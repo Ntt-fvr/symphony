@@ -21,14 +21,13 @@ import (
 // CustomerUpdate is the builder for updating Customer entities.
 type CustomerUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *CustomerMutation
-	predicates []predicate.Customer
+	hooks    []Hook
+	mutation *CustomerMutation
 }
 
 // Where adds a new predicate for the builder.
 func (cu *CustomerUpdate) Where(ps ...predicate.Customer) *CustomerUpdate {
-	cu.predicates = append(cu.predicates, ps...)
+	cu.mutation.predicates = append(cu.mutation.predicates, ps...)
 	return cu
 }
 
@@ -191,7 +190,7 @@ func (cu *CustomerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := cu.predicates; len(ps) > 0 {
+	if ps := cu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

@@ -20,6 +20,7 @@ import Lasso from '../facades/shapes/vertexes/helpers/Lasso';
 import ShapesFactory from '../shapes/ShapesFactory';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DEFAULT_LINK_SETTINGS} from '../shapes/connectors/BaseConnector';
+import {blockNameFixer} from '../utils/helpers';
 import {
   buildPaperConnectionValidation,
   handleNewConnections,
@@ -41,6 +42,8 @@ type AddConnectorFunctionType = (source: IBlock, target: IBlock) => ?IConnector;
 export type GraphCoreAPI = $ReadOnly<{|
   bindGraphContainer: HTMLElement => void,
   addBlock: AddBlockFunctionType,
+  duplicateBlocks: (blocks: IBlock[], addToGraph?: boolean) => IBlock[],
+  addCopiedBlocks: (IBlock[]) => void,
   removeBlocks: (IBlock[]) => void,
   removeConnector: IConnector => void,
   addConnector: AddConnectorFunctionType,
@@ -53,6 +56,8 @@ export default function graphCoreAPIProvider(
 ): GraphCoreAPI {
   const bindGraphContainer = graphBindToContainer.bind(flowWrapper);
   const addBlock = graphAddBlock.bind(flowWrapper);
+  const duplicateBlocks = graphDuplicateBlocks.bind(flowWrapper);
+  const addCopiedBlocks = graphAddCopiedBlocks.bind(flowWrapper);
   const removeBlocks = graphRemoveBlocks.bind(flowWrapper);
   const removeConnector = graphRemoveConnector.bind(flowWrapper);
   const addConnector = graphAddConnector.bind(flowWrapper);
@@ -62,6 +67,8 @@ export default function graphCoreAPIProvider(
   return {
     bindGraphContainer,
     addBlock,
+    duplicateBlocks,
+    addCopiedBlocks,
     removeBlocks,
     removeConnector,
     addConnector,
@@ -176,8 +183,12 @@ function graphRemoveBlocks(blocks: IBlock[]) {
   idsToRemove.forEach(id => blocksMap.delete(id));
 }
 
+function getAllBlocks() {
+  return [...(this.current?.blocks.values() || [])];
+}
+
 function graphClear() {
-  graphRemoveBlocks.call(this, [...(this.current?.blocks.values() || [])]);
+  graphRemoveBlocks.call(this, getAllBlocks.call(this));
 }
 
 function graphRemoveConnector(connector: IConnector) {
@@ -213,4 +224,60 @@ function graphDrawLasso(position: Position) {
   lasso.addTo(graph);
 
   return lasso;
+}
+
+function graphAddCopiedBlocks(blocks: IBlock[]) {
+  if (this.current == null) {
+    return;
+  }
+  const blocksMap = this.current.blocks;
+  const fixBlockName = blockNameFixer(getAllBlocks.call(this));
+  blocks.forEach(block => {
+    fixBlockName(block);
+    blocksMap.set(block.id, block);
+    block.addToGraph();
+  });
+  blocks.forEach(block =>
+    block.outConnectors.forEach(connector => connector.addToGraph()),
+  );
+}
+
+function graphDuplicateBlocks(
+  blocks: IBlock[],
+  addToGraph?: boolean = true,
+): IBlock[] {
+  if (this.current == null) {
+    return [];
+  }
+  const blocksMap = this.current.blocks;
+  const originalIDToNewBlock = new Map<string, IBlock>();
+  const fixBlockName = blockNameFixer(getAllBlocks.call(this));
+
+  blocks.forEach(block => {
+    const newBlock = addToGraph ? block.clone() : block.copy();
+    originalIDToNewBlock.set(block.id, newBlock);
+    if (addToGraph) {
+      fixBlockName(newBlock);
+      blocksMap.set(newBlock.id, newBlock);
+    }
+  });
+
+  blocks.forEach(block => {
+    const duplicatedBlock = originalIDToNewBlock.get(block.id);
+    if (duplicatedBlock == null) {
+      return;
+    }
+    [...block.outConnectors].forEach((connector, portIndex) => {
+      if (connector == null) {
+        return;
+      }
+      const newTagetBlock = originalIDToNewBlock.get(connector.target.id);
+      if (newTagetBlock == null) {
+        return;
+      }
+      duplicatedBlock.addConnector(portIndex, newTagetBlock);
+    });
+  });
+
+  return [...originalIDToNewBlock.values()];
 }

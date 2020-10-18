@@ -33,7 +33,7 @@ export const VERTEX_COMMON_DISPLAY = {
       text: 'manual action',
       textVerticalAnchor: 'middle',
       textAnchor: 'center',
-      refY: '120%',
+      refY: '115%',
       fontSize: 14,
       fill: symphony.palette.secondary,
     },
@@ -104,6 +104,7 @@ export interface IVertexModel extends IShape {
   +view: Paper => IVertexView;
   +addPort: KeyValuePair => void;
   +getPorts: () => $ReadOnlyArray<Port>;
+  +clone: (options?: ?KeyValuePair) => IVertexModel;
 }
 
 export type IVertexView = $ReadOnly<{|

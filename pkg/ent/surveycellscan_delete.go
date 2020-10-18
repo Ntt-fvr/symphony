@@ -20,14 +20,13 @@ import (
 // SurveyCellScanDelete is the builder for deleting a SurveyCellScan entity.
 type SurveyCellScanDelete struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyCellScanMutation
-	predicates []predicate.SurveyCellScan
+	hooks    []Hook
+	mutation *SurveyCellScanMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (scsd *SurveyCellScanDelete) Where(ps ...predicate.SurveyCellScan) *SurveyCellScanDelete {
-	scsd.predicates = append(scsd.predicates, ps...)
+	scsd.mutation.predicates = append(scsd.mutation.predicates, ps...)
 	return scsd
 }
 
@@ -79,7 +78,7 @@ func (scsd *SurveyCellScanDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := scsd.predicates; len(ps) > 0 {
+	if ps := scsd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

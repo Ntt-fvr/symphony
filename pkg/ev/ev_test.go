@@ -163,8 +163,12 @@ func TestEventTelemetry(t *testing.T) {
 		require.True(t, ok)
 		require.Equal(t, float64(2), data.Value)
 	}
-	{
-		rows, err := view.RetrieveData(ev.EventEmittedTotalView.Name)
+
+	for _, v := range []*view.View{
+		ev.EventEmittedTotalView,
+		ev.EventReceivedTotalView,
+	} {
+		rows, err := view.RetrieveData(v.Name)
 		require.NoError(t, err)
 		require.Len(t, rows, len(events))
 		for _, row := range rows {
@@ -172,14 +176,6 @@ func TestEventTelemetry(t *testing.T) {
 			require.True(t, ok)
 			require.Equal(t, int64(1), data.Value)
 		}
-	}
-	{
-		rows, err := view.RetrieveData(ev.EventReceivedTotalView.Name)
-		require.NoError(t, err)
-		require.Len(t, rows, 1)
-		data, ok := rows[0].Data.(*view.CountData)
-		require.True(t, ok)
-		require.Equal(t, int64(3), data.Value)
 	}
 
 	for _, v := range []*view.View{

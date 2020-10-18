@@ -20,14 +20,13 @@ import (
 // ServiceTypeDelete is the builder for deleting a ServiceType entity.
 type ServiceTypeDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ServiceTypeMutation
-	predicates []predicate.ServiceType
+	hooks    []Hook
+	mutation *ServiceTypeMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (std *ServiceTypeDelete) Where(ps ...predicate.ServiceType) *ServiceTypeDelete {
-	std.predicates = append(std.predicates, ps...)
+	std.mutation.predicates = append(std.mutation.predicates, ps...)
 	return std
 }
 
@@ -79,7 +78,7 @@ func (std *ServiceTypeDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := std.predicates; len(ps) > 0 {
+	if ps := std.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

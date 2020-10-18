@@ -23,14 +23,13 @@ import (
 // CheckListCategoryUpdate is the builder for updating CheckListCategory entities.
 type CheckListCategoryUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *CheckListCategoryMutation
-	predicates []predicate.CheckListCategory
+	hooks    []Hook
+	mutation *CheckListCategoryMutation
 }
 
 // Where adds a new predicate for the builder.
 func (clcu *CheckListCategoryUpdate) Where(ps ...predicate.CheckListCategory) *CheckListCategoryUpdate {
-	clcu.predicates = append(clcu.predicates, ps...)
+	clcu.mutation.predicates = append(clcu.mutation.predicates, ps...)
 	return clcu
 }
 
@@ -203,7 +202,7 @@ func (clcu *CheckListCategoryUpdate) sqlSave(ctx context.Context) (n int, err er
 			},
 		},
 	}
-	if ps := clcu.predicates; len(ps) > 0 {
+	if ps := clcu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

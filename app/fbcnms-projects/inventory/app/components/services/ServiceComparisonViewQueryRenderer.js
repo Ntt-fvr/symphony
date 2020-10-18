@@ -36,13 +36,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   onServiceSelected: (serviceId: string) => void,
   limit?: number,
   filters: Array<FilterValue>,
   serviceKey: number,
   onQueryReturn: number => void,
-};
+|}>;
 
 const serviceSearchQuery = graphql`
   query ServiceComparisonViewQueryRendererSearchQuery(

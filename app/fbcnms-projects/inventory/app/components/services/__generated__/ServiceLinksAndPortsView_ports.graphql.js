@@ -22,6 +22,9 @@ export type ServiceLinksAndPortsView_ports = $ReadOnlyArray<{|
   +parentEquipment: {|
     +id: string,
     +name: string,
+    +equipmentType: {|
+      +name: string
+    |},
   |},
   +definition: {|
     +id: string,
@@ -46,16 +49,13 @@ var v0 = {
   "name": "id",
   "storageKey": null
 },
-v1 = [
-  (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "name",
-    "storageKey": null
-  }
-];
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -72,7 +72,22 @@ return {
       "kind": "LinkedField",
       "name": "parentEquipment",
       "plural": false,
-      "selections": (v1/*: any*/),
+      "selections": [
+        (v0/*: any*/),
+        (v1/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "EquipmentType",
+          "kind": "LinkedField",
+          "name": "equipmentType",
+          "plural": false,
+          "selections": [
+            (v1/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
@@ -82,7 +97,10 @@ return {
       "kind": "LinkedField",
       "name": "definition",
       "plural": false,
-      "selections": (v1/*: any*/),
+      "selections": [
+        (v0/*: any*/),
+        (v1/*: any*/)
+      ],
       "storageKey": null
     }
   ],
@@ -91,6 +109,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0935b3324a49eba583ad909c31bf6d1d';
+(node/*: any*/).hash = '3c5ec3c451149626125b19ee8257c1c4';
 
 module.exports = node;

@@ -34,11 +34,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   onWorkOrderSelected: (workOrderId: ?string) => void,
   onSearchEntitySelected: (entityId: string, entityType: EntityType) => void,
   onNavigateToWorkOrder: (workOrderId: ?string) => void,
-};
+|}>;
 
 const InventoryTopBar = (props: Props) => {
   const {

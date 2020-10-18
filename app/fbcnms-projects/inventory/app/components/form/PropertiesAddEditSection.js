@@ -18,10 +18,10 @@ import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = WithStyles<typeof styles> & {
+type Props = WithStyles<typeof styles> & {|
   properties: Array<Property>,
   onChange: (propertyIndex: number) => (Property | PropertyType) => void,
-};
+|};
 
 const styles = theme => ({
   subheader: {
@@ -53,12 +53,10 @@ class PropertiesAddEditSection extends React.Component<Props> {
           {properties.map((property, index) => (
             <Grid key={property.id} item xs={12} sm={12} lg={6} xl={4}>
               <PropertyValueInput
-                hasSpacer={true}
                 required={!!property.propertyType.isMandatory}
                 disabled={!property.propertyType.isInstanceProperty}
                 label={property.propertyType.name}
                 className={classes.input}
-                margin="none"
                 inputType="Property"
                 property={property}
                 onChange={this.props.onChange(index)}

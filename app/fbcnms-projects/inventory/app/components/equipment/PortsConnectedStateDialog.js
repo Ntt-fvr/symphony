@@ -33,7 +33,7 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {toPropertyInput} from '../../common/Property';
 import {withSnackbar} from 'notistack';
 
-type Props = {
+type Props = {|
   workOrderId: ?string,
   equipment: Equipment,
   port: EquipmentPort,
@@ -42,7 +42,7 @@ type Props = {
   open: boolean,
   onClose: (response?: Link) => void,
   isSubFlow: ?boolean,
-} & WithSnackbarProps;
+|} & WithSnackbarProps;
 
 class PortsConnectedStateDialog extends React.Component<Props> {
   render() {

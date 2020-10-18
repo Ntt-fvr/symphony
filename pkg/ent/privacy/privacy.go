@@ -8,24 +8,25 @@ package privacy
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+
+	"github.com/facebook/ent/privacy"
 )
 
 var (
 	// Allow may be returned by rules to indicate that the policy
 	// evaluation should terminate with an allow decision.
-	Allow = errors.New("ent/privacy: allow rule")
+	Allow = privacy.Allow
 
 	// Deny may be returned by rules to indicate that the policy
 	// evaluation should terminate with an deny decision.
-	Deny = errors.New("ent/privacy: deny rule")
+	Deny = privacy.Deny
 
 	// Skip may be returned by rules to indicate that the policy
 	// evaluation should continue to the next rule.
-	Skip = errors.New("ent/privacy: skip rule")
+	Skip = privacy.Skip
 )
 
 // Allowf returns an formatted wrapped Allow decision.
@@ -43,51 +44,24 @@ func Skipf(format string, a ...interface{}) error {
 	return fmt.Errorf(format+": %w", append(a, Skip)...)
 }
 
-type decisionCtxKey struct{}
-
-// DecisionContext creates a decision context.
+// DecisionContext creates a new context from the given parent context with
+// a policy decision attach to it.
 func DecisionContext(parent context.Context, decision error) context.Context {
-	if decision == nil || errors.Is(decision, Skip) {
-		return parent
-	}
-	return context.WithValue(parent, decisionCtxKey{}, decision)
+	return privacy.DecisionContext(parent, decision)
 }
 
-func decisionFromContext(ctx context.Context) (error, bool) {
-	decision, ok := ctx.Value(decisionCtxKey{}).(error)
-	if ok && errors.Is(decision, Allow) {
-		decision = nil
-	}
-	return decision, ok
+// DecisionFromContext retrieves the policy decision from the context.
+func DecisionFromContext(ctx context.Context) (error, bool) {
+	return privacy.DecisionFromContext(ctx)
 }
 
 type (
-	// QueryPolicy combines multiple query rules into a single policy.
-	QueryPolicy []QueryRule
-
 	// QueryRule defines the interface deciding whether a
 	// query is allowed and optionally modify it.
-	QueryRule interface {
-		EvalQuery(context.Context, ent.Query) error
-	}
+	QueryRule = privacy.QueryRule
+	// QueryPolicy combines multiple query rules into a single policy.
+	QueryPolicy = privacy.QueryPolicy
 )
-
-// EvalQuery evaluates a query against a query policy.
-func (policy QueryPolicy) EvalQuery(ctx context.Context, q ent.Query) error {
-	if decision, ok := decisionFromContext(ctx); ok {
-		return decision
-	}
-	for _, rule := range policy {
-		switch decision := rule.EvalQuery(ctx, q); {
-		case decision == nil || errors.Is(decision, Skip):
-		case errors.Is(decision, Allow):
-			return nil
-		default:
-			return decision
-		}
-	}
-	return nil
-}
 
 // QueryRuleFunc type is an adapter to allow the use of
 // ordinary functions as query rules.
@@ -99,32 +73,12 @@ func (f QueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
 }
 
 type (
-	// MutationPolicy combines multiple mutation rules into a single policy.
-	MutationPolicy []MutationRule
-
 	// MutationRule defines the interface deciding whether a
 	// mutation is allowed and optionally modify it.
-	MutationRule interface {
-		EvalMutation(context.Context, ent.Mutation) error
-	}
+	MutationRule = privacy.MutationRule
+	// MutationPolicy combines multiple mutation rules into a single policy.
+	MutationPolicy = privacy.MutationPolicy
 )
-
-// EvalMutation evaluates a mutation against a mutation policy.
-func (policy MutationPolicy) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if decision, ok := decisionFromContext(ctx); ok {
-		return decision
-	}
-	for _, rule := range policy {
-		switch decision := rule.EvalMutation(ctx, m); {
-		case decision == nil || errors.Is(decision, Skip):
-		case errors.Is(decision, Allow):
-			return nil
-		default:
-			return decision
-		}
-	}
-	return nil
-}
 
 // MutationRuleFunc type is an adapter to allow the use of
 // ordinary functions as mutation rules.
@@ -430,6 +384,30 @@ func (f CustomerMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CustomerMutation", m)
 }
 
+// The EntryPointQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntryPointQueryRuleFunc func(context.Context, *ent.EntryPointQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntryPointQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.EntryPointQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EntryPointQuery", q)
+}
+
+// The EntryPointMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntryPointMutationRuleFunc func(context.Context, *ent.EntryPointMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntryPointMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.EntryPointMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EntryPointMutation", m)
+}
+
 // The EquipmentQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EquipmentQueryRuleFunc func(context.Context, *ent.EquipmentQuery) error
@@ -620,6 +598,30 @@ func (f EquipmentTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EquipmentTypeMutation", m)
+}
+
+// The ExitPointQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ExitPointQueryRuleFunc func(context.Context, *ent.ExitPointQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ExitPointQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ExitPointQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ExitPointQuery", q)
+}
+
+// The ExitPointMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ExitPointMutationRuleFunc func(context.Context, *ent.ExitPointMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ExitPointMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ExitPointMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ExitPointMutation", m)
 }
 
 // The ExportTaskQueryRuleFunc type is an adapter to allow the use of ordinary

@@ -20,11 +20,11 @@ import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   relatedEntityId: string,
   relatedEntityType: CommentEntity,
   className?: string,
-};
+|}>;
 
 const useStyles = makeStyles(() => ({
   newCommentBox: {

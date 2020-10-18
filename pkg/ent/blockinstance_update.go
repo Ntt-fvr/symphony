@@ -24,14 +24,13 @@ import (
 // BlockInstanceUpdate is the builder for updating BlockInstance entities.
 type BlockInstanceUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *BlockInstanceMutation
-	predicates []predicate.BlockInstance
+	hooks    []Hook
+	mutation *BlockInstanceMutation
 }
 
 // Where adds a new predicate for the builder.
 func (biu *BlockInstanceUpdate) Where(ps ...predicate.BlockInstance) *BlockInstanceUpdate {
-	biu.predicates = append(biu.predicates, ps...)
+	biu.mutation.predicates = append(biu.mutation.predicates, ps...)
 	return biu
 }
 
@@ -277,7 +276,7 @@ func (biu *BlockInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			},
 		},
 	}
-	if ps := biu.predicates; len(ps) > 0 {
+	if ps := biu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

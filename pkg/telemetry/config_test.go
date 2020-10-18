@@ -11,6 +11,7 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/stretchr/testify/require"
+	"go.opencensus.io/trace"
 )
 
 func TestFlags(t *testing.T) {
@@ -76,6 +77,7 @@ func TestProvider(t *testing.T) {
 	_, err = parser.Parse([]string{
 		"--telemetry.trace.exporter", "jaeger",
 		"--telemetry.view.exporter", "prometheus",
+		"--telemetry.trace.exclude_span_names", "foo,baz",
 	})
 	require.NoError(t, err)
 	te, flusher, err := telemetry.ProvideTraceExporter(cfg)
@@ -84,6 +86,8 @@ func TestProvider(t *testing.T) {
 	require.NotNil(t, flusher)
 	sampler := telemetry.ProvideTraceSampler(cfg)
 	require.NotNil(t, sampler)
+	require.False(t, sampler(trace.SamplingParameters{Name: "baz"}).Sample)
+	require.True(t, sampler(trace.SamplingParameters{Name: "bar"}).Sample)
 	ve, err := telemetry.ProvideViewExporter(cfg)
 	require.NoError(t, err)
 	require.NotNil(t, ve)

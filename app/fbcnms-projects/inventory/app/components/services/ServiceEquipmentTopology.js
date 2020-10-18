@@ -21,10 +21,10 @@ import TopologyTextBox from '../topology/TopologyTextBox';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   topology: ServiceEquipmentTopology_topology,
   endpoints: ServiceEquipmentTopology_endpoints,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = _ => ({
   card: {

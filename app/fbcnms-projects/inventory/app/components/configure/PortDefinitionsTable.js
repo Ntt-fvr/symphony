@@ -19,6 +19,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Text from '@symphony/design-system/components/Text';
 import inventoryTheme from '../../common/theme';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../draggable/DraggableUtils';
@@ -30,17 +31,19 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   portDefinitions: PortDefinitionsTable_portDefinitions,
   onPortDefinitionsChanged?: ?(
     newPorts: PortDefinitionsTable_portDefinitions,
   ) => void,
-};
+|}>;
 
 const PortDefinitionsTable = (props: Props) => {
   const {portDefinitions} = props;
   const classes = useStyles();
-
+  const backplaneConnectionsEnabled = useFeatureFlag(
+    'enable_backplane_connections',
+  );
   if (portDefinitions.length === 0) {
     return null;
   }
@@ -58,6 +61,11 @@ const PortDefinitionsTable = (props: Props) => {
             <TableCell component="div" className={classes.cell}>
               Type
             </TableCell>
+            {backplaneConnectionsEnabled && (
+              <TableCell component="div" className={classes.cell}>
+                BackPlane Connections
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody component="div">
@@ -75,6 +83,19 @@ const PortDefinitionsTable = (props: Props) => {
                 <TableCell className={classes.cell} component="div" scope="row">
                   <Text variant="body2">{portDefinition.portType?.name}</Text>
                 </TableCell>
+                {backplaneConnectionsEnabled && (
+                  <TableCell
+                    className={classes.cell}
+                    component="div"
+                    scope="row">
+                    <Text variant="body2">
+                      {portDefinition.connectedPorts &&
+                        portDefinition.connectedPorts
+                          .map(_port => _port.name)
+                          .join(',')}
+                    </Text>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
         </TableBody>
@@ -92,6 +113,10 @@ export default createFragmentContainer(PortDefinitionsTable, {
       index
       visibleLabel
       portType {
+        id
+        name
+      }
+      connectedPorts {
         id
         name
       }

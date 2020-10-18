@@ -20,14 +20,13 @@ import (
 // CustomerDelete is the builder for deleting a Customer entity.
 type CustomerDelete struct {
 	config
-	hooks      []Hook
-	mutation   *CustomerMutation
-	predicates []predicate.Customer
+	hooks    []Hook
+	mutation *CustomerMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (cd *CustomerDelete) Where(ps ...predicate.Customer) *CustomerDelete {
-	cd.predicates = append(cd.predicates, ps...)
+	cd.mutation.predicates = append(cd.mutation.predicates, ps...)
 	return cd
 }
 
@@ -79,7 +78,7 @@ func (cd *CustomerDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := cd.predicates; len(ps) > 0 {
+	if ps := cd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

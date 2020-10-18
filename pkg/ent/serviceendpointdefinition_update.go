@@ -23,14 +23,13 @@ import (
 // ServiceEndpointDefinitionUpdate is the builder for updating ServiceEndpointDefinition entities.
 type ServiceEndpointDefinitionUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ServiceEndpointDefinitionMutation
-	predicates []predicate.ServiceEndpointDefinition
+	hooks    []Hook
+	mutation *ServiceEndpointDefinitionMutation
 }
 
 // Where adds a new predicate for the builder.
 func (sedu *ServiceEndpointDefinitionUpdate) Where(ps ...predicate.ServiceEndpointDefinition) *ServiceEndpointDefinitionUpdate {
-	sedu.predicates = append(sedu.predicates, ps...)
+	sedu.mutation.predicates = append(sedu.mutation.predicates, ps...)
 	return sedu
 }
 
@@ -251,7 +250,7 @@ func (sedu *ServiceEndpointDefinitionUpdate) sqlSave(ctx context.Context) (n int
 			},
 		},
 	}
-	if ps := sedu.predicates; len(ps) > 0 {
+	if ps := sedu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

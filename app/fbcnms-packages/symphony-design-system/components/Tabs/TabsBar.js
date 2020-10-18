@@ -117,14 +117,14 @@ export type TabProps = {|
   disabled?: boolean,
 |};
 
-export type Props = {
+export type Props = $ReadOnly<{|
   tabs: Array<TabProps>,
   activeTabIndex: number,
   onChange?: number => void,
   size?: 'small' | 'standard' | 'large',
   spread?: ?boolean,
   className?: ?string,
-};
+|}>;
 
 export default function TabsBar(props: Props) {
   const {

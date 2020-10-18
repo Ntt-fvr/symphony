@@ -20,14 +20,13 @@ import (
 // ProjectTemplateDelete is the builder for deleting a ProjectTemplate entity.
 type ProjectTemplateDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ProjectTemplateMutation
-	predicates []predicate.ProjectTemplate
+	hooks    []Hook
+	mutation *ProjectTemplateMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ptd *ProjectTemplateDelete) Where(ps ...predicate.ProjectTemplate) *ProjectTemplateDelete {
-	ptd.predicates = append(ptd.predicates, ps...)
+	ptd.mutation.predicates = append(ptd.mutation.predicates, ps...)
 	return ptd
 }
 
@@ -79,7 +78,7 @@ func (ptd *ProjectTemplateDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ptd.predicates; len(ps) > 0 {
+	if ps := ptd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

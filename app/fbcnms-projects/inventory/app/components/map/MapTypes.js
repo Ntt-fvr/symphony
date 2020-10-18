@@ -12,8 +12,8 @@ import type {MapFeature} from './GeoJSON';
 
 import mapboxgl from 'mapbox-gl';
 
-export type MapMarkerProps = {
+export type MapMarkerProps = {|
   map: mapboxgl.Map,
   feature: MapFeature,
   onClick?: (string | number) => void,
-};
+|};

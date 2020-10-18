@@ -64,11 +64,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   onSave: (flowId: string) => void,
-};
+|}>;
 
 export type Flow = {
   id: string,

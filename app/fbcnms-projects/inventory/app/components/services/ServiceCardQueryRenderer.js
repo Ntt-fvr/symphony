@@ -13,9 +13,9 @@ import React from 'react';
 import ServiceCard from './ServiceCard';
 import {graphql} from 'react-relay';
 
-type Props = {
+type Props = $ReadOnly<{|
   serviceId: ?string,
-};
+|}>;
 
 const serviceQuery = graphql`
   query ServiceCardQueryRendererQuery($serviceId: ID!) {

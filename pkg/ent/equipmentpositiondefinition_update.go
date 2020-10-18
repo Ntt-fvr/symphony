@@ -22,14 +22,13 @@ import (
 // EquipmentPositionDefinitionUpdate is the builder for updating EquipmentPositionDefinition entities.
 type EquipmentPositionDefinitionUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentPositionDefinitionMutation
-	predicates []predicate.EquipmentPositionDefinition
+	hooks    []Hook
+	mutation *EquipmentPositionDefinitionMutation
 }
 
 // Where adds a new predicate for the builder.
 func (epdu *EquipmentPositionDefinitionUpdate) Where(ps ...predicate.EquipmentPositionDefinition) *EquipmentPositionDefinitionUpdate {
-	epdu.predicates = append(epdu.predicates, ps...)
+	epdu.mutation.predicates = append(epdu.mutation.predicates, ps...)
 	return epdu
 }
 
@@ -223,7 +222,7 @@ func (epdu *EquipmentPositionDefinitionUpdate) sqlSave(ctx context.Context) (n i
 			},
 		},
 	}
-	if ps := epdu.predicates; len(ps) > 0 {
+	if ps := epdu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

@@ -271,14 +271,16 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.Len(t, blks, 2)
 	startWithNext, err := draft.QueryBlocks().
 		Where(block.TypeEQ(block.TypeStart)).
-		WithNextBlocks().
+		WithExitPoints(func(query *ent.ExitPointQuery) {
+			query.WithNextEntryPoints()
+		}).
 		Only(ctx)
 	require.NoError(t, err)
-	require.Len(t, startWithNext.Edges.NextBlocks, 1)
+	require.Len(t, startWithNext.Edges.ExitPoints, 1)
+	require.Len(t, startWithNext.Edges.ExitPoints[0].Edges.NextEntryPoints, 1)
 
 	endBlock, err := draft.QueryBlocks().
 		Where(block.TypeEQ(block.TypeEnd)).
-		WithNextBlocks().
 		Only(ctx)
 	require.NoError(t, err)
 	details, err := br.Details(ctx, endBlock)
@@ -362,7 +364,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	r := newTestResolver(t, withActionFactory(actions.NewFactory()), withTriggerFactory(triggers.NewFactory()))
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, fdr := r.Mutation(), r.FlowDraft()
+	mr, fdr, ipr, opr := r.Mutation(), r.FlowDraft(), r.EntryPoint(), r.ExitPoint()
 
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "First version",
@@ -392,10 +394,16 @@ func TestImportEmptyFlow(t *testing.T) {
 		},
 		{
 			SourceBlockCid: "decision1",
+			SourcePoint: &models.ExitPointInput{
+				Cid: pointer.ToString("false"),
+			},
 			TargetBlockCid: "end",
 		},
 		{
 			SourceBlockCid: "decision1",
+			SourcePoint: &models.ExitPointInput{
+				Cid: pointer.ToString("true"),
+			},
 			TargetBlockCid: "shortcut",
 		},
 		{
@@ -432,6 +440,14 @@ func TestImportEmptyFlow(t *testing.T) {
 		DecisionBlocks: []*models.DecisionBlockInput{
 			{
 				Cid: "decision1",
+				Routes: []*models.DecisionRouteInput{
+					{
+						Cid: pointer.ToString("true"),
+					},
+					{
+						Cid: pointer.ToString("false"),
+					},
+				},
 			},
 		},
 		ActionBlocks: []*models.ActionBlockInput{
@@ -508,16 +524,18 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, connectors, 5)
 	for _, connector := range connectors {
-		require.NotNil(t, connector.FlowDraftID)
-		require.Equal(t, draft.ID, *connector.FlowDraftID)
+		sourceBlock, err := opr.ParentBlock(ctx, connector.Source)
+		require.NoError(t, err)
+		targetBlock, err := ipr.ParentBlock(ctx, connector.Target)
+		require.NoError(t, err)
 		found := false
 		for _, connectorInput := range connectorInputs {
-			if connector.SourceBlockCid == connectorInput.SourceBlockCid && connector.TargetBlockCid == connectorInput.TargetBlockCid {
+			if sourceBlock.Cid == connectorInput.SourceBlockCid && targetBlock.Cid == connectorInput.TargetBlockCid {
 				found = true
 			}
 		}
 		if !found {
-			t.Fatalf("failed to find connector. source=%s, target=%s", connector.SourceBlockCid, connector.TargetBlockCid)
+			t.Fatalf("failed to find connector. source=%s, target=%s", sourceBlock.Cid, targetBlock.Cid)
 		}
 	}
 }

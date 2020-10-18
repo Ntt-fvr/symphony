@@ -50,15 +50,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export type SvgIconStyleProps = {
+export type SvgIconStyleProps = {|
   className?: string,
   color?: 'light' | 'regular' | 'primary' | 'error' | 'gray' | 'inherit',
   variant?: 'normal' | 'large',
-};
+|};
 
-type Props = {
+type Props = $ReadOnly<{|
   children: React.Node,
-} & SvgIconStyleProps;
+  ...SvgIconStyleProps,
+|}>;
 
 const SvgIcon = (props: Props) => {
   const classes = useStyles();

@@ -25,14 +25,13 @@ import (
 // LinkUpdate is the builder for updating Link entities.
 type LinkUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *LinkMutation
-	predicates []predicate.Link
+	hooks    []Hook
+	mutation *LinkMutation
 }
 
 // Where adds a new predicate for the builder.
 func (lu *LinkUpdate) Where(ps ...predicate.Link) *LinkUpdate {
-	lu.predicates = append(lu.predicates, ps...)
+	lu.mutation.predicates = append(lu.mutation.predicates, ps...)
 	return lu
 }
 
@@ -281,7 +280,7 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := lu.predicates; len(ps) > 0 {
+	if ps := lu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

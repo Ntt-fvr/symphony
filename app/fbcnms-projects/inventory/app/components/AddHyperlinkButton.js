@@ -31,13 +31,13 @@ import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {useCallback, useContext, useState} from 'react';
 import {withSnackbar} from 'notistack';
 
-type addLinkProps = {
+type addLinkProps = {|
   entityId: string,
   entityType: ImageEntity,
   allowCategories?: boolean,
   children?: ?React.Node,
   className?: string,
-};
+|};
 
 type Props = addLinkProps & ButtonProps & WithSnackbarProps;
 

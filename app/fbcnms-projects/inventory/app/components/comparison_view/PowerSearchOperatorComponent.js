@@ -42,10 +42,10 @@ const useStyles = makeStyles(_theme => ({
 
 export const POWER_SEARCH_OPERATOR_ID = 'power_search_operator_select';
 
-type Props = {
+type Props = $ReadOnly<{|
   operator: Operator,
   onOperatorChange?: Operator => void,
-};
+|}>;
 
 const PowerSearchOperatorComponent = (props: Props) => {
   const classes = useStyles();

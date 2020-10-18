@@ -20,14 +20,13 @@ import (
 // ReportFilterUpdate is the builder for updating ReportFilter entities.
 type ReportFilterUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ReportFilterMutation
-	predicates []predicate.ReportFilter
+	hooks    []Hook
+	mutation *ReportFilterMutation
 }
 
 // Where adds a new predicate for the builder.
 func (rfu *ReportFilterUpdate) Where(ps ...predicate.ReportFilter) *ReportFilterUpdate {
-	rfu.predicates = append(rfu.predicates, ps...)
+	rfu.mutation.predicates = append(rfu.mutation.predicates, ps...)
 	return rfu
 }
 
@@ -154,7 +153,7 @@ func (rfu *ReportFilterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := rfu.predicates; len(ps) > 0 {
+	if ps := rfu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

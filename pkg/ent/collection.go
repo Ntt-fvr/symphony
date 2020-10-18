@@ -33,18 +33,6 @@ func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *Bl
 }
 
 func (b *BlockQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *BlockQuery {
-	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
-		switch field.Name {
-		case "nextBlocks":
-			b = b.WithNextBlocks(func(query *BlockQuery) {
-				query.collectField(ctx, field)
-			})
-		case "prevBlocks":
-			b = b.WithPrevBlocks(func(query *BlockQuery) {
-				query.collectField(ctx, field)
-			})
-		}
-	}
 	return b
 }
 
@@ -130,6 +118,30 @@ func (c *CustomerQuery) CollectFields(ctx context.Context, satisfies ...string) 
 
 func (c *CustomerQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CustomerQuery {
 	return c
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ep *EntryPointQuery) CollectFields(ctx context.Context, satisfies ...string) *EntryPointQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ep = ep.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ep
+}
+
+func (ep *EntryPointQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *EntryPointQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "parentBlock":
+			ep = ep.WithParentBlock(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		case "prevExitPoints":
+			ep = ep.WithPrevExitPoints(func(query *ExitPointQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return ep
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -358,6 +370,30 @@ func (et *EquipmentTypeQuery) collectField(ctx *graphql.OperationContext, field 
 		}
 	}
 	return et
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ep *ExitPointQuery) CollectFields(ctx context.Context, satisfies ...string) *ExitPointQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ep = ep.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ep
+}
+
+func (ep *ExitPointQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ExitPointQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "nextEntryPoints":
+			ep = ep.WithNextEntryPoints(func(query *EntryPointQuery) {
+				query.collectField(ctx, field)
+			})
+		case "parentBlock":
+			ep = ep.WithParentBlock(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return ep
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

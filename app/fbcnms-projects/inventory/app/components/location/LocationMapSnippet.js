@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import {locationToGeoJson} from '../map/MapUtil';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   location: {
     id: string,
@@ -24,16 +24,12 @@ type Props = {
     longitude: number,
     locationType?: {mapType?: ?string, mapZoomLevel?: ?string},
   },
-};
+|}>;
 
 const useStyles = makeStyles(_theme => ({
   container: {
     position: 'relative',
     height: '100%',
-  },
-  mapContainer: {
-    height: '100%',
-    marginBottom: '5px',
   },
   section: {
     marginBottom: '24px',
@@ -70,7 +66,6 @@ const LocationMapSnippet = (props: Props) => {
   return (
     <div className={classNames(classes.container, className)}>
       <MapView
-        id="mapView"
         center={{
           lat: location.latitude,
           lng: location.longitude,
@@ -81,7 +76,6 @@ const LocationMapSnippet = (props: Props) => {
             : 'streets'
         }
         zoomLevel={location.locationType?.mapZoomLevel ?? '8'}
-        classes={{mapContainer: classes.mapContainer}}
         markers={locationToGeoJson(location)}
         showGeocoder={false}
         showMapSatelliteToggle={false}

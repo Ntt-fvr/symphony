@@ -20,14 +20,13 @@ import (
 // EquipmentTypeDelete is the builder for deleting a EquipmentType entity.
 type EquipmentTypeDelete struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentTypeMutation
-	predicates []predicate.EquipmentType
+	hooks    []Hook
+	mutation *EquipmentTypeMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (etd *EquipmentTypeDelete) Where(ps ...predicate.EquipmentType) *EquipmentTypeDelete {
-	etd.predicates = append(etd.predicates, ps...)
+	etd.mutation.predicates = append(etd.mutation.predicates, ps...)
 	return etd
 }
 
@@ -79,7 +78,7 @@ func (etd *EquipmentTypeDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := etd.predicates; len(ps) > 0 {
+	if ps := etd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

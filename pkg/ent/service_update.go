@@ -27,14 +27,13 @@ import (
 // ServiceUpdate is the builder for updating Service entities.
 type ServiceUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ServiceMutation
-	predicates []predicate.Service
+	hooks    []Hook
+	mutation *ServiceMutation
 }
 
 // Where adds a new predicate for the builder.
 func (su *ServiceUpdate) Where(ps ...predicate.Service) *ServiceUpdate {
-	su.predicates = append(su.predicates, ps...)
+	su.mutation.predicates = append(su.mutation.predicates, ps...)
 	return su
 }
 
@@ -444,7 +443,7 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := su.predicates; len(ps) > 0 {
+	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

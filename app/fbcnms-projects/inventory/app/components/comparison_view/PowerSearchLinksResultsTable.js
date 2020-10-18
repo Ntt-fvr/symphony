@@ -87,9 +87,9 @@ const styles = (theme: Theme) => ({
 
 type Props = WithAlert &
   WithStyles<typeof styles> &
-  ContextRouter & {
+  ContextRouter & {|
     links: PowerSearchLinksResultsTable_links,
-  };
+  |};
 
 class PowerSearchLinksResultsTable extends React.Component<Props> {
   static contextType = AppContext;

@@ -287,6 +287,10 @@ DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.
 - name: JAEGER_AGENT_ENDPOINT
   value: {{ . | quote }}
 {{- end }}
+{{- with .Values.tracing.excludeSpanNames }}
+- name: TELEMETRY_TRACE_EXCLUDE_SPAN_NAMES
+  value: {{ uniq . |  join "," | quote }}
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -326,15 +330,15 @@ imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- with .probes.liveness }}
 livenessProbe:
   httpGet:
-    path: {{ default "/healthz/liveness" .path }}
+    path: {{ default "/healthz/liveness" $.probes.path }}
     port: http
 {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .probes.readiness }}
 readinessProbe:
   httpGet:
-    path: {{ default "/healthz/readiness" .path }}
+    path: {{ default "/healthz/readiness" $.probes.path }}
     port: http
-  {{- toYaml . | nindent 2 }}
+{{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}

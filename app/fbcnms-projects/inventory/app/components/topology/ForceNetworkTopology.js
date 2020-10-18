@@ -56,11 +56,11 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   topology: ForceNetworkTopology_topology,
   className?: string,
   renderNode: (id: string) => React.Node,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   loading: boolean,

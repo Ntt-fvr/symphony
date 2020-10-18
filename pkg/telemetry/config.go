@@ -17,8 +17,9 @@ import (
 // Config is a struct containing configurable telemetry settings.
 type Config struct {
 	Trace struct {
-		ExporterName         string  `name:"exporter" env:"TELEMETRY_TRACE_EXPORTER" default:"nop" enum:"${trace_exporters}" help:"Exporter to use when exporting telemetry trace data."`
-		SamplingProbability  float64 `name:"sampling_probability" env:"TELEMETRY_TRACE_SAMPLING_PROBABILITY" default:"1.0" help:"Sampling probability for trace creation."`
+		ExporterName         string   `name:"exporter" env:"TELEMETRY_TRACE_EXPORTER" default:"nop" enum:"${trace_exporters}" help:"Exporter to use when exporting telemetry trace data."`
+		SamplingProbability  float64  `name:"sampling_probability" env:"TELEMETRY_TRACE_SAMPLING_PROBABILITY" default:"1.0" help:"Sampling probability for trace creation."`
+		ExcludeSpanNames     []string `name:"exclude_span_names" env:"TELEMETRY_TRACE_EXCLUDE_SPAN_NAMES" help:"List of span names to exclude on creation."`
 		TraceExporterOptions `embed:""`
 	} `prefix:"telemetry.trace." embed:""`
 	View struct {
@@ -61,9 +62,22 @@ func ProvideTraceExporter(config Config) (trace.Exporter, func(), error) {
 
 // ProvideTraceSampler is a wire provider that produces trace sampler from config.
 func ProvideTraceSampler(config Config) trace.Sampler {
-	return trace.ProbabilitySampler(
+	sampler := trace.ProbabilitySampler(
 		config.Trace.SamplingProbability,
 	)
+	if len(config.Trace.ExcludeSpanNames) == 0 {
+		return sampler
+	}
+	filter := WithoutNameSampler(
+		config.Trace.ExcludeSpanNames[0],
+		config.Trace.ExcludeSpanNames[1:]...,
+	)
+	return func(p trace.SamplingParameters) trace.SamplingDecision {
+		if decision := filter(p); !decision.Sample {
+			return decision
+		}
+		return sampler(p)
+	}
 }
 
 // ProvideViewExporter is a wire provider that produces view exporter from config.

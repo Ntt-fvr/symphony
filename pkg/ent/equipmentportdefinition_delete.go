@@ -20,14 +20,13 @@ import (
 // EquipmentPortDefinitionDelete is the builder for deleting a EquipmentPortDefinition entity.
 type EquipmentPortDefinitionDelete struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentPortDefinitionMutation
-	predicates []predicate.EquipmentPortDefinition
+	hooks    []Hook
+	mutation *EquipmentPortDefinitionMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (epdd *EquipmentPortDefinitionDelete) Where(ps ...predicate.EquipmentPortDefinition) *EquipmentPortDefinitionDelete {
-	epdd.predicates = append(epdd.predicates, ps...)
+	epdd.mutation.predicates = append(epdd.mutation.predicates, ps...)
 	return epdd
 }
 
@@ -79,7 +78,7 @@ func (epdd *EquipmentPortDefinitionDelete) sqlExec(ctx context.Context) (int, er
 			},
 		},
 	}
-	if ps := epdd.predicates; len(ps) > 0 {
+	if ps := epdd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

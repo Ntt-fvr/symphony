@@ -17,7 +17,7 @@ import React from 'react';
 import nullthrows from '@fbcnms/util/nullthrows';
 import withInventoryErrorBoundary from '../common/withInventoryErrorBoundary';
 
-type Props = {
+type Props = $ReadOnly<{|
   mode: 'add' | 'edit' | 'show',
   onSave: () => void,
   onEdit: () => void,
@@ -34,7 +34,7 @@ type Props = {
   onEquipmentClicked: (equipmentId: string) => void,
   onParentLocationClicked: (locationId: string) => void,
   onWorkOrderSelected: (workOrderId: string) => void,
-};
+|}>;
 
 class EquipmentCard extends React.Component<Props> {
   render() {

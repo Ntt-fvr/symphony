@@ -8,9 +8,11 @@
  * @format
  */
 
-import useKeyboardToggle from '../../../utils/useKeyboardToggle';
-import {COMMON_PREDICATES} from '../../../utils/useKeyboardShortcut';
 import {Events} from '../../canvas/graph/facades/Helpers';
+import {
+  PREDICATES,
+  useKeyboardToggle,
+} from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {useCallback, useMemo, useState} from 'react';
 import {useEventRegistrationToggle} from '../../../utils/helpers';
 import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
@@ -48,11 +50,7 @@ export default function usePaperGrab() {
     changeGrabMode,
   ]);
 
-  useKeyboardToggle(
-    COMMON_PREDICATES.spaceIsPressed,
-    enterGrabMode,
-    leaveGrabMode,
-  );
+  useKeyboardToggle(PREDICATES.space, enterGrabMode, leaveGrabMode);
 
   const onDragStart = useCallback(() => setCursor('grabbing'), [setCursor]);
   const onDragEnd = useCallback(() => setCursor('grab'), [setCursor]);

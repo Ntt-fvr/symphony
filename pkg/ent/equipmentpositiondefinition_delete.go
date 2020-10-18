@@ -20,14 +20,13 @@ import (
 // EquipmentPositionDefinitionDelete is the builder for deleting a EquipmentPositionDefinition entity.
 type EquipmentPositionDefinitionDelete struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentPositionDefinitionMutation
-	predicates []predicate.EquipmentPositionDefinition
+	hooks    []Hook
+	mutation *EquipmentPositionDefinitionMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (epdd *EquipmentPositionDefinitionDelete) Where(ps ...predicate.EquipmentPositionDefinition) *EquipmentPositionDefinitionDelete {
-	epdd.predicates = append(epdd.predicates, ps...)
+	epdd.mutation.predicates = append(epdd.mutation.predicates, ps...)
 	return epdd
 }
 
@@ -79,7 +78,7 @@ func (epdd *EquipmentPositionDefinitionDelete) sqlExec(ctx context.Context) (int
 			},
 		},
 	}
-	if ps := epdd.predicates; len(ps) > 0 {
+	if ps := epdd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

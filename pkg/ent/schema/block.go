@@ -9,7 +9,6 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebook/ent/schema/index"
-	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -56,10 +55,6 @@ func (Block) Fields() []ent.Field {
 // Edges returns block edges.
 func (Block) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("next_blocks", Block.Type).
-			Annotations(entgql.MapsTo("nextBlocks")).
-			From("prev_blocks").
-			Annotations(entgql.MapsTo("prevBlocks")),
 		edge.From("flow", Flow.Type).
 			Ref("blocks").
 			Unique(),
@@ -76,6 +71,9 @@ func (Block) Edges() []ent.Edge {
 			From("source_block"),
 		edge.From("instances", BlockInstance.Type).
 			Ref("block"),
+		edge.To("entry_point", EntryPoint.Type).
+			Unique(),
+		edge.To("exit_points", ExitPoint.Type),
 	}
 }
 
@@ -98,6 +96,8 @@ func (Block) Indexes() []ent.Index {
 func (Block) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.VerifyStartParamDefinitionsHook(),
+		hooks.AddDefaultEntryAndExitPointsHook(),
+		hooks.DeleteEntryAndExitPointsHook(),
 		hooks.UpdateDraftChangedHook(),
 	}
 }

@@ -20,14 +20,13 @@ import (
 // FloorPlanReferencePointDelete is the builder for deleting a FloorPlanReferencePoint entity.
 type FloorPlanReferencePointDelete struct {
 	config
-	hooks      []Hook
-	mutation   *FloorPlanReferencePointMutation
-	predicates []predicate.FloorPlanReferencePoint
+	hooks    []Hook
+	mutation *FloorPlanReferencePointMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (fprpd *FloorPlanReferencePointDelete) Where(ps ...predicate.FloorPlanReferencePoint) *FloorPlanReferencePointDelete {
-	fprpd.predicates = append(fprpd.predicates, ps...)
+	fprpd.mutation.predicates = append(fprpd.mutation.predicates, ps...)
 	return fprpd
 }
 
@@ -79,7 +78,7 @@ func (fprpd *FloorPlanReferencePointDelete) sqlExec(ctx context.Context) (int, e
 			},
 		},
 	}
-	if ps := fprpd.predicates; len(ps) > 0 {
+	if ps := fprpd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

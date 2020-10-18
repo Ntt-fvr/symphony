@@ -55,7 +55,7 @@ export default function MemberListItem<T>(props: Props<T>) {
     onContent: {
       regularContent: (
         <>
-          <CheckIcon color="inherit" size="small" />
+          <CheckIcon color="inherit" />
           <fbt desc="">Added</fbt>
         </>
       ),
@@ -66,7 +66,7 @@ export default function MemberListItem<T>(props: Props<T>) {
     offContent: {
       regularContent: (
         <>
-          <PlusIcon color="inherit" size="small" />
+          <PlusIcon color="inherit" />
           {Strings.common.addButton}
         </>
       ),

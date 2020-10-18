@@ -66,11 +66,11 @@ const styles = _ => ({
   },
 });
 
-type Props = ContextRouter & {
+type Props = ContextRouter & {|
   onSelect: (serviceTypeId: string) => void,
   onClose: () => void,
   showNonManualDiscovery?: boolean,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   serviceTypes: Array<ServiceTypesListQuery_serviceType>,

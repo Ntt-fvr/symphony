@@ -55,13 +55,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   limit?: number,
   filters: Array<FilterValue>,
   displayMode?: DisplayOptionTypes,
   onProjectSelected: (projectID: string) => void,
-};
+|}>;
 
 const projectSearchQuery = graphql`
   query ProjectComparisonViewQueryRendererSearchQuery(

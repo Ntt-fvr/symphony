@@ -75,6 +75,7 @@ tracing:
     collectorEndpoint: ""
     agentEndpoint: ""
     agentThriftEndpoint: ""
+  excludeSpanNames: []
 
 # Configuration for front application
 front:

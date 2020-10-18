@@ -485,7 +485,6 @@ const AddWorkOrderCard = (props: Props) => {
                             disabled={!property.propertyType.isInstanceProperty}
                             label={property.propertyType.name}
                             className={classes.gridInput}
-                            margin="dense"
                             inputType="Property"
                             property={property}
                             headlineVariant="form"

@@ -116,8 +116,8 @@ func (fetq *FlowExecutionTemplateQuery) FirstID(ctx context.Context) (id int, er
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (fetq *FlowExecutionTemplateQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (fetq *FlowExecutionTemplateQuery) FirstIDX(ctx context.Context) int {
 	id, err := fetq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

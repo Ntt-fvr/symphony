@@ -23,14 +23,13 @@ import (
 // WorkOrderDefinitionUpdate is the builder for updating WorkOrderDefinition entities.
 type WorkOrderDefinitionUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *WorkOrderDefinitionMutation
-	predicates []predicate.WorkOrderDefinition
+	hooks    []Hook
+	mutation *WorkOrderDefinitionMutation
 }
 
 // Where adds a new predicate for the builder.
 func (wodu *WorkOrderDefinitionUpdate) Where(ps ...predicate.WorkOrderDefinition) *WorkOrderDefinitionUpdate {
-	wodu.predicates = append(wodu.predicates, ps...)
+	wodu.mutation.predicates = append(wodu.mutation.predicates, ps...)
 	return wodu
 }
 
@@ -212,7 +211,7 @@ func (wodu *WorkOrderDefinitionUpdate) sqlSave(ctx context.Context) (n int, err 
 			},
 		},
 	}
-	if ps := wodu.predicates; len(ps) > 0 {
+	if ps := wodu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

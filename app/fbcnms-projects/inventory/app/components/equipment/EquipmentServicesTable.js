@@ -53,10 +53,10 @@ const styles = (_theme: Theme) => ({
   },
 });
 
-type Props = {
+type Props = $ReadOnly<{|
   services: Array<Service>,
   ...$Exact<WithStyles<typeof styles>>,
-};
+|}>;
 
 const EquipmentServicesTable = (props: Props) => {
   const [anchorEl, setAnchorEl] = useState<?HTMLElement>(null);

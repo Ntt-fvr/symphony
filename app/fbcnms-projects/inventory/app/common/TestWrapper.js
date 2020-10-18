@@ -15,9 +15,9 @@ import {MemoryRouter} from 'react-router-dom';
 import {MuiThemeProvider} from '@material-ui/core/styles';
 import {SnackbarProvider} from 'notistack';
 
-type Props = {
+type Props = $ReadOnly<{|
   children: React.Node,
-};
+|}>;
 
 const TestWrapper = (props: Props) => {
   return (

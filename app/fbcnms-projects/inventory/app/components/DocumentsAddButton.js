@@ -21,6 +21,7 @@ import type {WithStyles} from '@material-ui/core';
 import AddImageMutation from '../mutations/AddImageMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
+import Clickable from '@symphony/design-system/components/Core/Clickable';
 import FileUploadButton from './FileUpload/FileUploadButton';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import PopoverMenu from '@symphony/design-system/components/Select/PopoverMenu';
@@ -45,10 +46,10 @@ const styles = {
   },
 };
 
-type Props = {
+type Props = {|
   entityId: ?string,
   entityType: ImageEntity,
-} & WithSnackbarProps &
+|} & WithSnackbarProps &
   WithStyles<typeof styles>;
 
 type State = {
@@ -89,12 +90,13 @@ class DocumentsAddButton extends React.Component<Props, State> {
                   key={category}
                   onFileUploaded={this.onDocumentUploaded(category)}>
                   {openFileUploadDialog => (
-                    <Text
-                      className={classes.uploadCategoryButton}
-                      variant="body2"
-                      onClick={openFileUploadDialog}>
-                      {category}
-                    </Text>
+                    <Clickable onClick={openFileUploadDialog}>
+                      <Text
+                        className={classes.uploadCategoryButton}
+                        variant="body2">
+                        {category}
+                      </Text>
+                    </Clickable>
                   )}
                 </FileUploadButton>
               ),

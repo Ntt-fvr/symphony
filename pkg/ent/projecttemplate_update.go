@@ -23,14 +23,13 @@ import (
 // ProjectTemplateUpdate is the builder for updating ProjectTemplate entities.
 type ProjectTemplateUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ProjectTemplateMutation
-	predicates []predicate.ProjectTemplate
+	hooks    []Hook
+	mutation *ProjectTemplateMutation
 }
 
 // Where adds a new predicate for the builder.
 func (ptu *ProjectTemplateUpdate) Where(ps ...predicate.ProjectTemplate) *ProjectTemplateUpdate {
-	ptu.predicates = append(ptu.predicates, ps...)
+	ptu.mutation.predicates = append(ptu.mutation.predicates, ps...)
 	return ptu
 }
 
@@ -249,7 +248,7 @@ func (ptu *ProjectTemplateUpdate) sqlSave(ctx context.Context) (n int, err error
 			},
 		},
 	}
-	if ps := ptu.predicates; len(ps) > 0 {
+	if ps := ptu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

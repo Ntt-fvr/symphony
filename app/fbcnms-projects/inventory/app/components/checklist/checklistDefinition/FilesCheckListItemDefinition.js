@@ -8,17 +8,12 @@
  * @format
  */
 
-import type {CheckListItem} from '../checkListCategory/ChecklistItemsDialogMutateState';
+import type {CheckListItemDefinitionProps} from './CheckListItemDefinition';
 
 import CheckListItemDefinitionBase from './CheckListItemDefinitionBase';
 import React from 'react';
 
-type Props = {
-  item: CheckListItem,
-  onChange?: (updatedItem: CheckListItem) => void,
-};
-
-const FilesCheckListItemDefinition = (props: Props) => {
+const FilesCheckListItemDefinition = (props: CheckListItemDefinitionProps) => {
   return <CheckListItemDefinitionBase {...props} />;
 };
 

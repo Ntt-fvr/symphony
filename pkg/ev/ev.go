@@ -211,7 +211,9 @@ func (r *TopicReceiver) Receive(ctx context.Context) (evt *Event, err error) {
 
 	defer func() {
 		if err == nil {
-			stats.Record(ctx, EventReceivedTotal.M(1))
+			_ = stats.RecordWithTags(ctx, evt.tags(),
+				EventReceivedTotal.M(1),
+			)
 		} else {
 			stats.Record(ctx, EventReceiveErrorTotal.M(1))
 		}

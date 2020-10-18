@@ -141,8 +141,8 @@ func (fdq *FlowDraftQuery) FirstID(ctx context.Context) (id int, err error) {
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (fdq *FlowDraftQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (fdq *FlowDraftQuery) FirstIDX(ctx context.Context) int {
 	id, err := fdq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

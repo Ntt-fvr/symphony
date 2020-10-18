@@ -20,14 +20,13 @@ import (
 // ExportTaskUpdate is the builder for updating ExportTask entities.
 type ExportTaskUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ExportTaskMutation
-	predicates []predicate.ExportTask
+	hooks    []Hook
+	mutation *ExportTaskMutation
 }
 
 // Where adds a new predicate for the builder.
 func (etu *ExportTaskUpdate) Where(ps ...predicate.ExportTask) *ExportTaskUpdate {
-	etu.predicates = append(etu.predicates, ps...)
+	etu.mutation.predicates = append(etu.mutation.predicates, ps...)
 	return etu
 }
 
@@ -218,7 +217,7 @@ func (etu *ExportTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := etu.predicates; len(ps) > 0 {
+	if ps := etu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

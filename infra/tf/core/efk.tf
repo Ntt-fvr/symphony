@@ -29,7 +29,7 @@ resource aws_iam_service_linked_role es {
 # elastic search domain
 resource aws_elasticsearch_domain es {
   domain_name           = "tf-symphony-${terraform.workspace}"
-  elasticsearch_version = "7.4"
+  elasticsearch_version = "7.7"
 
   cluster_config {
     instance_type            = "m4.2xlarge.elasticsearch"
@@ -96,32 +96,38 @@ resource aws_elasticsearch_domain_policy es_management_access {
   access_policies = data.aws_iam_policy_document.es_management_access.json
 }
 
+# k8s namespace for logging resources
+resource kubernetes_namespace kube_logging {
+  metadata {
+    name = "kube-logging"
+  }
+}
+
 # helm chart for cleanning old indices.
 resource helm_release elasticsearch_curator {
   name       = "elasticsearch-curator"
   repository = local.helm_repository.stable
   chart      = "elasticsearch-curator"
-  namespace  = "monitoring"
+  namespace  = kubernetes_namespace.kube_logging.id
   version    = "2.2.1"
-  keyring    = ""
 
-  values = [<<EOT
-  configMaps:
-    config_yml: |-
-      ---
-      client:
-        hosts:
-          - ${aws_elasticsearch_domain.es.endpoint}
-        port: 80
-  EOT
-  ]
+  values = [yamlencode({
+    configMaps = {
+      config_yml = yamlencode({
+        client = {
+          hosts = [aws_elasticsearch_domain.es.endpoint]
+          port  = 80
+        }
+      })
+    }
+  })]
 }
 
 # external service for elastic
 resource kubernetes_service elastic {
   metadata {
     name      = "elastic"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.kube_logging.id
   }
 
   spec {
@@ -134,7 +140,7 @@ resource kubernetes_service elastic {
 resource kubernetes_ingress kibana {
   metadata {
     name      = "kibana"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.kube_logging.id
 
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
@@ -161,7 +167,7 @@ resource kubernetes_ingress kibana {
 resource kubernetes_ingress kibana_redirect {
   metadata {
     name      = "kibana-redirect"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.kube_logging.id
 
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
@@ -190,96 +196,34 @@ resource kubernetes_ingress kibana_redirect {
 # fluentd charts for sending logs from the cluster to elastic.
 resource helm_release fluentd_elasticsearch {
   chart      = "fluentd-elasticsearch"
-  repository = local.helm_repository.kiwigrid
+  repository = local.helm_repository.kokuwa
   name       = "fluentd-elasticsearch"
-  namespace  = "monitoring"
-  version    = "9.6.2"
-  keyring    = ""
+  namespace  = kubernetes_namespace.kube_logging.id
+  version    = "10.0.2"
 
-  values = [<<EOT
-  elasticsearch:
-    hosts:
-      - ${aws_elasticsearch_domain.es.endpoint}:443
-    scheme: https
-  service:
-    ports:
-      - name: http
-        type: ClusterIP
-        port: 9880
-  livenessProbe:
-    kind:
-      httpGet:
-        path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-        port: 9880
-      exec: null
-    initialDelaySeconds: 5
-    periodSeconds: 30
-  serviceMonitor:
-    enabled: true
-  prometheusRule:
-    enabled: true
-  configMaps:
-    useDefaults:
-      forwardInputConf: false
-  extraConfigMaps:
-    http.input.conf: |-
-      <source>
-        @id http
-        @type http
-        body_size_limit 2m
-        add_http_headers true
-      </source>
-    inventory.filter.conf: |-
-      <filter inventory>
-        @id filter_prometheus
-        @type prometheus
-        <metric>
-          name inventory_client_events_total
-          type counter
-          desc The total number of incoming client events
-          <labels>
-            event $${event}
-            tenant $${tenant}
-            user $${email}
-          </labels>
-        </metric>
-      </filter>
-    orc8r.filter.conf: |-
-      <filter kubernetes.**orc8r-proxy**>
-        @id filter_orc8r_proxy
-        @type parser
-        key_name message
-        reserve_data true
-        remove_key_name_field true
-        <parse>
-          @type multi_format
-          <pattern>
-            format regexp
-            expression /^(?<time>.*)@\|@(?<remote_addr>.*)@\|@(?<http_host>.*)@\|@(?<server_port>.*)@\|@(?<request>.*)@\|@(?<status>.*)@\|@(?<body_bytes_sent>.*)@\|@(?<request_time>.*)@\|@(?<alpn>.*)@\|@(?<tls_client_serial>.*)@\|@(?<tls_client_subject_name>.*)@\|@(?<tls_session_reused>.*)@\|@(?<tls_sni>.*)@\|@(?<tls_protocol>.*)@\|@(?<tls_cipher>.*)@\|@(?<backend_host>.*)@\|@(?<backend_port>.*)$/
-            time_format %iso8601
-          </pattern>
-          <pattern>
-            format none
-          </pattern>
-        </parse>
-      </filter>
-
-      <filter kubernetes.**orc8r-nginx**>
-        @id filter_orc8r_nginx
-        @type parser
-        key_name message
-        reserve_data true
-        remove_key_name_field true
-        <parse>
-          @type multi_format
-          <pattern>
-            format json
-          </pattern>
-          <pattern>
-            format none
-          </pattern>
-        </parse>
-      </filter>
-  EOT
-  ]
+  values = [yamlencode({
+    elasticsearch = {
+      hosts  = ["${aws_elasticsearch_domain.es.endpoint}:443"]
+      scheme = "https"
+      logstash = {
+        prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? ns + '.namespace' : tag == 'inventory' ? 'symphony.http' : 'logstash'}"
+      }
+      outputType = "elasticsearch_dynamic"
+    }
+    serviceMonitor = {
+      enabled = true
+    }
+    prometheusRule = {
+      enabled = true
+    }
+    configMaps = {
+      useDefaults = {
+        forwardInputConf = false
+        systemInputConf  = false
+      }
+    }
+    extraConfigMaps = {
+      for f in fileset(path.module, "fluentd/*") : basename(f) => file(f)
+    }
+  })]
 }

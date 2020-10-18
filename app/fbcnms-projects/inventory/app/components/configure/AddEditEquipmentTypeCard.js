@@ -78,11 +78,11 @@ const styles = theme => ({
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
-  WithAlert & {
+  WithAlert & {|
     editingEquipmentType?: ?EquipmentType,
     onClose: () => void,
     onSave: (equipmentType: any) => void,
-  };
+  |};
 
 type State = {
   error: ?string,
@@ -140,8 +140,6 @@ class AddEditEquipmentTypeCard extends React.Component<Props, State> {
               <Grid item xs={6}>
                 <FormField label={`${fbt('Equipment Name', '')}`} required>
                   <TextInput
-                    name="name"
-                    variant="outlined"
                     className={classes.input}
                     value={this.state.editingEquipmentType.name}
                     onChange={this.handleNameChanged}
@@ -292,6 +290,19 @@ class AddEditEquipmentTypeCard extends React.Component<Props, State> {
       return newDef;
     };
 
+    const setConnectedPorts = (portDef: Object) => {
+      portDef.connectedPorts.forEach(cp => {
+        if (cp.id && cp.id.includes('@tmp')) {
+          const connectedPortDefs = portDefinitions.filter(
+            _portDef => _portDef.id == cp.id,
+          );
+          cp.id = undefined;
+          cp.name = connectedPortDefs[0].name;
+        }
+      });
+      return portDef;
+    };
+
     const variables: EditEquipmentTypeMutationVariables = {
       input: {
         id: id,
@@ -312,6 +323,7 @@ class AddEditEquipmentTypeCard extends React.Component<Props, State> {
             delete portDefinition.portType;
             return portDefinition;
           })
+          .map(setConnectedPorts)
           .map(deleteTempId),
       },
     };
@@ -427,6 +439,7 @@ class AddEditEquipmentTypeCard extends React.Component<Props, State> {
           visibleLabel: '',
           portType: null,
           index: editingEquipmentType?.portDefinitions.length ?? 0,
+          connectedPorts: [],
         },
       ],
       propertyTypes: [

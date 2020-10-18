@@ -49,7 +49,7 @@ export const ACCOUNT_DISPLAY_VARIANTS = {
   userSettingsView: 'userSettingsView',
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   user: User,
   onChange?: (
     user: User,
@@ -58,7 +58,7 @@ type Props = {
   ) => void | Promise<void>,
   variant: $Values<typeof ACCOUNT_DISPLAY_VARIANTS>,
   className?: ?string,
-};
+|}>;
 
 const UserAccountDetailsPane = (props: Props) => {
   const {user, onChange, className, variant} = props;
@@ -149,7 +149,6 @@ const UserAccountDetailsPane = (props: Props) => {
       onValueChanged={setPassword}
       hasError={isEditable && !!passwordRules}
       errorText={isEditable ? passwordRules : ''}
-      immediateUpdate={true}
     />
   );
   const passwordVerficationField = (
@@ -161,7 +160,6 @@ const UserAccountDetailsPane = (props: Props) => {
       onValueChanged={setPasswordVerification}
       hasError={!!passwordMismatch}
       errorText={passwordMismatch}
-      immediateUpdate={true}
     />
   );
   return (
@@ -197,7 +195,6 @@ const UserAccountDetailsPane = (props: Props) => {
                     label={`${fbt('Current Password', '')}`}
                     value={currentPassword}
                     onValueChanged={setCurrentPassword}
-                    immediateUpdate={true}
                   />
                 </Grid>
               </Grid>

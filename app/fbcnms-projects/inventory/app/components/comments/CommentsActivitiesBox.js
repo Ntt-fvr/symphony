@@ -23,7 +23,7 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {withSnackbar} from 'notistack';
 
-type Props = {
+type Props = {|
   relatedEntityId: string,
   relatedEntityType: CommentEntity,
   comments: CommentsActivitiesBox_comments,
@@ -31,7 +31,7 @@ type Props = {
   boxElementsClass?: string,
   commentsLogClass?: string,
   newCommentInputClass?: string,
-} & WithSnackbarProps;
+|} & WithSnackbarProps;
 
 const useStyles = makeStyles(() => ({
   container: {

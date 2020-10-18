@@ -23,14 +23,13 @@ import (
 // FlowUpdate is the builder for updating Flow entities.
 type FlowUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *FlowMutation
-	predicates []predicate.Flow
+	hooks    []Hook
+	mutation *FlowMutation
 }
 
 // Where adds a new predicate for the builder.
 func (fu *FlowUpdate) Where(ps ...predicate.Flow) *FlowUpdate {
-	fu.predicates = append(fu.predicates, ps...)
+	fu.mutation.predicates = append(fu.mutation.predicates, ps...)
 	return fu
 }
 
@@ -263,7 +262,7 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := fu.predicates; len(ps) > 0 {
+	if ps := fu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

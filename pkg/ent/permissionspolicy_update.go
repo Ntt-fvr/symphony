@@ -22,14 +22,13 @@ import (
 // PermissionsPolicyUpdate is the builder for updating PermissionsPolicy entities.
 type PermissionsPolicyUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *PermissionsPolicyMutation
-	predicates []predicate.PermissionsPolicy
+	hooks    []Hook
+	mutation *PermissionsPolicyMutation
 }
 
 // Where adds a new predicate for the builder.
 func (ppu *PermissionsPolicyUpdate) Where(ps ...predicate.PermissionsPolicy) *PermissionsPolicyUpdate {
-	ppu.predicates = append(ppu.predicates, ps...)
+	ppu.mutation.predicates = append(ppu.mutation.predicates, ps...)
 	return ppu
 }
 
@@ -231,7 +230,7 @@ func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err err
 			},
 		},
 	}
-	if ps := ppu.predicates; len(ps) > 0 {
+	if ps := ppu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

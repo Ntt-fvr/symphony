@@ -16,9 +16,9 @@ import NodePropertyValue from '../NodePropertyValue';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {getPropertyValue} from '../../common/Property';
 
-type Props = {
+type Props = $ReadOnly<{|
   property: Property,
-};
+|}>;
 
 class PropertyFormField extends React.Component<Props> {
   render() {

@@ -24,11 +24,11 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   filters: FiltersQuery,
   limit?: number,
   onQueryReturn: number => void,
-};
+|}>;
 
 const portSearchQuery = graphql`
   query PortViewQueryRendererSearchQuery(

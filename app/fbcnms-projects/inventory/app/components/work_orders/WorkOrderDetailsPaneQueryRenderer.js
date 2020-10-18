@@ -13,9 +13,9 @@ import React from 'react';
 import WorkOrderDetailsPane from './WorkOrderDetailsPane';
 import {graphql} from 'react-relay';
 
-type Props = {
+type Props = $ReadOnly<{|
   workOrderId: string,
-};
+|}>;
 
 const workOrderDetailsQuery = graphql`
   query WorkOrderDetailsPaneQueryRendererQuery($workOrderId: ID!) {

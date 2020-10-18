@@ -164,8 +164,8 @@ func (swfsq *SurveyWiFiScanQuery) FirstID(ctx context.Context) (id int, err erro
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (swfsq *SurveyWiFiScanQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (swfsq *SurveyWiFiScanQuery) FirstIDX(ctx context.Context) int {
 	id, err := swfsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

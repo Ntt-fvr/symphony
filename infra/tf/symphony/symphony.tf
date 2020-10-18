@@ -55,6 +55,14 @@ data aws_iam_policy_document async {
       "${aws_s3_bucket.store.arn}/*/${local.store_exports_path}*",
     ]
   }
+  statement {
+    actions = [
+      "s3:GetObject",
+    ]
+    resources = [
+      "${aws_s3_bucket.store.arn}/*",
+    ]
+  }
 }
 
 resource helm_release symphony {
@@ -64,11 +72,11 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "4.0.0"
+  version             = "4.1.0"
   timeout             = 600
   max_history         = 100
 
-  values = concat([
+  values = [
     yamlencode({
       for s in toset(["front", "admin", "graph", "async", "store", "migrate", "jobrunner", "docs"]) :
       s => {
@@ -147,6 +155,9 @@ resource helm_release symphony {
           agentEndpoint       = "localhost:6831"
           agentThriftEndpoint = "localhost:6832"
         }
+        excludeSpanNames = [
+          "gocloud.dev/pubsub.driver.Subscription.ReceiveBatch",
+        ]
       }
       persistence = {
         database = {
@@ -164,7 +175,9 @@ resource helm_release symphony {
       front = {
         spec = {
           proxy = {
-            logger = data.terraform_remote_state.core.outputs.eks.fluentd_http_service
+            logger = format("%s-aggregator.%s.svc.cluster.local:9880",
+              helm_release.log_forwarder.name, helm_release.log_forwarder.namespace,
+            )
           }
           mysql = {
             host = module.front_db.this_db_instance_address
@@ -256,7 +269,7 @@ resource helm_release symphony {
         }
       }
     }),
-  ])
+  ]
 
   set_sensitive {
     name  = "front.spec.session_token"
@@ -285,13 +298,11 @@ resource kubernetes_cron_job tenant_cleaner {
     testimio = {
       schedule = "25,55 * * * *"
     }
-    fb-test = {
-      schedule = "0 0 * * *"
-    }
-    ls-test-staging = {
+    } : {
+    ls-test-automation = {
       schedule = "0 * * * *"
     }
-  } : {}
+  }
 
   metadata {
     name      = "${local.symphony_name}-${each.key}-cleaner"

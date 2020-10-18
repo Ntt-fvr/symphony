@@ -141,8 +141,8 @@ func (epdq *EquipmentPositionDefinitionQuery) FirstID(ctx context.Context) (id i
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (epdq *EquipmentPositionDefinitionQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (epdq *EquipmentPositionDefinitionQuery) FirstIDX(ctx context.Context) int {
 	id, err := epdq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

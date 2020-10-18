@@ -14,10 +14,10 @@ import React from 'react';
 import {CheckListItemConfigs} from '../checkListCategory/CheckListItemConsts';
 import {getValidChecklistItemType} from '../ChecklistUtils';
 
-export type CheckListItemFillingProps = {
+export type CheckListItemFillingProps = {|
   item: CheckListItem,
   onChange?: (updatedChecklistItemFilling: CheckListItem) => void,
-};
+|};
 
 const CheckListItemFilling = (props: CheckListItemFillingProps) => {
   const {item} = props;
@@ -29,14 +29,7 @@ const CheckListItemFilling = (props: CheckListItemFillingProps) => {
     return null;
   }
 
-  const checkListItemFillingComponentProps = {
-    ...props,
-    checkListItem: props.item,
-  };
-
-  return (
-    <CheckListItemFillingComponent {...checkListItemFillingComponentProps} />
-  );
+  return <CheckListItemFillingComponent {...props} />;
 };
 
 export default CheckListItemFilling;

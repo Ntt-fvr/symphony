@@ -20,14 +20,13 @@ import (
 // ActivityDelete is the builder for deleting a Activity entity.
 type ActivityDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ActivityMutation
-	predicates []predicate.Activity
+	hooks    []Hook
+	mutation *ActivityMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ad *ActivityDelete) Where(ps ...predicate.Activity) *ActivityDelete {
-	ad.predicates = append(ad.predicates, ps...)
+	ad.mutation.predicates = append(ad.mutation.predicates, ps...)
 	return ad
 }
 
@@ -79,7 +78,7 @@ func (ad *ActivityDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ad.predicates; len(ps) > 0 {
+	if ps := ad.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

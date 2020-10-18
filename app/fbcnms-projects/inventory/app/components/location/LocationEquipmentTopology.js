@@ -18,10 +18,10 @@ import ForceNetworkTopology from '../topology/ForceNetworkTopology';
 import TopologyTextBox from '../topology/TopologyTextBox';
 import {createFragmentContainer, graphql} from 'react-relay';
 
-type Props = {
+type Props = $ReadOnly<{|
   topology: LocationEquipmentTopology_topology,
   equipment: Array<Equipment>,
-};
+|}>;
 
 const LocationEquipmentTopology = (props: Props) => {
   const {topology, equipment} = props;

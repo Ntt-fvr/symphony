@@ -11,9 +11,9 @@
 import React from 'react';
 import symphony from '@symphony/design-system/theme/symphony';
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
-};
+|}>;
 
 const ArrowUp = ({className}: Props) => (
   <svg width="10px" height="10px" xmlns="http://www.w3.org/2000/svg">

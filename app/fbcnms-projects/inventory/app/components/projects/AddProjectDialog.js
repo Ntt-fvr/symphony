@@ -62,11 +62,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   onProjectTypeSelected: (id: string) => void,
-};
+|}>;
 
 const AddProjectDialog = (props: Props) => {
   const [selectedProjectTypeId, setSelectedProjectTypeId] = useState(null);

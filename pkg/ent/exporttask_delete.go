@@ -20,14 +20,13 @@ import (
 // ExportTaskDelete is the builder for deleting a ExportTask entity.
 type ExportTaskDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ExportTaskMutation
-	predicates []predicate.ExportTask
+	hooks    []Hook
+	mutation *ExportTaskMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (etd *ExportTaskDelete) Where(ps ...predicate.ExportTask) *ExportTaskDelete {
-	etd.predicates = append(etd.predicates, ps...)
+	etd.mutation.predicates = append(etd.mutation.predicates, ps...)
 	return etd
 }
 
@@ -79,7 +78,7 @@ func (etd *ExportTaskDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := etd.predicates; len(ps) > 0 {
+	if ps := etd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

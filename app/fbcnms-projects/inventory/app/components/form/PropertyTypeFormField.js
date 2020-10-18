@@ -16,9 +16,9 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {getPropertyDefaultValue} from '../../common/PropertyType';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   propertyType: PropertyType,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = _theme => ({});
 

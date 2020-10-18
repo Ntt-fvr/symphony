@@ -18,9 +18,9 @@ import WorkOrderDetailsPaneLinkItem from './WorkOrderDetailsPaneLinkItem';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = WithStyles<typeof styles> & {
+type Props = WithStyles<typeof styles> & {|
   workOrder: WorkOrderDetailsPane_workOrder,
-};
+|};
 
 const styles = theme => ({
   root: {

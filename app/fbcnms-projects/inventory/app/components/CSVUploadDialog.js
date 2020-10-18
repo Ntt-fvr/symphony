@@ -28,7 +28,7 @@ import {UploadAPIUrls} from '../common/UploadAPI';
 import {useContext, useState} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {mode?: string} & WithStyles<typeof styles>;
+type Props = {|mode?: string|} & WithStyles<typeof styles>;
 
 const styles = _ => ({
   uploadContent: {
@@ -132,6 +132,7 @@ const CSVUploadDialog = (props: Props) => {
   });
 
   const documentsLink = (path: string) => (
+    // $FlowFixMe - use Link
     <Text
       className={classes.link}
       onClick={() =>
@@ -351,7 +352,6 @@ const CSVUploadDialog = (props: Props) => {
             <CSVFileUpload
               key={entity.uploadPath}
               button={<Button variant="text">{entity.text}</Button>}
-              onProgress={() => setIsLoading(true)}
               entity={entity.entity}
               onFileChanged={(e, entity) => onFilePicked(e, entity)}
               uploadPath={entity.uploadPath}
@@ -364,7 +364,6 @@ const CSVUploadDialog = (props: Props) => {
             <CSVFileUpload
               key={entity.uploadPath}
               button={<Button variant="text">{entity.text}</Button>}
-              onProgress={() => setIsLoading(true)}
               entity={entity.entity}
               onFileChanged={(e, entity) => onFilePicked(e, entity)}
               uploadPath={entity.uploadPath}

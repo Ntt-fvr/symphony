@@ -83,13 +83,13 @@ const styles = (theme: Theme) => ({
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
-  WithAlert & {
+  WithAlert & {|
     editingLocationId?: ?string,
     parentId: ?string,
     type: ?LocationType,
     onCancel: () => void,
     onSave: (locationId: string) => void,
-  };
+  |};
 
 type State = {
   editingLocation: ?Location,
@@ -274,7 +274,6 @@ class LocationAddEditCard extends React.Component<Props, State> {
               <Grid item xs={12} sm={12} lg={6} xl={4}>
                 <GPSPropertyValueInput
                   label="Location"
-                  margin="normal"
                   fullWidth
                   className={classes.input}
                   value={{

@@ -30,12 +30,12 @@ const styles = _theme => ({
   },
 });
 
-type Props = WithStyles<typeof styles> & {
+type Props = WithStyles<typeof styles> & {|
   entityId: string,
   files: DocumentTable_files,
   hyperlinks: DocumentTable_hyperlinks,
   onDocumentDeleted: (file: $ElementType<DocumentTable_files, number>) => void,
-};
+|};
 
 const getHyperlinkSortingValue = (hyperlink, categoriesEnabled) => {
   return `${(categoriesEnabled && hyperlink.category) || ''}${

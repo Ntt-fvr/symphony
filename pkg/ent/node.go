@@ -26,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -34,6 +35,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -273,35 +275,13 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Value: string(buf),
 	}
 	var ids []int
-	ids, err = b.QueryPrevBlocks().
-		Select(block.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "prev_blocks",
-	}
-	ids, err = b.QueryNextBlocks().
-		Select(block.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "next_blocks",
-	}
 	ids, err = b.QueryFlow().
 		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
+	node.Edges[0] = &Edge{
 		IDs:  ids,
 		Type: "Flow",
 		Name: "flow",
@@ -312,7 +292,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
+	node.Edges[1] = &Edge{
 		IDs:  ids,
 		Type: "FlowExecutionTemplate",
 		Name: "flow_template",
@@ -323,7 +303,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
+	node.Edges[2] = &Edge{
 		IDs:  ids,
 		Type: "FlowDraft",
 		Name: "flow_draft",
@@ -334,7 +314,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[5] = &Edge{
+	node.Edges[3] = &Edge{
 		IDs:  ids,
 		Type: "Flow",
 		Name: "sub_flow",
@@ -345,7 +325,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[6] = &Edge{
+	node.Edges[4] = &Edge{
 		IDs:  ids,
 		Type: "Block",
 		Name: "source_block",
@@ -356,7 +336,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[7] = &Edge{
+	node.Edges[5] = &Edge{
 		IDs:  ids,
 		Type: "Block",
 		Name: "goto_block",
@@ -367,10 +347,32 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[8] = &Edge{
+	node.Edges[6] = &Edge{
 		IDs:  ids,
 		Type: "BlockInstance",
 		Name: "instances",
+	}
+	ids, err = b.QueryEntryPoint().
+		Select(entrypoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[7] = &Edge{
+		IDs:  ids,
+		Type: "EntryPoint",
+		Name: "entry_point",
+	}
+	ids, err = b.QueryExitPoints().
+		Select(exitpoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[8] = &Edge{
+		IDs:  ids,
+		Type: "ExitPoint",
+		Name: "exit_points",
 	}
 	return node, nil
 }
@@ -978,6 +980,72 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 		IDs:  ids,
 		Type: "Service",
 		Name: "services",
+	}
+	return node, nil
+}
+
+func (ep *EntryPoint) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ep.ID,
+		Type:   "EntryPoint",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ep.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.Role); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "flowschema.EntryPointRole",
+		Name:  "role",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.Cid); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "cid",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = ep.QueryPrevExitPoints().
+		Select(exitpoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "ExitPoint",
+		Name: "prev_exit_points",
+	}
+	ids, err = ep.QueryParentBlock().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "parent_block",
 	}
 	return node, nil
 }
@@ -1699,6 +1767,72 @@ func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 		IDs:  ids,
 		Type: "ServiceEndpointDefinition",
 		Name: "service_endpoint_definitions",
+	}
+	return node, nil
+}
+
+func (ep *ExitPoint) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ep.ID,
+		Type:   "ExitPoint",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ep.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.Role); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "flowschema.ExitPointRole",
+		Name:  "role",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ep.Cid); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "cid",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = ep.QueryNextEntryPoints().
+		Select(entrypoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "EntryPoint",
+		Name: "next_entry_points",
+	}
+	ids, err = ep.QueryParentBlock().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "parent_block",
 	}
 	return node, nil
 }
@@ -6082,6 +6216,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case entrypoint.Table:
+		n, err := c.EntryPoint.Query().
+			Where(entrypoint.ID(id)).
+			CollectFields(ctx, "EntryPoint").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case equipment.Table:
 		n, err := c.Equipment.Query().
 			Where(equipment.ID(id)).
@@ -6149,6 +6292,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.EquipmentType.Query().
 			Where(equipmenttype.ID(id)).
 			CollectFields(ctx, "EquipmentType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case exitpoint.Table:
+		n, err := c.ExitPoint.Query().
+			Where(exitpoint.ID(id)).
+			CollectFields(ctx, "ExitPoint").
 			Only(ctx)
 		if err != nil {
 			return nil, err

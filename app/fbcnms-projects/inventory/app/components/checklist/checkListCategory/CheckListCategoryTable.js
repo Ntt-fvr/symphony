@@ -43,10 +43,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type CheckListCategoryTableProps = $ReadOnly<{
+type CheckListCategoryTableProps = $ReadOnly<{|
   categories: ChecklistCategoriesStateType,
   isDefinitionsOnly?: boolean,
-}>;
+|}>;
 
 const CheckListCategoryTable = (props: CheckListCategoryTableProps) => {
   const {categories, isDefinitionsOnly} = props;
@@ -92,10 +92,8 @@ const CheckListCategoryTable = (props: CheckListCategoryTableProps) => {
             ),
             render: row => (
               <TextInput
-                id="title"
-                variant="outlined"
                 disabled={form.alerts.missingPermissions.detected}
-                defaultValue={row.value.title}
+                value={row.value.title}
                 autoFocus={true}
                 placeholder={`${fbt(
                   'Name of the category',
@@ -120,10 +118,8 @@ const CheckListCategoryTable = (props: CheckListCategoryTableProps) => {
             ),
             render: row => (
               <TextInput
-                id="description"
-                variant="outlined"
                 disabled={form.alerts.missingPermissions.detected}
-                defaultValue={row.value.description || ''}
+                value={row.value.description || ''}
                 placeholder={`${fbt(
                   'Short description of category (optional)',
                   'hint text for optional checklist category description field',

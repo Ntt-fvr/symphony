@@ -50,6 +50,7 @@ export function handleNewConnections(flow: ?FlowWrapper) {
     const connector = sourceBlock.addConnector(
       newLink.attributes.source.port,
       targetBlock,
+      newLink,
     );
 
     if (connector == null) {
@@ -99,8 +100,9 @@ function isLinkValid(flow: ?FlowWrapper, newLink: ILink) {
   }
 
   if (portSource.group === PORTS_GROUPS.INPUT) {
+    const originalSource = newLink.attributes.source;
     newLink.source(newLink.attributes.target);
-    newLink.target(newLink.attributes.source);
+    newLink.target(originalSource);
   }
 
   return true;
@@ -129,6 +131,26 @@ function getLinkEndpointPort(
 export function buildPaperConnectionValidation(
   flowWrapper: FlowWrapperReference,
 ) {
+  const isInputPort = (block: ?IBlock, portId: ?string) => {
+    if (block == null || portId == null) {
+      return false;
+    }
+
+    const blockInputPort = block.getInputPort();
+
+    return portId === blockInputPort?.id;
+  };
+
+  const isOutputPort = (block: ?IBlock, portId: ?string) => {
+    if (block == null || portId == null) {
+      return false;
+    }
+
+    const blockOutputPorts = block.getOutputPorts();
+
+    return blockOutputPorts.find(outPort => portId == outPort.id);
+  };
+
   return (
     cellViewS: IVertexView,
     magnetS: HTMLElement,
@@ -143,20 +165,87 @@ export function buildPaperConnectionValidation(
         return false;
       }
 
+      const sourcePortId = magnetS.getAttribute('port');
+      const sourceBlock = flowWrapper.current?.blocks.get(sourceBlockId);
+
       const targetPortId = magnetT.getAttribute('port');
-      if (targetPortId == null) {
-        return false;
-      }
-
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
-      const targetInputPort = targetBlock?.getInputPort();
 
-      if (targetInputPort == null) {
-        return false;
-      }
-
-      return targetPortId === targetInputPort?.id;
+      return (
+        (isOutputPort(sourceBlock, sourcePortId) &&
+          isInputPort(targetBlock, targetPortId)) ||
+        (isInputPort(sourceBlock, sourcePortId) &&
+          isOutputPort(targetBlock, targetPortId))
+      );
     }
     return false;
   };
+}
+
+const BLOCK_INDEXER_REGEX = /\s\((\d+)\)$/;
+const BLOCK_NAME_REGEX: RegExp = new RegExp(
+  `^(.+)${BLOCK_INDEXER_REGEX.source}`,
+);
+
+export function blockNameFixer(
+  allBlocks: $ReadOnlyArray<IBlock>,
+): IBlock => void {
+  const blocksNameDuplicationsMap = new Map<string, number>();
+
+  const getBlockBaseName = (name: string) => {
+    const blockNameMatch = name.match(BLOCK_NAME_REGEX);
+    return (blockNameMatch == null ? name : blockNameMatch[1]).trim();
+  };
+
+  const getNameAvailableIndex = (baseName: string) => {
+    const nextIndex =
+      blocksNameDuplicationsMap.get(baseName) ||
+      getHighestIndexerForBaseName(allBlocks, baseName);
+
+    blocksNameDuplicationsMap.set(baseName, nextIndex + 1);
+
+    return nextIndex;
+  };
+
+  return (block: IBlock) => {
+    const blockBaseName = getBlockBaseName(block.name);
+    const blockNameIndexer = getNameAvailableIndex(blockBaseName);
+    const name =
+      blockNameIndexer === 0
+        ? blockBaseName
+        : `${blockBaseName} (${blockNameIndexer})`;
+    block.setName(name);
+  };
+}
+
+function getHigherIndexer(
+  candidateIndexer: number,
+  name: string,
+  nameIndexerRegEx: RegExp,
+): number {
+  const blockNameMatch = name.match(nameIndexerRegEx);
+  if (blockNameMatch) {
+    const thisBlockIndexer = parseInt(blockNameMatch[1]);
+    if (thisBlockIndexer > candidateIndexer) {
+      return thisBlockIndexer;
+    }
+  }
+  return candidateIndexer;
+}
+
+function getHighestIndexerForBaseName(
+  blocks: $ReadOnlyArray<IBlock>,
+  baseName: string,
+): number {
+  const specificBlockNameRegEx: RegExp = new RegExp(
+    `^${baseName}${BLOCK_INDEXER_REGEX.source}`,
+  );
+  return (
+    blocks.reduce((topIndex, block) => {
+      if (topIndex < 0 && block.name === baseName) {
+        topIndex = 0;
+      }
+      return getHigherIndexer(topIndex, block.name, specificBlockNameRegEx);
+    }, -1) + 1
+  );
 }

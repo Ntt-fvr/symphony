@@ -72,11 +72,11 @@ const styles = {
 
 const IMAGE_TITLE_HEIGHT = 45;
 
-type Props = {
+type Props = {|
   onClose: () => void,
   open: boolean,
   img: ImageDialog_img,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   clientHeight: number,

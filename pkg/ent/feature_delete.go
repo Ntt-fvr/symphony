@@ -20,14 +20,13 @@ import (
 // FeatureDelete is the builder for deleting a Feature entity.
 type FeatureDelete struct {
 	config
-	hooks      []Hook
-	mutation   *FeatureMutation
-	predicates []predicate.Feature
+	hooks    []Hook
+	mutation *FeatureMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (fd *FeatureDelete) Where(ps ...predicate.Feature) *FeatureDelete {
-	fd.predicates = append(fd.predicates, ps...)
+	fd.mutation.predicates = append(fd.mutation.predicates, ps...)
 	return fd
 }
 
@@ -79,7 +78,7 @@ func (fd *FeatureDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := fd.predicates; len(ps) > 0 {
+	if ps := fd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

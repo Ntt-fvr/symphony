@@ -4,7 +4,7 @@ resource helm_release kube_prometheus_stack {
   namespace  = "monitoring"
   repository = local.helm_repository.prometheus-community
   chart      = "kube-prometheus-stack"
-  version    = "10.0.1"
+  version    = "10.1.0"
 
   values = [templatefile("${path.module}/templates/kube-prometheus-stack-values.tpl", {
     region             = data.aws_region.current.id
@@ -49,6 +49,7 @@ locals {
       { name = "nginx-ingress", id = 9789, rev = 6 },
       { name = "nats-server", id = 2279, rev = 1 },
       { name = "cadence-frontend", id = 10373, rev = 1 },
+      { name = "fluentd", id = 13042, rev = 2 },
     ] :
     d.name => {
       gnetId     = d.id,

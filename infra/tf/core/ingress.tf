@@ -211,7 +211,7 @@ resource helm_release ingress_nginx {
   namespace  = data.kubernetes_namespace.kube_system.id
   repository = local.helm_repository.ingress-nginx
   chart      = "ingress-nginx"
-  version    = "3.6.0"
+  version    = "3.7.1"
 
   values = [yamlencode({
     controller = {
@@ -465,7 +465,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.4.6"
+  version    = "3.4.8"
   namespace  = data.kubernetes_namespace.kube_system.id
 
   values = [yamlencode({

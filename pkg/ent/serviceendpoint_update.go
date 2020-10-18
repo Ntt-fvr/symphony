@@ -25,14 +25,13 @@ import (
 // ServiceEndpointUpdate is the builder for updating ServiceEndpoint entities.
 type ServiceEndpointUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ServiceEndpointMutation
-	predicates []predicate.ServiceEndpoint
+	hooks    []Hook
+	mutation *ServiceEndpointMutation
 }
 
 // Where adds a new predicate for the builder.
 func (seu *ServiceEndpointUpdate) Where(ps ...predicate.ServiceEndpoint) *ServiceEndpointUpdate {
-	seu.predicates = append(seu.predicates, ps...)
+	seu.mutation.predicates = append(seu.mutation.predicates, ps...)
 	return seu
 }
 
@@ -213,7 +212,7 @@ func (seu *ServiceEndpointUpdate) sqlSave(ctx context.Context) (n int, err error
 			},
 		},
 	}
-	if ps := seu.predicates; len(ps) > 0 {
+	if ps := seu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

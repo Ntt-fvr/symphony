@@ -24,14 +24,13 @@ import (
 // FloorPlanUpdate is the builder for updating FloorPlan entities.
 type FloorPlanUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *FloorPlanMutation
-	predicates []predicate.FloorPlan
+	hooks    []Hook
+	mutation *FloorPlanMutation
 }
 
 // Where adds a new predicate for the builder.
 func (fpu *FloorPlanUpdate) Where(ps ...predicate.FloorPlan) *FloorPlanUpdate {
-	fpu.predicates = append(fpu.predicates, ps...)
+	fpu.mutation.predicates = append(fpu.mutation.predicates, ps...)
 	return fpu
 }
 
@@ -217,7 +216,7 @@ func (fpu *FloorPlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := fpu.predicates; len(ps) > 0 {
+	if ps := fpu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

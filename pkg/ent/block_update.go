@@ -15,6 +15,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -25,14 +27,13 @@ import (
 // BlockUpdate is the builder for updating Block entities.
 type BlockUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *BlockMutation
-	predicates []predicate.Block
+	hooks    []Hook
+	mutation *BlockMutation
 }
 
 // Where adds a new predicate for the builder.
 func (bu *BlockUpdate) Where(ps ...predicate.Block) *BlockUpdate {
-	bu.predicates = append(bu.predicates, ps...)
+	bu.mutation.predicates = append(bu.mutation.predicates, ps...)
 	return bu
 }
 
@@ -122,36 +123,6 @@ func (bu *BlockUpdate) SetUIRepresentation(fur *flowschema.BlockUIRepresentation
 func (bu *BlockUpdate) ClearUIRepresentation() *BlockUpdate {
 	bu.mutation.ClearUIRepresentation()
 	return bu
-}
-
-// AddPrevBlockIDs adds the prev_blocks edge to Block by ids.
-func (bu *BlockUpdate) AddPrevBlockIDs(ids ...int) *BlockUpdate {
-	bu.mutation.AddPrevBlockIDs(ids...)
-	return bu
-}
-
-// AddPrevBlocks adds the prev_blocks edges to Block.
-func (bu *BlockUpdate) AddPrevBlocks(b ...*Block) *BlockUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return bu.AddPrevBlockIDs(ids...)
-}
-
-// AddNextBlockIDs adds the next_blocks edge to Block by ids.
-func (bu *BlockUpdate) AddNextBlockIDs(ids ...int) *BlockUpdate {
-	bu.mutation.AddNextBlockIDs(ids...)
-	return bu
-}
-
-// AddNextBlocks adds the next_blocks edges to Block.
-func (bu *BlockUpdate) AddNextBlocks(b ...*Block) *BlockUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return bu.AddNextBlockIDs(ids...)
 }
 
 // SetFlowID sets the flow edge to Flow by id.
@@ -279,51 +250,43 @@ func (bu *BlockUpdate) AddInstances(b ...*BlockInstance) *BlockUpdate {
 	return bu.AddInstanceIDs(ids...)
 }
 
+// SetEntryPointID sets the entry_point edge to EntryPoint by id.
+func (bu *BlockUpdate) SetEntryPointID(id int) *BlockUpdate {
+	bu.mutation.SetEntryPointID(id)
+	return bu
+}
+
+// SetNillableEntryPointID sets the entry_point edge to EntryPoint by id if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEntryPointID(id *int) *BlockUpdate {
+	if id != nil {
+		bu = bu.SetEntryPointID(*id)
+	}
+	return bu
+}
+
+// SetEntryPoint sets the entry_point edge to EntryPoint.
+func (bu *BlockUpdate) SetEntryPoint(e *EntryPoint) *BlockUpdate {
+	return bu.SetEntryPointID(e.ID)
+}
+
+// AddExitPointIDs adds the exit_points edge to ExitPoint by ids.
+func (bu *BlockUpdate) AddExitPointIDs(ids ...int) *BlockUpdate {
+	bu.mutation.AddExitPointIDs(ids...)
+	return bu
+}
+
+// AddExitPoints adds the exit_points edges to ExitPoint.
+func (bu *BlockUpdate) AddExitPoints(e ...*ExitPoint) *BlockUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return bu.AddExitPointIDs(ids...)
+}
+
 // Mutation returns the BlockMutation object of the builder.
 func (bu *BlockUpdate) Mutation() *BlockMutation {
 	return bu.mutation
-}
-
-// ClearPrevBlocks clears all "prev_blocks" edges to type Block.
-func (bu *BlockUpdate) ClearPrevBlocks() *BlockUpdate {
-	bu.mutation.ClearPrevBlocks()
-	return bu
-}
-
-// RemovePrevBlockIDs removes the prev_blocks edge to Block by ids.
-func (bu *BlockUpdate) RemovePrevBlockIDs(ids ...int) *BlockUpdate {
-	bu.mutation.RemovePrevBlockIDs(ids...)
-	return bu
-}
-
-// RemovePrevBlocks removes prev_blocks edges to Block.
-func (bu *BlockUpdate) RemovePrevBlocks(b ...*Block) *BlockUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return bu.RemovePrevBlockIDs(ids...)
-}
-
-// ClearNextBlocks clears all "next_blocks" edges to type Block.
-func (bu *BlockUpdate) ClearNextBlocks() *BlockUpdate {
-	bu.mutation.ClearNextBlocks()
-	return bu
-}
-
-// RemoveNextBlockIDs removes the next_blocks edge to Block by ids.
-func (bu *BlockUpdate) RemoveNextBlockIDs(ids ...int) *BlockUpdate {
-	bu.mutation.RemoveNextBlockIDs(ids...)
-	return bu
-}
-
-// RemoveNextBlocks removes next_blocks edges to Block.
-func (bu *BlockUpdate) RemoveNextBlocks(b ...*Block) *BlockUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return bu.RemoveNextBlockIDs(ids...)
 }
 
 // ClearFlow clears the "flow" edge to type Flow.
@@ -396,6 +359,33 @@ func (bu *BlockUpdate) RemoveInstances(b ...*BlockInstance) *BlockUpdate {
 		ids[i] = b[i].ID
 	}
 	return bu.RemoveInstanceIDs(ids...)
+}
+
+// ClearEntryPoint clears the "entry_point" edge to type EntryPoint.
+func (bu *BlockUpdate) ClearEntryPoint() *BlockUpdate {
+	bu.mutation.ClearEntryPoint()
+	return bu
+}
+
+// ClearExitPoints clears all "exit_points" edges to type ExitPoint.
+func (bu *BlockUpdate) ClearExitPoints() *BlockUpdate {
+	bu.mutation.ClearExitPoints()
+	return bu
+}
+
+// RemoveExitPointIDs removes the exit_points edge to ExitPoint by ids.
+func (bu *BlockUpdate) RemoveExitPointIDs(ids ...int) *BlockUpdate {
+	bu.mutation.RemoveExitPointIDs(ids...)
+	return bu
+}
+
+// RemoveExitPoints removes exit_points edges to ExitPoint.
+func (bu *BlockUpdate) RemoveExitPoints(e ...*ExitPoint) *BlockUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return bu.RemoveExitPointIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -500,7 +490,7 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := bu.predicates; len(ps) > 0 {
+	if ps := bu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -592,114 +582,6 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeJSON,
 			Column: block.FieldUIRepresentation,
 		})
-	}
-	if bu.mutation.PrevBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := bu.mutation.RemovedPrevBlocksIDs(); len(nodes) > 0 && !bu.mutation.PrevBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := bu.mutation.PrevBlocksIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if bu.mutation.NextBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := bu.mutation.RemovedNextBlocksIDs(); len(nodes) > 0 && !bu.mutation.NextBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := bu.mutation.NextBlocksIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if bu.mutation.FlowCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -984,6 +866,95 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if bu.mutation.EntryPointCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   block.EntryPointTable,
+			Columns: []string{block.EntryPointColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: entrypoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.EntryPointIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   block.EntryPointTable,
+			Columns: []string{block.EntryPointColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: entrypoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if bu.mutation.ExitPointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.RemovedExitPointsIDs(); len(nodes) > 0 && !bu.mutation.ExitPointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.ExitPointsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{block.Label}
@@ -1088,36 +1059,6 @@ func (buo *BlockUpdateOne) SetUIRepresentation(fur *flowschema.BlockUIRepresenta
 func (buo *BlockUpdateOne) ClearUIRepresentation() *BlockUpdateOne {
 	buo.mutation.ClearUIRepresentation()
 	return buo
-}
-
-// AddPrevBlockIDs adds the prev_blocks edge to Block by ids.
-func (buo *BlockUpdateOne) AddPrevBlockIDs(ids ...int) *BlockUpdateOne {
-	buo.mutation.AddPrevBlockIDs(ids...)
-	return buo
-}
-
-// AddPrevBlocks adds the prev_blocks edges to Block.
-func (buo *BlockUpdateOne) AddPrevBlocks(b ...*Block) *BlockUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return buo.AddPrevBlockIDs(ids...)
-}
-
-// AddNextBlockIDs adds the next_blocks edge to Block by ids.
-func (buo *BlockUpdateOne) AddNextBlockIDs(ids ...int) *BlockUpdateOne {
-	buo.mutation.AddNextBlockIDs(ids...)
-	return buo
-}
-
-// AddNextBlocks adds the next_blocks edges to Block.
-func (buo *BlockUpdateOne) AddNextBlocks(b ...*Block) *BlockUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return buo.AddNextBlockIDs(ids...)
 }
 
 // SetFlowID sets the flow edge to Flow by id.
@@ -1245,51 +1186,43 @@ func (buo *BlockUpdateOne) AddInstances(b ...*BlockInstance) *BlockUpdateOne {
 	return buo.AddInstanceIDs(ids...)
 }
 
+// SetEntryPointID sets the entry_point edge to EntryPoint by id.
+func (buo *BlockUpdateOne) SetEntryPointID(id int) *BlockUpdateOne {
+	buo.mutation.SetEntryPointID(id)
+	return buo
+}
+
+// SetNillableEntryPointID sets the entry_point edge to EntryPoint by id if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEntryPointID(id *int) *BlockUpdateOne {
+	if id != nil {
+		buo = buo.SetEntryPointID(*id)
+	}
+	return buo
+}
+
+// SetEntryPoint sets the entry_point edge to EntryPoint.
+func (buo *BlockUpdateOne) SetEntryPoint(e *EntryPoint) *BlockUpdateOne {
+	return buo.SetEntryPointID(e.ID)
+}
+
+// AddExitPointIDs adds the exit_points edge to ExitPoint by ids.
+func (buo *BlockUpdateOne) AddExitPointIDs(ids ...int) *BlockUpdateOne {
+	buo.mutation.AddExitPointIDs(ids...)
+	return buo
+}
+
+// AddExitPoints adds the exit_points edges to ExitPoint.
+func (buo *BlockUpdateOne) AddExitPoints(e ...*ExitPoint) *BlockUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return buo.AddExitPointIDs(ids...)
+}
+
 // Mutation returns the BlockMutation object of the builder.
 func (buo *BlockUpdateOne) Mutation() *BlockMutation {
 	return buo.mutation
-}
-
-// ClearPrevBlocks clears all "prev_blocks" edges to type Block.
-func (buo *BlockUpdateOne) ClearPrevBlocks() *BlockUpdateOne {
-	buo.mutation.ClearPrevBlocks()
-	return buo
-}
-
-// RemovePrevBlockIDs removes the prev_blocks edge to Block by ids.
-func (buo *BlockUpdateOne) RemovePrevBlockIDs(ids ...int) *BlockUpdateOne {
-	buo.mutation.RemovePrevBlockIDs(ids...)
-	return buo
-}
-
-// RemovePrevBlocks removes prev_blocks edges to Block.
-func (buo *BlockUpdateOne) RemovePrevBlocks(b ...*Block) *BlockUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return buo.RemovePrevBlockIDs(ids...)
-}
-
-// ClearNextBlocks clears all "next_blocks" edges to type Block.
-func (buo *BlockUpdateOne) ClearNextBlocks() *BlockUpdateOne {
-	buo.mutation.ClearNextBlocks()
-	return buo
-}
-
-// RemoveNextBlockIDs removes the next_blocks edge to Block by ids.
-func (buo *BlockUpdateOne) RemoveNextBlockIDs(ids ...int) *BlockUpdateOne {
-	buo.mutation.RemoveNextBlockIDs(ids...)
-	return buo
-}
-
-// RemoveNextBlocks removes next_blocks edges to Block.
-func (buo *BlockUpdateOne) RemoveNextBlocks(b ...*Block) *BlockUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return buo.RemoveNextBlockIDs(ids...)
 }
 
 // ClearFlow clears the "flow" edge to type Flow.
@@ -1362,6 +1295,33 @@ func (buo *BlockUpdateOne) RemoveInstances(b ...*BlockInstance) *BlockUpdateOne 
 		ids[i] = b[i].ID
 	}
 	return buo.RemoveInstanceIDs(ids...)
+}
+
+// ClearEntryPoint clears the "entry_point" edge to type EntryPoint.
+func (buo *BlockUpdateOne) ClearEntryPoint() *BlockUpdateOne {
+	buo.mutation.ClearEntryPoint()
+	return buo
+}
+
+// ClearExitPoints clears all "exit_points" edges to type ExitPoint.
+func (buo *BlockUpdateOne) ClearExitPoints() *BlockUpdateOne {
+	buo.mutation.ClearExitPoints()
+	return buo
+}
+
+// RemoveExitPointIDs removes the exit_points edge to ExitPoint by ids.
+func (buo *BlockUpdateOne) RemoveExitPointIDs(ids ...int) *BlockUpdateOne {
+	buo.mutation.RemoveExitPointIDs(ids...)
+	return buo
+}
+
+// RemoveExitPoints removes exit_points edges to ExitPoint.
+func (buo *BlockUpdateOne) RemoveExitPoints(e ...*ExitPoint) *BlockUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return buo.RemoveExitPointIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1556,114 +1516,6 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Type:   field.TypeJSON,
 			Column: block.FieldUIRepresentation,
 		})
-	}
-	if buo.mutation.PrevBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := buo.mutation.RemovedPrevBlocksIDs(); len(nodes) > 0 && !buo.mutation.PrevBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := buo.mutation.PrevBlocksIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if buo.mutation.NextBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := buo.mutation.RemovedNextBlocksIDs(); len(nodes) > 0 && !buo.mutation.NextBlocksCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := buo.mutation.NextBlocksIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if buo.mutation.FlowCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1940,6 +1792,95 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.EntryPointCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   block.EntryPointTable,
+			Columns: []string{block.EntryPointColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: entrypoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.EntryPointIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   block.EntryPointTable,
+			Columns: []string{block.EntryPointColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: entrypoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.ExitPointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.RemovedExitPointsIDs(); len(nodes) > 0 && !buo.mutation.ExitPointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.ExitPointsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
 				},
 			},
 		}

@@ -340,6 +340,7 @@ func (h Flower) VerifyInputParamsHook() ent.Hook {
 		))
 }
 
+// TriggerBlockHook verifies that trigger is of valid trigger type
 func (h Flower) TriggerBlockHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.BlockFunc(func(ctx context.Context, m *ent.BlockMutation) (ent.Value, error) {
@@ -373,6 +374,7 @@ func (h Flower) TriggerBlockHook() ent.Hook {
 		))
 }
 
+// TriggerBlockHook verifies that trigger is of valid action type
 func (h Flower) ActionBlockHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.BlockFunc(func(ctx context.Context, m *ent.BlockMutation) (ent.Value, error) {

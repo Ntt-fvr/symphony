@@ -28,14 +28,13 @@ import (
 // ProjectUpdate is the builder for updating Project entities.
 type ProjectUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ProjectMutation
-	predicates []predicate.Project
+	hooks    []Hook
+	mutation *ProjectMutation
 }
 
 // Where adds a new predicate for the builder.
 func (pu *ProjectUpdate) Where(ps ...predicate.Project) *ProjectUpdate {
-	pu.predicates = append(pu.predicates, ps...)
+	pu.mutation.predicates = append(pu.mutation.predicates, ps...)
 	return pu
 }
 
@@ -379,7 +378,7 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := pu.predicates; len(ps) > 0 {
+	if ps := pu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

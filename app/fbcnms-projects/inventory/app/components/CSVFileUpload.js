@@ -28,12 +28,12 @@ const styles = {
   },
 };
 
-type Props = {
+type Props = {|
   button: React.Element<any>,
   uploadPath: string,
   entity: ?string,
   onFileChanged: (SyntheticInputEvent<HTMLInputElement>, ?string) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 class CSVFileUpload extends React.Component<Props> {
   input = null;

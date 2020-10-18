@@ -164,8 +164,8 @@ func (ltq *LocationTypeQuery) FirstID(ctx context.Context) (id int, err error) {
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (ltq *LocationTypeQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (ltq *LocationTypeQuery) FirstIDX(ctx context.Context) int {
 	id, err := ltq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

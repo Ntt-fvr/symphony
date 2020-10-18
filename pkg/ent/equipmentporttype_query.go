@@ -163,8 +163,8 @@ func (eptq *EquipmentPortTypeQuery) FirstID(ctx context.Context) (id int, err er
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (eptq *EquipmentPortTypeQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (eptq *EquipmentPortTypeQuery) FirstIDX(ctx context.Context) int {
 	id, err := eptq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

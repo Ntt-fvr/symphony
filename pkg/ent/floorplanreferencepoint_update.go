@@ -20,14 +20,13 @@ import (
 // FloorPlanReferencePointUpdate is the builder for updating FloorPlanReferencePoint entities.
 type FloorPlanReferencePointUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *FloorPlanReferencePointMutation
-	predicates []predicate.FloorPlanReferencePoint
+	hooks    []Hook
+	mutation *FloorPlanReferencePointMutation
 }
 
 // Where adds a new predicate for the builder.
 func (fprpu *FloorPlanReferencePointUpdate) Where(ps ...predicate.FloorPlanReferencePoint) *FloorPlanReferencePointUpdate {
-	fprpu.predicates = append(fprpu.predicates, ps...)
+	fprpu.mutation.predicates = append(fprpu.mutation.predicates, ps...)
 	return fprpu
 }
 
@@ -159,7 +158,7 @@ func (fprpu *FloorPlanReferencePointUpdate) sqlSave(ctx context.Context) (n int,
 			},
 		},
 	}
-	if ps := fprpu.predicates; len(ps) > 0 {
+	if ps := fprpu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

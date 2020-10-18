@@ -18,10 +18,10 @@ import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   img: ImageAttachment_img,
   onImageDeleted: (img: $ElementType<ImageAttachment_img, number>) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   hovered: boolean,

@@ -21,14 +21,13 @@ import (
 // SurveyTemplateQuestionUpdate is the builder for updating SurveyTemplateQuestion entities.
 type SurveyTemplateQuestionUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyTemplateQuestionMutation
-	predicates []predicate.SurveyTemplateQuestion
+	hooks    []Hook
+	mutation *SurveyTemplateQuestionMutation
 }
 
 // Where adds a new predicate for the builder.
 func (stqu *SurveyTemplateQuestionUpdate) Where(ps ...predicate.SurveyTemplateQuestion) *SurveyTemplateQuestionUpdate {
-	stqu.predicates = append(stqu.predicates, ps...)
+	stqu.mutation.predicates = append(stqu.mutation.predicates, ps...)
 	return stqu
 }
 
@@ -164,7 +163,7 @@ func (stqu *SurveyTemplateQuestionUpdate) sqlSave(ctx context.Context) (n int, e
 			},
 		},
 	}
-	if ps := stqu.predicates; len(ps) > 0 {
+	if ps := stqu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

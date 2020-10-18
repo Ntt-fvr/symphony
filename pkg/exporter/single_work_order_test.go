@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -28,20 +29,41 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
+	"gocloud.dev/blob"
+	"gocloud.dev/blob/memblob"
 )
 
-func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
-	PrepareData(ctx, t)
-	client := ent.FromContext(ctx)
+type SingleWoTestSuite struct {
+	suite.Suite
+	client    *ent.Client
+	ctx       context.Context
+	bucket    *blob.Bucket
+	workOrder *ent.WorkOrder
+}
+
+func (s *SingleWoTestSuite) SetupSuite() {
+	s.client = viewertest.NewTestClient(s.T())
+	s.ctx = viewertest.NewContext(context.Background(), s.client)
+	s.bucket = memblob.OpenBucket(nil)
+	s.workOrder = s.prepareSingleWOData()
+}
+
+func TestExports(t *testing.T) {
+	suite.Run(t, &SingleWoTestSuite{})
+}
+
+func (s *SingleWoTestSuite) prepareSingleWOData() *ent.WorkOrder {
+	PrepareData(s.ctx, s.T())
+	client := ent.FromContext(s.ctx)
 
 	// Create a Work Order Type
 	wotype := client.WorkOrderType.Create().
 		SetName("woTemplate1").
 		SetDescription("woTemplate1 = desc").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create a Property Type
 	client.PropertyType.Create().
@@ -49,20 +71,20 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetType(propertytype.TypeString).
 		SetStringVal("t1").
 		SetWorkOrderType(wotype).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create a Project Type
 	projectType := client.ProjectType.Create().
 		SetName("projTemplate").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create a Project
-	user := viewer.FromContext(ctx).(*viewer.UserViewer).User()
+	user := viewer.FromContext(s.ctx).(*viewer.UserViewer).User()
 	project := client.Project.Create().
 		SetName("Project 1").
 		SetCreator(user).
 		SetType(projectType).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create a Work Order
 	st := workorder.StatusClosed
@@ -71,22 +93,22 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetName("WO1").
 		SetDescription("WO1 - description").
 		SetType(wotype).
-		SetLocation(client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx)).
+		SetLocation(client.Location.Query().Where(location.Name(parentLocation)).OnlyX(s.ctx)).
 		SetProject(project).
 		SetAssignee(user).
 		SetStatus(st).
 		SetPriority(priority).
 		SetOwner(user).
 		SetCreationDate(time.Now()).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create a Work Order Property
-	propStrEnt := wotype.QueryPropertyTypes().Where(propertytype.Name(propStr)).OnlyX(ctx)
+	propStrEnt := wotype.QueryPropertyTypes().Where(propertytype.Name(propStr)).OnlyX(s.ctx)
 	client.Property.Create().
 		SetType(propStrEnt).
 		SetStringVal("string1").
 		SetWorkOrder(wo).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create two Activities
 	client.Activity.Create().
@@ -95,7 +117,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetOldValue(workorder.PriorityLow.String()).
 		SetNewValue(workorder.PriorityHigh.String()).
 		SetAuthor(user).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.Activity.Create().
 		SetWorkOrder(wo).
@@ -103,30 +125,30 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetOldValue(workorder.PriorityHigh.String()).
 		SetNewValue(workorder.PriorityLow.String()).
 		SetAuthor(user).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create two Comments
 	client.Comment.Create().
 		SetWorkOrder(wo).
 		SetAuthor(user).
 		SetText("comment text 1").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.Comment.Create().
 		SetWorkOrder(wo).
 		SetAuthor(user).
 		SetText("comment text 2").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create Checklist Categories
 	category1 := client.CheckListCategory.Create().
 		SetTitle("First Category").
 		SetWorkOrder(wo).
-		SaveX(ctx)
+		SaveX(s.ctx)
 	category2 := client.CheckListCategory.Create().
 		SetTitle("Second Category").
 		SetWorkOrder(wo).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create Checklist Item for First Category
 	client.CheckListItem.Create().
@@ -136,7 +158,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetIndex(0).
 		SetIsMandatory(true).
 		SetChecked(true).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	// Create Checklist Item for Second Category
 	client.CheckListItem.Create().
@@ -146,7 +168,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetIndex(0).
 		SetIsMandatory(true).
 		SetChecked(true).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.CheckListItem.Create().
 		SetTitle("Enum Item").
@@ -155,7 +177,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetIndex(1).
 		SetIsMandatory(true).
 		SetEnumValues("blue, green, yellow").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.CheckListItem.Create().
 		SetTitle("String Item").
@@ -164,7 +186,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetIndex(2).
 		SetIsMandatory(false).
 		SetStringVal("Here is the string").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.CheckListItem.Create().
 		SetTitle("Yes/No Item - Yes").
@@ -173,7 +195,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetIndex(3).
 		SetIsMandatory(false).
 		SetYesNoVal(checklistitem.YesNoValYes).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.CheckListItem.Create().
 		SetTitle("Yes/No Item - Empty").
@@ -181,7 +203,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetType(enum.CheckListItemTypeYesNo).
 		SetIndex(4).
 		SetIsMandatory(false).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	cellScanItem := client.CheckListItem.Create().
 		SetTitle("Cell Scan").
@@ -189,7 +211,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetType(enum.CheckListItemTypeCellScan).
 		SetIndex(5).
 		SetIsMandatory(false).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.SurveyCellScan.Create().
 		SetChecklistItem(cellScanItem).
@@ -198,7 +220,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetTimestamp(time.Now()).
 		SetLatitude(37.1234).
 		SetLongitude(-122.1234).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	wifiScanItem := client.CheckListItem.Create().
 		SetTitle("WiFi Scan").
@@ -206,7 +228,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetType(enum.CheckListItemTypeWifiScan).
 		SetIndex(6).
 		SetIsMandatory(false).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.SurveyWiFiScan.Create().
 		SetChecklistItem(wifiScanItem).
@@ -223,7 +245,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetTimestamp(time.Now()).
 		SetLatitude(37.1234).
 		SetLongitude(-122.1234).
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	fileItem := client.CheckListItem.Create().
 		SetTitle("Files").
@@ -232,7 +254,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetIndex(7).
 		SetIsMandatory(false).
 		SetHelpText("Help Text").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	client.File.Create().
 		SetChecklistItem(fileItem).
@@ -241,22 +263,19 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 		SetSize(1024).
 		SetType(file.TypeImage).
 		SetContentType("image/jpg").
-		SaveX(ctx)
+		SaveX(s.ctx)
 
 	return wo
 }
 
-func TestSingleWorkOrderExport(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWorkOrderExport() {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	client := viewertest.NewTestClient(t)
 
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
 
-	file, err := e.CreateExcelFile(ctx, workOrder.ID)
-	require.NoError(t, err)
+	file, err := e.CreateExcelFile(s.ctx, s.workOrder.ID)
+	s.Require().NoError(err)
 
 	// Verify all the Work Order summary data is correct.
 	// The Work Order summary is displayed in columns A and B in the first 12 rows:
@@ -269,57 +288,54 @@ func TestSingleWorkOrderExport(t *testing.T) {
 	for i := 1; i <= 12; i++ {
 		header, _ := file.GetCellValue(SummarySheetName, "A"+strconv.Itoa(i))
 		value, _ := file.GetCellValue(SummarySheetName, "B"+strconv.Itoa(i))
-		require.Equal(t, SingleWoDataHeader[i-1], header)
+		s.Require().Equal(SingleWoDataHeader[i-1], header)
 		switch header {
 		case "ID":
-			require.Equal(t, value, strconv.Itoa(workOrder.ID))
+			s.Require().Equal(value, strconv.Itoa(s.workOrder.ID))
 		case "Name":
-			require.Equal(t, value, workOrder.Name)
+			s.Require().Equal(value, s.workOrder.Name)
 		case "Description":
-			require.Equal(t, value, *workOrder.Description)
+			s.Require().Equal(value, *s.workOrder.Description)
 		case "Project":
-			project, err := workOrder.QueryProject().Only(ctx)
-			require.NoError(t, err)
-			require.Equal(t, value, project.Name)
+			project, err := s.workOrder.QueryProject().Only(s.ctx)
+			s.Require().NoError(err)
+			s.Require().Equal(value, project.Name)
 		case "Type":
-			workOrderType, err := workOrder.QueryType().Only(ctx)
-			require.NoError(t, err)
-			require.Equal(t, value, workOrderType.Name)
+			workOrderType, err := s.workOrder.QueryType().Only(s.ctx)
+			s.Require().NoError(err)
+			s.Require().Equal(value, workOrderType.Name)
 		case "Priority":
-			require.Equal(t, value, workOrder.Priority.String())
+			s.Require().Equal(value, s.workOrder.Priority.String())
 		case "Status":
-			require.Equal(t, value, workOrder.Status.String())
+			s.Require().Equal(value, s.workOrder.Status.String())
 		case "Created":
-			require.Equal(t, value, workOrder.CreationDate.Format(TimeLayout))
+			s.Require().Equal(value, s.workOrder.CreationDate.Format(TimeLayout))
 		case "Closed":
-			require.Equal(t, value, workOrder.CloseDate.Format(TimeLayout))
+			s.Require().Equal(value, s.workOrder.CloseDate.Format(TimeLayout))
 		case "Location":
-			location, err := workOrder.QueryLocation().Only(ctx)
-			require.NoError(t, err)
-			require.Equal(t, value, location.Name)
+			location, err := s.workOrder.QueryLocation().Only(s.ctx)
+			s.Require().NoError(err)
+			s.Require().Equal(value, location.Name)
 		case "Assignee":
-			assignee, err := workOrder.QueryAssignee().Only(ctx)
-			require.NoError(t, err)
-			require.Equal(t, value, assignee.Email)
+			assignee, err := s.workOrder.QueryAssignee().Only(s.ctx)
+			s.Require().NoError(err)
+			s.Require().Equal(value, assignee.Email)
 		case "Owner":
-			owner, err := workOrder.QueryOwner().Only(ctx)
-			require.NoError(t, err)
-			require.Equal(t, value, owner.Email)
+			owner, err := s.workOrder.QueryOwner().Only(s.ctx)
+			s.Require().NoError(err)
+			s.Require().Equal(value, owner.Email)
 		}
 	}
 }
 
-func TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWorkOrderExportActivitiesAndComments() {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	client := viewertest.NewTestClient(t)
 
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
 
-	file, err := e.CreateExcelFile(ctx, workOrder.ID)
-	require.NoError(t, err)
+	file, err := e.CreateExcelFile(s.ctx, s.workOrder.ID)
+	s.Require().NoError(err)
 
 	// The activity log beings on row 14 and is tabular
 	//   Author         Activity/Comment                Created                    Updated
@@ -330,13 +346,13 @@ func TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
 	for i, activityHeader := range ActivityHeader {
 		cell := Columns[i] + activityLogHeaderRow
 		header, _ := file.GetCellValue(SummarySheetName, cell)
-		require.Equal(t, activityHeader, header)
+		s.Require().Equal(activityHeader, header)
 	}
 
 	// Check the comments log in row 15-16
 	const commentsLogStartingRow = 15
-	comments, err := workOrder.QueryComments().Order(ent.Asc(comment.FieldCreateTime)).All(ctx)
-	require.NoError(t, err)
+	comments, err := s.workOrder.QueryComments().Order(ent.Asc(comment.FieldCreateTime)).All(s.ctx)
+	s.Require().NoError(err)
 
 	for j, comment := range comments {
 		for i, header := range ActivityHeader {
@@ -344,58 +360,54 @@ func TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
 			value, _ := file.GetCellValue(SummarySheetName, cell)
 			switch header {
 			case "Author":
-				author, err := comment.QueryAuthor().Only(ctx)
-				require.NoError(t, err)
-				require.Equal(t, author.Email, value)
+				author, err := comment.QueryAuthor().Only(s.ctx)
+				s.Require().NoError(err)
+				s.Require().Equal(author.Email, value)
 			case "Activity/Comment":
-				require.Equal(t, comment.Text, value)
+				s.Require().Equal(comment.Text, value)
 			case "Created":
-				require.Equal(t, comment.CreateTime.Format(TimeLayout), value)
+				s.Require().Equal(comment.CreateTime.Format(TimeLayout), value)
 			case "Updated":
-				require.Equal(t, comment.UpdateTime.Format(TimeLayout), value)
+				s.Require().Equal(comment.UpdateTime.Format(TimeLayout), value)
 			}
 		}
 	}
 	// Check the activities log in row 17-18
 	const activitiesLogStartingRow = 17
-	activities, err := workOrder.QueryActivities().Order(ent.Asc(activity.FieldCreateTime)).All(ctx)
-	require.NoError(t, err)
+	activities, err := s.workOrder.QueryActivities().Order(ent.Asc(activity.FieldCreateTime)).All(s.ctx)
+	s.Require().NoError(err)
 	for j, activity := range activities {
 		for i, header := range ActivityHeader {
 			cell := Columns[i] + strconv.Itoa(activitiesLogStartingRow+j)
 			value, _ := file.GetCellValue(SummarySheetName, cell)
 			switch header {
 			case "Author":
-				author, err := activity.QueryAuthor().Only(ctx)
-				require.NoError(t, err)
-				require.Equal(t, author.Email, value)
+				author, err := activity.QueryAuthor().Only(s.ctx)
+				s.Require().NoError(err)
+				s.Require().Equal(author.Email, value)
 			case "Activity/Comment":
 				activityVal := "changed " + activity.ActivityType.String() + " from " + activity.OldValue + " to " + activity.NewValue
-				require.Equal(t, activityVal, value)
+				s.Require().Equal(activityVal, value)
 			case "Created":
-				require.Equal(t, activity.CreateTime.Format(TimeLayout), value)
+				s.Require().Equal(activity.CreateTime.Format(TimeLayout), value)
 			case "Updated":
-				require.Equal(t, activity.UpdateTime.Format(TimeLayout), value)
+				s.Require().Equal(activity.UpdateTime.Format(TimeLayout), value)
 			}
 		}
 	}
 }
 
-func TestSingleWorkOrderExportChecklist(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWorkOrderExportChecklist() {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	client := viewertest.NewTestClient(t)
 
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
 
-	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	file, err := e.CreateExcelFile(s.ctx, s.workOrder.ID)
+	s.Require().NoError(err)
 
-	file, err := e.CreateExcelFile(ctx, workOrder.ID)
-	require.NoError(t, err)
-
-	checklists, err := workOrder.QueryCheckListCategories().All(ctx)
-	require.NoError(t, err)
+	checklists, err := s.workOrder.QueryCheckListCategories().All(s.ctx)
+	s.Require().NoError(err)
 
 	// Each checklist will be a different tab in the spreadsheet
 	for _, checklist := range checklists {
@@ -404,12 +416,12 @@ func TestSingleWorkOrderExportChecklist(t *testing.T) {
 		for i, checklistHeader := range ChecklistHeader {
 			cell := Columns[i] + checklistHeaderRow
 			header, _ := file.GetCellValue(checklist.Title, cell)
-			require.Equal(t, checklistHeader, header)
+			s.Require().Equal(checklistHeader, header)
 		}
 
 		// Test the checklist items data
-		items, err := checklist.QueryCheckListItems().All(ctx)
-		require.NoError(t, err)
+		items, err := checklist.QueryCheckListItems().All(s.ctx)
+		s.Require().NoError(err)
 		const checklistItemStartingRow = 2
 		for j, item := range items {
 			for i, checklistHeader := range ChecklistHeader {
@@ -417,14 +429,14 @@ func TestSingleWorkOrderExportChecklist(t *testing.T) {
 				value, _ := file.GetCellValue(checklist.Title, cell)
 				switch checklistHeader {
 				case "Checklist Item":
-					require.Equal(t, item.Title, value)
+					s.Require().Equal(item.Title, value)
 				case "Is Mandatory":
-					require.Equal(t, strconv.FormatBool(item.IsMandatory), value)
+					s.Require().Equal(strconv.FormatBool(item.IsMandatory), value)
 				case "Response":
-					checkItemType(ctx, t, item, value)
+					s.checkItemType(item, value)
 				case "Additional Instructions":
 					if item.HelpText != nil {
-						require.Equal(t, *item.HelpText, value)
+						s.Require().Equal(*item.HelpText, value)
 					}
 				}
 			}
@@ -432,72 +444,87 @@ func TestSingleWorkOrderExportChecklist(t *testing.T) {
 	}
 }
 
-func checkItemType(ctx context.Context, t *testing.T, item *ent.CheckListItem, value string) {
+func (s *SingleWoTestSuite) checkItemType(item *ent.CheckListItem, value string) {
 	switch item.Type {
 	case enum.CheckListItemTypeEnum:
-		require.Equal(t, item.SelectedEnumValues, value)
+		s.Require().Equal(item.SelectedEnumValues, value)
 	case enum.CheckListItemTypeSimple:
-		require.Equal(t, strconv.FormatBool(item.Checked), value)
+		s.Require().Equal(strconv.FormatBool(item.Checked), value)
 	case enum.CheckListItemTypeString:
-		require.Equal(t, item.StringVal, value)
+		s.Require().Equal(item.StringVal, value)
 	case enum.CheckListItemTypeYesNo:
 		if item.YesNoVal != nil {
-			require.Equal(t, item.YesNoVal.String(), value)
+			s.Require().Equal(item.YesNoVal.String(), value)
 		} else {
-			require.Equal(t, "N/A", value)
+			s.Require().Equal("N/A", value)
 		}
 	case enum.CheckListItemTypeCellScan:
 		var data strings.Builder
 		data.WriteString(strings.Join(CellScanHeader, ", "))
 		data.WriteString("\n\r")
-		cellScans, err := item.QueryCellScan().All(ctx)
-		require.NoError(t, err)
+		cellScans, err := item.QueryCellScan().All(s.ctx)
+		s.Require().NoError(err)
 		for _, cellScan := range cellScans {
 			fields := []string{cellScan.CreateTime.Format(TimeLayout), cellScan.UpdateTime.Format(TimeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(TimeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)}
 			data.WriteString(strings.Join(fields, ", "))
 			data.WriteString("\n\r")
 		}
-		require.Equal(t, data.String(), value)
+		s.Require().Equal(data.String(), value)
 	case enum.CheckListItemTypeFiles:
-		files, err := item.QueryFiles().Select(file.FieldName).Strings(ctx)
-		require.NoError(t, err)
-		require.Equal(t, strings.Join(files, ", "), value)
+		// TODO: figure out how to check for a photo in a cell.
+		// excelize GetCellValue() does not return a string value for photos
 	case enum.CheckListItemTypeWifiScan:
 		var data strings.Builder
 		data.WriteString(strings.Join(WifiScanHeader, ", "))
 		data.WriteString("\n\r")
-		wifiScans, err := item.QueryWifiScan().All(ctx)
-		require.NoError(t, err)
+		wifiScans, err := item.QueryWifiScan().All(s.ctx)
+		s.Require().NoError(err)
 		for _, wifiScan := range wifiScans {
-			fields := []string{wifiScan.CreateTime.Format(TimeLayout), wifiScan.UpdateTime.Format(TimeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)}
+			fields := []string{
+				wifiScan.CreateTime.Format(TimeLayout),
+				wifiScan.UpdateTime.Format(TimeLayout),
+				wifiScan.Band, wifiScan.Bssid,
+				wifiScan.Ssid, wifiScan.Capabilities,
+				strconv.Itoa(wifiScan.Channel),
+				strconv.Itoa(wifiScan.ChannelWidth),
+				strconv.Itoa(wifiScan.Frequency),
+				strconv.FormatFloat(
+					pointer.GetFloat64(wifiScan.Rssi),
+					'f', -1, 64,
+				),
+				strconv.Itoa(wifiScan.Strength),
+				strconv.FormatFloat(
+					wifiScan.Latitude, 'f', -1, 64,
+				),
+				strconv.FormatFloat(
+					wifiScan.Longitude, 'f', -1, 64,
+				),
+			}
 			data.WriteString(strings.Join(fields, ", "))
 			data.WriteString("\n\r")
 		}
-		require.Equal(t, data.String(), value)
+		s.Require().Equal(data.String(), value)
 	}
 }
 
-func TestSingleWOAsyncExport(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWOAsyncExport() {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	client := viewertest.NewTestClient(t)
 
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
+	th := viewertest.TestHandler(s.T(), e, s.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
 	req, err := http.NewRequest(http.MethodGet, server.URL+"/single_work_order", nil)
-	require.NoError(t, err)
+	s.Require().NoError(err)
 
 	viewertest.SetDefaultViewerHeaders(req)
-	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
 	q := req.URL.Query()
-	q.Add("id", strconv.Itoa(workOrder.ID))
+	q.Add("id", strconv.Itoa(s.workOrder.ID))
 	req.URL.RawQuery = q.Encode()
 	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
+	s.Require().NoError(err)
 	defer res.Body.Close()
 
 	type resStruct struct {
@@ -506,8 +533,8 @@ func TestSingleWOAsyncExport(t *testing.T) {
 
 	var response resStruct
 	err = json.NewDecoder(res.Body).Decode(&response)
-	require.NoError(t, err)
+	s.Require().NoError(err)
 	taskID := response.TaskID
-	require.NotEmpty(t, taskID)
-	require.True(t, len(response.TaskID) > 1)
+	s.Require().NotEmpty(taskID)
+	s.Require().True(len(response.TaskID) > 1)
 }

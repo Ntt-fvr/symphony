@@ -379,7 +379,7 @@ func TestRemoveEquipmentWithChildren(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	posDefID := equipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := equipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               equipmentType.ID,
@@ -510,7 +510,7 @@ func TestAttachEquipmentToPosition(t *testing.T) {
 	require.NotNil(t, fetchedPosition)
 	// child should not have positions, since its type (created above) doesn't have any positions associated with it (unlike its parent).
 	require.Equal(t, childEquipment.QueryParentPosition().OnlyIDX(ctx), fetchedPosition.ID)
-	require.Equal(t, fetchedPosition.QueryAttachment().FirstXID(ctx), childEquipment.ID)
+	require.Equal(t, fetchedPosition.QueryAttachment().FirstIDX(ctx), childEquipment.ID)
 
 	_, err = mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
@@ -562,7 +562,7 @@ func TestMoveEquipmentToPosition(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	posDefID := equipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := equipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 
 	fetchedPosition, err := mr.MoveEquipmentToPosition(ctx, &parentEquipment.ID, &posDefID, childEquipment.ID)
 	require.NoError(t, err)
@@ -573,9 +573,9 @@ func TestMoveEquipmentToPosition(t *testing.T) {
 	require.True(t, ok)
 
 	require.NotNil(t, fetchedPosition)
-	cid := childEquipment.QueryPositions().FirstXID(ctx)
-	require.Equal(t, fetchedChildEquipment.QueryPositions().FirstXID(ctx), cid)
-	require.Equal(t, fetchedPosition.QueryAttachment().FirstXID(ctx), fetchedChildEquipment.ID)
+	cid := childEquipment.QueryPositions().FirstIDX(ctx)
+	require.Equal(t, fetchedChildEquipment.QueryPositions().FirstIDX(ctx), cid)
+	require.Equal(t, fetchedPosition.QueryAttachment().FirstIDX(ctx), fetchedChildEquipment.ID)
 	require.Zero(t, fetchedChildEquipment.QueryLocation().CountX(ctx))
 
 	_, err = mr.MoveEquipmentToPosition(ctx, &childEquipment.ID, &posDefID, parentEquipment.ID)
@@ -619,7 +619,7 @@ func TestDetachEquipmentFromPosition(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               childEquipmentType.ID,
@@ -634,8 +634,8 @@ func TestDetachEquipmentFromPosition(t *testing.T) {
 	require.True(t, ok)
 	fetchedPosition := fetchedParentEquipment.QueryPositions().FirstX(ctx)
 
-	require.Equal(t, childEquipment.QueryParentPosition().FirstXID(ctx), fetchedPosition.ID)
-	require.Equal(t, fetchedPosition.QueryAttachment().FirstXID(ctx), childEquipment.ID)
+	require.Equal(t, childEquipment.QueryParentPosition().FirstIDX(ctx), fetchedPosition.ID)
+	require.Equal(t, fetchedPosition.QueryAttachment().FirstIDX(ctx), childEquipment.ID)
 
 	// Detach equipment
 	updatedPosition, err := mr.RemoveEquipmentFromPosition(ctx, fetchedPosition.ID, nil)
@@ -691,7 +691,7 @@ func TestDetachEquipmentFromPositionWithWorkOrder(t *testing.T) {
 		Name: "child_equipment_type",
 	})
 	assert.NoError(t, err)
-	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               childEquipmentType.ID,
@@ -882,7 +882,7 @@ func TestEquipmentParentLocation(t *testing.T) {
 		Location: &location.ID,
 	})
 	require.NoError(t, err)
-	posDefID := equipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := equipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               equipmentType.ID,
@@ -927,7 +927,7 @@ func TestEquipmentParentEquipment(t *testing.T) {
 		Type:     equipmentType.ID,
 		Location: &location.ID,
 	})
-	posDefID := equipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := equipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, _ := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               equipmentType.ID,
@@ -1004,7 +1004,7 @@ func TestEditEquipment(t *testing.T) {
 
 	val = "Foo"
 	valB := "newprop val"
-	propAid := equipment.QueryProperties().FirstXID(ctx)
+	propAid := equipment.QueryProperties().FirstIDX(ctx)
 	prop = models.PropertyInput{
 		ID:             &propAid,
 		StringValue:    &val,
@@ -1088,7 +1088,7 @@ func TestEditEquipmentPort(t *testing.T) {
 	require.NoError(t, err)
 
 	portDef := equipmentType.QueryPortDefinitions().FirstX(ctx)
-	propTypeID := portDef.QueryEquipmentPortType().QueryPropertyTypes().FirstXID(ctx)
+	propTypeID := portDef.QueryEquipmentPortType().QueryPropertyTypes().FirstIDX(ctx)
 
 	equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:     "equipment_name_1",
@@ -1107,7 +1107,7 @@ func TestEditEquipmentPort(t *testing.T) {
 	editedEquipmentPort, err := mr.EditEquipmentPort(ctx, models.EditEquipmentPortInput{
 		Side: &models.LinkSide{
 			Equipment: equipment.ID,
-			Port:      port.QueryDefinition().FirstXID(ctx),
+			Port:      port.QueryDefinition().FirstIDX(ctx),
 		},
 		Properties: []*models.PropertyInput{&prop},
 	})

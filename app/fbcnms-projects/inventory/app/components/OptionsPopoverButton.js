@@ -37,7 +37,6 @@ type Props = $ReadOnly<{|
   options: Array<MenuOption>,
   menuIcon?: React.Node,
   className?: ?string,
-  popoverMenuClassName?: ?string,
   onVisibilityChange?: (isVisible: boolean) => void,
 |}>;
 
@@ -64,13 +63,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const OptionsPopoverButton = (props: Props) => {
-  const {
-    options,
-    menuIcon,
-    className,
-    popoverMenuClassName,
-    onVisibilityChange,
-  } = props;
+  const {options, menuIcon, className, onVisibilityChange} = props;
   const classes = useStyles();
   const isEnabled = useMemo(() => props.options.length > 0, [
     props.options.length,
@@ -115,8 +108,8 @@ const OptionsPopoverButton = (props: Props) => {
       menuDockRight={true}
       options={menuOptions}
       onChange={handleOptionClick}
-      menuClassName={classNames(classes.menu, popoverMenuClassName)}
-      className={classes.menuButton}
+      menuClassName={classes.menu}
+      className={classNames(classes.menuButton, className)}
       onVisibilityChange={onVisibilityChange}>
       {menuIcon ?? (
         <ThreeDotsVerticalIcon

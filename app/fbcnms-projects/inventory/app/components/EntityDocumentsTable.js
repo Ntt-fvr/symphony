@@ -28,13 +28,13 @@ import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withSnackbar} from 'notistack';
 
-type Props = {
+type Props = {|
   entityType: ImageEntity,
   entityId: string,
   files: EntityDocumentsTable_files,
   hyperlinks: EntityDocumentsTable_hyperlinks,
   className?: string,
-} & WithAlert &
+|} & WithAlert &
   WithSnackbarProps;
 
 class EntityDocumentsTable extends React.Component<Props> {

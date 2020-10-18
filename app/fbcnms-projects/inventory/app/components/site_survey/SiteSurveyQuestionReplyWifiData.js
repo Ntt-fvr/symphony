@@ -19,9 +19,9 @@ import TableRow from '@material-ui/core/TableRow';
 
 import {createFragmentContainer, graphql} from 'react-relay';
 
-type Props = {
+type Props = $ReadOnly<{|
   data: SiteSurveyQuestionReplyWifiData_data,
-};
+|}>;
 
 function SiteSurveyQuestionReplyWifiData(props: Props) {
   const {wifiData} = props.data;

@@ -16,13 +16,13 @@ import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {DocumentAPIUrls} from '../common/DocumentAPI';
 
-type Props = {
+type Props = $ReadOnly<{|
   document: FileAttachmentType,
   onDocumentDeleted: (document: FileAttachmentType) => void,
   onDialogOpen: () => void,
-  popoverMenuClassName?: ?string,
   onVisibilityChange?: (isVisible: boolean) => void,
-};
+  className?: string,
+|}>;
 
 class DocumentMenu extends React.Component<Props> {
   downloadFileRef: {
@@ -44,7 +44,7 @@ class DocumentMenu extends React.Component<Props> {
   };
 
   render() {
-    const {document, popoverMenuClassName, onVisibilityChange} = this.props;
+    const {document, className, onVisibilityChange} = this.props;
     const storeKey = nullthrows(document.storeKey);
     const menuOptions = [
       {
@@ -76,8 +76,8 @@ class DocumentMenu extends React.Component<Props> {
     return (
       <>
         <OptionsPopoverButton
+          className={className}
           options={menuOptions}
-          popoverMenuClassName={popoverMenuClassName}
           onVisibilityChange={onVisibilityChange}
         />
         <a

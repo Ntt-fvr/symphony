@@ -55,6 +55,9 @@ func NewServer(cfg Config) *Server {
 		ev.Config{
 			Receiver: cfg.Receiver,
 			Handler:  srv,
+			OnError: func(ctx context.Context, err error) {
+				cfg.Logger.For(ctx).Error("cannot handle event", zap.Error(err))
+			},
 		},
 		ev.WithEvent(event.EntMutation),
 	)
@@ -66,6 +69,7 @@ func (s *Server) Serve(ctx context.Context) error {
 	if err := s.healthPoller.Wait(ctx); err != nil {
 		return fmt.Errorf("failed to wait for health checks: %w", err)
 	}
+	s.logger.For(ctx).Info("starting to serve events")
 	return s.service.Run(ctx)
 }
 

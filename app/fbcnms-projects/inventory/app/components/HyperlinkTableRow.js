@@ -51,10 +51,10 @@ const styles = () => ({
   },
 });
 
-type Props = {
+type Props = {|
   entityId: string,
   hyperlink: HyperlinkTableRow_hyperlink,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   isImageDialogOpen: boolean,

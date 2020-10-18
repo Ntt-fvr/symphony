@@ -65,6 +65,8 @@ type SaveTaskResultInput struct {
 // activity for reporting results
 func (ew *ExportFactory) ExportSingleWoWorkflow(ctx workflow.Context, input ExportSingleWOInput) error {
 	var key string
+	workflow.GetLogger(ctx).Debug("handling export single work order workflow",
+		zap.Int("task_id", input.ExportTaskID))
 	err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
 		TaskList:               ExportWorkOrderTaskListName,
 		ScheduleToStartTimeout: 1 * time.Hour,
@@ -109,7 +111,8 @@ func (ew *ExportFactory) ExportSingleWoActivity(ctx context.Context, input Expor
 	}
 	woIDToExport := *task.WoIDToExport
 	excelExporter := exporter.SingleWo{
-		Log: ew.logger,
+		Log:    ew.logger,
+		Bucket: ew.bucket,
 	}
 	excelFile, err := excelExporter.CreateExcelFile(ctx, woIDToExport)
 	if err != nil {

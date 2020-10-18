@@ -20,14 +20,13 @@ import (
 // BlockInstanceDelete is the builder for deleting a BlockInstance entity.
 type BlockInstanceDelete struct {
 	config
-	hooks      []Hook
-	mutation   *BlockInstanceMutation
-	predicates []predicate.BlockInstance
+	hooks    []Hook
+	mutation *BlockInstanceMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (bid *BlockInstanceDelete) Where(ps ...predicate.BlockInstance) *BlockInstanceDelete {
-	bid.predicates = append(bid.predicates, ps...)
+	bid.mutation.predicates = append(bid.mutation.predicates, ps...)
 	return bid
 }
 
@@ -79,7 +78,7 @@ func (bid *BlockInstanceDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := bid.predicates; len(ps) > 0 {
+	if ps := bid.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

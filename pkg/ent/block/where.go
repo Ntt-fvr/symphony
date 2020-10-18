@@ -600,62 +600,6 @@ func UIRepresentationNotNil() predicate.Block {
 	})
 }
 
-// HasPrevBlocks applies the HasEdge predicate on the "prev_blocks" edge.
-func HasPrevBlocks() predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PrevBlocksTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, PrevBlocksTable, PrevBlocksPrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasPrevBlocksWith applies the HasEdge predicate on the "prev_blocks" edge with a given conditions (other predicates).
-func HasPrevBlocksWith(preds ...predicate.Block) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, PrevBlocksTable, PrevBlocksPrimaryKey...),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasNextBlocks applies the HasEdge predicate on the "next_blocks" edge.
-func HasNextBlocks() predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(NextBlocksTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, NextBlocksTable, NextBlocksPrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasNextBlocksWith applies the HasEdge predicate on the "next_blocks" edge with a given conditions (other predicates).
-func HasNextBlocksWith(preds ...predicate.Block) predicate.Block {
-	return predicate.Block(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, NextBlocksTable, NextBlocksPrimaryKey...),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasFlow applies the HasEdge predicate on the "flow" edge.
 func HasFlow() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -843,6 +787,62 @@ func HasInstancesWith(preds ...predicate.BlockInstance) predicate.Block {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(InstancesInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, InstancesTable, InstancesColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEntryPoint applies the HasEdge predicate on the "entry_point" edge.
+func HasEntryPoint() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(EntryPointTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, EntryPointTable, EntryPointColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntryPointWith applies the HasEdge predicate on the "entry_point" edge with a given conditions (other predicates).
+func HasEntryPointWith(preds ...predicate.EntryPoint) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(EntryPointInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, EntryPointTable, EntryPointColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasExitPoints applies the HasEdge predicate on the "exit_points" edge.
+func HasExitPoints() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ExitPointsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExitPointsTable, ExitPointsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExitPointsWith applies the HasEdge predicate on the "exit_points" edge with a given conditions (other predicates).
+func HasExitPointsWith(preds ...predicate.ExitPoint) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ExitPointsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExitPointsTable, ExitPointsColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

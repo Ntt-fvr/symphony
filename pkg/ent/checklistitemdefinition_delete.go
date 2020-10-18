@@ -20,14 +20,13 @@ import (
 // CheckListItemDefinitionDelete is the builder for deleting a CheckListItemDefinition entity.
 type CheckListItemDefinitionDelete struct {
 	config
-	hooks      []Hook
-	mutation   *CheckListItemDefinitionMutation
-	predicates []predicate.CheckListItemDefinition
+	hooks    []Hook
+	mutation *CheckListItemDefinitionMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (clidd *CheckListItemDefinitionDelete) Where(ps ...predicate.CheckListItemDefinition) *CheckListItemDefinitionDelete {
-	clidd.predicates = append(clidd.predicates, ps...)
+	clidd.mutation.predicates = append(clidd.mutation.predicates, ps...)
 	return clidd
 }
 
@@ -79,7 +78,7 @@ func (clidd *CheckListItemDefinitionDelete) sqlExec(ctx context.Context) (int, e
 			},
 		},
 	}
-	if ps := clidd.predicates; len(ps) > 0 {
+	if ps := clidd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

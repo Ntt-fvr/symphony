@@ -28,6 +28,7 @@ import LocationFloorPlansTab from './LocationFloorPlansTab';
 import LocationMenu from './LocationMenu';
 import LocationNetworkMapTab from './LocationNetworkMapTab';
 import LocationSiteSurveyTab from './LocationSiteSurveyTab';
+import LocationWorkOrdersTab from './LocationWorkOrdersTab';
 import React from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
@@ -38,7 +39,7 @@ import {graphql} from 'react-relay';
 import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   locationId: ?string,
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
@@ -47,7 +48,7 @@ type Props = {
   onAddEquipment: () => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   WithSnackbarProps;
 
 type State = {
@@ -289,6 +290,11 @@ class LocationPropertiesCard extends React.Component<Props, State> {
                           value="floor_plans"
                         />
                       )}
+                      <Tab
+                        classes={{root: classes.tabContainer}}
+                        label="Work Orders"
+                        value="work_orders"
+                      />
                     </Tabs>
                   </div>
                 </div>
@@ -317,6 +323,9 @@ class LocationPropertiesCard extends React.Component<Props, State> {
                   {this.state.selectedTab === 'floor_plans' && (
                     <LocationFloorPlansTab location={location} />
                   )}
+                  {this.state.selectedTab === 'work_orders' ? (
+                    <LocationWorkOrdersTab locationId={location.id} />
+                  ) : null}
                 </div>
               </div>
             </FormContextProvider>

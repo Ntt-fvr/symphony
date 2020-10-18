@@ -7,20 +7,28 @@ package exporter
 import (
 	"context"
 	"fmt"
+
+	// Imports required for excelize to decode images
+	_ "image/jpeg"
+	_ "image/png"
 	"strconv"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
+	"gocloud.dev/blob"
 )
 
 type SingleWo struct {
-	Log log.Logger
+	Log    log.Logger
+	Bucket *blob.Bucket
 }
 
 var (
@@ -144,6 +152,7 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	_ = f.SetColWidth(sheetName, "A", "D", 40)
 	_ = f.SetColWidth(sheetName, "B", "B", 11) // Is Mandatory column
 	currRow := 1
+	logger := er.Log.For(ctx)
 
 	for i, header := range ChecklistHeader {
 		cell := Columns[i] + strconv.Itoa(currRow)
@@ -152,11 +161,27 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	}
 	currRow++
 	for _, item := range items {
-		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
-			_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
+		// Handle Photos
+		if item.Type == enum.CheckListItemTypeFiles {
+			_ = f.SetCellValue(sheetName, Columns[0]+strconv.Itoa(currRow), item.Title)
+			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), strconv.FormatBool(item.IsMandatory))
+			image, err := er.getFileData(ctx, item)
+			if err != nil {
+				logger.Error("error getting file data", zap.Error(err))
+			} else {
+				err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(currRow), "", item.Title, ".jpg", image)
+				if err != nil {
+					logger.Error("could not add image to spreadsheet", zap.Error(err))
+				}
+			}
+		} else {
+			// Handle Everything else
+			for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
+				_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
+			}
 		}
 		if item.HelpText != nil {
-			_ = f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), *item.HelpText)
+			_ = f.SetCellValue(sheetName, Columns[3]+strconv.Itoa(currRow), *item.HelpText)
 		}
 		currRow++
 	}
@@ -178,12 +203,6 @@ func getItemString(ctx context.Context, item *ent.CheckListItem) string {
 		return "N/A"
 	case enum.CheckListItemTypeCellScan:
 		data, err := getCellScanData(ctx, item)
-		if err != nil {
-			return ""
-		}
-		return data
-	case enum.CheckListItemTypeFiles:
-		data, err := getFileData(ctx, item)
 		if err != nil {
 			return ""
 		}
@@ -215,27 +234,68 @@ func getCellScanData(ctx context.Context, item *ent.CheckListItem) (string, erro
 }
 
 func getWifiScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
-	wifiScans, err := item.QueryWifiScan().All(ctx)
+	scans, err := item.QueryWifiScan().All(ctx)
 	if err != nil {
 		return "", err
 	}
-	var data strings.Builder
-	data.WriteString(strings.Join(WifiScanHeader, ", "))
-	data.WriteString("\n\r")
-	for _, wifiScan := range wifiScans {
-		fields := []string{wifiScan.CreateTime.Format(TimeLayout), wifiScan.UpdateTime.Format(TimeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)}
-		data.WriteString(strings.Join(fields, ", "))
-		data.WriteString("\n\r")
+
+	var b strings.Builder
+	join := func(strs []string) {
+		for i, str := range strs {
+			if i > 0 {
+				b.WriteString(", ")
+			}
+			b.WriteString(str)
+		}
+		b.WriteString("\n\r")
 	}
-	return data.String(), nil
+	join(WifiScanHeader)
+
+	for _, scan := range scans {
+		join([]string{
+			scan.CreateTime.Format(TimeLayout),
+			scan.UpdateTime.Format(TimeLayout),
+			scan.Band, scan.Bssid,
+			scan.Ssid, scan.Capabilities,
+			strconv.Itoa(scan.Channel),
+			strconv.Itoa(scan.ChannelWidth),
+			strconv.Itoa(scan.Frequency),
+			strconv.FormatFloat(
+				pointer.GetFloat64(scan.Rssi),
+				'f', -1, 64,
+			),
+			strconv.Itoa(scan.Strength),
+			strconv.FormatFloat(
+				scan.Latitude, 'f', -1, 64,
+			),
+			strconv.FormatFloat(
+				scan.Longitude, 'f', -1, 64,
+			),
+		})
+	}
+	return b.String(), nil
 }
 
-func getFileData(ctx context.Context, item *ent.CheckListItem) (string, error) {
-	files, err := item.QueryFiles().Select(file.FieldName).Strings(ctx)
+func (er SingleWo) getFileData(ctx context.Context, item *ent.CheckListItem) ([]byte, error) {
+	logger := er.Log.For(ctx)
+	// For now we will only support the first file
+	key, err := item.QueryFiles().
+		Limit(1).
+		Select(file.FieldStoreKey).
+		String(ctx)
 	if err != nil {
-		return "", err
+		logger.Error("cannot query checklist file store key", zap.Error(err))
+		return nil, err
 	}
-	return strings.Join(files, ", "), nil
+	tenant := viewer.FromContext(ctx).Tenant()
+	data, err := er.Bucket.ReadAll(ctx, tenant+"/"+key)
+	if err != nil {
+		logger.Error("cannot read blob",
+			zap.String("tenant", tenant),
+			zap.String("key", key),
+		)
+	}
+	return data, err
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {

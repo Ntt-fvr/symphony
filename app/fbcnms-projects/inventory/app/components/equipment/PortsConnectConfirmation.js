@@ -21,12 +21,12 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   aSideEquipment: Equipment,
   aSidePort: EquipmentPort,
   zSideEquipment: Equipment,
   zSidePort: EquipmentPort,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 class PortsConnectConfirmation extends React.Component<Props> {
   _formatPortEquipment(equipment: Equipment, port: EquipmentPort) {

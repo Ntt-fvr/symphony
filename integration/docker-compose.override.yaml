@@ -8,7 +8,6 @@ services:
   platform-server:
     command: yarn run start:dev
     volumes:
-      - ~/magma_certs:/magma_certs:ro
       - ../app/fbcnms-packages:/app/fbcnms-packages:delegated
       - ../app/fbcnms-projects/platform-server/config:/app/fbcnms-projects/platform-server/config:delegated
       - ../app/fbcnms-projects/platform-server/src:/app/fbcnms-projects/platform-server/src:delegated
@@ -24,7 +23,6 @@ services:
       - ../app/fbcnms-packages:/app/fbcnms-packages:delegated
       - ../app/fbcnms-projects/inventory/app:/app/fbcnms-projects/inventory/app:delegated
       - ../app/fbcnms-projects/inventory/scripts:/app/fbcnms-projects/inventory/scripts:delegated
-      - ../app/fbcnms-projects/magmalte/app:/app/fbcnms-projects/magmalte/app:delegated
 
   store:
     environment:

@@ -10,6 +10,7 @@
 'use strict';
 
 import type {IConnector} from '../connectors/BaseConnector';
+import type {ILink} from '../../facades/shapes/edges/Link';
 import type {
   IVertexModel,
   IVertexView,
@@ -22,6 +23,11 @@ import {
   DISPLAY_SETTINGS,
   PORTS_GROUPS,
 } from '../../facades/shapes/vertexes/BaseVertext';
+
+const DUPLICATION_SHIFT = {
+  x: 84,
+  y: 84,
+};
 
 export interface IBlock {
   +id: string;
@@ -38,8 +44,15 @@ export interface IBlock {
   +getPortByID: (portID: string) => ?VertexPort;
   +setName: string => void;
   +outConnectors: Array<IConnector>;
-  +addConnector: (sourcePort: ?string, target: IBlock) => ?IConnector;
+  +addConnector: (
+    sourcePort: ?(string | number),
+    target: IBlock,
+    model?: ?ILink,
+  ) => ?IConnector;
   +removeConnector: IConnector => void;
+  +addToGraph: () => void;
+  +copy: () => IBlock;
+  +clone: () => IBlock;
 }
 
 export default class BaseBlock implements IBlock {
@@ -51,8 +64,9 @@ export default class BaseBlock implements IBlock {
   isSelected: boolean;
   id: string;
   outConnectors: Array<IConnector>;
+  isInGraph: boolean = false;
 
-  constructor(model: IVertexModel, paper: Paper) {
+  constructor(model: IVertexModel, paper: Paper, addToGraph: boolean = true) {
     this.paper = paper;
     this.model = model;
 
@@ -60,10 +74,9 @@ export default class BaseBlock implements IBlock {
 
     this.name = model.attributes.attrs.label.text;
 
-    const graph = this.paper.model;
-    this.model.addTo(graph);
-
-    this.view = paper.findViewByModel(model);
+    if (addToGraph) {
+      this.addToGraph();
+    }
 
     this.type = model.attributes.type;
     this.id = model.id;
@@ -118,16 +131,19 @@ export default class BaseBlock implements IBlock {
     delete this.outConnectors[index];
   }
 
-  addConnector(sourcePort: ?string, target: IBlock) {
+  addConnector(sourcePort: ?(string | number), target: IBlock, model?: ?ILink) {
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
     }
 
     const outputPorts = this.getOutputPorts();
+
     const index =
       sourcePort != null
-        ? outputPorts.findIndex(p => p.id === sourcePort)
+        ? typeof sourcePort === 'number'
+          ? sourcePort
+          : outputPorts.findIndex(p => p.id === sourcePort)
         : outputPorts.findIndex(
             (_p, pIndex) => this.outConnectors[pIndex] == null,
           );
@@ -135,15 +151,49 @@ export default class BaseBlock implements IBlock {
       return;
     }
 
-    const connector = new BaseConnector(this.paper, {
-      source: this,
-      sourcePort: outputPorts[index].id,
-      target,
-      targetPort: targetPort.id,
-    });
+    const connector = new BaseConnector(
+      this.paper,
+      {
+        source: this,
+        sourcePort: outputPorts[index].id,
+        target,
+        targetPort: targetPort.id,
+      },
+      model,
+      this.isInGraph,
+    );
 
     this.outConnectors[index] = connector;
 
     return connector;
+  }
+
+  addToGraph() {
+    if (this.isInGraph) {
+      return;
+    }
+
+    const graph = this.paper.model;
+    this.model.addTo(graph);
+    this.view = this.paper.findViewByModel(this.model);
+
+    this.isInGraph = true;
+  }
+
+  copy() {
+    return this.clone(false);
+  }
+
+  clone(addToGraph?: boolean = true) {
+    const clonedModel = this.model.clone();
+    clonedModel.position(
+      this.model.attributes.position.x + DUPLICATION_SHIFT.x,
+      this.model.attributes.position.y + DUPLICATION_SHIFT.y,
+    );
+
+    const clonedBlock = new BaseBlock(clonedModel, this.paper, addToGraph);
+    clonedBlock.setName(this.name);
+
+    return clonedBlock;
   }
 }

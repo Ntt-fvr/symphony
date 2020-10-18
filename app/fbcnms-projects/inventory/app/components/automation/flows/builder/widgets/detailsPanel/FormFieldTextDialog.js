@@ -79,7 +79,6 @@ function DialogContent(props: Props) {
         label={label}
         hasSpacer={true}
         value={value}
-        immediateUpdate={true}
         onValueChanged={newValue => setValue(newValue)}
         {...rest}
       />

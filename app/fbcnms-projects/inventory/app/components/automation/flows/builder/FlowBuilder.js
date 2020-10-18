@@ -15,12 +15,14 @@ import Canvas from './canvas/Canvas';
 import React, {useEffect, useState} from 'react';
 import TopBar from './tools/TopBar';
 import usePaperGrab from './widgets/navigation/usePaperGrab';
+import {CopyPasteContextProvider} from './widgets/copyPaste/CopyPasteContext';
 import {DetailsPanelContextProvider} from './widgets/detailsPanel/DetailsPanelContext';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {FlowDataContextProvider} from '../data/FlowDataContext';
 import {GraphContextProvider} from './canvas/graph/graphAPIContext/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {KeyboardShortcutsContextProvider} from './widgets/keyboardShortcuts/KeyboardShortcutsContext';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router-dom';
 
@@ -87,24 +89,28 @@ export default function FlowBuilder() {
 
   return (
     <GraphContextProvider>
-      <FlowDataContextProvider
-        flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
-        <DialogShowingContextProvider>
-          <GraphSelectionContextProvider>
-            <DetailsPanelContextProvider>
-              <FlowBuilderLayout />
-              <AddFlowDialog
-                open={dialogOpen}
-                onClose={hideDialog}
-                onSave={flowId => {
-                  setDialogOpen(false);
-                  history.push(InventoryAPIUrls.flow(flowId));
-                }}
-              />
-            </DetailsPanelContextProvider>
-          </GraphSelectionContextProvider>
-        </DialogShowingContextProvider>
-      </FlowDataContextProvider>
+      <KeyboardShortcutsContextProvider>
+        <FlowDataContextProvider
+          flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
+          <DialogShowingContextProvider>
+            <GraphSelectionContextProvider>
+              <CopyPasteContextProvider>
+                <DetailsPanelContextProvider>
+                  <FlowBuilderLayout />
+                  <AddFlowDialog
+                    open={dialogOpen}
+                    onClose={hideDialog}
+                    onSave={flowId => {
+                      setDialogOpen(false);
+                      history.push(InventoryAPIUrls.flow(flowId));
+                    }}
+                  />
+                </DetailsPanelContextProvider>
+              </CopyPasteContextProvider>
+            </GraphSelectionContextProvider>
+          </DialogShowingContextProvider>
+        </FlowDataContextProvider>
+      </KeyboardShortcutsContextProvider>
     </GraphContextProvider>
   );
 }

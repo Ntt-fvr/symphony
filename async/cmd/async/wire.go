@@ -20,7 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
-	health2 "github.com/facebookincubator/symphony/pkg/health"
+	poller "github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server/metrics"
@@ -29,6 +29,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
+	"gocloud.dev/runtimevar"
 
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
@@ -78,11 +79,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(hooks.Flower),
 			"*",
 		),
-		newHealthChecks,
+		provideHealthCheckers,
 		http.NotFoundHandler,
 		xserver.ServiceSet,
 		provideViews,
-		health2.NewPoller,
+		poller.NewPoller,
 		wire.Struct(
 			new(handler.Config), "*",
 		),
@@ -110,8 +111,12 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceHealthChecker *worker.HealthChecker) []health.Checker {
-	return []health.Checker{tenancy, cadenceHealthChecker}
+func provideHealthCheckers(
+	tenancy *viewer.MySQLTenancy,
+	checker *worker.HealthChecker,
+	features *runtimevar.Variable,
+) []health.Checker {
+	return []health.Checker{tenancy, checker, features}
 }
 
 func provideViews() []*view.View {

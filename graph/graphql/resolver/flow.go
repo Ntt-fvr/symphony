@@ -8,14 +8,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
-	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 type flowResolver struct{}
@@ -33,24 +31,28 @@ func (r flowResolver) Draft(ctx context.Context, obj *ent.Flow) (*ent.FlowDraft,
 	return draft, ent.MaskNotFound(err)
 }
 
-func (r flowResolver) Connectors(ctx context.Context, obj *ent.Flow) ([]*flowschema.Connector, error) {
-	var connectors []*flowschema.Connector
-	blocks, err := obj.QueryBlocks().
-		WithNextBlocks().
-		All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to query blocks: %w", err)
-	}
-	for _, blk := range blocks {
-		for _, nextBlock := range blk.Edges.NextBlocks {
-			connectors = append(connectors, &flowschema.Connector{
-				FlowID:         pointer.ToInt(obj.ID),
-				SourceBlockCid: blk.Cid,
-				TargetBlockCid: nextBlock.Cid,
+func connectors(exitPointsWithNext []*ent.ExitPoint) []*models.Connector {
+	var connectors []*models.Connector
+	for _, exitPoint := range exitPointsWithNext {
+		for _, entryPoint := range exitPoint.Edges.NextEntryPoints {
+			connectors = append(connectors, &models.Connector{
+				Source: exitPoint,
+				Target: entryPoint,
 			})
 		}
 	}
-	return connectors, nil
+	return connectors
+}
+
+func (r flowResolver) Connectors(ctx context.Context, obj *ent.Flow) ([]*models.Connector, error) {
+	exitPoints, err := obj.QueryBlocks().
+		QueryExitPoints().
+		WithNextEntryPoints().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query exit points: %w", err)
+	}
+	return connectors(exitPoints), nil
 }
 
 type flowDraftResolver struct{}
@@ -62,24 +64,15 @@ func (r flowDraftResolver) Blocks(ctx context.Context, obj *ent.FlowDraft) ([]*e
 	return obj.QueryBlocks().All(ctx)
 }
 
-func (r flowDraftResolver) Connectors(ctx context.Context, obj *ent.FlowDraft) ([]*flowschema.Connector, error) {
-	var connectors []*flowschema.Connector
-	blocks, err := obj.QueryBlocks().
-		WithNextBlocks().
+func (r flowDraftResolver) Connectors(ctx context.Context, obj *ent.FlowDraft) ([]*models.Connector, error) {
+	exitPoints, err := obj.QueryBlocks().
+		QueryExitPoints().
+		WithNextEntryPoints().
 		All(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query blocks: %w", err)
+		return nil, fmt.Errorf("failed to query exit points: %w", err)
 	}
-	for _, blk := range blocks {
-		for _, nextBlock := range blk.Edges.NextBlocks {
-			connectors = append(connectors, &flowschema.Connector{
-				FlowDraftID:    pointer.ToInt(obj.ID),
-				SourceBlockCid: blk.Cid,
-				TargetBlockCid: nextBlock.Cid,
-			})
-		}
-	}
-	return connectors, nil
+	return connectors(exitPoints), nil
 }
 
 func (r mutationResolver) AddFlowDraft(ctx context.Context, input models.AddFlowDraftInput) (*ent.FlowDraft, error) {

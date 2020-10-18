@@ -22,14 +22,13 @@ import (
 // ActivityUpdate is the builder for updating Activity entities.
 type ActivityUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *ActivityMutation
-	predicates []predicate.Activity
+	hooks    []Hook
+	mutation *ActivityMutation
 }
 
 // Where adds a new predicate for the builder.
 func (au *ActivityUpdate) Where(ps ...predicate.Activity) *ActivityUpdate {
-	au.predicates = append(au.predicates, ps...)
+	au.mutation.predicates = append(au.mutation.predicates, ps...)
 	return au
 }
 
@@ -255,7 +254,7 @@ func (au *ActivityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := au.predicates; len(ps) > 0 {
+	if ps := au.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

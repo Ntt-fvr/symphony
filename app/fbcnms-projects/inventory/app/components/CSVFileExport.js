@@ -73,11 +73,11 @@ const PATH_PREFIX = '/graph/export';
 const PATH_SINGLE_WORK_ORDER = '/single_work_order';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
 
-type Props = {
+type Props = {|
   exportPath: string,
   title: string,
   filters: ?FiltersQuery,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   WithAlert;
 
 const CSVFileExport = (props: Props) => {

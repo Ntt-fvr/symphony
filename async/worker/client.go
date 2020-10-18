@@ -68,6 +68,7 @@ func (cc *Client) Run(ctx context.Context) error {
 	if err := cc.healthPoller.Wait(ctx); err != nil {
 		return fmt.Errorf("failed to wait for health checks: %w", err)
 	}
+	cc.logger.For(ctx).Info("starting to serve tasks")
 	workerOptions := worker.Options{
 		Logger: cc.logger.For(ctx),
 		Tracer: cc.tracer,

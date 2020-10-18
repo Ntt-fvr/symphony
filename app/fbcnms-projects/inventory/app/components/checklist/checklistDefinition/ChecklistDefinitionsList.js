@@ -22,10 +22,10 @@ import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../../draggable/DraggableUtils';
 import {useFormContext} from '../../../common/FormContext';
 
-type Props = {
+type Props = $ReadOnly<{|
   items: Array<CheckListItem>,
   editedDefinitionId: ?string,
-};
+|}>;
 
 const useStyles = makeStyles(() => ({
   itemsList: {

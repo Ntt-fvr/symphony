@@ -36,11 +36,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{
+type Props = $ReadOnly<{|
   group: UsersGroup,
   onChange: UsersGroup => void,
   className?: ?string,
-}>;
+|}>;
 
 export default function PermissionsGroupDetailsPane(props: Props) {
   const {group, className, onChange} = props;

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"go.opencensus.io/plugin/ochttp"
 	"gocloud.dev/runtimevar"
 	"gocloud.dev/runtimevar/httpvar"
 )
@@ -41,10 +42,11 @@ func NewFeatureSet(features ...string) FeatureSet {
 // SyncFeatures syncs feature flags to variable periodically via http
 func SyncFeatures(cfg Config) (*runtimevar.Variable, func(), error) {
 	decoder := runtimevar.NewDecoder(TenantFeatures{}, runtimevar.JSONDecode)
-	httpClient := http.DefaultClient
-	v, err := httpvar.OpenVariable(httpClient, cfg.FeaturesURL.String(), decoder, &httpvar.Options{
-		WaitDuration: featuresUpdateFreq,
-	})
+	v, err := httpvar.OpenVariable(
+		&http.Client{Transport: &ochttp.Transport{}},
+		cfg.FeaturesURL.String(), decoder,
+		&httpvar.Options{WaitDuration: featuresUpdateFreq},
+	)
 	if err != nil {
 		return nil, nil, err
 	}

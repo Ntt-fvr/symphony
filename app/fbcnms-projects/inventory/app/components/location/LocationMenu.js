@@ -19,7 +19,6 @@ import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {ThreeDotsHorizontalIcon} from '@symphony/design-system/icons';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {makeStyles} from '@material-ui/styles';
 import {moveLocation} from '../../mutations/MoveLocationMutation';
 import {removeLocation} from '../../mutations/RemoveLocationMutation';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -33,12 +32,6 @@ type Props = $ReadOnly<
     onVisibilityChange?: (isVisible: boolean) => void,
   |} & WithAlert,
 >;
-
-const useStyles = makeStyles(() => ({
-  popoverMenu: {
-    minWidth: '150px',
-  },
-}));
 
 const LocationMenu = (props: Props) => {
   const {
@@ -124,13 +117,10 @@ const LocationMenu = (props: Props) => {
     });
   }
 
-  const classes = useStyles();
-
   return (
     <>
       <OptionsPopoverButton
         options={menuOptions}
-        popoverMenuClassName={classes.popoverMenu}
         onVisibilityChange={onVisibilityChange}
         menuIcon={<ThreeDotsHorizontalIcon color="gray" />}
       />
