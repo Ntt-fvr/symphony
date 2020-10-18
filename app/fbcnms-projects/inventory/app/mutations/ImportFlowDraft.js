@@ -16,7 +16,7 @@ import type {
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
-import RelayEnvironemnt from '../common/RelayEnvironment.js';
+import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
@@ -54,7 +54,7 @@ export default (
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<ImportFlowDraftMutation>(RelayEnvironemnt, {
+  commitMutation<ImportFlowDraftMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

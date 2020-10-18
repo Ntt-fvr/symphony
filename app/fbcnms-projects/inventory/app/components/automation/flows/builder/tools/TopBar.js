@@ -84,6 +84,26 @@ export default function TopBar() {
           }>
           {Strings.common.saveButton}
         </Button>
+        <Button
+          onClick={() =>
+            flowData
+              .publish()
+              .then(() => {
+                enqueueSnackbar('Flow has been published!', {
+                  variant: 'success',
+                });
+              })
+              .catch(() => {
+                enqueueSnackbar(
+                  'There was an error when trying to publish the flow.',
+                  {
+                    variant: 'error',
+                  },
+                );
+              })
+          }>
+          Publish
+        </Button>
       </div>
     </ToolsBar>
   );
