@@ -8,9 +8,11 @@
  * @format
  */
 
+import type {ClickableEvents} from '@symphony/design-system/components/Core/Clickable';
 import type {TRefFor} from '../../types/TRefFor.flow';
 
 import * as React from 'react';
+import Clickable from '@symphony/design-system/components/Core/Clickable';
 import FormElementContext from '../Form/FormElementContext';
 import InputContext from './InputContext';
 import Text from '../Text';
@@ -62,9 +64,13 @@ const useStyles = makeStyles(() => ({
     height: 'unset',
     paddingRight: 0,
   },
+  clickable: {
+    flexGrow: 1,
+  },
   hasFocus: {},
   disabled: {
     '& $input': {
+      cursor: 'not-allowed',
       '&::placeholder': {
         color: symphony.palette.disabled,
       },
@@ -135,9 +141,10 @@ export type FocusEvent<T> = {
 
 type FocusEventFn<T: HTMLElement> = (FocusEvent<T>) => void;
 
-type Props = {
+type Props = {|
   /** Input type. See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types */
   type?: string,
+  name?: string,
   value?: string | number,
   className?: string,
   containerClassName?: string,
@@ -156,7 +163,8 @@ type Props = {
   onEnterPressed?: (e: KeyboardEvent) => void,
   onEscPressed?: (e: KeyboardEvent) => void,
   onBackspacePressed?: (e: KeyboardEvent) => void,
-};
+  ...ClickableEvents,
+|};
 
 function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
   const {
@@ -177,6 +185,8 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
     type,
     rows = 2,
     isProcessing = false,
+    onClick,
+    onMouseDown,
     ...rest
   } = props;
   const classes = useStyles();
@@ -249,32 +259,38 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
         )}>
         <InputContext.Provider value={{disabled, value: value ?? ''}}>
           {prefix}
-          {isMultiline ? (
-            <textarea
-              {...rest}
-              rows={rows}
-              disabled={disabled}
-              className={classNames(classes.input, classes.multilineInput)}
-              onFocus={onInputFocused}
-              onBlur={onInputBlurred}
-              onChange={onInputChanged}
-              onKeyDown={onKeyDown}
-              value={value}
-            />
-          ) : (
-            <input
-              {...rest}
-              type={type}
-              className={classes.input}
-              disabled={disabled}
-              onFocus={onInputFocused}
-              onBlur={onInputBlurred}
-              onChange={onInputChanged}
-              onKeyDown={onKeyDown}
-              value={value}
-              ref={forwardedRef}
-            />
-          )}
+          <Clickable
+            className={classes.clickable}
+            onClick={onClick}
+            onMouseDown={onMouseDown}
+            disabled={disabled}>
+            {isMultiline ? (
+              <textarea
+                {...rest}
+                rows={rows}
+                disabled={disabled}
+                className={classNames(classes.input, classes.multilineInput)}
+                onFocus={onInputFocused}
+                onBlur={onInputBlurred}
+                onChange={onInputChanged}
+                onKeyDown={onKeyDown}
+                value={value}
+              />
+            ) : (
+              <input
+                {...rest}
+                type={type}
+                className={classes.input}
+                disabled={disabled}
+                onFocus={onInputFocused}
+                onBlur={onInputBlurred}
+                onChange={onInputChanged}
+                onKeyDown={onKeyDown}
+                value={value}
+                ref={forwardedRef}
+              />
+            )}
+          </Clickable>
           {suffix && <div className={classes.suffix}>{suffix}</div>}
         </InputContext.Provider>
         <div

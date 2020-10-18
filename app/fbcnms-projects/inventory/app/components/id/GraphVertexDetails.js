@@ -87,9 +87,9 @@ const vertexQuery = graphql`
   }
 `;
 
-type Props = {
+type Props = {|
   vertexId: string,
-};
+|};
 
 const GraphVertexDetails = ({vertexId}: Props) => {
   const classes = useStyles();

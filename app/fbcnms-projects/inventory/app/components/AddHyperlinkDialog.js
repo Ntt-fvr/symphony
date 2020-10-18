@@ -33,12 +33,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   isOpened: boolean,
   onAdd: (usr: string, displayName: ?string) => void,
   onClose: () => void,
   targetCategory?: ?string,
-};
+|};
 
 const AddHyperlinkDialog = (props: Props) => {
   const {isOpened, targetCategory} = props;

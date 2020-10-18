@@ -15,12 +15,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 
-type Props = {
+type Props = {|
   service: Service,
   anchorEl: ?HTMLElement,
   onClose: () => void,
   onViewService: (serviceId: string) => void,
-};
+|};
 
 const EquipmentServicesTableMenu = (props: Props) => {
   const {service, anchorEl, onClose, onViewService} = props;

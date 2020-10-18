@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   isDisabled?: boolean,
   disabledMessage?: string,
   onSave: () => void,
@@ -34,7 +34,7 @@ type Props = {
     cancelButton?: string,
     saveButton?: string,
   },
-};
+|};
 
 const FormSaveCancelPanel = (props: Props) => {
   const {

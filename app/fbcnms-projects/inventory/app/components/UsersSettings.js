@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {...WithAlert};
+type Props = {|...WithAlert|};
 
 function UsersSettings(props: Props) {
   const classes = useStyles();

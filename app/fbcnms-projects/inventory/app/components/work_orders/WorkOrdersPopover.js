@@ -63,10 +63,10 @@ const styles = theme => ({
   },
 });
 
-type Props = WithStyles<typeof styles> & {
+type Props = WithStyles<typeof styles> & {|
   onSelect: (workOrderId: ?string) => void,
   onNavigateToWorkOrder: (workOrderId: ?string) => void,
-};
+|};
 
 type State = {
   popoverOpen: boolean,

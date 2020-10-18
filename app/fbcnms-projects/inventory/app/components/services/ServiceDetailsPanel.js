@@ -41,12 +41,12 @@ import {
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
-type Props = {
+type Props = {|
   shown: boolean,
   service: Service,
   panelWidth?: number,
   onClose: () => void,
-};
+|};
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -238,7 +238,6 @@ const ServiceDetailsPanel = (props: Props) => {
           <div className={classes.input}>
             <FormField label="Service ID">
               <TextInput
-                id="serviceId"
                 onChange={event =>
                   onChangeDetail('externalId', event.target.value)
                 }
@@ -249,11 +248,7 @@ const ServiceDetailsPanel = (props: Props) => {
           </div>
           <div className={classes.input}>
             <FormField label="Service Type">
-              <TextInput
-                id="serviceType"
-                disabled={true}
-                value={service.serviceType.name}
-              />
+              <TextInput disabled={true} value={service.serviceType.name} />
             </FormField>
           </div>
           <div className={classes.input}>
@@ -284,7 +279,6 @@ const ServiceDetailsPanel = (props: Props) => {
               disabled={!property.propertyType.isInstanceProperty}
               label={property.propertyType.name}
               className={classes.input}
-              margin="dense"
               inputType="Property"
               property={property}
               // $FlowFixMe pass property and not property type

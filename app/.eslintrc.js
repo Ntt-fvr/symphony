@@ -68,9 +68,14 @@ module.exports.overrides = [
   },
   {
     files: ['*.js'],
-    excludedFiles: ['**/__generated__/*', '**/flow-typed/*'],
+    excludedFiles: [
+      '**/__generated__/*',
+      '**/flow-typed/*',
+      '**/magmalte/**/*.js',
+    ],
     rules: {
       'lint/type-imports-block': 'error',
+      'lint/flow-exact-props': 'error',
     },
   },
   {

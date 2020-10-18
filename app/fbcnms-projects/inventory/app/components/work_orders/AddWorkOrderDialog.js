@@ -53,11 +53,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   open: boolean,
   onClose: () => void,
   onWorkOrderTypeSelected: (id: string) => void,
-};
+|};
 
 const AddWorkOrderDialog = (props: Props) => {
   const [selectedWorkOrderTypeId, setSelectedWorkOrderTypeId] = useState(null);

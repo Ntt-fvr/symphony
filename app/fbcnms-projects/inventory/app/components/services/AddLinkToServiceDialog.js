@@ -73,11 +73,11 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   service: $ReadOnly<{|id: string, name: string|}>,
   onClose: () => void,
   onAddLink: (link: Link) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   activeEquipement: ?Equipment,

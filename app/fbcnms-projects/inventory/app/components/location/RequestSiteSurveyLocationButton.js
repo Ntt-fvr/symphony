@@ -22,9 +22,9 @@ import React from 'react';
 import nullthrows from '@fbcnms/util/nullthrows';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 
-type Props = {
+type Props = {|
   location: {id: string, siteSurveyNeeded: boolean},
-} & WithAlert;
+|} & WithAlert;
 
 class RequestSiteSurveyLocationButton extends React.Component<Props> {
   render() {

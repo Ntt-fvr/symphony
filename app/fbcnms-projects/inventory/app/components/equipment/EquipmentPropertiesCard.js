@@ -131,7 +131,7 @@ const equipmentsPropertiesCardQuery = graphql`
   }
 `;
 
-type Props = {
+type Props = {|
   equipmentId: string,
   workOrderId: ?string,
   onAttachingEquipmentToPosition: (
@@ -142,7 +142,7 @@ type Props = {
   onParentLocationClicked: (locationId: string) => void,
   onEdit: () => void,
   onWorkOrderSelected: (workOrderId: string) => void,
-};
+|};
 
 const useStyles = makeStyles(theme => ({
   cardRoot: {

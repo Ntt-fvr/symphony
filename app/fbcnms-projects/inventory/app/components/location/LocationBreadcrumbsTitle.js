@@ -26,12 +26,12 @@ export const NAVIGATION_OPTIONS = {
 
 type NavigationOption = $Keys<typeof NAVIGATION_OPTIONS>;
 
-type Props = ContextRouter & {
+type Props = ContextRouter & {|
   locationDetails: Location,
   hideTypes?: boolean,
   navigateOnClick?: ?NavigationOption,
   size?: 'default' | 'small' | 'large',
-};
+|};
 
 const LocationBreadcrumbsTitle = (props: Props) => {
   const {

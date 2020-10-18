@@ -25,14 +25,14 @@ const DEBOUNCE_CONFIG = {
   leading: true,
 };
 
-type Props = {
+type Props = {|
   className?: string,
   required?: boolean,
   headline?: ?string,
   selectedWorkOrder?: ?{id: string, name: string},
   margin?: ?string,
   onWorkOrderSelected: (?{id: string, name: string}) => void,
-};
+|};
 
 const workOrderSearchQuery = graphql`
   query WorkOrderTypeaheadQuery(

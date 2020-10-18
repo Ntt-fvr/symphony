@@ -62,12 +62,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   fileName: string,
   progress: number,
   error?: ?string,
   className?: string,
-};
+|};
 
 const PendingFilePreview = ({
   fileName,

@@ -18,10 +18,10 @@ import nullthrows from '@fbcnms/util/nullthrows';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = WithStyles<typeof styles> & {
+type Props = WithStyles<typeof styles> & {|
   link: WorkOrderDetailsPaneLinkItem_link,
   futureState: FutureState,
-};
+|};
 
 const styles = theme => ({
   root: {

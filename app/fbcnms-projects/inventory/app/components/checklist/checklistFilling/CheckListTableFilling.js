@@ -23,9 +23,9 @@ import {CheckListItemConfigs} from '../checkListCategory/CheckListItemConsts';
 import {isChecklistItemDone} from '../ChecklistUtils';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = {|
   items: Array<CheckListItem>,
-};
+|};
 
 const useStyles = makeStyles(() => ({
   container: {

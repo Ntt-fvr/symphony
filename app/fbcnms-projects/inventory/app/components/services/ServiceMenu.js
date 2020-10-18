@@ -17,12 +17,12 @@ import OptionsPopoverButton from '../OptionsPopoverButton';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = {|
   items: Array<MenuOption>,
   isOpen: boolean,
   onClose: () => void,
   children: React.Node,
-};
+|};
 
 const useStyles = makeStyles(() => ({
   addIcon: {

@@ -38,9 +38,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   location: LocationFloorPlansTab_location$key,
-};
+|};
 
 const FLOOR_PLANS_KEY = 'floorPlans';
 

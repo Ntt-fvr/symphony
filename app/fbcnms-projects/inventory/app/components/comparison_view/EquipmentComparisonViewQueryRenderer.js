@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   limit?: number,
   showExport?: boolean,
   initialFilters?: FiltersQuery,
@@ -70,7 +70,7 @@ type Props = {
       | PowerSearchEquipmentResultsTable_equipment
       | PowerSearchLinkFirstEquipmentResultsTable_equipment,
   }) => React.Element<*>,
-};
+|};
 
 const equipmentSearchQuery = graphql`
   query EquipmentComparisonViewQueryRendererSearchQuery(

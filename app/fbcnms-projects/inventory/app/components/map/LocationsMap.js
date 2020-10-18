@@ -81,7 +81,7 @@ const colorPalette: Array<string> = [
   colors.brown,
 ];
 
-type Props = {};
+type Props = {||};
 
 const LocationsMap = (_props: Props) => {
   const classes = useStyles();

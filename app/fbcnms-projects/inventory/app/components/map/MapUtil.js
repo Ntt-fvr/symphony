@@ -34,11 +34,11 @@ export type CoordProps = {|
   signalStrength?: number,
   strength?: number,
 |};
-export type CoordsWithProps = {
+export type CoordsWithProps = {|
   latitude: number,
   longitude: number,
   properties: CoordProps,
-};
+|};
 
 export type WorkOrderLocation = BasicLocation & {
   id: string,

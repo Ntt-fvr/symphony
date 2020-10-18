@@ -39,7 +39,7 @@ import {graphql} from 'react-relay';
 import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   locationId: ?string,
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
@@ -48,7 +48,7 @@ type Props = {
   onAddEquipment: () => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   WithSnackbarProps;
 
 type State = {

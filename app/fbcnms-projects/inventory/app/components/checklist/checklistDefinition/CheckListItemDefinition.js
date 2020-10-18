@@ -15,14 +15,19 @@ import React from 'react';
 import {CheckListItemConfigs} from '../checkListCategory/CheckListItemConsts';
 import {getValidChecklistItemType} from '../ChecklistUtils';
 
-export type CheckListItemDefinitionProps = {
+export type CheckListItemDefinitionProps = {|
   item: CheckListItem,
-  editedDefinitionId: ?string,
   onChange?: (updatedChecklistItemDefinition: CheckListItem) => void,
-};
+|};
 
-const CheckListItemDefinition = (props: CheckListItemDefinitionProps) => {
-  const {item, editedDefinitionId} = props;
+type Props = {|
+  ...CheckListItemDefinitionProps,
+  editedDefinitionId: ?string,
+|};
+
+const CheckListItemDefinition = (props: Props) => {
+  const {editedDefinitionId, ...rest} = props;
+  const {item} = rest;
 
   const itemTypeKey = item && getValidChecklistItemType(item.type);
   const itemType = itemTypeKey && CheckListItemConfigs[itemTypeKey];
@@ -36,7 +41,7 @@ const CheckListItemDefinition = (props: CheckListItemDefinitionProps) => {
     return <CheckListItemCollapsedDefinition item={item} />;
   }
 
-  return <CheckListItemDefinitionComponent {...props} />;
+  return <CheckListItemDefinitionComponent {...rest} />;
 };
 
 export default CheckListItemDefinition;

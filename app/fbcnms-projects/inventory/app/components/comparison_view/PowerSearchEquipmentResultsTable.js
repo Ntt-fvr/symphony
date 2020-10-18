@@ -90,13 +90,13 @@ const styles = (theme: Theme) => ({
 
 type Props = WithAlert &
   WithStyles<typeof styles> &
-  ContextRouter & {
+  ContextRouter & {|
     equipment: PowerSearchEquipmentResultsTable_equipment,
     selectedEquipment?: ?Equipment,
     onEquipmentSelected?: (equipment: Equipment) => void,
     onWorkOrderSelected?: (workOrderId: string) => void,
     onRowSelected?: (equipment: Equipment) => void,
-  };
+  |};
 
 class PowerSearchEquipmentResultsTable extends React.Component<Props> {
   static contextType = AppContext;

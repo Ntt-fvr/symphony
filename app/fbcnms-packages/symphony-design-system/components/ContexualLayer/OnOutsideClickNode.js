@@ -13,11 +13,11 @@ import type {TRefFor} from '../../types/TRefFor.flow';
 import * as React from 'react';
 import {useEffect, useRef} from 'react';
 
-type Props = {
+type Props = {|
   isVisible: boolean,
   children: (ref: TRefFor<?HTMLElement>) => React.Node,
   onOutsideClick: () => void,
-};
+|};
 
 const OnOutsideClickNode = ({isVisible, children, onOutsideClick}: Props) => {
   const elementRef = useRef(null);

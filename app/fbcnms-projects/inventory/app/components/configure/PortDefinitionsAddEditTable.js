@@ -144,7 +144,6 @@ const PortDefinitionsAddEditTable = (props: Props) => {
       <FormField>
         <TextInput
           placeholder={placeholder}
-          variant="outlined"
           className={classes.input}
           value={value ? value : ''}
           onChange={({target}) =>

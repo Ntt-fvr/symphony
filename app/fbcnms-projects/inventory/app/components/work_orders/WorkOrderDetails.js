@@ -65,13 +65,13 @@ import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
 
-type Props = {
+type Props = {|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
   onCancelClicked: () => void,
   ...WithAlert,
   ...ContextRouter,
-};
+|};
 
 const FileTypeEnum = {
   IMAGE: 'IMAGE',
@@ -377,7 +377,6 @@ const WorkOrderDetails = ({
                           <FormField label="Type">
                             <TextInput
                               disabled={true}
-                              variant="outlined"
                               className={classes.gridInput}
                               value={workOrder.workOrderType.name}
                             />
@@ -473,7 +472,6 @@ const WorkOrderDetails = ({
                               }
                               label={property.propertyType.name}
                               className={classes.gridInput}
-                              margin="dense"
                               inputType="Property"
                               property={property}
                               onChange={property =>

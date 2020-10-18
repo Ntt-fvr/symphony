@@ -19,10 +19,10 @@ import {graphql} from 'react-relay';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   projectId: ?string,
   onProjectRemoved: () => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   ContextRouter;
 
 type State = {

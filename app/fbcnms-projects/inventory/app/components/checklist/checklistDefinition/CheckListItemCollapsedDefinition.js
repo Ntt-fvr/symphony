@@ -44,10 +44,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   className?: string,
   item: CheckListItem,
-};
+|};
 
 const CheckListItemCollapsedDefinition = ({item, className}: Props) => {
   const classes = useStyles();

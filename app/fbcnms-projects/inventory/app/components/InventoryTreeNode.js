@@ -139,14 +139,14 @@ const locationsWithChildrenQuery = graphql`
   }
 `;
 
-type Props = {
+type Props = {|
   element: Location,
   parent: ?Location,
   depth: number,
   onClick: ?(string) => void,
   getHoverRightContent: ?(Object) => ?React.Node,
   selectedHierarchy: Array<string>,
-};
+|};
 
 function InventoryTreeNodeChildren(props: Props) {
   const {

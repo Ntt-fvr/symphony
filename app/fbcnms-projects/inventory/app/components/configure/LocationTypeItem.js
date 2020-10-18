@@ -28,11 +28,11 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   locationType: LocationTypeItem_locationType,
   onEdit: () => void,
   position: number,
-} & WithAlert &
+|} & WithAlert &
   WithStyles<typeof styles> &
   WithSnackbarProps;
 

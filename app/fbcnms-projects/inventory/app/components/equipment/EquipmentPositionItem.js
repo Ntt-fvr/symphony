@@ -38,7 +38,7 @@ import {lowerCase} from 'lodash';
 import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   equipment: Equipment,
   position: EquipmentPosition,
   onAttachingEquipmentToPosition: (
@@ -48,7 +48,7 @@ type Props = {
   onEquipmentPositionClicked: (equipmentId: string) => void,
   workOrderId: ?string,
   onWorkOrderSelected: (workOrderId: string) => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   WithAlert &
   WithSnackbarProps;
 
@@ -193,10 +193,7 @@ class EquipmentPositionItem extends React.Component<Props, State> {
 
     const equipmentPositionName = (
       <div className={classes.equipmentPositionName}>
-        <Text
-          variant="body2"
-          useEllipsis={true}
-          title={position.definition.name}>
+        <Text variant="body2" useEllipsis={true}>
           {`${position.definition.name}`}
         </Text>
         <Text variant="body2">{': '}</Text>
@@ -211,12 +208,12 @@ class EquipmentPositionItem extends React.Component<Props, State> {
             className={classNames(
               classes.equipmentDetails,
               classes.allowWrapping,
-            )}>
+            )}
+            title={available}>
             {equipmentPositionName}
             <Text
               variant="body2"
               useEllipsis={true}
-              title={available}
               className={classes.equipmentPositionName}>
               {available}
             </Text>

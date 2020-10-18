@@ -14,11 +14,11 @@ import classNames from 'classnames';
 import {gray7} from '@fbcnms/ui/theme/colors';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = {|
   label: string,
   children: React.Node,
   className: ?string,
-};
+|};
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -15,10 +15,10 @@ import React from 'react';
 import WorkOrderDetailsPaneItem from './WorkOrderDetailsPaneItem';
 import {createFragmentContainer, graphql} from 'react-relay';
 
-type Props = {
+type Props = {|
   equipment: WorkOrderDetailsPaneEquipmentItem_equipment,
   futureState: FutureState,
-};
+|};
 
 class WorkOrderDetailsPaneEquipmentItem extends React.Component<Props> {
   render() {

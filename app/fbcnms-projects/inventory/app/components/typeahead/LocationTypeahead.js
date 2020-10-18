@@ -51,13 +51,13 @@ const DEBOUNCE_CONFIG = {
   leading: true,
 };
 
-type Props = {
+type Props = {|
   className?: string,
   selectedLocation?: ?{id: string, name: string},
   margin?: ?string,
   onLocationSelection: (location: ?{id: string, name: string}) => void,
   headline?: ?string,
-};
+|};
 
 type State = {
   locationSuggestions: Array<Suggestion>,

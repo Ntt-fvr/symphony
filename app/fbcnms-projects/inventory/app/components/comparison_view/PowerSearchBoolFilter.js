@@ -41,9 +41,10 @@ const boolValues = [
   },
 ];
 
-type Props = FilterProps & {
+type Props = {|
   label: string,
-};
+  ...FilterProps,
+|};
 
 const PowerSearchBoolFilter = (props: Props) => {
   const {

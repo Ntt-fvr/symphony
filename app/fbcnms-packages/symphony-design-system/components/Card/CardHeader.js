@@ -24,11 +24,11 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   className?: string,
   children: string,
   rightContent?: React.Node,
-};
+|};
 
 const CardHeader = (props: Props) => {
   const {children, className, rightContent} = props;

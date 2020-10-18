@@ -47,10 +47,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   categories: SurveyTemplateCategory[],
   onCategoriesChanged: (SurveyTemplateCategory[]) => void,
-};
+|};
 
 export default function SurveyTemplateCategories(props: Props) {
   const classes = useStyles();
@@ -89,7 +89,6 @@ export default function SurveyTemplateCategories(props: Props) {
                 <FormField>
                   <TextInput
                     placeholder={`${fbt('Title', '')}`}
-                    variant="outlined"
                     className={classes.input}
                     value={category.categoryTitle}
                     onChange={onChange('categoryTitle', i)}
@@ -100,7 +99,6 @@ export default function SurveyTemplateCategories(props: Props) {
                 <FormField>
                   <TextInput
                     placeholder={`${fbt('Description', '')}`}
-                    variant="outlined"
                     className={classes.input}
                     value={category.categoryDescription}
                     onChange={onChange('categoryDescription', i)}

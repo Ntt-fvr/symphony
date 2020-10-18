@@ -19,11 +19,10 @@ import {graphql} from 'react-relay';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   workOrderId: ?string,
-  onWorkOrderExecuted: () => void,
   onWorkOrderRemoved: () => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   ContextRouter;
 
 type State = {
@@ -82,12 +81,7 @@ class WorkOrderCard extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      classes,
-      workOrderId,
-      onWorkOrderExecuted,
-      onWorkOrderRemoved,
-    } = this.props;
+    const {classes, workOrderId, onWorkOrderRemoved} = this.props;
     return (
       <InventoryQueryRenderer
         query={workOrderQuery}
@@ -101,7 +95,6 @@ class WorkOrderCard extends React.Component<Props, State> {
               <WorkOrderDetails
                 workOrder={workOrder}
                 onWorkOrderRemoved={onWorkOrderRemoved}
-                onWorkOrderExecuted={onWorkOrderExecuted}
                 onCancelClicked={this.navigateToMainPage}
               />
             </div>

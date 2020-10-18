@@ -241,7 +241,7 @@ export default function UserProfilePane(props: Props) {
                     label={`${fbt('Photo', '')}`}
                     className={classes.photoWrapper}>
                     <FileUploadButton
-                      useUploadSnackbar={false}
+                      uploadUsingSnackbar={false}
                       multiple={false}
                       onFileUploaded={
                         (_file, storeKey) => setProfilePhoto({storeKey})

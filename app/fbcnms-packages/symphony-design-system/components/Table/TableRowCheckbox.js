@@ -14,9 +14,9 @@ import Checkbox from '../Checkbox/Checkbox';
 import React, {useMemo} from 'react';
 import {useSelection} from './TableSelectionContext';
 
-type Props = {
+type Props = {|
   id: string | number,
-};
+|};
 
 const TableRowCheckbox = ({id}: Props) => {
   const {selectedIds, changeRowSelection} = useSelection();

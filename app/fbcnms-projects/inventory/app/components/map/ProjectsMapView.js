@@ -70,7 +70,7 @@ type State = {
   projectId: ?string,
 };
 
-type Props = {
+type Props = {|
   mode: MapType,
   zoomLevel?: number,
   center?: LngLatLike,
@@ -78,7 +78,7 @@ type Props = {
   showGeocoder?: boolean,
   showMapSatelliteToggle?: boolean,
   mapButton?: React.Node,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 // https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions
 type MapExpression = Array<string | number | MapExpression>;

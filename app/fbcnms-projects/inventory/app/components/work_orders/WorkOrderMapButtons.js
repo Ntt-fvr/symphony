@@ -10,9 +10,9 @@
 import MapButtonGroup from '@fbcnms/ui/components/map/MapButtonGroup';
 import React from 'react';
 
-type Props = {
+type Props = {|
   onClick: (id: string) => void,
-};
+|};
 
 const WorkOrderMapButtons = (props: Props) => {
   const {onClick} = props;

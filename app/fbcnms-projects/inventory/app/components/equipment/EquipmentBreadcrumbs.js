@@ -46,7 +46,7 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   equipment: Equipment,
   onParentLocationClicked?: (locationId: string) => void,
   onEquipmentClicked?: (equipmentId: string) => void,
@@ -54,7 +54,7 @@ type Props = {
   showSelfEquipment: boolean,
   textClassName?: string,
   variant?: TextVariant,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const EquipmentBreadcrumbs = (props: Props) => {
   const {
@@ -137,7 +137,6 @@ const EquipmentBreadcrumbs = (props: Props) => {
 
 EquipmentBreadcrumbs.defaultProps = {
   size: 'default',
-  showTypes: true,
   showSelfEquipment: true,
 };
 

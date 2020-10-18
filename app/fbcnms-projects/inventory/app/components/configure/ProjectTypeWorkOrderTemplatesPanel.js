@@ -37,11 +37,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   selectedWorkOrderTypeIds: Array<string>,
   workOrderTypes: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes,
   onWorkOrderTypesSelected: (ids: Array<string>) => void,
-};
+|};
 
 const ProjectTypeWorkOrderTemplatesPanel = ({
   selectedWorkOrderTypeIds,

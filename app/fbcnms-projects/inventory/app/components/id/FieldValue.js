@@ -22,12 +22,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   field: {
     type: string,
     value: string,
   },
-};
+|};
 
 const FieldValue = (props: Props) => {
   const {field} = props;

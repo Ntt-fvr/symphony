@@ -31,9 +31,9 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   serviceEndpointDefinitions: ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions,
-};
+|};
 
 const ServiceEndpointDefinitionStaticTable = (props: Props) => {
   const {serviceEndpointDefinitions} = props;

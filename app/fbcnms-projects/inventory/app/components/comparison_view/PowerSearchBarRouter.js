@@ -16,12 +16,12 @@ import LocationsPowerSearchBar from './LocationsPowerSearchBar';
 import PortsPowerSearchBar from './PortsPowerSearchBar';
 import React from 'react';
 
-type Props = {
+type Props = {|
   subject: EntityType,
   filters: FiltersQuery,
   onFiltersChanged: FiltersQuery => void,
   footer?: ?string,
-};
+|};
 
 const PwerSearchBarRouter = (props: Props) => {
   const {subject, filters, onFiltersChanged, footer} = props;

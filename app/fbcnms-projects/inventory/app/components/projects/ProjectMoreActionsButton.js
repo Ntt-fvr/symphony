@@ -36,11 +36,11 @@ const styles = () => ({
   },
 });
 
-type Props = {
+type Props = {|
   className?: string,
   project: ProjectMoreActionsButton_project,
   onProjectRemoved: () => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   WithAlert &
   WithSnackbarProps;
 

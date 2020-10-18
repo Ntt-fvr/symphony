@@ -39,11 +39,11 @@ const TablePaginationContext = React.createContext<TablePaginationContextValue>(
   },
 );
 
-type Props = {
+type Props = {|
   loadedDataCount: number,
   children: React.Node,
   ...TablePaginationProps,
-};
+|};
 
 export const TablePaginationContextProvider = (props: Props) => {
   const {children, pageSize, totalRowsCount, loadNext, loadedDataCount} = props;

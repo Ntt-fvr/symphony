@@ -16,10 +16,10 @@ import React, {useState} from 'react';
 import ServiceMenu from './ServiceMenu';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 
-type Props = {
+type Props = {|
   service: ServicePanel_service,
   onAddEndpoint: (port: EquipmentPort, role: string) => void,
-};
+|};
 
 export type EndpointDef = {
   name: string,

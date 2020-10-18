@@ -56,12 +56,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   editingProjectType: ?AddEditProjectTypeCard_editingProjectType,
   onCancelClicked: () => void,
   onProjectTypeSaved: () => void,
   workOrderTypes: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes,
-};
+|};
 
 const AddEditProjectTypeCard = (props: Props) => {
   const {

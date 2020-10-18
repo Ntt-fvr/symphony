@@ -23,7 +23,7 @@ type Range = {
   rangeTo: ?number,
 };
 
-type Props = {
+type Props = {|
   label?: ?string,
   value: Range,
   className: string,
@@ -32,9 +32,8 @@ type Props = {
   onBlur: (e: FocusEvent<HTMLInputElement>) => ?void,
   onRangeToChange: (event: SyntheticInputEvent<>) => void,
   onRangeFromChange: (event: SyntheticInputEvent<>) => void,
-  margin: 'none' | 'dense' | 'normal',
   autoFocus?: boolean,
-};
+|};
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -54,18 +53,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ENTER_KEY_CODE = 13;
-
 const RangePropertyValueInput = (props: Props) => {
-  const {
-    className,
-    disabled,
-    margin,
-    required,
-    value,
-    autoFocus,
-    label,
-  } = props;
+  const {className, disabled, required, value, autoFocus, label} = props;
   const classes = useStyles();
 
   const {rangeFrom, rangeTo} = value;
@@ -96,17 +85,12 @@ const RangePropertyValueInput = (props: Props) => {
                 hasError={!!errorFrom}>
                 <TextInput
                   autoFocus={autoFocus}
-                  required={required}
                   disabled={disabled}
                   prefix={<InputAffix>From</InputAffix>}
-                  id="from-value"
-                  variant="outlined"
                   className={classes.input}
-                  margin={margin}
-                  onKeyDown={e => {
-                    if (e.keyCode === ENTER_KEY_CODE) {
-                      props.onBlur(e);
-                    }
+                  onEnterPressed={e => {
+                    // $FlowFixMe
+                    props.onBlur(e);
                   }}
                   value={parseFloat(rangeFrom)}
                   type="number"
@@ -119,17 +103,12 @@ const RangePropertyValueInput = (props: Props) => {
                 hasError={!!errorTo}
                 className={classNames(classes.lngField, classes.formField)}>
                 <TextInput
-                  required={required}
                   disabled={disabled}
                   prefix={<InputAffix>To</InputAffix>}
-                  id="to-value"
-                  variant="outlined"
                   className={classes.input}
-                  margin={margin}
-                  onKeyDown={e => {
-                    if (e.keyCode === ENTER_KEY_CODE) {
-                      props.onBlur(e);
-                    }
+                  onEnterPressed={e => {
+                    // $FlowFixMe
+                    props.onBlur(e);
                   }}
                   type="number"
                   value={parseFloat(rangeTo)}

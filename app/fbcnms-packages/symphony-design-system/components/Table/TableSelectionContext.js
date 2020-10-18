@@ -42,14 +42,14 @@ const TableSelectionContext = React.createContext<TableSelectionContextValue>({
   changeHeaderSelectionMode: emptyFunction,
 });
 
-type Props = {
+type Props = {|
   children: React.Node,
   allIds: $ReadOnlyArray<TableRowId>,
   activeId?: NullableTableRowId,
   onActiveChanged?: ActiveCallbackType,
   selectedIds: $ReadOnlyArray<TableRowId>,
   onSelectionChanged?: SelectionCallbackType,
-};
+|};
 
 export const TableSelectionContextProvider = ({
   activeId = null,

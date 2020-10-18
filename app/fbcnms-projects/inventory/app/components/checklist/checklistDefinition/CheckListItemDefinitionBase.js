@@ -77,11 +77,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   item: CheckListItem,
   children?: Node,
   onChange?: (newItem: CheckListItem) => void,
-};
+|};
 
 const CheckListItemDefinitionBase = ({children, item, onChange}: Props) => {
   const classes = useStyles();

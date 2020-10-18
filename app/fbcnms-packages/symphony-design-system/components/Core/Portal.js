@@ -11,10 +11,10 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 
-type Props = {
+type Props = {|
   children: React.Node,
   target: ?HTMLElement,
-};
+|};
 
 const Portal = ({children, target}: Props) => {
   return target != null ? ReactDOM.createPortal(children, target) : null;

@@ -65,12 +65,12 @@ export type NavigatableView =
   | NavigatableView_MenuItemRouting
   | NavigatableView_PossibleRoutingToGivenComponent;
 
-type Props = {
+type Props = {|
   variant?: $Keys<typeof NAVIGATION_VARIANTS>,
   header?: ?React.Node,
   views: Array<NavigatableView>,
   routingBasePath?: string,
-};
+|};
 
 const PATH_DELIMITER = '/';
 const PATH_PARAM_PREFIX = ':';

@@ -32,10 +32,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   className?: string,
   location: Location,
-};
+|};
 
 const LocationDetailsCard = (props: Props) => {
   const {className, location} = props;

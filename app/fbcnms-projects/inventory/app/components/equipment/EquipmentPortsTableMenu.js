@@ -20,10 +20,10 @@ import {getNonInstancePropertyTypes} from '../../common/Property';
 
 import type {EquipmentPort, Link} from '../../common/Equipment';
 
-type Props = {
+type Props = {|
   port: EquipmentPort,
   workOrderId: ?string,
-};
+|};
 
 const EquipmentPortsTableMenu = (props: Props) => {
   const {port, workOrderId} = props;

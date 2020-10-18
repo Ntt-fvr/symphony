@@ -78,12 +78,12 @@ const styles = {
   },
 };
 
-type Props = {
+type Props = {|
   equipment: Equipment,
   ports: AvailablePortsTable_ports,
   selectedPort: ?EquipmentPort,
   onPortSelected?: (port: EquipmentPort) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const AvailablePortsTable = (props: Props) => {
   const {equipment, ports, selectedPort, onPortSelected, classes} = props;

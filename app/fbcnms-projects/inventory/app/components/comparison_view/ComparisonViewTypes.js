@@ -80,7 +80,7 @@ export type FilterValue = {
   propertyValue?: ?PropertyType,
 };
 
-export type FilterProps = {
+export type FilterProps = {|
   config: FilterConfig,
   onInputBlurred: () => void,
   onNewInputBlurred: (newValue: FilterValue) => void,
@@ -89,6 +89,6 @@ export type FilterProps = {
   onValueChanged: (newValue: FilterValue) => void,
   onRemoveFilter: () => void,
   title?: string,
-};
+|};
 
 export type FiltersQuery = Array<FilterValue>;

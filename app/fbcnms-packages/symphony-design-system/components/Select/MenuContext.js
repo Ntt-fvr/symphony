@@ -21,10 +21,10 @@ const MenuContext = React.createContext<MenuContextValue>({
   shown: false,
 });
 
-type Props = {
+type Props = {|
   value: MenuContextValue,
   children: React.Node,
-};
+|};
 
 const MenuContextProvider = ({children, value}: Props) => {
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;

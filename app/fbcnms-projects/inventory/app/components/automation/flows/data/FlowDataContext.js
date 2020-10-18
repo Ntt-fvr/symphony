@@ -303,10 +303,10 @@ export function useFlowData() {
   return useContext(FlowDataContext);
 }
 
-type ComponentProps<T> = {
+type ComponentProps<T> = {|
   flowDraft: ?FlowDraftResponse,
   ...T,
-};
+|};
 
 export function withFlowData<
   TComponent: React.ComponentType<ComponentProps<*>>,

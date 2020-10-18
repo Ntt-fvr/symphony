@@ -86,13 +86,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   initialSelectedWorkOrderTypeIds: Array<string>,
   workOrderTypes: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes,
   open: boolean,
   onClose: () => void,
   onSaveClicked: (workOrderTypeIds: Array<string>) => void,
-};
+|};
 
 const ProjectTypeSelectWorkOrdersDialog = ({
   open,

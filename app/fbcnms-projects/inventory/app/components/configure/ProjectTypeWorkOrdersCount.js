@@ -35,10 +35,10 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   className?: string,
   count: number,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 class ProjectTypeWorkOrdersCount extends React.Component<Props> {
   render() {

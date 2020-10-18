@@ -11,10 +11,10 @@
 import * as React from 'react';
 import {useCallback, useEffect} from 'react';
 
-type Props = {
+type Props = {|
   children: React.Node,
   onEsc: () => void,
-};
+|};
 
 const HideOnEsc = ({children, onEsc}: Props) => {
   const onKeyUp = useCallback(

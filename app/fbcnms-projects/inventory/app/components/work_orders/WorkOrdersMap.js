@@ -31,9 +31,9 @@ import {useMemo, useState} from 'react';
 import {withRouter} from 'react-router-dom';
 import {workOrderToGeoJSONSource} from './../map/MapUtil';
 
-type Props = {
+type Props = {|
   workOrders: Array<WorkOrder>,
-};
+|};
 
 const useStyles = makeStyles(() => ({
   workOrderPopover: {

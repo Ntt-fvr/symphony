@@ -15,7 +15,7 @@ import RelayEnvironment from '../../common/RelayEnvironment.js';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
 import {fetchQuery, graphql} from 'relay-runtime';
 
-type Props = {
+type Props = {|
   className?: string,
   required?: boolean,
   headline?: string,
@@ -25,7 +25,7 @@ type Props = {
   },
   margin?: ?string,
   onProjectSelection: (?{id: string, name: string}) => void,
-};
+|};
 
 type State = {
   projectSuggestions: Array<Suggestion>,

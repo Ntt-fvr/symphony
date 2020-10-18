@@ -39,12 +39,12 @@ export type MenuItem = $ReadOnly<{|
   tooltip?: ?string,
 |}>;
 
-type Props = {
+type Props = {|
   header?: ?React.Node,
   items: Array<MenuItem>,
   activeItemIndex?: number,
   onActiveItemChanged: (activeItem: MenuItem, activeItemIndex: number) => void,
-};
+|};
 
 export default function SideMenu(props: Props) {
   const {header, items, activeItemIndex, onActiveItemChanged} = props;

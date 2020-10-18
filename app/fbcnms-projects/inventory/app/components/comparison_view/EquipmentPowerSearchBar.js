@@ -22,11 +22,11 @@ import {EquipmentCriteriaConfig} from './EquipmentSearchConfig';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {buildPropertyFilterConfigs, getSelectedFilter} from './FilterUtils';
 
-type Props = {
+type Props = {|
   filters: FiltersQuery,
   onFiltersChanged: FiltersQuery => void,
   footer?: ?string,
-};
+|};
 
 const EquipmentPowerSearchBar = (props: Props) => {
   const {onFiltersChanged, filters, footer} = props;
@@ -45,7 +45,6 @@ const EquipmentPowerSearchBar = (props: Props) => {
 
   return (
     <PowerSearchBar
-      filters={filters}
       filterValues={filters}
       exportPath={'/equipment'}
       onFiltersChanged={onFiltersChanged}

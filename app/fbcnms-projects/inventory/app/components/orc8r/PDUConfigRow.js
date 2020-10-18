@@ -29,10 +29,10 @@ export type DeviceConfig = {
   ipAddress: string,
 };
 
-type Props = {
+type Props = {|
   config: DeviceConfig,
   onChange: DeviceConfig => void,
-};
+|};
 
 export default function (props: Props) {
   const classes = useStyles();

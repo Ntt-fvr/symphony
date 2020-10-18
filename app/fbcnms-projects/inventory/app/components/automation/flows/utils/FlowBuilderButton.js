@@ -14,11 +14,11 @@ import type {MouseEventHandler} from '@symphony/design-system/components/Core/Cl
 import * as React from 'react';
 import IconButton from '@symphony/design-system/components/IconButton';
 
-type Props = {
+type Props = {|
   icon: IconComponent,
   onClick: MouseEventHandler,
   className?: string,
-};
+|};
 
 export default function FlowBuilderButton(props: Props) {
   const {icon, onClick, className} = props;

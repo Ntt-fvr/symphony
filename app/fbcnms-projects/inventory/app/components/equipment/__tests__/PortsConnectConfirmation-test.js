@@ -94,7 +94,6 @@ describe('<PortsConnectConfirmation />', () => {
           aSideEquipment={eq('a_eq_name', 'a_eq_type_name')}
           zSidePort={eqPort('z', 'z_eq_name', 'z_eq_type_name')}
           zSideEquipment={eq('z_eq_name', 'z_eq_type_name')}
-          classes={{}}
         />
       </Wrapper>,
     );

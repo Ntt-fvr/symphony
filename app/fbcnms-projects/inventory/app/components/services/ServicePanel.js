@@ -66,10 +66,10 @@ import {
   serviceStatusToVisibleNames,
 } from '../../common/Service';
 
-type Props = {
+type Props = {|
   service: ServicePanel_service,
   onOpenDetailsPanel: () => void,
-};
+|};
 
 const useStyles = makeStyles(() => ({
   root: {

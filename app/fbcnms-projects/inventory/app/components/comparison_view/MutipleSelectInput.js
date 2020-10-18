@@ -25,13 +25,13 @@ const useStyles = makeStyles(theme => ({
 
 const ENTER_KEY_CODE = 13;
 
-type Props = {
+type Props = {|
   onBlur: () => void,
   onSubmit: () => void,
   value: Array<string>,
   options: Array<{value: string | number, label: string}>,
   onChange: (newValue: Array<string>) => void,
-};
+|};
 
 const MutipleSelectInput = (props: Props) => {
   const classes = useStyles();

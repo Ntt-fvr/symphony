@@ -13,6 +13,7 @@ import type {UploadStatus} from './FileUploadStatus';
 import * as React from 'react';
 import CloseIcon from '../../icons/Navigation/CloseIcon';
 import FileUploadStatus, {FileUploadStatuses} from './FileUploadStatus';
+import IconButton from '@symphony/design-system/components/IconButton';
 import Portal from '../Core/Portal';
 import Text from '../Text';
 import fbt from 'fbt';
@@ -42,14 +43,6 @@ const useStyles = makeStyles(() => ({
   headerText: {
     flexGrow: 1,
   },
-  closeIcon: {
-    width: '20px',
-    height: '20px',
-    cursor: 'pointer',
-    '&:hover': {
-      fill: symphony.palette.B300,
-    },
-  },
   content: {
     maxHeight: '270px',
     overflowY: 'auto',
@@ -63,10 +56,10 @@ export type FileItem = {
   errorMessage?: React.Node,
 };
 
-type Props = {
+type Props = {|
   files: Array<FileItem>,
   onClose: () => void,
-};
+|};
 
 const FilesUploadSnackbar = ({files, onClose}: Props) => {
   const classes = useStyles();
@@ -121,11 +114,7 @@ const FilesUploadSnackbar = ({files, onClose}: Props) => {
               </fbt>
             )}
           </Text>
-          <CloseIcon
-            color="light"
-            className={classes.closeIcon}
-            onClick={onClose}
-          />
+          <IconButton skin="gray" icon={CloseIcon} onClick={onClose} />
         </div>
         <div className={classes.content} ref={thisElement}>
           {files.map(file => (

@@ -81,12 +81,12 @@ const styles = theme => ({
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
-  WithAlert & {
+  WithAlert & {|
     open: boolean,
     onClose: () => void,
     onSave: (portType: any) => void,
     editingEquipmentPortType?: ?EquipmentPortType,
-  };
+  |};
 
 type State = {
   editingEquipmentPortType: EquipmentPortType,
@@ -133,8 +133,6 @@ class AddEditEquipmentPortTypeCard extends React.Component<Props, State> {
               <Grid item xs={6}>
                 <FormField label="Name" required>
                   <TextInput
-                    name="name"
-                    variant="outlined"
                     className={classes.input}
                     value={editingEquipmentPortType.name}
                     onChange={this.nameChanged}

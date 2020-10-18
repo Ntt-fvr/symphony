@@ -28,10 +28,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   projects: ProjectsTableView_projects,
   onProjectSelected: string => void,
-};
+|};
 
 const ProjectsTableView = (props: Props) => {
   const {projects, onProjectSelected} = props;

@@ -41,9 +41,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   question: SiteSurveyQuestionReply_question,
-};
+|};
 
 function SiteSurveyQuestionReply(props: Props) {
   const {question} = props;
@@ -74,7 +74,6 @@ function SiteSurveyQuestionReply(props: Props) {
       return (
         <div className={classes.mapContainer}>
           <MapView
-            id="mapView"
             center={
               question.latitude && question.longitude
                 ? {lat: question.latitude, lng: question.longitude}

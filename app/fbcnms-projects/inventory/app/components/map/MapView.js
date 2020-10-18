@@ -101,7 +101,7 @@ export type CustomGeoJSONFeatureCollection<T> = {
   features: Array<CustomGeoJSONFeature<T>>,
 };
 
-type Props<T> = WithStyles<typeof styles> & {
+type Props<T> = WithStyles<typeof styles> & {|
   mode: MapType,
   zoomLevel?: number | string,
   layers: Array<MapLayer<T>>,
@@ -115,8 +115,9 @@ type Props<T> = WithStyles<typeof styles> & {
   showMapSatelliteToggle?: boolean,
   mapButton?: React.Node,
   workOrdersView?: boolean,
+  classes?: {...},
   ...ContextRouter,
-};
+|};
 
 export type MapLayer<T> = {
   source: GeoJSONSource<T>,
@@ -198,7 +199,6 @@ class MapView<T> extends React.Component<Props<T>, State> {
     layers: [],
     center: [0, 0],
     zoomLevel: '2',
-    workOrderView: false,
   };
 
   state = {

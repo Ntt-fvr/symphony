@@ -55,11 +55,11 @@ const useStyles = makeStyles(_ => ({
   },
 }));
 
-type Props = {
+type Props = {|
   open: boolean,
   onClose: () => void,
   onServiceCreated: (id: string) => void,
-};
+|};
 
 const AddServiceDialog = (props: Props) => {
   const {open, onClose, onServiceCreated} = props;

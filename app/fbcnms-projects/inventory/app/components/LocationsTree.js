@@ -43,11 +43,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = {|
   selectedLocationId: ?string,
   onSelect: ?(locationId: ?string) => void,
   onAddLocation: (parentLocation: ?Location) => void,
-};
+|};
 
 graphql`
   fragment LocationsTree_location on Location @relay(mask: false) {

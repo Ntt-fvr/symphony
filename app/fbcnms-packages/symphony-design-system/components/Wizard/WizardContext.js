@@ -23,9 +23,9 @@ const WizardContext = React.createContext<WizardContextType>({
   get: emptyFunction,
 });
 
-type Props = {
+type Props = {|
   children: React.Node,
-};
+|};
 
 type DataStore = imm.Map<string, mixed>;
 

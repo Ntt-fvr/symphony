@@ -71,12 +71,12 @@ export type PropertyTypeInfo = $ReadOnly<{|
   featureFlag?: FeatureID,
 |}>;
 
-type Props = {
+type Props = {|
   propertyTypes: Array<PropertyType>,
   onPropertiesChanged: (newProperties: Array<PropertyType>) => void,
   supportMandatory?: boolean,
   supportDelete?: boolean,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 class PropertyTypeTable extends React.Component<Props> {
   static contextType = AppContext;
@@ -129,7 +129,6 @@ class PropertyTypeTable extends React.Component<Props> {
                       <TextInput
                         autoFocus={true}
                         placeholder="Name"
-                        variant="outlined"
                         className={classes.input}
                         value={property.name}
                         onChange={this._handleNameChange(i)}
@@ -158,7 +157,6 @@ class PropertyTypeTable extends React.Component<Props> {
                       inputType="PropertyType"
                       property={property}
                       onChange={this._handlePropertyTypeChange(i)}
-                      margin="dense"
                     />
                   </TableCell>
                   <TableCell padding="checkbox" component="div">

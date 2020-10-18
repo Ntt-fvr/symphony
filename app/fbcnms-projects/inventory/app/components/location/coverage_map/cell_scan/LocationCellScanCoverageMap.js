@@ -52,14 +52,14 @@ export type CellScanCollection = {
 
 export type CellScanIndex = {[string]: AggregatedCellScan};
 
-type Props = {
+type Props = {|
   location: Location,
   cellData: LocationCellScanCoverageMap_cellData,
   circleLayerStyles: MapLayerStyles,
   heatmapLayerStyles: MapLayerStyles,
   selector?: React.Node,
   legend?: React.Node,
-};
+|};
 
 // size of grid where cell scan data is aggregated for heatmap
 const HEATMAP_LAT_LNG_GRID_SIZE = 0.01;
@@ -168,7 +168,6 @@ const LocationCellScanCoverageMap = (props: Props) => {
       </div>
       <div className={classes.mapContainer}>
         <MapView
-          id="cellCoverageMap"
           mode={
             location.locationType.mapType === 'satellite'
               ? 'satellite'

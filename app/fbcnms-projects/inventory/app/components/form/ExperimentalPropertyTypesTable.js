@@ -137,7 +137,6 @@ const ExperimentalPropertyTypesTable = ({
                     <TextInput
                       autoFocus={true}
                       placeholder="Name"
-                      variant="outlined"
                       className={classes.input}
                       value={property.name}
                       onChange={({target}) =>
@@ -174,7 +173,6 @@ const ExperimentalPropertyTypesTable = ({
                         value,
                       })
                     }
-                    margin="dense"
                   />
                 </TableCell>
                 <TableCell padding="checkbox" component="div">

@@ -24,9 +24,9 @@ import {fetchQuery, graphql} from 'relay-runtime';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = ContextRouter & {
+type Props = ContextRouter & {|
   onSelect: ?(locationType: ?LocationType) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   errorMessage: ?string,

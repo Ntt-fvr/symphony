@@ -24,11 +24,11 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = {|
   filters: FiltersQuery,
   limit?: number,
   onQueryReturn: number => void,
-};
+|};
 
 const locationSearchQuery = graphql`
   query LocationViewQueryRendererSearchQuery(

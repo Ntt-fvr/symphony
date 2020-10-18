@@ -66,9 +66,9 @@ const styles = () => ({
 
 type Props = WithAlert &
   WithStyles<typeof styles> &
-  ContextRouter & {
+  ContextRouter & {|
     ports: PowerSearchPortsResultsTable_ports,
-  };
+  |};
 
 class PowerSearchPortsResultsTable extends React.Component<Props> {
   _getConnectedPort = (

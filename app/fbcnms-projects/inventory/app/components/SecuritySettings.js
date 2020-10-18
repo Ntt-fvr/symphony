@@ -68,9 +68,7 @@ export default function SecuritySettings() {
 
   return (
     <div className={classes.formContainer}>
-      <Text data-testid="change-password-title" variant="h5">
-        Change Password
-      </Text>
+      <Text>Change Password</Text>
       <FormGroup row className={classes.formGroup}>
         <TextField
           required

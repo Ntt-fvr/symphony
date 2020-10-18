@@ -18,10 +18,10 @@ import Text from '@symphony/design-system/components/Text';
 
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = {|
   aggregatedCellData: ?AggregatedCellScan,
   renderCellScansDialog?: (cell: AggregatedCellScan) => void,
-};
+|};
 
 const CellScanPopout = (props: Props) => {
   const classes = useStyles();

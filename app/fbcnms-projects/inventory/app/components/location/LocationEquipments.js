@@ -21,10 +21,10 @@ import {graphql} from 'react-relay';
 import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {useState} from 'react';
 
-type Props = {
+type Props = {|
   locationId: string,
   onSelect: Equipment => void,
-};
+|};
 
 const locationEquipmentsQuery = graphql`
   query LocationEquipmentsQuery($locationId: ID!) {
