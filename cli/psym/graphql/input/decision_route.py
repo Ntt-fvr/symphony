@@ -12,5 +12,5 @@ from dataclasses_json import DataClassJsonMixin
 
 @dataclass
 class DecisionRouteInput(DataClassJsonMixin):
-    pid: Optional[str] = None
+    cid: Optional[str] = None
 

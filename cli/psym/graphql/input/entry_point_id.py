@@ -16,5 +16,5 @@ from ..enum.entry_point_role import EntryPointRole
 @dataclass
 class EntryPointId(DataClassJsonMixin):
     role: Optional[EntryPointRole] = None
-    pid: Optional[str] = None
+    cid: Optional[str] = None
 

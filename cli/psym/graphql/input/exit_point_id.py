@@ -16,5 +16,5 @@ from ..enum.exit_point_role import ExitPointRole
 @dataclass
 class ExitPointId(DataClassJsonMixin):
     role: Optional[ExitPointRole] = None
-    pid: Optional[str] = None
+    cid: Optional[str] = None
 

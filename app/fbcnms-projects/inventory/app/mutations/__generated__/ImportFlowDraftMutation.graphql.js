@@ -71,7 +71,7 @@ export type DecisionBlockInput = {|
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type DecisionRouteInput = {|
-  pid?: ?string
+  cid?: ?string
 |};
 export type GotoBlockInput = {|
   cid: string,
@@ -104,11 +104,11 @@ export type ConnectorInput = {|
 |};
 export type ExitPointId = {|
   role?: ?ExitPointRole,
-  pid?: ?string,
+  cid?: ?string,
 |};
 export type EntryPointId = {|
   role?: ?EntryPointRole,
-  pid?: ?string,
+  cid?: ?string,
 |};
 export type ImportFlowDraftMutationVariables = {|
   input: ImportFlowDraftInput
