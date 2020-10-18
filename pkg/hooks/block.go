@@ -70,18 +70,18 @@ func UpdateDraftChangedHook() ent.Hook {
 				if !exists {
 					return nil, fmt.Errorf("block has no id")
 				}
-				flowDraft, err := mutation.Client().Block.Query().
+				draftID, err = mutation.Client().Block.Query().
 					Where(block.ID(id)).
 					WithFlowDraft().
-					Only(ctx)
+					OnlyID(ctx)
 				if err != nil {
 					return nil, fmt.Errorf("cannot get flow draft: %w", err)
 				}
-				draftID = flowDraft.ID
 			}
 
-			err = mutation.Client().FlowDraft.UpdateOneID(draftID).SetSameAsFlow(false).Exec(ctx)
-			if err != nil {
+			if err := mutation.Client().FlowDraft.UpdateOneID(draftID).
+				SetSameAsFlow(false).
+				Exec(ctx); err != nil {
 				return nil, fmt.Errorf("failed to update flow draft")
 			}
 			return next.Mutate(ctx, mutation)
