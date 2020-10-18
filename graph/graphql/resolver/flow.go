@@ -144,7 +144,7 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 	}
 	outputFlow := flowDraft.Edges.Flow
 	if outputFlow == nil {
-		return nil, fmt.Errorf("no flow for draft: %w", err)
+		return nil, fmt.Errorf("no flow for draft")
 	}
 
 	outputFlow, err = client.Flow.UpdateOne(outputFlow).
