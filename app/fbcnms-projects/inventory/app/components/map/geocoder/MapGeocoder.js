@@ -34,7 +34,7 @@ export type Feature = {
 };
 export type Result = {feature: Feature};
 
-type Props<T> = {|
+type Props<T> = $ReadOnly<{|
   markers?: ?CustomGeoJSONFeatureCollection<T>,
   accessToken: string,
   mapRef: ?mapboxgl.Map,
@@ -46,7 +46,7 @@ type Props<T> = {|
   // Debounce searches at this interval
   searchDebounceMs: number,
   shouldSearchPlaces?: ?(customResults: Array<Result>) => boolean,
-|};
+|}>;
 
 class MapGeocoder<T: Object> extends React.Component<Props<T>> {
   static defaultProps = {

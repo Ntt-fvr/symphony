@@ -106,10 +106,10 @@ const flowQuery = graphql`
     }
   }
 `;
-type Props = {|
+type Props = $ReadOnly<{|
   flowId: ?string,
   children: React.Node,
-|};
+|}>;
 
 function FlowDataContextProviderComponent(props: Props) {
   const {flowId} = props;

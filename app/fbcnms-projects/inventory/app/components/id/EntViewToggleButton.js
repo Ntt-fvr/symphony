@@ -47,10 +47,10 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   selectedView: 'details' | 'graph',
   onViewSelected: (view: 'details' | 'graph') => void,
-|};
+|}>;
 
 const EntViewToggleButton = (props: Props) => {
   const {selectedView, onViewSelected} = props;

@@ -14,10 +14,10 @@ import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {|
+type Props = $ReadOnly<{|
   deviceID: string,
   onChange: string => void,
-|};
+|}>;
 
 const useStyles = makeStyles(theme => ({
   subheader: {

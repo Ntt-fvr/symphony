@@ -25,10 +25,10 @@ import {formatMultiSelectValue} from '@symphony/design-system/utils/displayUtils
 import {makeStyles} from '@material-ui/styles';
 import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 
-type Props = {|
+type Props = $ReadOnly<{|
   onNavigateToWorkOrder: (workOrderId: string) => void,
   workOrders: Array<WorkOrder>,
-|};
+|}>;
 
 const useStyles = makeStyles(theme => ({
   root: {

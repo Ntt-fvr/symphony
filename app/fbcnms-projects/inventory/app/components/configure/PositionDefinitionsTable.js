@@ -31,9 +31,9 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   positionDefinitions: PositionDefinitionsTable_positionDefinitions,
-|};
+|}>;
 
 const PositionDefinitionsTable = (props: Props) => {
   const {positionDefinitions} = props;

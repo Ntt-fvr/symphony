@@ -16,10 +16,10 @@ import FormElementContext from '@symphony/design-system/components/Form/FormElem
 import IconButton from '@material-ui/core/IconButton';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {|
+type Props = $ReadOnly<{|
   isOnEdit: boolean,
   onChange: (isOnEdit: boolean) => void,
-|};
+|}>;
 
 const useStyles = makeStyles(() => ({
   disabled: {

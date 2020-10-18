@@ -30,9 +30,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   field: ActivityField | 'COMMENT',
-|};
+|}>;
 
 const ActivityIcon = ({field}: Props) => {
   const classes = useStyles();

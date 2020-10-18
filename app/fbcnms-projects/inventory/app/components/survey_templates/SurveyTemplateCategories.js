@@ -47,10 +47,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   categories: SurveyTemplateCategory[],
   onCategoriesChanged: (SurveyTemplateCategory[]) => void,
-|};
+|}>;
 
 export default function SurveyTemplateCategories(props: Props) {
   const classes = useStyles();

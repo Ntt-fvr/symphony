@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   name: string,
   operator: Operator,
   onOperatorChange?: Operator => void,
@@ -60,7 +60,7 @@ type Props = {|
   editMode: boolean,
   input: React.Element<any>,
   onRemoveFilter: () => void,
-|};
+|}>;
 
 const PowerSearchFilter = (props: Props) => {
   const classes = useStyles();

@@ -35,10 +35,10 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   location: LocationDocumentsCard_location$key,
-|};
+|}>;
 
 const LocationDocumentsCard = (props: Props) => {
   const {className, location} = props;

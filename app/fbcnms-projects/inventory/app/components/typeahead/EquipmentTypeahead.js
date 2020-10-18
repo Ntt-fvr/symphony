@@ -36,13 +36,13 @@ const DEBOUNCE_CONFIG = {
   leading: true,
 };
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   selectedEquipment?: ?{id: string, name: string},
   margin?: ?string,
   onEquipmentSelection: (?{id: string, name: string}) => void,
   headline?: ?string,
-|};
+|}>;
 
 type State = {
   equipmentSuggestions: Array<Suggestion>,

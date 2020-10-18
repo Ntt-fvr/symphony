@@ -41,10 +41,10 @@ const boolValues = [
   },
 ];
 
-type Props = {|
+type Props = $ReadOnly<{|
   label: string,
   ...FilterProps,
-|};
+|}>;
 
 const PowerSearchBoolFilter = (props: Props) => {
   const {

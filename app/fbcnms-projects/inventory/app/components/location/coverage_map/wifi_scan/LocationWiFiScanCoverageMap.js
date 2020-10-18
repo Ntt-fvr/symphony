@@ -47,13 +47,13 @@ type AggregatedWiFiScan = {
 
 export type WiFiScanIndex = {[string]: AggregatedWiFiScan};
 
-type Props = {|
+type Props = $ReadOnly<{|
   location: Location,
   wifiData: LocationWiFiScanCoverageMap_wifiData,
   circleLayerStyles: MapLayerStyles,
   selector?: React.Node,
   legend?: React.Node,
-|};
+|}>;
 
 const LocationWiFiScanCoverageMap = (props: Props) => {
   const {location, circleLayerStyles, selector, legend} = props;

@@ -16,14 +16,14 @@ import Typeahead from '@fbcnms/ui/components/Typeahead';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import {fetchQuery, graphql} from 'relay-runtime';
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   required?: boolean,
   headline?: string,
   selectedCustomer?: ?string,
   margin?: ?string,
   onCustomerSelection: (?{id: string, name: string}) => void,
-|};
+|}>;
 
 type State = {
   customerSuggestions: Array<Suggestion>,

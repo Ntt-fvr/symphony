@@ -141,7 +141,7 @@ export type FocusEvent<T> = {
 
 type FocusEventFn<T: HTMLElement> = (FocusEvent<T>) => void;
 
-type Props = {|
+type Props = $ReadOnly<{|
   /** Input type. See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types */
   type?: string,
   name?: string,
@@ -164,7 +164,7 @@ type Props = {|
   onEscPressed?: (e: KeyboardEvent) => void,
   onBackspacePressed?: (e: KeyboardEvent) => void,
   ...ClickableEvents,
-|};
+|}>;
 
 function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
   const {

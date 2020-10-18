@@ -56,10 +56,10 @@ export type FileItem = {
   errorMessage?: React.Node,
 };
 
-type Props = {|
+type Props = $ReadOnly<{|
   files: Array<FileItem>,
   onClose: () => void,
-|};
+|}>;
 
 const FilesUploadSnackbar = ({files, onClose}: Props) => {
   const classes = useStyles();

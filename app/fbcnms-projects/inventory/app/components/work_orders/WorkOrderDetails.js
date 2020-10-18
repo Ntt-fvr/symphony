@@ -65,13 +65,13 @@ import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
 
-type Props = {|
+type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
   onCancelClicked: () => void,
   ...WithAlert,
   ...ContextRouter,
-|};
+|}>;
 
 const FileTypeEnum = {
   IMAGE: 'IMAGE',

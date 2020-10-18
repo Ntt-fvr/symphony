@@ -84,7 +84,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   filterValues?: FiltersQuery,
   placeholder?: string,
   filterConfigs: Array<FilterConfig>,
@@ -100,7 +100,7 @@ type Props = {|
   // used when a filter is selected from filter typeahead
   getSelectedFilter: (filterConfig: FilterConfig) => FilterValue,
   entity?: FilterEntity,
-|};
+|}>;
 
 const PowerSearchBar = (props: Props) => {
   const filtersTypeaheadRef = useRef();

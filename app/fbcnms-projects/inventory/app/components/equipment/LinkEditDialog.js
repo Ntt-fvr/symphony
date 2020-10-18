@@ -62,10 +62,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   link: Link,
   onClose: void => void,
-|};
+|}>;
 
 const getEditingLink = (link: Link): Link => {
   let initialLinkProps = link.properties ?? [];

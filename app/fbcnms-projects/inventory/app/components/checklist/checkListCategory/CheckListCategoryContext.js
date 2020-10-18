@@ -33,9 +33,9 @@ const CheckListCategoryContext = React.createContext<
   },
 });
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 export function CheckListCategoryContextProvider(props: Props) {
   const [addNewCategory, setAddNewCategory] = useState(() => emptyFunction);

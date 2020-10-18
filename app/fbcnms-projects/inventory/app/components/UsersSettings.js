@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {|...WithAlert|};
+type Props = $ReadOnly<{|...WithAlert|}>;
 
 function UsersSettings(props: Props) {
   const classes = useStyles();

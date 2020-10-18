@@ -57,12 +57,12 @@ graphql`
   }
 `;
 
-type Props = {|
+type Props = $ReadOnly<{|
   positionDefinitions: Array<PositionDefinitionsAddEditTable_positionDefinition>,
   onPositionDefinitionsChanged?: ?(
     newPositioDef: Array<PositionDefinitionsAddEditTable_positionDefinition>,
   ) => void,
-|};
+|}>;
 
 const PositionDefinitionsAddEditTable = (props: Props) => {
   const classes = useStyles();

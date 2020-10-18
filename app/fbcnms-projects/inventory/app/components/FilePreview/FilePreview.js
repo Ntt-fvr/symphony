@@ -77,12 +77,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   file: FileAttachmentType,
   onFileDeleted: (file: FileAttachmentType) => void,
   className?: string,
   ...WithAlert,
-|};
+|}>;
 
 const FilePreview = ({
   file,

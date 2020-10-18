@@ -19,11 +19,11 @@ import SurveyTemplateQuestionsTable from '../survey_templates/SurveyTemplateQues
 
 import {useState} from 'react';
 
-type Props = {|
+type Props = $ReadOnly<{|
   onClose: () => void,
   onSave: (SurveyTemplateQuestion[]) => void,
   questions: SurveyTemplateQuestion[],
-|};
+|}>;
 
 export default function QuestionsDialog(props: Props) {
   const [questions, setQuestions] = useState(props.questions);

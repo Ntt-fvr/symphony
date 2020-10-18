@@ -16,13 +16,13 @@ import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {DocumentAPIUrls} from '../common/DocumentAPI';
 
-type Props = {|
+type Props = $ReadOnly<{|
   document: FileAttachmentType,
   onDocumentDeleted: (document: FileAttachmentType) => void,
   onDialogOpen: () => void,
   onVisibilityChange?: (isVisible: boolean) => void,
   className?: string,
-|};
+|}>;
 
 class DocumentMenu extends React.Component<Props> {
   downloadFileRef: {

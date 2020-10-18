@@ -75,7 +75,7 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   workOrderName: string,
   workOrder: WorkOrderDetails_workOrder,
   properties: Array<Property>,
@@ -85,7 +85,7 @@ type Props = {|
   onCancelClicked: () => void,
   onPriorityChanged: (value: string) => void,
   onStatusChanged: (value: GraphQLWorkOrderStatus) => void,
-|};
+|}>;
 
 const WorkOrderHeader = (props: Props) => {
   const classes = useStyles();

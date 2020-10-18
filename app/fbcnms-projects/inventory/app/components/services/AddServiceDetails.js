@@ -118,11 +118,11 @@ const serviceTypeQuery = graphql`
   }
 `;
 
-type Props = {|
+type Props = $ReadOnly<{|
   serviceTypeId: string,
   onBackClicked: () => void,
   onServiceCreated: (id: string) => void,
-|};
+|}>;
 
 type ServiceDetails = {
   name: string,

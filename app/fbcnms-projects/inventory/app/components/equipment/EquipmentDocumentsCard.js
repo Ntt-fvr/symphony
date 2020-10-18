@@ -34,10 +34,10 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   equipment: EquipmentDocumentsCard_equipment$key,
-|};
+|}>;
 
 const EquipmentDocumentsCard = (props: Props) => {
   const {className, equipment} = props;

@@ -28,9 +28,9 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   propertyTypes: Array<PropertyType>,
-|};
+|}>;
 
 const DynamicPropertyTypesGrid = (props: Props) => {
   const propertyTypes = props.propertyTypes.slice().sort(sortByIndex);

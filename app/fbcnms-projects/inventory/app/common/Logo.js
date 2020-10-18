@@ -10,9 +10,9 @@
 
 import React from 'react';
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
-|};
+|}>;
 const Logo = (props: Props) => {
   const {className} = props;
 

@@ -16,7 +16,7 @@ import LocationAddEditCard from './location/LocationAddEditCard';
 import LocationPropertiesCard from './location/LocationPropertiesCard';
 import React from 'react';
 
-type Props = {|
+type Props = $ReadOnly<{|
   mode: 'show' | 'add' | 'edit',
   onEdit: () => void,
   onSave: (locationId: string) => void,
@@ -30,7 +30,7 @@ type Props = {|
   onAddEquipment: () => void,
   onLocationMoved: (movedLocation: LocationMenu_location) => void,
   onLocationRemoved: (removedLocation: LocationMenu_location) => void,
-|};
+|}>;
 
 class LocationCard extends React.Component<Props> {
   render() {

@@ -41,9 +41,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   question: SiteSurveyQuestionReply_question,
-|};
+|}>;
 
 function SiteSurveyQuestionReply(props: Props) {
   const {question} = props;

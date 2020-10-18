@@ -21,9 +21,9 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   locationId: string,
-|};
+|}>;
 
 const networkTopologyQuery = graphql`
   query LocationNetworkMapTabQuery($locationId: ID!) {

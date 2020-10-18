@@ -44,9 +44,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   fields: Array<Object>,
-|};
+|}>;
 
 const FanbtlNeame = (props: Props) => {
   const {fields} = props;

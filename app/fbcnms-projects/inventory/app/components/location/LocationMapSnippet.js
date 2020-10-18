@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import {locationToGeoJson} from '../map/MapUtil';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   location: {
     id: string,
@@ -24,7 +24,7 @@ type Props = {|
     longitude: number,
     locationType?: {mapType?: ?string, mapZoomLevel?: ?string},
   },
-|};
+|}>;
 
 const useStyles = makeStyles(_theme => ({
   container: {

@@ -34,13 +34,13 @@ export type MouseEventHandler = (
   SyntheticMouseEvent<HTMLElement>,
 ) => void | Promise<void>;
 
-type Props = {|
+type Props = $ReadOnly<{|
   children?: React.Node,
   disabled?: boolean,
   tooltip?: string,
   className?: string,
   ...ClickableEvents,
-|};
+|}>;
 
 const Clickable = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
   const {

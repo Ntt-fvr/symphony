@@ -67,7 +67,7 @@ export type RadioOption = {
   disabled?: ?boolean,
 };
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   optionClassName?: string,
   selectedOptionClassName?: string,
@@ -75,7 +75,7 @@ type Props = {|
   options: RadioOption[],
   disabled?: ?boolean,
   onChange?: (newValue: string) => void,
-|};
+|}>;
 
 const RadioGroup = (props: Props) => {
   const {

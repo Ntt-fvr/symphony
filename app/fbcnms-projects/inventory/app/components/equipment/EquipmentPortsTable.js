@@ -70,14 +70,14 @@ const styles = (_theme: Theme) => ({
   },
 });
 
-type Props = {|
+type Props = $ReadOnly<{|
   equipment: Equipment,
   workOrderId: ?string,
   onPortEquipmentClicked: (equipmentId: string) => void,
   onParentLocationClicked: (locationId: string) => void,
   onWorkOrderSelected: (workOrderId: string) => void,
   ...$Exact<WithStyles<typeof styles>>,
-|};
+|}>;
 
 const findNestedPorts = (
   equipment: ?Equipment,

@@ -57,11 +57,11 @@ export type MapLayer = {
   color: string,
 };
 
-type Props = {|
+type Props = $ReadOnly<{|
   layers: Array<MapLayer>,
   selection: Array<string>,
   onSelectionChanged: (selection: Array<string>) => void,
-|};
+|}>;
 
 const MapLayerLegend = (props: Props) => {
   const classes = useStyles();

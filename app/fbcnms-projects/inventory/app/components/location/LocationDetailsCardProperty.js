@@ -20,10 +20,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   title: React.Node,
   value: string,
-|};
+|}>;
 
 const LocationDetailsCardProperty = (props: Props) => {
   const {title, value} = props;

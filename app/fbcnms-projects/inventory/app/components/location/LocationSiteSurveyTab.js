@@ -29,9 +29,9 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 
-type Props = {|
+type Props = $ReadOnly<{|
   location: LocationSiteSurveyTab_location,
-|};
+|}>;
 
 const styles = {
   content: {

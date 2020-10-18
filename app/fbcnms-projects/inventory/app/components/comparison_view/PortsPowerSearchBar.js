@@ -23,11 +23,11 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {PortCriteriaConfig} from './PortSearchConfig';
 import {buildPropertyFilterConfigs, getSelectedFilter} from './FilterUtils';
 
-type Props = {|
+type Props = $ReadOnly<{|
   filters: FiltersQuery,
   onFiltersChanged: FiltersQuery => void,
   footer?: ?string,
-|};
+|}>;
 
 const PortsPowerSearchBar = (props: Props) => {
   const {onFiltersChanged, filters, footer} = props;

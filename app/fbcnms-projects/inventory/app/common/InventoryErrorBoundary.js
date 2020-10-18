@@ -12,9 +12,9 @@ import * as React from 'react';
 import ErrorBoundary from '@fbcnms/ui/components/ErrorBoundary/ErrorBoundary';
 import {LogEvents, ServerLogger} from './LoggingUtils';
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 export default function InventoryErrorBoundary(props: Props) {
   return (

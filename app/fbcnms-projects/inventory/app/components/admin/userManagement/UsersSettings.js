@@ -60,7 +60,7 @@ const userQuery = graphql`
   }
 `;
 
-type Props = {|...WithAlert|};
+type Props = $ReadOnly<{|...WithAlert|}>;
 
 function UsersSettings(props: Props) {
   const classes = useStyles();

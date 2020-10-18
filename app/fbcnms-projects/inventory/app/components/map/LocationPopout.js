@@ -27,9 +27,9 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   locationId: string,
-|};
+|}>;
 
 const locationPopoutQuery = graphql`
   query LocationPopoutQuery($locationId: ID!) {

@@ -23,7 +23,7 @@ type Range = {
   rangeTo: ?number,
 };
 
-type Props = {|
+type Props = $ReadOnly<{|
   label?: ?string,
   value: Range,
   className: string,
@@ -33,7 +33,7 @@ type Props = {|
   onRangeToChange: (event: SyntheticInputEvent<>) => void,
   onRangeFromChange: (event: SyntheticInputEvent<>) => void,
   autoFocus?: boolean,
-|};
+|}>;
 
 const useStyles = makeStyles(theme => ({
   container: {

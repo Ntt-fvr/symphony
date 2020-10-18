@@ -76,6 +76,7 @@ module.exports.overrides = [
     rules: {
       'lint/type-imports-block': 'error',
       'lint/flow-exact-props': 'error',
+      'lint/flow-readonly-props': 'error',
     },
   },
   {

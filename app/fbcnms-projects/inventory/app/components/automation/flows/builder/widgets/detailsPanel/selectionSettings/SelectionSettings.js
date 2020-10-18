@@ -15,9 +15,9 @@ import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {|
+type Props = $ReadOnly<{|
   selection: GraphSelectionContextType,
-|};
+|}>;
 const useStyles = makeStyles(() => ({
   root: {
     width: '100%',

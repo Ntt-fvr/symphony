@@ -20,10 +20,10 @@ export type CheckListItemDefinitionProps = {|
   onChange?: (updatedChecklistItemDefinition: CheckListItem) => void,
 |};
 
-type Props = {|
+type Props = $ReadOnly<{|
   ...CheckListItemDefinitionProps,
   editedDefinitionId: ?string,
-|};
+|}>;
 
 const CheckListItemDefinition = (props: Props) => {
   const {editedDefinitionId, ...rest} = props;

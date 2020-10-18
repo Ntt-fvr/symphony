@@ -24,11 +24,11 @@ import {LinkCriteriaConfig} from './LinkSearchConfig';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {buildPropertyFilterConfigs, getSelectedFilter} from './FilterUtils';
 
-type Props = {|
+type Props = $ReadOnly<{|
   filters: FiltersQuery,
   onFiltersChanged: FiltersQuery => void,
   footer?: ?string,
-|};
+|}>;
 
 const LinksPowerSearchBar = (props: Props) => {
   const {onFiltersChanged, filters, footer} = props;

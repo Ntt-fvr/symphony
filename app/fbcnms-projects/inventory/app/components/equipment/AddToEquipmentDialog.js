@@ -30,13 +30,13 @@ import nullthrows from '@fbcnms/util/nullthrows';
 import {useCallback} from 'react';
 import {useMemo, useState} from 'react';
 
-type Props = {|
+type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   onEquipmentTypeSelected: (equipmentType: EquipmentType) => void,
   parentEquipment: Equipment,
   position: EquipmentPosition,
-|};
+|}>;
 
 type ViewTab = {|
   id: string,

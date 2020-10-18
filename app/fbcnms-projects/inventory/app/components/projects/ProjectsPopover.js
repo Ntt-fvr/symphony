@@ -81,9 +81,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   projectId: ?string,
-|};
+|}>;
 
 const ProjectsPopoverQuery = graphql`
   query ProjectsPopoverQuery($projectId: ID!) {

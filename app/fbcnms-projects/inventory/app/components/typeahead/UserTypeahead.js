@@ -16,14 +16,14 @@ import Typeahead from '@fbcnms/ui/components/Typeahead';
 import UserViewer from '../admin/userManagement/users/UserViewer';
 import {useUserSearch} from '../admin/userManagement/utils/search/UserSearchContext';
 
-type Props = {|
+type Props = $ReadOnly<{|
   className?: string,
   required?: boolean,
   headline?: ?string,
   selectedUser?: ?ShortUser,
   margin?: ?string,
   onUserSelection: (?ShortUser) => void,
-|};
+|}>;
 
 const UserTypeahead = (props: Props) => {
   const {

@@ -18,7 +18,7 @@ import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../common/FormContext';
 
-type Props = {|
+type Props = $ReadOnly<{|
   value: any,
   className?: string,
   label?: ?string,
@@ -28,7 +28,7 @@ type Props = {|
   onLongitudeChange: (event: SyntheticInputEvent<any>) => void,
   fullWidth?: boolean,
   autoFocus?: boolean,
-|};
+|}>;
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {

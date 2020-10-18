@@ -34,7 +34,7 @@ const useStyles = makeStyles(_theme => ({
 
 const ENTER_KEY_CODE = 13;
 
-type Props = {||};
+type Props = $ReadOnly<{||}>;
 
 const EntSearchBar = (_props: Props) => {
   const history = useHistory();

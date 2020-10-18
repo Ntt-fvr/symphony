@@ -29,12 +29,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props<T: Property | PropertyType> = {|
+type Props<T: Property | PropertyType> = $ReadOnly<{|
   className: string,
   property: T,
   onChange: T => void,
   ...ButtonProps,
-|};
+|}>;
 
 const EnumPropertySelectValueInput = <T: Property | PropertyType>({
   onChange,

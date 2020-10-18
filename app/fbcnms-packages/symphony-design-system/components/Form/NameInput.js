@@ -14,7 +14,7 @@ import React, {useContext, useMemo} from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import shortid from 'shortid';
 
-type Props = {|
+type Props = $ReadOnly<{|
   value: ?string,
   onChange?: (e: SyntheticInputEvent<HTMLInputElement>) => void,
   inputClass?: string,
@@ -23,7 +23,7 @@ type Props = {|
   disabled?: boolean,
   onBlur?: () => void,
   hasSpacer?: boolean,
-|};
+|}>;
 
 const NameInput = (props: Props) => {
   const {

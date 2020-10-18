@@ -61,10 +61,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type Props = {|
+type Props = $ReadOnly<{|
   port: EquipmentPort,
   onClose: void => void,
-|};
+|}>;
 
 const getEditingPort = (port: EquipmentPort): EquipmentPort => {
   let initialProps = port.properties ?? [];

@@ -15,9 +15,9 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {projectToGeoJson} from './../map/ProjectsMapUtils';
 import {withRouter} from 'react-router-dom';
 
-type Props = {|
+type Props = $ReadOnly<{|
   projects: Array<ProjectMapMarkerData>,
-|};
+|}>;
 
 const ProjectsMap = (props: Props) => {
   const {projects} = props;

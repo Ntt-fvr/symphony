@@ -41,12 +41,12 @@ import {
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
-type Props = {|
+type Props = $ReadOnly<{|
   shown: boolean,
   service: Service,
   panelWidth?: number,
   onClose: () => void,
-|};
+|}>;
 
 const useStyles = makeStyles(() => ({
   root: {

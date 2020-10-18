@@ -19,13 +19,13 @@ import LocationEquipmentCard from './LocationEquipmentCard';
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {|
+type Props = $ReadOnly<{|
   location: Location,
   selectedWorkOrderId: ?string,
   onEquipmentSelected: Equipment => void,
   onWorkOrderSelected: (workOrderId: string) => void,
   onAddEquipment: () => void,
-|};
+|}>;
 
 const useStyles = makeStyles(_theme => ({
   card: {

@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {||};
+type Props = $ReadOnly<{||}>;
 
 const idQuery = graphql`
   query EntDetailsQuery($id: ID!) {

@@ -56,10 +56,10 @@ export type SvgIconStyleProps = {|
   variant?: 'normal' | 'large',
 |};
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
   ...SvgIconStyleProps,
-|};
+|}>;
 
 const SvgIcon = (props: Props) => {
   const classes = useStyles();

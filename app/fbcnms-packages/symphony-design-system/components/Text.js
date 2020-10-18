@@ -69,7 +69,7 @@ const styles = {
 };
 export const typographyStyles = makeStyles<Props, typeof styles>(() => styles);
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: ?React.Node,
   variant?:
     | 'h1'
@@ -97,7 +97,7 @@ type Props = {|
     | 'warning'
     | 'inherit',
   style?: {...},
-|};
+|}>;
 
 const Text = (props: Props) => {
   const {
