@@ -139,6 +139,11 @@ func TestAddBlockEntryExitPoints(t *testing.T) {
 		SetParentBlock(blk).
 		Save(ctx)
 	require.Error(t, err)
+	_, err = client.ExitPoint.Create().
+		SetRole(flowschema.ExitPointRoleDefault).
+		SetParentBlock(blk).
+		Save(ctx)
+	require.NoError(t, err)
 
 	blk, err = client.Block.Create().
 		SetCid("decision").
@@ -147,9 +152,17 @@ func TestAddBlockEntryExitPoints(t *testing.T) {
 	require.NoError(t, err)
 	exitPoint, err := client.ExitPoint.Create().
 		SetRole(flowschema.ExitPointRoleDecision).
+		SetCid("route1").
 		SetParentBlock(blk).
 		Save(ctx)
 	require.NoError(t, err)
+	_, err = client.ExitPoint.Create().
+		SetRole(flowschema.ExitPointRoleDecision).
+		SetCid("route1").
+		SetParentBlock(blk).
+		Save(ctx)
+	require.Error(t, err)
+
 	err = client.Block.DeleteOne(blk).Exec(ctx)
 	require.NoError(t, err)
 	exists, err := client.ExitPoint.Query().
