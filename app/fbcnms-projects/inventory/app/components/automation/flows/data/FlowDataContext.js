@@ -302,7 +302,7 @@ function FlowDataContextProviderComponent(props: Props) {
       return Promise.reject('There was not flowDraft to publish.');
     }
     const flowData: PublishFlowInput = {
-      flowDraftID: flowDraft.id,
+      flowDraftID: flowDraft.id ?? '',
       flowInstancesPolicy: 'ENABLED',
     };
     return publishFlow(flowData);
