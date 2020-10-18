@@ -316,7 +316,7 @@ type DecisionRoute struct {
 }
 
 type DecisionRouteInput struct {
-	Pid *string `json:"pid"`
+	Cid *string `json:"cid"`
 }
 
 type EditBlockInput struct {
@@ -470,7 +470,7 @@ type EndBlockInput struct {
 
 type EntryPointID struct {
 	Role *flowschema.EntryPointRole `json:"role"`
-	Pid  *string                    `json:"pid"`
+	Cid  *string                    `json:"cid"`
 }
 
 type EquipmentPortConnectionInput struct {
@@ -497,7 +497,7 @@ type EquipmentPositionInput struct {
 
 type ExitPointID struct {
 	Role *flowschema.ExitPointRole `json:"role"`
-	Pid  *string                   `json:"pid"`
+	Cid  *string                   `json:"cid"`
 }
 
 type FileInput struct {

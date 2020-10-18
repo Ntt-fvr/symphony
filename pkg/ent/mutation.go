@@ -8129,7 +8129,7 @@ type EntryPointMutation struct {
 	create_time             *time.Time
 	update_time             *time.Time
 	role                    *flowschema.EntryPointRole
-	pid                     *string
+	cid                     *string
 	clearedFields           map[string]struct{}
 	prev_exit_points        map[int]struct{}
 	removedprev_exit_points map[int]struct{}
@@ -8331,54 +8331,54 @@ func (m *EntryPointMutation) ResetRole() {
 	m.role = nil
 }
 
-// SetPid sets the pid field.
-func (m *EntryPointMutation) SetPid(s string) {
-	m.pid = &s
+// SetCid sets the cid field.
+func (m *EntryPointMutation) SetCid(s string) {
+	m.cid = &s
 }
 
-// Pid returns the pid value in the mutation.
-func (m *EntryPointMutation) Pid() (r string, exists bool) {
-	v := m.pid
+// Cid returns the cid value in the mutation.
+func (m *EntryPointMutation) Cid() (r string, exists bool) {
+	v := m.cid
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPid returns the old pid value of the EntryPoint.
+// OldCid returns the old cid value of the EntryPoint.
 // If the EntryPoint object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *EntryPointMutation) OldPid(ctx context.Context) (v *string, err error) {
+func (m *EntryPointMutation) OldCid(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPid is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldCid is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPid requires an ID field in the mutation")
+		return v, fmt.Errorf("OldCid requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPid: %w", err)
+		return v, fmt.Errorf("querying old value for OldCid: %w", err)
 	}
-	return oldValue.Pid, nil
+	return oldValue.Cid, nil
 }
 
-// ClearPid clears the value of pid.
-func (m *EntryPointMutation) ClearPid() {
-	m.pid = nil
-	m.clearedFields[entrypoint.FieldPid] = struct{}{}
+// ClearCid clears the value of cid.
+func (m *EntryPointMutation) ClearCid() {
+	m.cid = nil
+	m.clearedFields[entrypoint.FieldCid] = struct{}{}
 }
 
-// PidCleared returns if the field pid was cleared in this mutation.
-func (m *EntryPointMutation) PidCleared() bool {
-	_, ok := m.clearedFields[entrypoint.FieldPid]
+// CidCleared returns if the field cid was cleared in this mutation.
+func (m *EntryPointMutation) CidCleared() bool {
+	_, ok := m.clearedFields[entrypoint.FieldCid]
 	return ok
 }
 
-// ResetPid reset all changes of the "pid" field.
-func (m *EntryPointMutation) ResetPid() {
-	m.pid = nil
-	delete(m.clearedFields, entrypoint.FieldPid)
+// ResetCid reset all changes of the "cid" field.
+func (m *EntryPointMutation) ResetCid() {
+	m.cid = nil
+	delete(m.clearedFields, entrypoint.FieldCid)
 }
 
 // AddPrevExitPointIDs adds the prev_exit_points edge to ExitPoint by ids.
@@ -8497,8 +8497,8 @@ func (m *EntryPointMutation) Fields() []string {
 	if m.role != nil {
 		fields = append(fields, entrypoint.FieldRole)
 	}
-	if m.pid != nil {
-		fields = append(fields, entrypoint.FieldPid)
+	if m.cid != nil {
+		fields = append(fields, entrypoint.FieldCid)
 	}
 	return fields
 }
@@ -8514,8 +8514,8 @@ func (m *EntryPointMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case entrypoint.FieldRole:
 		return m.Role()
-	case entrypoint.FieldPid:
-		return m.Pid()
+	case entrypoint.FieldCid:
+		return m.Cid()
 	}
 	return nil, false
 }
@@ -8531,8 +8531,8 @@ func (m *EntryPointMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUpdateTime(ctx)
 	case entrypoint.FieldRole:
 		return m.OldRole(ctx)
-	case entrypoint.FieldPid:
-		return m.OldPid(ctx)
+	case entrypoint.FieldCid:
+		return m.OldCid(ctx)
 	}
 	return nil, fmt.Errorf("unknown EntryPoint field %s", name)
 }
@@ -8563,12 +8563,12 @@ func (m *EntryPointMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRole(v)
 		return nil
-	case entrypoint.FieldPid:
+	case entrypoint.FieldCid:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPid(v)
+		m.SetCid(v)
 		return nil
 	}
 	return fmt.Errorf("unknown EntryPoint field %s", name)
@@ -8600,8 +8600,8 @@ func (m *EntryPointMutation) AddField(name string, value ent.Value) error {
 // during this mutation.
 func (m *EntryPointMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(entrypoint.FieldPid) {
-		fields = append(fields, entrypoint.FieldPid)
+	if m.FieldCleared(entrypoint.FieldCid) {
+		fields = append(fields, entrypoint.FieldCid)
 	}
 	return fields
 }
@@ -8617,8 +8617,8 @@ func (m *EntryPointMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *EntryPointMutation) ClearField(name string) error {
 	switch name {
-	case entrypoint.FieldPid:
-		m.ClearPid()
+	case entrypoint.FieldCid:
+		m.ClearCid()
 		return nil
 	}
 	return fmt.Errorf("unknown EntryPoint nullable field %s", name)
@@ -8638,8 +8638,8 @@ func (m *EntryPointMutation) ResetField(name string) error {
 	case entrypoint.FieldRole:
 		m.ResetRole()
 		return nil
-	case entrypoint.FieldPid:
-		m.ResetPid()
+	case entrypoint.FieldCid:
+		m.ResetCid()
 		return nil
 	}
 	return fmt.Errorf("unknown EntryPoint field %s", name)
@@ -15186,7 +15186,7 @@ type ExitPointMutation struct {
 	create_time              *time.Time
 	update_time              *time.Time
 	role                     *flowschema.ExitPointRole
-	pid                      *string
+	cid                      *string
 	clearedFields            map[string]struct{}
 	next_entry_points        map[int]struct{}
 	removednext_entry_points map[int]struct{}
@@ -15388,54 +15388,54 @@ func (m *ExitPointMutation) ResetRole() {
 	m.role = nil
 }
 
-// SetPid sets the pid field.
-func (m *ExitPointMutation) SetPid(s string) {
-	m.pid = &s
+// SetCid sets the cid field.
+func (m *ExitPointMutation) SetCid(s string) {
+	m.cid = &s
 }
 
-// Pid returns the pid value in the mutation.
-func (m *ExitPointMutation) Pid() (r string, exists bool) {
-	v := m.pid
+// Cid returns the cid value in the mutation.
+func (m *ExitPointMutation) Cid() (r string, exists bool) {
+	v := m.cid
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPid returns the old pid value of the ExitPoint.
+// OldCid returns the old cid value of the ExitPoint.
 // If the ExitPoint object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ExitPointMutation) OldPid(ctx context.Context) (v *string, err error) {
+func (m *ExitPointMutation) OldCid(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPid is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldCid is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPid requires an ID field in the mutation")
+		return v, fmt.Errorf("OldCid requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPid: %w", err)
+		return v, fmt.Errorf("querying old value for OldCid: %w", err)
 	}
-	return oldValue.Pid, nil
+	return oldValue.Cid, nil
 }
 
-// ClearPid clears the value of pid.
-func (m *ExitPointMutation) ClearPid() {
-	m.pid = nil
-	m.clearedFields[exitpoint.FieldPid] = struct{}{}
+// ClearCid clears the value of cid.
+func (m *ExitPointMutation) ClearCid() {
+	m.cid = nil
+	m.clearedFields[exitpoint.FieldCid] = struct{}{}
 }
 
-// PidCleared returns if the field pid was cleared in this mutation.
-func (m *ExitPointMutation) PidCleared() bool {
-	_, ok := m.clearedFields[exitpoint.FieldPid]
+// CidCleared returns if the field cid was cleared in this mutation.
+func (m *ExitPointMutation) CidCleared() bool {
+	_, ok := m.clearedFields[exitpoint.FieldCid]
 	return ok
 }
 
-// ResetPid reset all changes of the "pid" field.
-func (m *ExitPointMutation) ResetPid() {
-	m.pid = nil
-	delete(m.clearedFields, exitpoint.FieldPid)
+// ResetCid reset all changes of the "cid" field.
+func (m *ExitPointMutation) ResetCid() {
+	m.cid = nil
+	delete(m.clearedFields, exitpoint.FieldCid)
 }
 
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
@@ -15554,8 +15554,8 @@ func (m *ExitPointMutation) Fields() []string {
 	if m.role != nil {
 		fields = append(fields, exitpoint.FieldRole)
 	}
-	if m.pid != nil {
-		fields = append(fields, exitpoint.FieldPid)
+	if m.cid != nil {
+		fields = append(fields, exitpoint.FieldCid)
 	}
 	return fields
 }
@@ -15571,8 +15571,8 @@ func (m *ExitPointMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case exitpoint.FieldRole:
 		return m.Role()
-	case exitpoint.FieldPid:
-		return m.Pid()
+	case exitpoint.FieldCid:
+		return m.Cid()
 	}
 	return nil, false
 }
@@ -15588,8 +15588,8 @@ func (m *ExitPointMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldUpdateTime(ctx)
 	case exitpoint.FieldRole:
 		return m.OldRole(ctx)
-	case exitpoint.FieldPid:
-		return m.OldPid(ctx)
+	case exitpoint.FieldCid:
+		return m.OldCid(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -15620,12 +15620,12 @@ func (m *ExitPointMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRole(v)
 		return nil
-	case exitpoint.FieldPid:
+	case exitpoint.FieldCid:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPid(v)
+		m.SetCid(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)
@@ -15657,8 +15657,8 @@ func (m *ExitPointMutation) AddField(name string, value ent.Value) error {
 // during this mutation.
 func (m *ExitPointMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(exitpoint.FieldPid) {
-		fields = append(fields, exitpoint.FieldPid)
+	if m.FieldCleared(exitpoint.FieldCid) {
+		fields = append(fields, exitpoint.FieldCid)
 	}
 	return fields
 }
@@ -15674,8 +15674,8 @@ func (m *ExitPointMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ExitPointMutation) ClearField(name string) error {
 	switch name {
-	case exitpoint.FieldPid:
-		m.ClearPid()
+	case exitpoint.FieldCid:
+		m.ClearCid()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint nullable field %s", name)
@@ -15695,8 +15695,8 @@ func (m *ExitPointMutation) ResetField(name string) error {
 	case exitpoint.FieldRole:
 		m.ResetRole()
 		return nil
-	case exitpoint.FieldPid:
-		m.ResetPid()
+	case exitpoint.FieldCid:
+		m.ResetCid()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)

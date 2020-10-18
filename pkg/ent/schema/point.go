@@ -26,7 +26,7 @@ func (EntryPoint) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("role").
 			GoType(flowschema.EntryPointRole("")),
-		field.String("pid").
+		field.String("cid").
 			Optional().
 			Nillable(),
 	}
@@ -43,6 +43,15 @@ func (EntryPoint) Edges() []ent.Edge {
 			Ref("entry_point").
 			Unique().
 			Required(),
+	}
+}
+
+// Indexes returns entry point indexes.
+func (EntryPoint) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("cid").
+			Edges("parent_block").
+			Unique(),
 	}
 }
 
@@ -72,7 +81,7 @@ func (ExitPoint) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("role").
 			GoType(flowschema.ExitPointRole("")),
-		field.String("pid").
+		field.String("cid").
 			Optional().
 			Nillable(),
 	}
@@ -94,7 +103,7 @@ func (ExitPoint) Edges() []ent.Edge {
 // Indexes returns exit point indexes.
 func (ExitPoint) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("pid").
+		index.Fields("cid").
 			Edges("parent_block").
 			Unique(),
 	}

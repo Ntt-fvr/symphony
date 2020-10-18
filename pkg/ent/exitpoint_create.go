@@ -61,16 +61,16 @@ func (epc *ExitPointCreate) SetRole(fpr flowschema.ExitPointRole) *ExitPointCrea
 	return epc
 }
 
-// SetPid sets the pid field.
-func (epc *ExitPointCreate) SetPid(s string) *ExitPointCreate {
-	epc.mutation.SetPid(s)
+// SetCid sets the cid field.
+func (epc *ExitPointCreate) SetCid(s string) *ExitPointCreate {
+	epc.mutation.SetCid(s)
 	return epc
 }
 
-// SetNillablePid sets the pid field if the given value is not nil.
-func (epc *ExitPointCreate) SetNillablePid(s *string) *ExitPointCreate {
+// SetNillableCid sets the cid field if the given value is not nil.
+func (epc *ExitPointCreate) SetNillableCid(s *string) *ExitPointCreate {
 	if s != nil {
-		epc.SetPid(*s)
+		epc.SetCid(*s)
 	}
 	return epc
 }
@@ -233,13 +233,13 @@ func (epc *ExitPointCreate) createSpec() (*ExitPoint, *sqlgraph.CreateSpec) {
 		})
 		_node.Role = value
 	}
-	if value, ok := epc.mutation.Pid(); ok {
+	if value, ok := epc.mutation.Cid(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: exitpoint.FieldPid,
+			Column: exitpoint.FieldCid,
 		})
-		_node.Pid = &value
+		_node.Cid = &value
 	}
 	if nodes := epc.mutation.NextEntryPointsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

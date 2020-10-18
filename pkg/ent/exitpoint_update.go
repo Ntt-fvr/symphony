@@ -40,23 +40,23 @@ func (epu *ExitPointUpdate) SetRole(fpr flowschema.ExitPointRole) *ExitPointUpda
 	return epu
 }
 
-// SetPid sets the pid field.
-func (epu *ExitPointUpdate) SetPid(s string) *ExitPointUpdate {
-	epu.mutation.SetPid(s)
+// SetCid sets the cid field.
+func (epu *ExitPointUpdate) SetCid(s string) *ExitPointUpdate {
+	epu.mutation.SetCid(s)
 	return epu
 }
 
-// SetNillablePid sets the pid field if the given value is not nil.
-func (epu *ExitPointUpdate) SetNillablePid(s *string) *ExitPointUpdate {
+// SetNillableCid sets the cid field if the given value is not nil.
+func (epu *ExitPointUpdate) SetNillableCid(s *string) *ExitPointUpdate {
 	if s != nil {
-		epu.SetPid(*s)
+		epu.SetCid(*s)
 	}
 	return epu
 }
 
-// ClearPid clears the value of pid.
-func (epu *ExitPointUpdate) ClearPid() *ExitPointUpdate {
-	epu.mutation.ClearPid()
+// ClearCid clears the value of cid.
+func (epu *ExitPointUpdate) ClearCid() *ExitPointUpdate {
+	epu.mutation.ClearCid()
 	return epu
 }
 
@@ -229,17 +229,17 @@ func (epu *ExitPointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exitpoint.FieldRole,
 		})
 	}
-	if value, ok := epu.mutation.Pid(); ok {
+	if value, ok := epu.mutation.Cid(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: exitpoint.FieldPid,
+			Column: exitpoint.FieldCid,
 		})
 	}
-	if epu.mutation.PidCleared() {
+	if epu.mutation.CidCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: exitpoint.FieldPid,
+			Column: exitpoint.FieldCid,
 		})
 	}
 	if epu.mutation.NextEntryPointsCleared() {
@@ -355,23 +355,23 @@ func (epuo *ExitPointUpdateOne) SetRole(fpr flowschema.ExitPointRole) *ExitPoint
 	return epuo
 }
 
-// SetPid sets the pid field.
-func (epuo *ExitPointUpdateOne) SetPid(s string) *ExitPointUpdateOne {
-	epuo.mutation.SetPid(s)
+// SetCid sets the cid field.
+func (epuo *ExitPointUpdateOne) SetCid(s string) *ExitPointUpdateOne {
+	epuo.mutation.SetCid(s)
 	return epuo
 }
 
-// SetNillablePid sets the pid field if the given value is not nil.
-func (epuo *ExitPointUpdateOne) SetNillablePid(s *string) *ExitPointUpdateOne {
+// SetNillableCid sets the cid field if the given value is not nil.
+func (epuo *ExitPointUpdateOne) SetNillableCid(s *string) *ExitPointUpdateOne {
 	if s != nil {
-		epuo.SetPid(*s)
+		epuo.SetCid(*s)
 	}
 	return epuo
 }
 
-// ClearPid clears the value of pid.
-func (epuo *ExitPointUpdateOne) ClearPid() *ExitPointUpdateOne {
-	epuo.mutation.ClearPid()
+// ClearCid clears the value of cid.
+func (epuo *ExitPointUpdateOne) ClearCid() *ExitPointUpdateOne {
+	epuo.mutation.ClearCid()
 	return epuo
 }
 
@@ -542,17 +542,17 @@ func (epuo *ExitPointUpdateOne) sqlSave(ctx context.Context) (_node *ExitPoint, 
 			Column: exitpoint.FieldRole,
 		})
 	}
-	if value, ok := epuo.mutation.Pid(); ok {
+	if value, ok := epuo.mutation.Cid(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: exitpoint.FieldPid,
+			Column: exitpoint.FieldCid,
 		})
 	}
-	if epuo.mutation.PidCleared() {
+	if epuo.mutation.CidCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: exitpoint.FieldPid,
+			Column: exitpoint.FieldCid,
 		})
 	}
 	if epuo.mutation.NextEntryPointsCleared() {

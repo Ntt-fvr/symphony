@@ -296,9 +296,9 @@ type ComplexityRoot struct {
 	}
 
 	EntryPoint struct {
+		Cid            func(childComplexity int) int
 		ID             func(childComplexity int) int
 		ParentBlock    func(childComplexity int) int
-		Pid            func(childComplexity int) int
 		PrevExitPoints func(childComplexity int) int
 	}
 
@@ -438,10 +438,10 @@ type ComplexityRoot struct {
 	}
 
 	ExitPoint struct {
+		Cid             func(childComplexity int) int
 		ID              func(childComplexity int) int
 		NextEntryPoints func(childComplexity int) int
 		ParentBlock     func(childComplexity int) int
-		Pid             func(childComplexity int) int
 	}
 
 	ExportTask struct {
@@ -2545,6 +2545,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EndBlock.Params(childComplexity), true
 
+	case "EntryPoint.cid":
+		if e.complexity.EntryPoint.Cid == nil {
+			break
+		}
+
+		return e.complexity.EntryPoint.Cid(childComplexity), true
+
 	case "EntryPoint.id":
 		if e.complexity.EntryPoint.ID == nil {
 			break
@@ -2558,13 +2565,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EntryPoint.ParentBlock(childComplexity), true
-
-	case "EntryPoint.pid":
-		if e.complexity.EntryPoint.Pid == nil {
-			break
-		}
-
-		return e.complexity.EntryPoint.Pid(childComplexity), true
 
 	case "EntryPoint.prevExitPoints":
 		if e.complexity.EntryPoint.PrevExitPoints == nil {
@@ -3145,6 +3145,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EquipmentTypeEdge.Node(childComplexity), true
 
+	case "ExitPoint.cid":
+		if e.complexity.ExitPoint.Cid == nil {
+			break
+		}
+
+		return e.complexity.ExitPoint.Cid(childComplexity), true
+
 	case "ExitPoint.id":
 		if e.complexity.ExitPoint.ID == nil {
 			break
@@ -3165,13 +3172,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExitPoint.ParentBlock(childComplexity), true
-
-	case "ExitPoint.pid":
-		if e.complexity.ExitPoint.Pid == nil {
-			break
-		}
-
-		return e.complexity.ExitPoint.Pid(childComplexity), true
 
 	case "ExportTask.filters":
 		if e.complexity.ExportTask.Filters == nil {
@@ -11782,14 +11782,14 @@ enum ExitPointRole @goModel(
 type ExitPoint implements Node {
   id: ID!
   parentBlock: Block!
-  pid: String
+  cid: String
   nextEntryPoints: [EntryPoint!]!
 }
 
 type EntryPoint implements Node {
   id: ID!
   parentBlock: Block!
-  pid: String
+  cid: String
   prevExitPoints: [ExitPoint!]!
 }
 
@@ -11853,7 +11853,7 @@ input EndBlockInput {
 }
 
 input DecisionRouteInput {
-  pid: String
+  cid: String
 }
 
 input DecisionBlockInput {
@@ -11891,12 +11891,12 @@ input ActionBlockInput {
 
 input ExitPointId {
   role: ExitPointRole
-  pid: String
+  cid: String
 }
 
 input EntryPointId {
   role: EntryPointRole
-  pid: String
+  cid: String
 }
 
 input ConnectorInput {
@@ -20582,7 +20582,7 @@ func (ec *executionContext) _EntryPoint_parentBlock(ctx context.Context, field g
 	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _EntryPoint_pid(ctx context.Context, field graphql.CollectedField, obj *ent.EntryPoint) (ret graphql.Marshaler) {
+func (ec *executionContext) _EntryPoint_cid(ctx context.Context, field graphql.CollectedField, obj *ent.EntryPoint) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -20600,7 +20600,7 @@ func (ec *executionContext) _EntryPoint_pid(ctx context.Context, field graphql.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Pid, nil
+		return obj.Cid, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23501,7 +23501,7 @@ func (ec *executionContext) _ExitPoint_parentBlock(ctx context.Context, field gr
 	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExitPoint_pid(ctx context.Context, field graphql.CollectedField, obj *ent.ExitPoint) (ret graphql.Marshaler) {
+func (ec *executionContext) _ExitPoint_cid(ctx context.Context, field graphql.CollectedField, obj *ent.ExitPoint) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -23519,7 +23519,7 @@ func (ec *executionContext) _ExitPoint_pid(ctx context.Context, field graphql.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Pid, nil
+		return obj.Cid, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -50121,11 +50121,11 @@ func (ec *executionContext) unmarshalInputDecisionRouteInput(ctx context.Context
 
 	for k, v := range asMap {
 		switch k {
-		case "pid":
+		case "cid":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pid"))
-			it.Pid, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51273,11 +51273,11 @@ func (ec *executionContext) unmarshalInputEntryPointId(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
-		case "pid":
+		case "cid":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pid"))
-			it.Pid, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51541,11 +51541,11 @@ func (ec *executionContext) unmarshalInputExitPointId(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "pid":
+		case "cid":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pid"))
-			it.Pid, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -56302,8 +56302,8 @@ func (ec *executionContext) _EntryPoint(ctx context.Context, sel ast.SelectionSe
 				}
 				return res
 			})
-		case "pid":
-			out.Values[i] = ec._EntryPoint_pid(ctx, field, obj)
+		case "cid":
+			out.Values[i] = ec._EntryPoint_cid(ctx, field, obj)
 		case "prevExitPoints":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -57415,8 +57415,8 @@ func (ec *executionContext) _ExitPoint(ctx context.Context, sel ast.SelectionSet
 				}
 				return res
 			})
-		case "pid":
-			out.Values[i] = ec._ExitPoint_pid(ctx, field, obj)
+		case "cid":
+			out.Values[i] = ec._ExitPoint_cid(ctx, field, obj)
 		case "nextEntryPoints":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

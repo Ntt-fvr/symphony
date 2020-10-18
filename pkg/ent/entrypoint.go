@@ -28,8 +28,8 @@ type EntryPoint struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Role holds the value of the "role" field.
 	Role flowschema.EntryPointRole `json:"role,omitempty"`
-	// Pid holds the value of the "pid" field.
-	Pid *string `json:"pid,omitempty"`
+	// Cid holds the value of the "cid" field.
+	Cid *string `json:"cid,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntryPointQuery when eager-loading is set.
 	Edges             EntryPointEdges `json:"edges"`
@@ -77,7 +77,7 @@ func (*EntryPoint) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // role
-		&sql.NullString{}, // pid
+		&sql.NullString{}, // cid
 	}
 }
 
@@ -116,10 +116,10 @@ func (ep *EntryPoint) assignValues(values ...interface{}) error {
 		ep.Role = flowschema.EntryPointRole(value.String)
 	}
 	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field pid", values[3])
+		return fmt.Errorf("unexpected type %T for field cid", values[3])
 	} else if value.Valid {
-		ep.Pid = new(string)
-		*ep.Pid = value.String
+		ep.Cid = new(string)
+		*ep.Cid = value.String
 	}
 	values = values[4:]
 	if len(values) == len(entrypoint.ForeignKeys) {
@@ -172,8 +172,8 @@ func (ep *EntryPoint) String() string {
 	builder.WriteString(ep.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", role=")
 	builder.WriteString(fmt.Sprintf("%v", ep.Role))
-	if v := ep.Pid; v != nil {
-		builder.WriteString(", pid=")
+	if v := ep.Cid; v != nil {
+		builder.WriteString(", cid=")
 		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')

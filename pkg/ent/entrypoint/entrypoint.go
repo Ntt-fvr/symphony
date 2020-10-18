@@ -26,8 +26,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
-	// FieldPid holds the string denoting the pid field in the database.
-	FieldPid = "pid"
+	// FieldCid holds the string denoting the cid field in the database.
+	FieldCid = "cid"
 
 	// EdgePrevExitPoints holds the string denoting the prev_exit_points edge name in mutations.
 	EdgePrevExitPoints = "prev_exit_points"
@@ -56,7 +56,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldRole,
-	FieldPid,
+	FieldCid,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the EntryPoint type.

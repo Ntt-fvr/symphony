@@ -528,10 +528,10 @@ func TestNestedMandatoryPropertiesEnforced(t *testing.T) {
 	}
 }
 
-func connectBlocks(ctx context.Context, t *testing.T, source *ent.Block, target *ent.Block, sourcePid *string) {
+func connectBlocks(ctx context.Context, t *testing.T, source *ent.Block, target *ent.Block, sourceCid *string) {
 	pred := exitpoint.RoleEQ(flowschema.ExitPointRoleDefault)
-	if sourcePid != nil {
-		pred = exitpoint.Pid(*sourcePid)
+	if sourceCid != nil {
+		pred = exitpoint.Cid(*sourceCid)
 	}
 	exitPoint, err := source.QueryExitPoints().
 		Where(pred).
@@ -638,7 +638,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 	_, err = client.ExitPoint.Create().
 		SetParentBlock(decisionBlock).
 		SetRole(flowschema.ExitPointRoleDecision).
-		SetPid("true").
+		SetCid("true").
 		Save(ctx)
 	require.NoError(t, err)
 	endBlock, err := client.Block.Create().
@@ -653,7 +653,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 	_, err = client.ExitPoint.Create().
 		SetParentBlock(decisionBlock).
 		SetRole(flowschema.ExitPointRoleDecision).
-		SetPid("false").
+		SetCid("false").
 		Save(ctx)
 	require.NoError(t, err)
 	gotoBlock, err := client.Block.Create().
@@ -711,9 +711,9 @@ func TestFlowInstanceCreation(t *testing.T) {
 				switch {
 				case exitPoint.Role == flowschema.ExitPointRoleDefault:
 					require.Empty(t, exitPoint.Edges.NextEntryPoints)
-				case exitPoint.Role == flowschema.ExitPointRoleDecision && exitPoint.Pid != nil && *exitPoint.Pid == "true":
+				case exitPoint.Role == flowschema.ExitPointRoleDecision && exitPoint.Cid != nil && *exitPoint.Cid == "true":
 					require.Len(t, exitPoint.Edges.NextEntryPoints, 1)
-				case exitPoint.Role == flowschema.ExitPointRoleDecision && exitPoint.Pid != nil && *exitPoint.Pid == "false":
+				case exitPoint.Role == flowschema.ExitPointRoleDecision && exitPoint.Cid != nil && *exitPoint.Cid == "false":
 					require.Len(t, exitPoint.Edges.NextEntryPoints, 1)
 				default:
 					t.Fail()

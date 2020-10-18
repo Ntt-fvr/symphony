@@ -63,7 +63,7 @@ func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBloc
 		newExitPoint, err = client.ExitPoint.Create().
 			SetParentBlock(newBlock).
 			SetRole(exitPoint.Role).
-			SetNillablePid(exitPoint.Pid).
+			SetNillableCid(exitPoint.Cid).
 			Save(ctx)
 	} else {
 		newExitPoint, err = client.ExitPoint.Query().

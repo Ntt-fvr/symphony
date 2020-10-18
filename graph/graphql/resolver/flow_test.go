@@ -394,14 +394,14 @@ func TestImportEmptyFlow(t *testing.T) {
 		{
 			SourceBlockCid: "decision1",
 			SourcePid: &models.ExitPointID{
-				Pid: pointer.ToString("false"),
+				Cid: pointer.ToString("false"),
 			},
 			TargetBlockCid: "end",
 		},
 		{
 			SourceBlockCid: "decision1",
 			SourcePid: &models.ExitPointID{
-				Pid: pointer.ToString("true"),
+				Cid: pointer.ToString("true"),
 			},
 			TargetBlockCid: "shortcut",
 		},
@@ -441,10 +441,10 @@ func TestImportEmptyFlow(t *testing.T) {
 				Cid: "decision1",
 				Routes: []*models.DecisionRouteInput{
 					{
-						Pid: pointer.ToString("true"),
+						Cid: pointer.ToString("true"),
 					},
 					{
-						Pid: pointer.ToString("false"),
+						Cid: pointer.ToString("false"),
 					},
 				},
 			},

@@ -112,10 +112,10 @@ func UpdateTime(v time.Time) predicate.EntryPoint {
 	})
 }
 
-// Pid applies equality check predicate on the "pid" field. It's identical to PidEQ.
-func Pid(v string) predicate.EntryPoint {
+// Cid applies equality check predicate on the "cid" field. It's identical to CidEQ.
+func Cid(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPid), v))
+		s.Where(sql.EQ(s.C(FieldCid), v))
 	})
 }
 
@@ -321,22 +321,22 @@ func RoleNotIn(vs ...flowschema.EntryPointRole) predicate.EntryPoint {
 	})
 }
 
-// PidEQ applies the EQ predicate on the "pid" field.
-func PidEQ(v string) predicate.EntryPoint {
+// CidEQ applies the EQ predicate on the "cid" field.
+func CidEQ(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPid), v))
+		s.Where(sql.EQ(s.C(FieldCid), v))
 	})
 }
 
-// PidNEQ applies the NEQ predicate on the "pid" field.
-func PidNEQ(v string) predicate.EntryPoint {
+// CidNEQ applies the NEQ predicate on the "cid" field.
+func CidNEQ(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPid), v))
+		s.Where(sql.NEQ(s.C(FieldCid), v))
 	})
 }
 
-// PidIn applies the In predicate on the "pid" field.
-func PidIn(vs ...string) predicate.EntryPoint {
+// CidIn applies the In predicate on the "cid" field.
+func CidIn(vs ...string) predicate.EntryPoint {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -348,12 +348,12 @@ func PidIn(vs ...string) predicate.EntryPoint {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldPid), v...))
+		s.Where(sql.In(s.C(FieldCid), v...))
 	})
 }
 
-// PidNotIn applies the NotIn predicate on the "pid" field.
-func PidNotIn(vs ...string) predicate.EntryPoint {
+// CidNotIn applies the NotIn predicate on the "cid" field.
+func CidNotIn(vs ...string) predicate.EntryPoint {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -365,84 +365,84 @@ func PidNotIn(vs ...string) predicate.EntryPoint {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldPid), v...))
+		s.Where(sql.NotIn(s.C(FieldCid), v...))
 	})
 }
 
-// PidGT applies the GT predicate on the "pid" field.
-func PidGT(v string) predicate.EntryPoint {
+// CidGT applies the GT predicate on the "cid" field.
+func CidGT(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPid), v))
+		s.Where(sql.GT(s.C(FieldCid), v))
 	})
 }
 
-// PidGTE applies the GTE predicate on the "pid" field.
-func PidGTE(v string) predicate.EntryPoint {
+// CidGTE applies the GTE predicate on the "cid" field.
+func CidGTE(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPid), v))
+		s.Where(sql.GTE(s.C(FieldCid), v))
 	})
 }
 
-// PidLT applies the LT predicate on the "pid" field.
-func PidLT(v string) predicate.EntryPoint {
+// CidLT applies the LT predicate on the "cid" field.
+func CidLT(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPid), v))
+		s.Where(sql.LT(s.C(FieldCid), v))
 	})
 }
 
-// PidLTE applies the LTE predicate on the "pid" field.
-func PidLTE(v string) predicate.EntryPoint {
+// CidLTE applies the LTE predicate on the "cid" field.
+func CidLTE(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPid), v))
+		s.Where(sql.LTE(s.C(FieldCid), v))
 	})
 }
 
-// PidContains applies the Contains predicate on the "pid" field.
-func PidContains(v string) predicate.EntryPoint {
+// CidContains applies the Contains predicate on the "cid" field.
+func CidContains(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPid), v))
+		s.Where(sql.Contains(s.C(FieldCid), v))
 	})
 }
 
-// PidHasPrefix applies the HasPrefix predicate on the "pid" field.
-func PidHasPrefix(v string) predicate.EntryPoint {
+// CidHasPrefix applies the HasPrefix predicate on the "cid" field.
+func CidHasPrefix(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPid), v))
+		s.Where(sql.HasPrefix(s.C(FieldCid), v))
 	})
 }
 
-// PidHasSuffix applies the HasSuffix predicate on the "pid" field.
-func PidHasSuffix(v string) predicate.EntryPoint {
+// CidHasSuffix applies the HasSuffix predicate on the "cid" field.
+func CidHasSuffix(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPid), v))
+		s.Where(sql.HasSuffix(s.C(FieldCid), v))
 	})
 }
 
-// PidIsNil applies the IsNil predicate on the "pid" field.
-func PidIsNil() predicate.EntryPoint {
+// CidIsNil applies the IsNil predicate on the "cid" field.
+func CidIsNil() predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPid)))
+		s.Where(sql.IsNull(s.C(FieldCid)))
 	})
 }
 
-// PidNotNil applies the NotNil predicate on the "pid" field.
-func PidNotNil() predicate.EntryPoint {
+// CidNotNil applies the NotNil predicate on the "cid" field.
+func CidNotNil() predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPid)))
+		s.Where(sql.NotNull(s.C(FieldCid)))
 	})
 }
 
-// PidEqualFold applies the EqualFold predicate on the "pid" field.
-func PidEqualFold(v string) predicate.EntryPoint {
+// CidEqualFold applies the EqualFold predicate on the "cid" field.
+func CidEqualFold(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPid), v))
+		s.Where(sql.EqualFold(s.C(FieldCid), v))
 	})
 }
 
-// PidContainsFold applies the ContainsFold predicate on the "pid" field.
-func PidContainsFold(v string) predicate.EntryPoint {
+// CidContainsFold applies the ContainsFold predicate on the "cid" field.
+func CidContainsFold(v string) predicate.EntryPoint {
 	return predicate.EntryPoint(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPid), v))
+		s.Where(sql.ContainsFold(s.C(FieldCid), v))
 	})
 }
 

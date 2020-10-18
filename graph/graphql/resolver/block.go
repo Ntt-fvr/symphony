@@ -267,10 +267,10 @@ func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int,
 	}
 	client := r.ClientFrom(ctx)
 	for _, route := range input.Routes {
-		if route.Pid != nil {
+		if route.Cid != nil {
 			if _, err := client.ExitPoint.Create().
 				SetRole(flowschema.ExitPointRoleDecision).
-				SetPid(*route.Pid).
+				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
 				Save(ctx); err != nil {
 				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
@@ -362,8 +362,8 @@ func getExitPoint(ctx context.Context, flowDraftID int, blockCid string, pid *mo
 			block.Cid(blockCid),
 		),
 	}
-	if pid != nil && pid.Pid != nil {
-		exitPointPredicates = append(exitPointPredicates, exitpoint.Pid(*pid.Pid))
+	if pid != nil && pid.Cid != nil {
+		exitPointPredicates = append(exitPointPredicates, exitpoint.Cid(*pid.Cid))
 	} else {
 		exitPointPredicates = append(exitPointPredicates,
 			exitpoint.RoleEQ(getExitPointRoleOrDefault(pid)))
@@ -392,8 +392,8 @@ func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, pid *m
 			block.Cid(blockCid),
 		),
 	}
-	if pid != nil && pid.Pid != nil {
-		entryPointPredicates = append(entryPointPredicates, entrypoint.Pid(*pid.Pid))
+	if pid != nil && pid.Cid != nil {
+		entryPointPredicates = append(entryPointPredicates, entrypoint.Cid(*pid.Cid))
 	} else {
 		entryPointPredicates = append(entryPointPredicates,
 			entrypoint.RoleEQ(getEntryPointRoleOrDefault(pid)))

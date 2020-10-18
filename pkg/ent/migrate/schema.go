@@ -336,7 +336,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT"}},
-		{Name: "pid", Type: field.TypeString, Nullable: true},
+		{Name: "cid", Type: field.TypeString, Nullable: true},
 		{Name: "block_entry_point", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// EntryPointsTable holds the schema information for the "entry_points" table.
@@ -351,6 +351,13 @@ var (
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entrypoint_cid_block_entry_point",
+				Unique:  true,
+				Columns: []*schema.Column{EntryPointsColumns[4], EntryPointsColumns[5]},
 			},
 		},
 	}
@@ -602,7 +609,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT", "DECISION"}},
-		{Name: "pid", Type: field.TypeString, Nullable: true},
+		{Name: "cid", Type: field.TypeString, Nullable: true},
 		{Name: "block_exit_points", Type: field.TypeInt, Nullable: true},
 	}
 	// ExitPointsTable holds the schema information for the "exit_points" table.
@@ -621,7 +628,7 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "exitpoint_pid_block_exit_points",
+				Name:    "exitpoint_cid_block_exit_points",
 				Unique:  true,
 				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[5]},
 			},

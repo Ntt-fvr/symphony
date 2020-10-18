@@ -1016,12 +1016,12 @@ func (ep *EntryPoint) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "role",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(ep.Pid); err != nil {
+	if buf, err = json.Marshal(ep.Cid); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
 		Type:  "string",
-		Name:  "pid",
+		Name:  "cid",
 		Value: string(buf),
 	}
 	var ids []int
@@ -1803,12 +1803,12 @@ func (ep *ExitPoint) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "role",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(ep.Pid); err != nil {
+	if buf, err = json.Marshal(ep.Cid); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
 		Type:  "string",
-		Name:  "pid",
+		Name:  "cid",
 		Value: string(buf),
 	}
 	var ids []int

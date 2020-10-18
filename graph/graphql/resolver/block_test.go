@@ -323,13 +323,13 @@ func TestDecisionBlock(t *testing.T) {
 		Cid: "decision",
 		Routes: []*models.DecisionRouteInput{
 			{
-				Pid: pointer.ToString("option1"),
+				Cid: pointer.ToString("option1"),
 			},
 			{
-				Pid: pointer.ToString("option2"),
+				Cid: pointer.ToString("option2"),
 			},
 			{
-				Pid: pointer.ToString("option3"),
+				Cid: pointer.ToString("option3"),
 			},
 		},
 	})
@@ -340,11 +340,11 @@ func TestDecisionBlock(t *testing.T) {
 	decision, ok := details.(*models.DecisionBlock)
 	require.True(t, ok)
 	require.Equal(t, flowschema.ExitPointRoleDefault, decision.DefaultExitPoint.Role)
-	require.Nil(t, decision.DefaultExitPoint.Pid)
+	require.Nil(t, decision.DefaultExitPoint.Cid)
 	require.Len(t, decision.Routes, 3)
 	for _, route := range decision.Routes {
 		require.Equal(t, flowschema.ExitPointRoleDecision, route.ExitPoint.Role)
-		require.NotNil(t, route.ExitPoint.Pid)
+		require.NotNil(t, route.ExitPoint.Cid)
 	}
 
 	defaultRole := flowschema.ExitPointRoleDefault
@@ -367,7 +367,7 @@ func TestDecisionBlock(t *testing.T) {
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
 		SourceBlockCid: "decision",
 		SourcePid: &models.ExitPointID{
-			Pid: pointer.ToString("option1"),
+			Cid: pointer.ToString("option1"),
 		},
 		TargetBlockCid: "end",
 	})
@@ -376,7 +376,7 @@ func TestDecisionBlock(t *testing.T) {
 		SourceBlockCid: "decision",
 		SourcePid: &models.ExitPointID{
 			Role: &defaultRole,
-			Pid:  pointer.ToString("option2"),
+			Cid:  pointer.ToString("option2"),
 		},
 		TargetBlockCid: "end",
 	})
