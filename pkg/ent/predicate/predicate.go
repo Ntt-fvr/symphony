@@ -37,6 +37,9 @@ type Comment func(*sql.Selector)
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)
 
+// EntryPoint is the predicate function for entrypoint builders.
+type EntryPoint func(*sql.Selector)
+
 // Equipment is the predicate function for equipment builders.
 type Equipment func(*sql.Selector)
 
@@ -60,6 +63,9 @@ type EquipmentPositionDefinition func(*sql.Selector)
 
 // EquipmentType is the predicate function for equipmenttype builders.
 type EquipmentType func(*sql.Selector)
+
+// ExitPoint is the predicate function for exitpoint builders.
+type ExitPoint func(*sql.Selector)
 
 // ExportTask is the predicate function for exporttask builders.
 type ExportTask func(*sql.Selector)

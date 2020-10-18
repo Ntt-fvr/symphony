@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -30,6 +31,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -92,6 +94,7 @@ const (
 	TypeCheckListItemDefinition     = "CheckListItemDefinition"
 	TypeComment                     = "Comment"
 	TypeCustomer                    = "Customer"
+	TypeEntryPoint                  = "EntryPoint"
 	TypeEquipment                   = "Equipment"
 	TypeEquipmentCategory           = "EquipmentCategory"
 	TypeEquipmentPort               = "EquipmentPort"
@@ -100,6 +103,7 @@ const (
 	TypeEquipmentPosition           = "EquipmentPosition"
 	TypeEquipmentPositionDefinition = "EquipmentPositionDefinition"
 	TypeEquipmentType               = "EquipmentType"
+	TypeExitPoint                   = "ExitPoint"
 	TypeExportTask                  = "ExportTask"
 	TypeFeature                     = "Feature"
 	TypeFile                        = "File"
@@ -968,12 +972,6 @@ type BlockMutation struct {
 	input_params            *[]*flowschema.VariableExpression
 	ui_representation       **flowschema.BlockUIRepresentation
 	clearedFields           map[string]struct{}
-	prev_blocks             map[int]struct{}
-	removedprev_blocks      map[int]struct{}
-	clearedprev_blocks      bool
-	next_blocks             map[int]struct{}
-	removednext_blocks      map[int]struct{}
-	clearednext_blocks      bool
 	flow                    *int
 	clearedflow             bool
 	flow_template           *int
@@ -990,6 +988,11 @@ type BlockMutation struct {
 	instances               map[int]struct{}
 	removedinstances        map[int]struct{}
 	clearedinstances        bool
+	entry_point             *int
+	clearedentry_point      bool
+	exit_points             map[int]struct{}
+	removedexit_points      map[int]struct{}
+	clearedexit_points      bool
 	done                    bool
 	oldValue                func(context.Context) (*Block, error)
 	predicates              []predicate.Block
@@ -1472,112 +1475,6 @@ func (m *BlockMutation) ResetUIRepresentation() {
 	delete(m.clearedFields, block.FieldUIRepresentation)
 }
 
-// AddPrevBlockIDs adds the prev_blocks edge to Block by ids.
-func (m *BlockMutation) AddPrevBlockIDs(ids ...int) {
-	if m.prev_blocks == nil {
-		m.prev_blocks = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.prev_blocks[ids[i]] = struct{}{}
-	}
-}
-
-// ClearPrevBlocks clears the prev_blocks edge to Block.
-func (m *BlockMutation) ClearPrevBlocks() {
-	m.clearedprev_blocks = true
-}
-
-// PrevBlocksCleared returns if the edge prev_blocks was cleared.
-func (m *BlockMutation) PrevBlocksCleared() bool {
-	return m.clearedprev_blocks
-}
-
-// RemovePrevBlockIDs removes the prev_blocks edge to Block by ids.
-func (m *BlockMutation) RemovePrevBlockIDs(ids ...int) {
-	if m.removedprev_blocks == nil {
-		m.removedprev_blocks = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedprev_blocks[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedPrevBlocks returns the removed ids of prev_blocks.
-func (m *BlockMutation) RemovedPrevBlocksIDs() (ids []int) {
-	for id := range m.removedprev_blocks {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// PrevBlocksIDs returns the prev_blocks ids in the mutation.
-func (m *BlockMutation) PrevBlocksIDs() (ids []int) {
-	for id := range m.prev_blocks {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetPrevBlocks reset all changes of the "prev_blocks" edge.
-func (m *BlockMutation) ResetPrevBlocks() {
-	m.prev_blocks = nil
-	m.clearedprev_blocks = false
-	m.removedprev_blocks = nil
-}
-
-// AddNextBlockIDs adds the next_blocks edge to Block by ids.
-func (m *BlockMutation) AddNextBlockIDs(ids ...int) {
-	if m.next_blocks == nil {
-		m.next_blocks = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.next_blocks[ids[i]] = struct{}{}
-	}
-}
-
-// ClearNextBlocks clears the next_blocks edge to Block.
-func (m *BlockMutation) ClearNextBlocks() {
-	m.clearednext_blocks = true
-}
-
-// NextBlocksCleared returns if the edge next_blocks was cleared.
-func (m *BlockMutation) NextBlocksCleared() bool {
-	return m.clearednext_blocks
-}
-
-// RemoveNextBlockIDs removes the next_blocks edge to Block by ids.
-func (m *BlockMutation) RemoveNextBlockIDs(ids ...int) {
-	if m.removednext_blocks == nil {
-		m.removednext_blocks = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removednext_blocks[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedNextBlocks returns the removed ids of next_blocks.
-func (m *BlockMutation) RemovedNextBlocksIDs() (ids []int) {
-	for id := range m.removednext_blocks {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// NextBlocksIDs returns the next_blocks ids in the mutation.
-func (m *BlockMutation) NextBlocksIDs() (ids []int) {
-	for id := range m.next_blocks {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetNextBlocks reset all changes of the "next_blocks" edge.
-func (m *BlockMutation) ResetNextBlocks() {
-	m.next_blocks = nil
-	m.clearednext_blocks = false
-	m.removednext_blocks = nil
-}
-
 // SetFlowID sets the flow edge to Flow by id.
 func (m *BlockMutation) SetFlowID(id int) {
 	m.flow = &id
@@ -1879,6 +1776,98 @@ func (m *BlockMutation) ResetInstances() {
 	m.removedinstances = nil
 }
 
+// SetEntryPointID sets the entry_point edge to EntryPoint by id.
+func (m *BlockMutation) SetEntryPointID(id int) {
+	m.entry_point = &id
+}
+
+// ClearEntryPoint clears the entry_point edge to EntryPoint.
+func (m *BlockMutation) ClearEntryPoint() {
+	m.clearedentry_point = true
+}
+
+// EntryPointCleared returns if the edge entry_point was cleared.
+func (m *BlockMutation) EntryPointCleared() bool {
+	return m.clearedentry_point
+}
+
+// EntryPointID returns the entry_point id in the mutation.
+func (m *BlockMutation) EntryPointID() (id int, exists bool) {
+	if m.entry_point != nil {
+		return *m.entry_point, true
+	}
+	return
+}
+
+// EntryPointIDs returns the entry_point ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// EntryPointID instead. It exists only for internal usage by the builders.
+func (m *BlockMutation) EntryPointIDs() (ids []int) {
+	if id := m.entry_point; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEntryPoint reset all changes of the "entry_point" edge.
+func (m *BlockMutation) ResetEntryPoint() {
+	m.entry_point = nil
+	m.clearedentry_point = false
+}
+
+// AddExitPointIDs adds the exit_points edge to ExitPoint by ids.
+func (m *BlockMutation) AddExitPointIDs(ids ...int) {
+	if m.exit_points == nil {
+		m.exit_points = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.exit_points[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExitPoints clears the exit_points edge to ExitPoint.
+func (m *BlockMutation) ClearExitPoints() {
+	m.clearedexit_points = true
+}
+
+// ExitPointsCleared returns if the edge exit_points was cleared.
+func (m *BlockMutation) ExitPointsCleared() bool {
+	return m.clearedexit_points
+}
+
+// RemoveExitPointIDs removes the exit_points edge to ExitPoint by ids.
+func (m *BlockMutation) RemoveExitPointIDs(ids ...int) {
+	if m.removedexit_points == nil {
+		m.removedexit_points = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedexit_points[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExitPoints returns the removed ids of exit_points.
+func (m *BlockMutation) RemovedExitPointsIDs() (ids []int) {
+	for id := range m.removedexit_points {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExitPointsIDs returns the exit_points ids in the mutation.
+func (m *BlockMutation) ExitPointsIDs() (ids []int) {
+	for id := range m.exit_points {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExitPoints reset all changes of the "exit_points" edge.
+func (m *BlockMutation) ResetExitPoints() {
+	m.exit_points = nil
+	m.clearedexit_points = false
+	m.removedexit_points = nil
+}
+
 // Op returns the operation name.
 func (m *BlockMutation) Op() Op {
 	return m.op
@@ -2164,12 +2153,6 @@ func (m *BlockMutation) ResetField(name string) error {
 // mutation.
 func (m *BlockMutation) AddedEdges() []string {
 	edges := make([]string, 0, 9)
-	if m.prev_blocks != nil {
-		edges = append(edges, block.EdgePrevBlocks)
-	}
-	if m.next_blocks != nil {
-		edges = append(edges, block.EdgeNextBlocks)
-	}
 	if m.flow != nil {
 		edges = append(edges, block.EdgeFlow)
 	}
@@ -2191,6 +2174,12 @@ func (m *BlockMutation) AddedEdges() []string {
 	if m.instances != nil {
 		edges = append(edges, block.EdgeInstances)
 	}
+	if m.entry_point != nil {
+		edges = append(edges, block.EdgeEntryPoint)
+	}
+	if m.exit_points != nil {
+		edges = append(edges, block.EdgeExitPoints)
+	}
 	return edges
 }
 
@@ -2198,18 +2187,6 @@ func (m *BlockMutation) AddedEdges() []string {
 // the given edge name.
 func (m *BlockMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case block.EdgePrevBlocks:
-		ids := make([]ent.Value, 0, len(m.prev_blocks))
-		for id := range m.prev_blocks {
-			ids = append(ids, id)
-		}
-		return ids
-	case block.EdgeNextBlocks:
-		ids := make([]ent.Value, 0, len(m.next_blocks))
-		for id := range m.next_blocks {
-			ids = append(ids, id)
-		}
-		return ids
 	case block.EdgeFlow:
 		if id := m.flow; id != nil {
 			return []ent.Value{*id}
@@ -2242,6 +2219,16 @@ func (m *BlockMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case block.EdgeEntryPoint:
+		if id := m.entry_point; id != nil {
+			return []ent.Value{*id}
+		}
+	case block.EdgeExitPoints:
+		ids := make([]ent.Value, 0, len(m.exit_points))
+		for id := range m.exit_points {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2250,17 +2237,14 @@ func (m *BlockMutation) AddedIDs(name string) []ent.Value {
 // mutation.
 func (m *BlockMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 9)
-	if m.removedprev_blocks != nil {
-		edges = append(edges, block.EdgePrevBlocks)
-	}
-	if m.removednext_blocks != nil {
-		edges = append(edges, block.EdgeNextBlocks)
-	}
 	if m.removedsource_block != nil {
 		edges = append(edges, block.EdgeSourceBlock)
 	}
 	if m.removedinstances != nil {
 		edges = append(edges, block.EdgeInstances)
+	}
+	if m.removedexit_points != nil {
+		edges = append(edges, block.EdgeExitPoints)
 	}
 	return edges
 }
@@ -2269,18 +2253,6 @@ func (m *BlockMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *BlockMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case block.EdgePrevBlocks:
-		ids := make([]ent.Value, 0, len(m.removedprev_blocks))
-		for id := range m.removedprev_blocks {
-			ids = append(ids, id)
-		}
-		return ids
-	case block.EdgeNextBlocks:
-		ids := make([]ent.Value, 0, len(m.removednext_blocks))
-		for id := range m.removednext_blocks {
-			ids = append(ids, id)
-		}
-		return ids
 	case block.EdgeSourceBlock:
 		ids := make([]ent.Value, 0, len(m.removedsource_block))
 		for id := range m.removedsource_block {
@@ -2293,6 +2265,12 @@ func (m *BlockMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case block.EdgeExitPoints:
+		ids := make([]ent.Value, 0, len(m.removedexit_points))
+		for id := range m.removedexit_points {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2301,12 +2279,6 @@ func (m *BlockMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *BlockMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 9)
-	if m.clearedprev_blocks {
-		edges = append(edges, block.EdgePrevBlocks)
-	}
-	if m.clearednext_blocks {
-		edges = append(edges, block.EdgeNextBlocks)
-	}
 	if m.clearedflow {
 		edges = append(edges, block.EdgeFlow)
 	}
@@ -2328,6 +2300,12 @@ func (m *BlockMutation) ClearedEdges() []string {
 	if m.clearedinstances {
 		edges = append(edges, block.EdgeInstances)
 	}
+	if m.clearedentry_point {
+		edges = append(edges, block.EdgeEntryPoint)
+	}
+	if m.clearedexit_points {
+		edges = append(edges, block.EdgeExitPoints)
+	}
 	return edges
 }
 
@@ -2335,10 +2313,6 @@ func (m *BlockMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *BlockMutation) EdgeCleared(name string) bool {
 	switch name {
-	case block.EdgePrevBlocks:
-		return m.clearedprev_blocks
-	case block.EdgeNextBlocks:
-		return m.clearednext_blocks
 	case block.EdgeFlow:
 		return m.clearedflow
 	case block.EdgeFlowTemplate:
@@ -2353,6 +2327,10 @@ func (m *BlockMutation) EdgeCleared(name string) bool {
 		return m.clearedgoto_block
 	case block.EdgeInstances:
 		return m.clearedinstances
+	case block.EdgeEntryPoint:
+		return m.clearedentry_point
+	case block.EdgeExitPoints:
+		return m.clearedexit_points
 	}
 	return false
 }
@@ -2376,6 +2354,9 @@ func (m *BlockMutation) ClearEdge(name string) error {
 	case block.EdgeGotoBlock:
 		m.ClearGotoBlock()
 		return nil
+	case block.EdgeEntryPoint:
+		m.ClearEntryPoint()
+		return nil
 	}
 	return fmt.Errorf("unknown Block unique edge %s", name)
 }
@@ -2385,12 +2366,6 @@ func (m *BlockMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *BlockMutation) ResetEdge(name string) error {
 	switch name {
-	case block.EdgePrevBlocks:
-		m.ResetPrevBlocks()
-		return nil
-	case block.EdgeNextBlocks:
-		m.ResetNextBlocks()
-		return nil
 	case block.EdgeFlow:
 		m.ResetFlow()
 		return nil
@@ -2411,6 +2386,12 @@ func (m *BlockMutation) ResetEdge(name string) error {
 		return nil
 	case block.EdgeInstances:
 		m.ResetInstances()
+		return nil
+	case block.EdgeEntryPoint:
+		m.ResetEntryPoint()
+		return nil
+	case block.EdgeExitPoints:
+		m.ResetExitPoints()
 		return nil
 	}
 	return fmt.Errorf("unknown Block edge %s", name)
@@ -8136,6 +8117,638 @@ func (m *CustomerMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Customer edge %s", name)
+}
+
+// EntryPointMutation represents an operation that mutate the EntryPoints
+// nodes in the graph.
+type EntryPointMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	create_time             *time.Time
+	update_time             *time.Time
+	role                    *flowschema.EntryPointRole
+	cid                     *string
+	clearedFields           map[string]struct{}
+	prev_exit_points        map[int]struct{}
+	removedprev_exit_points map[int]struct{}
+	clearedprev_exit_points bool
+	parent_block            *int
+	clearedparent_block     bool
+	done                    bool
+	oldValue                func(context.Context) (*EntryPoint, error)
+	predicates              []predicate.EntryPoint
+}
+
+var _ ent.Mutation = (*EntryPointMutation)(nil)
+
+// entrypointOption allows to manage the mutation configuration using functional options.
+type entrypointOption func(*EntryPointMutation)
+
+// newEntryPointMutation creates new mutation for $n.Name.
+func newEntryPointMutation(c config, op Op, opts ...entrypointOption) *EntryPointMutation {
+	m := &EntryPointMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEntryPoint,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEntryPointID sets the id field of the mutation.
+func withEntryPointID(id int) entrypointOption {
+	return func(m *EntryPointMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *EntryPoint
+		)
+		m.oldValue = func(ctx context.Context) (*EntryPoint, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().EntryPoint.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEntryPoint sets the old EntryPoint of the mutation.
+func withEntryPoint(node *EntryPoint) entrypointOption {
+	return func(m *EntryPointMutation) {
+		m.oldValue = func(context.Context) (*EntryPoint, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EntryPointMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EntryPointMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *EntryPointMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *EntryPointMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *EntryPointMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the EntryPoint.
+// If the EntryPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *EntryPointMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *EntryPointMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *EntryPointMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *EntryPointMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the EntryPoint.
+// If the EntryPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *EntryPointMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *EntryPointMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetRole sets the role field.
+func (m *EntryPointMutation) SetRole(fpr flowschema.EntryPointRole) {
+	m.role = &fpr
+}
+
+// Role returns the role value in the mutation.
+func (m *EntryPointMutation) Role() (r flowschema.EntryPointRole, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old role value of the EntryPoint.
+// If the EntryPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *EntryPointMutation) OldRole(ctx context.Context) (v flowschema.EntryPointRole, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRole is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ResetRole reset all changes of the "role" field.
+func (m *EntryPointMutation) ResetRole() {
+	m.role = nil
+}
+
+// SetCid sets the cid field.
+func (m *EntryPointMutation) SetCid(s string) {
+	m.cid = &s
+}
+
+// Cid returns the cid value in the mutation.
+func (m *EntryPointMutation) Cid() (r string, exists bool) {
+	v := m.cid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCid returns the old cid value of the EntryPoint.
+// If the EntryPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *EntryPointMutation) OldCid(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCid is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCid requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCid: %w", err)
+	}
+	return oldValue.Cid, nil
+}
+
+// ClearCid clears the value of cid.
+func (m *EntryPointMutation) ClearCid() {
+	m.cid = nil
+	m.clearedFields[entrypoint.FieldCid] = struct{}{}
+}
+
+// CidCleared returns if the field cid was cleared in this mutation.
+func (m *EntryPointMutation) CidCleared() bool {
+	_, ok := m.clearedFields[entrypoint.FieldCid]
+	return ok
+}
+
+// ResetCid reset all changes of the "cid" field.
+func (m *EntryPointMutation) ResetCid() {
+	m.cid = nil
+	delete(m.clearedFields, entrypoint.FieldCid)
+}
+
+// AddPrevExitPointIDs adds the prev_exit_points edge to ExitPoint by ids.
+func (m *EntryPointMutation) AddPrevExitPointIDs(ids ...int) {
+	if m.prev_exit_points == nil {
+		m.prev_exit_points = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.prev_exit_points[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPrevExitPoints clears the prev_exit_points edge to ExitPoint.
+func (m *EntryPointMutation) ClearPrevExitPoints() {
+	m.clearedprev_exit_points = true
+}
+
+// PrevExitPointsCleared returns if the edge prev_exit_points was cleared.
+func (m *EntryPointMutation) PrevExitPointsCleared() bool {
+	return m.clearedprev_exit_points
+}
+
+// RemovePrevExitPointIDs removes the prev_exit_points edge to ExitPoint by ids.
+func (m *EntryPointMutation) RemovePrevExitPointIDs(ids ...int) {
+	if m.removedprev_exit_points == nil {
+		m.removedprev_exit_points = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedprev_exit_points[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPrevExitPoints returns the removed ids of prev_exit_points.
+func (m *EntryPointMutation) RemovedPrevExitPointsIDs() (ids []int) {
+	for id := range m.removedprev_exit_points {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PrevExitPointsIDs returns the prev_exit_points ids in the mutation.
+func (m *EntryPointMutation) PrevExitPointsIDs() (ids []int) {
+	for id := range m.prev_exit_points {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPrevExitPoints reset all changes of the "prev_exit_points" edge.
+func (m *EntryPointMutation) ResetPrevExitPoints() {
+	m.prev_exit_points = nil
+	m.clearedprev_exit_points = false
+	m.removedprev_exit_points = nil
+}
+
+// SetParentBlockID sets the parent_block edge to Block by id.
+func (m *EntryPointMutation) SetParentBlockID(id int) {
+	m.parent_block = &id
+}
+
+// ClearParentBlock clears the parent_block edge to Block.
+func (m *EntryPointMutation) ClearParentBlock() {
+	m.clearedparent_block = true
+}
+
+// ParentBlockCleared returns if the edge parent_block was cleared.
+func (m *EntryPointMutation) ParentBlockCleared() bool {
+	return m.clearedparent_block
+}
+
+// ParentBlockID returns the parent_block id in the mutation.
+func (m *EntryPointMutation) ParentBlockID() (id int, exists bool) {
+	if m.parent_block != nil {
+		return *m.parent_block, true
+	}
+	return
+}
+
+// ParentBlockIDs returns the parent_block ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ParentBlockID instead. It exists only for internal usage by the builders.
+func (m *EntryPointMutation) ParentBlockIDs() (ids []int) {
+	if id := m.parent_block; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParentBlock reset all changes of the "parent_block" edge.
+func (m *EntryPointMutation) ResetParentBlock() {
+	m.parent_block = nil
+	m.clearedparent_block = false
+}
+
+// Op returns the operation name.
+func (m *EntryPointMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (EntryPoint).
+func (m *EntryPointMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *EntryPointMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, entrypoint.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, entrypoint.FieldUpdateTime)
+	}
+	if m.role != nil {
+		fields = append(fields, entrypoint.FieldRole)
+	}
+	if m.cid != nil {
+		fields = append(fields, entrypoint.FieldCid)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *EntryPointMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case entrypoint.FieldCreateTime:
+		return m.CreateTime()
+	case entrypoint.FieldUpdateTime:
+		return m.UpdateTime()
+	case entrypoint.FieldRole:
+		return m.Role()
+	case entrypoint.FieldCid:
+		return m.Cid()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *EntryPointMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case entrypoint.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case entrypoint.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case entrypoint.FieldRole:
+		return m.OldRole(ctx)
+	case entrypoint.FieldCid:
+		return m.OldCid(ctx)
+	}
+	return nil, fmt.Errorf("unknown EntryPoint field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *EntryPointMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case entrypoint.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case entrypoint.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case entrypoint.FieldRole:
+		v, ok := value.(flowschema.EntryPointRole)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
+		return nil
+	case entrypoint.FieldCid:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCid(v)
+		return nil
+	}
+	return fmt.Errorf("unknown EntryPoint field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *EntryPointMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *EntryPointMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *EntryPointMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown EntryPoint numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *EntryPointMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(entrypoint.FieldCid) {
+		fields = append(fields, entrypoint.FieldCid)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *EntryPointMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EntryPointMutation) ClearField(name string) error {
+	switch name {
+	case entrypoint.FieldCid:
+		m.ClearCid()
+		return nil
+	}
+	return fmt.Errorf("unknown EntryPoint nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *EntryPointMutation) ResetField(name string) error {
+	switch name {
+	case entrypoint.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case entrypoint.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case entrypoint.FieldRole:
+		m.ResetRole()
+		return nil
+	case entrypoint.FieldCid:
+		m.ResetCid()
+		return nil
+	}
+	return fmt.Errorf("unknown EntryPoint field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *EntryPointMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.prev_exit_points != nil {
+		edges = append(edges, entrypoint.EdgePrevExitPoints)
+	}
+	if m.parent_block != nil {
+		edges = append(edges, entrypoint.EdgeParentBlock)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *EntryPointMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case entrypoint.EdgePrevExitPoints:
+		ids := make([]ent.Value, 0, len(m.prev_exit_points))
+		for id := range m.prev_exit_points {
+			ids = append(ids, id)
+		}
+		return ids
+	case entrypoint.EdgeParentBlock:
+		if id := m.parent_block; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *EntryPointMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedprev_exit_points != nil {
+		edges = append(edges, entrypoint.EdgePrevExitPoints)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *EntryPointMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case entrypoint.EdgePrevExitPoints:
+		ids := make([]ent.Value, 0, len(m.removedprev_exit_points))
+		for id := range m.removedprev_exit_points {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *EntryPointMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedprev_exit_points {
+		edges = append(edges, entrypoint.EdgePrevExitPoints)
+	}
+	if m.clearedparent_block {
+		edges = append(edges, entrypoint.EdgeParentBlock)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *EntryPointMutation) EdgeCleared(name string) bool {
+	switch name {
+	case entrypoint.EdgePrevExitPoints:
+		return m.clearedprev_exit_points
+	case entrypoint.EdgeParentBlock:
+		return m.clearedparent_block
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *EntryPointMutation) ClearEdge(name string) error {
+	switch name {
+	case entrypoint.EdgeParentBlock:
+		m.ClearParentBlock()
+		return nil
+	}
+	return fmt.Errorf("unknown EntryPoint unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *EntryPointMutation) ResetEdge(name string) error {
+	switch name {
+	case entrypoint.EdgePrevExitPoints:
+		m.ResetPrevExitPoints()
+		return nil
+	case entrypoint.EdgeParentBlock:
+		m.ResetParentBlock()
+		return nil
+	}
+	return fmt.Errorf("unknown EntryPoint edge %s", name)
 }
 
 // EquipmentMutation represents an operation that mutate the EquipmentSlice
@@ -14561,6 +15174,638 @@ func (m *EquipmentTypeMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown EquipmentType edge %s", name)
+}
+
+// ExitPointMutation represents an operation that mutate the ExitPoints
+// nodes in the graph.
+type ExitPointMutation struct {
+	config
+	op                       Op
+	typ                      string
+	id                       *int
+	create_time              *time.Time
+	update_time              *time.Time
+	role                     *flowschema.ExitPointRole
+	cid                      *string
+	clearedFields            map[string]struct{}
+	next_entry_points        map[int]struct{}
+	removednext_entry_points map[int]struct{}
+	clearednext_entry_points bool
+	parent_block             *int
+	clearedparent_block      bool
+	done                     bool
+	oldValue                 func(context.Context) (*ExitPoint, error)
+	predicates               []predicate.ExitPoint
+}
+
+var _ ent.Mutation = (*ExitPointMutation)(nil)
+
+// exitpointOption allows to manage the mutation configuration using functional options.
+type exitpointOption func(*ExitPointMutation)
+
+// newExitPointMutation creates new mutation for $n.Name.
+func newExitPointMutation(c config, op Op, opts ...exitpointOption) *ExitPointMutation {
+	m := &ExitPointMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExitPoint,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExitPointID sets the id field of the mutation.
+func withExitPointID(id int) exitpointOption {
+	return func(m *ExitPointMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ExitPoint
+		)
+		m.oldValue = func(ctx context.Context) (*ExitPoint, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ExitPoint.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExitPoint sets the old ExitPoint of the mutation.
+func withExitPoint(node *ExitPoint) exitpointOption {
+	return func(m *ExitPointMutation) {
+		m.oldValue = func(context.Context) (*ExitPoint, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExitPointMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExitPointMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ExitPointMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ExitPointMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ExitPointMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ExitPointMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ExitPointMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ExitPointMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ExitPointMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetRole sets the role field.
+func (m *ExitPointMutation) SetRole(fpr flowschema.ExitPointRole) {
+	m.role = &fpr
+}
+
+// Role returns the role value in the mutation.
+func (m *ExitPointMutation) Role() (r flowschema.ExitPointRole, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old role value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldRole(ctx context.Context) (v flowschema.ExitPointRole, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRole is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ResetRole reset all changes of the "role" field.
+func (m *ExitPointMutation) ResetRole() {
+	m.role = nil
+}
+
+// SetCid sets the cid field.
+func (m *ExitPointMutation) SetCid(s string) {
+	m.cid = &s
+}
+
+// Cid returns the cid value in the mutation.
+func (m *ExitPointMutation) Cid() (r string, exists bool) {
+	v := m.cid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCid returns the old cid value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldCid(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCid is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCid requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCid: %w", err)
+	}
+	return oldValue.Cid, nil
+}
+
+// ClearCid clears the value of cid.
+func (m *ExitPointMutation) ClearCid() {
+	m.cid = nil
+	m.clearedFields[exitpoint.FieldCid] = struct{}{}
+}
+
+// CidCleared returns if the field cid was cleared in this mutation.
+func (m *ExitPointMutation) CidCleared() bool {
+	_, ok := m.clearedFields[exitpoint.FieldCid]
+	return ok
+}
+
+// ResetCid reset all changes of the "cid" field.
+func (m *ExitPointMutation) ResetCid() {
+	m.cid = nil
+	delete(m.clearedFields, exitpoint.FieldCid)
+}
+
+// AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
+func (m *ExitPointMutation) AddNextEntryPointIDs(ids ...int) {
+	if m.next_entry_points == nil {
+		m.next_entry_points = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.next_entry_points[ids[i]] = struct{}{}
+	}
+}
+
+// ClearNextEntryPoints clears the next_entry_points edge to EntryPoint.
+func (m *ExitPointMutation) ClearNextEntryPoints() {
+	m.clearednext_entry_points = true
+}
+
+// NextEntryPointsCleared returns if the edge next_entry_points was cleared.
+func (m *ExitPointMutation) NextEntryPointsCleared() bool {
+	return m.clearednext_entry_points
+}
+
+// RemoveNextEntryPointIDs removes the next_entry_points edge to EntryPoint by ids.
+func (m *ExitPointMutation) RemoveNextEntryPointIDs(ids ...int) {
+	if m.removednext_entry_points == nil {
+		m.removednext_entry_points = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removednext_entry_points[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedNextEntryPoints returns the removed ids of next_entry_points.
+func (m *ExitPointMutation) RemovedNextEntryPointsIDs() (ids []int) {
+	for id := range m.removednext_entry_points {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// NextEntryPointsIDs returns the next_entry_points ids in the mutation.
+func (m *ExitPointMutation) NextEntryPointsIDs() (ids []int) {
+	for id := range m.next_entry_points {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetNextEntryPoints reset all changes of the "next_entry_points" edge.
+func (m *ExitPointMutation) ResetNextEntryPoints() {
+	m.next_entry_points = nil
+	m.clearednext_entry_points = false
+	m.removednext_entry_points = nil
+}
+
+// SetParentBlockID sets the parent_block edge to Block by id.
+func (m *ExitPointMutation) SetParentBlockID(id int) {
+	m.parent_block = &id
+}
+
+// ClearParentBlock clears the parent_block edge to Block.
+func (m *ExitPointMutation) ClearParentBlock() {
+	m.clearedparent_block = true
+}
+
+// ParentBlockCleared returns if the edge parent_block was cleared.
+func (m *ExitPointMutation) ParentBlockCleared() bool {
+	return m.clearedparent_block
+}
+
+// ParentBlockID returns the parent_block id in the mutation.
+func (m *ExitPointMutation) ParentBlockID() (id int, exists bool) {
+	if m.parent_block != nil {
+		return *m.parent_block, true
+	}
+	return
+}
+
+// ParentBlockIDs returns the parent_block ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ParentBlockID instead. It exists only for internal usage by the builders.
+func (m *ExitPointMutation) ParentBlockIDs() (ids []int) {
+	if id := m.parent_block; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParentBlock reset all changes of the "parent_block" edge.
+func (m *ExitPointMutation) ResetParentBlock() {
+	m.parent_block = nil
+	m.clearedparent_block = false
+}
+
+// Op returns the operation name.
+func (m *ExitPointMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ExitPoint).
+func (m *ExitPointMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ExitPointMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, exitpoint.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, exitpoint.FieldUpdateTime)
+	}
+	if m.role != nil {
+		fields = append(fields, exitpoint.FieldRole)
+	}
+	if m.cid != nil {
+		fields = append(fields, exitpoint.FieldCid)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ExitPointMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case exitpoint.FieldCreateTime:
+		return m.CreateTime()
+	case exitpoint.FieldUpdateTime:
+		return m.UpdateTime()
+	case exitpoint.FieldRole:
+		return m.Role()
+	case exitpoint.FieldCid:
+		return m.Cid()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ExitPointMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case exitpoint.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case exitpoint.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case exitpoint.FieldRole:
+		return m.OldRole(ctx)
+	case exitpoint.FieldCid:
+		return m.OldCid(ctx)
+	}
+	return nil, fmt.Errorf("unknown ExitPoint field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ExitPointMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case exitpoint.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case exitpoint.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case exitpoint.FieldRole:
+		v, ok := value.(flowschema.ExitPointRole)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
+		return nil
+	case exitpoint.FieldCid:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCid(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExitPoint field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ExitPointMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ExitPointMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ExitPointMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ExitPoint numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ExitPointMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(exitpoint.FieldCid) {
+		fields = append(fields, exitpoint.FieldCid)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ExitPointMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExitPointMutation) ClearField(name string) error {
+	switch name {
+	case exitpoint.FieldCid:
+		m.ClearCid()
+		return nil
+	}
+	return fmt.Errorf("unknown ExitPoint nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ExitPointMutation) ResetField(name string) error {
+	switch name {
+	case exitpoint.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case exitpoint.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case exitpoint.FieldRole:
+		m.ResetRole()
+		return nil
+	case exitpoint.FieldCid:
+		m.ResetCid()
+		return nil
+	}
+	return fmt.Errorf("unknown ExitPoint field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ExitPointMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.next_entry_points != nil {
+		edges = append(edges, exitpoint.EdgeNextEntryPoints)
+	}
+	if m.parent_block != nil {
+		edges = append(edges, exitpoint.EdgeParentBlock)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ExitPointMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case exitpoint.EdgeNextEntryPoints:
+		ids := make([]ent.Value, 0, len(m.next_entry_points))
+		for id := range m.next_entry_points {
+			ids = append(ids, id)
+		}
+		return ids
+	case exitpoint.EdgeParentBlock:
+		if id := m.parent_block; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ExitPointMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removednext_entry_points != nil {
+		edges = append(edges, exitpoint.EdgeNextEntryPoints)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ExitPointMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case exitpoint.EdgeNextEntryPoints:
+		ids := make([]ent.Value, 0, len(m.removednext_entry_points))
+		for id := range m.removednext_entry_points {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ExitPointMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearednext_entry_points {
+		edges = append(edges, exitpoint.EdgeNextEntryPoints)
+	}
+	if m.clearedparent_block {
+		edges = append(edges, exitpoint.EdgeParentBlock)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ExitPointMutation) EdgeCleared(name string) bool {
+	switch name {
+	case exitpoint.EdgeNextEntryPoints:
+		return m.clearednext_entry_points
+	case exitpoint.EdgeParentBlock:
+		return m.clearedparent_block
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ExitPointMutation) ClearEdge(name string) error {
+	switch name {
+	case exitpoint.EdgeParentBlock:
+		m.ClearParentBlock()
+		return nil
+	}
+	return fmt.Errorf("unknown ExitPoint unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ExitPointMutation) ResetEdge(name string) error {
+	switch name {
+	case exitpoint.EdgeNextEntryPoints:
+		m.ResetNextEntryPoints()
+		return nil
+	case exitpoint.EdgeParentBlock:
+		m.ResetParentBlock()
+		return nil
+	}
+	return fmt.Errorf("unknown ExitPoint edge %s", name)
 }
 
 // ExportTaskMutation represents an operation that mutate the ExportTasks

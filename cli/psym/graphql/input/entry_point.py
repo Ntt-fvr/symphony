@@ -10,12 +10,11 @@ from typing import Any, Callable, List, Mapping, Optional
 
 from dataclasses_json import DataClassJsonMixin
 
-from ..input.entry_point import EntryPointInput
-from ..input.exit_point import ExitPointInput
+from gql.gql.enum_utils import enum_field
+from ..enum.entry_point_role import EntryPointRole
+
 @dataclass
-class ConnectorInput(DataClassJsonMixin):
-    sourceBlockCid: str
-    targetBlockCid: str
-    sourcePoint: Optional[ExitPointInput] = None
-    targetPoint: Optional[EntryPointInput] = None
+class EntryPointInput(DataClassJsonMixin):
+    role: Optional[EntryPointRole] = None
+    cid: Optional[str] = None
 

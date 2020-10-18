@@ -9,6 +9,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	action_mocks "github.com/facebookincubator/symphony/pkg/flowengine/actions/mocks"
@@ -92,7 +93,7 @@ func TestAddDeleteConnectors(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, br := r.Mutation(), r.Block()
+	mr, br, epr, fdr := r.Mutation(), r.Block(), r.ExitPoint(), r.FlowDraft()
 	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "Flow Name",
 	})
@@ -101,8 +102,12 @@ func TestAddDeleteConnectors(t *testing.T) {
 		Cid: "start",
 	})
 	require.NoError(t, err)
-	endBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
+	endBlock, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
 		Cid: "end",
+	})
+	require.NoError(t, err)
+	endBlock2, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Cid: "end2",
 	})
 	require.NoError(t, err)
 	connector, err := mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
@@ -110,16 +115,27 @@ func TestAddDeleteConnectors(t *testing.T) {
 		TargetBlockCid: endBlock.Cid,
 	})
 	require.NoError(t, err)
-	require.Equal(t, startBlock.Cid, connector.SourceBlockCid)
+	sourceBlock, err := epr.ParentBlock(ctx, connector.Source)
+	require.NoError(t, err)
+	require.Equal(t, startBlock.ID, sourceBlock.ID)
+	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: endBlock.Cid,
+	})
+	require.Error(t, err)
+	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: endBlock2.Cid,
+	})
+	require.NoError(t, err)
 
 	blocks, err := br.NextBlocks(ctx, startBlock)
 	require.NoError(t, err)
-	require.Len(t, blocks, 1)
-	require.Equal(t, blocks[0].ID, endBlock.ID)
+	require.Len(t, blocks, 2)
+	require.EqualValues(t, []int{blocks[0].ID, blocks[1].ID}, []int{endBlock.ID, endBlock2.ID})
 	blocks, err = br.PrevBlocks(ctx, startBlock)
 	require.NoError(t, err)
 	require.Empty(t, blocks)
-
 	blocks, err = br.NextBlocks(ctx, endBlock)
 	require.NoError(t, err)
 	require.Empty(t, blocks)
@@ -127,6 +143,10 @@ func TestAddDeleteConnectors(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, blocks, 1)
 	require.Equal(t, blocks[0].ID, startBlock.ID)
+
+	connectors, err := fdr.Connectors(ctx, flowDraft)
+	require.NoError(t, err)
+	require.Len(t, connectors, 2)
 
 	_, err = mr.DeleteConnector(ctx, flowDraft.ID, models.ConnectorInput{
 		SourceBlockCid: endBlock.Cid,
@@ -138,9 +158,14 @@ func TestAddDeleteConnectors(t *testing.T) {
 		TargetBlockCid: endBlock.Cid,
 	})
 	require.NoError(t, err)
+	_, err = mr.DeleteConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: endBlock.Cid,
+	})
+	require.Error(t, err)
 	blocks, err = br.NextBlocks(ctx, startBlock)
 	require.NoError(t, err)
-	require.Empty(t, blocks)
+	require.Len(t, blocks, 1)
 }
 
 func TestGotoBlock(t *testing.T) {
@@ -168,6 +193,7 @@ func TestGotoBlock(t *testing.T) {
 	goTo, ok := details.(*models.GotoBlock)
 	require.True(t, ok)
 	require.Equal(t, endBlock.ID, goTo.Target.ID)
+	require.Equal(t, flowschema.EntryPointRoleDefault, goTo.EntryPoint.Role)
 }
 
 func TestTriggerBlockNotExists(t *testing.T) {
@@ -217,6 +243,7 @@ func TestTriggerBlockNotExists(t *testing.T) {
 	trigger, ok := details.(*models.TriggerBlock)
 	require.True(t, ok)
 	require.Equal(t, description, trigger.TriggerType.Description())
+	require.Equal(t, flowschema.ExitPointRoleDefault, trigger.ExitPoint.Role)
 	triggerFactory.On("GetType", mock.Anything).
 		Return(nil, errors.New("not found")).
 		Once()
@@ -264,9 +291,102 @@ func TestActionBlockNotExists(t *testing.T) {
 	action, ok := details.(*models.ActionBlock)
 	require.True(t, ok)
 	require.Equal(t, description, action.ActionType.Description())
+	require.Equal(t, flowschema.ExitPointRoleDefault, action.ExitPoint.Role)
+	require.Equal(t, flowschema.EntryPointRoleDefault, action.EntryPoint.Role)
 	actionFactory.On("GetType", mock.Anything).
 		Return(nil, errors.New("not found")).
 		Once()
 	_, err = br.Details(ctx, actionBlock)
 	require.Error(t, err)
+}
+
+func TestDecisionBlock(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br, fdr := r.Mutation(), r.Block(), r.FlowDraft()
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow Name",
+	})
+	require.NoError(t, err)
+	_, err = mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
+		Cid: "start",
+	})
+	require.NoError(t, err)
+	_, err = mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Cid: "end",
+	})
+	require.NoError(t, err)
+
+	decisionBlock, err := mr.AddDecisionBlock(ctx, flowDraft.ID, models.DecisionBlockInput{
+		Cid: "decision",
+		Routes: []*models.DecisionRouteInput{
+			{
+				Cid: pointer.ToString("option1"),
+			},
+			{
+				Cid: pointer.ToString("option2"),
+			},
+			{
+				Cid: pointer.ToString("option3"),
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	details, err := br.Details(ctx, decisionBlock)
+	require.NoError(t, err)
+	decision, ok := details.(*models.DecisionBlock)
+	require.True(t, ok)
+	require.Equal(t, flowschema.ExitPointRoleDefault, decision.DefaultExitPoint.Role)
+	require.Nil(t, decision.DefaultExitPoint.Cid)
+	require.Len(t, decision.Routes, 3)
+	for _, route := range decision.Routes {
+		require.Equal(t, flowschema.ExitPointRoleDecision, route.ExitPoint.Role)
+		require.NotNil(t, route.ExitPoint.Cid)
+	}
+
+	defaultRole := flowschema.ExitPointRoleDefault
+	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: "decision",
+		SourcePoint: &models.ExitPointInput{
+			Role: &defaultRole,
+		},
+		TargetBlockCid: "start",
+	})
+	require.Error(t, err)
+	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: "decision",
+		SourcePoint: &models.ExitPointInput{
+			Role: &defaultRole,
+		},
+		TargetBlockCid: "end",
+	})
+	require.NoError(t, err)
+	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: "decision",
+		SourcePoint: &models.ExitPointInput{
+			Cid: pointer.ToString("option1"),
+		},
+		TargetBlockCid: "end",
+	})
+	require.NoError(t, err)
+	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: "decision",
+		SourcePoint: &models.ExitPointInput{
+			Role: &defaultRole,
+			Cid:  pointer.ToString("option2"),
+		},
+		TargetBlockCid: "end",
+	})
+	require.Error(t, err)
+
+	nextBlocks, err := br.NextBlocks(ctx, decisionBlock)
+	require.NoError(t, err)
+	require.Len(t, nextBlocks, 1)
+	require.Equal(t, "end", nextBlocks[0].Cid)
+	connectors, err := fdr.Connectors(ctx, flowDraft)
+	require.NoError(t, err)
+	require.Len(t, connectors, 2)
 }

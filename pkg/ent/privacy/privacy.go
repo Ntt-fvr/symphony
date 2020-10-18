@@ -384,6 +384,30 @@ func (f CustomerMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CustomerMutation", m)
 }
 
+// The EntryPointQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntryPointQueryRuleFunc func(context.Context, *ent.EntryPointQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntryPointQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.EntryPointQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EntryPointQuery", q)
+}
+
+// The EntryPointMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntryPointMutationRuleFunc func(context.Context, *ent.EntryPointMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntryPointMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.EntryPointMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EntryPointMutation", m)
+}
+
 // The EquipmentQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EquipmentQueryRuleFunc func(context.Context, *ent.EquipmentQuery) error
@@ -574,6 +598,30 @@ func (f EquipmentTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EquipmentTypeMutation", m)
+}
+
+// The ExitPointQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ExitPointQueryRuleFunc func(context.Context, *ent.ExitPointQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ExitPointQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ExitPointQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ExitPointQuery", q)
+}
+
+// The ExitPointMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ExitPointMutationRuleFunc func(context.Context, *ent.ExitPointMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ExitPointMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ExitPointMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ExitPointMutation", m)
 }
 
 // The ExportTaskQueryRuleFunc type is an adapter to allow the use of ordinary
