@@ -132,7 +132,12 @@ func UpdateSameAsFlowOnDraftChangeHook() ent.Hook {
 			return next.Mutate(ctx, m)
 		})
 	}
-	return hook.If(hk, hook.And(hook.Not(hook.HasFields(flowdraft.FieldSameAsFlow)), hook.HasOp(ent.OpUpdate|ent.OpUpdateOne)))
+	return hook.If(hk,
+		hook.And(
+			hook.Not(hook.HasFields(flowdraft.FieldSameAsFlow)),
+			hook.HasOp(ent.OpUpdateOne),
+		),
+	)
 }
 
 // DenyCreationOfInstanceOfDisabledFlowHook denied creation of flow instance based on flow status

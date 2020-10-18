@@ -66,7 +66,7 @@ func UpdateDraftChangedHook() ent.Hook {
 			return next.Mutate(ctx, mutation)
 		})
 	}
-	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpUpdate|ent.OpDelete|ent.OpDeleteOne)
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpDeleteOne)
 }
 
 func getBlockType(ctx context.Context, mutation *ent.BlockMutation) (*block.Type, error) {
