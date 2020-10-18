@@ -98,15 +98,15 @@ export type ActionBlockInput = {|
 |};
 export type ConnectorInput = {|
   sourceBlockCid: string,
-  sourcePid?: ?ExitPointId,
+  sourcePoint?: ?ExitPointInput,
   targetBlockCid: string,
-  targetPid?: ?EntryPointId,
+  targetPoint?: ?EntryPointInput,
 |};
-export type ExitPointId = {|
+export type ExitPointInput = {|
   role?: ?ExitPointRole,
   cid?: ?string,
 |};
-export type EntryPointId = {|
+export type EntryPointInput = {|
   role?: ?EntryPointRole,
   cid?: ?string,
 |};

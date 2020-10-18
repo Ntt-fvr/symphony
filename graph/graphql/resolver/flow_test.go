@@ -393,14 +393,14 @@ func TestImportEmptyFlow(t *testing.T) {
 		},
 		{
 			SourceBlockCid: "decision1",
-			SourcePid: &models.ExitPointID{
+			SourcePoint: &models.ExitPointInput{
 				Cid: pointer.ToString("false"),
 			},
 			TargetBlockCid: "end",
 		},
 		{
 			SourceBlockCid: "decision1",
-			SourcePid: &models.ExitPointID{
+			SourcePoint: &models.ExitPointInput{
 				Cid: pointer.ToString("true"),
 			},
 			TargetBlockCid: "shortcut",

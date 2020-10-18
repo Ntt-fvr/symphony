@@ -286,10 +286,10 @@ type Connector struct {
 }
 
 type ConnectorInput struct {
-	SourceBlockCid string        `json:"sourceBlockCid"`
-	SourcePid      *ExitPointID  `json:"sourcePid"`
-	TargetBlockCid string        `json:"targetBlockCid"`
-	TargetPid      *EntryPointID `json:"targetPid"`
+	SourceBlockCid string           `json:"sourceBlockCid"`
+	SourcePoint    *ExitPointInput  `json:"sourcePoint"`
+	TargetBlockCid string           `json:"targetBlockCid"`
+	TargetPoint    *EntryPointInput `json:"targetPoint"`
 }
 
 type Coordinates struct {
@@ -468,7 +468,7 @@ type EndBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
-type EntryPointID struct {
+type EntryPointInput struct {
 	Role *flowschema.EntryPointRole `json:"role"`
 	Cid  *string                    `json:"cid"`
 }
@@ -495,7 +495,7 @@ type EquipmentPositionInput struct {
 	VisibleLabel *string `json:"visibleLabel"`
 }
 
-type ExitPointID struct {
+type ExitPointInput struct {
 	Role *flowschema.ExitPointRole `json:"role"`
 	Cid  *string                   `json:"cid"`
 }

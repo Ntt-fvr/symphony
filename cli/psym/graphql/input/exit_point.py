@@ -11,10 +11,10 @@ from typing import Any, Callable, List, Mapping, Optional
 from dataclasses_json import DataClassJsonMixin
 
 from gql.gql.enum_utils import enum_field
-from ..enum.entry_point_role import EntryPointRole
+from ..enum.exit_point_role import ExitPointRole
 
 @dataclass
-class EntryPointId(DataClassJsonMixin):
-    role: Optional[EntryPointRole] = None
+class ExitPointInput(DataClassJsonMixin):
+    role: Optional[ExitPointRole] = None
     cid: Optional[str] = None
 

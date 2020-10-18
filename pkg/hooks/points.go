@@ -49,15 +49,8 @@ func VerifyEntryPointTypeHook() ent.Hook {
 			if err != nil {
 				return nil, fmt.Errorf("cannot get parent block: %w", err)
 			}
-			role, exists := mutation.Role()
-			if !exists {
-				return nil, fmt.Errorf("entry point has no parent block")
-			}
 			switch blk.Type {
 			case block.TypeEnd, block.TypeGoTo, block.TypeDecision, block.TypeSubFlow, block.TypeAction:
-				if role != flowschema.EntryPointRoleDefault {
-					return nil, fmt.Errorf("entry point role %v not valid for block type %v", role, blk.Type)
-				}
 			default:
 				return nil, fmt.Errorf("block type %v is not allowed entry points", blk.Type)
 			}
@@ -82,7 +75,7 @@ func VerifyExitPointTypeHook() ent.Hook {
 			}
 			role, exists := mutation.Role()
 			if !exists {
-				return nil, fmt.Errorf("entry point has no parent block")
+				return nil, fmt.Errorf("entry point has no role")
 			}
 			switch blk.Type {
 			case block.TypeStart, block.TypeTrigger, block.TypeSubFlow, block.TypeAction:
@@ -115,24 +108,15 @@ func AddDefaultEntryAndExitPointsHook() ent.Hook {
 				return nil, fmt.Errorf("")
 			}
 			client := mutation.Client()
-			switch blk.Type {
-			case block.TypeStart, block.TypeTrigger:
-				if err := addDefaultExitPoint(ctx, client, blk.ID); err != nil {
-					return nil, err
-				}
-			case block.TypeEnd, block.TypeGoTo:
+			if blk.Type != block.TypeStart && blk.Type != block.TypeTrigger {
 				if err := addDefaultEntryPoint(ctx, client, blk.ID); err != nil {
 					return nil, err
 				}
-			case block.TypeDecision, block.TypeSubFlow, block.TypeAction:
-				if err := addDefaultEntryPoint(ctx, client, blk.ID); err != nil {
-					return nil, err
-				}
+			}
+			if blk.Type != block.TypeEnd && blk.Type != block.TypeGoTo {
 				if err := addDefaultExitPoint(ctx, client, blk.ID); err != nil {
 					return nil, err
 				}
-			default:
-				return nil, fmt.Errorf("block type not found. type=%v", blk.Type)
 			}
 			return value, nil
 		})

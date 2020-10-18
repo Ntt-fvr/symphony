@@ -36,6 +36,7 @@ func getDraftBlock(ctx context.Context, flowDraftID int, blockCid string) (*ent.
 		Only(ctx)
 }
 
+// TODO: remove the resolver after usage is removed from UI
 func (r blockResolver) NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error) {
 	return obj.QueryExitPoints().
 		QueryNextEntryPoints().
@@ -43,6 +44,7 @@ func (r blockResolver) NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.B
 		All(ctx)
 }
 
+// TODO: remove the resolver after usage is removed from UI
 func (r blockResolver) PrevBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error) {
 	return obj.QueryEntryPoint().
 		QueryPrevExitPoints().
@@ -84,23 +86,14 @@ func getDefaultEntryExitPoints(ctx context.Context, obj *ent.Block) (*ent.EntryP
 		exitPoint  *ent.ExitPoint
 		err        error
 	)
-	switch obj.Type {
-	case block.TypeStart, block.TypeTrigger:
-		exitPoint, err = getDefaultExitPoint(ctx, obj)
-		if err != nil {
-			return nil, nil, err
-		}
-	case block.TypeEnd, block.TypeGoTo:
+	if obj.Type != block.TypeStart && obj.Type != block.TypeTrigger {
 		entryPoint, err = getDefaultEntryPoint(ctx, obj)
 		if err != nil {
 			return nil, nil, err
 		}
-	case block.TypeDecision, block.TypeSubFlow, block.TypeAction:
+	}
+	if obj.Type != block.TypeEnd && obj.Type != block.TypeGoTo {
 		exitPoint, err = getDefaultExitPoint(ctx, obj)
-		if err != nil {
-			return nil, nil, err
-		}
-		entryPoint, err = getDefaultEntryPoint(ctx, obj)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -348,25 +341,29 @@ func (r mutationResolver) DeleteBlock(ctx context.Context, id int) (bool, error)
 	return true, nil
 }
 
-func getExitPointRoleOrDefault(pid *models.ExitPointID) flowschema.ExitPointRole {
-	if pid == nil || pid.Role == nil {
+func getExitPointRoleOrDefault(ePoint *models.ExitPointInput) flowschema.ExitPointRole {
+	if ePoint == nil || ePoint.Role == nil {
 		return flowschema.ExitPointRoleDefault
 	}
-	return *pid.Role
+	return *ePoint.Role
 }
 
-func getExitPoint(ctx context.Context, flowDraftID int, blockCid string, pid *models.ExitPointID) (*ent.ExitPoint, error) {
+func getExitPoint(ctx context.Context, flowDraftID int, blockCid string, ePoint *models.ExitPointInput) (*ent.ExitPoint, error) {
+	if ePoint != nil && ePoint.Role != nil && ePoint.Cid != nil {
+		return nil, fmt.Errorf("exit point input cannot have cid and role together")
+	}
 	exitPointPredicates := []predicate.ExitPoint{
 		exitpoint.HasParentBlockWith(
 			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
 			block.Cid(blockCid),
 		),
 	}
-	if pid != nil && pid.Cid != nil {
-		exitPointPredicates = append(exitPointPredicates, exitpoint.Cid(*pid.Cid))
+	if ePoint != nil && ePoint.Cid != nil {
+		exitPointPredicates = append(exitPointPredicates, exitpoint.Cid(*ePoint.Cid))
 	} else {
 		exitPointPredicates = append(exitPointPredicates,
-			exitpoint.RoleEQ(getExitPointRoleOrDefault(pid)))
+			exitpoint.RoleEQ(getExitPointRoleOrDefault(ePoint)),
+			exitpoint.CidIsNil())
 	}
 	client := ent.FromContext(ctx)
 	exitPoint, err := client.ExitPoint.Query().
@@ -378,25 +375,29 @@ func getExitPoint(ctx context.Context, flowDraftID int, blockCid string, pid *mo
 	return exitPoint, nil
 }
 
-func getEntryPointRoleOrDefault(pid *models.EntryPointID) flowschema.EntryPointRole {
-	if pid == nil || pid.Role == nil {
+func getEntryPointRoleOrDefault(ePoint *models.EntryPointInput) flowschema.EntryPointRole {
+	if ePoint == nil || ePoint.Role == nil {
 		return flowschema.EntryPointRoleDefault
 	}
-	return *pid.Role
+	return *ePoint.Role
 }
 
-func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, pid *models.EntryPointID) (*ent.EntryPoint, error) {
+func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, ePoint *models.EntryPointInput) (*ent.EntryPoint, error) {
+	if ePoint != nil && ePoint.Role != nil && ePoint.Cid != nil {
+		return nil, fmt.Errorf("entry point input cannot have cid and role together")
+	}
 	entryPointPredicates := []predicate.EntryPoint{
 		entrypoint.HasParentBlockWith(
 			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
 			block.Cid(blockCid),
 		),
 	}
-	if pid != nil && pid.Cid != nil {
-		entryPointPredicates = append(entryPointPredicates, entrypoint.Cid(*pid.Cid))
+	if ePoint != nil && ePoint.Cid != nil {
+		entryPointPredicates = append(entryPointPredicates, entrypoint.Cid(*ePoint.Cid))
 	} else {
 		entryPointPredicates = append(entryPointPredicates,
-			entrypoint.RoleEQ(getEntryPointRoleOrDefault(pid)))
+			entrypoint.RoleEQ(getEntryPointRoleOrDefault(ePoint)),
+			entrypoint.CidIsNil())
 	}
 	client := ent.FromContext(ctx)
 	entryPoint, err := client.EntryPoint.Query().
@@ -409,11 +410,11 @@ func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, pid *m
 }
 
 func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*models.Connector, error) {
-	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePid)
+	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePoint)
 	if err != nil {
 		return nil, err
 	}
-	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPid)
+	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPoint)
 	if err != nil {
 		return nil, err
 	}
@@ -438,11 +439,11 @@ func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, inp
 }
 
 func (r mutationResolver) DeleteConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (bool, error) {
-	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePid)
+	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePoint)
 	if err != nil {
 		return false, err
 	}
-	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPid)
+	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPoint)
 	if err != nil {
 		return false, err
 	}

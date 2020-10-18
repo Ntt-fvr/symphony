@@ -11889,21 +11889,21 @@ input ActionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-input ExitPointId {
+input ExitPointInput {
   role: ExitPointRole
   cid: String
 }
 
-input EntryPointId {
+input EntryPointInput {
   role: EntryPointRole
   cid: String
 }
 
 input ConnectorInput {
   sourceBlockCid: String!
-  sourcePid: ExitPointId
+  sourcePoint: ExitPointInput
   targetBlockCid: String!
-  targetPid: EntryPointId
+  targetPoint: EntryPointInput
 }
 
 type Connector {
@@ -50049,11 +50049,11 @@ func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "sourcePid":
+		case "sourcePoint":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sourcePid"))
-			it.SourcePid, err = ec.unmarshalOExitPointId2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sourcePoint"))
+			it.SourcePoint, err = ec.unmarshalOExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -50065,11 +50065,11 @@ func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "targetPid":
+		case "targetPoint":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetPid"))
-			it.TargetPid, err = ec.unmarshalOEntryPointId2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointID(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetPoint"))
+			it.TargetPoint, err = ec.unmarshalOEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51259,8 +51259,8 @@ func (ec *executionContext) unmarshalInputEndBlockInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputEntryPointId(ctx context.Context, obj interface{}) (models.EntryPointID, error) {
-	var it models.EntryPointID
+func (ec *executionContext) unmarshalInputEntryPointInput(ctx context.Context, obj interface{}) (models.EntryPointInput, error) {
+	var it models.EntryPointInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -51527,8 +51527,8 @@ func (ec *executionContext) unmarshalInputEquipmentPositionInput(ctx context.Con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputExitPointId(ctx context.Context, obj interface{}) (models.ExitPointID, error) {
-	var it models.ExitPointID
+func (ec *executionContext) unmarshalInputExitPointInput(ctx context.Context, obj interface{}) (models.ExitPointInput, error) {
+	var it models.ExitPointInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -70614,11 +70614,11 @@ func (ec *executionContext) unmarshalOEndBlockInput2ᚕᚖgithubᚗcomᚋfaceboo
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOEntryPointId2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointID(ctx context.Context, v interface{}) (*models.EntryPointID, error) {
+func (ec *executionContext) unmarshalOEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx context.Context, v interface{}) (*models.EntryPointInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputEntryPointId(ctx, v)
+	res, err := ec.unmarshalInputEntryPointInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -70854,11 +70854,11 @@ func (ec *executionContext) marshalOExitPoint2ᚖgithubᚗcomᚋfacebookincubato
 	return ec._ExitPoint(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOExitPointId2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointID(ctx context.Context, v interface{}) (*models.ExitPointID, error) {
+func (ec *executionContext) unmarshalOExitPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐExitPointInput(ctx context.Context, v interface{}) (*models.ExitPointInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputExitPointId(ctx, v)
+	res, err := ec.unmarshalInputExitPointInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

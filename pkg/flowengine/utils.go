@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -42,10 +43,7 @@ func copyConnectors(ctx context.Context, oldToNewEntryPoint map[int]*ent.EntryPo
 func getDefaultEntryPoint(ctx context.Context, blk *ent.Block) (*ent.EntryPoint, error) {
 	client := ent.FromContext(ctx)
 	entryPoint, err := client.EntryPoint.Query().
-		Where(
-			entrypoint.HasParentBlockWith(block.ID(blk.ID)),
-			entrypoint.RoleEQ(flowschema.EntryPointRoleDefault),
-		).
+		Where(entrypoint.HasParentBlockWith(block.ID(blk.ID))).
 		Only(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get new entry point: %w", err)
@@ -54,27 +52,31 @@ func getDefaultEntryPoint(ctx context.Context, blk *ent.Block) (*ent.EntryPoint,
 }
 
 func getOrCreateExitPoint(ctx context.Context, exitPoint *ent.ExitPoint, newBlock *ent.Block) (*ent.ExitPoint, error) {
-	var (
-		newExitPoint *ent.ExitPoint
-		err          error
-	)
 	client := ent.FromContext(ctx)
-	if exitPoint.Role != flowschema.ExitPointRoleDefault {
+	predicates := []predicate.ExitPoint{
+		exitpoint.HasParentBlockWith(block.ID(newBlock.ID)),
+		exitpoint.RoleEQ(exitPoint.Role),
+	}
+	if exitPoint.Cid != nil {
+		predicates = append(predicates, exitpoint.Cid(*exitPoint.Cid))
+	} else {
+		predicates = append(predicates, exitpoint.CidIsNil())
+	}
+	newExitPoint, err := client.ExitPoint.Query().
+		Where(predicates...).
+		Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return nil, fmt.Errorf("failed to get new exit point: %w", err)
+		}
 		newExitPoint, err = client.ExitPoint.Create().
 			SetParentBlock(newBlock).
 			SetRole(exitPoint.Role).
 			SetNillableCid(exitPoint.Cid).
 			Save(ctx)
-	} else {
-		newExitPoint, err = client.ExitPoint.Query().
-			Where(
-				exitpoint.HasParentBlockWith(block.ID(newBlock.ID)),
-				exitpoint.RoleEQ(flowschema.ExitPointRoleDefault),
-			).
-			Only(ctx)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("failed to get new exit point: %w", err)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create new exit point: %w", err)
+		}
 	}
 	return newExitPoint, nil
 }

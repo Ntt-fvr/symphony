@@ -3351,21 +3351,21 @@ input ActionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-input ExitPointId {
+input ExitPointInput {
   role: ExitPointRole
   cid: String
 }
 
-input EntryPointId {
+input EntryPointInput {
   role: EntryPointRole
   cid: String
 }
 
 input ConnectorInput {
   sourceBlockCid: String!
-  sourcePid: ExitPointId
+  sourcePoint: ExitPointInput
   targetBlockCid: String!
-  targetPid: EntryPointId
+  targetPoint: EntryPointInput
 }
 
 type Connector {

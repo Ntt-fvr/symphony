@@ -350,7 +350,7 @@ func TestDecisionBlock(t *testing.T) {
 	defaultRole := flowschema.ExitPointRoleDefault
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
 		SourceBlockCid: "decision",
-		SourcePid: &models.ExitPointID{
+		SourcePoint: &models.ExitPointInput{
 			Role: &defaultRole,
 		},
 		TargetBlockCid: "start",
@@ -358,7 +358,7 @@ func TestDecisionBlock(t *testing.T) {
 	require.Error(t, err)
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
 		SourceBlockCid: "decision",
-		SourcePid: &models.ExitPointID{
+		SourcePoint: &models.ExitPointInput{
 			Role: &defaultRole,
 		},
 		TargetBlockCid: "end",
@@ -366,7 +366,7 @@ func TestDecisionBlock(t *testing.T) {
 	require.NoError(t, err)
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
 		SourceBlockCid: "decision",
-		SourcePid: &models.ExitPointID{
+		SourcePoint: &models.ExitPointInput{
 			Cid: pointer.ToString("option1"),
 		},
 		TargetBlockCid: "end",
@@ -374,13 +374,13 @@ func TestDecisionBlock(t *testing.T) {
 	require.NoError(t, err)
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
 		SourceBlockCid: "decision",
-		SourcePid: &models.ExitPointID{
+		SourcePoint: &models.ExitPointInput{
 			Role: &defaultRole,
 			Cid:  pointer.ToString("option2"),
 		},
 		TargetBlockCid: "end",
 	})
-	require.NoError(t, err)
+	require.Error(t, err)
 
 	nextBlocks, err := br.NextBlocks(ctx, decisionBlock)
 	require.NoError(t, err)
@@ -388,5 +388,5 @@ func TestDecisionBlock(t *testing.T) {
 	require.Equal(t, "end", nextBlocks[0].Cid)
 	connectors, err := fdr.Connectors(ctx, flowDraft)
 	require.NoError(t, err)
-	require.Len(t, connectors, 3)
+	require.Len(t, connectors, 2)
 }

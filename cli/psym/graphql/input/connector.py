@@ -10,12 +10,12 @@ from typing import Any, Callable, List, Mapping, Optional
 
 from dataclasses_json import DataClassJsonMixin
 
-from ..input.entry_point_id import EntryPointId
-from ..input.exit_point_id import ExitPointId
+from ..input.entry_point import EntryPointInput
+from ..input.exit_point import ExitPointInput
 @dataclass
 class ConnectorInput(DataClassJsonMixin):
     sourceBlockCid: str
     targetBlockCid: str
-    sourcePid: Optional[ExitPointId] = None
-    targetPid: Optional[EntryPointId] = None
+    sourcePoint: Optional[ExitPointInput] = None
+    targetPoint: Optional[EntryPointInput] = None
 
