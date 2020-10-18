@@ -124,8 +124,8 @@ func VerifyEndParamDefinitionsHook() ent.Hook {
 	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
 }
 
-// UpdateSameAsFlowOnDraftChange sets SetSameAsFlow to false upon draft change
-func UpdateSameAsFlowOnDraftChange() ent.Hook {
+// UpdateSameAsFlowOnDraftChangeHook sets SetSameAsFlow to false upon draft change
+func UpdateSameAsFlowOnDraftChangeHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.FlowDraftFunc(func(ctx context.Context, m *ent.FlowDraftMutation) (ent.Value, error) {
 			m.SetSameAsFlow(false)

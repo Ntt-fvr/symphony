@@ -152,7 +152,7 @@ func (FlowDraft) Edges() []ent.Edge {
 // Hooks returns flow draft hooks.
 func (FlowDraft) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hooks.UpdateSameAsFlowOnDraftChange(),
+		hooks.UpdateSameAsFlowOnDraftChangeHook(),
 	}
 }
 

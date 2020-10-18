@@ -51,8 +51,8 @@ func VerifyStartParamDefinitionsHook() ent.Hook {
 		))
 }
 
-// UpdateDraftChanged
-func UpdateDraftChanged() ent.Hook {
+// UpdateDraftChangedHook
+func UpdateDraftChangedHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.BlockFunc(func(ctx context.Context, mutation *ent.BlockMutation) (ent.Value, error) {
 			draftID, exists := mutation.FlowDraftID()
