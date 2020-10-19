@@ -16,6 +16,8 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
+	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
+	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -454,4 +456,92 @@ func (queryResolver) PythonPackages(context.Context) ([]*models.PythonPackage, e
 
 func (r queryResolver) Vertex(ctx context.Context, id int) (*ent.Node, error) {
 	return r.ClientFrom(ctx).Node(ctx, id)
+}
+
+var ErrMultipleEndToEndPath = errors.New("multiple paths found")
+
+func (r queryResolver) EndToEndPath(ctx context.Context, linkID *int, portID *int) (*models.EndToEndPath, error) {
+	client := r.ClientFrom(ctx)
+	// portId is a backplane connected port
+	if portID != nil {
+		currentPort, err := client.EquipmentPort.Get(ctx, *portID)
+		if err != nil {
+			return nil, fmt.Errorf("unable to find port: %w", err)
+		}
+		backplanePort, err := r.getNextConnectedPortWithLink(ctx, currentPort)
+		switch {
+		case ent.IsNotFound(err):
+			return &models.EndToEndPath{Ports: []*ent.EquipmentPort{currentPort}}, nil
+		case ent.IsNotSingular(err):
+			return nil, ErrMultipleEndToEndPath
+		case err != nil:
+			return nil, fmt.Errorf("unable to find backplane port: %w", err)
+		}
+		currentLink, err := backplanePort.Edges.LinkOrErr()
+		if err != nil {
+			return &models.EndToEndPath{Ports: []*ent.EquipmentPort{currentPort, backplanePort}}, nil
+		}
+		return r.traverseEndToEndPathInLink(ctx, currentLink)
+	}
+	if linkID == nil {
+		return nil, errors.New("a portId or linkId is required")
+	}
+	currentLink, err := client.Link.Query().WithPorts().Where(link.ID(*linkID)).First(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("unable to find link for port: %w", err)
+	}
+	return r.traverseEndToEndPathInLink(ctx, currentLink)
+}
+
+func (r queryResolver) traverseEndToEndPathInLink(ctx context.Context, item *ent.Link) (*models.EndToEndPath, error) {
+	if len(item.Edges.Ports) != 2 {
+		return nil, errors.New("the number of ports on link is invalid")
+	}
+	result := models.EndToEndPath{Links: []*ent.Link{item}, Ports: []*ent.EquipmentPort{}}
+	// traverse left,right
+	for _, port := range item.Edges.Ports {
+		for {
+			nextBackPlanePort, err := r.getNextConnectedPortWithLink(ctx, port)
+			if err != nil {
+				if ent.IsNotFound(err) {
+					break
+				}
+				if ent.IsNotSingular(err) {
+					return nil, ErrMultipleEndToEndPath
+				}
+				return nil, fmt.Errorf("unable to find backplane port %w", err)
+			}
+			if nextBackPlanePort.Edges.Link == nil {
+				result.Ports = append(result.Ports, nextBackPlanePort)
+				break
+			}
+			nextLink := nextBackPlanePort.Edges.Link
+			result.Links = append(result.Links, nextLink)
+			linkPorts, err := nextLink.Edges.PortsOrErr()
+			if err != nil || len(linkPorts) < 1 {
+				return nil, fmt.Errorf("unable to find port for link %d: %w", port.ID, err)
+			}
+			if nextBackPlanePort.ID != linkPorts[0].ID {
+				port = linkPorts[0]
+				continue
+			}
+			port = linkPorts[1]
+		}
+	}
+	return &result, nil
+}
+
+func (r queryResolver) getNextConnectedPortWithLink(ctx context.Context, port *ent.EquipmentPort) (*ent.EquipmentPort, error) {
+	portParentEquipmentID, err := port.QueryParent().FirstID(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("unable to find port parent equipment: %w", err)
+	}
+	return port.QueryDefinition().
+		QueryConnectedPorts().
+		QueryPorts().
+		Where(equipmentport.HasParentWith(equipment.ID(portParentEquipmentID))).
+		WithLink(func(query *ent.LinkQuery) {
+			query.WithPorts()
+		}).
+		Only(ctx)
 }

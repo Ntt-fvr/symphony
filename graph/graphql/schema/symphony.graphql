@@ -840,6 +840,20 @@ type SearchEntry {
 }
 
 """
+End To End Path Descovery.
+"""
+type EndToEndPath {
+  """
+  The links in the path
+  """
+  links: [Link]
+  """
+  The start,end ports in the path
+  """
+  ports: [EquipmentPort]
+}
+
+"""
 A search node edge in a connection.
 """
 type SearchNodeEdge {
@@ -3496,6 +3510,21 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
+
+  """
+  Fetches end to end path of links
+  """
+  endToEndPath(
+    """
+    find to end to end path containing this link
+    """
+    linkId: ID
+
+    """
+    find to end to end path containing this port
+    """
+    portId: ID
+  ): EndToEndPath
 
   """
   A list of locations.

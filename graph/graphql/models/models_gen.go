@@ -468,6 +468,14 @@ type EndBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+// End To End Path Descovery.
+type EndToEndPath struct {
+	// The links in the path
+	Links []*ent.Link `json:"links"`
+	// The start,end ports in the path
+	Ports []*ent.EquipmentPort `json:"ports"`
+}
+
 type EntryPointInput struct {
 	Role *flowschema.EntryPointRole `json:"role"`
 	Cid  *string                    `json:"cid"`

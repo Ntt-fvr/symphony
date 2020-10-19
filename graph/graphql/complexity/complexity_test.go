@@ -62,6 +62,7 @@ func TestQueryComplexity(t *testing.T) {
 		"Surveys",
 		"TriggerType",
 		"User",
+		"EndToEndPath",
 		"Vertex",
 	)
 	query := reflect.ValueOf(complexity.New().Query)

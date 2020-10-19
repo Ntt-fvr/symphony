@@ -295,6 +295,11 @@ type ComplexityRoot struct {
 		Params     func(childComplexity int) int
 	}
 
+	EndToEndPath struct {
+		Links func(childComplexity int) int
+		Ports func(childComplexity int) int
+	}
+
 	EntryPoint struct {
 		Cid            func(childComplexity int) int
 		ID             func(childComplexity int) int
@@ -934,6 +939,7 @@ type ComplexityRoot struct {
 		ActionType               func(childComplexity int, id flowschema.ActionTypeID) int
 		CustomerSearch           func(childComplexity int, limit *int) int
 		Customers                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		EndToEndPath             func(childComplexity int, linkID *int, portID *int) int
 		EquipmentPortDefinitions func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPortTypes       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
@@ -1685,6 +1691,7 @@ type QueryResolver interface {
 	ActionType(ctx context.Context, id flowschema.ActionTypeID) (actions.ActionType, error)
 	TriggerType(ctx context.Context, id flowschema.TriggerTypeID) (triggers.TriggerType, error)
 	LocationTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.LocationTypeConnection, error)
+	EndToEndPath(ctx context.Context, linkID *int, portID *int) (*models.EndToEndPath, error)
 	Locations(ctx context.Context, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) (*ent.LocationConnection, error)
 	EquipmentPortTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortTypeConnection, error)
 	EquipmentPortDefinitions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortDefinitionConnection, error)
@@ -2544,6 +2551,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EndBlock.Params(childComplexity), true
+
+	case "EndToEndPath.links":
+		if e.complexity.EndToEndPath.Links == nil {
+			break
+		}
+
+		return e.complexity.EndToEndPath.Links(childComplexity), true
+
+	case "EndToEndPath.ports":
+		if e.complexity.EndToEndPath.Ports == nil {
+			break
+		}
+
+		return e.complexity.EndToEndPath.Ports(childComplexity), true
 
 	case "EntryPoint.cid":
 		if e.complexity.EntryPoint.Cid == nil {
@@ -6041,6 +6062,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Customers(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
+	case "Query.endToEndPath":
+		if e.complexity.Query.EndToEndPath == nil {
+			break
+		}
+
+		args, err := ec.field_Query_endToEndPath_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EndToEndPath(childComplexity, args["linkId"].(*int), args["portId"].(*int)), true
+
 	case "Query.equipmentPortDefinitions":
 		if e.complexity.Query.EquipmentPortDefinitions == nil {
 			break
@@ -9378,6 +9411,20 @@ type SearchEntry {
 }
 
 """
+End To End Path Descovery.
+"""
+type EndToEndPath {
+  """
+  The links in the path
+  """
+  links: [Link]
+  """
+  The start,end ports in the path
+  """
+  ports: [EquipmentPort]
+}
+
+"""
 A search node edge in a connection.
 """
 type SearchNodeEdge {
@@ -12034,6 +12081,21 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
+
+  """
+  Fetches end to end path of links
+  """
+  endToEndPath(
+    """
+    find to end to end path containing this link
+    """
+    linkId: ID
+
+    """
+    find to end to end path containing this port
+    """
+    portId: ID
+  ): EndToEndPath
 
   """
   A list of locations.
@@ -14724,6 +14786,30 @@ func (ec *executionContext) field_Query_customers_args(ctx context.Context, rawA
 		}
 	}
 	args["last"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_endToEndPath_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["linkId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkId"))
+		arg0, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["linkId"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["portId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("portId"))
+		arg1, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["portId"] = arg1
 	return args, nil
 }
 
@@ -20510,6 +20596,70 @@ func (ec *executionContext) _EndBlock_entryPoint(ctx context.Context, field grap
 	res := resTmp.(*ent.EntryPoint)
 	fc.Result = res
 	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EndToEndPath_links(ctx context.Context, field graphql.CollectedField, obj *models.EndToEndPath) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EndToEndPath",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Links, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Link)
+	fc.Result = res
+	return ec.marshalOLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EndToEndPath_ports(ctx context.Context, field graphql.CollectedField, obj *models.EndToEndPath) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EndToEndPath",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ports, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.EquipmentPort)
+	fc.Result = res
+	return ec.marshalOEquipmentPort2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _EntryPoint_id(ctx context.Context, field graphql.CollectedField, obj *ent.EntryPoint) (ret graphql.Marshaler) {
@@ -36027,6 +36177,45 @@ func (ec *executionContext) _Query_locationTypes(ctx context.Context, field grap
 	res := resTmp.(*ent.LocationTypeConnection)
 	fc.Result = res
 	return ec.marshalOLocationTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationTypeConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_endToEndPath(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_endToEndPath_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().EndToEndPath(rctx, args["linkId"].(*int), args["portId"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.EndToEndPath)
+	fc.Result = res
+	return ec.marshalOEndToEndPath2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEndToEndPath(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_locations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -56272,6 +56461,32 @@ func (ec *executionContext) _EndBlock(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var endToEndPathImplementors = []string{"EndToEndPath"}
+
+func (ec *executionContext) _EndToEndPath(ctx context.Context, sel ast.SelectionSet, obj *models.EndToEndPath) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, endToEndPathImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EndToEndPath")
+		case "links":
+			out.Values[i] = ec._EndToEndPath_links(ctx, field, obj)
+		case "ports":
+			out.Values[i] = ec._EndToEndPath_ports(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var entryPointImplementors = []string{"EntryPoint", "Node"}
 
 func (ec *executionContext) _EntryPoint(ctx context.Context, sel ast.SelectionSet, obj *ent.EntryPoint) graphql.Marshaler {
@@ -60554,6 +60769,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_locationTypes(ctx, field)
+				return res
+			})
+		case "endToEndPath":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_endToEndPath(ctx, field)
 				return res
 			})
 		case "locations":
@@ -70614,6 +70840,13 @@ func (ec *executionContext) unmarshalOEndBlockInput2ᚕᚖgithubᚗcomᚋfaceboo
 	return res, nil
 }
 
+func (ec *executionContext) marshalOEndToEndPath2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEndToEndPath(ctx context.Context, sel ast.SelectionSet, v *models.EndToEndPath) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._EndToEndPath(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx context.Context, v interface{}) (*models.EntryPointInput, error) {
 	if v == nil {
 		return nil, nil
@@ -70691,6 +70924,46 @@ func (ec *executionContext) marshalOEquipmentOrderField2ᚖgithubᚗcomᚋfacebo
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOEquipmentPort2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx context.Context, sel ast.SelectionSet, v []*ent.EquipmentPort) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOEquipmentPort2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOEquipmentPort2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx context.Context, sel ast.SelectionSet, v *ent.EquipmentPort) graphql.Marshaler {
@@ -71304,6 +71577,46 @@ func (ec *executionContext) marshalOLatestPythonPackageResult2ᚖgithubᚗcomᚋ
 		return graphql.Null
 	}
 	return ec._LatestPythonPackageResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx context.Context, sel ast.SelectionSet, v []*ent.Link) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOLink2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOLink2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx context.Context, sel ast.SelectionSet, v *ent.Link) graphql.Marshaler {
