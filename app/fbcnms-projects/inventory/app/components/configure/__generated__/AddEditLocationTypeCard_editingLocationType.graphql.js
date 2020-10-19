@@ -25,7 +25,6 @@ export type AddEditLocationTypeCard_editingLocationType = {|
   +mapType: ?string,
   +mapZoomLevel: ?number,
   +numberOfLocations: number,
-  +isSite: boolean,
   +propertyTypes: $ReadOnlyArray<?{|
     +id: string,
     +name: string,
@@ -116,13 +115,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "numberOfLocations",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "isSite",
       "storageKey": null
     },
     {
@@ -296,6 +288,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '922d9f9f84ee7d6e6f8efd7f0da8b295';
+(node/*: any*/).hash = '6e27020b543c9913fe242a536fcf285c';
 
 module.exports = node;
