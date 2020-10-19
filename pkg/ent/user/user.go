@@ -237,10 +237,10 @@ func (s Status) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (s *Status) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (s *Status) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*s = Status(str)
 	if err := StatusValidator(*s); err != nil {
@@ -255,10 +255,10 @@ func (r Role) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (r *Role) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (r *Role) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*r = Role(str)
 	if err := RoleValidator(*r); err != nil {
@@ -273,10 +273,10 @@ func (du DistanceUnit) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (du *DistanceUnit) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (du *DistanceUnit) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*du = DistanceUnit(str)
 	if err := DistanceUnitValidator(*du); err != nil {

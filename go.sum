@@ -233,10 +233,15 @@ github.com/facebook/ent v0.4.4-0.20201006091631-3f3debbe973b h1:QVev2PgzArf99btE
 github.com/facebook/ent v0.4.4-0.20201006091631-3f3debbe973b/go.mod h1:vR40t3AzzxF5WcNZouGjfq1LdzryPiT6GHTfBBwSiiU=
 github.com/facebook/ent v0.4.4-0.20201015070947-119cdf207ef7 h1:VFMzTR+p2zomeuIZo8tzoWd2DjOpvtKjlnVXT9NFJC8=
 github.com/facebook/ent v0.4.4-0.20201015070947-119cdf207ef7/go.mod h1:TRP7RemIs+wOZ2AkLYe+c2IyByg82XxSajjcUdZm1Rc=
+github.com/facebook/ent v0.4.4-0.20201018111720-17ee19e23a5c/go.mod h1:TRP7RemIs+wOZ2AkLYe+c2IyByg82XxSajjcUdZm1Rc=
+github.com/facebook/ent v0.4.4-0.20201019115128-98aeb19013f1 h1:fUz6h13o1ZlCy2PJwm/pVXCe6msMEs6CIaJnjJvIRpU=
+github.com/facebook/ent v0.4.4-0.20201019115128-98aeb19013f1/go.mod h1:HrrMNGsvgZoGQ74PGBQJ9r9WNOVMqKQefcOJFXuOUlw=
 github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a h1:yDWHCSQ40h88yih2JAcL6Ls/kVkSE8GFACTGVnMPruw=
 github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a/go.mod h1:7Ga40egUymuWXxAe151lTNnCv97MddSOVsjpPPkityA=
 github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d h1:7zgmPfZyCNOIC3S+ny4hM05G/rIXrVdjY1i3Ma3gh1Q=
 github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d/go.mod h1:ThhJ88ry5MEB39ewXi4fOZPOZOyGq5WMWWQsjDIqgcI=
+github.com/facebookincubator/ent-contrib v0.0.0-20201018112627-5709d2185a62 h1:iLVTWHTdjxsSGMkJU5fcSQbrVszegfRxWWe5ZgOiOVE=
+github.com/facebookincubator/ent-contrib v0.0.0-20201018112627-5709d2185a62/go.mod h1:qGRH5992A5gadBgOFBRTYxgpAmmiagkqleki/mO5V1Y=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/set v0.2.1 h1:nn2CaJyknWE/6txyUDGwysr3G5QC6xWB/PtVjPBbeaA=
 github.com/fatih/set v0.2.1/go.mod h1:+RKtMCH+favT2+3YecHGxcc0b4KyVWA1QWWJUs4E0CI=
@@ -672,6 +677,7 @@ github.com/spf13/cast v1.3.0/go.mod h1:Qx5cxh0v+4UWYiBimWS+eyWzqEqokIECu5etghLkU
 github.com/spf13/cobra v0.0.3/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
 github.com/spf13/cobra v1.0.0/go.mod h1:/6GTrnGXV9HjY+aR4k0oJ5tcvakLuG6EuKReYlHNrgE=
 github.com/spf13/cobra v1.1.0/go.mod h1:yk5b0mALVusDL5fMM6Rd1wgnoO5jUPhwsQ6LQAJTidQ=
+github.com/spf13/cobra v1.1.1/go.mod h1:WnodtKOvamDL/PwE2M4iKs8aMDBZ5Q5klgD3qfVJQMI=
 github.com/spf13/jwalterweatherman v1.0.0/go.mod h1:cQK4TGJAtQXfYWX+Ddv3mKDzgVb68N+wFjFa4jdeBTo=
 github.com/spf13/pflag v1.0.1/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
 github.com/spf13/pflag v1.0.3/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=

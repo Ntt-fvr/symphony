@@ -168,28 +168,25 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "clock_details",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = a.QueryAuthor().
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "author",
+	}
+	node.Edges[0].IDs, err = a.QueryAuthor().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "User",
-		Name: "author",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
 	}
-	ids, err = a.QueryWorkOrder().
+	node.Edges[1].IDs, err = a.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
 	}
 	return node, nil
 }
@@ -274,105 +271,95 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "ui_representation",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = b.QueryFlow().
-		Select(flow.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[0] = &Edge{
-		IDs:  ids,
 		Type: "Flow",
 		Name: "flow",
 	}
-	ids, err = b.QueryFlowTemplate().
-		Select(flowexecutiontemplate.FieldID).
+	node.Edges[0].IDs, err = b.QueryFlow().
+		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "FlowExecutionTemplate",
 		Name: "flow_template",
 	}
-	ids, err = b.QueryFlowDraft().
-		Select(flowdraft.FieldID).
+	node.Edges[1].IDs, err = b.QueryFlowTemplate().
+		Select(flowexecutiontemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "FlowDraft",
 		Name: "flow_draft",
 	}
-	ids, err = b.QuerySubFlow().
-		Select(flow.FieldID).
+	node.Edges[2].IDs, err = b.QueryFlowDraft().
+		Select(flowdraft.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "Flow",
 		Name: "sub_flow",
 	}
-	ids, err = b.QuerySourceBlock().
-		Select(block.FieldID).
+	node.Edges[3].IDs, err = b.QuerySubFlow().
+		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "Block",
 		Name: "source_block",
 	}
-	ids, err = b.QueryGotoBlock().
+	node.Edges[4].IDs, err = b.QuerySourceBlock().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		IDs:  ids,
 		Type: "Block",
 		Name: "goto_block",
 	}
-	ids, err = b.QueryInstances().
-		Select(blockinstance.FieldID).
+	node.Edges[5].IDs, err = b.QueryGotoBlock().
+		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		IDs:  ids,
 		Type: "BlockInstance",
 		Name: "instances",
 	}
-	ids, err = b.QueryEntryPoint().
-		Select(entrypoint.FieldID).
+	node.Edges[6].IDs, err = b.QueryInstances().
+		Select(blockinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		IDs:  ids,
 		Type: "EntryPoint",
 		Name: "entry_point",
 	}
-	ids, err = b.QueryExitPoints().
-		Select(exitpoint.FieldID).
+	node.Edges[7].IDs, err = b.QueryEntryPoint().
+		Select(entrypoint.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		IDs:  ids,
 		Type: "ExitPoint",
 		Name: "exit_points",
+	}
+	node.Edges[8].IDs, err = b.QueryExitPoints().
+		Select(exitpoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -441,39 +428,35 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "block_instance_counter",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = bi.QueryFlowInstance().
-		Select(flowinstance.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[0] = &Edge{
-		IDs:  ids,
 		Type: "FlowInstance",
 		Name: "flow_instance",
 	}
-	ids, err = bi.QueryBlock().
-		Select(block.FieldID).
+	node.Edges[0].IDs, err = bi.QueryFlowInstance().
+		Select(flowinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "Block",
 		Name: "block",
 	}
-	ids, err = bi.QuerySubflowInstance().
-		Select(flowinstance.FieldID).
+	node.Edges[1].IDs, err = bi.QueryBlock().
+		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "FlowInstance",
 		Name: "subflow_instance",
+	}
+	node.Edges[2].IDs, err = bi.QuerySubflowInstance().
+		Select(flowinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -518,28 +501,25 @@ func (clc *CheckListCategory) Node(ctx context.Context) (node *Node, err error) 
 		Name:  "description",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = clc.QueryCheckListItems().
+	node.Edges[0] = &Edge{
+		Type: "CheckListItem",
+		Name: "check_list_items",
+	}
+	node.Edges[0].IDs, err = clc.QueryCheckListItems().
 		Select(checklistitem.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "CheckListItem",
-		Name: "check_list_items",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
 	}
-	ids, err = clc.QueryWorkOrder().
+	node.Edges[1].IDs, err = clc.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
 	}
 	return node, nil
 }
@@ -584,39 +564,35 @@ func (clcd *CheckListCategoryDefinition) Node(ctx context.Context) (node *Node, 
 		Name:  "description",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = clcd.QueryCheckListItemDefinitions().
+	node.Edges[0] = &Edge{
+		Type: "CheckListItemDefinition",
+		Name: "check_list_item_definitions",
+	}
+	node.Edges[0].IDs, err = clcd.QueryCheckListItemDefinitions().
 		Select(checklistitemdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "CheckListItemDefinition",
-		Name: "check_list_item_definitions",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrderType",
+		Name: "work_order_type",
 	}
-	ids, err = clcd.QueryWorkOrderType().
+	node.Edges[1].IDs, err = clcd.QueryWorkOrderType().
 		Select(workordertype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderType",
-		Name: "work_order_type",
+	node.Edges[2] = &Edge{
+		Type: "WorkOrderTemplate",
+		Name: "work_order_template",
 	}
-	ids, err = clcd.QueryWorkOrderTemplate().
+	node.Edges[2].IDs, err = clcd.QueryWorkOrderTemplate().
 		Select(workordertemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderTemplate",
-		Name: "work_order_template",
 	}
 	return node, nil
 }
@@ -717,50 +693,45 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "help_text",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = cli.QueryFiles().
+	node.Edges[0] = &Edge{
+		Type: "File",
+		Name: "files",
+	}
+	node.Edges[0].IDs, err = cli.QueryFiles().
 		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "File",
-		Name: "files",
+	node.Edges[1] = &Edge{
+		Type: "SurveyWiFiScan",
+		Name: "wifi_scan",
 	}
-	ids, err = cli.QueryWifiScan().
+	node.Edges[1].IDs, err = cli.QueryWifiScan().
 		Select(surveywifiscan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "SurveyWiFiScan",
-		Name: "wifi_scan",
+	node.Edges[2] = &Edge{
+		Type: "SurveyCellScan",
+		Name: "cell_scan",
 	}
-	ids, err = cli.QueryCellScan().
+	node.Edges[2].IDs, err = cli.QueryCellScan().
 		Select(surveycellscan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "SurveyCellScan",
-		Name: "cell_scan",
+	node.Edges[3] = &Edge{
+		Type: "CheckListCategory",
+		Name: "check_list_category",
 	}
-	ids, err = cli.QueryCheckListCategory().
+	node.Edges[3].IDs, err = cli.QueryCheckListCategory().
 		Select(checklistcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "CheckListCategory",
-		Name: "check_list_category",
 	}
 	return node, nil
 }
@@ -845,17 +816,15 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 		Name:  "help_text",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = clid.QueryCheckListCategoryDefinition().
+	node.Edges[0] = &Edge{
+		Type: "CheckListCategoryDefinition",
+		Name: "check_list_category_definition",
+	}
+	node.Edges[0].IDs, err = clid.QueryCheckListCategoryDefinition().
 		Select(checklistcategorydefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "CheckListCategoryDefinition",
-		Name: "check_list_category_definition",
 	}
 	return node, nil
 }
@@ -892,39 +861,35 @@ func (c *Comment) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "text",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = c.QueryAuthor().
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "author",
+	}
+	node.Edges[0].IDs, err = c.QueryAuthor().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "User",
-		Name: "author",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
 	}
-	ids, err = c.QueryWorkOrder().
+	node.Edges[1].IDs, err = c.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
+	node.Edges[2] = &Edge{
+		Type: "Project",
+		Name: "project",
 	}
-	ids, err = c.QueryProject().
+	node.Edges[2].IDs, err = c.QueryProject().
 		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Project",
-		Name: "project",
 	}
 	return node, nil
 }
@@ -969,17 +934,15 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "external_id",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = c.QueryServices().
+	node.Edges[0] = &Edge{
+		Type: "Service",
+		Name: "services",
+	}
+	node.Edges[0].IDs, err = c.QueryServices().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "services",
 	}
 	return node, nil
 }
@@ -1024,28 +987,25 @@ func (ep *EntryPoint) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "cid",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ep.QueryPrevExitPoints().
+	node.Edges[0] = &Edge{
+		Type: "ExitPoint",
+		Name: "prev_exit_points",
+	}
+	node.Edges[0].IDs, err = ep.QueryPrevExitPoints().
 		Select(exitpoint.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "ExitPoint",
-		Name: "prev_exit_points",
+	node.Edges[1] = &Edge{
+		Type: "Block",
+		Name: "parent_block",
 	}
-	ids, err = ep.QueryParentBlock().
+	node.Edges[1].IDs, err = ep.QueryParentBlock().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "parent_block",
 	}
 	return node, nil
 }
@@ -1106,116 +1066,105 @@ func (e *Equipment) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "external_id",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = e.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = e.QueryType().
 		Select(equipmenttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentType",
-		Name: "type",
+	node.Edges[1] = &Edge{
+		Type: "Location",
+		Name: "location",
 	}
-	ids, err = e.QueryLocation().
+	node.Edges[1].IDs, err = e.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
-	}
-	ids, err = e.QueryParentPosition().
-		Select(equipmentposition.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPosition",
 		Name: "parent_position",
 	}
-	ids, err = e.QueryPositions().
+	node.Edges[2].IDs, err = e.QueryParentPosition().
 		Select(equipmentposition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPosition",
 		Name: "positions",
 	}
-	ids, err = e.QueryPorts().
-		Select(equipmentport.FieldID).
+	node.Edges[3].IDs, err = e.QueryPositions().
+		Select(equipmentposition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPort",
 		Name: "ports",
 	}
-	ids, err = e.QueryWorkOrder().
-		Select(workorder.FieldID).
+	node.Edges[4].IDs, err = e.QueryPorts().
+		Select(equipmentport.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "work_order",
 	}
-	ids, err = e.QueryProperties().
-		Select(property.FieldID).
+	node.Edges[5].IDs, err = e.QueryWorkOrder().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		IDs:  ids,
 		Type: "Property",
 		Name: "properties",
 	}
-	ids, err = e.QueryFiles().
-		Select(file.FieldID).
+	node.Edges[6].IDs, err = e.QueryProperties().
+		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		IDs:  ids,
 		Type: "File",
 		Name: "files",
 	}
-	ids, err = e.QueryHyperlinks().
-		Select(hyperlink.FieldID).
+	node.Edges[7].IDs, err = e.QueryFiles().
+		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		IDs:  ids,
 		Type: "Hyperlink",
 		Name: "hyperlinks",
 	}
-	ids, err = e.QueryEndpoints().
-		Select(serviceendpoint.FieldID).
+	node.Edges[8].IDs, err = e.QueryHyperlinks().
+		Select(hyperlink.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[9] = &Edge{
-		IDs:  ids,
 		Type: "ServiceEndpoint",
 		Name: "endpoints",
+	}
+	node.Edges[9].IDs, err = e.QueryEndpoints().
+		Select(serviceendpoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -1252,17 +1201,15 @@ func (ec *EquipmentCategory) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ec.QueryTypes().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentType",
+		Name: "types",
+	}
+	node.Edges[0].IDs, err = ec.QueryTypes().
 		Select(equipmenttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentType",
-		Name: "types",
 	}
 	return node, nil
 }
@@ -1291,72 +1238,65 @@ func (ep *EquipmentPort) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ep.QueryDefinition().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPortDefinition",
+		Name: "definition",
+	}
+	node.Edges[0].IDs, err = ep.QueryDefinition().
 		Select(equipmentportdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPortDefinition",
-		Name: "definition",
+	node.Edges[1] = &Edge{
+		Type: "Equipment",
+		Name: "parent",
 	}
-	ids, err = ep.QueryParent().
+	node.Edges[1].IDs, err = ep.QueryParent().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "parent",
+	node.Edges[2] = &Edge{
+		Type: "Link",
+		Name: "link",
 	}
-	ids, err = ep.QueryLink().
+	node.Edges[2].IDs, err = ep.QueryLink().
 		Select(link.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Link",
-		Name: "link",
+	node.Edges[3] = &Edge{
+		Type: "Property",
+		Name: "properties",
 	}
-	ids, err = ep.QueryProperties().
+	node.Edges[3].IDs, err = ep.QueryProperties().
 		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "Property",
-		Name: "properties",
+	node.Edges[4] = &Edge{
+		Type: "ServiceEndpoint",
+		Name: "endpoints",
 	}
-	ids, err = ep.QueryEndpoints().
+	node.Edges[4].IDs, err = ep.QueryEndpoints().
 		Select(serviceendpoint.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
-		IDs:  ids,
-		Type: "ServiceEndpoint",
-		Name: "endpoints",
+	node.Edges[5] = &Edge{
+		Type: "Service",
+		Name: "service",
 	}
-	ids, err = ep.QueryService().
+	node.Edges[5].IDs, err = ep.QueryService().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[5] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "service",
 	}
 	return node, nil
 }
@@ -1417,50 +1357,45 @@ func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err e
 		Name:  "visibility_label",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = epd.QueryEquipmentPortType().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPortType",
+		Name: "equipment_port_type",
+	}
+	node.Edges[0].IDs, err = epd.QueryEquipmentPortType().
 		Select(equipmentporttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPortType",
-		Name: "equipment_port_type",
+	node.Edges[1] = &Edge{
+		Type: "EquipmentPort",
+		Name: "ports",
 	}
-	ids, err = epd.QueryPorts().
+	node.Edges[1].IDs, err = epd.QueryPorts().
 		Select(equipmentport.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPort",
-		Name: "ports",
+	node.Edges[2] = &Edge{
+		Type: "EquipmentType",
+		Name: "equipment_type",
 	}
-	ids, err = epd.QueryEquipmentType().
+	node.Edges[2].IDs, err = epd.QueryEquipmentType().
 		Select(equipmenttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentType",
-		Name: "equipment_type",
+	node.Edges[3] = &Edge{
+		Type: "EquipmentPortDefinition",
+		Name: "connected_ports",
 	}
-	ids, err = epd.QueryConnectedPorts().
+	node.Edges[3].IDs, err = epd.QueryConnectedPorts().
 		Select(equipmentportdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPortDefinition",
-		Name: "connected_ports",
 	}
 	return node, nil
 }
@@ -1497,39 +1432,35 @@ func (ept *EquipmentPortType) Node(ctx context.Context) (node *Node, err error) 
 		Name:  "name",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ept.QueryPropertyTypes().
-		Select(propertytype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[0] = &Edge{
-		IDs:  ids,
 		Type: "PropertyType",
 		Name: "property_types",
 	}
-	ids, err = ept.QueryLinkPropertyTypes().
+	node.Edges[0].IDs, err = ept.QueryPropertyTypes().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "PropertyType",
 		Name: "link_property_types",
 	}
-	ids, err = ept.QueryPortDefinitions().
-		Select(equipmentportdefinition.FieldID).
+	node.Edges[1].IDs, err = ept.QueryLinkPropertyTypes().
+		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPortDefinition",
 		Name: "port_definitions",
+	}
+	node.Edges[2].IDs, err = ept.QueryPortDefinitions().
+		Select(equipmentportdefinition.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -1558,39 +1489,35 @@ func (ep *EquipmentPosition) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ep.QueryDefinition().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPositionDefinition",
+		Name: "definition",
+	}
+	node.Edges[0].IDs, err = ep.QueryDefinition().
 		Select(equipmentpositiondefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPositionDefinition",
-		Name: "definition",
-	}
-	ids, err = ep.QueryParent().
-		Select(equipment.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "Equipment",
 		Name: "parent",
 	}
-	ids, err = ep.QueryAttachment().
+	node.Edges[1].IDs, err = ep.QueryParent().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "Equipment",
 		Name: "attachment",
+	}
+	node.Edges[2].IDs, err = ep.QueryAttachment().
+		Select(equipment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -1643,28 +1570,25 @@ func (epd *EquipmentPositionDefinition) Node(ctx context.Context) (node *Node, e
 		Name:  "visibility_label",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = epd.QueryPositions().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPosition",
+		Name: "positions",
+	}
+	node.Edges[0].IDs, err = epd.QueryPositions().
 		Select(equipmentposition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPosition",
-		Name: "positions",
+	node.Edges[1] = &Edge{
+		Type: "EquipmentType",
+		Name: "equipment_type",
 	}
-	ids, err = epd.QueryEquipmentType().
+	node.Edges[1].IDs, err = epd.QueryEquipmentType().
 		Select(equipmenttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentType",
-		Name: "equipment_type",
 	}
 	return node, nil
 }
@@ -1701,72 +1625,65 @@ func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = et.QueryPortDefinitions().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPortDefinition",
+		Name: "port_definitions",
+	}
+	node.Edges[0].IDs, err = et.QueryPortDefinitions().
 		Select(equipmentportdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPortDefinition",
-		Name: "port_definitions",
+	node.Edges[1] = &Edge{
+		Type: "EquipmentPositionDefinition",
+		Name: "position_definitions",
 	}
-	ids, err = et.QueryPositionDefinitions().
+	node.Edges[1].IDs, err = et.QueryPositionDefinitions().
 		Select(equipmentpositiondefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPositionDefinition",
-		Name: "position_definitions",
+	node.Edges[2] = &Edge{
+		Type: "PropertyType",
+		Name: "property_types",
 	}
-	ids, err = et.QueryPropertyTypes().
+	node.Edges[2].IDs, err = et.QueryPropertyTypes().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "property_types",
+	node.Edges[3] = &Edge{
+		Type: "Equipment",
+		Name: "equipment",
 	}
-	ids, err = et.QueryEquipment().
+	node.Edges[3].IDs, err = et.QueryEquipment().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "equipment",
+	node.Edges[4] = &Edge{
+		Type: "EquipmentCategory",
+		Name: "category",
 	}
-	ids, err = et.QueryCategory().
+	node.Edges[4].IDs, err = et.QueryCategory().
 		Select(equipmentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentCategory",
-		Name: "category",
+	node.Edges[5] = &Edge{
+		Type: "ServiceEndpointDefinition",
+		Name: "service_endpoint_definitions",
 	}
-	ids, err = et.QueryServiceEndpointDefinitions().
+	node.Edges[5].IDs, err = et.QueryServiceEndpointDefinitions().
 		Select(serviceendpointdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[5] = &Edge{
-		IDs:  ids,
-		Type: "ServiceEndpointDefinition",
-		Name: "service_endpoint_definitions",
 	}
 	return node, nil
 }
@@ -1811,28 +1728,25 @@ func (ep *ExitPoint) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "cid",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ep.QueryNextEntryPoints().
+	node.Edges[0] = &Edge{
+		Type: "EntryPoint",
+		Name: "next_entry_points",
+	}
+	node.Edges[0].IDs, err = ep.QueryNextEntryPoints().
 		Select(entrypoint.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EntryPoint",
-		Name: "next_entry_points",
+	node.Edges[1] = &Edge{
+		Type: "Block",
+		Name: "parent_block",
 	}
-	ids, err = ep.QueryParentBlock().
+	node.Edges[1].IDs, err = ep.QueryParentBlock().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "parent_block",
 	}
 	return node, nil
 }
@@ -1952,28 +1866,25 @@ func (f *Feature) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "description",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = f.QueryUsers().
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "users",
+	}
+	node.Edges[0].IDs, err = f.QueryUsers().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "User",
-		Name: "users",
+	node.Edges[1] = &Edge{
+		Type: "UsersGroup",
+		Name: "groups",
 	}
-	ids, err = f.QueryGroups().
+	node.Edges[1].IDs, err = f.QueryGroups().
 		Select(usersgroup.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "UsersGroup",
-		Name: "groups",
 	}
 	return node, nil
 }
@@ -2074,105 +1985,95 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "annotation",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = f.QueryLocation().
+	node.Edges[0] = &Edge{
+		Type: "Location",
+		Name: "location",
+	}
+	node.Edges[0].IDs, err = f.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
+	node.Edges[1] = &Edge{
+		Type: "Equipment",
+		Name: "equipment",
 	}
-	ids, err = f.QueryEquipment().
+	node.Edges[1].IDs, err = f.QueryEquipment().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "equipment",
+	node.Edges[2] = &Edge{
+		Type: "User",
+		Name: "user",
 	}
-	ids, err = f.QueryUser().
+	node.Edges[2].IDs, err = f.QueryUser().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "User",
-		Name: "user",
+	node.Edges[3] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
 	}
-	ids, err = f.QueryWorkOrder().
+	node.Edges[3].IDs, err = f.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
+	node.Edges[4] = &Edge{
+		Type: "CheckListItem",
+		Name: "checklist_item",
 	}
-	ids, err = f.QueryChecklistItem().
+	node.Edges[4].IDs, err = f.QueryChecklistItem().
 		Select(checklistitem.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
-		IDs:  ids,
-		Type: "CheckListItem",
-		Name: "checklist_item",
+	node.Edges[5] = &Edge{
+		Type: "Survey",
+		Name: "survey",
 	}
-	ids, err = f.QuerySurvey().
+	node.Edges[5].IDs, err = f.QuerySurvey().
 		Select(survey.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[5] = &Edge{
-		IDs:  ids,
-		Type: "Survey",
-		Name: "survey",
+	node.Edges[6] = &Edge{
+		Type: "FloorPlan",
+		Name: "floor_plan",
 	}
-	ids, err = f.QueryFloorPlan().
+	node.Edges[6].IDs, err = f.QueryFloorPlan().
 		Select(floorplan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[6] = &Edge{
-		IDs:  ids,
-		Type: "FloorPlan",
-		Name: "floor_plan",
-	}
-	ids, err = f.QueryPhotoSurveyQuestion().
-		Select(surveyquestion.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[7] = &Edge{
-		IDs:  ids,
 		Type: "SurveyQuestion",
 		Name: "photo_survey_question",
 	}
-	ids, err = f.QuerySurveyQuestion().
+	node.Edges[7].IDs, err = f.QueryPhotoSurveyQuestion().
 		Select(surveyquestion.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		IDs:  ids,
 		Type: "SurveyQuestion",
 		Name: "survey_question",
+	}
+	node.Edges[8].IDs, err = f.QuerySurveyQuestion().
+		Select(surveyquestion.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -2209,50 +2110,45 @@ func (fp *FloorPlan) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = fp.QueryLocation().
+	node.Edges[0] = &Edge{
+		Type: "Location",
+		Name: "location",
+	}
+	node.Edges[0].IDs, err = fp.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
+	node.Edges[1] = &Edge{
+		Type: "FloorPlanReferencePoint",
+		Name: "reference_point",
 	}
-	ids, err = fp.QueryReferencePoint().
+	node.Edges[1].IDs, err = fp.QueryReferencePoint().
 		Select(floorplanreferencepoint.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "FloorPlanReferencePoint",
-		Name: "reference_point",
+	node.Edges[2] = &Edge{
+		Type: "FloorPlanScale",
+		Name: "scale",
 	}
-	ids, err = fp.QueryScale().
+	node.Edges[2].IDs, err = fp.QueryScale().
 		Select(floorplanscale.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "FloorPlanScale",
-		Name: "scale",
+	node.Edges[3] = &Edge{
+		Type: "File",
+		Name: "image",
 	}
-	ids, err = fp.QueryImage().
+	node.Edges[3].IDs, err = fp.QueryImage().
 		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "File",
-		Name: "image",
 	}
 	return node, nil
 }
@@ -2447,28 +2343,25 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "newInstancesPolicy",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = f.QueryBlocks().
+	node.Edges[0] = &Edge{
+		Type: "Block",
+		Name: "blocks",
+	}
+	node.Edges[0].IDs, err = f.QueryBlocks().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "blocks",
+	node.Edges[1] = &Edge{
+		Type: "FlowDraft",
+		Name: "draft",
 	}
-	ids, err = f.QueryDraft().
+	node.Edges[1].IDs, err = f.QueryDraft().
 		Select(flowdraft.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "FlowDraft",
-		Name: "draft",
 	}
 	return node, nil
 }
@@ -2521,28 +2414,25 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "end_param_definitions",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = fd.QueryBlocks().
+	node.Edges[0] = &Edge{
+		Type: "Block",
+		Name: "blocks",
+	}
+	node.Edges[0].IDs, err = fd.QueryBlocks().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "blocks",
+	node.Edges[1] = &Edge{
+		Type: "Flow",
+		Name: "flow",
 	}
-	ids, err = fd.QueryFlow().
+	node.Edges[1].IDs, err = fd.QueryFlow().
 		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Flow",
-		Name: "flow",
 	}
 	return node, nil
 }
@@ -2595,17 +2485,15 @@ func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err err
 		Name:  "end_param_definitions",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = fet.QueryBlocks().
+	node.Edges[0] = &Edge{
+		Type: "Block",
+		Name: "blocks",
+	}
+	node.Edges[0].IDs, err = fet.QueryBlocks().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Block",
-		Name: "blocks",
 	}
 	return node, nil
 }
@@ -2658,50 +2546,45 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "incompletion_reason",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = fi.QueryFlow().
+	node.Edges[0] = &Edge{
+		Type: "Flow",
+		Name: "flow",
+	}
+	node.Edges[0].IDs, err = fi.QueryFlow().
 		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Flow",
-		Name: "flow",
+	node.Edges[1] = &Edge{
+		Type: "FlowExecutionTemplate",
+		Name: "template",
 	}
-	ids, err = fi.QueryTemplate().
+	node.Edges[1].IDs, err = fi.QueryTemplate().
 		Select(flowexecutiontemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "FlowExecutionTemplate",
-		Name: "template",
-	}
-	ids, err = fi.QueryBlocks().
-		Select(blockinstance.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "BlockInstance",
 		Name: "blocks",
 	}
-	ids, err = fi.QueryParentSubflowBlock().
+	node.Edges[2].IDs, err = fi.QueryBlocks().
 		Select(blockinstance.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "BlockInstance",
 		Name: "parent_subflow_block",
+	}
+	node.Edges[3].IDs, err = fi.QueryParentSubflowBlock().
+		Select(blockinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -2754,39 +2637,35 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "category",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = h.QueryEquipment().
+	node.Edges[0] = &Edge{
+		Type: "Equipment",
+		Name: "equipment",
+	}
+	node.Edges[0].IDs, err = h.QueryEquipment().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "equipment",
+	node.Edges[1] = &Edge{
+		Type: "Location",
+		Name: "location",
 	}
-	ids, err = h.QueryLocation().
+	node.Edges[1].IDs, err = h.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
+	node.Edges[2] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
 	}
-	ids, err = h.QueryWorkOrder().
+	node.Edges[2].IDs, err = h.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
 	}
 	return node, nil
 }
@@ -2823,50 +2702,45 @@ func (l *Link) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "future_state",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = l.QueryPorts().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPort",
+		Name: "ports",
+	}
+	node.Edges[0].IDs, err = l.QueryPorts().
 		Select(equipmentport.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPort",
-		Name: "ports",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
 	}
-	ids, err = l.QueryWorkOrder().
+	node.Edges[1].IDs, err = l.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
+	node.Edges[2] = &Edge{
+		Type: "Property",
+		Name: "properties",
 	}
-	ids, err = l.QueryProperties().
+	node.Edges[2].IDs, err = l.QueryProperties().
 		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Property",
-		Name: "properties",
+	node.Edges[3] = &Edge{
+		Type: "Service",
+		Name: "service",
 	}
-	ids, err = l.QueryService().
+	node.Edges[3].IDs, err = l.QueryService().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "service",
 	}
 	return node, nil
 }
@@ -2935,138 +2809,125 @@ func (l *Location) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "site_survey_needed",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = l.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "LocationType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = l.QueryType().
 		Select(locationtype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "LocationType",
-		Name: "type",
-	}
-	ids, err = l.QueryParent().
-		Select(location.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "Location",
 		Name: "parent",
 	}
-	ids, err = l.QueryChildren().
+	node.Edges[1].IDs, err = l.QueryParent().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "Location",
 		Name: "children",
 	}
-	ids, err = l.QueryFiles().
-		Select(file.FieldID).
+	node.Edges[2].IDs, err = l.QueryChildren().
+		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "File",
 		Name: "files",
 	}
-	ids, err = l.QueryHyperlinks().
-		Select(hyperlink.FieldID).
+	node.Edges[3].IDs, err = l.QueryFiles().
+		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "Hyperlink",
 		Name: "hyperlinks",
 	}
-	ids, err = l.QueryEquipment().
-		Select(equipment.FieldID).
+	node.Edges[4].IDs, err = l.QueryHyperlinks().
+		Select(hyperlink.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		IDs:  ids,
 		Type: "Equipment",
 		Name: "equipment",
 	}
-	ids, err = l.QueryProperties().
-		Select(property.FieldID).
+	node.Edges[5].IDs, err = l.QueryEquipment().
+		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		IDs:  ids,
 		Type: "Property",
 		Name: "properties",
 	}
-	ids, err = l.QuerySurvey().
-		Select(survey.FieldID).
+	node.Edges[6].IDs, err = l.QueryProperties().
+		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		IDs:  ids,
 		Type: "Survey",
 		Name: "survey",
 	}
-	ids, err = l.QueryWifiScan().
-		Select(surveywifiscan.FieldID).
+	node.Edges[7].IDs, err = l.QuerySurvey().
+		Select(survey.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		IDs:  ids,
 		Type: "SurveyWiFiScan",
 		Name: "wifi_scan",
 	}
-	ids, err = l.QueryCellScan().
-		Select(surveycellscan.FieldID).
+	node.Edges[8].IDs, err = l.QueryWifiScan().
+		Select(surveywifiscan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[9] = &Edge{
-		IDs:  ids,
 		Type: "SurveyCellScan",
 		Name: "cell_scan",
 	}
-	ids, err = l.QueryWorkOrders().
-		Select(workorder.FieldID).
+	node.Edges[9].IDs, err = l.QueryCellScan().
+		Select(surveycellscan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[10] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "work_orders",
 	}
-	ids, err = l.QueryFloorPlans().
-		Select(floorplan.FieldID).
+	node.Edges[10].IDs, err = l.QueryWorkOrders().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[11] = &Edge{
-		IDs:  ids,
 		Type: "FloorPlan",
 		Name: "floor_plans",
+	}
+	node.Edges[11].IDs, err = l.QueryFloorPlans().
+		Select(floorplan.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -3135,39 +2996,35 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "index",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = lt.QueryLocations().
+	node.Edges[0] = &Edge{
+		Type: "Location",
+		Name: "locations",
+	}
+	node.Edges[0].IDs, err = lt.QueryLocations().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "locations",
+	node.Edges[1] = &Edge{
+		Type: "PropertyType",
+		Name: "property_types",
 	}
-	ids, err = lt.QueryPropertyTypes().
+	node.Edges[1].IDs, err = lt.QueryPropertyTypes().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "property_types",
+	node.Edges[2] = &Edge{
+		Type: "SurveyTemplateCategory",
+		Name: "survey_template_categories",
 	}
-	ids, err = lt.QuerySurveyTemplateCategories().
+	node.Edges[2].IDs, err = lt.QuerySurveyTemplateCategories().
 		Select(surveytemplatecategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "SurveyTemplateCategory",
-		Name: "survey_template_categories",
 	}
 	return node, nil
 }
@@ -3236,17 +3093,15 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "workforce_policy",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = pp.QueryGroups().
+	node.Edges[0] = &Edge{
+		Type: "UsersGroup",
+		Name: "groups",
+	}
+	node.Edges[0].IDs, err = pp.QueryGroups().
 		Select(usersgroup.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "UsersGroup",
-		Name: "groups",
 	}
 	return node, nil
 }
@@ -3299,83 +3154,75 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "priority",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = pr.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "ProjectType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = pr.QueryType().
 		Select(projecttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "ProjectType",
-		Name: "type",
+	node.Edges[1] = &Edge{
+		Type: "ProjectTemplate",
+		Name: "template",
 	}
-	ids, err = pr.QueryTemplate().
+	node.Edges[1].IDs, err = pr.QueryTemplate().
 		Select(projecttemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "ProjectTemplate",
-		Name: "template",
+	node.Edges[2] = &Edge{
+		Type: "Location",
+		Name: "location",
 	}
-	ids, err = pr.QueryLocation().
+	node.Edges[2].IDs, err = pr.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
+	node.Edges[3] = &Edge{
+		Type: "Comment",
+		Name: "comments",
 	}
-	ids, err = pr.QueryComments().
+	node.Edges[3].IDs, err = pr.QueryComments().
 		Select(comment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "Comment",
-		Name: "comments",
+	node.Edges[4] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_orders",
 	}
-	ids, err = pr.QueryWorkOrders().
+	node.Edges[4].IDs, err = pr.QueryWorkOrders().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_orders",
+	node.Edges[5] = &Edge{
+		Type: "Property",
+		Name: "properties",
 	}
-	ids, err = pr.QueryProperties().
+	node.Edges[5].IDs, err = pr.QueryProperties().
 		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[5] = &Edge{
-		IDs:  ids,
-		Type: "Property",
-		Name: "properties",
+	node.Edges[6] = &Edge{
+		Type: "User",
+		Name: "creator",
 	}
-	ids, err = pr.QueryCreator().
+	node.Edges[6].IDs, err = pr.QueryCreator().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[6] = &Edge{
-		IDs:  ids,
-		Type: "User",
-		Name: "creator",
 	}
 	return node, nil
 }
@@ -3420,39 +3267,35 @@ func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "description",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = pt.QueryProperties().
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "properties",
+	}
+	node.Edges[0].IDs, err = pt.QueryProperties().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "properties",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrderDefinition",
+		Name: "work_orders",
 	}
-	ids, err = pt.QueryWorkOrders().
+	node.Edges[1].IDs, err = pt.QueryWorkOrders().
 		Select(workorderdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderDefinition",
-		Name: "work_orders",
+	node.Edges[2] = &Edge{
+		Type: "ProjectType",
+		Name: "type",
 	}
-	ids, err = pt.QueryType().
+	node.Edges[2].IDs, err = pt.QueryType().
 		Select(projecttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "ProjectType",
-		Name: "type",
 	}
 	return node, nil
 }
@@ -3497,39 +3340,35 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "description",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = pt.QueryProperties().
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "properties",
+	}
+	node.Edges[0].IDs, err = pt.QueryProperties().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "properties",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrderDefinition",
+		Name: "work_orders",
 	}
-	ids, err = pt.QueryWorkOrders().
+	node.Edges[1].IDs, err = pt.QueryWorkOrders().
 		Select(workorderdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderDefinition",
-		Name: "work_orders",
+	node.Edges[2] = &Edge{
+		Type: "Project",
+		Name: "projects",
 	}
-	ids, err = pt.QueryProjects().
+	node.Edges[2].IDs, err = pt.QueryProjects().
 		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Project",
-		Name: "projects",
 	}
 	return node, nil
 }
@@ -3622,149 +3461,135 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "string_val",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = pr.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = pr.QueryType().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "type",
-	}
-	ids, err = pr.QueryLocation().
-		Select(location.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "Location",
 		Name: "location",
 	}
-	ids, err = pr.QueryEquipment().
-		Select(equipment.FieldID).
+	node.Edges[1].IDs, err = pr.QueryLocation().
+		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "Equipment",
 		Name: "equipment",
 	}
-	ids, err = pr.QueryService().
-		Select(service.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "service",
-	}
-	ids, err = pr.QueryEquipmentPort().
-		Select(equipmentport.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[4] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPort",
-		Name: "equipment_port",
-	}
-	ids, err = pr.QueryLink().
-		Select(link.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[5] = &Edge{
-		IDs:  ids,
-		Type: "Link",
-		Name: "link",
-	}
-	ids, err = pr.QueryWorkOrder().
-		Select(workorder.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[6] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_order",
-	}
-	ids, err = pr.QueryProject().
-		Select(project.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[7] = &Edge{
-		IDs:  ids,
-		Type: "Project",
-		Name: "project",
-	}
-	ids, err = pr.QueryEquipmentValue().
+	node.Edges[2].IDs, err = pr.QueryEquipment().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[8] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "equipment_value",
+	node.Edges[3] = &Edge{
+		Type: "Service",
+		Name: "service",
 	}
-	ids, err = pr.QueryLocationValue().
-		Select(location.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[9] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location_value",
-	}
-	ids, err = pr.QueryServiceValue().
+	node.Edges[3].IDs, err = pr.QueryService().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[10] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "service_value",
+	node.Edges[4] = &Edge{
+		Type: "EquipmentPort",
+		Name: "equipment_port",
 	}
-	ids, err = pr.QueryWorkOrderValue().
+	node.Edges[4].IDs, err = pr.QueryEquipmentPort().
+		Select(equipmentport.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[5] = &Edge{
+		Type: "Link",
+		Name: "link",
+	}
+	node.Edges[5].IDs, err = pr.QueryLink().
+		Select(link.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[6] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order",
+	}
+	node.Edges[6].IDs, err = pr.QueryWorkOrder().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[7] = &Edge{
+		Type: "Project",
+		Name: "project",
+	}
+	node.Edges[7].IDs, err = pr.QueryProject().
+		Select(project.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[8] = &Edge{
+		Type: "Equipment",
+		Name: "equipment_value",
+	}
+	node.Edges[8].IDs, err = pr.QueryEquipmentValue().
+		Select(equipment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[9] = &Edge{
+		Type: "Location",
+		Name: "location_value",
+	}
+	node.Edges[9].IDs, err = pr.QueryLocationValue().
+		Select(location.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[10] = &Edge{
+		Type: "Service",
+		Name: "service_value",
+	}
+	node.Edges[10].IDs, err = pr.QueryServiceValue().
+		Select(service.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	node.Edges[11] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "work_order_value",
 	}
-	ids, err = pr.QueryUserValue().
-		Select(user.FieldID).
+	node.Edges[11].IDs, err = pr.QueryWorkOrderValue().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[12] = &Edge{
-		IDs:  ids,
 		Type: "User",
 		Name: "user_value",
+	}
+	node.Edges[12].IDs, err = pr.QueryUserValue().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -3937,116 +3762,105 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "nodeType",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = pt.QueryProperties().
+	node.Edges[0] = &Edge{
+		Type: "Property",
+		Name: "properties",
+	}
+	node.Edges[0].IDs, err = pt.QueryProperties().
 		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Property",
-		Name: "properties",
+	node.Edges[1] = &Edge{
+		Type: "LocationType",
+		Name: "location_type",
 	}
-	ids, err = pt.QueryLocationType().
+	node.Edges[1].IDs, err = pt.QueryLocationType().
 		Select(locationtype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "LocationType",
-		Name: "location_type",
-	}
-	ids, err = pt.QueryEquipmentPortType().
-		Select(equipmentporttype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPortType",
 		Name: "equipment_port_type",
 	}
-	ids, err = pt.QueryLinkEquipmentPortType().
+	node.Edges[2].IDs, err = pt.QueryEquipmentPortType().
 		Select(equipmentporttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPortType",
 		Name: "link_equipment_port_type",
 	}
-	ids, err = pt.QueryEquipmentType().
-		Select(equipmenttype.FieldID).
+	node.Edges[3].IDs, err = pt.QueryLinkEquipmentPortType().
+		Select(equipmentporttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentType",
 		Name: "equipment_type",
 	}
-	ids, err = pt.QueryServiceType().
-		Select(servicetype.FieldID).
+	node.Edges[4].IDs, err = pt.QueryEquipmentType().
+		Select(equipmenttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		IDs:  ids,
 		Type: "ServiceType",
 		Name: "service_type",
 	}
-	ids, err = pt.QueryWorkOrderType().
-		Select(workordertype.FieldID).
+	node.Edges[5].IDs, err = pt.QueryServiceType().
+		Select(servicetype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrderType",
 		Name: "work_order_type",
 	}
-	ids, err = pt.QueryWorkOrderTemplate().
-		Select(workordertemplate.FieldID).
+	node.Edges[6].IDs, err = pt.QueryWorkOrderType().
+		Select(workordertype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrderTemplate",
 		Name: "work_order_template",
 	}
-	ids, err = pt.QueryProjectType().
-		Select(projecttype.FieldID).
+	node.Edges[7].IDs, err = pt.QueryWorkOrderTemplate().
+		Select(workordertemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		IDs:  ids,
 		Type: "ProjectType",
 		Name: "project_type",
 	}
-	ids, err = pt.QueryProjectTemplate().
-		Select(projecttemplate.FieldID).
+	node.Edges[8].IDs, err = pt.QueryProjectType().
+		Select(projecttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[9] = &Edge{
-		IDs:  ids,
 		Type: "ProjectTemplate",
 		Name: "project_template",
+	}
+	node.Edges[9].IDs, err = pt.QueryProjectTemplate().
+		Select(projecttemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -4150,94 +3964,85 @@ func (s *Service) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "status",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = s.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "ServiceType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = s.QueryType().
 		Select(servicetype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "ServiceType",
-		Name: "type",
-	}
-	ids, err = s.QueryDownstream().
-		Select(service.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[1] = &Edge{
-		IDs:  ids,
 		Type: "Service",
 		Name: "downstream",
 	}
-	ids, err = s.QueryUpstream().
+	node.Edges[1].IDs, err = s.QueryDownstream().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "Service",
 		Name: "upstream",
 	}
-	ids, err = s.QueryProperties().
-		Select(property.FieldID).
+	node.Edges[2].IDs, err = s.QueryUpstream().
+		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "Property",
 		Name: "properties",
 	}
-	ids, err = s.QueryLinks().
-		Select(link.FieldID).
+	node.Edges[3].IDs, err = s.QueryProperties().
+		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "Link",
 		Name: "links",
 	}
-	ids, err = s.QueryPorts().
-		Select(equipmentport.FieldID).
+	node.Edges[4].IDs, err = s.QueryLinks().
+		Select(link.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		IDs:  ids,
 		Type: "EquipmentPort",
 		Name: "ports",
 	}
-	ids, err = s.QueryCustomer().
-		Select(customer.FieldID).
+	node.Edges[5].IDs, err = s.QueryPorts().
+		Select(equipmentport.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		IDs:  ids,
 		Type: "Customer",
 		Name: "customer",
 	}
-	ids, err = s.QueryEndpoints().
-		Select(serviceendpoint.FieldID).
+	node.Edges[6].IDs, err = s.QueryCustomer().
+		Select(customer.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		IDs:  ids,
 		Type: "ServiceEndpoint",
 		Name: "endpoints",
+	}
+	node.Edges[7].IDs, err = s.QueryEndpoints().
+		Select(serviceendpoint.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -4266,50 +4071,45 @@ func (se *ServiceEndpoint) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = se.QueryPort().
+	node.Edges[0] = &Edge{
+		Type: "EquipmentPort",
+		Name: "port",
+	}
+	node.Edges[0].IDs, err = se.QueryPort().
 		Select(equipmentport.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentPort",
-		Name: "port",
+	node.Edges[1] = &Edge{
+		Type: "Equipment",
+		Name: "equipment",
 	}
-	ids, err = se.QueryEquipment().
+	node.Edges[1].IDs, err = se.QueryEquipment().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "equipment",
+	node.Edges[2] = &Edge{
+		Type: "Service",
+		Name: "service",
 	}
-	ids, err = se.QueryService().
+	node.Edges[2].IDs, err = se.QueryService().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "service",
+	node.Edges[3] = &Edge{
+		Type: "ServiceEndpointDefinition",
+		Name: "definition",
 	}
-	ids, err = se.QueryDefinition().
+	node.Edges[3].IDs, err = se.QueryDefinition().
 		Select(serviceendpointdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "ServiceEndpointDefinition",
-		Name: "definition",
 	}
 	return node, nil
 }
@@ -4362,39 +4162,35 @@ func (sed *ServiceEndpointDefinition) Node(ctx context.Context) (node *Node, err
 		Name:  "index",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = sed.QueryEndpoints().
+	node.Edges[0] = &Edge{
+		Type: "ServiceEndpoint",
+		Name: "endpoints",
+	}
+	node.Edges[0].IDs, err = sed.QueryEndpoints().
 		Select(serviceendpoint.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "ServiceEndpoint",
-		Name: "endpoints",
+	node.Edges[1] = &Edge{
+		Type: "ServiceType",
+		Name: "service_type",
 	}
-	ids, err = sed.QueryServiceType().
+	node.Edges[1].IDs, err = sed.QueryServiceType().
 		Select(servicetype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "ServiceType",
-		Name: "service_type",
+	node.Edges[2] = &Edge{
+		Type: "EquipmentType",
+		Name: "equipment_type",
 	}
-	ids, err = sed.QueryEquipmentType().
+	node.Edges[2].IDs, err = sed.QueryEquipmentType().
 		Select(equipmenttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "EquipmentType",
-		Name: "equipment_type",
 	}
 	return node, nil
 }
@@ -4455,39 +4251,35 @@ func (st *ServiceType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "discovery_method",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = st.QueryServices().
+	node.Edges[0] = &Edge{
+		Type: "Service",
+		Name: "services",
+	}
+	node.Edges[0].IDs, err = st.QueryServices().
 		Select(service.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Service",
-		Name: "services",
+	node.Edges[1] = &Edge{
+		Type: "PropertyType",
+		Name: "property_types",
 	}
-	ids, err = st.QueryPropertyTypes().
+	node.Edges[1].IDs, err = st.QueryPropertyTypes().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "property_types",
+	node.Edges[2] = &Edge{
+		Type: "ServiceEndpointDefinition",
+		Name: "endpoint_definitions",
 	}
-	ids, err = st.QueryEndpointDefinitions().
+	node.Edges[2].IDs, err = st.QueryEndpointDefinitions().
 		Select(serviceendpointdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "ServiceEndpointDefinition",
-		Name: "endpoint_definitions",
 	}
 	return node, nil
 }
@@ -4548,39 +4340,35 @@ func (s *Survey) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "completion_timestamp",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = s.QueryLocation().
+	node.Edges[0] = &Edge{
+		Type: "Location",
+		Name: "location",
+	}
+	node.Edges[0].IDs, err = s.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
+	node.Edges[1] = &Edge{
+		Type: "File",
+		Name: "source_file",
 	}
-	ids, err = s.QuerySourceFile().
+	node.Edges[1].IDs, err = s.QuerySourceFile().
 		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "File",
-		Name: "source_file",
+	node.Edges[2] = &Edge{
+		Type: "SurveyQuestion",
+		Name: "questions",
 	}
-	ids, err = s.QueryQuestions().
+	node.Edges[2].IDs, err = s.QueryQuestions().
 		Select(surveyquestion.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "SurveyQuestion",
-		Name: "questions",
 	}
 	return node, nil
 }
@@ -4793,39 +4581,35 @@ func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "rssi",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = scs.QueryChecklistItem().
+	node.Edges[0] = &Edge{
+		Type: "CheckListItem",
+		Name: "checklist_item",
+	}
+	node.Edges[0].IDs, err = scs.QueryChecklistItem().
 		Select(checklistitem.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "CheckListItem",
-		Name: "checklist_item",
+	node.Edges[1] = &Edge{
+		Type: "SurveyQuestion",
+		Name: "survey_question",
 	}
-	ids, err = scs.QuerySurveyQuestion().
+	node.Edges[1].IDs, err = scs.QuerySurveyQuestion().
 		Select(surveyquestion.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "SurveyQuestion",
-		Name: "survey_question",
+	node.Edges[2] = &Edge{
+		Type: "Location",
+		Name: "location",
 	}
-	ids, err = scs.QueryLocation().
+	node.Edges[2].IDs, err = scs.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
 	}
 	return node, nil
 }
@@ -4998,61 +4782,55 @@ func (sq *SurveyQuestion) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "date_data",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = sq.QuerySurvey().
+	node.Edges[0] = &Edge{
+		Type: "Survey",
+		Name: "survey",
+	}
+	node.Edges[0].IDs, err = sq.QuerySurvey().
 		Select(survey.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Survey",
-		Name: "survey",
+	node.Edges[1] = &Edge{
+		Type: "SurveyWiFiScan",
+		Name: "wifi_scan",
 	}
-	ids, err = sq.QueryWifiScan().
+	node.Edges[1].IDs, err = sq.QueryWifiScan().
 		Select(surveywifiscan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "SurveyWiFiScan",
-		Name: "wifi_scan",
+	node.Edges[2] = &Edge{
+		Type: "SurveyCellScan",
+		Name: "cell_scan",
 	}
-	ids, err = sq.QueryCellScan().
+	node.Edges[2].IDs, err = sq.QueryCellScan().
 		Select(surveycellscan.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "SurveyCellScan",
-		Name: "cell_scan",
-	}
-	ids, err = sq.QueryPhotoData().
-		Select(file.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "File",
 		Name: "photo_data",
 	}
-	ids, err = sq.QueryImages().
+	node.Edges[3].IDs, err = sq.QueryPhotoData().
 		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "File",
 		Name: "images",
+	}
+	node.Edges[4].IDs, err = sq.QueryImages().
+		Select(file.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -5097,28 +4875,25 @@ func (stc *SurveyTemplateCategory) Node(ctx context.Context) (node *Node, err er
 		Name:  "category_description",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = stc.QuerySurveyTemplateQuestions().
+	node.Edges[0] = &Edge{
+		Type: "SurveyTemplateQuestion",
+		Name: "survey_template_questions",
+	}
+	node.Edges[0].IDs, err = stc.QuerySurveyTemplateQuestions().
 		Select(surveytemplatequestion.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "SurveyTemplateQuestion",
-		Name: "survey_template_questions",
+	node.Edges[1] = &Edge{
+		Type: "LocationType",
+		Name: "location_type",
 	}
-	ids, err = stc.QueryLocationType().
+	node.Edges[1].IDs, err = stc.QueryLocationType().
 		Select(locationtype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "LocationType",
-		Name: "location_type",
 	}
 	return node, nil
 }
@@ -5179,17 +4954,15 @@ func (stq *SurveyTemplateQuestion) Node(ctx context.Context) (node *Node, err er
 		Name:  "index",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = stq.QueryCategory().
+	node.Edges[0] = &Edge{
+		Type: "SurveyTemplateCategory",
+		Name: "category",
+	}
+	node.Edges[0].IDs, err = stq.QueryCategory().
 		Select(surveytemplatecategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "SurveyTemplateCategory",
-		Name: "category",
 	}
 	return node, nil
 }
@@ -5330,39 +5103,35 @@ func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "rssi",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = swfs.QueryChecklistItem().
+	node.Edges[0] = &Edge{
+		Type: "CheckListItem",
+		Name: "checklist_item",
+	}
+	node.Edges[0].IDs, err = swfs.QueryChecklistItem().
 		Select(checklistitem.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "CheckListItem",
-		Name: "checklist_item",
+	node.Edges[1] = &Edge{
+		Type: "SurveyQuestion",
+		Name: "survey_question",
 	}
-	ids, err = swfs.QuerySurveyQuestion().
+	node.Edges[1].IDs, err = swfs.QuerySurveyQuestion().
 		Select(surveyquestion.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "SurveyQuestion",
-		Name: "survey_question",
+	node.Edges[2] = &Edge{
+		Type: "Location",
+		Name: "location",
 	}
-	ids, err = swfs.QueryLocation().
+	node.Edges[2].IDs, err = swfs.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
 	}
 	return node, nil
 }
@@ -5447,72 +5216,65 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "distance_unit",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = u.QueryProfilePhoto().
+	node.Edges[0] = &Edge{
+		Type: "File",
+		Name: "profile_photo",
+	}
+	node.Edges[0].IDs, err = u.QueryProfilePhoto().
 		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "File",
-		Name: "profile_photo",
+	node.Edges[1] = &Edge{
+		Type: "UsersGroup",
+		Name: "groups",
 	}
-	ids, err = u.QueryGroups().
+	node.Edges[1].IDs, err = u.QueryGroups().
 		Select(usersgroup.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "UsersGroup",
-		Name: "groups",
-	}
-	ids, err = u.QueryOwnedWorkOrders().
-		Select(workorder.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[2] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "owned_work_orders",
 	}
-	ids, err = u.QueryAssignedWorkOrders().
+	node.Edges[2].IDs, err = u.QueryOwnedWorkOrders().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "assigned_work_orders",
 	}
-	ids, err = u.QueryCreatedProjects().
-		Select(project.FieldID).
+	node.Edges[3].IDs, err = u.QueryAssignedWorkOrders().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		IDs:  ids,
 		Type: "Project",
 		Name: "created_projects",
 	}
-	ids, err = u.QueryFeatures().
-		Select(feature.FieldID).
+	node.Edges[4].IDs, err = u.QueryCreatedProjects().
+		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		IDs:  ids,
 		Type: "Feature",
 		Name: "features",
+	}
+	node.Edges[5].IDs, err = u.QueryFeatures().
+		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -5565,39 +5327,35 @@ func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "status",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = ug.QueryMembers().
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "members",
+	}
+	node.Edges[0].IDs, err = ug.QueryMembers().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "User",
-		Name: "members",
+	node.Edges[1] = &Edge{
+		Type: "PermissionsPolicy",
+		Name: "policies",
 	}
-	ids, err = ug.QueryPolicies().
+	node.Edges[1].IDs, err = ug.QueryPolicies().
 		Select(permissionspolicy.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "PermissionsPolicy",
-		Name: "policies",
+	node.Edges[2] = &Edge{
+		Type: "Feature",
+		Name: "features",
 	}
-	ids, err = ug.QueryFeatures().
+	node.Edges[2].IDs, err = ug.QueryFeatures().
 		Select(feature.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Feature",
-		Name: "features",
 	}
 	return node, nil
 }
@@ -5690,160 +5448,145 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "close_date",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = wo.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "WorkOrderType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = wo.QueryType().
 		Select(workordertype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderType",
-		Name: "type",
+	node.Edges[1] = &Edge{
+		Type: "WorkOrderTemplate",
+		Name: "template",
 	}
-	ids, err = wo.QueryTemplate().
+	node.Edges[1].IDs, err = wo.QueryTemplate().
 		Select(workordertemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderTemplate",
-		Name: "template",
+	node.Edges[2] = &Edge{
+		Type: "Equipment",
+		Name: "equipment",
 	}
-	ids, err = wo.QueryEquipment().
+	node.Edges[2].IDs, err = wo.QueryEquipment().
 		Select(equipment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "Equipment",
-		Name: "equipment",
+	node.Edges[3] = &Edge{
+		Type: "Link",
+		Name: "links",
 	}
-	ids, err = wo.QueryLinks().
+	node.Edges[3].IDs, err = wo.QueryLinks().
 		Select(link.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "Link",
-		Name: "links",
+	node.Edges[4] = &Edge{
+		Type: "File",
+		Name: "files",
 	}
-	ids, err = wo.QueryFiles().
+	node.Edges[4].IDs, err = wo.QueryFiles().
 		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
-		IDs:  ids,
-		Type: "File",
-		Name: "files",
+	node.Edges[5] = &Edge{
+		Type: "Hyperlink",
+		Name: "hyperlinks",
 	}
-	ids, err = wo.QueryHyperlinks().
+	node.Edges[5].IDs, err = wo.QueryHyperlinks().
 		Select(hyperlink.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[5] = &Edge{
-		IDs:  ids,
-		Type: "Hyperlink",
-		Name: "hyperlinks",
+	node.Edges[6] = &Edge{
+		Type: "Location",
+		Name: "location",
 	}
-	ids, err = wo.QueryLocation().
+	node.Edges[6].IDs, err = wo.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[6] = &Edge{
-		IDs:  ids,
-		Type: "Location",
-		Name: "location",
+	node.Edges[7] = &Edge{
+		Type: "Comment",
+		Name: "comments",
 	}
-	ids, err = wo.QueryComments().
+	node.Edges[7].IDs, err = wo.QueryComments().
 		Select(comment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[7] = &Edge{
-		IDs:  ids,
-		Type: "Comment",
-		Name: "comments",
+	node.Edges[8] = &Edge{
+		Type: "Activity",
+		Name: "activities",
 	}
-	ids, err = wo.QueryActivities().
+	node.Edges[8].IDs, err = wo.QueryActivities().
 		Select(activity.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[8] = &Edge{
-		IDs:  ids,
-		Type: "Activity",
-		Name: "activities",
+	node.Edges[9] = &Edge{
+		Type: "Property",
+		Name: "properties",
 	}
-	ids, err = wo.QueryProperties().
+	node.Edges[9].IDs, err = wo.QueryProperties().
 		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[9] = &Edge{
-		IDs:  ids,
-		Type: "Property",
-		Name: "properties",
+	node.Edges[10] = &Edge{
+		Type: "CheckListCategory",
+		Name: "check_list_categories",
 	}
-	ids, err = wo.QueryCheckListCategories().
+	node.Edges[10].IDs, err = wo.QueryCheckListCategories().
 		Select(checklistcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[10] = &Edge{
-		IDs:  ids,
-		Type: "CheckListCategory",
-		Name: "check_list_categories",
+	node.Edges[11] = &Edge{
+		Type: "Project",
+		Name: "project",
 	}
-	ids, err = wo.QueryProject().
+	node.Edges[11].IDs, err = wo.QueryProject().
 		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[11] = &Edge{
-		IDs:  ids,
-		Type: "Project",
-		Name: "project",
-	}
-	ids, err = wo.QueryOwner().
-		Select(user.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	node.Edges[12] = &Edge{
-		IDs:  ids,
 		Type: "User",
 		Name: "owner",
 	}
-	ids, err = wo.QueryAssignee().
+	node.Edges[12].IDs, err = wo.QueryOwner().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[13] = &Edge{
-		IDs:  ids,
 		Type: "User",
 		Name: "assignee",
+	}
+	node.Edges[13].IDs, err = wo.QueryAssignee().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return node, nil
 }
@@ -5880,39 +5623,35 @@ func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error
 		Name:  "index",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = wod.QueryType().
+	node.Edges[0] = &Edge{
+		Type: "WorkOrderType",
+		Name: "type",
+	}
+	node.Edges[0].IDs, err = wod.QueryType().
 		Select(workordertype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderType",
-		Name: "type",
+	node.Edges[1] = &Edge{
+		Type: "ProjectType",
+		Name: "project_type",
 	}
-	ids, err = wod.QueryProjectType().
+	node.Edges[1].IDs, err = wod.QueryProjectType().
 		Select(projecttype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "ProjectType",
-		Name: "project_type",
+	node.Edges[2] = &Edge{
+		Type: "ProjectTemplate",
+		Name: "project_template",
 	}
-	ids, err = wod.QueryProjectTemplate().
+	node.Edges[2].IDs, err = wod.QueryProjectTemplate().
 		Select(projecttemplate.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "ProjectTemplate",
-		Name: "project_template",
 	}
 	return node, nil
 }
@@ -5965,39 +5704,35 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = wot.QueryPropertyTypes().
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "property_types",
+	}
+	node.Edges[0].IDs, err = wot.QueryPropertyTypes().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "property_types",
+	node.Edges[1] = &Edge{
+		Type: "CheckListCategoryDefinition",
+		Name: "check_list_category_definitions",
 	}
-	ids, err = wot.QueryCheckListCategoryDefinitions().
+	node.Edges[1].IDs, err = wot.QueryCheckListCategoryDefinitions().
 		Select(checklistcategorydefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "CheckListCategoryDefinition",
-		Name: "check_list_category_definitions",
+	node.Edges[2] = &Edge{
+		Type: "WorkOrderType",
+		Name: "type",
 	}
-	ids, err = wot.QueryType().
+	node.Edges[2].IDs, err = wot.QueryType().
 		Select(workordertype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderType",
-		Name: "type",
 	}
 	return node, nil
 }
@@ -6050,50 +5785,45 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
 	}
-	var ids []int
-	ids, err = wot.QueryPropertyTypes().
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "property_types",
+	}
+	node.Edges[0].IDs, err = wot.QueryPropertyTypes().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "PropertyType",
-		Name: "property_types",
+	node.Edges[1] = &Edge{
+		Type: "CheckListCategoryDefinition",
+		Name: "check_list_category_definitions",
 	}
-	ids, err = wot.QueryCheckListCategoryDefinitions().
+	node.Edges[1].IDs, err = wot.QueryCheckListCategoryDefinitions().
 		Select(checklistcategorydefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		IDs:  ids,
-		Type: "CheckListCategoryDefinition",
-		Name: "check_list_category_definitions",
+	node.Edges[2] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_orders",
 	}
-	ids, err = wot.QueryWorkOrders().
+	node.Edges[2].IDs, err = wot.QueryWorkOrders().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrder",
-		Name: "work_orders",
+	node.Edges[3] = &Edge{
+		Type: "WorkOrderDefinition",
+		Name: "definitions",
 	}
-	ids, err = wot.QueryDefinitions().
+	node.Edges[3].IDs, err = wot.QueryDefinitions().
 		Select(workorderdefinition.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
-	}
-	node.Edges[3] = &Edge{
-		IDs:  ids,
-		Type: "WorkOrderDefinition",
-		Name: "definitions",
 	}
 	return node, nil
 }
@@ -6108,21 +5838,47 @@ func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
-func (c *Client) Noder(ctx context.Context, id int) (_ Noder, err error) {
+// NodeOption allows configuring the Noder execution using functional options.
+type NodeOption func(*NodeOptions)
+
+// WithNodeType sets the Type of the node (i.e. the table to query).
+// If was not provided, the table will be derived from the universal-id
+// configuration as described in: https://entgo.io/docs/migrate/#universal-ids.
+func WithNodeType(t string) NodeOption {
+	return func(o *NodeOptions) {
+		o.Type = t
+	}
+}
+
+// NodeOptions holds the configuration for Noder execution.
+type NodeOptions struct {
+	// Type of the node (schema table).
+	Type string
+}
+
+// Noder returns a Node by its id. If the NodeType was not provided, it will
+// be derived from the id value according to the universal-id configuration.
+//
+//		c.Noder(ctx, id)
+//		c.Noder(ctx, id, ent.WithNodeType(pet.Table))
+//
+func (c *Client) Noder(ctx context.Context, id int, opts ...NodeOption) (_ Noder, err error) {
 	defer func() {
 		if IsNotFound(err) {
 			err = multierror.Append(err, entgql.ErrNodeNotFound(id))
 		}
 	}()
-	tables, err := c.tables.Load(ctx, c.driver)
-	if err != nil {
-		return nil, err
+	options := &NodeOptions{}
+	for _, opt := range opts {
+		opt(options)
 	}
-	idx := id / (1<<32 - 1)
-	if idx < 0 || idx >= len(tables) {
-		return nil, fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
+	if options.Type == "" {
+		options.Type, err = c.tables.nodeType(ctx, c.driver, id)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return c.noder(ctx, tables[idx], id)
+	return c.noder(ctx, options.Type, id)
 }
 
 func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
@@ -6632,17 +6388,27 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		}
 		return n, nil
 	default:
-		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", tbl, errNodeInvalidID)
+		return nil, fmt.Errorf("cannot resolve Noder from table %q: %w", tbl, errNodeInvalidID)
 	}
 }
 
-type (
-	tables struct {
-		once  sync.Once
-		sem   *semaphore.Weighted
-		value atomic.Value
+type tables struct {
+	once  sync.Once
+	sem   *semaphore.Weighted
+	value atomic.Value
+}
+
+func (t *tables) nodeType(ctx context.Context, drv dialect.Driver, id int) (string, error) {
+	tables, err := t.Load(ctx, drv)
+	if err != nil {
+		return "", err
 	}
-)
+	idx := id / (1<<32 - 1)
+	if idx < 0 || idx >= len(tables) {
+		return "", fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
+	}
+	return tables[idx], nil
+}
 
 func (t *tables) Load(ctx context.Context, drv dialect.Driver) ([]string, error) {
 	if tables := t.value.Load(); tables != nil {

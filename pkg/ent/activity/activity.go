@@ -146,10 +146,10 @@ func (at ActivityType) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (at *ActivityType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (at *ActivityType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*at = ActivityType(str)
 	if err := ActivityTypeValidator(*at); err != nil {

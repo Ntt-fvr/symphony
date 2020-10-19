@@ -133,10 +133,10 @@ func (_type Type) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (_type *Type) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (_type *Type) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*_type = Type(str)
 	if err := TypeValidator(*_type); err != nil {
@@ -151,10 +151,10 @@ func (s Status) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (s *Status) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (s *Status) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*s = Status(str)
 	if err := StatusValidator(*s); err != nil {
