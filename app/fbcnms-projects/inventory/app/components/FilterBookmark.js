@@ -84,10 +84,10 @@ const useStyles = makeStyles(() => ({
     marginLeft: '4px',
   },
 }));
-type Props = WithSnackbarProps & {
+type Props = WithSnackbarProps & {|
   filters: FiltersQuery,
   entity: FilterEntity,
-};
+|};
 
 const FilterBookmark = (props: Props) => {
   const classes = useStyles();

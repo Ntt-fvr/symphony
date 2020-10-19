@@ -81,7 +81,7 @@
         summary: 'Client fatal error occurred for tenant "{{ $labels.tenant }}"'
       expr: |-
         sum(increase(
-            inventory_client_events_total{event="client_fatal_error"}[1d]
+            inventory_client_events_total{event="client_fatal_error", namespace="${namespace}"}[1d]
         )) by(tenant, event) > 0
       labels:
         severity: major

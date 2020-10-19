@@ -57,12 +57,12 @@ graphql`
   }
 `;
 
-type Props = {
+type Props = $ReadOnly<{|
   positionDefinitions: Array<PositionDefinitionsAddEditTable_positionDefinition>,
   onPositionDefinitionsChanged?: ?(
     newPositioDef: Array<PositionDefinitionsAddEditTable_positionDefinition>,
   ) => void,
-};
+|}>;
 
 const PositionDefinitionsAddEditTable = (props: Props) => {
   const classes = useStyles();
@@ -162,7 +162,6 @@ const PositionDefinitionsAddEditTable = (props: Props) => {
                 <FormField>
                   <TextInput
                     placeholder={`${fbt('Name', '')}`}
-                    variant="outlined"
                     className={classes.input}
                     value={definition.name ?? ''}
                     onChange={({target}) =>
@@ -175,7 +174,6 @@ const PositionDefinitionsAddEditTable = (props: Props) => {
                 <FormField>
                   <TextInput
                     placeholder={`${fbt('Visible Label', '')}`}
-                    variant="outlined"
                     className={classes.input}
                     value={definition.visibleLabel ?? ''}
                     onChange={({target}) =>

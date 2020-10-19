@@ -15,11 +15,11 @@ import {QueryRenderer} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useSnackbar} from '@fbcnms/ui/hooks';
 
-type Props = {
+type Props = $ReadOnly<{|
   query: any,
   variables: Object,
   render: (props: Object) => React$Element<any> | null,
-};
+|}>;
 
 const useStyles = makeStyles(_theme => ({
   progress: {

@@ -25,18 +25,22 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+export type ClickableEvents = $ReadOnly<{|
+  onClick?: ?MouseEventHandler,
+  onMouseDown?: ?MouseEventHandler,
+|}>;
+
 export type MouseEventHandler = (
   SyntheticMouseEvent<HTMLElement>,
 ) => void | Promise<void>;
 
-type Props = {
+type Props = $ReadOnly<{|
   children?: React.Node,
-  onClick?: ?MouseEventHandler,
-  onMouseDown?: ?MouseEventHandler,
   disabled?: boolean,
   tooltip?: string,
   className?: string,
-};
+  ...ClickableEvents,
+|}>;
 
 const Clickable = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
   const {

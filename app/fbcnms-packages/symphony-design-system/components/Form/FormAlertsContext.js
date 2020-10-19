@@ -179,9 +179,9 @@ const FormRulesMaintainer = function () {
   };
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   children: React.Node,
-};
+|}>;
 
 export function FormAlertsContextProvider(props: Props) {
   const errorsContext = FormRulesMaintainer();

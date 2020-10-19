@@ -23,11 +23,11 @@ import {LocationCriteriaConfig} from './LocationSearchConfig';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {buildPropertyFilterConfigs, getSelectedFilter} from './FilterUtils';
 
-type Props = {
+type Props = $ReadOnly<{|
   filters: FiltersQuery,
   onFiltersChanged: FiltersQuery => void,
   footer?: ?string,
-};
+|}>;
 
 const LocationsPowerSearchBar = (props: Props) => {
   const {onFiltersChanged, filters, footer} = props;
@@ -45,7 +45,6 @@ const LocationsPowerSearchBar = (props: Props) => {
     .concat(locationTypesFilterConfigs ?? []);
   return (
     <PowerSearchBar
-      filters={filters}
       filterValues={filters}
       onFiltersChanged={onFiltersChanged}
       onFilterRemoved={handleFilterRemoved}

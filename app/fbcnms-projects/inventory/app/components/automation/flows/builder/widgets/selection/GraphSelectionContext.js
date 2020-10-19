@@ -52,9 +52,9 @@ const GraphSelectionContext = React.createContext<GraphSelectionContextType>(
 
 export type IsIgnoredElementFunc = IBlock => boolean;
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 export function GraphSelectionContextProvider(props: Props) {
   const flow = useGraph();

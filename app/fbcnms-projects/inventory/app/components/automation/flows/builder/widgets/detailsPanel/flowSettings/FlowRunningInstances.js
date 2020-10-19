@@ -20,9 +20,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
-};
+|}>;
 
 export default function FlowRunningInstances(props: Props) {
   const {className} = props;

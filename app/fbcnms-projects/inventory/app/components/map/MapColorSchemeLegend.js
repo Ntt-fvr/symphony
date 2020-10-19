@@ -20,10 +20,10 @@ export type MapColorScheme = {
   colors: Array<string>,
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   title: string,
   colorScheme: MapColorScheme,
-};
+|}>;
 
 const MapColorSchemeLegend = (props: Props) => {
   const classes = useStyles();

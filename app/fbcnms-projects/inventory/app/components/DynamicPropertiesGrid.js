@@ -23,11 +23,11 @@ import {
 } from '../common/Property';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   properties: Array<Property>,
   propertyTypes: Array<PropertyType>,
   hideTitle?: boolean,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = theme => ({
   subheader: {

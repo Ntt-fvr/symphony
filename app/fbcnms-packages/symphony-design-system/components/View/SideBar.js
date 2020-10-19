@@ -61,7 +61,7 @@ export type MenuItem = $ReadOnly<{|
   tooltip?: ?string,
 |}>;
 
-type Props = {
+type Props = $ReadOnly<{|
   header?: ?React.Node,
   children?: ?React.Node,
   className?: ?string,
@@ -69,7 +69,7 @@ type Props = {
   bodyClassName?: ?string,
   collapsible?: boolean,
   collapseCallback?: boolean => void,
-};
+|}>;
 
 export default function SideBar(props: Props) {
   const {

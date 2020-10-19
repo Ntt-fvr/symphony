@@ -137,14 +137,14 @@ type SelectableOption =
       optionType: 'SAVED_SEARCH',
     };
 
-type Props = {|
+type Props = $ReadOnly<{|
   options: Array<FilterConfig>,
   searchConfig: Array<EntityConfig>,
   savedSearches: Array<SavedSearchConfig>,
   onInputBlurred: () => void,
   onInputFocused: () => void,
   onFilterSelected: SelectableOption => void,
-|};
+|}>;
 
 const KEYBOARD_ENTER_KEY_CODE = 13;
 const KEYBOARD_UP_KEY_CODE = 38;

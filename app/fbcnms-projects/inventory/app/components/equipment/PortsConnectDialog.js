@@ -19,7 +19,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import EquipmentComparisonViewQueryRenderer from '../comparison_view/EquipmentComparisonViewQueryRenderer';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
-import NodePropertyInput from '../NodePropertyInput';
 import PortsConnectConfirmation from './PortsConnectConfirmation';
 import PowerSearchEquipmentResultsTable from '../comparison_view/PowerSearchEquipmentResultsTable';
 import PropertiesAddEditSection from '../form/PropertiesAddEditSection';
@@ -80,13 +79,13 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   equipment: Equipment,
   port: EquipmentPort,
   onConnectPorts: (EquipmentPort, Array<Property>) => void,
   onCancel: () => void,
   isSubFlow: ?boolean,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   activeEquipement: ?Equipment,
@@ -228,7 +227,6 @@ class PortsConnectDialog extends React.Component<Props, State> {
           <PropertiesAddEditSection
             properties={linkProperties}
             onChange={index => this._propertyChangedHandler(index)}
-            nodeInput={NodePropertyInput}
           />
         );
       case 3:

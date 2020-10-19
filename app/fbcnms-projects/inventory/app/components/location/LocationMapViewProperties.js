@@ -14,12 +14,12 @@ import React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   mapType: string,
   mapZoomLevel: string,
   onMapTypeChanged: (newType: string) => void,
   onMapZoomLevelChanged: (newZoomLevel: string) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = theme => ({
   container: {

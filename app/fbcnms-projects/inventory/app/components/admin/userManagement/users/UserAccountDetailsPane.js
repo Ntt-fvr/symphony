@@ -49,7 +49,7 @@ export const ACCOUNT_DISPLAY_VARIANTS = {
   userSettingsView: 'userSettingsView',
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   user: User,
   onChange?: (
     user: User,
@@ -58,7 +58,7 @@ type Props = {
   ) => void | Promise<void>,
   variant: $Values<typeof ACCOUNT_DISPLAY_VARIANTS>,
   className?: ?string,
-};
+|}>;
 
 const UserAccountDetailsPane = (props: Props) => {
   const {user, onChange, className, variant} = props;

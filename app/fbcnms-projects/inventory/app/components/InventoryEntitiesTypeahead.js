@@ -87,9 +87,9 @@ const styles = (theme: Theme) => ({
 
 type EntityType = 'location' | 'equipment';
 
-type Props = {
+type Props = {|
   onEntitySelected: (entityId: string, entityType: EntityType) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   suggestions: Array<Suggestion>,

@@ -16,6 +16,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -113,36 +115,6 @@ func (bc *BlockCreate) SetInputParams(fe []*flowschema.VariableExpression) *Bloc
 func (bc *BlockCreate) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockCreate {
 	bc.mutation.SetUIRepresentation(fur)
 	return bc
-}
-
-// AddPrevBlockIDs adds the prev_blocks edge to Block by ids.
-func (bc *BlockCreate) AddPrevBlockIDs(ids ...int) *BlockCreate {
-	bc.mutation.AddPrevBlockIDs(ids...)
-	return bc
-}
-
-// AddPrevBlocks adds the prev_blocks edges to Block.
-func (bc *BlockCreate) AddPrevBlocks(b ...*Block) *BlockCreate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return bc.AddPrevBlockIDs(ids...)
-}
-
-// AddNextBlockIDs adds the next_blocks edge to Block by ids.
-func (bc *BlockCreate) AddNextBlockIDs(ids ...int) *BlockCreate {
-	bc.mutation.AddNextBlockIDs(ids...)
-	return bc
-}
-
-// AddNextBlocks adds the next_blocks edges to Block.
-func (bc *BlockCreate) AddNextBlocks(b ...*Block) *BlockCreate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return bc.AddNextBlockIDs(ids...)
 }
 
 // SetFlowID sets the flow edge to Flow by id.
@@ -268,6 +240,40 @@ func (bc *BlockCreate) AddInstances(b ...*BlockInstance) *BlockCreate {
 		ids[i] = b[i].ID
 	}
 	return bc.AddInstanceIDs(ids...)
+}
+
+// SetEntryPointID sets the entry_point edge to EntryPoint by id.
+func (bc *BlockCreate) SetEntryPointID(id int) *BlockCreate {
+	bc.mutation.SetEntryPointID(id)
+	return bc
+}
+
+// SetNillableEntryPointID sets the entry_point edge to EntryPoint by id if the given value is not nil.
+func (bc *BlockCreate) SetNillableEntryPointID(id *int) *BlockCreate {
+	if id != nil {
+		bc = bc.SetEntryPointID(*id)
+	}
+	return bc
+}
+
+// SetEntryPoint sets the entry_point edge to EntryPoint.
+func (bc *BlockCreate) SetEntryPoint(e *EntryPoint) *BlockCreate {
+	return bc.SetEntryPointID(e.ID)
+}
+
+// AddExitPointIDs adds the exit_points edge to ExitPoint by ids.
+func (bc *BlockCreate) AddExitPointIDs(ids ...int) *BlockCreate {
+	bc.mutation.AddExitPointIDs(ids...)
+	return bc
+}
+
+// AddExitPoints adds the exit_points edges to ExitPoint.
+func (bc *BlockCreate) AddExitPoints(e ...*ExitPoint) *BlockCreate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return bc.AddExitPointIDs(ids...)
 }
 
 // Mutation returns the BlockMutation object of the builder.
@@ -465,44 +471,6 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 		})
 		_node.UIRepresentation = value
 	}
-	if nodes := bc.mutation.PrevBlocksIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   block.PrevBlocksTable,
-			Columns: block.PrevBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := bc.mutation.NextBlocksIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   block.NextBlocksTable,
-			Columns: block.NextBlocksPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: block.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -628,6 +596,44 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.EntryPointIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   block.EntryPointTable,
+			Columns: []string{block.EntryPointColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: entrypoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.ExitPointsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   block.ExitPointsTable,
+			Columns: []string{block.ExitPointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: exitpoint.FieldID,
 				},
 			},
 		}

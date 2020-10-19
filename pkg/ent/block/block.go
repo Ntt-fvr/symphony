@@ -41,10 +41,6 @@ const (
 	// FieldUIRepresentation holds the string denoting the ui_representation field in the database.
 	FieldUIRepresentation = "ui_representation"
 
-	// EdgePrevBlocks holds the string denoting the prev_blocks edge name in mutations.
-	EdgePrevBlocks = "prev_blocks"
-	// EdgeNextBlocks holds the string denoting the next_blocks edge name in mutations.
-	EdgeNextBlocks = "next_blocks"
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
 	// EdgeFlowTemplate holds the string denoting the flow_template edge name in mutations.
@@ -59,13 +55,13 @@ const (
 	EdgeGotoBlock = "goto_block"
 	// EdgeInstances holds the string denoting the instances edge name in mutations.
 	EdgeInstances = "instances"
+	// EdgeEntryPoint holds the string denoting the entry_point edge name in mutations.
+	EdgeEntryPoint = "entry_point"
+	// EdgeExitPoints holds the string denoting the exit_points edge name in mutations.
+	EdgeExitPoints = "exit_points"
 
 	// Table holds the table name of the block in the database.
 	Table = "blocks"
-	// PrevBlocksTable is the table the holds the prev_blocks relation/edge. The primary key declared below.
-	PrevBlocksTable = "block_next_blocks"
-	// NextBlocksTable is the table the holds the next_blocks relation/edge. The primary key declared below.
-	NextBlocksTable = "block_next_blocks"
 	// FlowTable is the table the holds the flow relation/edge.
 	FlowTable = "blocks"
 	// FlowInverseTable is the table name for the Flow entity.
@@ -109,6 +105,20 @@ const (
 	InstancesInverseTable = "block_instances"
 	// InstancesColumn is the table column denoting the instances relation/edge.
 	InstancesColumn = "block_instance_block"
+	// EntryPointTable is the table the holds the entry_point relation/edge.
+	EntryPointTable = "entry_points"
+	// EntryPointInverseTable is the table name for the EntryPoint entity.
+	// It exists in this package in order to avoid circular dependency with the "entrypoint" package.
+	EntryPointInverseTable = "entry_points"
+	// EntryPointColumn is the table column denoting the entry_point relation/edge.
+	EntryPointColumn = "block_entry_point"
+	// ExitPointsTable is the table the holds the exit_points relation/edge.
+	ExitPointsTable = "exit_points"
+	// ExitPointsInverseTable is the table name for the ExitPoint entity.
+	// It exists in this package in order to avoid circular dependency with the "exitpoint" package.
+	ExitPointsInverseTable = "exit_points"
+	// ExitPointsColumn is the table column denoting the exit_points relation/edge.
+	ExitPointsColumn = "block_exit_points"
 )
 
 // Columns holds all SQL columns for block fields.
@@ -134,15 +144,6 @@ var ForeignKeys = []string{
 	"flow_execution_template_blocks",
 }
 
-var (
-	// PrevBlocksPrimaryKey and PrevBlocksColumn2 are the table columns denoting the
-	// primary key for the prev_blocks relation (M2M).
-	PrevBlocksPrimaryKey = []string{"block_id", "prev_block_id"}
-	// NextBlocksPrimaryKey and NextBlocksColumn2 are the table columns denoting the
-	// primary key for the next_blocks relation (M2M).
-	NextBlocksPrimaryKey = []string{"block_id", "prev_block_id"}
-)
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
@@ -165,7 +166,7 @@ func ValidColumn(column string) bool {
 //	import _ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 //
 var (
-	Hooks  [2]ent.Hook
+	Hooks  [4]ent.Hook
 	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the create_time field.
 	DefaultCreateTime func() time.Time

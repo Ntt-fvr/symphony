@@ -62,10 +62,10 @@ type State = {
   properties: Array<Property>,
 };
 
-type Props = {
+type Props = {|
   project: ProjectDetails_project,
   onProjectRemoved: () => void,
-} & WithAlert &
+|} & WithAlert &
   WithStyles<typeof styles> &
   ContextRouter &
   WithSnackbarProps;
@@ -330,7 +330,6 @@ class ProjectDetails extends React.Component<Props, State> {
                               <FormField label="Type">
                                 <TextInput
                                   disabled={true}
-                                  variant="outlined"
                                   type="string"
                                   value={project.type.name}
                                 />
@@ -373,7 +372,6 @@ class ProjectDetails extends React.Component<Props, State> {
                                 fullWidth={true}
                                 label={property.propertyType.name}
                                 className={classes.gridInput}
-                                margin="dense"
                                 inputType="Property"
                                 property={property}
                                 onChange={this._propertyChangedHandler(index)}

@@ -22,10 +22,10 @@ import React from 'react';
 import {graphql} from 'relay-runtime';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = WithStyles<typeof styles> & {
+type Props = WithStyles<typeof styles> & {|
   onSelect: (workOrder: WorkOrder) => void,
   onNavigateToWorkOrder: (workOrderId: string) => void,
-};
+|};
 
 const styles = theme => ({
   root: {

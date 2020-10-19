@@ -45,7 +45,6 @@ const useStyles = makeStyles(() => ({
 
 const ProjectComparisonView = () => {
   const [filters, setFilters] = useState([]);
-  const [count, setCount] = useState((0: number));
   const [dialogKey, setDialogKey] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const {match, history, location} = useRouter();
@@ -131,22 +130,6 @@ const ProjectComparisonView = () => {
             )
           }
           onFiltersChanged={filters => setFilters(filters)}
-          footer={
-            count !== 0
-              ? count > QUERY_LIMIT
-                ? fbt(
-                    '1 to ' +
-                      fbt.param('size of page', QUERY_LIMIT) +
-                      ' of ' +
-                      fbt.param('total number possible rows', count),
-                    'header to indicate partial results',
-                  )
-                : fbt(
-                    '1 to ' + fbt.param('number of results in page', count),
-                    'header to indicate number of results',
-                  )
-              : null
-          }
         />
       </div>
     ),
@@ -188,7 +171,6 @@ const ProjectComparisonView = () => {
               ? DisplayOptions.map
               : DisplayOptions.table
           }
-          onQueryReturn={c => setCount(c)}
         />
         <AddProjectDialog
           key={`new_project_${dialogKey}`}

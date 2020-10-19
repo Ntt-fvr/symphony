@@ -59,10 +59,10 @@ const questionTypes: {[SurveyQuestionType]: string} = {
   WIFI: 'Wi-Fi Signal Scan',
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   questions: SurveyTemplateQuestion[],
   onQuestionsChanged: (SurveyTemplateQuestion[]) => void,
-};
+|}>;
 
 export default function SurveyTemplateQuestionsTable(props: Props) {
   const classes = useStyles();

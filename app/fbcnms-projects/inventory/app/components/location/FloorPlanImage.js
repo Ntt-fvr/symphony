@@ -49,10 +49,10 @@ type Scale = {
   scaleInMeters?: number,
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   file: File,
   onUpload: (key: string, ReferencePoint, Scale) => void,
-};
+|}>;
 
 export default function LocationFloorPlansTab(props: Props) {
   const imageRef = useRef();

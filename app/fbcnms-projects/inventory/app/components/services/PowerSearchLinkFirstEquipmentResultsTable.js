@@ -72,11 +72,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   equipment: PowerSearchLinkFirstEquipmentResultsTable_equipment,
   selectedEquipment: ?Equipment,
   onEquipmentSelected: (equipment: Equipment) => void,
-};
+|}>;
 
 const PowerSearchLinkFirstEquipmentResultsTable = (props: Props) => {
   const classes = useStyles();

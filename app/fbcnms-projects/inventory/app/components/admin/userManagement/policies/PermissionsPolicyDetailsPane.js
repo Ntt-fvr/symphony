@@ -30,11 +30,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{
+type Props = $ReadOnly<{|
   policy: PermissionsPolicy,
   onChange: PermissionsPolicy => void,
   className?: ?string,
-}>;
+|}>;
 
 export default function PermissionsPolicyDetailsPane(props: Props) {
   const {policy, className, onChange} = props;

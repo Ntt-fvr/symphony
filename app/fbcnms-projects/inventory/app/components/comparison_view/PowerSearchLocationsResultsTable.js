@@ -85,10 +85,10 @@ const styles = (theme: Theme) => ({
 
 type Props = WithAlert &
   WithStyles<typeof styles> &
-  ContextRouter & {
+  ContextRouter & {|
     // $FlowFixMe (T62907961) Relay flow types
     locations: PowerSearchLocationsResultsTable_locations,
-  };
+  |};
 
 class PowerSearchLocationsResultsTable extends React.Component<Props> {
   static contextType = AppContext;

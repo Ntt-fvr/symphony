@@ -41,11 +41,11 @@ const useStyles = makeStyles(_ => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   service: Service,
   onBackClicked: () => void,
   onServiceRemoved: () => void,
-};
+|}>;
 
 const ServiceHeader = (props: Props) => {
   const classes = useStyles();

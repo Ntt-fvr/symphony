@@ -34,6 +34,8 @@ type Tx struct {
 	Comment *CommentClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// EntryPoint is the client for interacting with the EntryPoint builders.
+	EntryPoint *EntryPointClient
 	// Equipment is the client for interacting with the Equipment builders.
 	Equipment *EquipmentClient
 	// EquipmentCategory is the client for interacting with the EquipmentCategory builders.
@@ -50,6 +52,8 @@ type Tx struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
+	// ExitPoint is the client for interacting with the ExitPoint builders.
+	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
 	ExportTask *ExportTaskClient
 	// Feature is the client for interacting with the Feature builders.
@@ -268,6 +272,7 @@ func (tx *Tx) init() {
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
+	tx.EntryPoint = NewEntryPointClient(tx.config)
 	tx.Equipment = NewEquipmentClient(tx.config)
 	tx.EquipmentCategory = NewEquipmentCategoryClient(tx.config)
 	tx.EquipmentPort = NewEquipmentPortClient(tx.config)
@@ -276,6 +281,7 @@ func (tx *Tx) init() {
 	tx.EquipmentPosition = NewEquipmentPositionClient(tx.config)
 	tx.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(tx.config)
 	tx.EquipmentType = NewEquipmentTypeClient(tx.config)
+	tx.ExitPoint = NewExitPointClient(tx.config)
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
 	tx.File = NewFileClient(tx.config)

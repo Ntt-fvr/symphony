@@ -42,9 +42,9 @@ const CopyPasteContext = React.createContext<CopyPasteContextType>(
   CopyPasteContextDefaults,
 );
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 export function CopyPasteContextProvider(props: Props) {
   const flow = useGraph();

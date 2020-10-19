@@ -37,13 +37,13 @@ const styles = () => ({
   },
 });
 
-type Props = {
+type Props = {|
   className?: string,
   workOrderId: string,
   workOrderTypeId: string,
   ignorePermissions?: ?boolean,
   onWorkOrderRemoved: () => void,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   WithAlert &
   WithSnackbarProps;
 

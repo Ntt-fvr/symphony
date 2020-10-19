@@ -38,10 +38,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   searchTerm: string,
   onChange: (searchTerm: string) => void,
-};
+|}>;
 
 const SelectSearchInput = ({searchTerm, onChange}: Props) => {
   const classes = useStyles();

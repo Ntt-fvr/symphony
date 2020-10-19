@@ -13,11 +13,11 @@ import React from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   label: string,
   value: string,
   onChange: (SyntheticInputEvent<HTMLInputElement>) => void,
-};
+|}>;
 
 const useStyles = makeStyles(() => ({
   input: {

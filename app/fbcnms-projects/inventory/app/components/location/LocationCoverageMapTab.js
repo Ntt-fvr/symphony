@@ -33,9 +33,9 @@ import lime from '@material-ui/core/colors/lime';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   location: Location,
-};
+|}>;
 
 // signal strength(dBm) range: https://powerfulsignal.com/cell-signal-strength
 const CELL_SIGNAL_STRENGTH_THRESHOLD_LOW = -120;

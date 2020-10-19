@@ -54,8 +54,6 @@ function EquipmentDetails(props: Props) {
         propertyTypes={propTypes}
       />
       <EquipmentPositionsGrid
-        positionDefinitions={equipment.equipmentType.positionDefinitions}
-        positions={equipment.positions}
         workOrderId={workOrderId}
         onAttachingEquipmentToPosition={onAttachingEquipmentToPosition}
         onEquipmentPositionClicked={onEquipmentClicked}

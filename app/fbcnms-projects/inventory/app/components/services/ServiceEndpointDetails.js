@@ -24,10 +24,10 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   endpoint: ServiceEndpoint,
   onDeleteEndpoint: ?() => void,
-};
+|}>;
 
 const useStyles = makeStyles(_ => ({
   root: {
@@ -125,7 +125,6 @@ const ServiceEndpointDetails = (props: Props) => {
               equipment={endpoint.equipment}
               showSelfEquipment={false}
               variant="body2"
-              className={classes.componentName}
               textClassName={classes.locationName}
             />
           </div>

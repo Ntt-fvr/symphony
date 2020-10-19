@@ -142,7 +142,6 @@ const ServiceComparisonView = () => {
                   getSelectedFilter(filterConfig, possibleProperties ?? [])
                 }
                 onFiltersChanged={filters => setFilters(filters)}
-                filters={filters}
                 filterValues={filters}
                 savedSearches={filterBookmarksFilterConfig}
                 exportPath={'/services'}

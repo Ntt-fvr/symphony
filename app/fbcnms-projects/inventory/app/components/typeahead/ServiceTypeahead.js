@@ -23,14 +23,14 @@ const DEBOUNCE_CONFIG = {
   leading: true,
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   required?: boolean,
   headline?: ?string,
   selectedService?: ?{id: string, name: string},
   margin?: ?string,
   onServiceSelection: (?{id: string, name: string}) => void,
-};
+|}>;
 
 type State = {
   serviceSuggestions: Array<Suggestion>,

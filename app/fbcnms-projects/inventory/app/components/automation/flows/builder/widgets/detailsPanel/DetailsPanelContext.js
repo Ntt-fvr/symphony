@@ -34,9 +34,9 @@ const DetailsPanelContext = React.createContext<DetailsPanelContextType>(
   DetailsPanelContextDefaults,
 );
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 const useStyles = makeStyles(() => ({
   detailsContainer: {

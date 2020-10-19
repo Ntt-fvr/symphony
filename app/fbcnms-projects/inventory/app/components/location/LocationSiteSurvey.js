@@ -49,10 +49,10 @@ export type LocationSiteSurveyEntry = {
   },
 };
 
-type Props = {
+type Props = {|
   survey: LocationSiteSurveyEntry,
   onSurveySelected: () => void,
-} & WithAlert;
+|} & WithAlert;
 
 const useStyles = makeStyles(_theme => ({
   statusText: {

@@ -234,10 +234,7 @@ const LocationTypes = () => {
           </div>
         </div>
         <div className={classes.root}>
-          <DroppableTableBody
-            isDragDisabled={isSaving}
-            className={classes.table}
-            onDragEnd={onDragEnd}>
+          <DroppableTableBody className={classes.table} onDragEnd={onDragEnd}>
             {locationTypesData.sort(sortByIndex).map((locType, i) => {
               return (
                 <div className={classes.listItem} key={`${locType.id}_${i}`}>

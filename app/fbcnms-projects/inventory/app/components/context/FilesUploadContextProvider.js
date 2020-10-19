@@ -33,9 +33,9 @@ export const FilesUploadContext = React.createContext<Context>({
   files: new immMap<string, FileItem>(),
 });
 
-type Props = {
+type Props = $ReadOnly<{|
   children: React.Node,
-};
+|}>;
 
 export default function FilesUploadContextProvider({children}: Props) {
   const [files, setFiles] = useState(new immMap<string, FileItem>());

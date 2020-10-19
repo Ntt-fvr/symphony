@@ -33,9 +33,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
-};
+|}>;
 
 export default function FlowDescription(props: Props) {
   const {className} = props;

@@ -28,10 +28,8 @@ const UserSearchBox = (props: Props) => {
     <div className={className}>
       <TextInput
         type="string"
-        variant="outlined"
         placeholder={`${fbt('Search users...', '')}`}
         isProcessing={userSearch.isSearchInProgress}
-        fullWidth={true}
         value={userSearch.searchTerm}
         onChange={e => userSearch.setSearchTerm(e.target.value)}
         onEscPressed={() => userSearch.clearSearch()}

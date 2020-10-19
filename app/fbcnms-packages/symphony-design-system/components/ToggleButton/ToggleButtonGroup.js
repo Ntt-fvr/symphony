@@ -66,12 +66,12 @@ export type ButtonItem = {
   item: React.Node,
 };
 
-export type ToggleButtonProps = {
+export type ToggleButtonProps = {|
   buttons: Array<ButtonItem>,
   onItemClicked: (id: string) => void,
   selectedButtonId?: ?string,
   className?: string,
-};
+|};
 
 const ToggleButton = (props: ToggleButtonProps) => {
   const {buttons, selectedButtonId, onItemClicked, className} = props;

@@ -42,12 +42,12 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   children: React.Node,
   onClick?: () => void,
   inheritsDisability?: boolean,
-};
+|}>;
 
 const InputAffix = (props: Props) => {
   const {children, className, onClick, inheritsDisability = false} = props;

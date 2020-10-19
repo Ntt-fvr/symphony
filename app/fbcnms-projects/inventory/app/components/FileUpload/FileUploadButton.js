@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   children: (openFileUploadDialog: () => void) => React.Node,
   className?: ?string,
   onProgress?: (fileId: string, file: File, progress: number) => void,
@@ -39,7 +39,7 @@ type Props = {
   fileTypes?: string,
   uploadUsingSnackbar?: boolean,
   uploadType?: 'locally' | 'upload',
-};
+|}>;
 
 const FileUploadButton = ({
   children,

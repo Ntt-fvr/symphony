@@ -9,6 +9,7 @@
  */
 
 import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
+import type {SvgIconStyleProps} from '@symphony/design-system/icons/SvgIcon';
 import type {TRefFor} from '../types/TRefFor.flow';
 
 import * as React from 'react';
@@ -402,7 +403,9 @@ export type ButtonSkin =
   | 'brightGray'
   | 'orange'
   | 'green';
-type SvgIcon = React$ComponentType<SvgIconExports>;
+type SvgIconComponent =
+  | React.ComponentType<SvgIconStyleProps>
+  | React$ComponentType<SvgIconExports>;
 
 export type ButtonProps = $ReadOnly<{|
   skin?: ButtonSkin,
@@ -417,9 +420,9 @@ export type Props = $ReadOnly<{|
   children: React.Node,
   onClick?: ?MouseEventHandler,
   onMouseDown?: ?MouseEventHandler,
-  leftIcon?: SvgIcon,
+  leftIcon?: SvgIconComponent,
   leftIconClass?: string,
-  rightIcon?: SvgIcon,
+  rightIcon?: SvgIconComponent,
   rightIconClass?: string,
   ...ButtonProps,
 |}>;
@@ -471,7 +474,7 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
         },
         className,
       )}
-      title={tooltip}
+      tooltip={tooltip}
       disabled={disabled}
       onClick={onClick}
       onMouseDown={onMouseDown}
@@ -480,7 +483,6 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
         <LeftIcon
           color="inherit"
           className={classNames(classes.icon, classes.leftIcon, leftIconClass)}
-          size="small"
         />
       ) : null}
       <Text
@@ -497,7 +499,6 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
             classes.rightIcon,
             rightIconClass,
           )}
-          size="small"
           color="inherit"
         />
       ) : null}

@@ -206,27 +206,9 @@ resource helm_release fluentd_elasticsearch {
       hosts  = ["${aws_elasticsearch_domain.es.endpoint}:443"]
       scheme = "https"
       logstash = {
-        prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? 'ns.' + ns : 'logstash'}"
+        prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? ns + '.namespace' : tag == 'inventory' ? 'symphony.http' : 'logstash'}"
       }
       outputType = "elasticsearch_dynamic"
-    }
-    service = {
-      ports = [{
-        name = "http"
-        type = "ClusterIP"
-        port = 9880
-      }]
-    }
-    livenessProbe = {
-      kind = {
-        httpGet = {
-          path = "/fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D"
-          port = 9880
-        }
-        exec = null
-      }
-      initialDelaySeconds = 5
-      periodSeconds       = 30
     }
     serviceMonitor = {
       enabled = true

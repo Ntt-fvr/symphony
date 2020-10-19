@@ -70,7 +70,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   workOrder: WorkOrderProperties,
   onWorkOrderClick?: () => void,
   displayFullDetails?: boolean,
@@ -81,7 +81,7 @@ type Props = {
     value: ?string,
     workOrderId: string,
   ) => void,
-};
+|}>;
 
 const TECHNICIAN_ACTIVITY_INVALID_DISTANCE_METERS = 200;
 
