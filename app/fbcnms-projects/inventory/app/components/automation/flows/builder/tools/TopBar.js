@@ -13,6 +13,7 @@ import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import React, {useCallback} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
+import fbt from 'fbt';
 import {
   PREDICATES,
   useKeyboardShortcut,
@@ -62,13 +63,16 @@ export default function TopBar() {
     flowData
       .save()
       .then(() => {
-        enqueueSnackbar('Flow draft has been saved!', {
+        enqueueSnackbar(`${fbt('Flow draft has been saved!', '')}`, {
           variant: 'success',
         });
       })
       .catch(() => {
         enqueueSnackbar(
-          'There was an error when trying to save the flow draft.',
+          `${fbt(
+            'There was an error when trying to save the flow draft.',
+            '',
+          )}`,
           {
             variant: 'error',
           },
@@ -110,20 +114,23 @@ export default function TopBar() {
             flowData
               .publish()
               .then(() => {
-                enqueueSnackbar('Flow has been published!', {
+                enqueueSnackbar(`${fbt('Flow has been published!', '')}`, {
                   variant: 'success',
                 });
               })
               .catch(() => {
                 enqueueSnackbar(
-                  'There was an error when trying to publish the flow.',
+                  `${fbt(
+                    'There was an error when trying to publish the flow.',
+                    '',
+                  )}`,
                   {
                     variant: 'error',
                   },
                 );
               })
           }>
-          Publish
+          {`${fbt('Publish', '')}`}
         </Button>
       </div>
     </ToolsBar>
