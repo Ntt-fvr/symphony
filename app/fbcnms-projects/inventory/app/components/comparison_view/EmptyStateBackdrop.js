@@ -9,9 +9,8 @@
  */
 
 import * as React from 'react';
-import classNames from 'classnames';
 import Text from '@symphony/design-system/components/Text';
-import Button from '@symphony/design-system/components/Button';
+import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -24,11 +23,11 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
   heading: {
-    margin: '15px 0'
+    margin: '15px 0',
   },
   paragraph: {
-    marginBottom: '20px'
-  }
+    marginBottom: '20px',
+  },
 }));
 
 type EmptyStateBackdropType = {
@@ -37,7 +36,7 @@ type EmptyStateBackdropType = {
   headingText?: string,
   paragraphText?: string,
   children?: React.Node,
-}
+};
 
 const EmptyStateBackdrop = ({
   className,
@@ -51,18 +50,10 @@ const EmptyStateBackdrop = ({
   return (
     <div className={classNames(classes.emptyStateRoot, className)}>
       {illustration}
-      <Text
-        variant="h6"
-        color="regular"
-        className={classes.heading}
-      >
+      <Text variant="h6" color="regular" className={classes.heading}>
         {headingText}
       </Text>
-      <Text
-        variant="body2"
-        color="regular"
-        className={classes.paragraph}
-      >
+      <Text variant="body2" color="regular" className={classes.paragraph}>
         {paragraphText}
       </Text>
       {children}

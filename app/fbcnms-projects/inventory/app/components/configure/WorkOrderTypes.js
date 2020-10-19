@@ -15,6 +15,8 @@ import type {
 
 import AddEditWorkOrderTypeCard from './AddEditWorkOrderTypeCard';
 import Button from '@symphony/design-system/components/Button';
+import EducationNote from '@symphony/design-system/illustrations/EducationNote';
+import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryView from '../InventoryViewContainer';
 import React, {useMemo, useState} from 'react';
@@ -23,8 +25,6 @@ import fbt from 'fbt';
 import withInventoryErrorBoundary from '../../common/withInventoryErrorBoundary';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
-import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
-import EducationNote from '@symphony/design-system/illustrations/EducationNote';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -165,17 +165,15 @@ const WorkOrderTypes = () => {
           order: TABLE_SORT_ORDER.ascending,
         }}
       />
-      {!tableData.length && <EmptyStateBackdrop
-        illustration={<EducationNote />}
-        headingText="Start creating work order templates"
-      >
-        <Button
-          key="2"
-          onClick={() => showAddEditWorkOrderTypeCard(null)}
-        >
-          <fbt desc="">Create Work Order Template</fbt>
-        </Button>
-      </EmptyStateBackdrop>}
+      {!tableData.length && (
+        <EmptyStateBackdrop
+          illustration={<EducationNote />}
+          headingText="Start creating work order templates">
+          <Button key="2" onClick={() => showAddEditWorkOrderTypeCard(null)}>
+            <fbt desc="">Create Work Order Template</fbt>
+          </Button>
+        </EmptyStateBackdrop>
+      )}
     </InventoryView>
   );
 };

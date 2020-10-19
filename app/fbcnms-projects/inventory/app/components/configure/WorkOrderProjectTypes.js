@@ -12,12 +12,12 @@ import type {WorkOrderProjectTypesQueryResponse} from './__generated__/WorkOrder
 
 import AddEditProjectTypeCard from './AddEditProjectTypeCard';
 import Button from '@symphony/design-system/components/Button';
+import EducationNote from '@symphony/design-system/illustrations/EducationNote';
+import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import InventoryView from '../InventoryViewContainer';
 import ProjectTypeCard from './ProjectTypeCard';
-import EducationNote from '@symphony/design-system/illustrations/EducationNote';
-import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 import React, {useState} from 'react';
 import fbt from 'fbt';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
@@ -107,7 +107,7 @@ const WorkOrderProjectTypes = () => {
 
         const projectTypeData = (props.projectTypes?.edges ?? [])
           .map(edge => edge.node)
-          .filter(Boolean)
+          .filter(Boolean);
 
         const createProjectTemplateButton = (
           <FormActionWithPermissions
@@ -125,7 +125,7 @@ const WorkOrderProjectTypes = () => {
               <fbt desc="">Create Project Template</fbt>
             </Button>
           </FormActionWithPermissions>
-        )
+        );
 
         return (
           <InventoryView
@@ -144,25 +144,22 @@ const WorkOrderProjectTypes = () => {
             }}>
             {!!projectTypeData.length ? (
               <div className={classes.typeCards}>
-                {projectTypeData
-                  .map(projectType => (
-                    <div key={projectType.id} className={classes.typeCard}>
-                      <ProjectTypeCard
-                        projectType={projectType}
-                        onEditClicked={() => setEditingProjectType(projectType)}
-                      />
-                    </div>
-                  ))}
+                {projectTypeData.map(projectType => (
+                  <div key={projectType.id} className={classes.typeCard}>
+                    <ProjectTypeCard
+                      projectType={projectType}
+                      onEditClicked={() => setEditingProjectType(projectType)}
+                    />
+                  </div>
+                ))}
               </div>
             ) : (
               <EmptyStateBackdrop
                 illustration={<EducationNote />}
-                headingText="Start creating project templates"
-              >
-               {createProjectTemplateButton}
+                headingText="Start creating project templates">
+                {createProjectTemplateButton}
               </EmptyStateBackdrop>
             )}
-              
           </InventoryView>
         );
       }}
