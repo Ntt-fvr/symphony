@@ -37,6 +37,7 @@ type hooks struct {
 	CheckListItemDefinition     []ent.Hook
 	Comment                     []ent.Hook
 	Customer                    []ent.Hook
+	EntryPoint                  []ent.Hook
 	Equipment                   []ent.Hook
 	EquipmentCategory           []ent.Hook
 	EquipmentPort               []ent.Hook
@@ -45,6 +46,7 @@ type hooks struct {
 	EquipmentPosition           []ent.Hook
 	EquipmentPositionDefinition []ent.Hook
 	EquipmentType               []ent.Hook
+	ExitPoint                   []ent.Hook
 	ExportTask                  []ent.Hook
 	Feature                     []ent.Hook
 	File                        []ent.Hook

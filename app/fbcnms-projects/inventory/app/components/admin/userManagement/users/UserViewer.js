@@ -53,13 +53,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{
+type Props = $ReadOnly<{|
   user: User | UserBase,
   highlightName?: ?boolean,
   showPhoto?: ?boolean,
   showRole?: ?boolean,
   className?: ?string,
-}>;
+|}>;
 
 export default function UserViewer(props: Props) {
   const {

@@ -49,9 +49,9 @@ const GraphContext = React.createContext<GraphContextType>(
   GraphContextDefaults,
 );
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 export type FlowWrapper = {|
   +graph: Graph,

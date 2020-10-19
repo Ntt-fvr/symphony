@@ -79,7 +79,7 @@ type Card = {
 type Props = ContextRouter &
   WithStyles<typeof styles> &
   WithAlert &
-  WithSnackbarProps & {};
+  WithSnackbarProps & {||};
 
 type State = {
   card: Card,

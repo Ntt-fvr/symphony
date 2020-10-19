@@ -78,11 +78,11 @@ const styles = theme => ({
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
-  WithAlert & {
+  WithAlert & {|
     editingEquipmentType?: ?EquipmentType,
     onClose: () => void,
     onSave: (equipmentType: any) => void,
-  };
+  |};
 
 type State = {
   error: ?string,
@@ -140,8 +140,6 @@ class AddEditEquipmentTypeCard extends React.Component<Props, State> {
               <Grid item xs={6}>
                 <FormField label={`${fbt('Equipment Name', '')}`} required>
                   <TextInput
-                    name="name"
-                    variant="outlined"
                     className={classes.input}
                     value={this.state.editingEquipmentType.name}
                     onChange={this.handleNameChanged}

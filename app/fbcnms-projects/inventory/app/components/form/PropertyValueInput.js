@@ -29,7 +29,7 @@ import update from 'immutability-helper';
 import {getPropertyValue} from '../../common/Property';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props<T: Property | PropertyType> = {
+type Props<T: Property | PropertyType> = {|
   autoFocus: boolean,
   className: string,
   inputClassName?: ?string,
@@ -41,10 +41,9 @@ type Props<T: Property | PropertyType> = {
   onChange: T => void,
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void,
   onKeyDown?: ?(e: SyntheticKeyboardEvent<>) => void,
-  margin: 'none' | 'dense' | 'normal',
   headlineVariant?: 'headline' | 'form',
   fullWidth?: boolean,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = {
   input: {
@@ -88,11 +87,8 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
       classes,
       onChange,
       onBlur,
-      margin,
       required,
       className,
-      inputClassName,
-      onKeyDown,
       inputType,
       headlineVariant,
     } = this.props;
@@ -132,16 +128,10 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
         return (
           <TextInput
             autoFocus={autoFocus}
-            required={required}
             disabled={disabled}
-            id="property-value"
-            label={label}
-            variant="outlined"
             className={classNames(classes.input, className)}
-            margin={margin}
             value={property.stringValue ?? ''}
             onBlur={e => onBlur && onBlur(e)}
-            onKeyDown={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
                 update(property, {
@@ -149,7 +139,6 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
                 }),
               )
             }
-            inputProps={{className: inputClassName}}
             // as we cant use hypens on server side types,
             // replacing with underscores
             // e.g. datetime_local -> datetime-local.
@@ -160,17 +149,11 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
         return (
           <TextInput
             autoFocus={autoFocus}
-            required={required}
             disabled={disabled}
-            id="property-value"
-            label={label}
-            variant="outlined"
             className={classNames(classes.input, className)}
-            margin={margin}
-            placeholder={'0'}
-            {...(property.intValue ? {value: property.intValue} : {})}
+            placeholder="0"
+            value={property.intValue ?? undefined}
             onBlur={e => onBlur && onBlur(e)}
-            onKeyDown={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
                 update(property, {
@@ -178,7 +161,6 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
                 }),
               )
             }
-            inputProps={{className: inputClassName}}
             type="number"
           />
         );
@@ -186,16 +168,10 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
         return (
           <TextInput
             autoFocus={autoFocus}
-            required={required}
             disabled={disabled}
-            id="property-value"
-            label={label}
-            variant="outlined"
             className={classNames(classes.input, className)}
-            margin={margin}
             value={property.floatValue ?? 0}
             onBlur={e => onBlur && onBlur(e)}
-            onKeyDown={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
                 update(property, {
@@ -203,7 +179,6 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
                 }),
               )
             }
-            inputProps={{className: inputClassName}}
             type="number"
           />
         );
@@ -212,10 +187,8 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
           <GPSPropertyValueInput
             required={required}
             disabled={disabled}
-            id="property-value"
             label={this.props.label}
             className={classNames(classes.input, className)}
-            margin={margin}
             value={{
               latitude: property.latitudeValue,
               longitude: property.longitudeValue,
@@ -271,10 +244,8 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
           <RangePropertyValueInput
             required={required}
             disabled={disabled}
-            id="property-value"
             label={this.props.label}
             className={classNames(classes.input, className)}
-            margin={margin}
             onBlur={e => onBlur && onBlur(e)}
             value={{
               rangeFrom: property.rangeFromValue,

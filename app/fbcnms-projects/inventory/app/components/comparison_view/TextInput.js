@@ -24,13 +24,13 @@ const useStyles = makeStyles(theme => ({
 
 const ENTER_KEY_CODE = 13;
 
-type Props = {
+type Props = $ReadOnly<{|
   onBlur: () => void,
   onSubmit: () => void,
   value: string | number,
   type: 'text' | 'number',
   onChange: (newValue: string) => void,
-};
+|}>;
 
 const TextInput = (props: Props) => {
   const classes = useStyles();

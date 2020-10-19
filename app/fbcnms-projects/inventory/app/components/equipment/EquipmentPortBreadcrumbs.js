@@ -55,10 +55,10 @@ export type EquipmentPortWithBreadcrumbs = EquipmentPort & {
   breadcrumbs: Array<Equipment>,
 };
 
-type Props = {
+type Props = {|
   port: EquipmentPortWithBreadcrumbs,
   onPortEquipmentClicked?: (equipmentId: string) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const EquipmentBreadcrumbsTitle = (props: Props) => {
   const {classes, port, onPortEquipmentClicked} = props;

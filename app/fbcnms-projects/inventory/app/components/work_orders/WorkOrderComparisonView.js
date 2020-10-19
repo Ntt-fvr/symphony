@@ -181,7 +181,6 @@ const WorkOrderComparisonView = () => {
       <ErrorBoundary>
         <WorkOrderCard
           workOrderId={selectedWorkOrderCardId}
-          onWorkOrderExecuted={() => {}}
           onWorkOrderRemoved={() => navigateToWorkOrder(null)}
         />
       </ErrorBoundary>

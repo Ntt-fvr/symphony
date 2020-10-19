@@ -165,7 +165,7 @@ const equipmentAddEditCardQuery__equipmentTypeQuery = graphql`
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
-  WithAlert & {
+  WithAlert & {|
     editingEquipmentId?: ?string,
     locationId: ?string,
     equipmentPosition: ?EquipmentPosition,
@@ -173,7 +173,7 @@ type Props = WithSnackbarProps &
     type: ?EquipmentType,
     onCancel: () => void,
     onSave: () => void,
-  };
+  |};
 
 type State = {
   editingEquipment: ?Equipment,

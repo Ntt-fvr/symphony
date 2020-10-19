@@ -53,12 +53,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export type FileUploadAreaProps = {
+export type FileUploadAreaProps = {|
   dimensions?: 'square' | 'wide',
   icon?: 'upload' | 'plus',
   onClick: () => void,
   className?: string,
-};
+|};
 
 const FileUploadArea = ({
   icon = 'upload',

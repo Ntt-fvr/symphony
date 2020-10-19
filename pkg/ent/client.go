@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -30,6 +31,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -96,6 +98,8 @@ type Client struct {
 	Comment *CommentClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// EntryPoint is the client for interacting with the EntryPoint builders.
+	EntryPoint *EntryPointClient
 	// Equipment is the client for interacting with the Equipment builders.
 	Equipment *EquipmentClient
 	// EquipmentCategory is the client for interacting with the EquipmentCategory builders.
@@ -112,6 +116,8 @@ type Client struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
+	// ExitPoint is the client for interacting with the ExitPoint builders.
+	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
 	ExportTask *ExportTaskClient
 	// Feature is the client for interacting with the Feature builders.
@@ -210,6 +216,7 @@ func (c *Client) init() {
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.Customer = NewCustomerClient(c.config)
+	c.EntryPoint = NewEntryPointClient(c.config)
 	c.Equipment = NewEquipmentClient(c.config)
 	c.EquipmentCategory = NewEquipmentCategoryClient(c.config)
 	c.EquipmentPort = NewEquipmentPortClient(c.config)
@@ -218,6 +225,7 @@ func (c *Client) init() {
 	c.EquipmentPosition = NewEquipmentPositionClient(c.config)
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
+	c.ExitPoint = NewExitPointClient(c.config)
 	c.ExportTask = NewExportTaskClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
 	c.File = NewFileClient(c.config)
@@ -296,6 +304,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
+		EntryPoint:                  NewEntryPointClient(cfg),
 		Equipment:                   NewEquipmentClient(cfg),
 		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
 		EquipmentPort:               NewEquipmentPortClient(cfg),
@@ -304,6 +313,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
@@ -365,6 +375,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
+		EntryPoint:                  NewEntryPointClient(cfg),
 		Equipment:                   NewEquipmentClient(cfg),
 		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
 		EquipmentPort:               NewEquipmentPortClient(cfg),
@@ -373,6 +384,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
@@ -447,6 +459,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
 	c.Customer.Use(hooks...)
+	c.EntryPoint.Use(hooks...)
 	c.Equipment.Use(hooks...)
 	c.EquipmentCategory.Use(hooks...)
 	c.EquipmentPort.Use(hooks...)
@@ -455,6 +468,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPosition.Use(hooks...)
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
+	c.ExitPoint.Use(hooks...)
 	c.ExportTask.Use(hooks...)
 	c.Feature.Use(hooks...)
 	c.File.Use(hooks...)
@@ -698,38 +712,6 @@ func (c *BlockClient) GetX(ctx context.Context, id int) *Block {
 	return obj
 }
 
-// QueryPrevBlocks queries the prev_blocks edge of a Block.
-func (c *BlockClient) QueryPrevBlocks(b *Block) *BlockQuery {
-	query := &BlockQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, id),
-			sqlgraph.To(block.Table, block.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, block.PrevBlocksTable, block.PrevBlocksPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryNextBlocks queries the next_blocks edge of a Block.
-func (c *BlockClient) QueryNextBlocks(b *Block) *BlockQuery {
-	query := &BlockQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, id),
-			sqlgraph.To(block.Table, block.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, block.NextBlocksTable, block.NextBlocksPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryFlow queries the flow edge of a Block.
 func (c *BlockClient) QueryFlow(b *Block) *FlowQuery {
 	query := &FlowQuery{config: c.config}
@@ -835,6 +817,38 @@ func (c *BlockClient) QueryInstances(b *Block) *BlockInstanceQuery {
 			sqlgraph.From(block.Table, block.FieldID, id),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, block.InstancesTable, block.InstancesColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntryPoint queries the entry_point edge of a Block.
+func (c *BlockClient) QueryEntryPoint(b *Block) *EntryPointQuery {
+	query := &EntryPointQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(entrypoint.Table, entrypoint.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, block.EntryPointTable, block.EntryPointColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExitPoints queries the exit_points edge of a Block.
+func (c *BlockClient) QueryExitPoints(b *Block) *ExitPointQuery {
+	query := &ExitPointQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(exitpoint.Table, exitpoint.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, block.ExitPointsTable, block.ExitPointsColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -1741,6 +1755,127 @@ func (c *CustomerClient) QueryServices(cu *Customer) *ServiceQuery {
 func (c *CustomerClient) Hooks() []Hook {
 	hooks := c.hooks.Customer
 	return append(hooks[:len(hooks):len(hooks)], customer.Hooks[:]...)
+}
+
+// EntryPointClient is a client for the EntryPoint schema.
+type EntryPointClient struct {
+	config
+}
+
+// NewEntryPointClient returns a client for the EntryPoint from the given config.
+func NewEntryPointClient(c config) *EntryPointClient {
+	return &EntryPointClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entrypoint.Hooks(f(g(h())))`.
+func (c *EntryPointClient) Use(hooks ...Hook) {
+	c.hooks.EntryPoint = append(c.hooks.EntryPoint, hooks...)
+}
+
+// Create returns a create builder for EntryPoint.
+func (c *EntryPointClient) Create() *EntryPointCreate {
+	mutation := newEntryPointMutation(c.config, OpCreate)
+	return &EntryPointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of EntryPoint entities.
+func (c *EntryPointClient) CreateBulk(builders ...*EntryPointCreate) *EntryPointCreateBulk {
+	return &EntryPointCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntryPoint.
+func (c *EntryPointClient) Update() *EntryPointUpdate {
+	mutation := newEntryPointMutation(c.config, OpUpdate)
+	return &EntryPointUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntryPointClient) UpdateOne(ep *EntryPoint) *EntryPointUpdateOne {
+	mutation := newEntryPointMutation(c.config, OpUpdateOne, withEntryPoint(ep))
+	return &EntryPointUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntryPointClient) UpdateOneID(id int) *EntryPointUpdateOne {
+	mutation := newEntryPointMutation(c.config, OpUpdateOne, withEntryPointID(id))
+	return &EntryPointUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntryPoint.
+func (c *EntryPointClient) Delete() *EntryPointDelete {
+	mutation := newEntryPointMutation(c.config, OpDelete)
+	return &EntryPointDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *EntryPointClient) DeleteOne(ep *EntryPoint) *EntryPointDeleteOne {
+	return c.DeleteOneID(ep.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *EntryPointClient) DeleteOneID(id int) *EntryPointDeleteOne {
+	builder := c.Delete().Where(entrypoint.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntryPointDeleteOne{builder}
+}
+
+// Query returns a query builder for EntryPoint.
+func (c *EntryPointClient) Query() *EntryPointQuery {
+	return &EntryPointQuery{config: c.config}
+}
+
+// Get returns a EntryPoint entity by its id.
+func (c *EntryPointClient) Get(ctx context.Context, id int) (*EntryPoint, error) {
+	return c.Query().Where(entrypoint.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntryPointClient) GetX(ctx context.Context, id int) *EntryPoint {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPrevExitPoints queries the prev_exit_points edge of a EntryPoint.
+func (c *EntryPointClient) QueryPrevExitPoints(ep *EntryPoint) *ExitPointQuery {
+	query := &ExitPointQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entrypoint.Table, entrypoint.FieldID, id),
+			sqlgraph.To(exitpoint.Table, exitpoint.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, entrypoint.PrevExitPointsTable, entrypoint.PrevExitPointsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParentBlock queries the parent_block edge of a EntryPoint.
+func (c *EntryPointClient) QueryParentBlock(ep *EntryPoint) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entrypoint.Table, entrypoint.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, entrypoint.ParentBlockTable, entrypoint.ParentBlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EntryPointClient) Hooks() []Hook {
+	hooks := c.hooks.EntryPoint
+	return append(hooks[:len(hooks):len(hooks)], entrypoint.Hooks[:]...)
 }
 
 // EquipmentClient is a client for the Equipment schema.
@@ -3013,6 +3148,127 @@ func (c *EquipmentTypeClient) QueryServiceEndpointDefinitions(et *EquipmentType)
 func (c *EquipmentTypeClient) Hooks() []Hook {
 	hooks := c.hooks.EquipmentType
 	return append(hooks[:len(hooks):len(hooks)], equipmenttype.Hooks[:]...)
+}
+
+// ExitPointClient is a client for the ExitPoint schema.
+type ExitPointClient struct {
+	config
+}
+
+// NewExitPointClient returns a client for the ExitPoint from the given config.
+func NewExitPointClient(c config) *ExitPointClient {
+	return &ExitPointClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `exitpoint.Hooks(f(g(h())))`.
+func (c *ExitPointClient) Use(hooks ...Hook) {
+	c.hooks.ExitPoint = append(c.hooks.ExitPoint, hooks...)
+}
+
+// Create returns a create builder for ExitPoint.
+func (c *ExitPointClient) Create() *ExitPointCreate {
+	mutation := newExitPointMutation(c.config, OpCreate)
+	return &ExitPointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of ExitPoint entities.
+func (c *ExitPointClient) CreateBulk(builders ...*ExitPointCreate) *ExitPointCreateBulk {
+	return &ExitPointCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExitPoint.
+func (c *ExitPointClient) Update() *ExitPointUpdate {
+	mutation := newExitPointMutation(c.config, OpUpdate)
+	return &ExitPointUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExitPointClient) UpdateOne(ep *ExitPoint) *ExitPointUpdateOne {
+	mutation := newExitPointMutation(c.config, OpUpdateOne, withExitPoint(ep))
+	return &ExitPointUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExitPointClient) UpdateOneID(id int) *ExitPointUpdateOne {
+	mutation := newExitPointMutation(c.config, OpUpdateOne, withExitPointID(id))
+	return &ExitPointUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExitPoint.
+func (c *ExitPointClient) Delete() *ExitPointDelete {
+	mutation := newExitPointMutation(c.config, OpDelete)
+	return &ExitPointDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ExitPointClient) DeleteOne(ep *ExitPoint) *ExitPointDeleteOne {
+	return c.DeleteOneID(ep.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ExitPointClient) DeleteOneID(id int) *ExitPointDeleteOne {
+	builder := c.Delete().Where(exitpoint.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExitPointDeleteOne{builder}
+}
+
+// Query returns a query builder for ExitPoint.
+func (c *ExitPointClient) Query() *ExitPointQuery {
+	return &ExitPointQuery{config: c.config}
+}
+
+// Get returns a ExitPoint entity by its id.
+func (c *ExitPointClient) Get(ctx context.Context, id int) (*ExitPoint, error) {
+	return c.Query().Where(exitpoint.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExitPointClient) GetX(ctx context.Context, id int) *ExitPoint {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryNextEntryPoints queries the next_entry_points edge of a ExitPoint.
+func (c *ExitPointClient) QueryNextEntryPoints(ep *ExitPoint) *EntryPointQuery {
+	query := &EntryPointQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(exitpoint.Table, exitpoint.FieldID, id),
+			sqlgraph.To(entrypoint.Table, entrypoint.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, exitpoint.NextEntryPointsTable, exitpoint.NextEntryPointsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParentBlock queries the parent_block edge of a ExitPoint.
+func (c *ExitPointClient) QueryParentBlock(ep *ExitPoint) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(exitpoint.Table, exitpoint.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, exitpoint.ParentBlockTable, exitpoint.ParentBlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ExitPointClient) Hooks() []Hook {
+	hooks := c.hooks.ExitPoint
+	return append(hooks[:len(hooks):len(hooks)], exitpoint.Hooks[:]...)
 }
 
 // ExportTaskClient is a client for the ExportTask schema.

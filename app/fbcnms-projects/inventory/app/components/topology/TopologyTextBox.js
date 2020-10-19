@@ -16,10 +16,10 @@ import {withStyles} from '@material-ui/core/styles';
 
 const TEXT_FONT_SIZE = 12;
 
-type Props = {
+type Props = {|
   transform: string,
   text: ?string,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = _ => ({
   nodeText: {

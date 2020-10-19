@@ -118,11 +118,11 @@ const serviceTypeQuery = graphql`
   }
 `;
 
-type Props = {
+type Props = $ReadOnly<{|
   serviceTypeId: string,
   onBackClicked: () => void,
   onServiceCreated: (id: string) => void,
-};
+|}>;
 
 type ServiceDetails = {
   name: string,
@@ -302,7 +302,6 @@ const AddServiceDetails = (props: Props) => {
                       disabled={!property.propertyType.isInstanceProperty}
                       label={property.propertyType.name}
                       className={classes.propInput}
-                      margin="dense"
                       inputType="Property"
                       property={property}
                       onChange={propertyChangedHandler(index)}

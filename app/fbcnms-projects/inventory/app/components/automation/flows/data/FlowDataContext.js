@@ -106,10 +106,10 @@ const flowQuery = graphql`
     }
   }
 `;
-type Props = {|
+type Props = $ReadOnly<{|
   flowId: ?string,
   children: React.Node,
-|};
+|}>;
 
 function FlowDataContextProviderComponent(props: Props) {
   const {flowId} = props;
@@ -303,10 +303,10 @@ export function useFlowData() {
   return useContext(FlowDataContext);
 }
 
-type ComponentProps<T> = {
+type ComponentProps<T> = {|
   flowDraft: ?FlowDraftResponse,
   ...T,
-};
+|};
 
 export function withFlowData<
   TComponent: React.ComponentType<ComponentProps<*>>,

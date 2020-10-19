@@ -30,13 +30,13 @@ import Text from '@symphony/design-system/components/Text';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   open: boolean,
   show: 'location' | 'equipment' | 'upload' | 'python',
   onClose: () => void,
   onEquipmentTypeSelected: (equipmentType: EquipmentType) => void,
   onLocationTypeSelected: (locationType: LocationType) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   value: number,
@@ -169,6 +169,7 @@ class AddToLocationDialog extends React.Component<Props, State> {
   };
 
   documentsLink = (path: string) => (
+    // $FlowFixMe - Use Link component
     <Text
       className={this.props.classes.link}
       onClick={() =>

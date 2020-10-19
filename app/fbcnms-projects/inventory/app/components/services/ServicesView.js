@@ -65,10 +65,10 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   onServiceSelected: (serviceId: string) => void,
   service: ServicesView_service,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 class ServicesView extends React.Component<Props> {
   _headerRenderer = ({label}) => {

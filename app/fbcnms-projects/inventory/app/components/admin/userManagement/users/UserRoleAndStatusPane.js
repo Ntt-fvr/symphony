@@ -37,13 +37,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{
+type Props = $ReadOnly<{|
   user: User,
   onChange: User => void,
   canSetDeactivated?: ?boolean,
   className?: ?string,
   disabled?: ?boolean,
-}>;
+|}>;
 
 const ROLES_OPTIONS: Array<RadioOption> = [
   {

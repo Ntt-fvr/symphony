@@ -77,12 +77,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   file: FileAttachmentType,
   onFileDeleted: (file: FileAttachmentType) => void,
   className?: string,
   ...WithAlert,
-};
+|}>;
 
 const FilePreview = ({
   file,
@@ -110,6 +110,9 @@ const FilePreview = ({
       </div>
       <div className={classes.overlay} />
       <DocumentMenu
+        className={classNames(classes.popoverMenu, {
+          [classes.visiblePopoverMenu]: isMenuOpen,
+        })}
         document={file}
         onDialogOpen={() => setIsPreviewDialogOpen(true)}
         onDocumentDeleted={() => {
@@ -121,9 +124,6 @@ const FilePreview = ({
             </fbt>,
           ).then(confirmed => confirmed && onFileDeleted(file));
         }}
-        popoverMenuClassName={classNames(classes.popoverMenu, {
-          [classes.visiblePopoverMenu]: isMenuOpen,
-        })}
         onVisibilityChange={isVisible => setIsMenuOpen(isVisible)}
       />
       <ImageDialog

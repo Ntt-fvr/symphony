@@ -11,8 +11,10 @@ from typing import Any, Callable, List, Mapping, Optional
 from dataclasses_json import DataClassJsonMixin
 
 from ..input.block_u_i_representation import BlockUIRepresentationInput
+from ..input.decision_route import DecisionRouteInput
 @dataclass
 class DecisionBlockInput(DataClassJsonMixin):
     cid: str
+    routes: List[DecisionRouteInput]
     uiRepresentation: Optional[BlockUIRepresentationInput] = None
 

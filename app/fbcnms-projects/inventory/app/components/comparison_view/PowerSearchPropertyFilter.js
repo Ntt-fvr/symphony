@@ -110,7 +110,6 @@ const PowerSearchPropertyFilter = (props: FilterProps) => {
                 onChange(newValue);
               }
             }}
-            margin="none"
           />
         </div>
       }

@@ -18,11 +18,11 @@ import Text from '@symphony/design-system/components/Text';
 
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   latitude: number,
   longitude: number,
   cellData: LocationCellScanCoverageMap_cellData,
-};
+|}>;
 
 const LocationCellScansPane = (props: Props) => {
   const classes = useStyles();

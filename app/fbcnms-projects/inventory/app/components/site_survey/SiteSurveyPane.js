@@ -81,9 +81,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   survey: SiteSurveyPane_survey,
-};
+|}>;
 
 const SiteSurveyPane = (props: Props) => {
   const {name, completionTimestamp, surveyResponses} = props.survey;

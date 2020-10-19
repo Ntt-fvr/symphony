@@ -13,9 +13,9 @@ import React from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import fbt from 'fbt';
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
-};
+|}>;
 
 export default function FlowNewInstances(props: Props) {
   const {className} = props;

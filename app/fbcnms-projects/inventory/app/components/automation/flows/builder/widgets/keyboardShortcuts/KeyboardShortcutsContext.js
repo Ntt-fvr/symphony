@@ -60,9 +60,9 @@ const KeyboardShortcutsContext = createContext<KeyboardShortcutsContextType>(
   KeyboardShortcutsContextDefaults,
 );
 
-type Props = {|
+type Props = $ReadOnly<{|
   children: React.Node,
-|};
+|}>;
 
 export function KeyboardShortcutsContextProvider(props: Props) {
   const keyboardShortcutsHandler = useRef();

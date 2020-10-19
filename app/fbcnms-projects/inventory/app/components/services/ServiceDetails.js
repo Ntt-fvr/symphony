@@ -13,10 +13,10 @@ import type {Service} from '../../common/Service';
 import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import React from 'react';
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   service: Service,
-};
+|}>;
 
 const ServiceDetails = (props: Props) => {
   const {className, service} = props;

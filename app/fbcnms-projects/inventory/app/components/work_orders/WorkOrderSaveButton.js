@@ -30,12 +30,12 @@ import {getGraphError} from '../../common/EntUtils';
 import {toPropertyInput} from '../../common/Property';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
-type Props = {
+type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   properties: Array<Property>,
   checkListCategories: ChecklistCategoriesStateType,
   locationId: ?string,
-};
+|}>;
 
 const WorkOrderSaveButton = (props: Props) => {
   const {workOrder, properties, checkListCategories, locationId} = props;

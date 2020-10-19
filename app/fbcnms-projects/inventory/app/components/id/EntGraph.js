@@ -81,9 +81,9 @@ const TEXT_FONT_SIZE = 10;
 const EPSILON = 0.01;
 const ALPHA_TARGET = 0.3;
 
-type Props = {
+type Props = {|
   rootNode: Object,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   loading: boolean,

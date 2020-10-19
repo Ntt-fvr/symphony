@@ -85,12 +85,12 @@ const styles = theme => ({
 
 type Props = WithSnackbarProps &
   WithStyles<typeof styles> &
-  WithAlert & {
+  WithAlert & {|
     open: boolean,
     onClose: () => void,
     onSave: (locationType: any) => void,
     editingLocationType?: AddEditLocationTypeCard_editingLocationType,
-  };
+  |};
 
 type State = {
   error: string,
@@ -142,8 +142,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
                 <Grid item xs={6}>
                   <FormField label={`${fbt('Location Name', '')}`} required>
                     <TextInput
-                      name="name"
-                      variant="outlined"
                       className={classes.nameInput}
                       value={editingLocationType.name}
                       onChange={this.nameChanged}

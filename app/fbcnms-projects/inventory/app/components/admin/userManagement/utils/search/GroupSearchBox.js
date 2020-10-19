@@ -27,10 +27,8 @@ const GroupSearchBox = (props: Props) => {
   return (
     <div className={className}>
       <TextInput
-        variant="outlined"
         placeholder={`${fbt('Search groups...', '')}`}
         isProcessing={groupSearch.isSearchInProgress}
-        fullWidth={true}
         value={groupSearch.searchTerm}
         onChange={e => groupSearch.setSearchTerm(e.target.value)}
         onEscPressed={() => groupSearch.clearSearch()}

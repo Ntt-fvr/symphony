@@ -29,9 +29,9 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   service: ServiceCard_service,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   ContextRouter;
 
 const styles = _ => ({

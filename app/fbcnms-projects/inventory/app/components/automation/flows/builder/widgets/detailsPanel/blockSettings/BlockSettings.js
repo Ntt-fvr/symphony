@@ -15,9 +15,9 @@ import FormFieldTextInput from '../../../../../../admin/userManagement/utils/For
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   block: IBlock,
-};
+|}>;
 
 const useStyles = makeStyles(() => ({
   root: {

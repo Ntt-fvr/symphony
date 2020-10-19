@@ -31,6 +31,7 @@ type StatusTagProps = $ReadOnly<{|
 const StatusTag = (props: StatusTagProps) => {
   const {status, className} = props;
   const classes = useStyles();
+
   return (
     <Text
       variant="body2"

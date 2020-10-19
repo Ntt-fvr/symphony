@@ -30,9 +30,9 @@ const styles = _theme => ({
   },
 });
 
-type Props = ContextRouter & {
+type Props = ContextRouter & {|
   onSelect: ?(equipmentType: ?EquipmentType) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   errorMessage: ?string,

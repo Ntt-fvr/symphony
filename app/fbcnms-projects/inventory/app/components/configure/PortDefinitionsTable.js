@@ -31,12 +31,12 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   portDefinitions: PortDefinitionsTable_portDefinitions,
   onPortDefinitionsChanged?: ?(
     newPorts: PortDefinitionsTable_portDefinitions,
   ) => void,
-};
+|}>;
 
 const PortDefinitionsTable = (props: Props) => {
   const {portDefinitions} = props;

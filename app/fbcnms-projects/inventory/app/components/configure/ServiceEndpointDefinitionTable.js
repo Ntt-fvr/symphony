@@ -89,12 +89,12 @@ const equipmentTypesQuery = graphql`
   }
 `;
 
-type Props = {
+type Props = {|
   serviceEndpointDefinitions: Array<ServiceEndpointDefinition>,
   onServiceEndpointDefinitionsChanged?: ?(
     newEndpointTypes: Array<ServiceEndpointDefinition>,
   ) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   equipmentTypes: Array<EquipmentTypeOption>,

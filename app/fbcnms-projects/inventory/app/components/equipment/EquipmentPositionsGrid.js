@@ -21,7 +21,7 @@ import {getNonInstancePositionDefinitions} from '../../common/Equipment';
 import {sortByIndex} from '../draggable/DraggableUtils';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   equipment: Equipment,
   onAttachingEquipmentToPosition: (
     equipmentType: EquipmentType,
@@ -30,7 +30,7 @@ type Props = {
   onEquipmentPositionClicked: (equipmentId: string) => void,
   workOrderId: ?string,
   onWorkOrderSelected: (workOrderId: string) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = theme => ({
   root: {

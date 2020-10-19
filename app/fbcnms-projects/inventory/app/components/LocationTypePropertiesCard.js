@@ -17,9 +17,9 @@ import FormField from '@fbcnms/ui/components/FormField';
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   locationType: ?LocationType,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const styles = {
   root: {

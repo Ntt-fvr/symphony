@@ -20,10 +20,10 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   link: Link,
   onDeleteLink: ?() => void,
-};
+|}>;
 
 const useStyles = makeStyles(theme => ({
   root: {

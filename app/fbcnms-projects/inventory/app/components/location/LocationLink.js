@@ -15,11 +15,11 @@ import React from 'react';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {withRouter} from 'react-router-dom';
 
-type Props = {
+type Props = {|
   id: string,
   title: string,
   newTab?: boolean,
-} & ContextRouter;
+|} & ContextRouter;
 
 const LocationLink = (props: Props) => {
   const {id, newTab = false} = props;

@@ -15,10 +15,10 @@ import * as React from 'react';
 import ServiceEndpointDetails from './ServiceEndpointDetails';
 import {createFragmentContainer, graphql} from 'react-relay';
 
-type Props = {
+type Props = $ReadOnly<{|
   endpoints: ServiceEndpointsView_endpoints,
   onDeleteEndpoint: ?(endpoint: ServiceEndpoint) => void,
-};
+|}>;
 
 const ServiceEndpointsView = (props: Props) => {
   const {endpoints, onDeleteEndpoint} = props;

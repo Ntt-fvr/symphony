@@ -28,10 +28,10 @@ import {ConnectionHandler} from 'relay-runtime';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   serviceType: ServiceTypeItem_serviceType,
   onEdit: () => void,
-} & WithAlert &
+|} & WithAlert &
   WithStyles<typeof styles>;
 
 const styles = {

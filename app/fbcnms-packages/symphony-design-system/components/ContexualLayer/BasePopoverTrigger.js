@@ -22,7 +22,7 @@ import MenuContextProvider from '../Select/MenuContext';
 import OnOutsideClickNode from './OnOutsideClickNode';
 import {useCallback, useRef, useState} from 'react';
 
-type Props = {
+type Props = $ReadOnly<{|
   children: (
     onShow: () => void,
     onHide: () => void,
@@ -31,7 +31,7 @@ type Props = {
   popover: React.Node,
   position?: ContextualLayerPosition,
   onVisibilityChange?: (isVisible: boolean) => void,
-};
+|}>;
 
 const BasePopoverTrigger = (
   {children, popover, position = 'below', onVisibilityChange}: Props,

@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -27,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -114,6 +116,10 @@ func init() {
 	blockHooks := schema.Block{}.Hooks()
 
 	block.Hooks[1] = blockHooks[0]
+
+	block.Hooks[2] = blockHooks[1]
+
+	block.Hooks[3] = blockHooks[2]
 	blockMixinFields0 := blockMixin[0].Fields()
 	blockFields := schema.Block{}.Fields()
 	_ = blockFields
@@ -290,6 +296,32 @@ func init() {
 	customerDescExternalID := customerFields[1].Descriptor()
 	// customer.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
 	customer.ExternalIDValidator = customerDescExternalID.Validators[0].(func(string) error)
+	entrypointMixin := schema.EntryPoint{}.Mixin()
+	entrypoint.Policy = privacy.NewPolicies(schema.EntryPoint{})
+	entrypoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := entrypoint.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	entrypointHooks := schema.EntryPoint{}.Hooks()
+
+	entrypoint.Hooks[1] = entrypointHooks[0]
+	entrypointMixinFields0 := entrypointMixin[0].Fields()
+	entrypointFields := schema.EntryPoint{}.Fields()
+	_ = entrypointFields
+	// entrypointDescCreateTime is the schema descriptor for create_time field.
+	entrypointDescCreateTime := entrypointMixinFields0[0].Descriptor()
+	// entrypoint.DefaultCreateTime holds the default value on creation for the create_time field.
+	entrypoint.DefaultCreateTime = entrypointDescCreateTime.Default.(func() time.Time)
+	// entrypointDescUpdateTime is the schema descriptor for update_time field.
+	entrypointDescUpdateTime := entrypointMixinFields0[1].Descriptor()
+	// entrypoint.DefaultUpdateTime holds the default value on creation for the update_time field.
+	entrypoint.DefaultUpdateTime = entrypointDescUpdateTime.Default.(func() time.Time)
+	// entrypoint.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	entrypoint.UpdateDefaultUpdateTime = entrypointDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmentMixin := schema.Equipment{}.Mixin()
 	equipment.Policy = privacy.NewPolicies(schema.Equipment{})
 	equipment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -482,6 +514,32 @@ func init() {
 	equipmenttype.DefaultUpdateTime = equipmenttypeDescUpdateTime.Default.(func() time.Time)
 	// equipmenttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmenttype.UpdateDefaultUpdateTime = equipmenttypeDescUpdateTime.UpdateDefault.(func() time.Time)
+	exitpointMixin := schema.ExitPoint{}.Mixin()
+	exitpoint.Policy = privacy.NewPolicies(schema.ExitPoint{})
+	exitpoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := exitpoint.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	exitpointHooks := schema.ExitPoint{}.Hooks()
+
+	exitpoint.Hooks[1] = exitpointHooks[0]
+	exitpointMixinFields0 := exitpointMixin[0].Fields()
+	exitpointFields := schema.ExitPoint{}.Fields()
+	_ = exitpointFields
+	// exitpointDescCreateTime is the schema descriptor for create_time field.
+	exitpointDescCreateTime := exitpointMixinFields0[0].Descriptor()
+	// exitpoint.DefaultCreateTime holds the default value on creation for the create_time field.
+	exitpoint.DefaultCreateTime = exitpointDescCreateTime.Default.(func() time.Time)
+	// exitpointDescUpdateTime is the schema descriptor for update_time field.
+	exitpointDescUpdateTime := exitpointMixinFields0[1].Descriptor()
+	// exitpoint.DefaultUpdateTime holds the default value on creation for the update_time field.
+	exitpoint.DefaultUpdateTime = exitpointDescUpdateTime.Default.(func() time.Time)
+	// exitpoint.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	exitpoint.UpdateDefaultUpdateTime = exitpointDescUpdateTime.UpdateDefault.(func() time.Time)
 	exporttask.Policy = privacy.NewPolicies(schema.ExportTask{})
 	exporttask.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {

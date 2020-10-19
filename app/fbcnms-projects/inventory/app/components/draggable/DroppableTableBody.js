@@ -13,11 +13,11 @@ import * as React from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import {DragDropContext, Droppable} from 'react-beautiful-dnd';
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   children?: React.Node,
   onDragEnd: (result: DropResult, provided: ResponderProvided) => void,
-};
+|}>;
 
 class DroppableTableBody extends React.Component<Props> {
   _bodyComponent = DroppableComponent((a1, a2) => this.props.onDragEnd(a1, a2));

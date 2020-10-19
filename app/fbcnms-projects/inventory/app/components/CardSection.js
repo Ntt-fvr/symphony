@@ -24,11 +24,11 @@ const styles = theme => ({
   },
 });
 
-type Props = {
+type Props = {|
   title: string,
   children: React.ChildrenArray<null | React.Element<*>>,
   className?: string,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 const CardSection = (props: Props) => {
   const {className, classes, children} = props;

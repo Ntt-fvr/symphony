@@ -47,9 +47,9 @@ import {withRouter} from 'react-router-dom';
 import {withSnackbar} from 'notistack';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {
+type Props = {|
   projectTypeId: ?string,
-} & WithStyles<typeof styles> &
+|} & WithStyles<typeof styles> &
   ContextRouter &
   WithSnackbarProps;
 
@@ -263,7 +263,6 @@ class AddProjectCard extends React.Component<Props, State> {
                                 fullWidth={true}
                                 label={property.propertyType.name}
                                 className={classes.gridInput}
-                                margin="dense"
                                 inputType="Property"
                                 property={property}
                                 onChange={this._propertyChangedHandler(index)}

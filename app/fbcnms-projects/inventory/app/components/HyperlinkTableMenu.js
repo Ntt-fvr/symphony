@@ -27,10 +27,10 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {getGraphError} from '../common/EntUtils';
 import {withSnackbar} from 'notistack';
 
-type Props = {
+type Props = {|
   entityId: string,
   hyperlink: HyperlinkTableMenu_hyperlink,
-} & WithAlert &
+|} & WithAlert &
   WithSnackbarProps;
 
 const HyperlinkTableMenu = (props: Props) => {

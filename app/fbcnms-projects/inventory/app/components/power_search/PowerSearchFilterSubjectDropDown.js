@@ -40,10 +40,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   subject: EntityType,
   onSubjectChange: EntityType => void,
-};
+|}>;
 
 const FILTER_SUBJECTS = {
   equipment: 'Equipment',

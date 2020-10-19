@@ -13,12 +13,12 @@ import Text from '../../components/Text';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 
-type Props = {
+type Props = $ReadOnly<{|
   color: string,
   name: string,
   code?: string,
   className?: string,
-};
+|}>;
 
 const useStyles = makeStyles(_theme => ({
   root: {

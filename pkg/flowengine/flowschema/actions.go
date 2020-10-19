@@ -10,7 +10,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
-// Type is the type of the action
+// ActionTypeID is the identifier of the action
 type ActionTypeID string
 
 const (
@@ -29,7 +29,7 @@ func (a ActionTypeID) String() string {
 	return string(a)
 }
 
-// Set sets the value stored in check list item type.
+// Set sets the value stored in action type id.
 func (a *ActionTypeID) Set(s string) {
 	*a = ActionTypeID(s)
 }

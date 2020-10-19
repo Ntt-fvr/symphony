@@ -18,7 +18,7 @@ import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../common/FormContext';
 
-type Props = {
+type Props = $ReadOnly<{|
   value: any,
   className?: string,
   label?: ?string,
@@ -26,10 +26,9 @@ type Props = {
   disabled?: boolean,
   onLatitudeChange: (event: SyntheticInputEvent<any>) => void,
   onLongitudeChange: (event: SyntheticInputEvent<any>) => void,
-  margin: 'none' | 'dense' | 'normal',
   fullWidth?: boolean,
   autoFocus?: boolean,
-};
+|}>;
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -57,7 +56,6 @@ const GPSPropertyValueInput = (props: Props) => {
   const {
     className,
     disabled = false,
-    margin,
     required = false,
     autoFocus,
     fullWidth,
@@ -101,13 +99,10 @@ const GPSPropertyValueInput = (props: Props) => {
           hasError={!!errorLatitude}
           className={classes.field}>
           <TextInput
-            required={required}
             autoFocus={autoFocus}
             prefix={<InputAffix>Lat.</InputAffix>}
             disabled={disabled}
-            variant="outlined"
             className={classes.input}
-            margin={margin}
             value={latitude}
             type="number"
             onChange={props.onLatitudeChange}
@@ -121,9 +116,7 @@ const GPSPropertyValueInput = (props: Props) => {
           <TextInput
             prefix={<InputAffix>Long.</InputAffix>}
             disabled={disabled}
-            variant="outlined"
             className={classes.input}
-            margin={margin}
             type="number"
             value={longitude}
             onChange={props.onLongitudeChange}

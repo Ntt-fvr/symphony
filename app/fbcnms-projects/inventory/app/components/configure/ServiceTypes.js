@@ -69,7 +69,7 @@ const styles = theme => ({
   },
 });
 
-type Props = ContextRouter & WithStyles<typeof styles> & {};
+type Props = ContextRouter & WithStyles<typeof styles> & {||};
 
 type State = {
   dialogKey: number,

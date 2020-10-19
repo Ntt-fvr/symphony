@@ -66,10 +66,10 @@ const styles = () => ({
   },
 });
 
-type Props = {
+type Props = {|
   file: FileAttachment_file,
   onDocumentDeleted: (file: $ElementType<FileAttachment_file, number>) => void,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   isImageDialogOpen: boolean,

@@ -46,9 +46,9 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   description: React.Node,
-};
+|}>;
 
 const InfoTooltip = ({description}: Props) => {
   const classes = useStyles();

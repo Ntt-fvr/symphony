@@ -61,6 +61,12 @@ func (c *CustomerClient) Instantiate(cu *Customer) *Customer {
 }
 
 // Instantiate entity configuration.
+func (c *EntryPointClient) Instantiate(ep *EntryPoint) *EntryPoint {
+	ep.config = c.config
+	return ep
+}
+
+// Instantiate entity configuration.
 func (c *EquipmentClient) Instantiate(e *Equipment) *Equipment {
 	e.config = c.config
 	return e
@@ -106,6 +112,12 @@ func (c *EquipmentPositionDefinitionClient) Instantiate(epd *EquipmentPositionDe
 func (c *EquipmentTypeClient) Instantiate(et *EquipmentType) *EquipmentType {
 	et.config = c.config
 	return et
+}
+
+// Instantiate entity configuration.
+func (c *ExitPointClient) Instantiate(ep *ExitPoint) *ExitPoint {
+	ep.config = c.config
+	return ep
 }
 
 // Instantiate entity configuration.

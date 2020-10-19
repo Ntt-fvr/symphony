@@ -86,12 +86,12 @@ const styles = _ => ({
   },
 });
 
-type Props = {
+type Props = {|
   open: boolean,
   onClose: () => void,
   onSave: (serviceType: any) => void,
   editingServiceType?: AddEditServiceTypeCard_editingServiceType,
-} & WithSnackbarProps &
+|} & WithSnackbarProps &
   WithStyles<typeof styles> &
   WithAlert;
 

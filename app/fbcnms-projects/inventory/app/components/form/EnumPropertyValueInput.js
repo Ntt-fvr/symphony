@@ -15,12 +15,12 @@ import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
 import {isJSON} from '@symphony/design-system/utils/displayUtils';
 
-type Props<T: Property | PropertyType> = {|
+type Props<T: Property | PropertyType> = $ReadOnly<{|
   property: T,
   onBlur?: ?() => void,
   onChange: T => void,
   disabled?: ?boolean,
-|};
+|}>;
 
 function EnumPropertyValueInput<T: Property | PropertyType>(props: Props<T>) {
   const {property, onBlur, onChange, disabled} = props;

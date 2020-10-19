@@ -10,6 +10,7 @@
 import type {ProjectTypeCard_projectType} from './__generated__/ProjectTypeCard_projectType.graphql';
 
 import Button from '@symphony/design-system/components/Button';
+import Clickable from '@symphony/design-system/components/Core/Clickable';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import ProjectTypeDeleteButton from './ProjectTypeDeleteButton';
 import ProjectTypeWorkOrdersCount from './ProjectTypeWorkOrdersCount';
@@ -97,13 +98,11 @@ const ProjectTypeCard = ({className, projectType, onEditClicked}: Props) => {
       <div className={classNames(classes.root, className)}>
         <div className={classes.descriptionContainer}>
           <div className={classes.nameContainer}>
-            <Text
-              weight="medium"
-              variant="h6"
-              className={classes.name}
-              onClick={onEditClicked}>
-              {name}
-            </Text>
+            <Clickable onClick={onEditClicked}>
+              <Text weight="medium" variant="h6" className={classes.name}>
+                {name}
+              </Text>
+            </Clickable>
             <ProjectTypeDeleteButton
               disabled={!!deleteButtonDisabledTooltip}
               tooltip={deleteButtonDisabledTooltip}

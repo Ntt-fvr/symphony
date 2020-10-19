@@ -24,10 +24,10 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   navItems: () => React.Node,
   navRoutes: () => React.Node,
-};
+|}>;
 
 export default function AdminMain(props: Props) {
   const classes = useStyles();

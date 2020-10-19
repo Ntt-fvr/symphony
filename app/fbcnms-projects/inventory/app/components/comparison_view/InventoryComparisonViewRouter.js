@@ -16,12 +16,12 @@ import LocationViewQueryRenderer from './LocationViewQueryRenderer';
 import PortViewQueryRenderer from './PortViewQueryRenderer';
 import React from 'react';
 
-type Props = {
+type Props = $ReadOnly<{|
   subject: EntityType,
   filters: FiltersQuery,
   limit?: number,
   onQueryReturn: number => void,
-};
+|}>;
 
 const InventoryComparisonViewRouter = (props: Props) => {
   const {limit, subject, filters, onQueryReturn} = props;

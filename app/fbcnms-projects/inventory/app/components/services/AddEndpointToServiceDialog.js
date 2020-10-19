@@ -64,12 +64,12 @@ const styles = {
   },
 };
 
-type Props = {
+type Props = {|
   service: ServicePanel_service,
   onClose: () => void,
   onAddEndpoint: (port: EquipmentPort) => void,
   endpointDef: ?EndpointDef,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 
 type State = {
   activeEquipement: ?Equipment,

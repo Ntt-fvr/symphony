@@ -63,11 +63,11 @@ export const FileUploadStatuses = {
 
 export type UploadStatus = $Values<typeof FileUploadStatuses>;
 
-type Props = {
+type Props = $ReadOnly<{|
   name: React.Node,
   status: UploadStatus,
   errorMessage?: React.Node,
-};
+|}>;
 
 const StatusIcon = ({status}) => {
   const classes = useStyles();

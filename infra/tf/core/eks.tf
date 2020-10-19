@@ -13,7 +13,7 @@ module eks {
   source          = "terraform-aws-modules/eks/aws"
   version         = "~> 13.0"
   cluster_name    = local.eks_cluster_name
-  cluster_version = "1.17"
+  cluster_version = "1.18"
   enable_irsa     = true
 
   vpc_id                   = module.vpc.vpc_id

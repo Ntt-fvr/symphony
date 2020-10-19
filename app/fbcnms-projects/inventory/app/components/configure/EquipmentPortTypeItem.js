@@ -26,10 +26,10 @@ import {withStyles} from '@material-ui/core/styles';
 
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 
-type Props = {
+type Props = {|
   equipmentPortType: EquipmentPortTypeItem_equipmentPortType,
   onEdit: () => void,
-} & WithAlert &
+|} & WithAlert &
   WithStyles<typeof styles>;
 
 const styles = {
