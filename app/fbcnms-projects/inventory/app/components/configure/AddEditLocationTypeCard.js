@@ -20,7 +20,6 @@ import type {WithStyles} from '@material-ui/core';
 import AddLocationTypeMutation from '../../mutations/AddLocationTypeMutation';
 import Button from '@symphony/design-system/components/Button';
 import CardSection from '../CardSection';
-import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import EditLocationTypeMutation from '../../mutations/EditLocationTypeMutation';
 import EditLocationTypeSurveyTemplateCategoriesMutation from '../../mutations/EditLocationTypeSurveyTemplateCategoriesMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
@@ -32,7 +31,6 @@ import PropertyTypeTable from '../form/PropertyTypeTable';
 import React from 'react';
 import SectionedCard from '@fbcnms/ui/components/SectionedCard';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import SurveyTemplateCategories from '../survey_templates/SurveyTemplateCategories';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
@@ -72,11 +70,6 @@ const styles = theme => ({
     height: 'calc(100% - 60px)',
     padding: '8px 24px',
     overflowY: 'auto',
-  },
-  isSiteContainer: {
-    marginTop: '16px',
-    display: 'flex',
-    alignItems: 'center',
   },
   checkbox: {
     marginRight: '8px',
@@ -121,7 +114,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       <FormLabel error>{this.state.error}</FormLabel>
     ) : null;
 
-    const {mapType, mapZoomLevel, isSite} = editingLocationType;
+    const {mapType, mapZoomLevel} = editingLocationType;
     const isOnEdit = !!this.props.editingLocationType;
     return (
       <FormContextProvider
@@ -156,16 +149,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
                 onMapTypeChanged={this.mapTypeChanged}
                 onMapZoomLevelChanged={this.mapZoomLevelChanged}
               />
-              <div className={classes.isSiteContainer}>
-                <FormField>
-                  <Checkbox
-                    className={classes.checkbox}
-                    title={fbt('This Location Type is a Site', '')}
-                    checked={isSite}
-                    onChange={this.isSiteChanged}
-                  />
-                </FormField>
-              </div>
             </div>
           </SectionedCard>
           <SectionedCard>
@@ -175,20 +158,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
                   <PropertyTypeTable
                     propertyTypes={propertyTypes}
                     onPropertiesChanged={this._propertyChangedHandler}
-                  />
-                </CardSection>
-              </Grid>
-            </Grid>
-          </SectionedCard>
-          <SectionedCard>
-            <Grid container direction="column" spacing={3}>
-              <Grid item xs={12} xl={7}>
-                <CardSection
-                  className={classes.section}
-                  title="Survey Template">
-                  <SurveyTemplateCategories
-                    categories={editingLocationType.surveyTemplateCategories}
-                    onCategoriesChanged={this._onCategoriesChanged}
                   />
                 </CardSection>
               </Grid>
@@ -235,14 +204,12 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       mapZoomLevel,
       propertyTypes,
       surveyTemplateCategories,
-      isSite,
     } = this.state.editingLocationType;
 
     return {
       input: {
         name,
         mapType,
-        isSite,
         mapZoomLevel: parseInt(mapZoomLevel, 10),
         properties: propertyTypes
           .filter(propType => !!propType.name)
@@ -266,7 +233,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       mapType,
       mapZoomLevel,
       propertyTypes,
-      isSite,
     } = this.state.editingLocationType;
 
     return {
@@ -275,7 +241,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         name,
         mapType,
         mapZoomLevel: parseInt(mapZoomLevel, 10),
-        isSite,
         properties: propertyTypes
           .filter(propType => !!propType.name)
           .map(this.deleteTempId),
@@ -427,14 +392,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       },
     });
   nameChanged = this.fieldChangedHandler('name');
-  isSiteChanged = selection => {
-    this.setState({
-      editingLocationType: {
-        ...this.state.editingLocationType,
-        isSite: selection === 'checked',
-      },
-    });
-  };
 
   _propertyChangedHandler = properties => {
     this.setState(prevState => {
@@ -442,17 +399,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         error: '',
         editingLocationType: update(prevState.editingLocationType, {
           propertyTypes: {$set: properties},
-        }),
-      };
-    });
-  };
-
-  _onCategoriesChanged = categories => {
-    this.setState(prevState => {
-      return {
-        error: '',
-        editingLocationType: update(prevState.editingLocationType, {
-          surveyTemplateCategories: {$set: categories},
         }),
       };
     });
@@ -501,7 +447,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
     return {
       id: editingLocationType?.id ?? 'LocationType@tmp0',
       name: editingLocationType?.name ?? '',
-      isSite: editingLocationType?.isSite ?? false,
+      isSite: false,
       mapType: editingLocationType?.mapType ?? 'map',
       mapZoomLevel: String(editingLocationType?.mapZoomLevel ?? 8),
       numberOfLocations: editingLocationType?.numberOfLocations ?? 0,
@@ -552,7 +498,6 @@ export default withStyles(styles)(
             mapType
             mapZoomLevel
             numberOfLocations
-            isSite
             propertyTypes {
               id
               name
