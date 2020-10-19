@@ -168,7 +168,7 @@ const WorkOrderTypes = () => {
       {!tableData.length && (
         <EmptyStateBackdrop
           illustration={<EducationNote />}
-          headingText="Start creating work order templates">
+          headingText={`${fbt('Start creating work order templates', '')}`}>
           <Button key="2" onClick={() => showAddEditWorkOrderTypeCard(null)}>
             <fbt desc="">Create Work Order Template</fbt>
           </Button>
