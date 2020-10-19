@@ -12,7 +12,6 @@ import type {Coords} from './Coords';
 import type {Equipment} from './Equipment';
 import type {FileAttachmentType} from './FileAttachment.js';
 import type {ImageAttachmentType} from './ImageAttachment.js';
-import type {LocationSiteSurveyTab_location} from './../components/location/__generated__/LocationSiteSurveyTab_location.graphql.js';
 import type {LocationType} from './LocationType';
 import type {Property} from './Property';
 import type {TopologyNetwork} from './NetworkTopology';
