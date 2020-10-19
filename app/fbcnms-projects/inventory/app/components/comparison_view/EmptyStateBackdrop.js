@@ -9,6 +9,7 @@
  */
 
 import * as React from 'react';
+import classNames from 'classnames';
 import Text from '@symphony/design-system/components/Text';
 import Button from '@symphony/design-system/components/Button';
 import {makeStyles} from '@material-ui/styles';
@@ -31,7 +32,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type EmptyStateBackdropType = {
-  wrapperStyle?: {[key: string]: string},
+  className?: string,
   illustration?: React.Node,
   headingText?: string,
   paragraphText?: string,
@@ -39,7 +40,7 @@ type EmptyStateBackdropType = {
 }
 
 const EmptyStateBackdrop = ({
-  wrapperStyle,
+  className,
   illustration,
   headingText,
   paragraphText,
@@ -48,7 +49,7 @@ const EmptyStateBackdrop = ({
   const classes = useStyles();
 
   return (
-    <div className={classes.emptyStateRoot} style={{...wrapperStyle}}>
+    <div className={classNames(classes.emptyStateRoot, className)}>
       {illustration}
       <Text
         variant="h6"

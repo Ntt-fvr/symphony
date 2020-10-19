@@ -173,7 +173,7 @@ const WorkOrderTypes = () => {
           key="2"
           onClick={() => showAddEditWorkOrderTypeCard(null)}
         >
-          <fbt desc="">Create work order template</fbt>
+          <fbt desc="">Create Work Order Template</fbt>
         </Button>
       </EmptyStateBackdrop>}
     </InventoryView>
