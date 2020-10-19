@@ -27,7 +27,6 @@ import LocationDocumentsCard from './LocationDocumentsCard';
 import LocationFloorPlansTab from './LocationFloorPlansTab';
 import LocationMenu from './LocationMenu';
 import LocationNetworkMapTab from './LocationNetworkMapTab';
-import LocationSiteSurveyTab from './LocationSiteSurveyTab';
 import LocationWorkOrdersTab from './LocationWorkOrdersTab';
 import React from 'react';
 import Tab from '@material-ui/core/Tab';
@@ -152,14 +151,10 @@ const locationsPropertiesCardQuery = graphql`
         hyperlinks {
           id
         }
-        surveys {
-          id
-        }
         parentCoords {
           latitude
           longitude
         }
-        ...LocationSiteSurveyTab_location
         ...LocationDocumentsCard_location
         ...LocationFloorPlansTab_location
         ...LocationMenu_location
@@ -192,7 +187,6 @@ class LocationPropertiesCard extends React.Component<Props, State> {
     const networkTopologyEnabled = this.context.isFeatureEnabled(
       'network_topology',
     );
-    const siteSurveyEnabled = this.context.isFeatureEnabled('site_survey');
     const floorPlansEnabled = this.context.isFeatureEnabled('floor_plans');
     const coverageMapEnabled = this.context.isFeatureEnabled('coverage_maps');
 
@@ -269,13 +263,6 @@ class LocationPropertiesCard extends React.Component<Props, State> {
                           value="network_map"
                         />
                       )}
-                      {siteSurveyEnabled && (
-                        <Tab
-                          classes={{root: classes.tabContainer}}
-                          label="Site Surveys"
-                          value="site_survey"
-                        />
-                      )}
                       {coverageMapEnabled && (
                         <Tab
                           classes={{root: classes.tabContainer}}
@@ -313,9 +300,6 @@ class LocationPropertiesCard extends React.Component<Props, State> {
                   ) : null}
                   {this.state.selectedTab === 'network_map' ? (
                     <LocationNetworkMapTab locationId={location.id} />
-                  ) : null}
-                  {this.state.selectedTab === 'site_survey' ? (
-                    <LocationSiteSurveyTab location={location} />
                   ) : null}
                   {this.state.selectedTab === 'coverage_map' ? (
                     <LocationCoverageMapTab location={location} />
