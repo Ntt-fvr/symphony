@@ -37,6 +37,5 @@ export type Location = BasicLocation & {
   siteSurveyNeeded: boolean,
   topology: TopologyNetwork,
   locationHierarchy: Array<Location>,
-  surveys: $PropertyType<LocationSiteSurveyTab_location, 'surveys'>,
   parentCoords: ?Coords,
 };
