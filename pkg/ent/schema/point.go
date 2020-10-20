@@ -59,6 +59,7 @@ func (EntryPoint) Indexes() []ent.Index {
 func (EntryPoint) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.VerifyEntryPointTypeHook(),
+		hooks.UpdateDraftChangedForEntryHook(),
 	}
 }
 
@@ -113,6 +114,7 @@ func (ExitPoint) Indexes() []ent.Index {
 func (ExitPoint) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.VerifyExitPointTypeHook(),
+		hooks.UpdateDraftChangedForExitHook(),
 	}
 }
 

@@ -51,20 +51,16 @@ func VerifyStartParamDefinitionsHook() ent.Hook {
 		))
 }
 
-// UpdateDraftChangedHook
+// UpdateDraftChangedHook marks the block's draft has changes from the flow
 func UpdateDraftChangedHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.BlockFunc(func(ctx context.Context, mutation *ent.BlockMutation) (ent.Value, error) {
 			var (
 				draftID int
 				err     error
-				exists  bool
 			)
 			if mutation.Op().Is(ent.OpCreate) {
-				draftID, exists = mutation.FlowDraftID()
-				if !exists {
-					return nil, fmt.Errorf("flow draft id is missing for block")
-				}
+				draftID, _ = mutation.FlowDraftID()
 			} else {
 				id, exists := mutation.ID()
 				if !exists {
@@ -72,18 +68,18 @@ func UpdateDraftChangedHook() ent.Hook {
 				}
 				draftID, err = mutation.Client().Block.Query().
 					Where(block.ID(id)).
-					WithFlowDraft().
+					QueryFlowDraft().
 					OnlyID(ctx)
-				if err != nil {
-					return nil, fmt.Errorf("cannot get flow draft: %w", err)
+			}
+
+			if draftID != 0 {
+				if err = mutation.Client().FlowDraft.UpdateOneID(draftID).
+					SetSameAsFlow(false).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update flow draft: %w", err)
 				}
 			}
 
-			if err := mutation.Client().FlowDraft.UpdateOneID(draftID).
-				SetSameAsFlow(false).
-				Exec(ctx); err != nil {
-				return nil, fmt.Errorf("failed to update flow draft")
-			}
 			return next.Mutate(ctx, mutation)
 		})
 	}

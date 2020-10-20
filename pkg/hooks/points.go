@@ -60,6 +60,49 @@ func VerifyEntryPointTypeHook() ent.Hook {
 	return hook.On(hk, ent.OpCreate)
 }
 
+// UpdateDraftChangedForEntryHook marks the entry point's draft has changes from the flow
+func UpdateDraftChangedForEntryHook() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.EntryPointFunc(func(ctx context.Context, mutation *ent.EntryPointMutation) (ent.Value, error) {
+			var (
+				draftID int
+				err     error
+			)
+			if mutation.Op().Is(ent.OpCreate) {
+				blockID, exists := mutation.ParentBlockID()
+				if !exists {
+					return nil, fmt.Errorf("parent block id is missing for entry point")
+				}
+				draftID, err = mutation.Client().Block.Query().
+					Where(block.ID(blockID)).
+					QueryFlowDraft().
+					OnlyID(ctx)
+			} else {
+				entryPointID, exists := mutation.ID()
+				if !exists {
+					return nil, fmt.Errorf("entry point has no id")
+				}
+				draftID, err = mutation.Client().EntryPoint.Query().
+					Where(entrypoint.ID(entryPointID)).
+					QueryParentBlock().
+					QueryFlowDraft().
+					OnlyID(ctx)
+			}
+
+			if draftID != 0 {
+				if err = mutation.Client().FlowDraft.UpdateOneID(draftID).
+					SetSameAsFlow(false).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update sameAsFlow field of flow draft : %w", err)
+				}
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpDeleteOne)
+}
+
 // VerifyExitPointTypeHook checks created exit point is allowed for specific block type
 func VerifyExitPointTypeHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
@@ -159,4 +202,47 @@ func DeleteEntryAndExitPointsHook() ent.Hook {
 		})
 	}
 	return hook.On(hk, ent.OpDeleteOne)
+}
+
+// UpdateDraftChangedForExitHook marks the exit point's draft has changes from the flow
+func UpdateDraftChangedForExitHook() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.ExitPointFunc(func(ctx context.Context, mutation *ent.ExitPointMutation) (ent.Value, error) {
+			var (
+				draftID int
+				err     error
+			)
+			if mutation.Op().Is(ent.OpCreate) {
+				blockID, exists := mutation.ParentBlockID()
+				if !exists {
+					return nil, fmt.Errorf("parent block id is missing for exit point")
+				}
+				draftID, err = mutation.Client().Block.Query().
+					Where(block.ID(blockID)).
+					QueryFlowDraft().
+					OnlyID(ctx)
+			} else {
+				exitPointID, exists := mutation.ID()
+				if !exists {
+					return nil, fmt.Errorf("exit point has no id")
+				}
+				draftID, err = mutation.Client().ExitPoint.Query().
+					Where(exitpoint.ID(exitPointID)).
+					QueryParentBlock().
+					QueryFlowDraft().
+					OnlyID(ctx)
+			}
+
+			if draftID != 0 {
+				if err = mutation.Client().FlowDraft.UpdateOneID(draftID).
+					SetSameAsFlow(false).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update sameAsFlow field of flow draft : %w", err)
+				}
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpDeleteOne)
 }

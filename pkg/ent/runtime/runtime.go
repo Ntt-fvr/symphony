@@ -311,6 +311,8 @@ func init() {
 	entrypointHooks := schema.EntryPoint{}.Hooks()
 
 	entrypoint.Hooks[1] = entrypointHooks[0]
+
+	entrypoint.Hooks[2] = entrypointHooks[1]
 	entrypointMixinFields0 := entrypointMixin[0].Fields()
 	entrypointFields := schema.EntryPoint{}.Fields()
 	_ = entrypointFields
@@ -529,6 +531,8 @@ func init() {
 	exitpointHooks := schema.ExitPoint{}.Hooks()
 
 	exitpoint.Hooks[1] = exitpointHooks[0]
+
+	exitpoint.Hooks[2] = exitpointHooks[1]
 	exitpointMixinFields0 := exitpointMixin[0].Fields()
 	exitpointFields := schema.ExitPoint{}.Fields()
 	_ = exitpointFields
