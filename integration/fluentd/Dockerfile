@@ -3,10 +3,16 @@
 # license that can be found in the LICENSE file.
 
 # Extend base fluentd image
-FROM fluent/fluentd:v1.9-1
+FROM fluent/fluentd:v1.11
 
+# Use root account to use apk
 USER root
 
 # Install prometheus plugin
 RUN fluent-gem install fluent-plugin-prometheus
-RUN fluent-gem install fluent-plugin-rewrite-tag-filter
+
+# Copy in config file override
+COPY fluent.conf /fluentd/etc/
+
+# Use fluent account when running
+USER fluent
