@@ -692,6 +692,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
+		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
 		AddComment                               func(childComplexity int, input models.CommentInput) int
 		AddConnector                             func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
@@ -1587,6 +1588,7 @@ type MutationResolver interface {
 	AddServiceEndpoint(ctx context.Context, input models.AddServiceEndpointInput) (*ent.Service, error)
 	RemoveServiceEndpoint(ctx context.Context, serviceEndpointID int) (*ent.Service, error)
 	AddServicePort(ctx context.Context, id int, portID int) (*ent.Service, error)
+	AddBulkServiceLinksAndPorts(ctx context.Context, input *models.AddBulkServiceLinksAndPortsInput) (*ent.Service, error)
 	RemoveServicePort(ctx context.Context, id int, portID int) (*ent.Service, error)
 	AddServiceType(ctx context.Context, data models.ServiceTypeCreateData) (*ent.ServiceType, error)
 	EditServiceType(ctx context.Context, data models.ServiceTypeEditData) (*ent.ServiceType, error)
@@ -4256,6 +4258,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddActionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.ActionBlockInput)), true
+
+	case "Mutation.addBulkServiceLinksAndPorts":
+		if e.complexity.Mutation.AddBulkServiceLinksAndPorts == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addBulkServiceLinksAndPorts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddBulkServiceLinksAndPorts(childComplexity, args["input"].(*models.AddBulkServiceLinksAndPortsInput)), true
 
 	case "Mutation.addCellScans":
 		if e.complexity.Mutation.AddCellScans == nil {
@@ -11400,6 +11414,12 @@ input AddServiceEndpointInput {
   definition: ID!
 }
 
+input AddBulkServiceLinksAndPortsInput {
+  id: ID!
+  portIds: [ID!]
+  linkIds: [ID!]
+}
+
 input ServiceEndpointDefinitionInput {
   id: ID
   name: String!
@@ -12480,6 +12500,7 @@ type Mutation {
   addServiceEndpoint(input: AddServiceEndpointInput!): Service!
   removeServiceEndpoint(serviceEndpointId: ID!): Service!
   addServicePort(id: ID!, portId: ID!): Service!
+  addBulkServiceLinksAndPorts(input: AddBulkServiceLinksAndPortsInput): Service!
   removeServicePort(id: ID!, portId: ID!): Service!
   addServiceType(
     """
@@ -13037,6 +13058,21 @@ func (ec *executionContext) field_Mutation_addActionBlock_args(ctx context.Conte
 		}
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addBulkServiceLinksAndPorts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *models.AddBulkServiceLinksAndPortsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBulkServiceLinksAndPortsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -30088,6 +30124,48 @@ func (ec *executionContext) _Mutation_addServicePort(ctx context.Context, field 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddServicePort(rctx, args["id"].(int), args["portId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Service)
+	fc.Result = res
+	return ec.marshalNService2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐService(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addBulkServiceLinksAndPorts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addBulkServiceLinksAndPorts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddBulkServiceLinksAndPorts(rctx, args["input"].(*models.AddBulkServiceLinksAndPortsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -48456,6 +48534,42 @@ func (ec *executionContext) unmarshalInputActivityFilterInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddBulkServiceLinksAndPortsInput(ctx context.Context, obj interface{}) (models.AddBulkServiceLinksAndPortsInput, error) {
+	var it models.AddBulkServiceLinksAndPortsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "portIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("portIds"))
+			it.PortIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "linkIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkIds"))
+			it.LinkIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddCustomerInput(ctx context.Context, obj interface{}) (models.AddCustomerInput, error) {
 	var it models.AddCustomerInput
 	var asMap = obj.(map[string]interface{})
@@ -59447,6 +59561,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addBulkServiceLinksAndPorts":
+			out.Values[i] = ec._Mutation_addBulkServiceLinksAndPorts(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "removeServicePort":
 			out.Values[i] = ec._Mutation_removeServicePort(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -70421,6 +70540,14 @@ func (ec *executionContext) unmarshalOActivityFilterInput2ᚖgithubᚗcomᚋface
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputActivityFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBulkServiceLinksAndPortsInput(ctx context.Context, v interface{}) (*models.AddBulkServiceLinksAndPortsInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -1048,3 +1048,155 @@ func TestAddRemoveServicePort(t *testing.T) {
 	ports, _ = r.ResolverRoot.Service().Ports(ctx, updatedService)
 	assert.Empty(t, ports)
 }
+
+func TestAddBulkServiceLinksAndPorts(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr := r.Mutation()
+
+	locType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
+		Name: "Room",
+	})
+
+	eqt, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "Router",
+		Ports: []*models.EquipmentPortInput{
+			{Name: "typ1_p1"},
+			{Name: "typ1_p2"},
+		},
+	})
+
+	loc, _ := mr.AddLocation(ctx, models.AddLocationInput{
+		Name: "Room2",
+		Type: locType.ID,
+	})
+
+	eq1, _ := mr.AddEquipment(ctx, models.AddEquipmentInput{
+		Name:     "Router1",
+		Type:     eqt.ID,
+		Location: &loc.ID,
+	})
+
+	eq2, _ := mr.AddEquipment(ctx, models.AddEquipmentInput{
+		Name:     "Router2",
+		Type:     eqt.ID,
+		Location: &loc.ID,
+	})
+
+	eq3, _ := mr.AddEquipment(ctx, models.AddEquipmentInput{
+		Name:     "Router3",
+		Type:     eqt.ID,
+		Location: &loc.ID,
+	})
+
+	equipmentType := r.client.EquipmentType.GetX(ctx, eqt.ID)
+	defs := equipmentType.QueryPortDefinitions().AllX(ctx)
+
+	l1, _ := mr.AddLink(ctx, models.AddLinkInput{
+		Sides: []*models.LinkSide{
+			{Equipment: eq1.ID, Port: defs[0].ID},
+			{Equipment: eq2.ID, Port: defs[0].ID},
+		},
+	})
+	l2, _ := mr.AddLink(ctx, models.AddLinkInput{
+		Sides: []*models.LinkSide{
+			{Equipment: eq2.ID, Port: defs[1].ID},
+			{Equipment: eq3.ID, Port: defs[1].ID},
+		},
+	})
+
+	st, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
+		Name:        "Internet Access",
+		HasCustomer: false,
+		Endpoints: []*models.ServiceEndpointDefinitionInput{
+			{
+				Name:            "endpoint type1",
+				Role:            pointer.ToString("CONSUMER"),
+				Index:           0,
+				EquipmentTypeID: eqt.ID,
+			},
+		},
+	})
+
+	s, err := mr.AddService(ctx, models.ServiceCreateData{
+		Name:          "Internet Access Room 2",
+		ServiceTypeID: st.ID,
+		Status:        service.StatusPending,
+	})
+	require.NoError(t, err)
+
+	equipmentPorts := eq1.QueryPorts().AllX(ctx)
+	require.NoError(t, err)
+
+	var equipmentPortIds []int
+	for _, item := range equipmentPorts {
+		equipmentPortIds = append(equipmentPortIds, item.ID)
+	}
+
+	updatedService, err := mr.AddBulkServiceLinksAndPorts(ctx, &models.AddBulkServiceLinksAndPortsInput{
+		ID:      s.ID,
+		LinkIds: []int{l1.ID, l2.ID},
+		PortIds: equipmentPortIds,
+	})
+	require.NoError(t, err)
+
+	links, _ := r.ResolverRoot.Service().Links(ctx, updatedService)
+	assert.NotEmpty(t, links)
+	assert.Equal(t, 2, len(links))
+
+	ports, _ := r.ResolverRoot.Service().Ports(ctx, updatedService)
+	assert.NotEmpty(t, ports)
+	assert.Equal(t, 2, len(ports))
+}
+
+func TestAddBulkServicePortsInvalidLinksAndPorts(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr := r.Mutation()
+	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
+		Name: "service_type", HasCustomer: false})
+	require.NoError(t, err)
+
+	service, err := mr.AddService(ctx, models.ServiceCreateData{
+		Name:          "service",
+		ServiceTypeID: serviceType.ID,
+		Status:        service.StatusPending,
+	})
+	require.NoError(t, err)
+
+	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
+		Name: "loc_type_name",
+	})
+	require.NoError(t, err)
+
+	location, err := mr.AddLocation(ctx, models.AddLocationInput{
+		Name: "loc_inst_name",
+		Type: locType.ID,
+	})
+	require.NoError(t, err)
+
+	eqType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "eq_type_name",
+		Ports: []*models.EquipmentPortInput{
+			{Name: "portType1"},
+		},
+	})
+	require.NoError(t, err)
+	_, err = mr.AddEquipment(ctx, models.AddEquipmentInput{
+		Name:     "eq_inst_name",
+		Type:     eqType.ID,
+		Location: &location.ID,
+	})
+	require.NoError(t, err)
+
+	_, err = mr.AddBulkServiceLinksAndPorts(ctx, &models.AddBulkServiceLinksAndPortsInput{
+		ID:      service.ID,
+		PortIds: []int{0, 1, 2, 3, 4, 5},
+		LinkIds: []int{0, 1, 2, 3, 4, 5}},
+	)
+	assert.Error(t, err)
+}

@@ -2829,6 +2829,12 @@ input AddServiceEndpointInput {
   definition: ID!
 }
 
+input AddBulkServiceLinksAndPortsInput {
+  id: ID!
+  portIds: [ID!]
+  linkIds: [ID!]
+}
+
 input ServiceEndpointDefinitionInput {
   id: ID
   name: String!
@@ -3909,6 +3915,7 @@ type Mutation {
   addServiceEndpoint(input: AddServiceEndpointInput!): Service!
   removeServiceEndpoint(serviceEndpointId: ID!): Service!
   addServicePort(id: ID!, portId: ID!): Service!
+  addBulkServiceLinksAndPorts(input: AddBulkServiceLinksAndPortsInput): Service!
   removeServicePort(id: ID!, portId: ID!): Service!
   addServiceType(
     """

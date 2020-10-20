@@ -58,6 +58,12 @@ type ActivityFilterInput struct {
 	ActivityType   activity.ActivityType `json:"activityType"`
 }
 
+type AddBulkServiceLinksAndPortsInput struct {
+	ID      int   `json:"id"`
+	PortIds []int `json:"portIds"`
+	LinkIds []int `json:"linkIds"`
+}
+
 type AddCustomerInput struct {
 	Name       string  `json:"name"`
 	ExternalID *string `json:"externalId"`
