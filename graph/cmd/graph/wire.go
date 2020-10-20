@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.opencensus.io/stats/view"
@@ -95,6 +96,7 @@ func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
 	views = append(views, ocsql.DefaultViews...)
+	views = append(views, ocgql.DefaultViews...)
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views
