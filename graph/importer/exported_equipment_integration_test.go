@@ -169,10 +169,11 @@ func TestEquipmentImportData(t *testing.T) {
 	require.Equal(t, 200, code)
 
 	verifyLocationsStructure(ctx, t, *r)
-	equips, err := q.EquipmentSearch(ctx, nil, nil)
+	equips, err := q.Equipments(ctx, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
-	require.Equal(t, 4, equips.Count)
-	for _, equip := range equips.Equipment {
+	require.Equal(t, 4, equips.TotalCount)
+	for _, edge := range equips.Edges {
+		equip := edge.Node
 		switch equip.Name {
 		case "A":
 			require.Equal(t, "EquipType1", equip.QueryType().OnlyX(ctx).Name)

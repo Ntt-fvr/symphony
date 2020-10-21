@@ -873,9 +873,8 @@ type TechnicianWorkOrderCheckOutInput struct {
 }
 
 type TechnicianWorkOrderUploadInput struct {
-	WorkOrderID         int                             `json:"workOrderId"`
-	Checklist           []*TechnicianCheckListItemInput `json:"checklist"`
-	CheckListCategories []*CheckListCategoryInput       `json:"checkListCategories"`
+	WorkOrderID         int                       `json:"workOrderId"`
+	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 }
 
 type TopologyLink struct {

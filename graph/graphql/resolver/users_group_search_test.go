@@ -37,8 +37,8 @@ func TestUsersGroupSearchByName(t *testing.T) {
 		Operator:    enum.FilterOperatorIs,
 		StringValue: &gName1,
 	}
-	resAll, err := r.Query().UsersGroupSearch(ctx, []*models.UsersGroupFilterInput{&f1}, pointer.ToInt(100))
+	resAll, err := r.Query().UsersGroups(ctx, nil, pointer.ToInt(100), nil, nil, []*models.UsersGroupFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, resAll.UsersGroups, 1)
-	require.Equal(t, resAll.Count, 1)
+	require.Len(t, resAll.Edges, 1)
+	require.Equal(t, resAll.TotalCount, 1)
 }

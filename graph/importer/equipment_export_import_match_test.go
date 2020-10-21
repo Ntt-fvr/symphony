@@ -191,14 +191,15 @@ func TestEquipmentExportAndImportMatch(t *testing.T) {
 					require.Equal(t, parentEquip, loc.QueryEquipment().OnlyX(ctx).Name)
 				}
 			}
-			equips, err := r.Query().EquipmentSearch(ctx, nil, nil)
+			equips, err := r.Query().Equipments(ctx, nil, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
 			if verify {
-				require.Equal(t, 0, equips.Count)
+				require.Equal(t, 0, equips.TotalCount)
 			} else {
-				require.Equal(t, 2, equips.Count)
+				require.Equal(t, 2, equips.TotalCount)
 			}
-			for _, equip := range equips.Equipment {
+			for _, edge := range equips.Edges {
+				equip := edge.Node
 				switch equip.Name {
 				case currEquip:
 					require.Equal(t, equipmentType2Name, equip.QueryType().OnlyX(ctx).Name)
@@ -233,10 +234,11 @@ func TestEquipmentImportAndEdit(t *testing.T) {
 			importEquipmentFile(t, r.Client, res, methodEdit, verify)
 			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
-			equips, err := r.Query().EquipmentSearch(ctx, nil, nil)
+			equips, err := r.Query().Equipments(ctx, nil, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
-			require.Equal(t, 2, equips.Count)
-			for _, equip := range equips.Equipment {
+			require.Equal(t, 2, equips.TotalCount)
+			for _, edge := range equips.Edges {
+				equip := edge.Node
 				switch equip.Name {
 				case parentEquip:
 					require.Equal(t, equipmentTypeName, equip.QueryType().OnlyX(ctx).Name)

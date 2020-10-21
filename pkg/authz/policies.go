@@ -279,7 +279,6 @@ func Permissions(ctx context.Context) (*models.PermissionSettings, error) {
 		workforcePolicy = NewWorkforcePolicy(false, false)
 	}
 	res := models.PermissionSettings{
-		CanWrite:        fullPermissions,
 		AdminPolicy:     NewAdministrativePolicy(fullPermissions),
 		InventoryPolicy: inventoryPolicy,
 		WorkforcePolicy: workforcePolicy,
@@ -289,7 +288,6 @@ func Permissions(ctx context.Context) (*models.PermissionSettings, error) {
 
 func FullPermissions() *models.PermissionSettings {
 	return &models.PermissionSettings{
-		CanWrite:        true,
 		AdminPolicy:     NewAdministrativePolicy(true),
 		InventoryPolicy: NewInventoryPolicy(true),
 		WorkforcePolicy: NewWorkforcePolicy(true, true),
@@ -298,7 +296,6 @@ func FullPermissions() *models.PermissionSettings {
 
 func EmptyPermissions() *models.PermissionSettings {
 	return &models.PermissionSettings{
-		CanWrite:        false,
 		AdminPolicy:     NewAdministrativePolicy(false),
 		InventoryPolicy: NewInventoryPolicy(false),
 		WorkforcePolicy: NewWorkforcePolicy(false, false),
@@ -307,7 +304,6 @@ func EmptyPermissions() *models.PermissionSettings {
 
 func AdminPermissions() *models.PermissionSettings {
 	return &models.PermissionSettings{
-		CanWrite:        false,
 		AdminPolicy:     NewAdministrativePolicy(true),
 		InventoryPolicy: NewInventoryPolicy(false),
 		WorkforcePolicy: NewWorkforcePolicy(false, false),

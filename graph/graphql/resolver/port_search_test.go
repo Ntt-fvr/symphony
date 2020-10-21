@@ -171,10 +171,10 @@ func TestSearchPortEquipmentName(t *testing.T) {
 	data := preparePortData(ctx, r)
 	qr := r.Query()
 	limit := 100
-	all, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{}, &limit)
+	all, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Ports, 8)
-	require.Equal(t, all.Count, 8)
+	require.Len(t, all.Edges, 8)
+	require.Equal(t, all.TotalCount, 8)
 	maxDepth := 2
 	f1 := pkgmodels.PortFilterInput{
 		FilterType:  enum.PortFilterTypePortInstEquipment,
@@ -182,9 +182,9 @@ func TestSearchPortEquipmentName(t *testing.T) {
 		StringValue: pointer.ToString(data.e1.Name),
 		MaxDepth:    &maxDepth,
 	}
-	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f1})
 	require.NoError(t, err)
-	ports := res1.Ports
+	ports := res1.Edges
 	require.Len(t, ports, 2)
 }
 
@@ -196,18 +196,18 @@ func TestSearchPortHasLink(t *testing.T) {
 	preparePortData(ctx, r)
 	qr := r.Query()
 	limit := 100
-	all, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{}, &limit)
+	all, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Ports, 8)
-	require.Equal(t, all.Count, 8)
+	require.Len(t, all.Edges, 8)
+	require.Equal(t, all.TotalCount, 8)
 	f1 := pkgmodels.PortFilterInput{
 		FilterType: enum.PortFilterTypePortInstHasLink,
 		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(false),
 	}
-	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f1})
 	require.NoError(t, err)
-	ports := res1.Ports
+	ports := res1.Edges
 	require.Len(t, ports, 6)
 }
 
@@ -227,9 +227,9 @@ func TestSearchPortDefinition(t *testing.T) {
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{defs[0].ID, defs[1].ID},
 	}
-	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f1})
 	require.NoError(t, err)
-	ports := res1.Ports
+	ports := res1.Edges
 	require.Len(t, ports, 4)
 }
 
@@ -248,9 +248,9 @@ func TestSearchPortLocation(t *testing.T) {
 		IDSet:      []int{d.loc1},
 		MaxDepth:   pointer.ToInt(2),
 	}
-	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f1})
 	require.NoError(t, err)
-	ports := res1.Ports
+	ports := res1.Edges
 	require.Len(t, ports, 4)
 
 	fExternal := pkgmodels.PortFilterInput{
@@ -258,9 +258,9 @@ func TestSearchPortLocation(t *testing.T) {
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("1"),
 	}
-	res1, err = qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&fExternal}, &limit)
+	res1, err = qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&fExternal})
 	require.NoError(t, err)
-	ports = res1.Ports
+	ports = res1.Edges
 	require.Len(t, ports, 4)
 }
 
@@ -284,9 +284,9 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f1})
 	require.NoError(t, err)
-	ports := res1.Ports
+	ports := res1.Edges
 	require.Len(t, ports, 1)
 
 	f2 := pkgmodels.PortFilterInput{
@@ -299,9 +299,9 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res2, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f2}, &limit)
+	res2, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f2})
 	require.NoError(t, err)
-	ports = res2.Ports
+	ports = res2.Edges
 	require.Len(t, ports, 1)
 
 	f3 := pkgmodels.PortFilterInput{
@@ -314,9 +314,9 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res3, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f3}, &limit)
+	res3, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f3})
 	require.NoError(t, err)
-	ports = res3.Ports
+	ports = res3.Edges
 	require.Len(t, ports, 1)
 
 	f4 := pkgmodels.PortFilterInput{
@@ -329,9 +329,9 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res4, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f4}, &limit)
+	res4, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f4})
 	require.NoError(t, err)
-	ports = res4.Ports
+	ports = res4.Edges
 	require.Len(t, ports, 0)
 
 	f5 := pkgmodels.PortFilterInput{
@@ -344,9 +344,9 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res5, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f5}, &limit)
+	res5, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f5})
 	require.NoError(t, err)
-	ports = res5.Ports
+	ports = res5.Edges
 	require.Len(t, ports, 1)
 }
 
@@ -434,9 +434,9 @@ func TestSearchPortsByService(t *testing.T) {
 	require.NoError(t, err)
 
 	limit := 100
-	all, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{}, &limit)
+	all, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Ports, 8)
+	require.Len(t, all.Edges, 8)
 	maxDepth := 2
 
 	f1 := pkgmodels.PortFilterInput{
@@ -445,10 +445,10 @@ func TestSearchPortsByService(t *testing.T) {
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Ports, 1)
-	require.Equal(t, res1.Ports[0].ID, port1.ID)
+	require.Len(t, res1.Edges, 1)
+	require.Equal(t, res1.Edges[0].Node.ID, port1.ID)
 
 	f2 := pkgmodels.PortFilterInput{
 		FilterType: enum.PortFilterTypeServiceInst,
@@ -456,9 +456,9 @@ func TestSearchPortsByService(t *testing.T) {
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f2}, &limit)
+	res2, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Ports, 3)
+	require.Len(t, res2.Edges, 3)
 
 	f3 := pkgmodels.PortFilterInput{
 		FilterType: enum.PortFilterTypeServiceInst,
@@ -466,9 +466,9 @@ func TestSearchPortsByService(t *testing.T) {
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f3}, &limit)
+	res3, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f3})
 	require.NoError(t, err)
-	require.Len(t, res3.Ports, 7)
+	require.Len(t, res3.Edges, 7)
 
 	f4 := pkgmodels.PortFilterInput{
 		FilterType: enum.PortFilterTypeServiceInst,
@@ -476,9 +476,9 @@ func TestSearchPortsByService(t *testing.T) {
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res4, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f4}, &limit)
+	res4, err := qr.EquipmentPorts(ctx, nil, &limit, nil, nil, []*pkgmodels.PortFilterInput{&f4})
 	require.NoError(t, err)
-	require.Len(t, res4.Ports, 5)
+	require.Len(t, res4.Edges, 5)
 }
 
 func TestReorderEndpointDefinitions(t *testing.T) {

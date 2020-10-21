@@ -28,14 +28,14 @@ func TestAddDeleteAndSearchCustomers(t *testing.T) {
 	require.NoError(t, err)
 
 	limit := 10
-	res1, err := qr.CustomerSearch(ctx, &limit)
+	res1, err := qr.Customers(ctx, nil, &limit, nil, nil)
 	require.NoError(t, err)
-	require.Len(t, res1, 2)
+	require.Len(t, res1.Edges, 2)
 
 	_, err = mr.RemoveCustomer(ctx, c.ID)
 	require.NoError(t, err)
 
-	res2, err := qr.CustomerSearch(ctx, &limit)
+	res2, err := qr.Customers(ctx, nil, &limit, nil, nil)
 	require.NoError(t, err)
-	require.Len(t, res2, 1)
+	require.Len(t, res2.Edges, 1)
 }

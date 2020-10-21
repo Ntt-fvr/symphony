@@ -161,13 +161,13 @@ func TestRemoveServiceType(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, s2)
 
-	services, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{}, pointer.ToInt(100))
+	services, err := qr.Services(ctx, nil, pointer.ToInt(100), nil, nil, []*pkgmodels.ServiceFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, services.Services, 2)
+	require.Len(t, services.Edges, 2)
 
 	_, err = mr.RemoveServiceType(ctx, serviceType2.ID)
 	require.NoError(t, err)
-	services, err = qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{}, pointer.ToInt(100))
+	services, err = qr.Services(ctx, nil, pointer.ToInt(100), nil, nil, []*pkgmodels.ServiceFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, services.Services, 1)
+	require.Len(t, services.Edges, 1)
 }

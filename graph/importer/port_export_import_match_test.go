@@ -25,10 +25,11 @@ func TestImportAndEditPorts(t *testing.T) {
 			importLinksPortsFile(t, r.Client, res, ImportEntityPort, methodEdit, skipLines, withVerify)
 			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
-			ports, err := r.Query().PortSearch(ctx, nil, nil)
+			ports, err := r.Query().EquipmentPorts(ctx, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
-			require.Equal(t, 2, ports.Count)
-			for _, port := range ports.Ports {
+			require.Equal(t, 2, ports.TotalCount)
+			for _, edge := range ports.Edges {
+				port := edge.Node
 				def := port.QueryDefinition().OnlyX(ctx)
 				if def.Name == portName1 {
 					typ := def.QueryEquipmentPortType().OnlyX(ctx)

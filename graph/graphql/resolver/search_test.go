@@ -28,16 +28,18 @@ import (
 
 const (
 	woCountQuery = `query($filters: [WorkOrderFilterInput!]!) {
-		workOrderSearch(filters:$filters) {
-			count
+		workOrders(filterBy:$filters) {
+			totalCount
 		}
 	}`
 
 	woAllQuery = `query($filters: [WorkOrderFilterInput!]!) {
-		workOrderSearch(filters:$filters) {
-			count
-			workOrders {
-				id
+		workOrders(filterBy:$filters) {
+			totalCount
+			edges {
+				node {
+					id
+				}
 			}
 		}
 	}`
@@ -62,10 +64,12 @@ type (
 	}
 
 	woSearchResult struct {
-		WorkOrderSearch struct {
-			Count      int
-			WorkOrders []struct {
-				ID string
+		WorkOrders struct {
+			TotalCount int
+			Edges      []struct {
+				Node struct {
+					ID string
+				}
 			}
 		}
 	}
@@ -293,10 +297,10 @@ func TestEquipmentSearch(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{}, &limit)
+	all, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Equipment, 4)
-	require.Equal(t, all.Count, 4)
+	require.Len(t, all.Edges, 4)
+	require.Equal(t, all.TotalCount, 4)
 
 	maxDepth := 5
 	f1 := pkgmodels.EquipmentFilterInput{
@@ -305,10 +309,10 @@ func TestEquipmentSearch(t *testing.T) {
 		IDSet:      []int{model1.loc1, model2.loc1},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1}, &limit)
+	res1, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Equipment, 2)
-	require.Equal(t, res1.Count, 2)
+	require.Len(t, res1.Edges, 2)
+	require.Equal(t, res1.TotalCount, 2)
 
 	f2 := pkgmodels.EquipmentFilterInput{
 		FilterType: enum.EquipmentFilterTypeEquipmentType,
@@ -316,12 +320,12 @@ func TestEquipmentSearch(t *testing.T) {
 		IDSet:      []int{model1.equType},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1, &f2}, &limit)
+	res2, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f1, &f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Equipment, 1)
-	require.Equal(t, res2.Count, 1)
+	require.Len(t, res2.Edges, 1)
+	require.Equal(t, res2.TotalCount, 1)
 
-	fetchedPropType := res2.Equipment[0].QueryType().QueryPropertyTypes().OnlyX(ctx)
+	fetchedPropType := res2.Edges[0].Node.QueryType().QueryPropertyTypes().OnlyX(ctx)
 	f3 := pkgmodels.EquipmentFilterInput{
 		FilterType: enum.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
@@ -332,11 +336,11 @@ func TestEquipmentSearch(t *testing.T) {
 		},
 		MaxDepth: &maxDepth,
 	}
-	res3, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f3}, &limit)
+	res3, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f3})
 	require.NoError(t, err)
 
-	require.Len(t, res3.Equipment, 2)
-	require.Equal(t, res3.Count, 2)
+	require.Len(t, res3.Edges, 2)
+	require.Equal(t, res3.TotalCount, 2)
 
 	subst := "inst1"
 	f4 := pkgmodels.EquipmentFilterInput{
@@ -345,10 +349,10 @@ func TestEquipmentSearch(t *testing.T) {
 		StringValue: &subst,
 		MaxDepth:    &maxDepth,
 	}
-	res4, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f3, &f4}, &limit)
+	res4, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f3, &f4})
 	require.NoError(t, err)
-	require.Len(t, res4.Equipment, 1)
-	require.Equal(t, res4.Count, 1)
+	require.Len(t, res4.Edges, 1)
+	require.Equal(t, res4.TotalCount, 1)
 
 	f5 := pkgmodels.EquipmentFilterInput{
 		FilterType: enum.EquipmentFilterTypeLocationInst,
@@ -356,10 +360,10 @@ func TestEquipmentSearch(t *testing.T) {
 		IDSet:      []int{model2.loc1},
 		MaxDepth:   &maxDepth,
 	}
-	res5, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f3, &f4, &f5}, &limit)
+	res5, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f3, &f4, &f5})
 	require.NoError(t, err)
-	require.Empty(t, res5.Equipment)
-	require.Zero(t, res5.Count)
+	require.Empty(t, res5.Edges)
+	require.Zero(t, res5.TotalCount)
 
 	f6 := pkgmodels.EquipmentFilterInput{
 		FilterType:  enum.EquipmentFilterTypeEquipInstExternalID,
@@ -367,10 +371,10 @@ func TestEquipmentSearch(t *testing.T) {
 		StringValue: &model1.equ2ExtID,
 		MaxDepth:    &maxDepth,
 	}
-	res6, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f6}, &limit)
+	res6, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f6})
 	require.NoError(t, err)
-	require.Len(t, res6.Equipment, 1)
-	require.Equal(t, res6.Count, 1)
+	require.Len(t, res6.Edges, 1)
+	require.Equal(t, res6.TotalCount, 1)
 }
 
 func TestUnsupportedEquipmentSearch(t *testing.T) {
@@ -387,7 +391,7 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
-	_, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f}, &limit)
+	_, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f})
 	require.Error(t, err)
 
 	f = pkgmodels.EquipmentFilterInput{
@@ -395,7 +399,7 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
-	_, err = qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f}, &limit)
+	_, err = qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f})
 	require.Error(t, err)
 
 	f = pkgmodels.EquipmentFilterInput{
@@ -403,7 +407,7 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
-	_, err = qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f}, &limit)
+	_, err = qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f})
 	require.Error(t, err)
 }
 
@@ -481,18 +485,18 @@ func TestSearchEquipmentByLocation(t *testing.T) {
 		IDSet:      []int{loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1}, &limit)
+	res1, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Equipment, 2)
+	require.Len(t, res1.Edges, 2)
 
 	f1External := pkgmodels.EquipmentFilterInput{
 		FilterType:  enum.EquipmentFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("11"),
 	}
-	res1, err = qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1External}, &limit)
+	res1, err = qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f1External})
 	require.NoError(t, err)
-	require.Len(t, res1.Equipment, 1, "1 equipment on the direct location")
+	require.Len(t, res1.Edges, 1, "1 equipment on the direct location")
 
 	f2 := pkgmodels.EquipmentFilterInput{
 		FilterType: enum.EquipmentFilterTypeLocationInst,
@@ -500,9 +504,9 @@ func TestSearchEquipmentByLocation(t *testing.T) {
 		IDSet:      []int{loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f2}, &limit)
+	res2, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Equipment, 1)
+	require.Len(t, res2.Edges, 1)
 }
 
 func TestSearchEquipmentByDate(t *testing.T) {
@@ -560,10 +564,10 @@ func TestSearchEquipmentByDate(t *testing.T) {
 		},
 	}
 
-	res1, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1}, &limit)
+	res1, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Equipment, 1)
-	require.Equal(t, res1.Equipment[0].ID, e2.ID)
+	require.Len(t, res1.Edges, 1)
+	require.Equal(t, res1.Edges[0].Node.ID, e2.ID)
 
 	f2 := pkgmodels.EquipmentFilterInput{
 		FilterType: enum.EquipmentFilterTypeProperty,
@@ -574,14 +578,14 @@ func TestSearchEquipmentByDate(t *testing.T) {
 			StringValue: &date,
 		},
 	}
-	res2, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f2}, &limit)
+	res2, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Equipment, 1)
-	require.Equal(t, res2.Equipment[0].ID, e1.ID)
+	require.Len(t, res2.Edges, 1)
+	require.Equal(t, res2.Edges[0].Node.ID, e1.ID)
 
-	res3, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1, &f2}, &limit)
+	res3, err := qr.Equipments(ctx, nil, &limit, nil, nil, nil, []*pkgmodels.EquipmentFilterInput{&f1, &f2})
 	require.NoError(t, err)
-	require.Len(t, res3.Equipment, 0)
+	require.Len(t, res3.Edges, 0)
 }
 
 func TestSearchWO(t *testing.T) {
@@ -607,8 +611,8 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{}),
 	)
-	require.Equal(t, 4, result.WorkOrderSearch.Count)
-	require.Empty(t, result.WorkOrderSearch.WorkOrders)
+	require.Equal(t, 4, result.WorkOrders.TotalCount)
+	require.Empty(t, result.WorkOrders.Edges)
 
 	name := "_1"
 	f1 := pkgmodels.WorkOrderFilterInput{
@@ -621,8 +625,8 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f1}),
 	)
-	require.Equal(t, 1, result.WorkOrderSearch.Count)
-	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrderSearch.WorkOrders[0].ID)
+	require.Equal(t, 1, result.WorkOrders.TotalCount)
+	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrders.Edges[0].Node.ID)
 
 	status := workorder.StatusPlanned.String()
 	f2 := pkgmodels.WorkOrderFilterInput{
@@ -635,7 +639,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f2}),
 	)
-	require.Equal(t, 3, result.WorkOrderSearch.Count)
+	require.Equal(t, 3, result.WorkOrders.TotalCount)
 
 	f3 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderType,
@@ -647,7 +651,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f3}),
 	)
-	require.Equal(t, 2, result.WorkOrderSearch.Count)
+	require.Equal(t, 2, result.WorkOrders.TotalCount)
 
 	f4 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderAssignedTo,
@@ -659,7 +663,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f4}),
 	)
-	require.Equal(t, 2, result.WorkOrderSearch.Count)
+	require.Equal(t, 2, result.WorkOrders.TotalCount)
 
 	f5 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderLocationInst,
@@ -671,14 +675,14 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f5}),
 	)
-	require.Equal(t, 2, result.WorkOrderSearch.Count)
+	require.Equal(t, 2, result.WorkOrders.TotalCount)
 
 	c.MustPost(
 		woCountQuery,
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f4, f5}),
 	)
-	require.Equal(t, 1, result.WorkOrderSearch.Count)
+	require.Equal(t, 1, result.WorkOrders.TotalCount)
 
 	f7 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderOwnedBy,
@@ -690,7 +694,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f7}),
 	)
-	require.Equal(t, 1, result.WorkOrderSearch.Count)
+	require.Equal(t, 1, result.WorkOrders.TotalCount)
 
 	f8 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderCreationDate,
@@ -702,7 +706,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f8}),
 	)
-	require.Equal(t, 4, result.WorkOrderSearch.Count)
+	require.Equal(t, 4, result.WorkOrders.TotalCount)
 
 	f9 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderCreationDate,
@@ -714,7 +718,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f9}),
 	)
-	require.Zero(t, result.WorkOrderSearch.Count)
+	require.Zero(t, result.WorkOrders.TotalCount)
 
 	f10 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderCloseDate,
@@ -726,7 +730,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f10}),
 	)
-	require.Equal(t, 1, result.WorkOrderSearch.Count)
+	require.Equal(t, 1, result.WorkOrders.TotalCount)
 
 	f11 := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderCloseDate,
@@ -738,7 +742,7 @@ func TestSearchWO(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f11}),
 	)
-	require.Zero(t, result.WorkOrderSearch.Count)
+	require.Zero(t, result.WorkOrders.TotalCount)
 }
 
 func TestSearchWOByPriority(t *testing.T) {
@@ -754,7 +758,7 @@ func TestSearchWOByPriority(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{}),
 	)
-	require.Equal(t, 4, result.WorkOrderSearch.Count)
+	require.Equal(t, 4, result.WorkOrders.TotalCount)
 
 	f := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderPriority,
@@ -766,8 +770,8 @@ func TestSearchWOByPriority(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
-	require.Equal(t, 1, result.WorkOrderSearch.Count)
-	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrderSearch.WorkOrders[0].ID)
+	require.Equal(t, 1, result.WorkOrders.TotalCount)
+	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrders.Edges[0].Node.ID)
 
 	f.StringSet = []string{workorder.PriorityLow.String()}
 	c.MustPost(
@@ -775,7 +779,7 @@ func TestSearchWOByPriority(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
-	require.Zero(t, result.WorkOrderSearch.Count)
+	require.Zero(t, result.WorkOrders.TotalCount)
 }
 
 func TestSearchWOByLocation(t *testing.T) {
@@ -800,7 +804,7 @@ func TestSearchWOByLocation(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{}),
 	)
-	require.Equal(t, 4, result.WorkOrderSearch.Count)
+	require.Equal(t, 4, result.WorkOrders.TotalCount)
 	f := pkgmodels.WorkOrderFilterInput{
 		FilterType: enum.WorkOrderFilterTypeWorkOrderLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
@@ -812,7 +816,7 @@ func TestSearchWOByLocation(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
-	require.Equal(t, 2, result.WorkOrderSearch.Count)
+	require.Equal(t, 2, result.WorkOrders.TotalCount)
 
 	f.IDSet = []int{-1}
 	c.MustPost(
@@ -820,7 +824,7 @@ func TestSearchWOByLocation(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
-	require.Zero(t, result.WorkOrderSearch.Count)
+	require.Zero(t, result.WorkOrders.TotalCount)
 
 	f2 := pkgmodels.WorkOrderFilterInput{
 		FilterType:  enum.WorkOrderFilterTypeLocationInstExternalID,
@@ -832,5 +836,5 @@ func TestSearchWOByLocation(t *testing.T) {
 		&result,
 		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f2}),
 	)
-	require.Equal(t, 2, result.WorkOrderSearch.Count)
+	require.Equal(t, 2, result.WorkOrders.TotalCount)
 }

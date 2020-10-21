@@ -159,18 +159,18 @@ func TestSearchServicesByName(t *testing.T) {
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("Room"),
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 3)
+	require.Len(t, res1.Edges, 3)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeServiceInstName,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("Room 201"),
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 2)
+	require.Len(t, res2.Edges, 2)
 }
 
 func TestSearchServicesByStatus(t *testing.T) {
@@ -208,27 +208,27 @@ func TestSearchServicesByStatus(t *testing.T) {
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{service.StatusMaintenance.String()},
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 1)
+	require.Len(t, res1.Edges, 1)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceStatus,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{service.StatusInService.String()},
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 2)
+	require.Len(t, res2.Edges, 2)
 
 	f3 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceStatus,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{service.StatusPending.String()},
 	}
-	res3, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f3}, &limit)
+	res3, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f3})
 	require.NoError(t, err)
-	require.Len(t, res3.Services, 0)
+	require.Len(t, res3.Edges, 0)
 }
 
 func TestSearchServicesByType(t *testing.T) {
@@ -259,29 +259,29 @@ func TestSearchServicesByType(t *testing.T) {
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.st1},
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 1)
-	assert.Equal(t, res1.Services[0].ID, s1.ID)
+	require.Len(t, res1.Edges, 1)
+	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.st2},
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 1)
-	assert.Equal(t, res2.Services[0].ID, s2.ID)
+	require.Len(t, res2.Edges, 1)
+	assert.Equal(t, res2.Edges[0].Node.ID, s2.ID)
 
 	f3 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.st1, data.st2},
 	}
-	res3, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f3}, &limit)
+	res3, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f3})
 	require.NoError(t, err)
-	require.Len(t, res3.Services, 2)
+	require.Len(t, res3.Edges, 2)
 }
 
 func TestSearchServicesByExternalID(t *testing.T) {
@@ -322,20 +322,20 @@ func TestSearchServicesByExternalID(t *testing.T) {
 		Operator:    enum.FilterOperatorIs,
 		StringValue: &externalID1,
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 1)
-	assert.Equal(t, res1.Services[0].ID, s1.ID)
+	require.Len(t, res1.Edges, 1)
+	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeServiceInstExternalID,
 		Operator:    enum.FilterOperatorIs,
 		StringValue: &externalID2,
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 1)
-	assert.Equal(t, res2.Services[0].ID, s2.ID)
+	require.Len(t, res2.Edges, 1)
+	assert.Equal(t, res2.Edges[0].Node.ID, s2.ID)
 }
 
 func TestSearchServicesByCustomerName(t *testing.T) {
@@ -380,19 +380,19 @@ func TestSearchServicesByCustomerName(t *testing.T) {
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("Donald"),
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 1)
-	assert.Equal(t, res1.Services[0].ID, s1.ID)
+	require.Len(t, res1.Edges, 1)
+	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeServiceInstCustomerName,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("a"),
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 2)
+	require.Len(t, res2.Edges, 2)
 }
 
 func TestSearchServicesByDiscoveryMethod(t *testing.T) {
@@ -424,32 +424,32 @@ func TestSearchServicesByDiscoveryMethod(t *testing.T) {
 	require.NoError(t, err)
 	limit := 100
 
-	all, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{}, &limit)
+	all, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Services, 3)
+	require.Len(t, all.Edges, 3)
 
 	f1 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceDiscoveryMethod,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{servicetype.DiscoveryMethodInventory.String()},
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 1)
-	assert.Equal(t, res1.Services[0].ID, s1.ID)
+	require.Len(t, res1.Edges, 1)
+	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceDiscoveryMethod,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{servicetype.DiscoveryMethodManual.String()},
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 2)
+	require.Len(t, res2.Edges, 2)
 
-	res3, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1, &f2}, &limit)
+	res3, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1, &f2})
 	require.NoError(t, err)
-	require.Len(t, res3.Services, 0)
+	require.Len(t, res3.Edges, 0)
 }
 
 func TestSearchServicesByProperties(t *testing.T) {
@@ -482,9 +482,9 @@ func TestSearchServicesByProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	limit := 100
-	all, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{}, &limit)
+	all, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Services, 2)
+	require.Len(t, all.Edges, 2)
 	f := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
@@ -494,9 +494,9 @@ func TestSearchServicesByProperties(t *testing.T) {
 			StringValue: pointer.ToString("Foo is the best"),
 		},
 	}
-	res, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f}, &limit)
+	res, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f})
 	require.NoError(t, err)
-	require.Len(t, res.Services, 1)
+	require.Len(t, res.Edges, 1)
 }
 
 func TestSearchServicesByLocations(t *testing.T) {
@@ -597,9 +597,9 @@ func TestSearchServicesByLocations(t *testing.T) {
 		IDSet:      []int{loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 3)
+	require.Len(t, res1.Edges, 3)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeLocationInst,
@@ -607,18 +607,18 @@ func TestSearchServicesByLocations(t *testing.T) {
 		IDSet:      []int{loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 2)
+	require.Len(t, res2.Edges, 2)
 
 	f2ExternalID := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("22"),
 	}
-	res2, err = qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2ExternalID}, &limit)
+	res2, err = qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2ExternalID})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 2)
+	require.Len(t, res2.Edges, 2)
 
 	f3 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeLocationInst,
@@ -626,9 +626,9 @@ func TestSearchServicesByLocations(t *testing.T) {
 		IDSet:      []int{loc2.ID, loc3.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f3}, &limit)
+	res3, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f3})
 	require.NoError(t, err)
-	require.Len(t, res3.Services, 3)
+	require.Len(t, res3.Edges, 3)
 }
 
 func TestSearchServicesByEquipmentInside(t *testing.T) {
@@ -728,16 +728,16 @@ func TestSearchServicesByEquipmentInside(t *testing.T) {
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("eq_"),
 	}
-	res1, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f1}, &limit)
+	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Services, 3)
+	require.Len(t, res1.Edges, 3)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeEquipmentInService,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("eq_inst3"),
 	}
-	res2, err := qr.ServiceSearch(ctx, []*pkgmodels.ServiceFilterInput{&f2}, &limit)
+	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Services, 1)
+	require.Len(t, res2.Edges, 1)
 }

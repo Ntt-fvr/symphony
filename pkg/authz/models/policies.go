@@ -68,7 +68,6 @@ type WorkforcePolicy struct {
 }
 
 type PermissionSettings struct {
-	CanWrite        bool                  `json:"canWrite"`
 	AdminPolicy     *AdministrativePolicy `json:"adminPolicy"`
 	InventoryPolicy *InventoryPolicy      `json:"inventoryPolicy"`
 	WorkforcePolicy *WorkforcePolicy      `json:"workforcePolicy"`
