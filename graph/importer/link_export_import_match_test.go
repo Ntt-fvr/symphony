@@ -21,8 +21,7 @@ func TestExportAndEditLinks(t *testing.T) {
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
-			importLinksPortsFile(t, r.Client, res.Body, ImportEntityLink, methodEdit, skipLines, withVerify)
-			res.Body.Close()
+			importLinksPortsFile(t, r.Client, res, ImportEntityLink, methodEdit, skipLines, withVerify)
 
 			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
@@ -67,8 +66,7 @@ func TestExportAndAddLinks(t *testing.T) {
 
 			equips := r.Client.Equipment.Query().AllX(ctx)
 			require.Len(t, equips, 1)
-			importLinksPortsFile(t, r.Client, res.Body, ImportEntityLink, methodAdd, skipLines, withVerify)
-			res.Body.Close()
+			importLinksPortsFile(t, r.Client, res, ImportEntityLink, methodAdd, skipLines, withVerify)
 			links, err := r.Query().LinkSearch(ctx, nil, nil)
 			require.NoError(t, err)
 			if skipLines || withVerify {

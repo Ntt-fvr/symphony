@@ -6,11 +6,7 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -215,21 +211,10 @@ func TestEmptyServicesDataExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(context.Background(), client)
 
 	e := &Exporter{Log: log, Rower: ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
 	head := append([]string{"\ufeffService ID",
 		serviceNameTitle,
 		serviceTypeTitle,
@@ -240,12 +225,9 @@ func TestEmptyServicesDataExport(t *testing.T) {
 		statusTitle,
 	},
 		endpointHeader[:]...)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.EqualValues(t, head, ln)
 	}
 }
@@ -256,20 +238,10 @@ func TestServicesExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 
 	e := &Exporter{Log: log, Rower: ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), client)
 	prepareServiceData(ctx)
-	require.NoError(t, err)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
+
 	head := append([]string{"\ufeffService ID",
 		serviceNameTitle,
 		serviceTypeTitle,
@@ -281,13 +253,9 @@ func TestServicesExport(t *testing.T) {
 	},
 		endpointHeader[:]...)
 
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		switch {
 		case ln[1] == serviceNameTitle:
 			require.EqualValues(t, append(head, []string{
@@ -376,20 +344,8 @@ func TestServiceWithFilters(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 
 	e := &Exporter{Log: log, Rower: ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-
 	ctx := viewertest.NewContext(context.Background(), client)
 	prepareServiceData(ctx)
-	require.NoError(t, err)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
 
 	f1, err := json.Marshal([]servicesFilterInput{
 		{
@@ -409,24 +365,10 @@ func TestServiceWithFilters(t *testing.T) {
 	require.NoError(t, err)
 
 	for i, filter := range [][]byte{f1, f2} {
-		req, err := http.NewRequest("GET", server.URL, nil)
-		require.NoError(t, err)
-		viewertest.SetDefaultViewerHeaders(req)
-
-		q := req.URL.Query()
-		q.Add("filters", string(filter))
-		req.URL.RawQuery = q.Encode()
-
-		res, err := http.DefaultClient.Do(req)
-		require.NoError(t, err)
-
-		reader := csv.NewReader(res.Body)
+		rows, err := e.Rower.Rows(ctx, string(filter))
+		require.NoError(t, err, "error getting rows")
 		linesCount := 0
-		for {
-			ln, err := reader.Read()
-			if err == io.EOF {
-				break
-			}
+		for _, ln := range rows {
 			linesCount++
 			require.NoError(t, err, "error reading row")
 			if i == 0 {
@@ -490,8 +432,6 @@ func TestServiceWithFilters(t *testing.T) {
 				}
 			}
 		}
-		err = res.Body.Close()
-		require.NoError(t, err)
 	}
 }
 

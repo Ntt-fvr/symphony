@@ -117,8 +117,7 @@ func TestExportAndEditLocations(t *testing.T) {
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
-			importLocationsFile(t, r.Client, res.Body, methodEdit, withVerify, skipLines)
-			res.Body.Close()
+			importLocationsFile(t, r.Client, res, methodEdit, withVerify, skipLines)
 
 			locations, err := r.Query().LocationSearch(ctx, nil, nil)
 			require.NoError(t, err)
@@ -174,8 +173,7 @@ func TestExportAndAddLocations(t *testing.T) {
 			locs = r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 0)
 
-			importLocationsFile(t, r.Client, res.Body, methodAdd, withVerify, skipLines)
-			res.Body.Close()
+			importLocationsFile(t, r.Client, res, methodAdd, withVerify, skipLines)
 
 			locations, err := r.Query().LocationSearch(ctx, nil, nil)
 			require.NoError(t, err)

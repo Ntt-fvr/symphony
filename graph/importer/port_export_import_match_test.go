@@ -22,8 +22,7 @@ func TestImportAndEditPorts(t *testing.T) {
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
-			importLinksPortsFile(t, r.Client, res.Body, ImportEntityPort, methodEdit, skipLines, withVerify)
-			res.Body.Close()
+			importLinksPortsFile(t, r.Client, res, ImportEntityPort, methodEdit, skipLines, withVerify)
 			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
 			ports, err := r.Query().PortSearch(ctx, nil, nil)

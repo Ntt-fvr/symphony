@@ -6,11 +6,7 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 
@@ -215,27 +211,12 @@ func TestEmptyLinksDataExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
-
+	ctx := viewertest.NewContext(context.Background(), client)
 	e := &Exporter{Log: log, Rower: LinksRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.EqualValues(t, []string{
 			"\ufeffLink ID",
 			portANameTitle,
@@ -267,26 +248,11 @@ func TestLinksExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
 	e := &Exporter{Log: log, Rower: LinksRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 	prepareLinkData(ctx, t)
-	require.NoError(t, err)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		switch {
 		case ln[1] == portANameTitle:
 			require.EqualValues(t, []string{
@@ -385,9 +351,6 @@ func TestLinksWithFilters(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
 	e := &Exporter{Log: log, Rower: LinksRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 	prepareLinkData(ctx, t)
 	loc := client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx)
 	equipType := client.EquipmentType.Query().Where(equipmenttype.Name(equipmentTypeName)).OnlyX(ctx)
@@ -438,24 +401,10 @@ func TestLinksWithFilters(t *testing.T) {
 	require.NoError(t, err)
 
 	for _, filter := range [][]byte{f1, f2, f3} {
-		req, err := http.NewRequest("GET", server.URL, nil)
-		require.NoError(t, err)
-		viewertest.SetDefaultViewerHeaders(req)
-
-		q := req.URL.Query()
-		q.Add("filters", string(filter))
-		req.URL.RawQuery = q.Encode()
-
-		res, err := http.DefaultClient.Do(req)
-		require.NoError(t, err)
-		require.Equal(t, res.StatusCode, 200)
-		reader := csv.NewReader(res.Body)
+		rows, err := e.Rower.Rows(ctx, string(filter))
+		require.NoError(t, err, "error getting rows")
 		linesCount := 0
-		for {
-			ln, err := reader.Read()
-			if err == io.EOF {
-				break
-			}
+		for _, ln := range rows {
 			linesCount++
 			require.NoError(t, err, "error reading row")
 			require.True(t, ln[1] == portName1 || ln[1] == portANameTitle)
@@ -490,8 +439,6 @@ func TestLinksWithFilters(t *testing.T) {
 			}
 		}
 		require.Equal(t, 2, linesCount)
-		err = res.Body.Close()
-		require.NoError(t, err)
 	}
 }
 

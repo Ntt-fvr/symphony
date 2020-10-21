@@ -6,7 +6,6 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,7 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -120,37 +118,12 @@ func writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int, log l
 func (m *Exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.Log.For(ctx)
-	if viewer.FromContext(ctx).Features().Enabled("async_export") && r.URL.Path != "/single_work_order" {
-		et, err := createExportTask(ctx, r.URL, m.Log)
-		if err != nil {
-			log.Error("error in async export", zap.Error(err))
-			http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
-		} else {
-			writeExportTaskID(ctx, w, et.ID, m.Log)
-		}
+	et, err := createExportTask(ctx, r.URL, m.Log)
+	if err != nil {
+		log.Error("error in async export", zap.Error(err))
+		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 	} else {
-		filename := "export"
-		rout := mux.CurrentRoute(r)
-		if rout != nil {
-			filename = rout.GetName()
-		}
-		w.Header().Set("Content-Disposition", "attachment; filename="+filename+".csv")
-		w.Header().Set("Content-Type", "text/csv")
-		w.Header().Set("Transfer-Encoding", "chunked")
-
-		writer := csv.NewWriter(w)
-
-		filters := r.URL.Query().Get("filters")
-		rows, err := m.Rows(ctx, filters)
-		if err != nil {
-			log.Error("error in export", zap.Error(err))
-			http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
-		}
-
-		err = writer.WriteAll(rows)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)
-		}
+		writeExportTaskID(ctx, w, et.ID, m.Log)
 	}
 }
 

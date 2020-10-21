@@ -142,22 +142,17 @@ func newExporterResolver(t *testing.T, drv dialect.Driver) *testExporterResolver
 	return &testExporterResolver{r, drv, client, e}
 }
 
-func prepareHandlerAndExport(t *testing.T, r *testExporterResolver, e http.Handler) (context.Context, *http.Response) {
-	th := viewertest.TestHandler(t, e, r.Client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-
+func prepareHandlerAndExport(t *testing.T, r *testExporterResolver, e *pkgexporter.Exporter) (context.Context, *bytes.Buffer) {
+	var buf bytes.Buffer
 	ctx := viewertest.NewContext(context.Background(), r.Client)
 	pkgexporter.PrepareData(ctx, t)
 	locs := r.Client.Location.Query().AllX(ctx)
 	require.Len(t, locs, 3)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	return ctx, res
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	err = csv.NewWriter(&buf).WriteAll(rows)
+	require.NoError(t, err, "error writing rows")
+	return ctx, &buf
 }
 
 func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity ImportEntity, method pkgexporter.Method, skipLines, withVerify bool) {
