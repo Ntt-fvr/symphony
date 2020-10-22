@@ -296,7 +296,6 @@ resource aws_iam_group_policy_attachment ctf_admin {
 data aws_iam_policy_document ctf_fileserver {
   statement {
     actions = [
-      "s3:GetObject",
       "s3:PutObject",
       "s3:DeleteObject",
     ]
@@ -308,6 +307,7 @@ data aws_iam_policy_document ctf_fileserver {
 
   statement {
     actions = [
+      "s3:Get*",
       "s3:List*",
     ]
 
