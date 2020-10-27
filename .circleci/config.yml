@@ -60,7 +60,7 @@ executors:
   terraform:
     parameters:
       tag:
-        default: 0.13.4
+        default: 0.13.5
         type: string
     docker:
       - image: hashicorp/terraform:<<parameters.tag>>
