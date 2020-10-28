@@ -38,7 +38,9 @@ enum UserRole
 }
 
 enum DistanceUnit
-  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit") {
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit"
+  ) {
   KILOMETER
   MILE
 }
@@ -541,9 +543,10 @@ enum ActivityField
   CLOCK_OUT
 }
 
-enum ClockOutReason  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
-) {
+enum ClockOutReason
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
+  ) {
   PAUSE
   SUBMIT
   SUBMIT_INCOMPLETE
@@ -1405,7 +1408,7 @@ type PropertyType implements Node {
 
 input PropertyTypeInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
   ) {
   id: ID
   externalId: String
@@ -1482,10 +1485,16 @@ enum WorkOrderStatus
   ) {
   PLANNED
   IN_PROGRESS
-  PENDING @deprecated(reason: "Use new status `IN_PROGRESS` instead. Will be removed on 2020-11-01")
+  PENDING
+    @deprecated(
+      reason: "Use new status `IN_PROGRESS` instead. Will be removed on 2020-11-01"
+    )
   SUBMITTED
   CLOSED
-  DONE @deprecated(reason: "Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead. Will be removed on 2020-11-01")
+  DONE
+    @deprecated(
+      reason: "Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead. Will be removed on 2020-11-01"
+    )
   BLOCKED
 }
 
@@ -1521,7 +1530,7 @@ enum ImageEntity {
 
 enum PropertyEntity
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
   ) {
   EQUIPMENT
   SERVICE
@@ -2353,7 +2362,7 @@ operators to filter search by
 """
 enum FilterOperator
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
   ) {
   IS
   CONTAINS
@@ -2370,7 +2379,7 @@ what type of equipment we filter about
 """
 enum EquipmentFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
   ) {
   EQUIP_INST_NAME
   EQUIP_INST_EXTERNAL_ID
@@ -2382,7 +2391,7 @@ enum EquipmentFilterType
 
 input EquipmentFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
   ) {
   filterType: EquipmentFilterType!
   operator: FilterOperator!
@@ -2395,7 +2404,7 @@ input EquipmentFilterInput
 
 type PortSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
   ) {
   ports: [EquipmentPort]!
   count: Int!
@@ -2403,7 +2412,7 @@ type PortSearchResult
 
 type LinkSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
   ) {
   links: [Link]!
   count: Int!
@@ -2411,7 +2420,7 @@ type LinkSearchResult
 
 type LocationSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
   ) {
   locations: [Location]!
   count: Int!
@@ -2419,7 +2428,7 @@ type LocationSearchResult
 
 type ServiceSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
   ) {
   services: [Service]!
   count: Int!
@@ -2432,7 +2441,7 @@ type UserSearchResult {
 
 type WorkOrderSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
   ) {
   workOrders: [WorkOrder]!
   count: Int!
@@ -2453,7 +2462,7 @@ what filters should we apply on ports
 """
 enum PortFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
   ) {
   PORT_DEF
   PORT_INST_HAS_LINK
@@ -2485,7 +2494,7 @@ what filters should we apply on locations
 """
 enum LocationFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
   ) {
   LOCATION_INST
   LOCATION_INST_NAME
@@ -2500,7 +2509,7 @@ what filters should we apply on services
 """
 enum ServiceFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
   ) {
   SERVICE_INST_NAME
   SERVICE_STATUS
@@ -2538,7 +2547,7 @@ enum UsersGroupFilterType {
 
 input PortFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
   ) {
   filterType: PortFilterType!
   operator: FilterOperator!
@@ -2552,7 +2561,7 @@ input PortFilterInput
 
 input LinkFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
   ) {
   filterType: LinkFilterType!
   operator: FilterOperator!
@@ -2565,7 +2574,7 @@ input LinkFilterInput
 
 input LocationFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
   ) {
   filterType: LocationFilterType!
   operator: FilterOperator!
@@ -2579,7 +2588,7 @@ input LocationFilterInput
 
 input ServiceFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
   ) {
   filterType: ServiceFilterType!
   operator: FilterOperator!
@@ -2637,7 +2646,7 @@ enum WorkOrderFilterType
 
 input WorkOrderFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
   ) {
   filterType: WorkOrderFilterType!
   operator: FilterOperator!
@@ -3095,7 +3104,7 @@ type SurveyCellScan implements Node {
 
 type EquipmentSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
   ) {
   equipment: [Equipment]!
   count: Int!
@@ -3128,7 +3137,10 @@ input TechnicianWorkOrderCheckInInput {
   checkInTime: Time
 }
 
-enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType") {
+enum VariableType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType"
+  ) {
   STRING
   INT
   DATE
@@ -3139,13 +3151,19 @@ enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent
   USER
 }
 
-enum VariableUsage @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage") {
+enum VariableUsage
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage"
+  ) {
   INPUT
   OUTPUT
   INPUT_AND_OUTPUT
 }
 
-type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+type VariableDefinition
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition"
+  ) {
   key: String!
   name: String!
   type: VariableType!
@@ -3157,7 +3175,10 @@ type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/p
   nestedVariables(value: String!): [VariableDefinition!]!
 }
 
-input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+input VariableDefinitionInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition"
+  ) {
   key: String!
   type: VariableType!
   mandatory: Boolean
@@ -3166,21 +3187,33 @@ input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symp
   defaultValue: String
 }
 
-type ActionType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType") {
-id: ActionTypeId!
-description: String!
-variables: [VariableDefinition!]!
+type ActionType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType"
+  ) {
+  id: ActionTypeId!
+  description: String!
+  variables: [VariableDefinition!]!
 }
 
-enum TriggerTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID") {
+enum TriggerTypeId
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID"
+  ) {
   work_order
 }
 
-enum ActionTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID") {
+enum ActionTypeId
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID"
+  ) {
   work_order
 }
 
-type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType") {
+type TriggerType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType"
+  ) {
   id: TriggerTypeId!
   description: String!
   variables: [VariableDefinition!]!
@@ -3199,8 +3232,10 @@ type Block implements Node {
   uiRepresentation: BlockUIRepresentation
 }
 
-
-type BlockVariable @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable") {
+type BlockVariable
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
+  ) {
   block: Block!
   outputParamDefinition: VariableDefinition!
 }
@@ -3210,7 +3245,10 @@ input BlockVariableInput {
   variableDefinitionKey: String!
 }
 
-type VariableExpression @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression") {
+type VariableExpression
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
+  ) {
   definition: VariableDefinition!
   expression: String!
   blockVariables: [BlockVariable!]
@@ -3222,31 +3260,35 @@ input VariableExpressionInput {
   blockVariables: [BlockVariableInput!]
 }
 
-type BlockUIRepresentation @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
-) {
+type BlockUIRepresentation
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+  ) {
   name: String!
   xPosition: Int!
   yPosition: Int!
 }
 
-input BlockUIRepresentationInput @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
-) {
+input BlockUIRepresentationInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+  ) {
   name: String!
   xPosition: Int!
   yPosition: Int!
 }
 
-enum EntryPointRole @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
-) {
+enum EntryPointRole
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
+  ) {
   DEFAULT
 }
 
-enum ExitPointRole @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
-) {
+enum ExitPointRole
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
+  ) {
   DEFAULT
   DECISION
 }
@@ -3265,7 +3307,7 @@ type EntryPoint implements Node {
   prevExitPoints: [ExitPoint!]!
 }
 
-type StartBlock  {
+type StartBlock {
   paramDefinitions: [VariableDefinition!]!
   exitPoint: ExitPoint!
 }
@@ -3310,7 +3352,14 @@ type ActionBlock {
   exitPoint: ExitPoint!
 }
 
-union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
+union BlockDetails =
+    StartBlock
+  | EndBlock
+  | DecisionBlock
+  | GotoBlock
+  | SubflowBlock
+  | TriggerBlock
+  | ActionBlock
 
 input StartBlockInput {
   cid: String!
@@ -3405,13 +3454,17 @@ input EditBlockInput {
 
 # Flow Definitions
 
-enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
+enum FlowStatus
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
   PUBLISHED
   UNPUBLISHED
   ARCHIVED
 }
 
-enum FlowNewInstancesPolicy @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy") {
+enum FlowNewInstancesPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy"
+  ) {
   ENABLED
   DISABLED
 }
@@ -3437,7 +3490,10 @@ type FlowDraft implements Node {
   connectors: [Connector!]!
 }
 
-enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
+enum FlowInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
+  ) {
   IN_PROGRESS
   FAILED
   COMPLETED
@@ -3461,9 +3517,10 @@ input PublishFlowInput {
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
-input VariableValue @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
-) {
+input VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
   variableDefinitionKey: String!
   value: String!
 }
@@ -3979,46 +4036,26 @@ type Mutation {
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!
-  @deprecated(
-    reason: "Use `technicianWorkOrderCheckOut` instead. Will be removed on 2020-11-01"
-  )
+    @deprecated(
+      reason: "Use `technicianWorkOrderCheckOut` instead. Will be removed on 2020-11-01"
+    )
   addReportFilter(input: ReportFilterInput!): ReportFilter!
   editReportFilter(input: EditReportFilterInput!): ReportFilter!
   deleteReportFilter(id: ID!): Boolean!
   addPermissionsPolicy(input: AddPermissionsPolicyInput!): PermissionsPolicy!
   editPermissionsPolicy(input: EditPermissionsPolicyInput!): PermissionsPolicy!
   deletePermissionsPolicy(id: ID!): Boolean!
-  addStartBlock(
-    flowDraftId: ID!
-    input: StartBlockInput!): Block!
-  addEndBlock(
-    flowDraftId: ID!
-    input: EndBlockInput!): Block!
-  addDecisionBlock(
-    flowDraftId: ID!
-    input: DecisionBlockInput!): Block!
-  addGotoBlock(
-    flowDraftId: ID!
-    input: GotoBlockInput!): Block!
-  addSubflowBlock(
-    flowDraftId: ID!
-    input: SubflowBlockInput!): Block!
-  addTriggerBlock(
-    flowDraftId: ID!
-    input: TriggerBlockInput!): Block!
-  addActionBlock(
-    flowDraftId: ID!
-    input: ActionBlockInput!): Block!
+  addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
+  addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
+  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
+  addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
+  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
+  addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
+  addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
-  addConnector(
-    flowDraftId: ID!
-    input: ConnectorInput!
-  ): Connector!
-  deleteConnector(
-    flowDraftId: ID!
-    input: ConnectorInput!
-  ): Boolean!
+  addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
+  deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
   publishFlow(input: PublishFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
@@ -4026,8 +4063,29 @@ type Mutation {
   startFlow(input: StartFlowInput!): FlowInstance!
 }
 
+"""
+Payload of the workOrderStatusChanged subscription.
+"""
+type WorkOrderStatusChangedPayload {
+  """
+  Previous status of the work order.
+  """
+  from: WorkOrderStatus
+
+  """
+  Current status of the work order.
+  """
+  to: WorkOrderStatus!
+
+  """
+  The work order of which status was modified.
+  """
+  workOrder: WorkOrder!
+}
+
 type Subscription {
   workOrderAdded: WorkOrder
   workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
 }

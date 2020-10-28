@@ -9,10 +9,12 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
 )
 
@@ -109,6 +111,10 @@ func (r subscriptionResolver) WorkOrderDone(ctx context.Context) (<-chan *ent.Wo
 		return nil, err
 	}
 	return events.(chan *ent.WorkOrder), nil
+}
+
+func (r subscriptionResolver) WorkOrderStatusChanged(context.Context) (<-chan *models.WorkOrderStatusChangedPayload, error) {
+	return nil, gqlerror.Errorf("Not implemented")
 }
 
 func (r subscriptionResolver) FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error) {

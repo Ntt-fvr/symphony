@@ -1084,9 +1084,10 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		FlowInstanceDone func(childComplexity int) int
-		WorkOrderAdded   func(childComplexity int) int
-		WorkOrderDone    func(childComplexity int) int
+		FlowInstanceDone       func(childComplexity int) int
+		WorkOrderAdded         func(childComplexity int) int
+		WorkOrderDone          func(childComplexity int) int
+		WorkOrderStatusChanged func(childComplexity int) int
 	}
 
 	Survey struct {
@@ -1347,6 +1348,12 @@ type ComplexityRoot struct {
 	WorkOrderSearchResult struct {
 		Count      func(childComplexity int) int
 		WorkOrders func(childComplexity int) int
+	}
+
+	WorkOrderStatusChangedPayload struct {
+		From      func(childComplexity int) int
+		To        func(childComplexity int) int
+		WorkOrder func(childComplexity int) int
 	}
 
 	WorkOrderTemplate struct {
@@ -1745,6 +1752,7 @@ type ServiceTypeResolver interface {
 type SubscriptionResolver interface {
 	WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error)
 	WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error)
+	WorkOrderStatusChanged(ctx context.Context) (<-chan *models.WorkOrderStatusChangedPayload, error)
 	FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error)
 }
 type SurveyResolver interface {
@@ -6881,6 +6889,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.WorkOrderDone(childComplexity), true
 
+	case "Subscription.workOrderStatusChanged":
+		if e.complexity.Subscription.WorkOrderStatusChanged == nil {
+			break
+		}
+
+		return e.complexity.Subscription.WorkOrderStatusChanged(childComplexity), true
+
 	case "Survey.completionTimestamp":
 		if e.complexity.Survey.CompletionTimestamp == nil {
 			break
@@ -8144,6 +8159,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrderSearchResult.WorkOrders(childComplexity), true
 
+	case "WorkOrderStatusChangedPayload.from":
+		if e.complexity.WorkOrderStatusChangedPayload.From == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderStatusChangedPayload.From(childComplexity), true
+
+	case "WorkOrderStatusChangedPayload.to":
+		if e.complexity.WorkOrderStatusChangedPayload.To == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderStatusChangedPayload.To(childComplexity), true
+
+	case "WorkOrderStatusChangedPayload.workOrder":
+		if e.complexity.WorkOrderStatusChangedPayload.WorkOrder == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderStatusChangedPayload.WorkOrder(childComplexity), true
+
 	case "WorkOrderTemplate.assigneeCanCompleteWorkOrder":
 		if e.complexity.WorkOrderTemplate.AssigneeCanCompleteWorkOrder == nil {
 			break
@@ -8461,7 +8497,9 @@ enum UserRole
 }
 
 enum DistanceUnit
-  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit") {
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit"
+  ) {
   KILOMETER
   MILE
 }
@@ -8964,9 +9002,10 @@ enum ActivityField
   CLOCK_OUT
 }
 
-enum ClockOutReason  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
-) {
+enum ClockOutReason
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
+  ) {
   PAUSE
   SUBMIT
   SUBMIT_INCOMPLETE
@@ -9828,7 +9867,7 @@ type PropertyType implements Node {
 
 input PropertyTypeInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
   ) {
   id: ID
   externalId: String
@@ -9905,10 +9944,16 @@ enum WorkOrderStatus
   ) {
   PLANNED
   IN_PROGRESS
-  PENDING @deprecated(reason: "Use new status ` + "`" + `IN_PROGRESS` + "`" + ` instead. Will be removed on 2020-11-01")
+  PENDING
+    @deprecated(
+      reason: "Use new status ` + "`" + `IN_PROGRESS` + "`" + ` instead. Will be removed on 2020-11-01"
+    )
   SUBMITTED
   CLOSED
-  DONE @deprecated(reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01")
+  DONE
+    @deprecated(
+      reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01"
+    )
   BLOCKED
 }
 
@@ -9944,7 +9989,7 @@ enum ImageEntity {
 
 enum PropertyEntity
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
   ) {
   EQUIPMENT
   SERVICE
@@ -10776,7 +10821,7 @@ operators to filter search by
 """
 enum FilterOperator
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
   ) {
   IS
   CONTAINS
@@ -10793,7 +10838,7 @@ what type of equipment we filter about
 """
 enum EquipmentFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
   ) {
   EQUIP_INST_NAME
   EQUIP_INST_EXTERNAL_ID
@@ -10805,7 +10850,7 @@ enum EquipmentFilterType
 
 input EquipmentFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
   ) {
   filterType: EquipmentFilterType!
   operator: FilterOperator!
@@ -10818,7 +10863,7 @@ input EquipmentFilterInput
 
 type PortSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
   ) {
   ports: [EquipmentPort]!
   count: Int!
@@ -10826,7 +10871,7 @@ type PortSearchResult
 
 type LinkSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
   ) {
   links: [Link]!
   count: Int!
@@ -10834,7 +10879,7 @@ type LinkSearchResult
 
 type LocationSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
   ) {
   locations: [Location]!
   count: Int!
@@ -10842,7 +10887,7 @@ type LocationSearchResult
 
 type ServiceSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
   ) {
   services: [Service]!
   count: Int!
@@ -10855,7 +10900,7 @@ type UserSearchResult {
 
 type WorkOrderSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
   ) {
   workOrders: [WorkOrder]!
   count: Int!
@@ -10876,7 +10921,7 @@ what filters should we apply on ports
 """
 enum PortFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
   ) {
   PORT_DEF
   PORT_INST_HAS_LINK
@@ -10908,7 +10953,7 @@ what filters should we apply on locations
 """
 enum LocationFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
   ) {
   LOCATION_INST
   LOCATION_INST_NAME
@@ -10923,7 +10968,7 @@ what filters should we apply on services
 """
 enum ServiceFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
   ) {
   SERVICE_INST_NAME
   SERVICE_STATUS
@@ -10961,7 +11006,7 @@ enum UsersGroupFilterType {
 
 input PortFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
   ) {
   filterType: PortFilterType!
   operator: FilterOperator!
@@ -10975,7 +11020,7 @@ input PortFilterInput
 
 input LinkFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
   ) {
   filterType: LinkFilterType!
   operator: FilterOperator!
@@ -10988,7 +11033,7 @@ input LinkFilterInput
 
 input LocationFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
   ) {
   filterType: LocationFilterType!
   operator: FilterOperator!
@@ -11002,7 +11047,7 @@ input LocationFilterInput
 
 input ServiceFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
   ) {
   filterType: ServiceFilterType!
   operator: FilterOperator!
@@ -11060,7 +11105,7 @@ enum WorkOrderFilterType
 
 input WorkOrderFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
   ) {
   filterType: WorkOrderFilterType!
   operator: FilterOperator!
@@ -11518,7 +11563,7 @@ type SurveyCellScan implements Node {
 
 type EquipmentSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
   ) {
   equipment: [Equipment]!
   count: Int!
@@ -11551,7 +11596,10 @@ input TechnicianWorkOrderCheckInInput {
   checkInTime: Time
 }
 
-enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType") {
+enum VariableType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType"
+  ) {
   STRING
   INT
   DATE
@@ -11562,13 +11610,19 @@ enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent
   USER
 }
 
-enum VariableUsage @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage") {
+enum VariableUsage
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage"
+  ) {
   INPUT
   OUTPUT
   INPUT_AND_OUTPUT
 }
 
-type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+type VariableDefinition
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition"
+  ) {
   key: String!
   name: String!
   type: VariableType!
@@ -11580,7 +11634,10 @@ type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/p
   nestedVariables(value: String!): [VariableDefinition!]!
 }
 
-input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+input VariableDefinitionInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition"
+  ) {
   key: String!
   type: VariableType!
   mandatory: Boolean
@@ -11589,21 +11646,33 @@ input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symp
   defaultValue: String
 }
 
-type ActionType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType") {
-id: ActionTypeId!
-description: String!
-variables: [VariableDefinition!]!
+type ActionType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType"
+  ) {
+  id: ActionTypeId!
+  description: String!
+  variables: [VariableDefinition!]!
 }
 
-enum TriggerTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID") {
+enum TriggerTypeId
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID"
+  ) {
   work_order
 }
 
-enum ActionTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID") {
+enum ActionTypeId
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID"
+  ) {
   work_order
 }
 
-type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType") {
+type TriggerType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType"
+  ) {
   id: TriggerTypeId!
   description: String!
   variables: [VariableDefinition!]!
@@ -11622,8 +11691,10 @@ type Block implements Node {
   uiRepresentation: BlockUIRepresentation
 }
 
-
-type BlockVariable @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable") {
+type BlockVariable
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
+  ) {
   block: Block!
   outputParamDefinition: VariableDefinition!
 }
@@ -11633,7 +11704,10 @@ input BlockVariableInput {
   variableDefinitionKey: String!
 }
 
-type VariableExpression @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression") {
+type VariableExpression
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
+  ) {
   definition: VariableDefinition!
   expression: String!
   blockVariables: [BlockVariable!]
@@ -11645,31 +11719,35 @@ input VariableExpressionInput {
   blockVariables: [BlockVariableInput!]
 }
 
-type BlockUIRepresentation @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
-) {
+type BlockUIRepresentation
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+  ) {
   name: String!
   xPosition: Int!
   yPosition: Int!
 }
 
-input BlockUIRepresentationInput @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
-) {
+input BlockUIRepresentationInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+  ) {
   name: String!
   xPosition: Int!
   yPosition: Int!
 }
 
-enum EntryPointRole @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
-) {
+enum EntryPointRole
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
+  ) {
   DEFAULT
 }
 
-enum ExitPointRole @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
-) {
+enum ExitPointRole
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
+  ) {
   DEFAULT
   DECISION
 }
@@ -11688,7 +11766,7 @@ type EntryPoint implements Node {
   prevExitPoints: [ExitPoint!]!
 }
 
-type StartBlock  {
+type StartBlock {
   paramDefinitions: [VariableDefinition!]!
   exitPoint: ExitPoint!
 }
@@ -11733,7 +11811,14 @@ type ActionBlock {
   exitPoint: ExitPoint!
 }
 
-union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
+union BlockDetails =
+    StartBlock
+  | EndBlock
+  | DecisionBlock
+  | GotoBlock
+  | SubflowBlock
+  | TriggerBlock
+  | ActionBlock
 
 input StartBlockInput {
   cid: String!
@@ -11828,13 +11913,17 @@ input EditBlockInput {
 
 # Flow Definitions
 
-enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
+enum FlowStatus
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
   PUBLISHED
   UNPUBLISHED
   ARCHIVED
 }
 
-enum FlowNewInstancesPolicy @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy") {
+enum FlowNewInstancesPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy"
+  ) {
   ENABLED
   DISABLED
 }
@@ -11860,7 +11949,10 @@ type FlowDraft implements Node {
   connectors: [Connector!]!
 }
 
-enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
+enum FlowInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
+  ) {
   IN_PROGRESS
   FAILED
   COMPLETED
@@ -11884,9 +11976,10 @@ input PublishFlowInput {
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
-input VariableValue @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
-) {
+input VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
   variableDefinitionKey: String!
   value: String!
 }
@@ -12402,46 +12495,26 @@ type Mutation {
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!
-  @deprecated(
-    reason: "Use ` + "`" + `technicianWorkOrderCheckOut` + "`" + ` instead. Will be removed on 2020-11-01"
-  )
+    @deprecated(
+      reason: "Use ` + "`" + `technicianWorkOrderCheckOut` + "`" + ` instead. Will be removed on 2020-11-01"
+    )
   addReportFilter(input: ReportFilterInput!): ReportFilter!
   editReportFilter(input: EditReportFilterInput!): ReportFilter!
   deleteReportFilter(id: ID!): Boolean!
   addPermissionsPolicy(input: AddPermissionsPolicyInput!): PermissionsPolicy!
   editPermissionsPolicy(input: EditPermissionsPolicyInput!): PermissionsPolicy!
   deletePermissionsPolicy(id: ID!): Boolean!
-  addStartBlock(
-    flowDraftId: ID!
-    input: StartBlockInput!): Block!
-  addEndBlock(
-    flowDraftId: ID!
-    input: EndBlockInput!): Block!
-  addDecisionBlock(
-    flowDraftId: ID!
-    input: DecisionBlockInput!): Block!
-  addGotoBlock(
-    flowDraftId: ID!
-    input: GotoBlockInput!): Block!
-  addSubflowBlock(
-    flowDraftId: ID!
-    input: SubflowBlockInput!): Block!
-  addTriggerBlock(
-    flowDraftId: ID!
-    input: TriggerBlockInput!): Block!
-  addActionBlock(
-    flowDraftId: ID!
-    input: ActionBlockInput!): Block!
+  addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
+  addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
+  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
+  addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
+  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
+  addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
+  addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
-  addConnector(
-    flowDraftId: ID!
-    input: ConnectorInput!
-  ): Connector!
-  deleteConnector(
-    flowDraftId: ID!
-    input: ConnectorInput!
-  ): Boolean!
+  addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
+  deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
   publishFlow(input: PublishFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
@@ -12449,9 +12522,30 @@ type Mutation {
   startFlow(input: StartFlowInput!): FlowInstance!
 }
 
+"""
+Payload of the workOrderStatusChanged subscription.
+"""
+type WorkOrderStatusChangedPayload {
+  """
+  Previous status of the work order.
+  """
+  from: WorkOrderStatus
+
+  """
+  Current status of the work order.
+  """
+  to: WorkOrderStatus!
+
+  """
+  The work order of which status was modified.
+  """
+  workOrder: WorkOrder!
+}
+
 type Subscription {
   workOrderAdded: WorkOrder
   workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
 }
 `, BuiltIn: false},
@@ -39077,6 +39171,51 @@ func (ec *executionContext) _Subscription_workOrderDone(ctx context.Context, fie
 	}
 }
 
+func (ec *executionContext) _Subscription_workOrderStatusChanged(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().WorkOrderStatusChanged(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *models.WorkOrderStatusChangedPayload)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderStatusChangedPayload(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _Subscription_flowInstanceDone(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -45189,6 +45328,108 @@ func (ec *executionContext) _WorkOrderSearchResult_count(ctx context.Context, fi
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload_from(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrderStatusChangedPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.From, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*workorder.Status)
+	fc.Result = res
+	return ec.marshalOWorkOrderStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload_to(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrderStatusChangedPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.To, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(workorder.Status)
+	fc.Result = res
+	return ec.marshalNWorkOrderStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload_workOrder(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrderStatusChangedPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrder)
+	fc.Result = res
+	return ec.marshalNWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkOrderTemplate_name(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderTemplate) (ret graphql.Marshaler) {
@@ -60867,6 +61108,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_workOrderAdded(ctx, fields[0])
 	case "workOrderDone":
 		return ec._Subscription_workOrderDone(ctx, fields[0])
+	case "workOrderStatusChanged":
+		return ec._Subscription_workOrderStatusChanged(ctx, fields[0])
 	case "flowInstanceDone":
 		return ec._Subscription_flowInstanceDone(ctx, fields[0])
 	default:
@@ -62517,6 +62760,40 @@ func (ec *executionContext) _WorkOrderSearchResult(ctx context.Context, sel ast.
 			}
 		case "count":
 			out.Values[i] = ec._WorkOrderSearchResult_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var workOrderStatusChangedPayloadImplementors = []string{"WorkOrderStatusChangedPayload"}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, obj *models.WorkOrderStatusChangedPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workOrderStatusChangedPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkOrderStatusChangedPayload")
+		case "from":
+			out.Values[i] = ec._WorkOrderStatusChangedPayload_from(ctx, field, obj)
+		case "to":
+			out.Values[i] = ec._WorkOrderStatusChangedPayload_to(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workOrder":
+			out.Values[i] = ec._WorkOrderStatusChangedPayload_workOrder(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -68342,6 +68619,20 @@ func (ec *executionContext) unmarshalNWorkOrderStatus2githubᚗcomᚋfacebookinc
 
 func (ec *executionContext) marshalNWorkOrderStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx context.Context, sel ast.SelectionSet, v workorder.Status) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v models.WorkOrderStatusChangedPayload) graphql.Marshaler {
+	return ec._WorkOrderStatusChangedPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v *models.WorkOrderStatusChangedPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkOrderStatusChangedPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNWorkOrderType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderType(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrderType) graphql.Marshaler {
