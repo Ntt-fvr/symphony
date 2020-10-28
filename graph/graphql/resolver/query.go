@@ -462,13 +462,16 @@ var ErrMultipleEndToEndPath = errors.New("multiple paths found")
 
 func (r queryResolver) EndToEndPath(ctx context.Context, linkID *int, portID *int) (*models.EndToEndPath, error) {
 	client := r.ClientFrom(ctx)
-	// portId is a backplane connected port
 	if portID != nil {
-		currentPort, err := client.EquipmentPort.Get(ctx, *portID)
+		currentPort, err := client.EquipmentPort.
+			Query().
+			WithLink().
+			Where(equipmentport.ID(*portID)).
+			First(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("unable to find port: %w", err)
 		}
-		backplanePort, err := r.getNextConnectedPortWithLink(ctx, currentPort)
+		_, err = r.getNextConnectedPortWithLink(ctx, currentPort)
 		switch {
 		case ent.IsNotFound(err):
 			return &models.EndToEndPath{Ports: []*ent.EquipmentPort{currentPort}}, nil
@@ -477,11 +480,17 @@ func (r queryResolver) EndToEndPath(ctx context.Context, linkID *int, portID *in
 		case err != nil:
 			return nil, fmt.Errorf("unable to find backplane port: %w", err)
 		}
-		currentLink, err := backplanePort.Edges.LinkOrErr()
+		currentLink, err := currentPort.Edges.LinkOrErr()
 		if err != nil {
-			return &models.EndToEndPath{Ports: []*ent.EquipmentPort{currentPort, backplanePort}}, nil
+			return r.traverseEndToEndPath(ctx, nil, currentPort)
 		}
-		return r.traverseEndToEndPathInLink(ctx, currentLink)
+		nextPort, err := currentLink.QueryPorts().
+			Where(equipmentport.IDNotIn(currentPort.ID)).
+			First(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("unable to find next port: %w", err)
+		}
+		return r.traverseEndToEndPath(ctx, currentLink, currentPort, nextPort)
 	}
 	if linkID == nil {
 		return nil, errors.New("a portId or linkId is required")
@@ -490,16 +499,18 @@ func (r queryResolver) EndToEndPath(ctx context.Context, linkID *int, portID *in
 	if err != nil {
 		return nil, fmt.Errorf("unable to find link for port: %w", err)
 	}
-	return r.traverseEndToEndPathInLink(ctx, currentLink)
+	return r.traverseEndToEndPath(ctx, currentLink, currentLink.Edges.Ports...)
 }
 
-func (r queryResolver) traverseEndToEndPathInLink(ctx context.Context, item *ent.Link) (*models.EndToEndPath, error) {
-	if len(item.Edges.Ports) != 2 {
-		return nil, errors.New("the number of ports on link is invalid")
+func (r queryResolver) traverseEndToEndPath(ctx context.Context, initialLink *ent.Link, ports ...*ent.EquipmentPort) (*models.EndToEndPath, error) {
+	result := models.EndToEndPath{Links: []*ent.Link{}, Ports: []*ent.EquipmentPort{}}
+	switch {
+	case initialLink != nil:
+		result.Links = append(result.Links, initialLink)
+	case len(ports) == 1:
+		result.Ports = append(result.Ports, ports[0])
 	}
-	result := models.EndToEndPath{Links: []*ent.Link{item}, Ports: []*ent.EquipmentPort{}}
-	// traverse left,right
-	for _, port := range item.Edges.Ports {
+	for _, port := range ports {
 		for {
 			nextBackPlanePort, err := r.getNextConnectedPortWithLink(ctx, port)
 			if err != nil {
