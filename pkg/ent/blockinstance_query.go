@@ -296,13 +296,19 @@ func (biq *BlockInstanceQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (biq *BlockInstanceQuery) Clone() *BlockInstanceQuery {
+	if biq == nil {
+		return nil
+	}
 	return &BlockInstanceQuery{
-		config:     biq.config,
-		limit:      biq.limit,
-		offset:     biq.offset,
-		order:      append([]OrderFunc{}, biq.order...),
-		unique:     append([]string{}, biq.unique...),
-		predicates: append([]predicate.BlockInstance{}, biq.predicates...),
+		config:              biq.config,
+		limit:               biq.limit,
+		offset:              biq.offset,
+		order:               append([]OrderFunc{}, biq.order...),
+		unique:              append([]string{}, biq.unique...),
+		predicates:          append([]predicate.BlockInstance{}, biq.predicates...),
+		withFlowInstance:    biq.withFlowInstance.Clone(),
+		withBlock:           biq.withBlock.Clone(),
+		withSubflowInstance: biq.withSubflowInstance.Clone(),
 		// clone intermediate query.
 		sql:  biq.sql.Clone(),
 		path: biq.path,

@@ -320,13 +320,20 @@ func (wotq *WorkOrderTypeQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (wotq *WorkOrderTypeQuery) Clone() *WorkOrderTypeQuery {
+	if wotq == nil {
+		return nil
+	}
 	return &WorkOrderTypeQuery{
-		config:     wotq.config,
-		limit:      wotq.limit,
-		offset:     wotq.offset,
-		order:      append([]OrderFunc{}, wotq.order...),
-		unique:     append([]string{}, wotq.unique...),
-		predicates: append([]predicate.WorkOrderType{}, wotq.predicates...),
+		config:                           wotq.config,
+		limit:                            wotq.limit,
+		offset:                           wotq.offset,
+		order:                            append([]OrderFunc{}, wotq.order...),
+		unique:                           append([]string{}, wotq.unique...),
+		predicates:                       append([]predicate.WorkOrderType{}, wotq.predicates...),
+		withPropertyTypes:                wotq.withPropertyTypes.Clone(),
+		withCheckListCategoryDefinitions: wotq.withCheckListCategoryDefinitions.Clone(),
+		withWorkOrders:                   wotq.withWorkOrders.Clone(),
+		withDefinitions:                  wotq.withDefinitions.Clone(),
 		// clone intermediate query.
 		sql:  wotq.sql.Clone(),
 		path: wotq.path,

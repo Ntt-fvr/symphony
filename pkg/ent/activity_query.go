@@ -272,13 +272,18 @@ func (aq *ActivityQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (aq *ActivityQuery) Clone() *ActivityQuery {
+	if aq == nil {
+		return nil
+	}
 	return &ActivityQuery{
-		config:     aq.config,
-		limit:      aq.limit,
-		offset:     aq.offset,
-		order:      append([]OrderFunc{}, aq.order...),
-		unique:     append([]string{}, aq.unique...),
-		predicates: append([]predicate.Activity{}, aq.predicates...),
+		config:        aq.config,
+		limit:         aq.limit,
+		offset:        aq.offset,
+		order:         append([]OrderFunc{}, aq.order...),
+		unique:        append([]string{}, aq.unique...),
+		predicates:    append([]predicate.Activity{}, aq.predicates...),
+		withAuthor:    aq.withAuthor.Clone(),
+		withWorkOrder: aq.withWorkOrder.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,

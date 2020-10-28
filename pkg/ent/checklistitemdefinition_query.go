@@ -248,13 +248,17 @@ func (clidq *CheckListItemDefinitionQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (clidq *CheckListItemDefinitionQuery) Clone() *CheckListItemDefinitionQuery {
+	if clidq == nil {
+		return nil
+	}
 	return &CheckListItemDefinitionQuery{
-		config:     clidq.config,
-		limit:      clidq.limit,
-		offset:     clidq.offset,
-		order:      append([]OrderFunc{}, clidq.order...),
-		unique:     append([]string{}, clidq.unique...),
-		predicates: append([]predicate.CheckListItemDefinition{}, clidq.predicates...),
+		config:                          clidq.config,
+		limit:                           clidq.limit,
+		offset:                          clidq.offset,
+		order:                           append([]OrderFunc{}, clidq.order...),
+		unique:                          append([]string{}, clidq.unique...),
+		predicates:                      append([]predicate.CheckListItemDefinition{}, clidq.predicates...),
+		withCheckListCategoryDefinition: clidq.withCheckListCategoryDefinition.Clone(),
 		// clone intermediate query.
 		sql:  clidq.sql.Clone(),
 		path: clidq.path,

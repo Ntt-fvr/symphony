@@ -369,13 +369,22 @@ func (etq *EquipmentTypeQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (etq *EquipmentTypeQuery) Clone() *EquipmentTypeQuery {
+	if etq == nil {
+		return nil
+	}
 	return &EquipmentTypeQuery{
-		config:     etq.config,
-		limit:      etq.limit,
-		offset:     etq.offset,
-		order:      append([]OrderFunc{}, etq.order...),
-		unique:     append([]string{}, etq.unique...),
-		predicates: append([]predicate.EquipmentType{}, etq.predicates...),
+		config:                         etq.config,
+		limit:                          etq.limit,
+		offset:                         etq.offset,
+		order:                          append([]OrderFunc{}, etq.order...),
+		unique:                         append([]string{}, etq.unique...),
+		predicates:                     append([]predicate.EquipmentType{}, etq.predicates...),
+		withPortDefinitions:            etq.withPortDefinitions.Clone(),
+		withPositionDefinitions:        etq.withPositionDefinitions.Clone(),
+		withPropertyTypes:              etq.withPropertyTypes.Clone(),
+		withEquipment:                  etq.withEquipment.Clone(),
+		withCategory:                   etq.withCategory.Clone(),
+		withServiceEndpointDefinitions: etq.withServiceEndpointDefinitions.Clone(),
 		// clone intermediate query.
 		sql:  etq.sql.Clone(),
 		path: etq.path,

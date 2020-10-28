@@ -296,13 +296,19 @@ func (swfsq *SurveyWiFiScanQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (swfsq *SurveyWiFiScanQuery) Clone() *SurveyWiFiScanQuery {
+	if swfsq == nil {
+		return nil
+	}
 	return &SurveyWiFiScanQuery{
-		config:     swfsq.config,
-		limit:      swfsq.limit,
-		offset:     swfsq.offset,
-		order:      append([]OrderFunc{}, swfsq.order...),
-		unique:     append([]string{}, swfsq.unique...),
-		predicates: append([]predicate.SurveyWiFiScan{}, swfsq.predicates...),
+		config:             swfsq.config,
+		limit:              swfsq.limit,
+		offset:             swfsq.offset,
+		order:              append([]OrderFunc{}, swfsq.order...),
+		unique:             append([]string{}, swfsq.unique...),
+		predicates:         append([]predicate.SurveyWiFiScan{}, swfsq.predicates...),
+		withChecklistItem:  swfsq.withChecklistItem.Clone(),
+		withSurveyQuestion: swfsq.withSurveyQuestion.Clone(),
+		withLocation:       swfsq.withLocation.Clone(),
 		// clone intermediate query.
 		sql:  swfsq.sql.Clone(),
 		path: swfsq.path,

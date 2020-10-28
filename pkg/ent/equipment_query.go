@@ -464,13 +464,26 @@ func (eq *EquipmentQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (eq *EquipmentQuery) Clone() *EquipmentQuery {
+	if eq == nil {
+		return nil
+	}
 	return &EquipmentQuery{
-		config:     eq.config,
-		limit:      eq.limit,
-		offset:     eq.offset,
-		order:      append([]OrderFunc{}, eq.order...),
-		unique:     append([]string{}, eq.unique...),
-		predicates: append([]predicate.Equipment{}, eq.predicates...),
+		config:             eq.config,
+		limit:              eq.limit,
+		offset:             eq.offset,
+		order:              append([]OrderFunc{}, eq.order...),
+		unique:             append([]string{}, eq.unique...),
+		predicates:         append([]predicate.Equipment{}, eq.predicates...),
+		withType:           eq.withType.Clone(),
+		withLocation:       eq.withLocation.Clone(),
+		withParentPosition: eq.withParentPosition.Clone(),
+		withPositions:      eq.withPositions.Clone(),
+		withPorts:          eq.withPorts.Clone(),
+		withWorkOrder:      eq.withWorkOrder.Clone(),
+		withProperties:     eq.withProperties.Clone(),
+		withFiles:          eq.withFiles.Clone(),
+		withHyperlinks:     eq.withHyperlinks.Clone(),
+		withEndpoints:      eq.withEndpoints.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,

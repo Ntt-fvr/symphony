@@ -511,13 +511,28 @@ func (lq *LocationQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (lq *LocationQuery) Clone() *LocationQuery {
+	if lq == nil {
+		return nil
+	}
 	return &LocationQuery{
-		config:     lq.config,
-		limit:      lq.limit,
-		offset:     lq.offset,
-		order:      append([]OrderFunc{}, lq.order...),
-		unique:     append([]string{}, lq.unique...),
-		predicates: append([]predicate.Location{}, lq.predicates...),
+		config:         lq.config,
+		limit:          lq.limit,
+		offset:         lq.offset,
+		order:          append([]OrderFunc{}, lq.order...),
+		unique:         append([]string{}, lq.unique...),
+		predicates:     append([]predicate.Location{}, lq.predicates...),
+		withType:       lq.withType.Clone(),
+		withParent:     lq.withParent.Clone(),
+		withChildren:   lq.withChildren.Clone(),
+		withFiles:      lq.withFiles.Clone(),
+		withHyperlinks: lq.withHyperlinks.Clone(),
+		withEquipment:  lq.withEquipment.Clone(),
+		withProperties: lq.withProperties.Clone(),
+		withSurvey:     lq.withSurvey.Clone(),
+		withWifiScan:   lq.withWifiScan.Clone(),
+		withCellScan:   lq.withCellScan.Clone(),
+		withWorkOrders: lq.withWorkOrders.Clone(),
+		withFloorPlans: lq.withFloorPlans.Clone(),
 		// clone intermediate query.
 		sql:  lq.sql.Clone(),
 		path: lq.path,

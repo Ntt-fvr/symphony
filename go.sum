@@ -236,6 +236,8 @@ github.com/facebook/ent v0.4.4-0.20201015070947-119cdf207ef7/go.mod h1:TRP7RemIs
 github.com/facebook/ent v0.4.4-0.20201018111720-17ee19e23a5c/go.mod h1:TRP7RemIs+wOZ2AkLYe+c2IyByg82XxSajjcUdZm1Rc=
 github.com/facebook/ent v0.4.4-0.20201019115128-98aeb19013f1 h1:fUz6h13o1ZlCy2PJwm/pVXCe6msMEs6CIaJnjJvIRpU=
 github.com/facebook/ent v0.4.4-0.20201019115128-98aeb19013f1/go.mod h1:HrrMNGsvgZoGQ74PGBQJ9r9WNOVMqKQefcOJFXuOUlw=
+github.com/facebook/ent v0.4.4-0.20201028122509-c5fae0e75121 h1:/chgn31JwrRJ/lHjW5QFRQXgqnfxdXU6pzN1j7t5L4Y=
+github.com/facebook/ent v0.4.4-0.20201028122509-c5fae0e75121/go.mod h1:HrrMNGsvgZoGQ74PGBQJ9r9WNOVMqKQefcOJFXuOUlw=
 github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a h1:yDWHCSQ40h88yih2JAcL6Ls/kVkSE8GFACTGVnMPruw=
 github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a/go.mod h1:7Ga40egUymuWXxAe151lTNnCv97MddSOVsjpPPkityA=
 github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d h1:7zgmPfZyCNOIC3S+ny4hM05G/rIXrVdjY1i3Ma3gh1Q=

@@ -272,6 +272,9 @@ func (fq *FeatureQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fq *FeatureQuery) Clone() *FeatureQuery {
+	if fq == nil {
+		return nil
+	}
 	return &FeatureQuery{
 		config:     fq.config,
 		limit:      fq.limit,
@@ -279,6 +282,8 @@ func (fq *FeatureQuery) Clone() *FeatureQuery {
 		order:      append([]OrderFunc{}, fq.order...),
 		unique:     append([]string{}, fq.unique...),
 		predicates: append([]predicate.Feature{}, fq.predicates...),
+		withUsers:  fq.withUsers.Clone(),
+		withGroups: fq.withGroups.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,

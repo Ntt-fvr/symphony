@@ -248,13 +248,17 @@ func (cq *CustomerQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (cq *CustomerQuery) Clone() *CustomerQuery {
+	if cq == nil {
+		return nil
+	}
 	return &CustomerQuery{
-		config:     cq.config,
-		limit:      cq.limit,
-		offset:     cq.offset,
-		order:      append([]OrderFunc{}, cq.order...),
-		unique:     append([]string{}, cq.unique...),
-		predicates: append([]predicate.Customer{}, cq.predicates...),
+		config:       cq.config,
+		limit:        cq.limit,
+		offset:       cq.offset,
+		order:        append([]OrderFunc{}, cq.order...),
+		unique:       append([]string{}, cq.unique...),
+		predicates:   append([]predicate.Customer{}, cq.predicates...),
+		withServices: cq.withServices.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,

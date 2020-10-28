@@ -296,13 +296,19 @@ func (scsq *SurveyCellScanQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (scsq *SurveyCellScanQuery) Clone() *SurveyCellScanQuery {
+	if scsq == nil {
+		return nil
+	}
 	return &SurveyCellScanQuery{
-		config:     scsq.config,
-		limit:      scsq.limit,
-		offset:     scsq.offset,
-		order:      append([]OrderFunc{}, scsq.order...),
-		unique:     append([]string{}, scsq.unique...),
-		predicates: append([]predicate.SurveyCellScan{}, scsq.predicates...),
+		config:             scsq.config,
+		limit:              scsq.limit,
+		offset:             scsq.offset,
+		order:              append([]OrderFunc{}, scsq.order...),
+		unique:             append([]string{}, scsq.unique...),
+		predicates:         append([]predicate.SurveyCellScan{}, scsq.predicates...),
+		withChecklistItem:  scsq.withChecklistItem.Clone(),
+		withSurveyQuestion: scsq.withSurveyQuestion.Clone(),
+		withLocation:       scsq.withLocation.Clone(),
 		// clone intermediate query.
 		sql:  scsq.sql.Clone(),
 		path: scsq.path,

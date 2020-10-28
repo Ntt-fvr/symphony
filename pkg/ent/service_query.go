@@ -415,13 +415,24 @@ func (sq *ServiceQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (sq *ServiceQuery) Clone() *ServiceQuery {
+	if sq == nil {
+		return nil
+	}
 	return &ServiceQuery{
-		config:     sq.config,
-		limit:      sq.limit,
-		offset:     sq.offset,
-		order:      append([]OrderFunc{}, sq.order...),
-		unique:     append([]string{}, sq.unique...),
-		predicates: append([]predicate.Service{}, sq.predicates...),
+		config:         sq.config,
+		limit:          sq.limit,
+		offset:         sq.offset,
+		order:          append([]OrderFunc{}, sq.order...),
+		unique:         append([]string{}, sq.unique...),
+		predicates:     append([]predicate.Service{}, sq.predicates...),
+		withType:       sq.withType.Clone(),
+		withDownstream: sq.withDownstream.Clone(),
+		withUpstream:   sq.withUpstream.Clone(),
+		withProperties: sq.withProperties.Clone(),
+		withLinks:      sq.withLinks.Clone(),
+		withPorts:      sq.withPorts.Clone(),
+		withCustomer:   sq.withCustomer.Clone(),
+		withEndpoints:  sq.withEndpoints.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,

@@ -296,13 +296,19 @@ func (cq *CommentQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (cq *CommentQuery) Clone() *CommentQuery {
+	if cq == nil {
+		return nil
+	}
 	return &CommentQuery{
-		config:     cq.config,
-		limit:      cq.limit,
-		offset:     cq.offset,
-		order:      append([]OrderFunc{}, cq.order...),
-		unique:     append([]string{}, cq.unique...),
-		predicates: append([]predicate.Comment{}, cq.predicates...),
+		config:        cq.config,
+		limit:         cq.limit,
+		offset:        cq.offset,
+		order:         append([]OrderFunc{}, cq.order...),
+		unique:        append([]string{}, cq.unique...),
+		predicates:    append([]predicate.Comment{}, cq.predicates...),
+		withAuthor:    cq.withAuthor.Clone(),
+		withWorkOrder: cq.withWorkOrder.Clone(),
+		withProject:   cq.withProject.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,

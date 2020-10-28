@@ -273,13 +273,18 @@ func (clcq *CheckListCategoryQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (clcq *CheckListCategoryQuery) Clone() *CheckListCategoryQuery {
+	if clcq == nil {
+		return nil
+	}
 	return &CheckListCategoryQuery{
-		config:     clcq.config,
-		limit:      clcq.limit,
-		offset:     clcq.offset,
-		order:      append([]OrderFunc{}, clcq.order...),
-		unique:     append([]string{}, clcq.unique...),
-		predicates: append([]predicate.CheckListCategory{}, clcq.predicates...),
+		config:             clcq.config,
+		limit:              clcq.limit,
+		offset:             clcq.offset,
+		order:              append([]OrderFunc{}, clcq.order...),
+		unique:             append([]string{}, clcq.unique...),
+		predicates:         append([]predicate.CheckListCategory{}, clcq.predicates...),
+		withCheckListItems: clcq.withCheckListItems.Clone(),
+		withWorkOrder:      clcq.withWorkOrder.Clone(),
 		// clone intermediate query.
 		sql:  clcq.sql.Clone(),
 		path: clcq.path,

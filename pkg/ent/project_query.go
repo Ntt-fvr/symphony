@@ -393,13 +393,23 @@ func (pq *ProjectQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (pq *ProjectQuery) Clone() *ProjectQuery {
+	if pq == nil {
+		return nil
+	}
 	return &ProjectQuery{
-		config:     pq.config,
-		limit:      pq.limit,
-		offset:     pq.offset,
-		order:      append([]OrderFunc{}, pq.order...),
-		unique:     append([]string{}, pq.unique...),
-		predicates: append([]predicate.Project{}, pq.predicates...),
+		config:         pq.config,
+		limit:          pq.limit,
+		offset:         pq.offset,
+		order:          append([]OrderFunc{}, pq.order...),
+		unique:         append([]string{}, pq.unique...),
+		predicates:     append([]predicate.Project{}, pq.predicates...),
+		withType:       pq.withType.Clone(),
+		withTemplate:   pq.withTemplate.Clone(),
+		withLocation:   pq.withLocation.Clone(),
+		withComments:   pq.withComments.Clone(),
+		withWorkOrders: pq.withWorkOrders.Clone(),
+		withProperties: pq.withProperties.Clone(),
+		withCreator:    pq.withCreator.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,

@@ -272,6 +272,9 @@ func (fq *FlowQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fq *FlowQuery) Clone() *FlowQuery {
+	if fq == nil {
+		return nil
+	}
 	return &FlowQuery{
 		config:     fq.config,
 		limit:      fq.limit,
@@ -279,6 +282,8 @@ func (fq *FlowQuery) Clone() *FlowQuery {
 		order:      append([]OrderFunc{}, fq.order...),
 		unique:     append([]string{}, fq.unique...),
 		predicates: append([]predicate.Flow{}, fq.predicates...),
+		withBlocks: fq.withBlocks.Clone(),
+		withDraft:  fq.withDraft.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,

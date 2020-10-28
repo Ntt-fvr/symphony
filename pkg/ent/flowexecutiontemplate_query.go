@@ -248,6 +248,9 @@ func (fetq *FlowExecutionTemplateQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fetq *FlowExecutionTemplateQuery) Clone() *FlowExecutionTemplateQuery {
+	if fetq == nil {
+		return nil
+	}
 	return &FlowExecutionTemplateQuery{
 		config:     fetq.config,
 		limit:      fetq.limit,
@@ -255,6 +258,7 @@ func (fetq *FlowExecutionTemplateQuery) Clone() *FlowExecutionTemplateQuery {
 		order:      append([]OrderFunc{}, fetq.order...),
 		unique:     append([]string{}, fetq.unique...),
 		predicates: append([]predicate.FlowExecutionTemplate{}, fetq.predicates...),
+		withBlocks: fetq.withBlocks.Clone(),
 		// clone intermediate query.
 		sql:  fetq.sql.Clone(),
 		path: fetq.path,

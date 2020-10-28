@@ -296,13 +296,19 @@ func (wodq *WorkOrderDefinitionQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (wodq *WorkOrderDefinitionQuery) Clone() *WorkOrderDefinitionQuery {
+	if wodq == nil {
+		return nil
+	}
 	return &WorkOrderDefinitionQuery{
-		config:     wodq.config,
-		limit:      wodq.limit,
-		offset:     wodq.offset,
-		order:      append([]OrderFunc{}, wodq.order...),
-		unique:     append([]string{}, wodq.unique...),
-		predicates: append([]predicate.WorkOrderDefinition{}, wodq.predicates...),
+		config:              wodq.config,
+		limit:               wodq.limit,
+		offset:              wodq.offset,
+		order:               append([]OrderFunc{}, wodq.order...),
+		unique:              append([]string{}, wodq.unique...),
+		predicates:          append([]predicate.WorkOrderDefinition{}, wodq.predicates...),
+		withType:            wodq.withType.Clone(),
+		withProjectType:     wodq.withProjectType.Clone(),
+		withProjectTemplate: wodq.withProjectTemplate.Clone(),
 		// clone intermediate query.
 		sql:  wodq.sql.Clone(),
 		path: wodq.path,

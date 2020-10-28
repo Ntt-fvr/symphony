@@ -296,13 +296,19 @@ func (hq *HyperlinkQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (hq *HyperlinkQuery) Clone() *HyperlinkQuery {
+	if hq == nil {
+		return nil
+	}
 	return &HyperlinkQuery{
-		config:     hq.config,
-		limit:      hq.limit,
-		offset:     hq.offset,
-		order:      append([]OrderFunc{}, hq.order...),
-		unique:     append([]string{}, hq.unique...),
-		predicates: append([]predicate.Hyperlink{}, hq.predicates...),
+		config:        hq.config,
+		limit:         hq.limit,
+		offset:        hq.offset,
+		order:         append([]OrderFunc{}, hq.order...),
+		unique:        append([]string{}, hq.unique...),
+		predicates:    append([]predicate.Hyperlink{}, hq.predicates...),
+		withEquipment: hq.withEquipment.Clone(),
+		withLocation:  hq.withLocation.Clone(),
+		withWorkOrder: hq.withWorkOrder.Clone(),
 		// clone intermediate query.
 		sql:  hq.sql.Clone(),
 		path: hq.path,

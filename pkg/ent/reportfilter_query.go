@@ -222,6 +222,9 @@ func (rfq *ReportFilterQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (rfq *ReportFilterQuery) Clone() *ReportFilterQuery {
+	if rfq == nil {
+		return nil
+	}
 	return &ReportFilterQuery{
 		config:     rfq.config,
 		limit:      rfq.limit,

@@ -296,13 +296,19 @@ func (ptq *ProjectTypeQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (ptq *ProjectTypeQuery) Clone() *ProjectTypeQuery {
+	if ptq == nil {
+		return nil
+	}
 	return &ProjectTypeQuery{
-		config:     ptq.config,
-		limit:      ptq.limit,
-		offset:     ptq.offset,
-		order:      append([]OrderFunc{}, ptq.order...),
-		unique:     append([]string{}, ptq.unique...),
-		predicates: append([]predicate.ProjectType{}, ptq.predicates...),
+		config:         ptq.config,
+		limit:          ptq.limit,
+		offset:         ptq.offset,
+		order:          append([]OrderFunc{}, ptq.order...),
+		unique:         append([]string{}, ptq.unique...),
+		predicates:     append([]predicate.ProjectType{}, ptq.predicates...),
+		withProperties: ptq.withProperties.Clone(),
+		withWorkOrders: ptq.withWorkOrders.Clone(),
+		withProjects:   ptq.withProjects.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,

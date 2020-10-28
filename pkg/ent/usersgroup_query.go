@@ -296,13 +296,19 @@ func (ugq *UsersGroupQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (ugq *UsersGroupQuery) Clone() *UsersGroupQuery {
+	if ugq == nil {
+		return nil
+	}
 	return &UsersGroupQuery{
-		config:     ugq.config,
-		limit:      ugq.limit,
-		offset:     ugq.offset,
-		order:      append([]OrderFunc{}, ugq.order...),
-		unique:     append([]string{}, ugq.unique...),
-		predicates: append([]predicate.UsersGroup{}, ugq.predicates...),
+		config:       ugq.config,
+		limit:        ugq.limit,
+		offset:       ugq.offset,
+		order:        append([]OrderFunc{}, ugq.order...),
+		unique:       append([]string{}, ugq.unique...),
+		predicates:   append([]predicate.UsersGroup{}, ugq.predicates...),
+		withMembers:  ugq.withMembers.Clone(),
+		withPolicies: ugq.withPolicies.Clone(),
+		withFeatures: ugq.withFeatures.Clone(),
 		// clone intermediate query.
 		sql:  ugq.sql.Clone(),
 		path: ugq.path,
