@@ -44,7 +44,7 @@ var (
 const (
 	TimeLayout       = "Mon, 02 Jan 2006 15:04:05"
 	SummarySheetName = "Summary"
-	MaxImageWidth    = 255.0
+	MaxImageWidth    = 300.0
 )
 
 func (er SingleWo) CreateExcelFile(ctx context.Context, id int) (*excelize.File, error) {
@@ -330,12 +330,15 @@ func (er SingleWo) addFilesToSheet(ctx context.Context, sheetName string, item *
 			zap.Int64("size", attributes.Size),
 			zap.Any("metadata", attributes.Metadata))
 
-		// width = x =  255 / width
 		scale := fmt.Sprintf("%f", MaxImageWidth/float32(config.Width))
 		cellFormat := `{"x_scale": ` + scale + `, "y_scale": ` + scale + `,"positioning": "oneCell"}`
 		logger.Debug("cell format", zap.String("format", cellFormat))
 		err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(*currRow), cellFormat, item.Title, fileExtension, data)
-		_ = f.SetColWidth(sheetName, Columns[2], Columns[2], MaxImageWidth)
+		if err != nil {
+			logger.Error("issue adding image to spreadsheet", zap.Error(err))
+			return err
+		}
+		_ = f.SetColWidth(sheetName, Columns[2], Columns[2], MaxImageWidth/6)
 		*currRow++
 	}
 
