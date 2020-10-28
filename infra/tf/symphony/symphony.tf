@@ -190,7 +190,7 @@ resource helm_release symphony {
       graph = {
         spec = {
           tenancy = {
-            tenantMaxDBConn = 10
+            tenantMaxDBConn = 1000
           }
           event = {
             url = local.graph_event_url
