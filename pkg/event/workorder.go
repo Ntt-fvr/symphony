@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -16,70 +17,139 @@ import (
 
 // Work order events.
 const (
-	WorkOrderAdded = "work_order:added"
-	WorkOrderDone  = "work_order:done"
+	WorkOrderAdded         = "work_order:added"
+	WorkOrderDone          = "work_order:done"
+	WorkOrderStatusChanged = "work_order:status_changed"
 )
 
 // Hook returns the hook which generates events from mutations.
 func (e *Eventer) workOrderHook() ent.Hook {
 	chain := hook.NewChain(
-		e.workOrderCreateHook(),
-		e.workOrderUpdateHook(),
-		e.workOrderUpdateOneHook(),
+		e.workOrderBlockUpdateStatusOfManyHook(),
+		e.workOrderDoneHook(),
+		e.workOrderAddedHook(),
+		e.workOrderStatusChangedHook(),
 	)
 	return chain.Hook()
 }
 
-func (e *Eventer) workOrderCreateHook() ent.Hook {
-	hk := func(next ent.Mutator) ent.Mutator {
+func (e *Eventer) workOrderDoneHook() ent.Hook {
+	isStatusDoneOrClosed := func(status workorder.Status) bool {
+		return status == workorder.StatusDone || status == workorder.StatusClosed
+	}
+
+	var chain hook.Chain
+	createHook := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
 			value, err := next.Mutate(ctx, m)
 			if err != nil {
 				return value, err
 			}
-			e.emit(ctx, WorkOrderAdded, value)
-			if value.(*ent.WorkOrder).Status == workorder.StatusDone ||
-				value.(*ent.WorkOrder).Status == workorder.StatusClosed {
+			if isStatusDoneOrClosed(value.(*ent.WorkOrder).Status) {
 				e.emit(ctx, WorkOrderDone, value)
 			}
 			return value, nil
 		})
 	}
-	return hook.On(hk, ent.OpCreate)
-}
+	chain = chain.Append(hook.On(createHook, ent.OpCreate))
 
-// ErrWorkOrderUpdateStatusOfMany is returned on work order status update by predicate.
-var ErrWorkOrderUpdateStatusOfMany = errors.New("work order status update to done by predicate not allowed")
-
-func (e *Eventer) workOrderUpdateHook() ent.Hook {
-	hk := func(next ent.Mutator) ent.Mutator {
+	updateHook := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
-			if status, exists := m.Status(); exists && (status == workorder.StatusDone || status == workorder.StatusClosed) {
-				return nil, ErrWorkOrderUpdateStatusOfMany
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	return hook.On(hk, ent.OpUpdate)
-}
-
-func (e *Eventer) workOrderUpdateOneHook() ent.Hook {
-	hk := func(next ent.Mutator) ent.Mutator {
-		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
-			status, exists := m.Status()
-			if !exists || (status != workorder.StatusDone && status != workorder.StatusClosed) {
+			status, _ := m.Status()
+			if !isStatusDoneOrClosed(status) {
 				return next.Mutate(ctx, m)
 			}
 			oldStatus, err := m.OldStatus(ctx)
 			if err != nil {
-				return nil, fmt.Errorf("fetching work order old status: %w", err)
+				return nil, fmt.Errorf("getting work order old status: %w", err)
+			}
+			if isStatusDoneOrClosed(oldStatus) {
+				return next.Mutate(ctx, m)
 			}
 			value, err := next.Mutate(ctx, m)
-			if err == nil && oldStatus != status {
+			if err == nil {
 				e.emit(ctx, WorkOrderDone, value)
 			}
 			return value, err
 		})
 	}
-	return hook.On(hk, ent.OpUpdateOne)
+	chain = chain.Append(hook.If(updateHook, hook.And(
+		hook.HasOp(ent.OpUpdateOne),
+		hook.HasFields(workorder.FieldStatus),
+	)))
+
+	return chain.Hook()
+}
+
+func (e *Eventer) workOrderAddedHook() ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
+			value, err := next.Mutate(ctx, m)
+			if err == nil {
+				e.emit(ctx, WorkOrderAdded, value)
+			}
+			return value, err
+		})
+	}
+}
+
+func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
+	var chain hook.Chain
+	createHook := func(next ent.Mutator) ent.Mutator {
+		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
+			value, err := next.Mutate(ctx, m)
+			if err != nil {
+				return value, err
+			}
+			workOrder := value.(*ent.WorkOrder)
+			e.emit(ctx, WorkOrderStatusChanged, &models.WorkOrderStatusChangedPayload{
+				To:        workOrder.Status,
+				WorkOrder: workOrder,
+			})
+			return value, nil
+		})
+	}
+	chain = chain.Append(hook.On(createHook, ent.OpCreate))
+
+	updateHook := func(next ent.Mutator) ent.Mutator {
+		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
+			oldStatus, err := m.OldStatus(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("getting work order old status: %w", err)
+			}
+			value, err := next.Mutate(ctx, m)
+			if err != nil {
+				return value, err
+			}
+			if workOrder := value.(*ent.WorkOrder); workOrder.Status != oldStatus {
+				e.emit(ctx, WorkOrderStatusChanged, &models.WorkOrderStatusChangedPayload{
+					From:      &oldStatus,
+					To:        workOrder.Status,
+					WorkOrder: workOrder,
+				})
+			}
+			return value, nil
+		})
+	}
+	chain = chain.Append(hook.If(updateHook, hook.And(
+		hook.HasOp(ent.OpUpdateOne),
+		hook.HasFields(workorder.FieldStatus),
+	)))
+
+	return chain.Hook()
+}
+
+// ErrWorkOrderUpdateStatusOfMany is returned on work order status update by predicate.
+var ErrWorkOrderUpdateStatusOfMany = errors.New("work order status update by predicate not allowed")
+
+func (Eventer) workOrderBlockUpdateStatusOfManyHook() ent.Hook {
+	return hook.If(
+		hook.FixedError(
+			ErrWorkOrderUpdateStatusOfMany,
+		),
+		hook.And(
+			hook.HasOp(ent.OpUpdate),
+			hook.HasFields(workorder.FieldStatus),
+		),
+	)
 }

@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -82,7 +83,7 @@ func (s *workOrderTestSuite) TestWorkOrderCreate() {
 	defer wg.Wait()
 	go func() {
 		defer func() {
-			svc.Stop(s.ctx)
+			_ = svc.Stop(s.ctx)
 			wg.Done()
 		}()
 		err := svc.Run(runCtx)
@@ -139,7 +140,7 @@ func (s *workOrderTestSuite) TestWorkOrderUpdateOne() {
 
 	go func() {
 		defer func() {
-			svc.Stop(s.ctx)
+			_ = svc.Stop(s.ctx)
 			wg.Done()
 		}()
 		err := svc.Run(runCtx)
@@ -160,5 +161,73 @@ func (s *workOrderTestSuite) TestWorkOrderUpdateOne() {
 		Exec(ctx)
 	s.Require().NoError(err)
 	err = tx.Commit()
+	s.Require().NoError(err)
+}
+
+func (s *workOrderTestSuite) TestWorkOrderStatusChanged() {
+	runCtx, cancel := context.WithCancel(s.ctx)
+	var handler evmocks.EventHandler
+	handler.On("HandleEvent", mock.Anything, mock.AnythingOfType("*ev.Event")).
+		Run(func(args mock.Arguments) {
+			evt := args.Get(1).(*ev.Event)
+			s.Require().Equal(event.WorkOrderStatusChanged, evt.Name)
+			payload, ok := evt.Object.(*models.WorkOrderStatusChangedPayload)
+			s.Require().True(ok)
+			s.Require().Nil(payload.From)
+			s.Require().Equal(workorder.StatusPlanned, payload.To)
+			s.Require().Equal("Test", payload.WorkOrder.Name)
+		}).
+		Return(nil).
+		Once()
+	handler.On("HandleEvent", mock.Anything, mock.AnythingOfType("*ev.Event")).
+		Run(func(args mock.Arguments) {
+			defer cancel()
+			evt := args.Get(1).(*ev.Event)
+			s.Require().Equal(event.WorkOrderStatusChanged, evt.Name)
+			payload, ok := evt.Object.(*models.WorkOrderStatusChangedPayload)
+			s.Require().True(ok)
+			s.Require().Equal(workorder.StatusPlanned, *payload.From)
+			s.Require().Equal(workorder.StatusClosed, payload.To)
+			s.Require().Equal("Test", payload.WorkOrder.Name)
+		}).
+		Return(nil).
+		Once()
+	defer handler.AssertExpectations(s.T())
+
+	svc, err := ev.NewService(
+		ev.Config{
+			Receiver: s.receiver,
+			Handler:  &handler,
+		},
+		ev.WithTenant(viewertest.DefaultTenant),
+		ev.WithEvent(event.WorkOrderStatusChanged),
+	)
+	s.Require().NoError(err)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	defer wg.Wait()
+
+	go func() {
+		defer func() {
+			_ = svc.Stop(s.ctx)
+			wg.Done()
+		}()
+		err := svc.Run(runCtx)
+		s.Require().True(errors.Is(err, context.Canceled))
+	}()
+
+	workOrder, err := s.client.WorkOrder.Create().
+		SetName("Test").
+		SetType(s.typ).
+		SetCreationDate(time.Now()).
+		SetOwner(s.user).
+		SetStatus(workorder.StatusPlanned).
+		Save(s.ctx)
+	s.Require().NoError(err)
+
+	err = workOrder.Update().
+		SetStatus(workorder.StatusClosed).
+		Exec(s.ctx)
 	s.Require().NoError(err)
 }
