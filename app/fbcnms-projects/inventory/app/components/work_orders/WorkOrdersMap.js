@@ -27,6 +27,7 @@ import nullthrows from 'nullthrows';
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useEffect} from 'react';
 import {useMemo, useState} from 'react';
 import {withRouter} from 'react-router-dom';
 import {workOrderToGeoJSONSource} from './../map/MapUtil';
@@ -65,26 +66,34 @@ const WorkOrdersMap = (props: Props) => {
   const [selectedView, setSelectedView] = useState('status');
   const router = useRouter();
   const setLocations = useMemo(() => new Set(), []);
-  const workOrdersConst = workOrders
-    .filter(w => w.location !== null)
-    .map(w => ({
-      workOrder: w,
-      location: distributeLocations(
-        {
-          ...nullthrows(w.location),
-          randomizedLatitude: w.location?.latitude || 0,
-        },
-        setLocations,
-      ),
-    }));
-  const [workOrdersWithLocations, setWorkOrdersWithLocations] = useState(
-    workOrdersConst,
-  );
+  const [workOrdersWithLocations, setWorkOrdersWithLocations] = useState([]);
+  const [layers, setLayers] = useState<
+    Array<MapLayer<WorkOrderProperties & {primaryKey: string, color: string}>>,
+  >([]);
 
-  const layers = useMemo((): Array<
-    MapLayer<WorkOrderProperties & {primaryKey: string, color: string}>,
-  > => {
-    return [
+  useEffect(() => {
+    if (!workOrders) {
+      return;
+    }
+
+    setWorkOrdersWithLocations(
+      workOrders
+        .filter(w => w.location !== null)
+        .map(w => ({
+          workOrder: w,
+          location: distributeLocations(
+            {
+              ...nullthrows(w.location),
+              randomizedLatitude: w.location?.latitude || 0,
+            },
+            setLocations,
+          ),
+        })),
+    );
+  }, [workOrders, setLocations]);
+
+  useEffect(() => {
+    setLayers([
       {
         styles: {
           icon: {
@@ -104,7 +113,7 @@ const WorkOrdersMap = (props: Props) => {
           color: 'blue',
         }),
       },
-    ];
+    ]);
   }, [selectedView, workOrdersWithLocations]);
 
   const onWorkOrderChanged = (
