@@ -17,7 +17,6 @@ import (
 // To query if feature is allowed use FeatureSet.Enabled
 const (
 	FeatureMandatoryPropertiesOnWorkOrderClose = "mandatory_properties_on_work_order_close"
-	FeatureNewWorkOrderStatuses                = "workorder_new_status"
 	FeatureExecuteAutomationFlows              = "execute_automation_flows"
 )
 

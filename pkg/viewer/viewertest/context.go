@@ -34,7 +34,6 @@ type Option func(*options)
 
 var DefaultFeatures = []string{
 	viewer.FeatureMandatoryPropertiesOnWorkOrderClose,
-	viewer.FeatureNewWorkOrderStatuses,
 	viewer.FeatureExecuteAutomationFlows,
 }
 

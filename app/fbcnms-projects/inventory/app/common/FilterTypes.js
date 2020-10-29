@@ -11,7 +11,6 @@
 import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
 
 import fbt from 'fbt';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 
 export type PriorityType = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 
@@ -93,13 +92,7 @@ export const blockedStatus = {
   label: `${fbt('Blocked', '')}`,
 };
 
-const oldStatusValues: Array<{|
-  key: string,
-  value: GraphQLStatusType,
-  label: string,
-|}> = [plannedStatus, pendingStatus, doneStatus];
-
-const newStatusValues: Array<{|
+const statusValues: Array<{|
   key: string,
   value: GraphQLStatusType,
   label: string,
@@ -112,9 +105,5 @@ const newStatusValues: Array<{|
 ];
 
 export function useStatusValues() {
-  const shouldUseNewWorkOrderStatus = useFeatureFlag('workorder_new_status');
-
-  return shouldUseNewWorkOrderStatus
-    ? {statusValues: newStatusValues, closedStatus}
-    : {statusValues: oldStatusValues, closedStatus: doneStatus};
+  return {statusValues, closedStatus};
 }
