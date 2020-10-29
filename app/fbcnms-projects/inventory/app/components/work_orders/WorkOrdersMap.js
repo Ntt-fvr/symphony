@@ -27,6 +27,7 @@ import nullthrows from 'nullthrows';
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useEffect} from 'react';
 import {useMemo, useState} from 'react';
 import {withRouter} from 'react-router-dom';
 import {workOrderToGeoJSONSource} from './../map/MapUtil';
@@ -80,11 +81,24 @@ const WorkOrdersMap = (props: Props) => {
   const [workOrdersWithLocations, setWorkOrdersWithLocations] = useState(
     workOrdersConst,
   );
+  const [layers, setLayers] = useState<
+    Array<MapLayer<WorkOrderProperties & {primaryKey: string, color: string}>>,
+  >([]);
 
-  const layers = useMemo((): Array<
-    MapLayer<WorkOrderProperties & {primaryKey: string, color: string}>,
-  > => {
-    return [
+  useEffect(() => {
+    const workOrdersConst = workOrders
+      .filter(w => w.location !== null)
+      .map(w => ({
+        workOrder: w,
+        location: distributeLocations(
+          {
+            ...nullthrows(w.location),
+            randomizedLatitude: w.location?.latitude || 0,
+          },
+          setLocations,
+        ),
+      }));
+    setLayers(() => [
       {
         styles: {
           icon: {
@@ -99,13 +113,13 @@ const WorkOrdersMap = (props: Props) => {
             textFont: (['Roboto Bold', 'Arial Unicode MS Bold']: Array<string>),
           },
         },
-        source: workOrderToGeoJSONSource('0', workOrdersWithLocations, {
+        source: workOrderToGeoJSONSource('0', workOrdersConst, {
           primaryKey: '0',
           color: 'blue',
         }),
       },
-    ];
-  }, [selectedView, workOrdersWithLocations]);
+    ]);
+  }, [selectedView, workOrdersWithLocations, workOrders, setLocations]);
 
   const onWorkOrderChanged = (
     key: 'assigneeId' | 'installDate',

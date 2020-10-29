@@ -105,7 +105,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     boxShadow: theme.shadows[1],
     position: 'fixed',
-    zIndex: 10,
+    zIndex: 11,
   },
   expansionPanelRoot: {
     '&:before': {
