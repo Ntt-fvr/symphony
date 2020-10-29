@@ -66,38 +66,33 @@ const WorkOrdersMap = (props: Props) => {
   const [selectedView, setSelectedView] = useState('status');
   const router = useRouter();
   const setLocations = useMemo(() => new Set(), []);
-  const workOrdersConst = workOrders
-    .filter(w => w.location !== null)
-    .map(w => ({
-      workOrder: w,
-      location: distributeLocations(
-        {
-          ...nullthrows(w.location),
-          randomizedLatitude: w.location?.latitude || 0,
-        },
-        setLocations,
-      ),
-    }));
-  const [workOrdersWithLocations, setWorkOrdersWithLocations] = useState(
-    workOrdersConst,
-  );
+  const [workOrdersWithLocations, setWorkOrdersWithLocations] = useState([]);
   const [layers, setLayers] = useState<
     Array<MapLayer<WorkOrderProperties & {primaryKey: string, color: string}>>,
   >([]);
 
   useEffect(() => {
-    const workOrdersConst = workOrders
-      .filter(w => w.location !== null)
-      .map(w => ({
-        workOrder: w,
-        location: distributeLocations(
-          {
-            ...nullthrows(w.location),
-            randomizedLatitude: w.location?.latitude || 0,
-          },
-          setLocations,
-        ),
-      }));
+    if (!workOrders) {
+      return;
+    }
+
+    setWorkOrdersWithLocations(
+      workOrders
+        .filter(w => w.location !== null)
+        .map(w => ({
+          workOrder: w,
+          location: distributeLocations(
+            {
+              ...nullthrows(w.location),
+              randomizedLatitude: w.location?.latitude || 0,
+            },
+            setLocations,
+          ),
+        })),
+    );
+  }, [workOrders, setLocations]);
+
+  useEffect(() => {
     setLayers(() => [
       {
         styles: {
@@ -113,13 +108,13 @@ const WorkOrdersMap = (props: Props) => {
             textFont: (['Roboto Bold', 'Arial Unicode MS Bold']: Array<string>),
           },
         },
-        source: workOrderToGeoJSONSource('0', workOrdersConst, {
+        source: workOrderToGeoJSONSource('0', workOrdersWithLocations, {
           primaryKey: '0',
           color: 'blue',
         }),
       },
     ]);
-  }, [selectedView, workOrdersWithLocations, workOrders, setLocations]);
+  }, [selectedView, workOrdersWithLocations]);
 
   const onWorkOrderChanged = (
     key: 'assigneeId' | 'installDate',
