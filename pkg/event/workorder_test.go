@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -171,7 +170,7 @@ func (s *workOrderTestSuite) TestWorkOrderStatusChanged() {
 		Run(func(args mock.Arguments) {
 			evt := args.Get(1).(*ev.Event)
 			s.Require().Equal(event.WorkOrderStatusChanged, evt.Name)
-			payload, ok := evt.Object.(*models.WorkOrderStatusChangedPayload)
+			payload, ok := evt.Object.(*event.WorkOrderStatusChangedPayload)
 			s.Require().True(ok)
 			s.Require().Nil(payload.From)
 			s.Require().Equal(workorder.StatusPlanned, payload.To)
@@ -184,7 +183,7 @@ func (s *workOrderTestSuite) TestWorkOrderStatusChanged() {
 			defer cancel()
 			evt := args.Get(1).(*ev.Event)
 			s.Require().Equal(event.WorkOrderStatusChanged, evt.Name)
-			payload, ok := evt.Object.(*models.WorkOrderStatusChangedPayload)
+			payload, ok := evt.Object.(*event.WorkOrderStatusChangedPayload)
 			s.Require().True(ok)
 			s.Require().Equal(workorder.StatusPlanned, *payload.From)
 			s.Require().Equal(workorder.StatusClosed, payload.To)

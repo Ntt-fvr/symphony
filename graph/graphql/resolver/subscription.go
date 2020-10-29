@@ -8,13 +8,12 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"time"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
 )
 
@@ -82,6 +81,10 @@ func (r subscriptionResolver) subscribe(ctx context.Context, event string, objec
 	go func() {
 		defer func() {
 			events.Close()
+			ctx, cancel := context.WithTimeout(
+				context.Background(), 5*time.Second,
+			)
+			defer cancel()
 			if err := svc.Stop(ctx); err != nil {
 				logger.Error("cannot stop event service",
 					zap.Error(err),
@@ -113,8 +116,66 @@ func (r subscriptionResolver) WorkOrderDone(ctx context.Context) (<-chan *ent.Wo
 	return events.(chan *ent.WorkOrder), nil
 }
 
-func (r subscriptionResolver) WorkOrderStatusChanged(context.Context) (<-chan *models.WorkOrderStatusChangedPayload, error) {
-	return nil, gqlerror.Errorf("Not implemented")
+func (r subscriptionResolver) WorkOrderStatusChanged(ctx context.Context) (<-chan *event.WorkOrderStatusChangedPayload, error) {
+	v := viewer.FromContext(ctx)
+	logger := r.logger.For(ctx).With(
+		zap.Object("viewer", v),
+		zap.String("event", event.WorkOrderStatusChanged),
+	)
+	receiver, err := r.event.NewReceiver(ctx, &event.WorkOrderStatusChangedPayload{})
+	if err != nil {
+		logger.Error("cannot create event receiver",
+			zap.Error(err),
+		)
+		return nil, err
+	}
+
+	instantiate := r.ClientFrom(ctx).WorkOrder.Instantiate
+	events := make(chan *event.WorkOrderStatusChangedPayload, 1)
+	svc, err := ev.NewService(
+		ev.Config{
+			Receiver: receiver,
+			Handler: ev.EventHandlerFunc(func(_ context.Context, evt *ev.Event) error {
+				payload := evt.Object.(*event.WorkOrderStatusChangedPayload)
+				payload.WorkOrder = instantiate(payload.WorkOrder)
+				events <- payload
+				logger.Debug("wrote to subscription",
+					zap.Int("id", payload.WorkOrder.ID),
+				)
+				return nil
+			}),
+		},
+		ev.WithTenant(v.Tenant()),
+		ev.WithEvent(event.WorkOrderStatusChanged),
+		ev.WithMaxConcurrency(1),
+	)
+	if err != nil {
+		logger.Error("cannot create event service",
+			zap.Error(err),
+		)
+		return nil, err
+	}
+
+	go func() {
+		defer func() {
+			close(events)
+			ctx, cancel := context.WithTimeout(
+				context.Background(), 5*time.Second,
+			)
+			defer cancel()
+			if err := svc.Stop(ctx); err != nil {
+				logger.Error("cannot stop event service",
+					zap.Error(err),
+				)
+			}
+		}()
+		err := svc.Run(ctx)
+		logger.Debug("subscription terminated",
+			zap.Error(err),
+		)
+	}()
+
+	return events, nil
 }
 
 func (r subscriptionResolver) FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error) {

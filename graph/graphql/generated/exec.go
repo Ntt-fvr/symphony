@@ -33,6 +33,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/event"
 	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -1752,7 +1753,7 @@ type ServiceTypeResolver interface {
 type SubscriptionResolver interface {
 	WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error)
 	WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error)
-	WorkOrderStatusChanged(ctx context.Context) (<-chan *models.WorkOrderStatusChangedPayload, error)
+	WorkOrderStatusChanged(ctx context.Context) (<-chan *event.WorkOrderStatusChangedPayload, error)
 	FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error)
 }
 type SurveyResolver interface {
@@ -12525,7 +12526,10 @@ type Mutation {
 """
 Payload of the workOrderStatusChanged subscription.
 """
-type WorkOrderStatusChangedPayload {
+type WorkOrderStatusChangedPayload
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/event.WorkOrderStatusChangedPayload"
+  ) {
   """
   Previous status of the work order.
   """
@@ -39202,7 +39206,7 @@ func (ec *executionContext) _Subscription_workOrderStatusChanged(ctx context.Con
 		return nil
 	}
 	return func() graphql.Marshaler {
-		res, ok := <-resTmp.(<-chan *models.WorkOrderStatusChangedPayload)
+		res, ok := <-resTmp.(<-chan *event.WorkOrderStatusChangedPayload)
 		if !ok {
 			return nil
 		}
@@ -39210,7 +39214,7 @@ func (ec *executionContext) _Subscription_workOrderStatusChanged(ctx context.Con
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderStatusChangedPayload(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋeventᚐWorkOrderStatusChangedPayload(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -45330,7 +45334,7 @@ func (ec *executionContext) _WorkOrderSearchResult_count(ctx context.Context, fi
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkOrderStatusChangedPayload_from(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkOrderStatusChangedPayload_from(ctx context.Context, field graphql.CollectedField, obj *event.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -45362,7 +45366,7 @@ func (ec *executionContext) _WorkOrderStatusChangedPayload_from(ctx context.Cont
 	return ec.marshalOWorkOrderStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkOrderStatusChangedPayload_to(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkOrderStatusChangedPayload_to(ctx context.Context, field graphql.CollectedField, obj *event.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -45397,7 +45401,7 @@ func (ec *executionContext) _WorkOrderStatusChangedPayload_to(ctx context.Contex
 	return ec.marshalNWorkOrderStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkOrderStatusChangedPayload_workOrder(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkOrderStatusChangedPayload_workOrder(ctx context.Context, field graphql.CollectedField, obj *event.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -62776,7 +62780,7 @@ func (ec *executionContext) _WorkOrderSearchResult(ctx context.Context, sel ast.
 
 var workOrderStatusChangedPayloadImplementors = []string{"WorkOrderStatusChangedPayload"}
 
-func (ec *executionContext) _WorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, obj *models.WorkOrderStatusChangedPayload) graphql.Marshaler {
+func (ec *executionContext) _WorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, obj *event.WorkOrderStatusChangedPayload) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, workOrderStatusChangedPayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -68621,11 +68625,11 @@ func (ec *executionContext) marshalNWorkOrderStatus2githubᚗcomᚋfacebookincub
 	return v
 }
 
-func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v models.WorkOrderStatusChangedPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋeventᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v event.WorkOrderStatusChangedPayload) graphql.Marshaler {
 	return ec._WorkOrderStatusChangedPayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v *models.WorkOrderStatusChangedPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋeventᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v *event.WorkOrderStatusChangedPayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

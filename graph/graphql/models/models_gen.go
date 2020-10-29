@@ -953,16 +953,6 @@ type WorkOrderExecutionResult struct {
 	LinkRemoved      []int            `json:"linkRemoved"`
 }
 
-// Payload of the workOrderStatusChanged subscription.
-type WorkOrderStatusChangedPayload struct {
-	// Previous status of the work order.
-	From *workorder.Status `json:"from"`
-	// Current status of the work order.
-	To workorder.Status `json:"to"`
-	// The work order of which status was modified.
-	WorkOrder *ent.WorkOrder `json:"workOrder"`
-}
-
 type CommentEntity string
 
 const (

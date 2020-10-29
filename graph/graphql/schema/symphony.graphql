@@ -4066,7 +4066,10 @@ type Mutation {
 """
 Payload of the workOrderStatusChanged subscription.
 """
-type WorkOrderStatusChangedPayload {
+type WorkOrderStatusChangedPayload
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/event.WorkOrderStatusChangedPayload"
+  ) {
   """
   Previous status of the work order.
   """

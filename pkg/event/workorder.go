@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -21,6 +20,13 @@ const (
 	WorkOrderDone          = "work_order:done"
 	WorkOrderStatusChanged = "work_order:status_changed"
 )
+
+// WorkOrderStatusChangedPayload is the payload of WorkOrderStatusChanged event.
+type WorkOrderStatusChangedPayload struct {
+	From      *workorder.Status `json:"from"`
+	To        workorder.Status  `json:"to"`
+	WorkOrder *ent.WorkOrder    `json:"workOrder"`
+}
 
 // Hook returns the hook which generates events from mutations.
 func (e *Eventer) workOrderHook() ent.Hook {
@@ -102,7 +108,7 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 				return value, err
 			}
 			workOrder := value.(*ent.WorkOrder)
-			e.emit(ctx, WorkOrderStatusChanged, &models.WorkOrderStatusChangedPayload{
+			e.emit(ctx, WorkOrderStatusChanged, &WorkOrderStatusChangedPayload{
 				To:        workOrder.Status,
 				WorkOrder: workOrder,
 			})
@@ -122,7 +128,7 @@ func (e *Eventer) workOrderStatusChangedHook() ent.Hook {
 				return value, err
 			}
 			if workOrder := value.(*ent.WorkOrder); workOrder.Status != oldStatus {
-				e.emit(ctx, WorkOrderStatusChanged, &models.WorkOrderStatusChangedPayload{
+				e.emit(ctx, WorkOrderStatusChanged, &WorkOrderStatusChangedPayload{
 					From:      &oldStatus,
 					To:        workOrder.Status,
 					WorkOrder: workOrder,
