@@ -93,7 +93,7 @@ const WorkOrdersMap = (props: Props) => {
   }, [workOrders, setLocations]);
 
   useEffect(() => {
-    setLayers(() => [
+    setLayers([
       {
         styles: {
           icon: {
