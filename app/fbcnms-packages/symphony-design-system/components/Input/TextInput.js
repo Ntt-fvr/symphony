@@ -168,6 +168,7 @@ type Props = $ReadOnly<{|
 
 function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
   const {
+    autoFocus = false,
     className,
     containerClassName,
     hasError: hasErrorProp,
@@ -182,7 +183,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
     onEnterPressed,
     onEscPressed,
     onBackspacePressed,
-    type,
+    type = 'string',
     rows = 2,
     isProcessing = false,
     onClick,
@@ -202,7 +203,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
     [hasErrorProp, contextHasError],
   );
   const [hasFocus, setHasFocus] = useState(
-    disabled ? false : props.autoFocus === true,
+    disabled ? false : autoFocus === true,
   );
 
   const onInputFocused = useCallback(() => {
@@ -309,12 +310,5 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
     </div>
   );
 }
-
-TextInput.defaultProps = {
-  autoFocus: false,
-  disabled: false,
-  hasError: false,
-  type: 'string',
-};
 
 export default React.forwardRef<Props, HTMLInputElement>(TextInput);
