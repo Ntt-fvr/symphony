@@ -11,13 +11,13 @@ import type {ServiceTypeItem_serviceType} from './__generated__/ServiceTypeItem_
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
 
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import CommonStrings from '@fbcnms/strings/Strings';
-import ConfigureExpansionPanel from './ConfigureExpansionPanel';
+import ConfigureAccordion from './ConfigureAccordionPanel';
 import DynamicPropertyTypesGrid from '../DynamicPropertyTypesGrid';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import React from 'react';
 import RemoveServiceTypeMutation from '../../mutations/RemoveServiceTypeMutation';
@@ -48,9 +48,9 @@ class ServiceTypeItem extends React.Component<Props> {
     const {classes, serviceType, onEdit} = this.props;
     return (
       <div>
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <ConfigureExpansionPanel
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <ConfigureAccordion
               entityName="serviceType"
               icon={<LinearScaleIcon />}
               name={serviceType.name}
@@ -61,8 +61,8 @@ class ServiceTypeItem extends React.Component<Props> {
               allowDelete={true}
               onEdit={onEdit}
             />
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <div className={classes.detailsContainer}>
               <div className={classes.section}>
                 <DynamicPropertyTypesGrid
@@ -77,8 +77,8 @@ class ServiceTypeItem extends React.Component<Props> {
                 />
               </div>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </div>
     );
   }

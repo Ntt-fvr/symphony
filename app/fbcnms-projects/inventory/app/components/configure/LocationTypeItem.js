@@ -13,13 +13,13 @@ import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
-import ConfigureExpansionPanel from './ConfigureExpansionPanel';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import ConfigureAccordion from './ConfigureAccordionPanel';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DynamicPropertyTypesGrid from '../DynamicPropertyTypesGrid';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import React from 'react';
 import RemoveLocationTypeMutation from '../../mutations/RemoveLocationTypeMutation';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
@@ -77,13 +77,13 @@ class LocationTypeItem extends React.Component<Props> {
           id={locationType.id}
           index={position}
           key={locationType.id}>
-          <ExpansionPanel
+          <Accordion
             className={classes.panel}
             classes={{root: classes.removeBefore}}>
-            <ExpansionPanelSummary
+            <AccordionSummary
               className={classes.row}
               expandIcon={<ExpandMoreIcon />}>
-              <ConfigureExpansionPanel
+              <ConfigureAccordion
                 entityName="locationType"
                 icon={<div>{position + 1}</div>}
                 name={locationType.name}
@@ -93,8 +93,8 @@ class LocationTypeItem extends React.Component<Props> {
                 onDelete={this.onDelete}
                 onEdit={onEdit}
               />
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
+            </AccordionSummary>
+            <AccordionDetails>
               <div className={classes.properties}>
                 <DynamicPropertyTypesGrid
                   key={locationType.id}
@@ -102,8 +102,8 @@ class LocationTypeItem extends React.Component<Props> {
                   propertyTypes={locationType.propertyTypes}
                 />
               </div>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+            </AccordionDetails>
+          </Accordion>
         </DraggableTableRow>
       </div>
     );

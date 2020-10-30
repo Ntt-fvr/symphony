@@ -82,7 +82,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function ConfigureExpansionPanel(props: Props) {
+function ConfigureAccordion(props: Props) {
   const {
     icon,
     entityName,
@@ -193,4 +193,4 @@ function DeleteButton(props: DeleteButtonProps) {
   );
 }
 
-export default ConfigureExpansionPanel;
+export default ConfigureAccordion;

@@ -56,11 +56,6 @@ const styles = _ => ({
   titleText: {
     lineHeight: '28px',
   },
-  expansionPanel: {
-    '&&': {
-      padding: '0px 20px 0px 32px',
-    },
-  },
   dialog: {
     width: '80%',
     maxWidth: '1280px',
