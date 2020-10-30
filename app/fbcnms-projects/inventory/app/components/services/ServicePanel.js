@@ -7,19 +7,14 @@
  * @flow
  * @format
  */
-
+import type {
+  AddBulkServiceLinksAndPortsMutationResponse,
+  AddBulkServiceLinksAndPortsMutationVariables,
+} from '../../mutations/__generated__/AddBulkServiceLinksAndPortsMutation.graphql';
 import type {
   AddServiceEndpointMutationResponse,
   AddServiceEndpointMutationVariables,
 } from '../../mutations/__generated__/AddServiceEndpointMutation.graphql';
-import type {
-  AddServiceLinkMutationResponse,
-  AddServiceLinkMutationVariables,
-} from '../../mutations/__generated__/AddServiceLinkMutation.graphql';
-import type {
-  AddServicePortMutationResponse,
-  AddServicePortMutationVariables,
-} from '../../mutations/__generated__/AddServicePortMutation.graphql';
 import type {EquipmentPort, Link} from '../../common/Equipment';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {
@@ -37,15 +32,15 @@ import type {
 import type {ServiceEndpoint, ServiceStatus} from '../../common/Service';
 import type {ServicePanel_service} from './__generated__/ServicePanel_service.graphql';
 
+import AddBulkServiceLinksAndPortsMutation from '../../mutations/AddBulkServiceLinksAndPortsMutation';
 import AddServiceEndpointMutation from '../../mutations/AddServiceEndpointMutation';
-import AddServiceLinkMutation from '../../mutations/AddServiceLinkMutation';
-import AddServicePortMutation from '../../mutations/AddServicePortMutation';
 import Button from '@symphony/design-system/components/Button';
 import EditServiceMutation from '../../mutations/EditServiceMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import PortsConnectedStateDialog from '../equipment/PortsConnectedStateDialog';
 import React, {useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import RemoveServiceEndpointMutation from '../../mutations/RemoveServiceEndpointMutation';
 import RemoveServiceLinkMutation from '../../mutations/RemoveServiceLinkMutation';
 import RemoveServicePortMutation from '../../mutations/RemoveServicePortMutation';
@@ -58,9 +53,12 @@ import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
-import {createFragmentContainer, graphql} from 'react-relay';
+import {createFragmentContainer, fetchQuery, graphql} from 'react-relay';
 import {fbt} from 'fbt';
 import {makeStyles} from '@material-ui/styles';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
+
+import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import {
   serviceStatusToColor,
   serviceStatusToVisibleNames,
@@ -151,10 +149,14 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
   const [linksExpanded, setLinksExpanded] = useState(false);
   const [createLink, setCreateLink] = useState(false);
   const [selectedPort, setSelectedPort] = useState(null);
+  const enqueueSnackbar = useEnqueueSnackbar();
 
   const hideEditButtons = service.serviceType?.discoveryMethod != 'MANUAL';
 
   const addPortToServiceEnabled = useFeatureFlag('add_port_to_service');
+  const backplaneConnectionsEnabled = useFeatureFlag(
+    'enable_backplane_connections',
+  );
 
   const linkHeading = addPortToServiceEnabled
     ? fbt('Links/Ports', 'Add Link or Ports Menu Label')
@@ -178,37 +180,65 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
   };
 
   const onAddLink = (link: Link) => {
+    if (backplaneConnectionsEnabled) {
+      return getEndToEndPath(link.id, null).then(endToEndPath => {
+        if (endToEndPath) {
+          const links = endToEndPath.links || [];
+          const ports = endToEndPath.ports || [];
+          return addLinksAndPorts(links, ports);
+        }
+        showEndToEndPathWarning();
+        return addLinksAndPorts([link], []);
+      });
+    }
+    return addLinksAndPorts([link], []);
+  };
+  const addLinksAndPorts = (links, ports) => {
+    const linkIds = links.map(link => link.id);
+    const portIds = ports.map(port => port.id);
+
     return new Promise<void>(resolve => {
-      const variables: AddServiceLinkMutationVariables = {
-        id: service.id,
-        linkId: link.id,
+      const variables: AddBulkServiceLinksAndPortsMutationVariables = {
+        input: {
+          id: service.id,
+          linkIds: linkIds,
+          portIds: portIds,
+        },
       };
-      const callbacks: MutationCallbacks<AddServiceLinkMutationResponse> = {
-        onCompleted: (_: AddServiceLinkMutationResponse) => {
+      const callbacks: MutationCallbacks<AddBulkServiceLinksAndPortsMutationResponse> = {
+        onCompleted: (_: AddBulkServiceLinksAndPortsMutationResponse) => {
           setLinksExpanded(true);
           resolve();
         },
       };
-      AddServiceLinkMutation(variables, callbacks);
+      AddBulkServiceLinksAndPortsMutation(variables, callbacks);
     });
   };
 
   const onAddPort = (port: EquipmentPort) => {
-    return new Promise<void>(resolve => {
-      const variables: AddServicePortMutationVariables = {
-        id: service.id,
-        portId: port.id,
-      };
-      const callbacks: MutationCallbacks<AddServicePortMutationResponse> = {
-        onCompleted: (_: AddServicePortMutationResponse) => {
-          setLinksExpanded(true);
-          resolve();
-        },
-      };
-      AddServicePortMutation(variables, callbacks);
-    });
+    if (backplaneConnectionsEnabled) {
+      return getEndToEndPath(null, port.id).then(endToEndPath => {
+        if (endToEndPath) {
+          const links = endToEndPath.links || [];
+          const ports = endToEndPath.ports || [];
+          return addLinksAndPorts(links, ports);
+        }
+        showEndToEndPathWarning();
+        return addLinksAndPorts([], [port]);
+      });
+    } else {
+      return addLinksAndPorts([], [port]);
+    }
   };
 
+  const showEndToEndPathWarning = () => {
+    const msg = 'End To end path could not be calculated';
+    enqueueSnackbar(msg, {
+      children: key => (
+        <SnackbarItem id={key} message={msg} variant="warning" />
+      ),
+    });
+  };
   const onDeletePort = (port: EquipmentPort) => {
     const variables: RemoveServicePortMutationVariables = {
       id: service.id,
@@ -221,10 +251,12 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
     };
     RemoveServicePortMutation(variables, callbacks);
   };
+
   const onCreateLink = (port: EquipmentPort) => {
     setCreateLink(true);
     setSelectedPort(port);
   };
+
   const onDeleteLink = (link: Link) => {
     const variables: RemoveServiceLinkMutationVariables = {
       id: service.id,
@@ -271,7 +303,29 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
 
     return 'PENDING';
   };
+  const endToEndPathQuery = graphql`
+    query ServicePanel_endToEndPathQuery($linkId: ID, $portId: ID) {
+      endToEndPath(portId: $portId, linkId: $linkId) {
+        links {
+          id
+        }
+        ports {
+          id
+        }
+      }
+    }
+  `;
 
+  const getEndToEndPath = async (_linkId: ?string, _portId: ?string) => {
+    const response = await fetchQuery(RelayEnvironment, endToEndPathQuery, {
+      linkId: _linkId,
+      portId: _portId,
+    });
+    if (response.errors) {
+      return null;
+    }
+    return response.endToEndPath;
+  };
   return (
     <div className={classes.root} ref={ref}>
       <div className={classes.detailsCard}>
