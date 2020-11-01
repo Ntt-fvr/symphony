@@ -428,16 +428,6 @@ graphql`
       equipmentType {
         id
         name
-        portDefinitions {
-          id
-          name
-          visibleLabel
-          portType {
-            id
-            name
-          }
-          bandwidth
-        }
       }
     }
     link {
@@ -498,16 +488,6 @@ graphql`
       equipmentType {
         id
         name
-        portDefinitions {
-          id
-          name
-          visibleLabel
-          bandwidth
-          portType {
-            id
-            name
-          }
-        }
       }
       ...EquipmentBreadcrumbs_equipment
     }

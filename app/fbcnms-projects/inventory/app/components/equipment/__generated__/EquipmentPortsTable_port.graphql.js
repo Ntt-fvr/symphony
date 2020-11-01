@@ -79,16 +79,6 @@ export type EquipmentPortsTable_port = {|
     +equipmentType: {|
       +id: string,
       +name: string,
-      +portDefinitions: $ReadOnlyArray<?{|
-        +id: string,
-        +name: string,
-        +visibleLabel: ?string,
-        +portType: ?{|
-          +id: string,
-          +name: string,
-        |},
-        +bandwidth: ?string,
-      |}>,
     |},
   |},
   +link: ?{|
@@ -130,16 +120,6 @@ export type EquipmentPortsTable_port = {|
         +equipmentType: {|
           +id: string,
           +name: string,
-          +portDefinitions: $ReadOnlyArray<?{|
-            +id: string,
-            +name: string,
-            +visibleLabel: ?string,
-            +bandwidth: ?string,
-            +portType: ?{|
-              +id: string,
-              +name: string,
-            |},
-          |}>,
         |},
         +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
       |},
@@ -414,9 +394,9 @@ v14 = [
 v15 = {
   "alias": null,
   "args": null,
-  "concreteType": "EquipmentPortType",
+  "concreteType": "EquipmentType",
   "kind": "LinkedField",
-  "name": "portType",
+  "name": "equipmentType",
   "plural": false,
   "selections": (v14/*: any*/),
   "storageKey": null
@@ -425,17 +405,10 @@ v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "bandwidth",
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "futureState",
   "storageKey": null
 },
-v18 = {
+v17 = {
   "alias": null,
   "args": null,
   "concreteType": "ServiceEndpoint",
@@ -476,7 +449,7 @@ v18 = {
   ],
   "storageKey": null
 },
-v19 = {
+v18 = {
   "alias": null,
   "args": null,
   "concreteType": "Property",
@@ -572,35 +545,7 @@ return {
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EquipmentType",
-          "kind": "LinkedField",
-          "name": "equipmentType",
-          "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EquipmentPortDefinition",
-              "kind": "LinkedField",
-              "name": "portDefinitions",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                (v1/*: any*/),
-                (v3/*: any*/),
-                (v15/*: any*/),
-                (v16/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
+        (v15/*: any*/)
       ],
       "storageKey": null
     },
@@ -613,7 +558,7 @@ return {
       "plural": false,
       "selections": [
         (v0/*: any*/),
-        (v17/*: any*/),
+        (v16/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -659,36 +604,8 @@ return {
               "selections": [
                 (v0/*: any*/),
                 (v1/*: any*/),
-                (v17/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "EquipmentType",
-                  "kind": "LinkedField",
-                  "name": "equipmentType",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/),
-                    (v1/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "EquipmentPortDefinition",
-                      "kind": "LinkedField",
-                      "name": "portDefinitions",
-                      "plural": true,
-                      "selections": [
-                        (v0/*: any*/),
-                        (v1/*: any*/),
-                        (v3/*: any*/),
-                        (v16/*: any*/),
-                        (v15/*: any*/)
-                      ],
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                },
+                (v16/*: any*/),
+                (v15/*: any*/),
                 {
                   "args": null,
                   "kind": "FragmentSpread",
@@ -697,7 +614,7 @@ return {
               ],
               "storageKey": null
             },
-            (v18/*: any*/)
+            (v17/*: any*/)
           ],
           "storageKey": null
         },
@@ -720,7 +637,7 @@ return {
           ],
           "storageKey": null
         },
-        (v19/*: any*/),
+        (v18/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -734,14 +651,14 @@ return {
       ],
       "storageKey": null
     },
-    (v19/*: any*/),
-    (v18/*: any*/)
+    (v18/*: any*/),
+    (v17/*: any*/)
   ],
   "type": "EquipmentPort",
   "abstractKey": null
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '989e58f64cb20aade170eb911604ab3c';
+(node/*: any*/).hash = 'e9843ee074431a29b92b146ae86a7852';
 
 module.exports = node;

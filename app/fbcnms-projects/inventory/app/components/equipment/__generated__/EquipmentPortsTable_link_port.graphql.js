@@ -56,16 +56,6 @@ export type EquipmentPortsTable_link_port = {|
     +equipmentType: {|
       +id: string,
       +name: string,
-      +portDefinitions: $ReadOnlyArray<?{|
-        +id: string,
-        +name: string,
-        +visibleLabel: ?string,
-        +bandwidth: ?string,
-        +portType: ?{|
-          +id: string,
-          +name: string,
-        |},
-      |}>,
     |},
     +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
   |},
@@ -102,13 +92,6 @@ v1 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "visibleLabel",
-  "storageKey": null
 };
 return {
   "argumentDefinitions": [],
@@ -127,7 +110,13 @@ return {
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
-        (v2/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "visibleLabel",
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -293,41 +282,7 @@ return {
           "plural": false,
           "selections": [
             (v0/*: any*/),
-            (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EquipmentPortDefinition",
-              "kind": "LinkedField",
-              "name": "portDefinitions",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                (v1/*: any*/),
-                (v2/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "bandwidth",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "EquipmentPortType",
-                  "kind": "LinkedField",
-                  "name": "portType",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/),
-                    (v1/*: any*/)
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
+            (v1/*: any*/)
           ],
           "storageKey": null
         },
@@ -386,6 +341,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a52288c25e58426be38cca7b0a1d61ce';
+(node/*: any*/).hash = '7862fde7be9146274a4a5678aea147a8';
 
 module.exports = node;
