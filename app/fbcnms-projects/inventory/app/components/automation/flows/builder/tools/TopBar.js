@@ -10,6 +10,7 @@
 
 import Button from '@symphony/design-system/components/Button';
 import FlowBuilderButton from '../../utils/FlowBuilderButton';
+import FlowHeader from './FlowHeader';
 import React, {useCallback} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
@@ -25,6 +26,7 @@ import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
 import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
 import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
+import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -40,6 +42,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function TopBar() {
+  const {isReadOnly} = useReadOnlyMode();
+  return isReadOnly ? ViewerTopBar() : BuilderTopBar();
+}
+
+function BuilderTopBar() {
   const classes = useStyles();
 
   const flow = useGraph();
@@ -107,6 +114,23 @@ export default function TopBar() {
           onClick={save}>
           {Strings.common.saveButton}
         </Button>
+      </div>
+    </ToolsBar>
+  );
+}
+
+function ViewerTopBar() {
+  const classes = useStyles();
+  const detailsPane = useDetailsPane();
+
+  return (
+    <ToolsBar className={classes.root}>
+      <div className={classes.left}>
+        <FlowHeader />
+      </div>
+      <div className={classes.center} />
+      <div className={classes.right}>
+        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
       </div>
     </ToolsBar>
   );

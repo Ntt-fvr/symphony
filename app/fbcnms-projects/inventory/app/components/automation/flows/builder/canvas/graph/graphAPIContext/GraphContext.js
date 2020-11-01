@@ -61,6 +61,7 @@ export type FlowWrapper = {|
   +shapesFactory: IShapesFactory,
   paperScale: number,
   paperTranslation: Position,
+  paperIsLocked: boolean,
 |};
 
 export type FlowWrapperReference = TRefObjectFor<?FlowWrapper>;

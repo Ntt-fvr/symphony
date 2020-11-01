@@ -12,7 +12,8 @@ import AddFlowDialog from '../view/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
-import React, {useEffect, useState} from 'react';
+import FlowHeader from './tools/FlowHeader';
+import React, {useEffect, useMemo, useState} from 'react';
 import TopBar from './tools/TopBar';
 import usePaperGrab from './widgets/navigation/usePaperGrab';
 import {CopyPasteContextProvider} from './widgets/copyPaste/CopyPasteContext';
@@ -23,6 +24,10 @@ import {GraphContextProvider} from './canvas/graph/graphAPIContext/GraphContext'
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {KeyboardShortcutsContextProvider} from './widgets/keyboardShortcuts/KeyboardShortcutsContext';
+import {
+  ReadOnlyModeContextProvider,
+  useReadOnlyMode,
+} from './widgets/readOnlyModeContext';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router-dom';
 
@@ -88,30 +93,32 @@ export default function FlowBuilder() {
   }, [isNewFlowDraft, isOnPlayground]);
 
   return (
-    <GraphContextProvider>
-      <KeyboardShortcutsContextProvider>
-        <FlowDataContextProvider
-          flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
-          <DialogShowingContextProvider>
-            <GraphSelectionContextProvider>
-              <CopyPasteContextProvider>
-                <DetailsPanelContextProvider>
-                  <FlowBuilderLayout />
-                  <AddFlowDialog
-                    open={dialogOpen}
-                    onClose={hideDialog}
-                    onSave={flowId => {
-                      setDialogOpen(false);
-                      history.push(InventoryAPIUrls.flow(flowId));
-                    }}
-                  />
-                </DetailsPanelContextProvider>
-              </CopyPasteContextProvider>
-            </GraphSelectionContextProvider>
-          </DialogShowingContextProvider>
-        </FlowDataContextProvider>
-      </KeyboardShortcutsContextProvider>
-    </GraphContextProvider>
+    <ReadOnlyModeContextProvider isReadOnly={false}>
+      <GraphContextProvider>
+        <KeyboardShortcutsContextProvider>
+          <FlowDataContextProvider
+            flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
+            <DialogShowingContextProvider>
+              <GraphSelectionContextProvider>
+                <CopyPasteContextProvider>
+                  <DetailsPanelContextProvider>
+                    <FlowBuilderLayout />
+                    <AddFlowDialog
+                      open={dialogOpen}
+                      onClose={hideDialog}
+                      onSave={flowId => {
+                        setDialogOpen(false);
+                        history.push(InventoryAPIUrls.flow(flowId));
+                      }}
+                    />
+                  </DetailsPanelContextProvider>
+                </CopyPasteContextProvider>
+              </GraphSelectionContextProvider>
+            </DialogShowingContextProvider>
+          </FlowDataContextProvider>
+        </KeyboardShortcutsContextProvider>
+      </GraphContextProvider>
+    </ReadOnlyModeContextProvider>
   );
 }
 
@@ -120,9 +127,15 @@ function FlowBuilderLayout() {
 
   usePaperGrab();
 
+  const {isReadOnly} = useReadOnlyMode();
+  const sideBar = useMemo(
+    () => (isReadOnly ? null : <BlocksBar title={<FlowHeader />} />),
+    [isReadOnly],
+  );
+
   return (
     <div className={classes.root}>
-      <BlocksBar />
+      {sideBar}
       <div className={classes.workspace}>
         <TopBar />
         <Canvas />

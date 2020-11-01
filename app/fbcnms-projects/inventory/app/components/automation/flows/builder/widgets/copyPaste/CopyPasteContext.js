@@ -14,11 +14,12 @@ import * as React from 'react';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import {
   PREDICATES,
-  useKeyboardShortcut,
+  useKeyboardShortcuts,
 } from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {useCallback, useContext, useEffect, useState} from 'react';
 import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 import {useGraphSelection} from '../selection/GraphSelectionContext';
+import {useReadOnlyMode} from '../readOnlyModeContext';
 
 export type CopyPasteContextType = {
   allowDuplicate: boolean,
@@ -55,15 +56,14 @@ export function CopyPasteContextProvider(props: Props) {
   const [clipboard, setClipboard] = useState<?(IBlock[])>(null);
 
   const duplicate = useCallback(() => {
+    if (!allowDuplicate) {
+      return;
+    }
+
     const blocksToDuplicate = selection.selectedElements;
     const duplicatedBlocks = flow.duplicateBlocks([...blocksToDuplicate]);
     selection.changeSelection(duplicatedBlocks);
-  }, [flow, selection]);
-
-  useKeyboardShortcut(
-    PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('d')]),
-    duplicate,
-  );
+  }, [allowDuplicate, flow, selection]);
 
   const copy = useCallback(() => {
     if (!allowCopy) {
@@ -77,11 +77,6 @@ export function CopyPasteContextProvider(props: Props) {
     setClipboard(duplicatedBlocks);
   }, [allowCopy, flow, selection]);
 
-  useKeyboardShortcut(
-    PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('c')]),
-    copy,
-  );
-
   const paste = useCallback(() => {
     if (clipboard == null) {
       return;
@@ -92,15 +87,37 @@ export function CopyPasteContextProvider(props: Props) {
     selection.changeSelection(clipboard);
   }, [clipboard, selection, flow]);
 
-  useKeyboardShortcut(
-    PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('v')]),
-    paste,
-  );
+  const {isReadOnly} = useReadOnlyMode();
+
+  const keyboardShortcuts = useKeyboardShortcuts();
+  const registerKeyboardShortcut =
+    keyboardShortcuts.registerCanvasKeyboardShortcut;
 
   useEffect(() => {
-    setAllowDuplicate(selection.selectedElements.length > 0);
-    setAllowCopy(selection.selectedElements.length > 0);
-  }, [selection]);
+    if (!isReadOnly) {
+      const unregisterCallbacks = [
+        registerKeyboardShortcut(
+          PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('d')]),
+          duplicate,
+        ),
+        registerKeyboardShortcut(
+          PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('c')]),
+          copy,
+        ),
+        registerKeyboardShortcut(
+          PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('v')]),
+          paste,
+        ),
+      ];
+
+      return () => unregisterCallbacks.forEach(unregister => unregister());
+    }
+  }, [isReadOnly, copy, paste, duplicate, registerKeyboardShortcut]);
+
+  useEffect(() => {
+    setAllowDuplicate(!isReadOnly && selection.selectedElements.length > 0);
+    setAllowCopy(!isReadOnly && selection.selectedElements.length > 0);
+  }, [isReadOnly, selection]);
 
   return (
     <CopyPasteContext.Provider

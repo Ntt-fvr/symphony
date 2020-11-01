@@ -105,7 +105,7 @@ const flowQuery = graphql`
             }
           }
         }
-        ...BlocksBar_flowDraft
+        ...FlowHeader_flowDraft
       }
     }
   }

@@ -15,7 +15,6 @@ import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback} from 'react';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import {FormContextProvider} from '../../../../../../../common/FormContext';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {RenameMultipleLinesIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
@@ -70,7 +69,7 @@ export default function FlowDescription(props: Props) {
   }, [dialogShowingContext, hide, flowData]);
 
   const actionItems = [
-    <FormAction disableOnFromError={true}>
+    <FormAction hideOnEditLocks={true}>
       <IconButton
         className={classes.editDescriptionButton}
         icon={RenameMultipleLinesIcon}
@@ -81,13 +80,11 @@ export default function FlowDescription(props: Props) {
   ];
 
   return (
-    <FormContextProvider permissions={{adminRightsRequired: true}}>
-      <DetailsPanelSection
-        title={fbt('Flow description', '')}
-        body={flowData.flowDraft?.description ?? null}
-        actionItems={actionItems}
-        className={classNames(classes.root, className)}
-      />
-    </FormContextProvider>
+    <DetailsPanelSection
+      title={fbt('Flow description', '')}
+      body={flowData.flowDraft?.description ?? null}
+      actionItems={actionItems}
+      className={classNames(classes.root, className)}
+    />
   );
 }

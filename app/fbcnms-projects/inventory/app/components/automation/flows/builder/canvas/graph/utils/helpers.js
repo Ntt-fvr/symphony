@@ -209,6 +209,14 @@ export function buildPaperConnectionValidation(
   };
 }
 
+export function buildPaperInteractivityCheck(
+  flowWrapper: FlowWrapperReference,
+) {
+  return () => {
+    return !flowWrapper.current?.paperIsLocked;
+  };
+}
+
 const BLOCK_INDEXER_REGEX = /\s\((\d+)\)$/;
 const BLOCK_NAME_REGEX: RegExp = new RegExp(
   `^(.+)${BLOCK_INDEXER_REGEX.source}`,

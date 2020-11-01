@@ -20,9 +20,10 @@ import Lasso from '../facades/shapes/vertexes/helpers/Lasso';
 import ShapesFactory from '../shapes/ShapesFactory';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DEFAULT_LINK_SETTINGS} from '../shapes/connectors/BaseConnector';
-import {blockNameFixer} from '../utils/helpers';
 import {
+  blockNameFixer,
   buildPaperConnectionValidation,
+  buildPaperInteractivityCheck,
   handleNewConnections,
 } from '../utils/helpers';
 import {handleMagnetPorts} from '../paper/helpers';
@@ -90,6 +91,7 @@ function graphBindToContainer(containerElement: HTMLElement) {
     },
     ...DEFAULT_LINK_SETTINGS,
     validateConnection: buildPaperConnectionValidation(this),
+    interactive: buildPaperInteractivityCheck(this),
   });
 
   const shapesFactory = new ShapesFactory(paper);
@@ -108,6 +110,7 @@ function graphBindToContainer(containerElement: HTMLElement) {
       x: 0,
       y: 0,
     },
+    paperIsLocked: false,
   };
 
   handleNewConnections(this.current);

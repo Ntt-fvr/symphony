@@ -13,6 +13,7 @@ import {makeStyles} from '@material-ui/styles';
 import {useEffect, useRef} from 'react';
 import {useGraph} from './graph/graphAPIContext/GraphContext';
 import {useKeyboardShortcuts} from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
+import {useReadOnlyMode} from '../widgets/readOnlyModeContext';
 
 const useStyles = makeStyles(() => ({
   graphContainer: {
@@ -37,6 +38,12 @@ export default function Canvas() {
     flow.bindGraphContainer(container);
     keyboardShortcuts.initiateKeyboardShortcutsHandlers();
   }, [flow, keyboardShortcuts]);
+
+  const {isReadOnly} = useReadOnlyMode();
+
+  useEffect(() => {
+    flow.setPaperInteractionLocked(isReadOnly === true);
+  }, [flow, isReadOnly]);
 
   return (
     <div

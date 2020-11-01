@@ -69,4 +69,5 @@ export type PaperCtorType = ({
   width: number | string,
   height: number | string,
   gridSize: number,
+  interactive: boolean | (IShape => boolean),
 }) => Paper;

@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-type BlocksBar_flowDraft$ref = any;
+type FlowHeader_flowDraft$ref = any;
 export type FlowDataContext_FlowDraftQueryVariables = {|
   flowId: string
 |};
@@ -42,7 +42,7 @@ export type FlowDataContext_FlowDraftQueryResponse = {|
         |},
       |}>,
     |}>,
-    +$fragmentRefs: BlocksBar_flowDraft$ref,
+    +$fragmentRefs: FlowHeader_flowDraft$ref,
   |}
 |};
 export type FlowDataContext_FlowDraftQuery = {|
@@ -83,13 +83,13 @@ query FlowDataContext_FlowDraftQuery(
         }
         id
       }
-      ...BlocksBar_flowDraft
+      ...FlowHeader_flowDraft
     }
     id
   }
 }
 
-fragment BlocksBar_flowDraft on FlowDraft {
+fragment FlowHeader_flowDraft on FlowDraft {
   name
 }
 */
@@ -233,7 +233,7 @@ return {
               {
                 "args": null,
                 "kind": "FragmentSpread",
-                "name": "BlocksBar_flowDraft"
+                "name": "FlowHeader_flowDraft"
               }
             ],
             "type": "FlowDraft",
@@ -306,16 +306,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8486abba78477e85937f028cb3240d57",
+    "cacheID": "38a02b755afa8f0fc01539a1ae201f37",
     "id": null,
     "metadata": {},
     "name": "FlowDataContext_FlowDraftQuery",
     "operationKind": "query",
-    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        id\n      }\n      ...BlocksBar_flowDraft\n    }\n    id\n  }\n}\n\nfragment BlocksBar_flowDraft on FlowDraft {\n  name\n}\n"
+    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bd843a58a5d1c6e673f2250838be6b10';
+(node/*: any*/).hash = '131e688bb7a0829709af817d86223b04';
 
 module.exports = node;
