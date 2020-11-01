@@ -9,6 +9,7 @@
  */
 'use strict';
 
+import type {IShape} from '../../BaseShape';
 import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
@@ -71,7 +72,7 @@ export default class Lasso extends LassoBaseClass implements IVertexModel {
   }
 }
 
-export function isLasso(element: ?IVertexModel): boolean {
+export function isLasso(element: ?IShape): boolean {
   if (element == null) {
     return false;
   }

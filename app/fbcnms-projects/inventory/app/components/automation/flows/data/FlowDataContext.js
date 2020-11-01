@@ -23,11 +23,13 @@ import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBou
 import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
 import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
+import {Events} from '../builder/canvas/graph/facades/Helpers.js';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {graphql} from 'react-relay';
 import {
+  hasMeaningfulChanges,
   mapActionBlocksForSave,
   mapConnectorsForSave,
   mapDecisionBlockForSave,
@@ -40,7 +42,7 @@ import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useGraph} from '../builder/canvas/graph/graphAPIContext/GraphContext';
 import {useHistory} from 'react-router-dom';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 
 const BLOCK_TYPES = {
   StartBlock: ManualStartType,
@@ -59,15 +61,17 @@ type FlowSettingsUpdateType = ?{
   description?: ?string,
 };
 
-export type FlowDataContextType = {
+export type FlowDataContextType = $ReadOnly<{|
   flowDraft: FlowDraftResponse,
+  hasChanges: boolean,
   save: (
     flowSettingsUpdate?: FlowSettingsUpdateType,
   ) => Promise<ImportFlowDraftMutationResponse>,
-};
+|}>;
 
 const FlowDataContextDefaults = {
   flowDraft: null,
+  hasChanges: false,
   save: () => Promise.reject(),
 };
 
@@ -113,6 +117,7 @@ type Props = $ReadOnly<{|
 
 function FlowDataContextProviderComponent(props: Props) {
   const {flowId} = props;
+  const [hasChanges, setHasChanges] = useState(false);
   const {flowDraft} = useLazyLoadQuery<FlowDataContext_FlowDraftQuery>(
     flowQuery,
     {
@@ -231,6 +236,13 @@ function FlowDataContextProviderComponent(props: Props) {
     loadConnectorsIntoGraph(blocks);
 
     isLoaded.current = true;
+
+    return flow.onGraphEvent(Events.Graph.OnChange, shape => {
+      if (!hasMeaningfulChanges(shape)) {
+        return;
+      }
+      setHasChanges(true);
+    });
   }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
   const save = useCallback(
@@ -283,13 +295,17 @@ function FlowDataContextProviderComponent(props: Props) {
         flowData.connectors = connectors;
       }
 
-      return saveFlowDraft(flowData);
+      const savePromise = saveFlowDraft(flowData);
+
+      savePromise.then(() => setHasChanges(false));
+
+      return savePromise;
     },
     [flow, flowDraft],
   );
 
   return (
-    <FlowDataContext.Provider value={{flowDraft, save}}>
+    <FlowDataContext.Provider value={{flowDraft, hasChanges, save}}>
       {props.children}
     </FlowDataContext.Provider>
   );

@@ -10,19 +10,21 @@
 'use strict';
 
 import type {IBlock} from '../blocks/BaseBlock';
-import type {ILink} from '../../facades/shapes/edges/Link';
+import type {ILinkModel, ILinkView} from '../../facades/shapes/edges/Link';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
 
 import Link from '../../facades/shapes/edges/Link';
-import symphony from '@symphony/design-system/theme/symphony';
+import {DISPLAY_SETTINGS} from '../../utils/helpers';
+import {V} from 'jointjs';
 
-export const STROKE = {
-  COLOR: {
-    DEFAULT: symphony.palette.secondary,
-    SELECTED: symphony.palette.primary,
+const selectionHighlighting = {
+  highlighter: {
+    name: 'addClass',
+    options: {
+      className: DISPLAY_SETTINGS.classes.isSelected,
+    },
   },
-  WIDTH: '2px',
 };
 
 export const DEFAULT_LINK_SETTINGS = {
@@ -32,8 +34,8 @@ export const DEFAULT_LINK_SETTINGS = {
     z: 2,
     attrs: {
       line: {
-        stroke: STROKE.COLOR.DEFAULT,
-        strokeWidth: STROKE.WIDTH,
+        stroke: DISPLAY_SETTINGS.connectors.defaultColor,
+        strokeWidth: '2px',
         strokeLinejoin: 'round',
         strokeLinecap: 'round',
         targetMarker: {
@@ -62,7 +64,8 @@ type CtorWithSourceTarget = $ReadOnly<{|
 
 export interface IConnector {
   +id: string;
-  +model: ILink;
+  +model: ILinkModel;
+  +view: ILinkView;
   +snapTargetToPointer: Position => void;
   +source: IBlock;
   +sourcePortId: string;
@@ -78,7 +81,8 @@ export interface IConnector {
 
 export default class BaseConnector implements IConnector {
   paper: Paper;
-  model: ILink;
+  model: ILinkModel;
+  view: ILinkView;
   id: string;
   source: IBlock;
   sourcePortId: string;
@@ -90,7 +94,7 @@ export default class BaseConnector implements IConnector {
   constructor(
     paper: Paper,
     args: CtorWithSourceTarget,
-    model?: ?ILink,
+    model?: ?ILinkModel,
     addToGraph?: boolean = true,
   ) {
     this.paper = paper;
@@ -111,7 +115,24 @@ export default class BaseConnector implements IConnector {
       }
     }
 
+    this.updateView();
+
     this.id = this.model.id;
+  }
+
+  updateView() {
+    this.model.attr({
+      line: {
+        stroke: 'inherit',
+      },
+    });
+
+    const view = this.paper.findViewByModel(this.model);
+    if (isLinkView(view)) {
+      this.view = view;
+    }
+
+    V(this.view.el).addClass(DISPLAY_SETTINGS.classes.defaultConnector);
   }
 
   setSource(source: IBlock, port: string, addToGraph?: boolean = true) {
@@ -151,20 +172,14 @@ export default class BaseConnector implements IConnector {
 
   select() {
     this.isSelected = true;
-    this.model.attr({
-      line: {
-        stroke: STROKE.COLOR.SELECTED,
-      },
-    });
+
+    this.view.highlight(undefined, selectionHighlighting);
   }
 
   deselect() {
     this.isSelected = false;
-    this.model.attr({
-      line: {
-        stroke: STROKE.COLOR.DEFAULT,
-      },
-    });
+
+    this.view.unhighlight(undefined, selectionHighlighting);
   }
 
   addToGraph() {
@@ -188,4 +203,8 @@ function buildConnectionEndpointAttrs(
         port,
       }
     : null;
+}
+
+function isLinkView(v): %checks {
+  return !!v.path;
 }

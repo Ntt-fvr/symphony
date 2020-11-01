@@ -8,6 +8,7 @@
  * @format
  */
 'use strict';
+import type {KeyValuePair, Primitive} from '../Helpers';
 
 export interface IBaseShapeAttributes {
   +id: string;
@@ -17,8 +18,21 @@ export interface IBaseShapeAttributes {
 export interface IShape {
   +id: string;
   +attributes: IBaseShapeAttributes;
+  +changed: KeyValuePair;
   +isLink: () => boolean;
 }
+
+export type IShapeView<M: IShape> = $ReadOnly<{|
+  el: HTMLElement,
+  model: M,
+  highlight: (?IShapeView<M>, options?: KeyValuePair) => void,
+  unhighlight: (?IShapeView<M>, options?: KeyValuePair) => void,
+  isSelected: boolean,
+  findAttribute: (
+    attribute: string,
+    node: HTMLElement,
+  ) => KeyValuePair | Primitive,
+|}>;
 
 export function getCellType(cell: ?IShape | IBaseShapeAttributes): ?string {
   if (cell == null) {

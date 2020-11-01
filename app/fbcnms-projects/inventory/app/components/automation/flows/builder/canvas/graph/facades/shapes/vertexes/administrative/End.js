@@ -14,7 +14,6 @@ import type {IVertexModel} from '../BaseVertext';
 import * as jointJS from 'jointjs';
 import fbt from 'fbt';
 import {
-  DISPLAY_SETTINGS,
   PORTS_GROUPS,
   VERTEX_COMMON_DISPLAY,
   getInitObject,
@@ -42,7 +41,6 @@ const defaultProperties = {
     body: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       strokeWidth: BORDER,
-      stroke: DISPLAY_SETTINGS.body.stroke.default,
       fill: FILL_COLOR,
       r: RADIUS,
       cx: INNER_CENTER,

@@ -10,7 +10,7 @@
 'use strict';
 
 import type {IConnector} from '../connectors/BaseConnector';
-import type {ILink} from '../../facades/shapes/edges/Link';
+import type {ILinkModel} from '../../facades/shapes/edges/Link';
 import type {
   IVertexModel,
   IVertexView,
@@ -19,14 +19,22 @@ import type {
 import type {Paper} from '../../facades/Paper';
 
 import BaseConnector from '../connectors/BaseConnector';
-import {
-  DISPLAY_SETTINGS,
-  PORTS_GROUPS,
-} from '../../facades/shapes/vertexes/BaseVertext';
+import {DISPLAY_SETTINGS} from '../../utils/helpers';
+import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
+import {V} from 'jointjs';
 
 const DUPLICATION_SHIFT = {
   x: 84,
   y: 84,
+};
+
+const selectionHighlighting = {
+  highlighter: {
+    name: 'addClass',
+    options: {
+      className: DISPLAY_SETTINGS.classes.isSelected,
+    },
+  },
 };
 
 export interface IBlock {
@@ -47,7 +55,7 @@ export interface IBlock {
   +addConnector: (
     sourcePort: ?(string | number),
     target: IBlock,
-    model?: ?ILink,
+    model?: ?ILinkModel,
   ) => ?IConnector;
   +removeConnector: IConnector => void;
   +addToGraph: () => void;
@@ -89,20 +97,14 @@ export default class BaseBlock implements IBlock {
 
   select() {
     this.isSelected = true;
-    this.model.attr({
-      body: {
-        stroke: DISPLAY_SETTINGS.body.stroke.selected,
-      },
-    });
+
+    this.view.highlight(undefined, selectionHighlighting);
   }
 
   deselect() {
     this.isSelected = false;
-    this.model.attr({
-      body: {
-        stroke: DISPLAY_SETTINGS.body.stroke.default,
-      },
-    });
+
+    this.view.unhighlight(undefined, selectionHighlighting);
   }
 
   getPorts(): $ReadOnlyArray<VertexPort> {
@@ -131,7 +133,11 @@ export default class BaseBlock implements IBlock {
     delete this.outConnectors[index];
   }
 
-  addConnector(sourcePort: ?(string | number), target: IBlock, model?: ?ILink) {
+  addConnector(
+    sourcePort: ?(string | number),
+    target: IBlock,
+    model?: ?ILinkModel,
+  ) {
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
@@ -175,9 +181,19 @@ export default class BaseBlock implements IBlock {
 
     const graph = this.paper.model;
     this.model.addTo(graph);
-    this.view = this.paper.findViewByModel(this.model);
+
+    this.updateView();
 
     this.isInGraph = true;
+  }
+
+  updateView() {
+    const view = this.paper.findViewByModel(this.model);
+    if (isVertexView(view)) {
+      this.view = view;
+    }
+
+    V(this.view.el).addClass(DISPLAY_SETTINGS.classes.defaultBlock);
   }
 
   copy() {
@@ -196,4 +212,8 @@ export default class BaseBlock implements IBlock {
 
     return clonedBlock;
   }
+}
+
+function isVertexView(v): %checks {
+  return !!v.portContainerMarkup;
 }

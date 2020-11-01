@@ -102,7 +102,9 @@ export default function TopBar() {
       <div className={classes.center} />
       <div className={classes.right}>
         <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
-        <Button disabled={!flowData.flowDraft?.id} onClick={save}>
+        <Button
+          disabled={!flowData.flowDraft?.id || !flowData.hasChanges}
+          onClick={save}>
           {Strings.common.saveButton}
         </Button>
       </div>

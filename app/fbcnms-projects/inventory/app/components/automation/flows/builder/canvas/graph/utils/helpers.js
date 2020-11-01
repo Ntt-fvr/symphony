@@ -14,7 +14,7 @@ import type {
 } from '../graphAPIContext/GraphContext';
 import type {IBlock} from '../shapes/blocks/BaseBlock';
 import type {
-  ILink,
+  ILinkModel,
   LinkEndpoint,
   LinkEventArgs,
 } from '../facades/shapes/edges/Link';
@@ -23,8 +23,35 @@ import type {
   VertexPort,
 } from '../facades/shapes/vertexes/BaseVertext';
 
+import jss from 'jss';
+import symphony from '@symphony/design-system/theme/symphony';
 import {Events} from '../facades/Helpers';
 import {PORTS_GROUPS} from '../facades/shapes/vertexes/BaseVertext';
+
+const connectorDefaultColor = symphony.palette.secondary;
+export const {classes} = jss
+  .createStyleSheet(
+    {
+      defaultBlock: {
+        stroke: symphony.palette.white,
+      },
+      defaultConnector: {
+        stroke: connectorDefaultColor,
+      },
+      isSelected: {
+        stroke: symphony.palette.primary,
+      },
+    },
+    {link: true},
+  )
+  .attach();
+
+export const DISPLAY_SETTINGS = {
+  connectors: {
+    defaultColor: connectorDefaultColor,
+  },
+  classes,
+};
 
 export function handleNewConnections(flow: ?FlowWrapper) {
   if (flow == null) {
@@ -32,7 +59,7 @@ export function handleNewConnections(flow: ?FlowWrapper) {
   }
 
   const handler = (args: LinkEventArgs) => {
-    const newLink: ILink = args.model;
+    const newLink: ILinkModel = args.model;
     if (flow.connectors.has(newLink.id) || !isLinkValid(flow, newLink)) {
       return;
     }
@@ -64,7 +91,7 @@ export function handleNewConnections(flow: ?FlowWrapper) {
 
 function getLinkEndpointBlock(
   flow: ?FlowWrapper,
-  link: ILink,
+  link: ILinkModel,
   side: 'source' | 'target',
 ): ?IBlock {
   if (flow == null) {
@@ -80,7 +107,7 @@ function getLinkEndpointBlock(
   return flow.blocks.get(linkSide.id);
 }
 
-function isLinkValid(flow: ?FlowWrapper, newLink: ILink) {
+function isLinkValid(flow: ?FlowWrapper, newLink: ILinkModel) {
   if (
     newLink.attributes.source.id == null ||
     newLink.attributes.target.id == null ||
