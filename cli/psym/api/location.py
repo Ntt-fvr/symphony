@@ -21,9 +21,12 @@ from ..exceptions import (
 )
 from ..graphql.enum.filter_operator import FilterOperator
 from ..graphql.fragment.location import LocationFragment
-from ..graphql.input.add_location import AddLocationInput
-from ..graphql.input.edit_location import EditLocationInput
-from ..graphql.input.location_filter import LocationFilterInput, LocationFilterType
+from ..graphql.input.add_location_input import AddLocationInput
+from ..graphql.input.edit_location_input import EditLocationInput
+from ..graphql.input.location_filter_input import (
+    LocationFilterInput,
+    LocationFilterType,
+)
 from ..graphql.mutation.add_location import AddLocationMutation
 from ..graphql.mutation.edit_location import EditLocationMutation
 from ..graphql.mutation.move_location import MoveLocationMutation

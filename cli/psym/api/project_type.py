@@ -20,8 +20,8 @@ from psym.common.data_format import (
     format_to_property_type_inputs,
 )
 from psym.exceptions import EntityNotFoundError
-from psym.graphql.input.add_project_type import AddProjectTypeInput
-from psym.graphql.input.work_order_definition import WorkOrderDefinitionInput
+from psym.graphql.input.add_project_type_input import AddProjectTypeInput
+from psym.graphql.input.work_order_definition_input import WorkOrderDefinitionInput
 from psym.graphql.mutation.add_project_type import AddProjectTypeMutation
 from psym.graphql.mutation.edit_project_type import (
     EditProjectTypeInput,

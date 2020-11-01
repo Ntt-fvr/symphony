@@ -16,8 +16,8 @@ from psym.common.data_format import (
 )
 from psym.exceptions import EntityNotFoundError
 
-from ..graphql.input.add_work_order_type import AddWorkOrderTypeInput
-from ..graphql.input.edit_work_order_type import EditWorkOrderTypeInput
+from ..graphql.input.add_work_order_type_input import AddWorkOrderTypeInput
+from ..graphql.input.edit_work_order_type_input import EditWorkOrderTypeInput
 from ..graphql.mutation.add_work_order_type import AddWorkOrderTypeMutation
 from ..graphql.mutation.edit_work_order_type import EditWorkOrderTypeMutation
 from ..graphql.mutation.remove_work_order_type import RemoveWorkOrderTypeMutation

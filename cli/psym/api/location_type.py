@@ -21,8 +21,8 @@ from psym.common.data_format import (
 )
 
 from ..exceptions import EntityNotFoundError
-from ..graphql.input.add_location_type import AddLocationTypeInput
-from ..graphql.input.edit_location_type import EditLocationTypeInput
+from ..graphql.input.add_location_type_input import AddLocationTypeInput
+from ..graphql.input.edit_location_type_input import EditLocationTypeInput
 from ..graphql.mutation.add_location_type import AddLocationTypeMutation
 from ..graphql.mutation.edit_location_type import EditLocationTypeMutation
 from ..graphql.mutation.remove_location_type import RemoveLocationTypeMutation

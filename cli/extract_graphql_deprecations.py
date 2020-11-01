@@ -8,7 +8,7 @@ from graphql import (
     GraphQLScalarType,
     GraphQLUnionType,
 )
-from graphql_compiler.gql.utils_schema import compile_schema_library
+from utils import compile_schema_library
 
 
 DEPRECATED_DOC = """---

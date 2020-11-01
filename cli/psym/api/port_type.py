@@ -16,8 +16,8 @@ from psym.common.data_format import (
 
 from .._utils import get_graphql_property_type_inputs
 from ..exceptions import EntityNotFoundError
-from ..graphql.input.add_equipment_port_type import AddEquipmentPortTypeInput
-from ..graphql.input.edit_equipment_port_type import EditEquipmentPortTypeInput
+from ..graphql.input.add_equipment_port_type_input import AddEquipmentPortTypeInput
+from ..graphql.input.edit_equipment_port_type_input import EditEquipmentPortTypeInput
 from ..graphql.mutation.add_equipment_port_type import AddEquipmentPortTypeMutation
 from ..graphql.mutation.edit_equipment_port_type import EditEquipmentPortTypeMutation
 from ..graphql.mutation.remove_equipment_port_type import (

@@ -27,18 +27,18 @@ from .._utils import (
     get_position_definition_input,
 )
 from ..exceptions import EntityNotFoundError
-from ..graphql.input.add_equipment_type import AddEquipmentTypeInput
-from ..graphql.input.edit_equipment_type import EditEquipmentTypeInput
-from ..graphql.input.equipment_port import EquipmentPortInput
-from ..graphql.input.equipment_position import EquipmentPositionInput
-from ..graphql.input.property_type import PropertyTypeInput
+from ..graphql.input.add_equipment_type_input import AddEquipmentTypeInput
+from ..graphql.input.edit_equipment_type_input import EditEquipmentTypeInput
+from ..graphql.input.equipment_port_input import EquipmentPortInput
+from ..graphql.input.equipment_position_input import EquipmentPositionInput
+from ..graphql.input.property_type_input import PropertyTypeInput
 from ..graphql.mutation.add_equipment_type import AddEquipmentTypeMutation
 from ..graphql.mutation.edit_equipment_type import EditEquipmentTypeMutation
 from ..graphql.mutation.remove_equipment_type import RemoveEquipmentTypeMutation
 from ..graphql.query.equipment_type_details import EquipmentTypeDetailsQuery
 from ..graphql.query.equipment_type_equipments import EquipmentTypeEquipmentQuery
 from ..graphql.query.equipment_types import EquipmentTypesQuery
-from ..graphql.input.equipment_port_connection import EquipmentPortConnectionInput
+from ..graphql.input.equipment_port_connection_input import EquipmentPortConnectionInput
 from .equipment import delete_equipment
 from .property_type import (
     edit_property_type,

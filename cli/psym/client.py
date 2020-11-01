@@ -2,9 +2,12 @@
 
 import re
 from typing import Any, Dict, Optional
+from http import HTTPStatus
 
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.reporter import DUMMY_REPORTER, Reporter
+from gql_client.runtime.graphql_client import GraphqlClient
+from gql_client.runtime.transport.http import HTTPException
+
+from gql_client.runtime.reporter import DUMMY_REPORTER, Reporter
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from requests.models import Response
@@ -17,6 +20,10 @@ from .common.endpoint import (
     SYMPHONY_STORE_PUT,
     SYMPHONY_URI,
 )
+
+
+class UserDeactivatedException(Exception):
+    pass
 
 
 class SymphonyClient(GraphqlClient):
@@ -78,7 +85,21 @@ class SymphonyClient(GraphqlClient):
         self.put_endpoint: str = self.address + SYMPHONY_STORE_PUT
         self.delete_endpoint: str = self.address + SYMPHONY_STORE_DELETE
 
-        super().__init__(graphql_endpoint_address, self.session, app, auth, reporter)
+        try:
+            super().__init__(
+                graphql_endpoint_address,
+                self.session,
+                auth,
+                {"User-Agent": app},
+                reporter,
+            )
+        except HTTPException as e:
+            if (
+                e.status_code == HTTPStatus.FORBIDDEN
+                and e.text == "user is deactivated\n"
+            ):
+                raise UserDeactivatedException()
+            raise
 
     def store_file(self, file_path: str, file_type: str, is_global: bool) -> str:
         # TODO(T64504906): Remove after basic auth is enabled

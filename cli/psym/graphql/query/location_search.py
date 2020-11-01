@@ -3,10 +3,10 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from gql.gql.datetime_utils import DATETIME_FIELD
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.client import OperationException
-from gql.gql.reporter import FailedOperationException
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.graphql_client import GraphqlClient
+from gql_client.runtime.client import OperationException
+from gql_client.runtime.reporter import FailedOperationException
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict
@@ -14,7 +14,7 @@ from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
 from ..fragment.location import LocationFragment, QUERY as LocationFragmentQuery
-from ..input.location_filter import LocationFilterInput
+from ..input.location_filter_input import LocationFilterInput
 
 
 QUERY: List[str] = LocationFragmentQuery + ["""
@@ -70,7 +70,6 @@ class LocationSearchQuery(DataClassJsonMixin):
             raise FailedOperationException(
                 client.reporter,
                 e.err_msg,
-                e.err_id,
                 "LocationSearchQuery",
                 variables,
             )

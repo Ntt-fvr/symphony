@@ -20,7 +20,6 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-GQL_PACKAGES = ["gql", "gql.*"]
 PSYM_PACKAGES = ["psym", "psym.*"]
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
@@ -37,36 +36,23 @@ setuptools.setup(
     description="Tool for accessing and modifying Symphony database",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(include=GQL_PACKAGES + PSYM_PACKAGES),
+    packages=setuptools.find_packages(include=PSYM_PACKAGES),
     license="BSD License",
     classifiers=[
         "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     include_package_data=True,
     install_requires=[
-        "graphql-core-next>=1.0.0",
+        "py-gql-client>=0.0.9",
         "tqdm>=4.32.2",
-        "rx==1.6.1",
         "unicodecsv>=0.14.1",
         "requests>=2.22.0",
         "filetype>=1.0.5",
         "jsonschema",
         "pandas>=0.24.2",
         "xlsxwriter>=1.1.8",
-        "xlrd>=1.2.0",
-        "dataclasses==0.6",
-        "dataclasses-json==0.3.2",
         "dacite>=1.0.2",
-        "sphinx>=3.1.2",
-        "sphinxcontrib-napoleon",
-        "colorama>=0.4.1",
-        "unittest-xml-reporting>=2.5.2",
-        "websocket-client>=0.56.0",
-        "mypy",
-        "black",
-        "flake8",
     ],
 )

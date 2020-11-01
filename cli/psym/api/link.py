@@ -15,7 +15,7 @@ from ..exceptions import (
     LinkNotFoundException,
     PortAlreadyOccupiedException,
 )
-from ..graphql.input.add_link import AddLinkInput
+from ..graphql.input.add_link_input import AddLinkInput
 from ..graphql.input.link_side import LinkSide
 from ..graphql.mutation.add_link import AddLinkMutation
 from ..graphql.query.equipment_ports import EquipmentPortsQuery

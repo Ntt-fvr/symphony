@@ -14,8 +14,8 @@ from psym.common.data_format import format_to_work_order
 from psym.exceptions import EntityNotFoundError
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 from psym.graphql.enum.work_order_status import WorkOrderStatus
-from psym.graphql.input.add_work_order import AddWorkOrderInput
-from psym.graphql.input.edit_work_order import EditWorkOrderInput
+from psym.graphql.input.add_work_order_input import AddWorkOrderInput
+from psym.graphql.input.edit_work_order_input import EditWorkOrderInput
 from psym.graphql.mutation.add_work_order import AddWorkOrderMutation
 from psym.graphql.mutation.edit_work_order import EditWorkOrderMutation
 from psym.graphql.mutation.remove_work_order import RemoveWorkOrderMutation

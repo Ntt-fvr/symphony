@@ -8,7 +8,7 @@ from typing import Iterator, Optional
 from psym.client import SymphonyClient
 from psym.common.data_class import Customer
 
-from ..graphql.input.add_customer import AddCustomerInput
+from ..graphql.input.add_customer_input import AddCustomerInput
 from ..graphql.mutation.add_customer import AddCustomerMutation
 from ..graphql.mutation.remove_customer import RemoveCustomerMutation
 from ..graphql.query.customers import CustomersQuery

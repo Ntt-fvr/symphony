@@ -219,9 +219,9 @@ commands:
   psym-setup:
     steps:
       - run:
-          name: Install PyInvenory requirements
+          name: Install Python requirements
           <<: *clidir
-          command: sudo python3 setup.py install
+          command: sudo pip install -r requirements.txt
 
   validate-gql:
     parameters:
@@ -233,7 +233,7 @@ commands:
       - run:
           name: Validate <<parameters.package_name>> GraphQL files
           <<: *clidir
-          command: python3 -m test_validate_gql_files <<parameters.schema_directory>> <<parameters.package_name>>/graphql/
+          command: gql-compiler --verify <<parameters.schema_directory>> <<parameters.package_name>>/graphql/
 
 jobs:
   lint:

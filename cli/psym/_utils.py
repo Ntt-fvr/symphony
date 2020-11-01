@@ -26,10 +26,10 @@ from .graphql.fragment.equipment_position_definition import (
     EquipmentPositionDefinitionFragment,
 )
 from .graphql.fragment.property import PropertyFragment
-from .graphql.input.equipment_port import EquipmentPortInput
-from .graphql.input.equipment_position import EquipmentPositionInput
-from .graphql.input.property import PropertyInput
-from .graphql.input.property_type import PropertyTypeInput
+from .graphql.input.equipment_port_input import EquipmentPortInput
+from .graphql.input.equipment_position_input import EquipmentPositionInput
+from .graphql.input.property_input import PropertyInput
+from .graphql.input.property_type_input import PropertyTypeInput
 
 
 def format_to_type_and_field_name(type_key: str) -> Optional[DataTypeName]:

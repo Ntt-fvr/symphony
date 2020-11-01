@@ -11,7 +11,7 @@ from zipfile import ZipFile
 from graphql import build_ast_schema
 from graphql.language.parser import parse
 from graphql.utilities import find_breaking_changes
-from graphql_compiler.gql.utils_schema import compile_schema_library
+from utils import compile_schema_library
 
 
 ERR_MSG_FORMAT = "Diff breaks schema {} version with changes: {}"

@@ -3,18 +3,18 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from gql.gql.datetime_utils import DATETIME_FIELD
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.client import OperationException
-from gql.gql.reporter import FailedOperationException
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.graphql_client import GraphqlClient
+from gql_client.runtime.client import OperationException
+from gql_client.runtime.reporter import FailedOperationException
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
-from ..fragment.property import PropertyFragment, QUERY as PropertyFragmentQuery
-from gql.gql.enum_utils import enum_field
+from .property import PropertyFragment, QUERY as PropertyFragmentQuery
+from gql_client.runtime.enum_utils import enum_field
 from ..enum.work_order_priority import WorkOrderPriority
 from ..enum.work_order_status import WorkOrderStatus
 

@@ -4,13 +4,13 @@
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
-from gql.gql.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional
 
 from dataclasses_json import DataClassJsonMixin
 
-from gql.gql.enum_utils import enum_field
+from gql_client.runtime.enum_utils import enum_field
 from ..enum.cellular_network_type import CellularNetworkType
 
 @dataclass

@@ -8,11 +8,11 @@ from typing import Optional
 from psym.client import SymphonyClient
 from psym.common.data_class import Flow, FlowDraft, FlowInstance
 from psym.graphql.enum.flow_new_instances_policy import FlowNewInstancesPolicy
-from psym.graphql.input.add_flow_draft import AddFlowDraftInput
-from psym.graphql.input.import_flow_draft import ImportFlowDraftInput
-from psym.graphql.input.publish_flow import PublishFlowInput
-from psym.graphql.input.start_block import StartBlockInput
-from psym.graphql.input.start_flow import StartFlowInput
+from psym.graphql.input.add_flow_draft_input import AddFlowDraftInput
+from psym.graphql.input.import_flow_draft_input import ImportFlowDraftInput
+from psym.graphql.input.publish_flow_input import PublishFlowInput
+from psym.graphql.input.start_block_input import StartBlockInput
+from psym.graphql.input.start_flow_input import StartFlowInput
 from psym.graphql.mutation.add_flow_draft import AddFlowDraftMutation
 from psym.graphql.mutation.import_flow_draft import ImportFlowDraftMutation
 from psym.graphql.mutation.publish_flow import PublishFlowMutation

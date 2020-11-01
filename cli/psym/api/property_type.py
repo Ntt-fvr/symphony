@@ -24,7 +24,7 @@ from psym.common.data_enum import Entity
 from psym.common.data_format import format_to_property_type_input
 
 from ..exceptions import EntityNotFoundError
-from ..graphql.input.property_type import PropertyTypeInput
+from ..graphql.input.property_type_input import PropertyTypeInput
 
 
 def get_property_types(

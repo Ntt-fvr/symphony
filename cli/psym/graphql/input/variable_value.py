@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
-from gql.gql.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional
 

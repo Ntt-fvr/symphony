@@ -11,7 +11,7 @@ from psym.client import SymphonyClient
 from psym.common.data_class import Document, Location
 
 from ..graphql.enum.image_entity import ImageEntity
-from ..graphql.input.add_image import AddImageInput
+from ..graphql.input.add_image_input import AddImageInput
 from ..graphql.mutation.add_image import AddImageMutation
 from ..graphql.mutation.delete_image import DeleteImageMutation
 

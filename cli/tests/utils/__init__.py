@@ -7,7 +7,7 @@ import time
 import requests
 
 from typing import Callable
-from gql.gql.graphql_client import GraphqlClient
+from gql_client.runtime.graphql_client import GraphqlClient
 from psym.client import SymphonyClient
 from psym.common.endpoint import LOCALHOST_SERVER
 
@@ -61,7 +61,7 @@ def init_cleaner() -> Callable:
 
     session = requests.Session()
     session.verify = False
-    client = GraphqlClient(endpoint, session, "psym")
+    client = GraphqlClient(endpoint, session, headers={"User-Agent": "psym"})
     mutation = """
         mutation TruncateTenant($name: String!) {
             truncateTenant(input: { name: $name }) {
