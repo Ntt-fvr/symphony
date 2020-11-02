@@ -92,7 +92,7 @@ resource helm_release metrics_server {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
-  version    = "4.5.1"
+  version    = "4.5.2"
   namespace  = data.kubernetes_namespace.kube_system.id
 
   values = [yamlencode({
@@ -108,7 +108,7 @@ resource helm_release node_problem_detector {
   repository = local.helm_repository.stable
   name       = "node-problem-detector"
   namespace  = data.kubernetes_namespace.kube_system.id
-  version    = "1.8.0"
+  version    = "1.8.1"
 
   set {
     name  = "metrics.serviceMonitor.enabled"
@@ -151,5 +151,5 @@ resource helm_release aws_calico {
   repository = local.helm_repository.eks
   chart      = "aws-calico"
   namespace  = data.kubernetes_namespace.kube_system.id
-  version    = "0.3.2"
+  version    = "0.3.4"
 }
