@@ -27,6 +27,7 @@ const {
   sessionMiddleware,
 } = require('@fbcnms/express-middleware');
 const {insertFeatures} = require('@fbcnms/platform-server/features');
+const {oidcAuthMiddleware} = require('@fbcnms/auth/oidc/middleware');
 const connectSession = require('connect-session-sequelize');
 const express = require('express');
 const passport = require('passport');
@@ -42,6 +43,10 @@ const {
 const OrganizationBasicLocalStrategy = require('@fbcnms/auth/strategies/OrganizationBasicLocalStrategy')
   .default;
 const OrganizationLocalStrategy = require('@fbcnms/auth/strategies/OrganizationLocalStrategy')
+  .default;
+const OrganizationSamlStrategy = require('@fbcnms/auth/strategies/OrganizationSamlStrategy')
+  .default;
+const OrganizationOIDCStrategy = require('@fbcnms/auth/strategies/OrganizationOIDCStrategy')
   .default;
 const BearerStrategy = require('@fbcnms/auth/strategies/BearerStrategy')
   .default;
@@ -130,7 +135,20 @@ app.use(passport.session()); // must be after sessionMiddleware
 fbcPassport.use();
 passport.use('basic_local', OrganizationBasicLocalStrategy());
 passport.use('local', OrganizationLocalStrategy());
+passport.use(
+  'saml',
+  OrganizationSamlStrategy({
+    urlPrefix: '/user',
+  }),
+);
+passport.use(
+  'oidc',
+  new OrganizationOIDCStrategy({
+    urlPrefix: '/user',
+  }),
+);
 passport.use('bearer', BearerStrategy());
+app.use(oidcAuthMiddleware());
 
 // Views
 app.set('views', path.join(__dirname, '..', 'views'));
