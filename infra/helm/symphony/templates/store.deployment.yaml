@@ -49,6 +49,9 @@ spec:
           env:
             {{- include "symphony.loggingEnv" .Values.store | nindent 12 }}
             {{- include "symphony.tracingEnv" . | nindent 12 }}
+            {{- with .Values.store.spec.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           ports: {{- include "symphony.containerPorts" .Values.store | nindent 12 }}
           {{- include "symphony.probes" .Values.store | indent 10 }}
           resources: {{- toYaml .Values.store.resources | nindent 12 }}
