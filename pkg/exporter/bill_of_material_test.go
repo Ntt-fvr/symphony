@@ -6,32 +6,30 @@ package exporter
 
 import (
 	"context"
-	"encoding/json"
-	"strconv"
+	"fmt"
 	"testing"
 	"time"
 
+	"go.uber.org/zap/zaptest/observer"
+
+	"go.uber.org/zap"
+
+	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/stretchr/testify/require"
+
+	"github.com/facebookincubator/symphony/pkg/ent/equipment"
+
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
-	"github.com/AlekSi/pointer"
-	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zaptest/observer"
 )
 
-type woTestType struct {
-	wo1 *ent.WorkOrder
-	wo2 *ent.WorkOrder
-}
-
-func prepareWOData(ctx context.Context, t *testing.T) woTestType {
+func prepareBOMData(ctx context.Context, t *testing.T) woTestType {
 	PrepareData(ctx, t)
 	client := ent.FromContext(ctx)
 	// Add templates
@@ -136,137 +134,132 @@ func prepareWOData(ctx context.Context, t *testing.T) woTestType {
 		SetWorkOrder(wo2).
 		SaveX(ctx)
 
-	/*
-		Project 1 (of type 'projTemplate')
-			WO1 ( type woTemplate1). loc: parent, (string props)
-		WO2 ( type woTemplate2). loc: child (bool&int props)
-	*/
+	equipment1 := client.Equipment.Query().
+		Where(equipment.Name(currEquip)).FirstX(ctx)
+	equipment2 := client.Equipment.Query().
+		Where(equipment.Name(parentEquip)).FirstX(ctx)
+	equipment1.Update().
+		SetWorkOrder(wo1).
+		SetFutureState(enum.FutureStateInstall).
+		SaveX(ctx)
+	equipment2.Update().
+		SetWorkOrder(wo1).
+		SetFutureState(enum.FutureStateInstall).
+		SaveX(ctx)
+	propertyType1 := client.PropertyType.Create().
+		SetName("Part Number").
+		SetType(propertytype.TypeString).
+		SetEquipmentType(client.EquipmentType.Query().Where(equipmenttype.Name(equipmentTypeName)).FirstX(ctx)).
+		SetStringVal("default").
+		SaveX(ctx)
+	propertyType2 := client.PropertyType.Create().
+		SetName("Rack Loc").
+		SetType(propertytype.TypeString).
+		SetEquipmentType(client.EquipmentType.Query().Where(equipmenttype.Name(equipmentTypeName)).FirstX(ctx)).
+		SetStringVal("default").
+		SaveX(ctx)
+	client.Property.Create().
+		SetStringVal(propInstanceValue).
+		SetEquipment(equipment1).
+		SetType(propertyType1).
+		SaveX(ctx)
+	client.Property.Create().
+		SetStringVal(propInstanceValue).
+		SetEquipment(equipment2).
+		SetType(propertyType1).
+		SaveX(ctx)
+	client.Property.Create().
+		SetStringVal(propInstanceValue).
+		SetEquipment(equipment1).
+		SetType(propertyType2).
+		SaveX(ctx)
+	client.Property.Create().
+		SetStringVal(propInstanceValue).
+		SetEquipment(equipment2).
+		SetType(propertyType2).
+		SaveX(ctx)
 	return woTestType{
 		wo1,
 		wo2,
 	}
 }
 
-func TestEmptyDataExport(t *testing.T) {
-	core, _ := observer.New(zap.DebugLevel)
-	log := log.NewDefaultLogger(zap.New(core))
+func TestGenerateEmptyBOMRows(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
-	e := &Exporter{Log: log, Rower: WoRower{Log: log}}
+	woTestType := prepareBOMData(ctx, t)
+	core, _ := observer.New(zap.DebugLevel)
+	rows, err := generateWoBOMRows(ctx, zap.New(core), woTestType.wo2)
+	require.NoError(t, err)
 
-	rows, err := e.Rower.Rows(ctx, "")
-	require.NoError(t, err, "error getting rows")
 	for _, ln := range rows {
-		require.EqualValues(t, WoDataHeader, ln)
+		require.NoError(t, err, "error reading row")
+		require.EqualValues(t, []string{
+			"Equipment Name",
+			"Equipment Type",
+			"State",
+			fmt.Sprintf("Location (%s)", locTypeNameL),
+			fmt.Sprintf("Location (%s)", locTypeNameM),
+			fmt.Sprintf("Location (%s)", locTypeNameS),
+		}, ln)
 	}
 }
 
-func TestWOExport(t *testing.T) {
-	core, _ := observer.New(zap.DebugLevel)
-	log := log.NewDefaultLogger(zap.New(core))
+func TestGenerateBOMRows(t *testing.T) {
 	client := viewertest.NewTestClient(t)
-
-	e := &Exporter{Log: log, Rower: WoRower{Log: log}}
-
 	ctx := viewertest.NewContext(context.Background(), client)
-	data := prepareWOData(ctx, t)
+	woTestType := prepareBOMData(ctx, t)
+	core, _ := observer.New(zap.DebugLevel)
+	rows, err := generateWoBOMRows(ctx, zap.New(core), woTestType.wo1)
+	require.NoError(t, err)
 
-	rows, err := e.Rower.Rows(ctx, "")
-	require.NoError(t, err, "error getting rows")
 	for _, ln := range rows {
-		var wo ent.WorkOrder
+		require.NoError(t, err, "error reading row")
 		switch {
-		case ln[1] == "Work Order Name":
-			require.EqualValues(t, append(WoDataHeader, []string{propNameBool, propNameInt, propStr, propStr2}...), ln)
-		case ln[0] == strconv.Itoa(data.wo1.ID):
-			wo = *data.wo1
-			require.EqualValues(t, ln[1:], []string{
-				"WO1",
-				wo.QueryProject().OnlyX(ctx).Name,
-				workorder.StatusClosed.String(),
-				"tester@example.com",
-				viewertest.DefaultUser,
-				workorder.PriorityHigh.String(),
-				GetStringDate(pointer.ToTime(time.Now())),
+		case ln[0] == "Equipment Name":
+			require.EqualValues(t, []string{
+				"Equipment Name",
+				"Equipment Type",
+				"State",
+				fmt.Sprintf("Location (%s)", locTypeNameL),
+				fmt.Sprintf("Location (%s)", locTypeNameM),
+				fmt.Sprintf("Location (%s)", locTypeNameS),
+				"Part Number",
+				"Rack Loc",
+				propNameStr,
+				propNameInt,
+				newPropNameStr,
+			}, ln)
+		case ln[1] == equipmentTypeName:
+			require.EqualValues(t, ln, []string{
+				parentEquip,
+				equipmentTypeName,
+				string(enum.FutureStateInstall),
+				grandParentLocation,
+				parentLocation,
+				childLocation,
+				propInstanceValue,
+				propInstanceValue,
 				"",
-				grandParentLocation + "; " + parentLocation,
 				"",
 				"",
-				"string1",
-				"string2",
 			})
-		case ln[0] == strconv.Itoa(data.wo2.ID):
-			wo = *data.wo2
-			require.EqualValues(t, ln[1:], []string{
-				"WO2",
-				"",
-				workorder.StatusPlanned.String(),
-				"tester2@example.com",
-				viewertest.DefaultUser,
-				workorder.PriorityMedium.String(),
-				GetStringDate(pointer.ToTime(time.Now())),
-				"",
-				parentLocation + "; " + childLocation,
-				"true",
-				"600",
-				"",
-				"",
+		case ln[1] == equipmentType2Name:
+			require.EqualValues(t, ln, []string{
+				currEquip,
+				equipmentType2Name,
+				string(enum.FutureStateInstall),
+				grandParentLocation,
+				parentLocation,
+				childLocation,
+				propInstanceValue,
+				propInstanceValue,
+				propInstanceValue,
+				"15",
+				"defaultVal2",
 			})
 		default:
 			require.Fail(t, "line does not match")
 		}
 	}
-}
-
-func TestExportWOWithFilters(t *testing.T) {
-	core, _ := observer.New(zap.DebugLevel)
-	log := log.NewDefaultLogger(zap.New(core))
-	client := viewertest.NewTestClient(t)
-	ctx := viewertest.NewContext(context.Background(), client)
-
-	e := &Exporter{Log: log, Rower: WoRower{Log: log}}
-	data := prepareWOData(ctx, t)
-
-	userID := viewer.FromContext(ctx).(*viewer.UserViewer).User().ID
-	f, err := json.Marshal([]equipmentFilterInput{
-		{
-			Name:      "WORK_ORDER_STATUS",
-			Operator:  "IS_ONE_OF",
-			StringSet: []string{"CLOSED"},
-		},
-		{
-			Name:     "WORK_ORDER_ASSIGNED_TO",
-			Operator: "IS_ONE_OF",
-			IDSet:    []string{strconv.Itoa(userID)},
-		},
-	})
-	require.NoError(t, err)
-
-	linesCount := 0
-	rows, err := e.Rower.Rows(ctx, string(f))
-	require.NoError(t, err, "error getting rows")
-	for _, ln := range rows {
-		linesCount++
-		if ln[0] == strconv.Itoa(data.wo1.ID) {
-			wo := data.wo1
-			require.EqualValues(t, ln[1:], []string{
-				"WO1",
-				wo.QueryProject().OnlyX(ctx).Name,
-				workorder.StatusClosed.String(),
-				"tester@example.com",
-				viewertest.DefaultUser,
-				workorder.PriorityHigh.String(),
-				GetStringDate(pointer.ToTime(time.Now())),
-				"",
-				grandParentLocation + "; " + parentLocation,
-				"string1",
-				"string2",
-			})
-		}
-	}
-	require.Equal(t, 2, linesCount)
-}
-
-func TestWorkOrdersAsyncExport(t *testing.T) {
-	testAsyncExport(t, exporttask.TypeWorkOrder)
 }

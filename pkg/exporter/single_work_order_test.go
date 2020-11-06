@@ -444,6 +444,29 @@ func (s *SingleWoTestSuite) TestSingleWorkOrderExportChecklist() {
 	}
 }
 
+func (s *SingleWoTestSuite) TestSingleWorkOrderExportBOM() {
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
+
+	file, err := e.CreateExcelFile(s.ctx, s.workOrder.ID)
+	s.Require().NoError(err)
+
+	rows, err := file.GetRows(BOMSheetName)
+	s.Require().NoError(err)
+	for _, ln := range rows {
+		s.Require().EqualValues([]string{
+			"Equipment Name",
+			"Equipment Type",
+			"State",
+			fmt.Sprintf("Location (%s)", locTypeNameL),
+			fmt.Sprintf("Location (%s)", locTypeNameM),
+			fmt.Sprintf("Location (%s)", locTypeNameS),
+		}, ln)
+	}
+}
+
 func (s *SingleWoTestSuite) checkItemType(item *ent.CheckListItem, value string) {
 	switch item.Type {
 	case enum.CheckListItemTypeEnum:

@@ -7,6 +7,7 @@ package exporter
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"image"
 
@@ -45,6 +46,7 @@ const (
 	TimeLayout       = "Mon, 02 Jan 2006 15:04:05"
 	SummarySheetName = "Summary"
 	MaxImageWidth    = 300.0
+	BOMSheetName     = "Bill Of Material"
 )
 
 func (er SingleWo) CreateExcelFile(ctx context.Context, id int) (*excelize.File, error) {
@@ -79,7 +81,32 @@ func (er SingleWo) CreateExcelFile(ctx context.Context, id int) (*excelize.File,
 			return nil, fmt.Errorf("cannot generate checklist items: %w", err)
 		}
 	}
+	if err := er.generateBOM(ctx, f, wo); err != nil {
+		logger.Error("cannot generate bill of material", zap.Error(err))
+		return nil, fmt.Errorf("cannot generate bill of material: %w", err)
+	}
 	return f, nil
+}
+
+func (er SingleWo) generateBOM(ctx context.Context, f *excelize.File, wo *ent.WorkOrder) error {
+	bomRows, err := generateWoBOMRows(ctx, er.Log.For(ctx), wo)
+	if err != nil {
+		return err
+	}
+	if len(bomRows) == 0 {
+		return errors.New("unable to generate BOM")
+	}
+	f.NewSheet(BOMSheetName)
+	columnNames := getSheetColumnNames(len(bomRows[0]))
+	_ = f.SetColWidth(BOMSheetName, columnNames[0], columnNames[len(columnNames)-1], 25)
+	for i, row := range bomRows {
+		for x, rowVal := range row {
+			columnName := columnNames[x]
+			cell := fmt.Sprintf("%s%d", columnName, i+1)
+			_ = f.SetCellValue(BOMSheetName, cell, rowVal)
+		}
+	}
+	return nil
 }
 
 func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder) error {
@@ -404,4 +431,17 @@ func setHeaderStyle(f *excelize.File, sheetName string, cell string) {
 		}
 	}`)
 	_ = f.SetCellStyle(sheetName, cell, cell, headerStyle)
+}
+
+func getSheetColumnNames(columnLength int) []string {
+	characters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	columns := make([]string, columnLength)
+	for i := 0; i < columnLength; i++ {
+		st := 0
+		if i >= len(characters) {
+			st = i / (len(characters))
+		}
+		columns[i] = fmt.Sprintf("%s%s", characters[:st], string(characters[i%26]))
+	}
+	return columns
 }
