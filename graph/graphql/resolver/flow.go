@@ -152,14 +152,15 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 		return nil, fmt.Errorf("failed to update flow: %w", err)
 	}
 
-	for _, draftBlock := range flowDraft.Edges.Blocks {
-		if err := client.Block.UpdateOne(draftBlock).
-			ClearFlowDraft().
-			SetFlow(outputFlow).
-			Exec(ctx); err != nil {
-			return nil, fmt.Errorf("failed to set flow: %w", err)
-		}
+	blockQuery := client.Block.Query().
+		Where(block.HasFlowDraftWith(flowdraft.ID(flowDraft.ID)))
+	setFlowBlocks := func(b *ent.BlockCreate) {
+		b.SetFlow(outputFlow)
 	}
+	if err := flowengine.CopyBlocks(ctx, blockQuery, setFlowBlocks); err != nil {
+		return nil, err
+	}
+
 	if err := client.FlowDraft.UpdateOne(flowDraft).
 		SetSameAsFlow(true).
 		Exec(ctx); err != nil {
