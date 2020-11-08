@@ -30,14 +30,11 @@ if __name__ == "__main__":
         users = list(get_users(client))
     except Exception as e:
         print(f"ERROR collectng users - {str(e)}")
-    finally:
-        client.session.close()
 
     for user in users:
         try:
             client = PsymClient(user.auth_id, user.auth_id, tenant)
             result.append(user.auth_id)
-            client.session.close()
         except Exception:
             continue
 

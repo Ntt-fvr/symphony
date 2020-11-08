@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from gql_client.runtime.datetime_utils import DATETIME_FIELD
 from gql_client.runtime.graphql_client import GraphqlClient
-from gql_client.runtime.client import OperationException
 from gql_client.runtime.reporter import FailedOperationException
+from gql import gql
+from gql.transport.exceptions import TransportQueryError
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict

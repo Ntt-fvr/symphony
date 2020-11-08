@@ -30,6 +30,7 @@ from .graphql.input.equipment_port_input import EquipmentPortInput
 from .graphql.input.equipment_position_input import EquipmentPositionInput
 from .graphql.input.property_input import PropertyInput
 from .graphql.input.property_type_input import PropertyTypeInput
+from .graphql.input.equipment_port_connection_input import EquipmentPortConnectionInput
 
 
 def format_to_type_and_field_name(type_key: str) -> Optional[DataTypeName]:
@@ -246,7 +247,10 @@ def get_port_definition_input(
         index=port_definition.index,
         visibleLabel=port_definition.visibleLabel,
         portTypeID=port_definition.portType.id if port_definition.portType else None,
-        connectedPorts=port_definition.connectedPorts,
+        connectedPorts=[
+            EquipmentPortConnectionInput(id=port.id, name=port.name)
+            for port in port_definition.connectedPorts
+        ],
     )
 
 

@@ -45,7 +45,7 @@ setuptools.setup(
     python_requires=">=3.7",
     include_package_data=True,
     install_requires=[
-        "py-gql-client>=0.0.9",
+        "py-gql-client==0.0.13",
         "tqdm>=4.32.2",
         "unicodecsv>=0.14.1",
         "requests>=2.22.0",

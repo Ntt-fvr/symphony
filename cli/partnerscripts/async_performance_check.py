@@ -58,7 +58,6 @@ async def main(
         ]
     )
     print(f"GATHER in {t.stop():.4f} secs")
-    client.session.close()
     return result
 
 

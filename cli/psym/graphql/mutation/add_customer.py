@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from gql_client.runtime.datetime_utils import DATETIME_FIELD
 from gql_client.runtime.graphql_client import GraphqlClient
-from gql_client.runtime.client import OperationException
 from gql_client.runtime.reporter import FailedOperationException
+from gql import gql
+from gql.transport.exceptions import TransportQueryError
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict
@@ -26,7 +27,6 @@ mutation AddCustomerMutation($input: AddCustomerInput!) {
 
 """]
 
-@dataclass
 class AddCustomerMutation(DataClassJsonMixin):
     @dataclass
     class AddCustomerMutationData(DataClassJsonMixin):
@@ -36,26 +36,22 @@ class AddCustomerMutation(DataClassJsonMixin):
 
         addCustomer: Customer
 
-    data: AddCustomerMutationData
-
     @classmethod
-    # fmt: off
     def execute(cls, client: GraphqlClient, input: AddCustomerInput) -> AddCustomerMutationData.Customer:
-        # fmt: off
         variables: Dict[str, Any] = {"input": input}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
             decode_start = perf_counter()
-            res = cls.from_json(response_text).data
+            res = cls.AddCustomerMutationData.from_dict(response_text)
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
             client.reporter.log_successful_operation("AddCustomerMutation", variables, network_time, decode_time)
             return res.addCustomer
-        except OperationException as e:
+        except TransportQueryError as e:
             raise FailedOperationException(
                 client.reporter,
-                e.err_msg,
+                str(e.errors),
                 "AddCustomerMutation",
                 variables,
             )

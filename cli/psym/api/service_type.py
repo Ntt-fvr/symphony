@@ -147,7 +147,7 @@ def get_service_types(client: SymphonyClient) -> Iterator[ServiceType]:
     for edge in result.edges:
         node = edge.node
         if node is not None:
-            yield format_to_service_type(service_type_fragment=result)
+            yield format_to_service_type(service_type_fragment=node)
 
 
 def get_service_type(client: SymphonyClient, service_type_id: str) -> ServiceType:
