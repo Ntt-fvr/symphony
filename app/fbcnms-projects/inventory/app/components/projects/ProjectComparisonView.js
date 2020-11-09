@@ -90,6 +90,24 @@ const ProjectComparisonView = () => {
     );
   }
 
+  const createProjectButton = (
+    <FormActionWithPermissions
+      permissions={{
+        entity: 'project',
+        action: 'create',
+        ignoreTypes: true,
+      }}>
+      <Button
+        onClick={() => {
+          setDialogOpen(true);
+          setDialogKey(dialogKey + 1);
+          ServerLogger.info(LogEvents.ADD_PROJECT_BUTTON_CLICKED);
+        }}>
+        <fbt desc="">Create Project</fbt>
+      </Button>
+    </FormActionWithPermissions>
+  );
+
   if (selectedProjectTypeId != null) {
     return (
       <ErrorBoundary>
@@ -133,23 +151,7 @@ const ProjectComparisonView = () => {
         />
       </div>
     ),
-    actionButtons: [
-      <FormActionWithPermissions
-        permissions={{
-          entity: 'project',
-          action: 'create',
-          ignoreTypes: true,
-        }}>
-        <Button
-          onClick={() => {
-            setDialogOpen(true);
-            setDialogKey(dialogKey + 1);
-            ServerLogger.info(LogEvents.ADD_PROJECT_BUTTON_CLICKED);
-          }}>
-          <fbt desc="">Create Project</fbt>
-        </Button>
-      </FormActionWithPermissions>,
-    ],
+    actionButtons: [createProjectButton],
   };
   return (
     <ErrorBoundary>
@@ -171,6 +173,7 @@ const ProjectComparisonView = () => {
               ? DisplayOptions.map
               : DisplayOptions.table
           }
+          createProjectButton={createProjectButton}
         />
         <AddProjectDialog
           key={`new_project_${dialogKey}`}

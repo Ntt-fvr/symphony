@@ -8,10 +8,10 @@
  * @format
  */
 
+import * as React from 'react';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import ProjectsMap from './ProjectsMap';
 import ProjectsTableView from './ProjectsTableView';
-import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import Text from '@symphony/design-system/components/Text';
 import {DisplayOptions} from '../InventoryViewContainer';
@@ -20,6 +20,10 @@ import {makeStyles} from '@material-ui/styles';
 
 import type {DisplayOptionTypes} from '../InventoryViewContainer';
 import type {FilterValue} from '../comparison_view/ComparisonViewTypes';
+
+import EducationNote from '@symphony/design-system/illustrations/EducationNote';
+
+import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 
 import classNames from 'classnames';
 
@@ -61,6 +65,7 @@ type Props = $ReadOnly<{|
   filters: Array<FilterValue>,
   displayMode?: DisplayOptionTypes,
   onProjectSelected: (projectID: string) => void,
+  createProjectButton: React.Node,
 |}>;
 
 const projectSearchQuery = graphql`
@@ -85,7 +90,14 @@ const projectSearchQuery = graphql`
 
 const ProjectComparisonViewQueryRenderer = (props: Props) => {
   const classes = useStyles();
-  const {filters, limit, onProjectSelected, displayMode, className} = props;
+  const {
+    filters,
+    limit,
+    onProjectSelected,
+    displayMode,
+    className,
+    createProjectButton,
+  } = props;
 
   return (
     <InventoryQueryRenderer
@@ -105,15 +117,26 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
         const {edges} = props.projects;
 
         if (edges.length === 0) {
+          if (filters.length) {
+            return (
+              <div className={classes.noResultsRoot}>
+                <SearchIcon className={classes.searchIcon} />
+                <Text variant="h6" className={classes.noResultsLabel}>
+                  No results found
+                </Text>
+              </div>
+            );
+          }
+
           return (
-            <div className={classes.noResultsRoot}>
-              <SearchIcon className={classes.searchIcon} />
-              <Text variant="h6" className={classes.noResultsLabel}>
-                No results found
-              </Text>
-            </div>
+            <EmptyStateBackdrop
+              illustration={<EducationNote />}
+              headingText="Start Creating a Project">
+              {createProjectButton}
+            </EmptyStateBackdrop>
           );
         }
+
         const projects = edges.map(edge => edge.node);
         return (
           <div className={classNames(classes.root, className)}>

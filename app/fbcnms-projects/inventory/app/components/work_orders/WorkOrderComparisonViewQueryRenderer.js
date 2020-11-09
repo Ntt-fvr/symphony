@@ -11,15 +11,20 @@
 import type {WorkOrderComparisonViewQueryRendererSearchQuery} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
 import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
 
+import EducationNote from '@symphony/design-system/illustrations/EducationNote';
+
+import * as React from 'react';
 import ComparisonViewNoResults from '../comparison_view/ComparisonViewNoResults';
-import React, {useEffect, useMemo, useState} from 'react';
+import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 import WorkOrdersMap from './WorkOrdersMap';
 import WorkOrdersView, {WORK_ORDERS_PAGE_SIZE} from './WorkOrdersView';
 import classNames from 'classnames';
 import {DisplayOptions} from '../InventoryViewContainer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useEffect, useMemo, useState} from 'react';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {validateIfDefaultStatusFieldsAreApplied} from '../comparison_view/FilterUtils';
 
 import type {DisplayOptionTypes} from '../InventoryViewContainer';
 
@@ -52,6 +57,8 @@ type Props = $ReadOnly<{|
   orderBy: WorkOrderOrder,
   displayMode?: DisplayOptionTypes,
   onOrderChanged: (newOrderSettings: WorkOrderOrder) => void,
+  createWorkOrderButton: React.Node,
+  defaultStatusFilter?: {[string]: any},
 |}>;
 
 const workOrderSearchQuery = graphql`
@@ -86,6 +93,8 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
     className,
     orderBy,
     onOrderChanged,
+    createWorkOrderButton,
+    defaultStatusFilter,
   } = props;
 
   const [tableKey, setTableKey] = useState(0);
@@ -118,8 +127,23 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
   }
 
   const {totalCount} = response.workOrdersMap;
+  const isDefaultStatusFilterApplied = validateIfDefaultStatusFieldsAreApplied(
+    filters,
+    defaultStatusFilter,
+  );
+
   if (totalCount === 0) {
-    return <ComparisonViewNoResults />;
+    if (filters.length && !isDefaultStatusFilterApplied) {
+      return <ComparisonViewNoResults />;
+    }
+
+    return (
+      <EmptyStateBackdrop
+        illustration={<EducationNote />}
+        headingText="Start Creating a Work Order">
+        {createWorkOrderButton}
+      </EmptyStateBackdrop>
+    );
   }
 
   return (

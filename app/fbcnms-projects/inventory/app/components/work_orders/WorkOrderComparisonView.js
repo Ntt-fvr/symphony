@@ -140,6 +140,19 @@ const WorkOrderComparisonView = () => {
   const shouldRenderTable =
     selectedWorkOrderCardId == null && selectedWorkOrderTypeId == null;
 
+  const createWorkOrderButton = (
+    <FormActionWithPermissions
+      permissions={{
+        entity: 'workorder',
+        action: 'create',
+        ignoreTypes: true,
+      }}>
+      <Button onClick={showDialog}>
+        <fbt desc="">Create Work Order</fbt>
+      </Button>
+    </FormActionWithPermissions>
+  );
+
   const workOrdersTable = useMemo(
     () =>
       shouldRenderTable === false ? null : (
@@ -155,6 +168,8 @@ const WorkOrderComparisonView = () => {
               ? DisplayOptions.map
               : DisplayOptions.table
           }
+          createWorkOrderButton={createWorkOrderButton}
+          defaultStatusFilter={defaultStatusFilter}
         />
       ),
     [
@@ -163,6 +178,8 @@ const WorkOrderComparisonView = () => {
       orderBy,
       resultsDisplayMode,
       shouldRenderTable,
+      createWorkOrderButton,
+      defaultStatusFilter,
     ],
   );
 
@@ -216,18 +233,7 @@ const WorkOrderComparisonView = () => {
         />
       </div>
     ),
-    actionButtons: [
-      <FormActionWithPermissions
-        permissions={{
-          entity: 'workorder',
-          action: 'create',
-          ignoreTypes: true,
-        }}>
-        <Button onClick={showDialog}>
-          <fbt desc="">Create Work Order</fbt>
-        </Button>
-      </FormActionWithPermissions>,
-    ],
+    actionButtons: [createWorkOrderButton],
   };
 
   return (
