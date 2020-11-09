@@ -45,7 +45,7 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/tchannel-go v1.20.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
-	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9
+	github.com/vmihailenco/msgpack/v5 v5.0.0-rc.2
 	go.opencensus.io v0.22.5
 	go.uber.org/cadence v0.14.1
 	go.uber.org/yarpc v1.48.0
