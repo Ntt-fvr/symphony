@@ -19,6 +19,7 @@ import (
 )
 
 import (
+	_ "gocloud.dev/blob/gcsblob"
 	_ "gocloud.dev/blob/s3blob"
 )
 

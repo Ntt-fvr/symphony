@@ -26,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	_ "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
+	_ "gocloud.dev/blob/gcsblob"
 	_ "gocloud.dev/blob/s3blob"
 	_ "gocloud.dev/pubsub/mempubsub"
 	_ "gocloud.dev/pubsub/natspubsub"

@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"go.uber.org/zap"
 
+	_ "gocloud.dev/blob/gcsblob"
 	_ "gocloud.dev/blob/s3blob"
 )
 

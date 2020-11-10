@@ -3,6 +3,7 @@ module github.com/facebookincubator/symphony
 go 1.14
 
 require (
+	cloud.google.com/go/storage v1.10.0
 	contrib.go.opencensus.io/exporter/jaeger v0.2.1
 	contrib.go.opencensus.io/exporter/prometheus v0.2.0
 	contrib.go.opencensus.io/integrations/ocsql v0.1.6
