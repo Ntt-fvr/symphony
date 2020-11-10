@@ -45,6 +45,7 @@ const (
 	portName1                  = "port1"
 	portName2                  = "port2"
 	portName3                  = "port3"
+	portName4                  = "port4"
 	propNameStr                = "propNameStr"
 	propNameDate               = "propNameDate"
 	propNameBool               = "propNameBool"

@@ -10,20 +10,24 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"strconv"
+	"strings"
+
+	"github.com/AlekSi/pointer"
+
+	"github.com/facebookincubator/symphony/pkg/viewer"
+
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 
 	// Imports required for excelize to decode images
 	_ "image/jpeg"
 	_ "image/png"
-	"strconv"
-	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
-	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 )
@@ -45,6 +49,7 @@ var (
 const (
 	TimeLayout       = "Mon, 02 Jan 2006 15:04:05"
 	SummarySheetName = "Summary"
+	CRLSheetName     = "Cable Run List"
 	MaxImageWidth    = 300.0
 	BOMSheetName     = "Bill Of Material"
 )
@@ -85,7 +90,32 @@ func (er SingleWo) CreateExcelFile(ctx context.Context, id int) (*excelize.File,
 		logger.Error("cannot generate bill of material", zap.Error(err))
 		return nil, fmt.Errorf("cannot generate bill of material: %w", err)
 	}
+	if err := er.generateCRL(ctx, f, wo); err != nil {
+		logger.Error("cannot generate cable run list", zap.Error(err))
+		return nil, fmt.Errorf("cannot generate cable run list: %w", err)
+	}
 	return f, nil
+}
+
+func (er SingleWo) generateCRL(ctx context.Context, f *excelize.File, wo *ent.WorkOrder) error {
+	crlRows, err := generateCRLRows(ctx, er.Log.For(ctx), wo)
+	if err != nil {
+		return err
+	}
+	if len(crlRows) == 0 {
+		return errors.New("unable to generate CRL")
+	}
+	f.NewSheet(CRLSheetName)
+	columnNames := getSheetColumnNames(len(crlRows[0]))
+	_ = f.SetColWidth(CRLSheetName, columnNames[0], columnNames[len(columnNames)-1], 25)
+	for i, row := range crlRows {
+		for x, rowVal := range row {
+			columnName := columnNames[x]
+			cell := fmt.Sprintf("%s%d", columnName, i+1)
+			_ = f.SetCellValue(CRLSheetName, cell, rowVal)
+		}
+	}
+	return nil
 }
 
 func (er SingleWo) generateBOM(ctx context.Context, f *excelize.File, wo *ent.WorkOrder) error {
