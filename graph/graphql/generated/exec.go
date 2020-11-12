@@ -12292,7 +12292,7 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
-  ): ProjectConnection
+  ): ProjectConnection!
   customers(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -36568,11 +36568,14 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.ProjectConnection)
 	fc.Result = res
-	return ec.marshalOProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx, field.Selections, res)
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_customers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -60197,6 +60200,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_projects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "customers":
@@ -66499,6 +66505,20 @@ func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Project(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx context.Context, sel ast.SelectionSet, v ent.ProjectConnection) graphql.Marshaler {
+	return ec._ProjectConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProjectEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ProjectEdge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -70482,13 +70502,6 @@ func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋfacebookincubator�
 		return graphql.Null
 	}
 	return ec._Project(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectConnection) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ProjectConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOProjectFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ProjectFilterInput, error) {

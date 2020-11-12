@@ -3832,7 +3832,7 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
-  ): ProjectConnection
+  ): ProjectConnection!
   customers(
     after: Cursor
     first: Int @numberValue(min: 0)

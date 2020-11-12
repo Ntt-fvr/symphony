@@ -29,7 +29,7 @@ export type ProjectTypeahead_ProjectsQueryVariables = {|
   filters: $ReadOnlyArray<ProjectFilterInput>,
 |};
 export type ProjectTypeahead_ProjectsQueryResponse = {|
-  +projects: ?{|
+  +projects: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,

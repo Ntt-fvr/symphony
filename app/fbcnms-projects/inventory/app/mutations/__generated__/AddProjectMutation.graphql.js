@@ -14,7 +14,6 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-type ProjectsTableView_projects$ref = any;
 export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type AddProjectInput = {|
   name: string,
@@ -45,7 +44,22 @@ export type AddProjectMutationVariables = {|
 |};
 export type AddProjectMutationResponse = {|
   +createProject: {|
-    +$fragmentRefs: ProjectsTableView_projects$ref
+    +id: string,
+    +createTime: any,
+    +name: string,
+    +createdBy: ?{|
+      +email: string
+    |},
+    +location: ?{|
+      +id: string,
+      +name: string,
+    |},
+    +type: {|
+      +id: string,
+      +name: string,
+    |},
+    +priority: ProjectPriority,
+    +numberOfWorkOrders: number,
   |}
 |};
 export type AddProjectMutation = {|
@@ -60,29 +74,24 @@ mutation AddProjectMutation(
   $input: AddProjectInput!
 ) {
   createProject(input: $input) {
-    ...ProjectsTableView_projects
     id
-  }
-}
-
-fragment ProjectsTableView_projects on Project {
-  id
-  createTime
-  name
-  createdBy {
-    email
-    id
-  }
-  location {
-    id
+    createTime
     name
+    createdBy {
+      email
+      id
+    }
+    location {
+      id
+      name
+    }
+    type {
+      id
+      name
+    }
+    priority
+    numberOfWorkOrders
   }
-  type {
-    id
-    name
-  }
-  priority
-  numberOfWorkOrders
 }
 */
 
@@ -112,13 +121,61 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "createTime",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v4 = [
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v6 = [
   (v2/*: any*/),
-  (v3/*: any*/)
-];
+  (v4/*: any*/)
+],
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Location",
+  "kind": "LinkedField",
+  "name": "location",
+  "plural": false,
+  "selections": (v6/*: any*/),
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ProjectType",
+  "kind": "LinkedField",
+  "name": "type",
+  "plural": false,
+  "selections": (v6/*: any*/),
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "priority",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "numberOfWorkOrders",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -134,11 +191,25 @@ return {
         "name": "createProject",
         "plural": false,
         "selections": [
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
+            "alias": null,
             "args": null,
-            "kind": "FragmentSpread",
-            "name": "ProjectsTableView_projects"
-          }
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "createdBy",
+            "plural": false,
+            "selections": [
+              (v5/*: any*/)
+            ],
+            "storageKey": null
+          },
+          (v7/*: any*/),
+          (v8/*: any*/),
+          (v9/*: any*/),
+          (v10/*: any*/)
         ],
         "storageKey": null
       }
@@ -161,14 +232,8 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "createTime",
-            "storageKey": null
-          },
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -177,67 +242,31 @@ return {
             "name": "createdBy",
             "plural": false,
             "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
-              },
+              (v5/*: any*/),
               (v2/*: any*/)
             ],
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Location",
-            "kind": "LinkedField",
-            "name": "location",
-            "plural": false,
-            "selections": (v4/*: any*/),
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectType",
-            "kind": "LinkedField",
-            "name": "type",
-            "plural": false,
-            "selections": (v4/*: any*/),
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "priority",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "numberOfWorkOrders",
-            "storageKey": null
-          }
+          (v7/*: any*/),
+          (v8/*: any*/),
+          (v9/*: any*/),
+          (v10/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "5cff189f19ce9ed3b92603462979a851",
+    "cacheID": "e51259bffafa3d4081dfdd39ac7e2fbf",
     "id": null,
     "metadata": {},
     "name": "AddProjectMutation",
     "operationKind": "mutation",
-    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  createTime\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n"
+    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    id\n    createTime\n    name\n    createdBy {\n      email\n      id\n    }\n    location {\n      id\n      name\n    }\n    type {\n      id\n      name\n    }\n    priority\n    numberOfWorkOrders\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4b62a168191f8fdb0ee345d1fd1212fc';
+(node/*: any*/).hash = '49be5a9ffa393f7b29e5d148a9ff2cfe';
 
 module.exports = node;

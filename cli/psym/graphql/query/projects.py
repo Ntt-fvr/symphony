@@ -43,10 +43,10 @@ class ProjectsQuery(DataClassJsonMixin):
 
             edges: List[ProjectEdge]
 
-        projects: Optional[ProjectConnection]
+        projects: ProjectConnection
 
     @classmethod
-    def execute(cls, client: GraphqlClient) -> Optional[ProjectsQueryData.ProjectConnection]:
+    def execute(cls, client: GraphqlClient) -> ProjectsQueryData.ProjectConnection:
         variables: Dict[str, Any] = {}
         try:
             network_start = perf_counter()

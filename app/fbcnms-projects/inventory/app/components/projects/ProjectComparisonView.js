@@ -10,12 +10,14 @@
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 
 import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
+import type {ProjectOrder} from './__generated__/ProjectsTableViewPaginationQuery.graphql';
 
 import AddProjectCard from './AddProjectCard';
 import AddProjectDialog from './AddProjectDialog';
 import Button from '@symphony/design-system/components/Button';
 import ErrorBoundary from '@fbcnms/ui/components/ErrorBoundary/ErrorBoundary';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
+import InventorySuspense from '../../common/InventorySuspense';
 import InventoryView, {DisplayOptions} from '../InventoryViewContainer';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import ProjectCard from './ProjectCard';
@@ -28,6 +30,7 @@ import {ProjectSearchConfig} from './ProjectsSearchConfig';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
+import {useCallback} from 'react';
 
 const QUERY_LIMIT = 1000;
 
@@ -52,6 +55,10 @@ const ProjectComparisonView = () => {
     DisplayOptions.table,
   );
   const classes = useStyles();
+  const [orderBy, setOrderBy] = useState<ProjectOrder>({
+    direction: 'DESC',
+    field: 'UPDATED_AT',
+  });
 
   const selectedProjectTypeId = useMemo(
     () => extractEntityIdFromUrl('projectType', location.search),
@@ -76,19 +83,27 @@ const ProjectComparisonView = () => {
     [locationTypesFilterConfigs],
   );
 
-  function navigateToProject(selectedProjectCardId: ?string) {
-    history.push(
-      match.url +
-        (selectedProjectCardId ? `?project=${selectedProjectCardId}` : ''),
-    );
-  }
+  const navigateToProject = useCallback(
+    (selectedProjectCardId: ?string) => {
+      history.push(
+        match.url +
+          (selectedProjectCardId ? `?project=${selectedProjectCardId}` : ''),
+      );
+    },
+    [history, match.url],
+  );
 
-  function navigateToAddProject(selectedProjectTypeId: ?string) {
-    history.push(
-      match.url +
-        (selectedProjectTypeId ? `?projectType=${selectedProjectTypeId}` : ''),
-    );
-  }
+  const navigateToAddProject = useCallback(
+    (selectedProjectTypeId: ?string) => {
+      history.push(
+        match.url +
+          (selectedProjectTypeId
+            ? `?projectType=${selectedProjectTypeId}`
+            : ''),
+      );
+    },
+    [history, match.url],
+  );
 
   const createProjectButton = (
     <FormActionWithPermissions
@@ -106,6 +121,38 @@ const ProjectComparisonView = () => {
         <fbt desc="">Create Project</fbt>
       </Button>
     </FormActionWithPermissions>
+  );
+
+  const shouldRenderTable =
+    selectedProjectCardId == null && selectedProjectTypeId == null;
+
+  const projectTable = useMemo(
+    () =>
+      shouldRenderTable === false ? null : (
+        <ProjectComparisonViewQueryRenderer
+          limit={QUERY_LIMIT}
+          filters={filters}
+          orderBy={orderBy}
+          onOrderChanged={setOrderBy}
+          onProjectSelected={selectedProjectCardId =>
+            navigateToProject(selectedProjectCardId)
+          }
+          displayMode={
+            resultsDisplayMode === DisplayOptions.map
+              ? DisplayOptions.map
+              : DisplayOptions.table
+          }
+          createProjectButton={createProjectButton}
+        />
+      ),
+    [
+      createProjectButton,
+      filters,
+      navigateToProject,
+      orderBy,
+      resultsDisplayMode,
+      shouldRenderTable,
+    ],
   );
 
   if (selectedProjectTypeId != null) {
@@ -155,36 +202,26 @@ const ProjectComparisonView = () => {
   };
   return (
     <ErrorBoundary>
-      <InventoryView
-        header={header}
-        className={classes.projectComparisonView}
-        onViewToggleClicked={setResultsDisplayMode}
-        permissions={{
-          entity: 'project',
-        }}>
-        <ProjectComparisonViewQueryRenderer
-          limit={QUERY_LIMIT}
-          filters={filters}
-          onProjectSelected={selectedProjectCardId =>
-            navigateToProject(selectedProjectCardId)
-          }
-          displayMode={
-            resultsDisplayMode === DisplayOptions.map
-              ? DisplayOptions.map
-              : DisplayOptions.table
-          }
-          createProjectButton={createProjectButton}
-        />
-        <AddProjectDialog
-          key={`new_project_${dialogKey}`}
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onProjectTypeSelected={typeId => {
-            navigateToAddProject(typeId);
-            setDialogOpen(false);
-          }}
-        />
-      </InventoryView>
+      <InventorySuspense>
+        <InventoryView
+          header={header}
+          className={classes.projectComparisonView}
+          onViewToggleClicked={setResultsDisplayMode}
+          permissions={{
+            entity: 'project',
+          }}>
+          {projectTable}
+          <AddProjectDialog
+            key={`new_project_${dialogKey}`}
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            onProjectTypeSelected={typeId => {
+              navigateToAddProject(typeId);
+              setDialogOpen(false);
+            }}
+          />
+        </InventoryView>
+      </InventorySuspense>
     </ErrorBoundary>
   );
 };

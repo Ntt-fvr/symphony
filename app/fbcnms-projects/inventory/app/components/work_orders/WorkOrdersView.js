@@ -51,7 +51,10 @@ const WorkOrdersView = (props: Props) => {
   const {statusValues} = useStatusValues();
 
   // $FlowFixMe[missing-type-arg] $FlowFixMe T74239404 Found via relay types
-  const {data, loadNext} = usePaginationFragment<WorkOrdersViewPaginationQuery>(
+  const {data, loadNext} = usePaginationFragment<
+    WorkOrdersViewPaginationQuery,
+    WorkOrdersView_query$key,
+  >(
     graphql`
       fragment WorkOrdersView_query on Query
         @argumentDefinitions(
@@ -110,7 +113,11 @@ const WorkOrdersView = (props: Props) => {
 
   const workOrdersData = useMemo(
     () =>
-      data?.workOrders?.edges.map(edge => ({...edge.node, key: edge.node.id})),
+      data?.workOrders?.edges.map(edge => {
+        if (edge.node) {
+          return {...edge.node, key: edge.node.id};
+        }
+      }),
     [data],
   );
 

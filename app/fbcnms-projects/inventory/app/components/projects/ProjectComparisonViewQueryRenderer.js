@@ -9,27 +9,29 @@
  */
 
 import * as React from 'react';
-import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import ProjectsMap from './ProjectsMap';
-import ProjectsTableView from './ProjectsTableView';
-import SearchIcon from '@material-ui/icons/Search';
-import Text from '@symphony/design-system/components/Text';
+import ProjectsTableView, {PROJECTS_PAGE_SIZE} from './ProjectsTableView';
 import {DisplayOptions} from '../InventoryViewContainer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import type {DisplayOptionTypes} from '../InventoryViewContainer';
-import type {FilterValue} from '../comparison_view/ComparisonViewTypes';
+import type {
+  ProjectComparisonViewQueryRendererSearchQuery,
+  ProjectOrder,
+} from './__generated__/ProjectComparisonViewQueryRendererSearchQuery.graphql';
 
-import EducationNote from '@symphony/design-system/illustrations/EducationNote';
-
-import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
-
+import ComparisonViewNoResults from '../comparison_view/ComparisonViewNoResults';
 import classNames from 'classnames';
+import {useEffect} from 'react';
+import {useMemo} from 'react';
+import {useState} from 'react';
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
+    display: 'flex',
   },
   noResultsRoot: {
     display: 'flex',
@@ -62,7 +64,9 @@ const useStyles = makeStyles(theme => ({
 type Props = $ReadOnly<{|
   className?: string,
   limit?: number,
-  filters: Array<FilterValue>,
+  filters: Array<any>,
+  orderBy: ProjectOrder,
+  onOrderChanged: (newOrderSettings: ProjectOrder) => void,
   displayMode?: DisplayOptionTypes,
   onProjectSelected: (projectID: string) => void,
   createProjectButton: React.Node,
@@ -72,15 +76,14 @@ const projectSearchQuery = graphql`
   query ProjectComparisonViewQueryRendererSearchQuery(
     $limit: Int
     $filters: [ProjectFilterInput!]!
+    $orderBy: ProjectOrder
   ) {
-    projects(
-      first: $limit
-      orderBy: {direction: DESC, field: UPDATED_AT}
-      filterBy: $filters
-    ) {
+    ...ProjectsTableView_query
+      @arguments(first: $limit, orderBy: $orderBy, filterBy: $filters)
+    projectsMap: projects(first: 100, orderBy: $orderBy, filterBy: $filters) {
+      totalCount
       edges {
         node {
-          ...ProjectsTableView_projects
           ...ProjectsMap_projects
         }
       }
@@ -90,68 +93,68 @@ const projectSearchQuery = graphql`
 
 const ProjectComparisonViewQueryRenderer = (props: Props) => {
   const classes = useStyles();
+  const [tableKey, setTableKey] = useState(0);
   const {
     filters,
-    limit,
+    orderBy,
     onProjectSelected,
     displayMode,
     className,
-    createProjectButton,
+    onOrderChanged,
+    // createProjectButton,
   } = props;
 
+  const filtersVariable = useMemo(
+    () =>
+      filters.map(f => ({
+        filterType: f.name.toUpperCase(),
+        operator: f.operator.toUpperCase(),
+        stringValue: f.stringValue,
+        idSet: f.idSet,
+        stringSet: f.stringSet,
+      })),
+    [filters],
+  );
+  useEffect(() => setTableKey(key => key + 1), [filtersVariable, orderBy]);
+
+  const response = useLazyLoadQuery<ProjectComparisonViewQueryRendererSearchQuery>(
+    projectSearchQuery,
+    {
+      limit: PROJECTS_PAGE_SIZE,
+      filters: filtersVariable,
+      orderBy,
+    },
+  );
+
+  if (response == null || response.projectsMap == null) {
+    return null;
+  }
+
+  const {totalCount} = response.projectsMap;
+  if (totalCount === 0) {
+    return <ComparisonViewNoResults />;
+  }
+
   return (
-    <InventoryQueryRenderer
-      query={projectSearchQuery}
-      variables={{
-        limit: limit,
-        filters: filters.map(f => ({
-          filterType: f.name.toUpperCase(),
-          operator: f.operator.toUpperCase(),
-          stringValue: f.stringValue,
-          propertyValue: f.propertyValue,
-          idSet: f.idSet,
-          stringSet: f.stringSet,
-        })),
-      }}
-      render={props => {
-        const {edges} = props.projects;
-
-        if (edges.length === 0) {
-          if (filters.length) {
-            return (
-              <div className={classes.noResultsRoot}>
-                <SearchIcon className={classes.searchIcon} />
-                <Text variant="h6" className={classes.noResultsLabel}>
-                  No results found
-                </Text>
-              </div>
-            );
-          }
-
-          return (
-            <EmptyStateBackdrop
-              illustration={<EducationNote />}
-              headingText="Start Creating a Project">
-              {createProjectButton}
-            </EmptyStateBackdrop>
-          );
-        }
-
-        const projects = edges.map(edge => edge.node);
-        return (
-          <div className={classNames(classes.root, className)}>
-            {displayMode === DisplayOptions.map ? (
-              <ProjectsMap projects={projects} />
-            ) : (
-              <ProjectsTableView
-                projects={projects}
-                onProjectSelected={onProjectSelected}
-              />
-            )}
-          </div>
-        );
-      }}
-    />
+    <div className={classNames(classes.root, className)}>
+      {displayMode === DisplayOptions.map ? (
+        <ProjectsMap
+          projects={response.projectsMap.edges
+            .filter(Boolean)
+            // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+            // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+            .map(edge => edge.node)}
+        />
+      ) : (
+        <ProjectsTableView
+          key={tableKey}
+          orderBy={orderBy}
+          projects={response}
+          onProjectSelected={onProjectSelected}
+          onOrderChanged={onOrderChanged}
+        />
+      )}
+    </div>
   );
 };
 
