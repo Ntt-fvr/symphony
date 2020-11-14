@@ -11,7 +11,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/vektah/gqlparser/v2/ast"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/trace"
 )
 
@@ -89,7 +88,7 @@ func isSubscription(oc *graphql.OperationContext) bool {
 }
 
 // InterceptResponse traces graphql response execution.
-func (t *Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+func (t *Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) (rsp *graphql.Response) {
 	if !t.AllowRoot && trace.FromContext(ctx) == nil {
 		return next(ctx)
 	}
@@ -106,18 +105,22 @@ func (t *Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHan
 	} else {
 		span.AddAttributes(t.operationAttrs(ctx, oc)...)
 	}
-	defer setSpanStatus(ctx, span, graphql.GetErrors)
+	defer func() {
+		span.AddAttributes(
+			trace.Int64Attribute(
+				"graphql.response_bytes",
+				int64(len(rsp.Data)),
+			),
+		)
+		if errs := graphql.GetErrors(ctx); errs != nil {
+			span.SetStatus(trace.Status{
+				Code:    trace.StatusCodeUnknown,
+				Message: errs.Error(),
+			})
+		}
+	}()
 
 	return next(ctx)
-}
-
-func setSpanStatus(ctx context.Context, span *trace.Span, getErrors func(context.Context) gqlerror.List) {
-	if errs := getErrors(ctx); errs != nil {
-		span.SetStatus(trace.Status{
-			Code:    trace.StatusCodeUnknown,
-			Message: errs.Error(),
-		})
-	}
 }
 
 func (t *Tracer) operationAttrs(ctx context.Context, oc *graphql.OperationContext) []trace.Attribute {
@@ -160,9 +163,14 @@ func (t *Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (int
 	}
 
 	span.AddAttributes(fieldAttrs(ctx)...)
-	defer setSpanStatus(ctx, span, func(ctx context.Context) gqlerror.List {
-		return graphql.GetFieldErrors(ctx, fc)
-	})
+	defer func() {
+		if errs := graphql.GetFieldErrors(ctx, fc); errs != nil {
+			span.SetStatus(trace.Status{
+				Code:    trace.StatusCodeUnknown,
+				Message: errs.Error(),
+			})
+		}
+	}()
 
 	return next(ctx)
 }

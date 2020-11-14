@@ -33,6 +33,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/plugin/ochttp"
+	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
 )
 
@@ -53,6 +54,14 @@ func init() {
 		v.TagKeys = append(v.TagKeys,
 			viewer.KeyTenant,
 			viewer.KeyUser,
+		)
+	}
+	for _, v := range []*view.View{
+		ocgql.DeprecatedResolveTotalView,
+		ocgql.ResolveCountByObjectField,
+		directive.ServerDeprecatedCountByObjectInputField,
+	} {
+		v.TagKeys = append(v.TagKeys,
 			viewer.KeyUserAgent,
 		)
 	}

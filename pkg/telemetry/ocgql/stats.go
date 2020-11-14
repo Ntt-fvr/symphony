@@ -29,6 +29,11 @@ var (
 		"Total number of responses",
 		stats.UnitDimensionless,
 	)
+	ResponseBytes = stats.Int64(
+		"graphql/response_bytes",
+		"Size of responses",
+		stats.UnitBytes,
+	)
 	ResolveTotal = stats.Int64(
 		"graphql/resolves_total",
 		"Total number of resolves",
@@ -101,6 +106,13 @@ var (
 		Measure:     ResponseTotal,
 		Aggregation: view.Count(),
 	}
+	ResponseBytesView = &view.View{
+		Name:        ResponseBytes.Name(),
+		Description: ResponseBytes.Description(),
+		TagKeys:     []tag.Key{Operation},
+		Measure:     ResponseBytes,
+		Aggregation: ochttp.DefaultSizeDistribution,
+	}
 	ResolveTotalView = &view.View{
 		Name:        ResolveTotal.Name(),
 		Description: ResolveTotal.Description(),
@@ -151,6 +163,7 @@ var DefaultViews = []*view.View{
 	RequestTotalView,
 	RequestLatencyView,
 	ResponseTotalView,
+	ResponseBytesView,
 	ResolveTotalView,
 	ResolveLatencyView,
 	DeprecatedResolveTotalView,
