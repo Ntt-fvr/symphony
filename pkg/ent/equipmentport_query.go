@@ -369,13 +369,22 @@ func (epq *EquipmentPortQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (epq *EquipmentPortQuery) Clone() *EquipmentPortQuery {
+	if epq == nil {
+		return nil
+	}
 	return &EquipmentPortQuery{
-		config:     epq.config,
-		limit:      epq.limit,
-		offset:     epq.offset,
-		order:      append([]OrderFunc{}, epq.order...),
-		unique:     append([]string{}, epq.unique...),
-		predicates: append([]predicate.EquipmentPort{}, epq.predicates...),
+		config:         epq.config,
+		limit:          epq.limit,
+		offset:         epq.offset,
+		order:          append([]OrderFunc{}, epq.order...),
+		unique:         append([]string{}, epq.unique...),
+		predicates:     append([]predicate.EquipmentPort{}, epq.predicates...),
+		withDefinition: epq.withDefinition.Clone(),
+		withParent:     epq.withParent.Clone(),
+		withLink:       epq.withLink.Clone(),
+		withProperties: epq.withProperties.Clone(),
+		withEndpoints:  epq.withEndpoints.Clone(),
+		withService:    epq.withService.Clone(),
 		// clone intermediate query.
 		sql:  epq.sql.Clone(),
 		path: epq.path,

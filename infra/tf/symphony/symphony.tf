@@ -72,7 +72,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "4.1.0"
+  version             = "4.2.0"
   timeout             = 600
   max_history         = 100
 
@@ -100,7 +100,7 @@ resource helm_release symphony {
       for s in [
         { name = "front", replicas = 2 },
         { name = "admin", replicas = 1 },
-        { name = "graph", replicas = 3 },
+        { name = "graph", replicas = 6 },
         { name = "async", replicas = 1 },
         { name = "store", replicas = 1 },
       ] :
@@ -190,7 +190,7 @@ resource helm_release symphony {
       graph = {
         spec = {
           tenancy = {
-            tenantMaxDBConn = 10
+            tenantMaxDBConn = 1000
           }
           event = {
             url = local.graph_event_url
@@ -298,11 +298,7 @@ resource kubernetes_cron_job tenant_cleaner {
     testimio = {
       schedule = "25,55 * * * *"
     }
-    } : {
-    ls-test-automation = {
-      schedule = "0 * * * *"
-    }
-  }
+  } : {}
 
   metadata {
     name      = "${local.symphony_name}-${each.key}-cleaner"

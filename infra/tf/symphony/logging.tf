@@ -3,7 +3,7 @@ resource helm_release log_forwarder {
   namespace  = kubernetes_namespace.symphony.id
   repository = local.helm_repository.bitnami
   chart      = "fluentd"
-  version    = "2.4.0"
+  version    = "3.0.0"
 
   values = [yamlencode({
     nameOverride = "log-forwarder"

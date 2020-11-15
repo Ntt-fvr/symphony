@@ -465,7 +465,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.4.8"
+  version    = "3.5.1"
   namespace  = data.kubernetes_namespace.kube_system.id
 
   values = [yamlencode({
@@ -538,7 +538,7 @@ resource helm_release cert_manager {
   name             = "cert-manager"
   repository       = local.helm_repository.jetstack
   chart            = "cert-manager"
-  version          = "1.0.3"
+  version          = "1.0.4"
   namespace        = "cert-manager"
   create_namespace = true
 

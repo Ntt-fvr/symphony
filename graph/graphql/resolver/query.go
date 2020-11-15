@@ -16,6 +16,8 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
+	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
+	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -454,4 +456,103 @@ func (queryResolver) PythonPackages(context.Context) ([]*models.PythonPackage, e
 
 func (r queryResolver) Vertex(ctx context.Context, id int) (*ent.Node, error) {
 	return r.ClientFrom(ctx).Node(ctx, id)
+}
+
+var ErrMultipleEndToEndPath = errors.New("multiple paths found")
+
+func (r queryResolver) EndToEndPath(ctx context.Context, linkID *int, portID *int) (*models.EndToEndPath, error) {
+	client := r.ClientFrom(ctx)
+	if portID != nil {
+		currentPort, err := client.EquipmentPort.
+			Query().
+			WithLink().
+			Where(equipmentport.ID(*portID)).
+			First(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("unable to find port: %w", err)
+		}
+		_, err = r.getNextConnectedPortWithLink(ctx, currentPort)
+		switch {
+		case ent.IsNotFound(err):
+			return &models.EndToEndPath{Ports: []*ent.EquipmentPort{currentPort}}, nil
+		case ent.IsNotSingular(err):
+			return nil, ErrMultipleEndToEndPath
+		case err != nil:
+			return nil, fmt.Errorf("unable to find backplane port: %w", err)
+		}
+		currentLink, err := currentPort.Edges.LinkOrErr()
+		if err != nil {
+			return r.traverseEndToEndPath(ctx, nil, currentPort)
+		}
+		nextPort, err := currentLink.QueryPorts().
+			Where(equipmentport.IDNotIn(currentPort.ID)).
+			First(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("unable to find next port: %w", err)
+		}
+		return r.traverseEndToEndPath(ctx, currentLink, currentPort, nextPort)
+	}
+	if linkID == nil {
+		return nil, errors.New("a portId or linkId is required")
+	}
+	currentLink, err := client.Link.Query().WithPorts().Where(link.ID(*linkID)).First(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("unable to find link for port: %w", err)
+	}
+	return r.traverseEndToEndPath(ctx, currentLink, currentLink.Edges.Ports...)
+}
+
+func (r queryResolver) traverseEndToEndPath(ctx context.Context, initialLink *ent.Link, ports ...*ent.EquipmentPort) (*models.EndToEndPath, error) {
+	result := models.EndToEndPath{Links: []*ent.Link{}, Ports: []*ent.EquipmentPort{}}
+	switch {
+	case initialLink != nil:
+		result.Links = append(result.Links, initialLink)
+	case len(ports) == 1:
+		result.Ports = append(result.Ports, ports[0])
+	}
+	for _, port := range ports {
+		for {
+			nextBackPlanePort, err := r.getNextConnectedPortWithLink(ctx, port)
+			if err != nil {
+				if ent.IsNotFound(err) {
+					break
+				}
+				if ent.IsNotSingular(err) {
+					return nil, ErrMultipleEndToEndPath
+				}
+				return nil, fmt.Errorf("unable to find backplane port %w", err)
+			}
+			if nextBackPlanePort.Edges.Link == nil {
+				result.Ports = append(result.Ports, nextBackPlanePort)
+				break
+			}
+			nextLink := nextBackPlanePort.Edges.Link
+			result.Links = append(result.Links, nextLink)
+			linkPorts, err := nextLink.Edges.PortsOrErr()
+			if err != nil || len(linkPorts) < 1 {
+				return nil, fmt.Errorf("unable to find port for link %d: %w", port.ID, err)
+			}
+			if nextBackPlanePort.ID != linkPorts[0].ID {
+				port = linkPorts[0]
+				continue
+			}
+			port = linkPorts[1]
+		}
+	}
+	return &result, nil
+}
+
+func (r queryResolver) getNextConnectedPortWithLink(ctx context.Context, port *ent.EquipmentPort) (*ent.EquipmentPort, error) {
+	portParentEquipmentID, err := port.QueryParent().FirstID(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("unable to find port parent equipment: %w", err)
+	}
+	return port.QueryDefinition().
+		QueryConnectedPorts().
+		QueryPorts().
+		Where(equipmentport.HasParentWith(equipment.ID(portParentEquipmentID))).
+		WithLink(func(query *ent.LinkQuery) {
+			query.WithPorts()
+		}).
+		Only(ctx)
 }

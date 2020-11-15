@@ -2,7 +2,7 @@
 # Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
-from gql.gql.reporter import DUMMY_REPORTER, Reporter
+from gql_client.runtime.reporter import DUMMY_REPORTER, Reporter
 
 from psym.common.constant import __version__
 

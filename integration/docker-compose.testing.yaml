@@ -14,6 +14,9 @@ services:
     build:
       context: ..
       dockerfile: integration/tests/Dockerfile
+      args:
+        GOPROXY: ${COMPOSE_GOPROXY-}
+      network: host
     volumes:
       - ./..:/src/symphony:delegated
     networks:

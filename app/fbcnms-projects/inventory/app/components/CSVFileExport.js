@@ -14,7 +14,6 @@ import type {FiltersQuery} from './comparison_view/ComparisonViewTypes';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
 
-import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, {useState} from 'react';
@@ -24,7 +23,6 @@ import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {fetchQuery, graphql} from 'relay-runtime';
-import {useContext} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = {
@@ -70,7 +68,6 @@ export const csvFileExportKeyQuery = graphql`
 `;
 
 const PATH_PREFIX = '/graph/export';
-const PATH_SINGLE_WORK_ORDER = '/single_work_order';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
 
 type Props = {|
@@ -84,9 +81,6 @@ const CSVFileExport = (props: Props) => {
   const {classes, title, exportPath} = props;
   const [isDownloading, setIsDownloading] = useState(false);
   const [isAsyncTaskInProgress, setIsAsyncTaskInProgress] = useState(false);
-  const isAsyncExportEnabled = useContext(AppContext).isFeatureEnabled(
-    'async_export',
-  );
 
   const filters = props.filters?.map(f => {
     if (f.name == 'property') {
@@ -153,24 +147,19 @@ const CSVFileExport = (props: Props) => {
         })
         .then(response => {
           setIsDownloading(false);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          if (!isAsyncExportEnabled || exportPath === PATH_SINGLE_WORK_ORDER) {
-            downloadFile(url);
-          } else {
-            response.data.text().then(text => {
-              if (text == null || text === '') {
-                return;
-              }
-              const taskId = JSON.parse(text)['TaskID'];
-              if (!isAsyncTaskInProgress) {
-                setIsAsyncTaskInProgress(true);
-                const intervalId = setInterval(
-                  () => handleAsyncExport(taskId, intervalId),
-                  EXPORT_TASK_REFRESH_INTERVAL_MS,
-                );
-              }
-            });
-          }
+          response.data.text().then(text => {
+            if (text == null || text === '') {
+              return;
+            }
+            const taskId = JSON.parse(text)['TaskID'];
+            if (!isAsyncTaskInProgress) {
+              setIsAsyncTaskInProgress(true);
+              const intervalId = setInterval(
+                () => handleAsyncExport(taskId, intervalId),
+                EXPORT_TASK_REFRESH_INTERVAL_MS,
+              );
+            }
+          });
         });
     } catch (error) {
       props.alert(error.response?.data?.error || error);
@@ -192,9 +181,7 @@ const CSVFileExport = (props: Props) => {
             size={24}
             color="inherit"
             className={classNames({
-              [classes.hiddenContent]:
-                (!isDownloading && !isAsyncExportEnabled) ||
-                (!isAsyncTaskInProgress && isAsyncExportEnabled),
+              [classes.hiddenContent]: !isAsyncTaskInProgress,
             })}
           />
         </div>

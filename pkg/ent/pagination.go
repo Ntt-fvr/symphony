@@ -107,10 +107,10 @@ func (o OrderDirection) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (o *OrderDirection) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (o *OrderDirection) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("order direction %T must be a string", v)
+		return fmt.Errorf("order direction %T must be a string", val)
 	}
 	*o = OrderDirection(str)
 	return o.Validate()
@@ -382,7 +382,7 @@ func (p *activityPager) applyOrder(query *ActivityQuery, reverse bool) *Activity
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultActivityOrder.Field {
-		query = query.Order(Asc(DefaultActivityOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultActivityOrder.Field.field))
 	}
 	return query
 }
@@ -601,7 +601,7 @@ func (p *blockPager) applyOrder(query *BlockQuery, reverse bool) *BlockQuery {
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultBlockOrder.Field {
-		query = query.Order(Asc(DefaultBlockOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultBlockOrder.Field.field))
 	}
 	return query
 }
@@ -820,7 +820,7 @@ func (p *blockInstancePager) applyOrder(query *BlockInstanceQuery, reverse bool)
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultBlockInstanceOrder.Field {
-		query = query.Order(Asc(DefaultBlockInstanceOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultBlockInstanceOrder.Field.field))
 	}
 	return query
 }
@@ -1039,7 +1039,7 @@ func (p *checkListCategoryPager) applyOrder(query *CheckListCategoryQuery, rever
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultCheckListCategoryOrder.Field {
-		query = query.Order(Asc(DefaultCheckListCategoryOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultCheckListCategoryOrder.Field.field))
 	}
 	return query
 }
@@ -1258,7 +1258,7 @@ func (p *checkListCategoryDefinitionPager) applyOrder(query *CheckListCategoryDe
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultCheckListCategoryDefinitionOrder.Field {
-		query = query.Order(Asc(DefaultCheckListCategoryDefinitionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultCheckListCategoryDefinitionOrder.Field.field))
 	}
 	return query
 }
@@ -1477,7 +1477,7 @@ func (p *checkListItemPager) applyOrder(query *CheckListItemQuery, reverse bool)
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultCheckListItemOrder.Field {
-		query = query.Order(Asc(DefaultCheckListItemOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultCheckListItemOrder.Field.field))
 	}
 	return query
 }
@@ -1696,7 +1696,7 @@ func (p *checkListItemDefinitionPager) applyOrder(query *CheckListItemDefinition
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultCheckListItemDefinitionOrder.Field {
-		query = query.Order(Asc(DefaultCheckListItemDefinitionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultCheckListItemDefinitionOrder.Field.field))
 	}
 	return query
 }
@@ -1915,7 +1915,7 @@ func (p *commentPager) applyOrder(query *CommentQuery, reverse bool) *CommentQue
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultCommentOrder.Field {
-		query = query.Order(Asc(DefaultCommentOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultCommentOrder.Field.field))
 	}
 	return query
 }
@@ -2134,7 +2134,7 @@ func (p *customerPager) applyOrder(query *CustomerQuery, reverse bool) *Customer
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultCustomerOrder.Field {
-		query = query.Order(Asc(DefaultCustomerOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultCustomerOrder.Field.field))
 	}
 	return query
 }
@@ -2353,7 +2353,7 @@ func (p *entryPointPager) applyOrder(query *EntryPointQuery, reverse bool) *Entr
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEntryPointOrder.Field {
-		query = query.Order(Asc(DefaultEntryPointOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEntryPointOrder.Field.field))
 	}
 	return query
 }
@@ -2572,7 +2572,7 @@ func (p *equipmentPager) applyOrder(query *EquipmentQuery, reverse bool) *Equipm
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentOrder.Field.field))
 	}
 	return query
 }
@@ -2848,7 +2848,7 @@ func (p *equipmentCategoryPager) applyOrder(query *EquipmentCategoryQuery, rever
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentCategoryOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentCategoryOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentCategoryOrder.Field.field))
 	}
 	return query
 }
@@ -3067,7 +3067,7 @@ func (p *equipmentPortPager) applyOrder(query *EquipmentPortQuery, reverse bool)
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentPortOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentPortOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentPortOrder.Field.field))
 	}
 	return query
 }
@@ -3286,7 +3286,7 @@ func (p *equipmentPortDefinitionPager) applyOrder(query *EquipmentPortDefinition
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentPortDefinitionOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentPortDefinitionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentPortDefinitionOrder.Field.field))
 	}
 	return query
 }
@@ -3505,7 +3505,7 @@ func (p *equipmentPortTypePager) applyOrder(query *EquipmentPortTypeQuery, rever
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentPortTypeOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentPortTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentPortTypeOrder.Field.field))
 	}
 	return query
 }
@@ -3724,7 +3724,7 @@ func (p *equipmentPositionPager) applyOrder(query *EquipmentPositionQuery, rever
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentPositionOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentPositionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentPositionOrder.Field.field))
 	}
 	return query
 }
@@ -3943,7 +3943,7 @@ func (p *equipmentPositionDefinitionPager) applyOrder(query *EquipmentPositionDe
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentPositionDefinitionOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentPositionDefinitionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentPositionDefinitionOrder.Field.field))
 	}
 	return query
 }
@@ -4162,7 +4162,7 @@ func (p *equipmentTypePager) applyOrder(query *EquipmentTypeQuery, reverse bool)
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultEquipmentTypeOrder.Field {
-		query = query.Order(Asc(DefaultEquipmentTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultEquipmentTypeOrder.Field.field))
 	}
 	return query
 }
@@ -4381,7 +4381,7 @@ func (p *exitPointPager) applyOrder(query *ExitPointQuery, reverse bool) *ExitPo
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultExitPointOrder.Field {
-		query = query.Order(Asc(DefaultExitPointOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultExitPointOrder.Field.field))
 	}
 	return query
 }
@@ -4600,7 +4600,7 @@ func (p *exportTaskPager) applyOrder(query *ExportTaskQuery, reverse bool) *Expo
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultExportTaskOrder.Field {
-		query = query.Order(Asc(DefaultExportTaskOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultExportTaskOrder.Field.field))
 	}
 	return query
 }
@@ -4819,7 +4819,7 @@ func (p *featurePager) applyOrder(query *FeatureQuery, reverse bool) *FeatureQue
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFeatureOrder.Field {
-		query = query.Order(Asc(DefaultFeatureOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFeatureOrder.Field.field))
 	}
 	return query
 }
@@ -5038,7 +5038,7 @@ func (p *filePager) applyOrder(query *FileQuery, reverse bool) *FileQuery {
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFileOrder.Field {
-		query = query.Order(Asc(DefaultFileOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFileOrder.Field.field))
 	}
 	return query
 }
@@ -5257,7 +5257,7 @@ func (p *floorPlanPager) applyOrder(query *FloorPlanQuery, reverse bool) *FloorP
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFloorPlanOrder.Field {
-		query = query.Order(Asc(DefaultFloorPlanOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFloorPlanOrder.Field.field))
 	}
 	return query
 }
@@ -5476,7 +5476,7 @@ func (p *floorPlanReferencePointPager) applyOrder(query *FloorPlanReferencePoint
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFloorPlanReferencePointOrder.Field {
-		query = query.Order(Asc(DefaultFloorPlanReferencePointOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFloorPlanReferencePointOrder.Field.field))
 	}
 	return query
 }
@@ -5695,7 +5695,7 @@ func (p *floorPlanScalePager) applyOrder(query *FloorPlanScaleQuery, reverse boo
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFloorPlanScaleOrder.Field {
-		query = query.Order(Asc(DefaultFloorPlanScaleOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFloorPlanScaleOrder.Field.field))
 	}
 	return query
 }
@@ -5914,7 +5914,7 @@ func (p *flowPager) applyOrder(query *FlowQuery, reverse bool) *FlowQuery {
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFlowOrder.Field {
-		query = query.Order(Asc(DefaultFlowOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFlowOrder.Field.field))
 	}
 	return query
 }
@@ -6133,7 +6133,7 @@ func (p *flowDraftPager) applyOrder(query *FlowDraftQuery, reverse bool) *FlowDr
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFlowDraftOrder.Field {
-		query = query.Order(Asc(DefaultFlowDraftOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFlowDraftOrder.Field.field))
 	}
 	return query
 }
@@ -6352,7 +6352,7 @@ func (p *flowExecutionTemplatePager) applyOrder(query *FlowExecutionTemplateQuer
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFlowExecutionTemplateOrder.Field {
-		query = query.Order(Asc(DefaultFlowExecutionTemplateOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFlowExecutionTemplateOrder.Field.field))
 	}
 	return query
 }
@@ -6571,7 +6571,7 @@ func (p *flowInstancePager) applyOrder(query *FlowInstanceQuery, reverse bool) *
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultFlowInstanceOrder.Field {
-		query = query.Order(Asc(DefaultFlowInstanceOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultFlowInstanceOrder.Field.field))
 	}
 	return query
 }
@@ -6790,7 +6790,7 @@ func (p *hyperlinkPager) applyOrder(query *HyperlinkQuery, reverse bool) *Hyperl
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultHyperlinkOrder.Field {
-		query = query.Order(Asc(DefaultHyperlinkOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultHyperlinkOrder.Field.field))
 	}
 	return query
 }
@@ -7009,7 +7009,7 @@ func (p *linkPager) applyOrder(query *LinkQuery, reverse bool) *LinkQuery {
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultLinkOrder.Field {
-		query = query.Order(Asc(DefaultLinkOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultLinkOrder.Field.field))
 	}
 	return query
 }
@@ -7228,7 +7228,7 @@ func (p *locationPager) applyOrder(query *LocationQuery, reverse bool) *Location
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultLocationOrder.Field {
-		query = query.Order(Asc(DefaultLocationOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultLocationOrder.Field.field))
 	}
 	return query
 }
@@ -7490,7 +7490,7 @@ func (p *locationTypePager) applyOrder(query *LocationTypeQuery, reverse bool) *
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultLocationTypeOrder.Field {
-		query = query.Order(Asc(DefaultLocationTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultLocationTypeOrder.Field.field))
 	}
 	return query
 }
@@ -7709,7 +7709,7 @@ func (p *permissionsPolicyPager) applyOrder(query *PermissionsPolicyQuery, rever
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultPermissionsPolicyOrder.Field {
-		query = query.Order(Asc(DefaultPermissionsPolicyOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultPermissionsPolicyOrder.Field.field))
 	}
 	return query
 }
@@ -7928,7 +7928,7 @@ func (p *projectPager) applyOrder(query *ProjectQuery, reverse bool) *ProjectQue
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultProjectOrder.Field {
-		query = query.Order(Asc(DefaultProjectOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultProjectOrder.Field.field))
 	}
 	return query
 }
@@ -8204,7 +8204,7 @@ func (p *projectTemplatePager) applyOrder(query *ProjectTemplateQuery, reverse b
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultProjectTemplateOrder.Field {
-		query = query.Order(Asc(DefaultProjectTemplateOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultProjectTemplateOrder.Field.field))
 	}
 	return query
 }
@@ -8423,7 +8423,7 @@ func (p *projectTypePager) applyOrder(query *ProjectTypeQuery, reverse bool) *Pr
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultProjectTypeOrder.Field {
-		query = query.Order(Asc(DefaultProjectTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultProjectTypeOrder.Field.field))
 	}
 	return query
 }
@@ -8642,7 +8642,7 @@ func (p *propertyPager) applyOrder(query *PropertyQuery, reverse bool) *Property
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultPropertyOrder.Field {
-		query = query.Order(Asc(DefaultPropertyOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultPropertyOrder.Field.field))
 	}
 	return query
 }
@@ -8861,7 +8861,7 @@ func (p *propertyTypePager) applyOrder(query *PropertyTypeQuery, reverse bool) *
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultPropertyTypeOrder.Field {
-		query = query.Order(Asc(DefaultPropertyTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultPropertyTypeOrder.Field.field))
 	}
 	return query
 }
@@ -9080,7 +9080,7 @@ func (p *reportFilterPager) applyOrder(query *ReportFilterQuery, reverse bool) *
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultReportFilterOrder.Field {
-		query = query.Order(Asc(DefaultReportFilterOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultReportFilterOrder.Field.field))
 	}
 	return query
 }
@@ -9299,7 +9299,7 @@ func (p *servicePager) applyOrder(query *ServiceQuery, reverse bool) *ServiceQue
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultServiceOrder.Field {
-		query = query.Order(Asc(DefaultServiceOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultServiceOrder.Field.field))
 	}
 	return query
 }
@@ -9518,7 +9518,7 @@ func (p *serviceEndpointPager) applyOrder(query *ServiceEndpointQuery, reverse b
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultServiceEndpointOrder.Field {
-		query = query.Order(Asc(DefaultServiceEndpointOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultServiceEndpointOrder.Field.field))
 	}
 	return query
 }
@@ -9737,7 +9737,7 @@ func (p *serviceEndpointDefinitionPager) applyOrder(query *ServiceEndpointDefini
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultServiceEndpointDefinitionOrder.Field {
-		query = query.Order(Asc(DefaultServiceEndpointDefinitionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultServiceEndpointDefinitionOrder.Field.field))
 	}
 	return query
 }
@@ -9956,7 +9956,7 @@ func (p *serviceTypePager) applyOrder(query *ServiceTypeQuery, reverse bool) *Se
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultServiceTypeOrder.Field {
-		query = query.Order(Asc(DefaultServiceTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultServiceTypeOrder.Field.field))
 	}
 	return query
 }
@@ -10175,7 +10175,7 @@ func (p *surveyPager) applyOrder(query *SurveyQuery, reverse bool) *SurveyQuery 
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultSurveyOrder.Field {
-		query = query.Order(Asc(DefaultSurveyOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultSurveyOrder.Field.field))
 	}
 	return query
 }
@@ -10394,7 +10394,7 @@ func (p *surveyCellScanPager) applyOrder(query *SurveyCellScanQuery, reverse boo
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultSurveyCellScanOrder.Field {
-		query = query.Order(Asc(DefaultSurveyCellScanOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultSurveyCellScanOrder.Field.field))
 	}
 	return query
 }
@@ -10613,7 +10613,7 @@ func (p *surveyQuestionPager) applyOrder(query *SurveyQuestionQuery, reverse boo
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultSurveyQuestionOrder.Field {
-		query = query.Order(Asc(DefaultSurveyQuestionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultSurveyQuestionOrder.Field.field))
 	}
 	return query
 }
@@ -10832,7 +10832,7 @@ func (p *surveyTemplateCategoryPager) applyOrder(query *SurveyTemplateCategoryQu
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultSurveyTemplateCategoryOrder.Field {
-		query = query.Order(Asc(DefaultSurveyTemplateCategoryOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultSurveyTemplateCategoryOrder.Field.field))
 	}
 	return query
 }
@@ -11051,7 +11051,7 @@ func (p *surveyTemplateQuestionPager) applyOrder(query *SurveyTemplateQuestionQu
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultSurveyTemplateQuestionOrder.Field {
-		query = query.Order(Asc(DefaultSurveyTemplateQuestionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultSurveyTemplateQuestionOrder.Field.field))
 	}
 	return query
 }
@@ -11270,7 +11270,7 @@ func (p *surveyWiFiScanPager) applyOrder(query *SurveyWiFiScanQuery, reverse boo
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultSurveyWiFiScanOrder.Field {
-		query = query.Order(Asc(DefaultSurveyWiFiScanOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultSurveyWiFiScanOrder.Field.field))
 	}
 	return query
 }
@@ -11489,7 +11489,7 @@ func (p *userPager) applyOrder(query *UserQuery, reverse bool) *UserQuery {
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultUserOrder.Field {
-		query = query.Order(Asc(DefaultUserOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultUserOrder.Field.field))
 	}
 	return query
 }
@@ -11708,7 +11708,7 @@ func (p *usersGroupPager) applyOrder(query *UsersGroupQuery, reverse bool) *User
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultUsersGroupOrder.Field {
-		query = query.Order(Asc(DefaultUsersGroupOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultUsersGroupOrder.Field.field))
 	}
 	return query
 }
@@ -11927,7 +11927,7 @@ func (p *workOrderPager) applyOrder(query *WorkOrderQuery, reverse bool) *WorkOr
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultWorkOrderOrder.Field {
-		query = query.Order(Asc(DefaultWorkOrderOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultWorkOrderOrder.Field.field))
 	}
 	return query
 }
@@ -12231,7 +12231,7 @@ func (p *workOrderDefinitionPager) applyOrder(query *WorkOrderDefinitionQuery, r
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultWorkOrderDefinitionOrder.Field {
-		query = query.Order(Asc(DefaultWorkOrderDefinitionOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultWorkOrderDefinitionOrder.Field.field))
 	}
 	return query
 }
@@ -12450,7 +12450,7 @@ func (p *workOrderTemplatePager) applyOrder(query *WorkOrderTemplateQuery, rever
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultWorkOrderTemplateOrder.Field {
-		query = query.Order(Asc(DefaultWorkOrderTemplateOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultWorkOrderTemplateOrder.Field.field))
 	}
 	return query
 }
@@ -12669,7 +12669,7 @@ func (p *workOrderTypePager) applyOrder(query *WorkOrderTypeQuery, reverse bool)
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
 	if p.order.Field != DefaultWorkOrderTypeOrder.Field {
-		query = query.Order(Asc(DefaultWorkOrderTypeOrder.Field.field))
+		query = query.Order(direction.orderFunc(DefaultWorkOrderTypeOrder.Field.field))
 	}
 	return query
 }

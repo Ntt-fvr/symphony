@@ -11,11 +11,14 @@
 
 import type {ExtendedMouseEvent, KeyValuePair} from '../../Helpers';
 import type {Graph} from '../../Graph';
-import type {IBaseShapeAttributes, IShape} from '../../shapes/BaseShape';
+import type {
+  IBaseShapeAttributes,
+  IShape,
+  IShapeView,
+} from '../../shapes/BaseShape';
 import type {IVertexModel} from '../../shapes/vertexes/BaseVertext';
-import type {Position} from '../../Helpers';
-
 import type {Paper} from '../../Paper';
+import type {Position} from '../../Helpers';
 
 import * as jointJS from 'jointjs';
 
@@ -35,7 +38,7 @@ export interface ILinkAttributes extends IBaseShapeAttributes {
   +z: number;
 }
 
-export interface ILink extends IShape {
+export interface ILinkModel extends IShape {
   +attributes: ILinkAttributes;
   +source: (?LinkEndpoint) => void;
   +target: (?LinkEndpoint) => void;
@@ -45,6 +48,11 @@ export interface ILink extends IShape {
   +attr: KeyValuePair => void;
   +remove: () => void;
 }
+
+export type ILinkView = $ReadOnly<{|
+  ...IShapeView<ILinkModel>,
+  path: KeyValuePair,
+|}>;
 
 export type LinkDescriptor = $ReadOnly<{|
   id: string,

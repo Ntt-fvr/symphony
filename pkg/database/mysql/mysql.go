@@ -12,6 +12,7 @@ import (
 
 	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/go-sql-driver/mysql"
+	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 	cdkmysql "gocloud.dev/mysql"
 	"gocloud.dev/mysql/awsmysql"
@@ -21,11 +22,8 @@ var defaultURLMux = cdkmysql.URLMux{}
 
 func init() {
 	traceOpts := []ocsql.TraceOption{
-		ocsql.WithPing(true),
-		ocsql.WithRowsAffected(true),
-		ocsql.WithLastInsertID(true),
-		ocsql.WithQuery(true),
 		ocsql.WithDisableErrSkip(true),
+		ocsql.WithSampler(trace.NeverSample()),
 	}
 	defaultURLMux.RegisterMySQL(cdkmysql.Scheme, &cdkmysql.URLOpener{
 		TraceOpts: traceOpts,

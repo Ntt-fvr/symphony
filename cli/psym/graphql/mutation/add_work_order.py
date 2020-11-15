@@ -3,10 +3,11 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from gql.gql.datetime_utils import DATETIME_FIELD
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.client import OperationException
-from gql.gql.reporter import FailedOperationException
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.graphql_client import GraphqlClient
+from gql_client.runtime.reporter import FailedOperationException
+from gql import gql
+from gql.transport.exceptions import TransportQueryError
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict
@@ -14,7 +15,7 @@ from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
 from ..fragment.work_order import WorkOrderFragment, QUERY as WorkOrderFragmentQuery
-from ..input.add_work_order import AddWorkOrderInput
+from ..input.add_work_order_input import AddWorkOrderInput
 
 
 QUERY: List[str] = WorkOrderFragmentQuery + ["""
@@ -26,7 +27,6 @@ mutation AddWorkOrderMutation($input: AddWorkOrderInput!) {
 
 """]
 
-@dataclass
 class AddWorkOrderMutation(DataClassJsonMixin):
     @dataclass
     class AddWorkOrderMutationData(DataClassJsonMixin):
@@ -36,27 +36,22 @@ class AddWorkOrderMutation(DataClassJsonMixin):
 
         addWorkOrder: WorkOrder
 
-    data: AddWorkOrderMutationData
-
     @classmethod
-    # fmt: off
     def execute(cls, client: GraphqlClient, input: AddWorkOrderInput) -> AddWorkOrderMutationData.WorkOrder:
-        # fmt: off
         variables: Dict[str, Any] = {"input": input}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
             decode_start = perf_counter()
-            res = cls.from_json(response_text).data
+            res = cls.AddWorkOrderMutationData.from_dict(response_text)
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
             client.reporter.log_successful_operation("AddWorkOrderMutation", variables, network_time, decode_time)
             return res.addWorkOrder
-        except OperationException as e:
+        except TransportQueryError as e:
             raise FailedOperationException(
                 client.reporter,
-                e.err_msg,
-                e.err_id,
+                str(e.errors),
                 "AddWorkOrderMutation",
                 variables,
             )

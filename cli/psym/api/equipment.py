@@ -30,9 +30,9 @@ from ..exceptions import (
 from ..graphql.enum.equipment_filter_type import EquipmentFilterType
 from ..graphql.enum.filter_operator import FilterOperator
 from ..graphql.enum.property_kind import PropertyKind
-from ..graphql.input.add_equipment import AddEquipmentInput
-from ..graphql.input.edit_equipment import EditEquipmentInput
-from ..graphql.input.equipment_filter import EquipmentFilterInput
+from ..graphql.input.add_equipment_input import AddEquipmentInput
+from ..graphql.input.edit_equipment_input import EditEquipmentInput
+from ..graphql.input.equipment_filter_input import EquipmentFilterInput
 from ..graphql.mutation.add_equipment import AddEquipmentMutation
 from ..graphql.mutation.edit_equipment import EditEquipmentMutation
 from ..graphql.mutation.remove_equipment import RemoveEquipmentMutation

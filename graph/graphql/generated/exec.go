@@ -33,6 +33,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/event"
 	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -293,6 +294,11 @@ type ComplexityRoot struct {
 	EndBlock struct {
 		EntryPoint func(childComplexity int) int
 		Params     func(childComplexity int) int
+	}
+
+	EndToEndPath struct {
+		Links func(childComplexity int) int
+		Ports func(childComplexity int) int
 	}
 
 	EntryPoint struct {
@@ -688,6 +694,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
+		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
 		AddComment                               func(childComplexity int, input models.CommentInput) int
 		AddConnector                             func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
@@ -796,7 +803,6 @@ type ComplexityRoot struct {
 
 	PermissionSettings struct {
 		AdminPolicy     func(childComplexity int) int
-		CanWrite        func(childComplexity int) int
 		InventoryPolicy func(childComplexity int) int
 		WorkforcePolicy func(childComplexity int) int
 	}
@@ -933,47 +939,37 @@ type ComplexityRoot struct {
 
 	Query struct {
 		ActionType               func(childComplexity int, id flowschema.ActionTypeID) int
-		CustomerSearch           func(childComplexity int, limit *int) int
 		Customers                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		EndToEndPath             func(childComplexity int, linkID *int, portID *int) int
 		EquipmentPortDefinitions func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPortTypes       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
-		EquipmentSearch          func(childComplexity int, filters []*models1.EquipmentFilterInput, limit *int) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
 		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		LatestPythonPackage      func(childComplexity int) int
-		LinkSearch               func(childComplexity int, filters []*models1.LinkFilterInput, limit *int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
-		LocationSearch           func(childComplexity int, filters []*models1.LocationFilterInput, limit *int) int
 		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Locations                func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) int
 		Me                       func(childComplexity int) int
 		NearestSites             func(childComplexity int, latitude float64, longitude float64, first int) int
 		Node                     func(childComplexity int, id int) int
 		PermissionsPolicies      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
-		PermissionsPolicySearch  func(childComplexity int, filters []*models.PermissionsPolicyFilterInput, limit *int) int
-		PortSearch               func(childComplexity int, filters []*models1.PortFilterInput, limit *int) int
 		PossibleProperties       func(childComplexity int, entityType enum.PropertyEntity) int
-		ProjectSearch            func(childComplexity int, filters []*models.ProjectFilterInput, limit *int) int
 		ProjectTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) int
 		PythonPackages           func(childComplexity int) int
 		ReportFilters            func(childComplexity int, entity models.FilterEntity) int
 		SearchForNode            func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		ServiceSearch            func(childComplexity int, filters []*models1.ServiceFilterInput, limit *int) int
 		ServiceTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Services                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
 		Surveys                  func(childComplexity int) int
 		TriggerType              func(childComplexity int, id flowschema.TriggerTypeID) int
 		User                     func(childComplexity int, authID string) int
-		UserSearch               func(childComplexity int, filters []*models.UserFilterInput, limit *int) int
 		Users                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
-		UsersGroupSearch         func(childComplexity int, filters []*models.UsersGroupFilterInput, limit *int) int
 		UsersGroups              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
 		Vertex                   func(childComplexity int, id int) int
-		WorkOrderSearch          func(childComplexity int, filters []*models1.WorkOrderFilterInput, limit *int) int
 		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
 	}
@@ -1090,9 +1086,10 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		FlowInstanceDone func(childComplexity int) int
-		WorkOrderAdded   func(childComplexity int) int
-		WorkOrderDone    func(childComplexity int) int
+		FlowInstanceDone       func(childComplexity int) int
+		WorkOrderAdded         func(childComplexity int) int
+		WorkOrderDone          func(childComplexity int) int
+		WorkOrderStatusChanged func(childComplexity int) int
 	}
 
 	Survey struct {
@@ -1355,6 +1352,12 @@ type ComplexityRoot struct {
 		WorkOrders func(childComplexity int) int
 	}
 
+	WorkOrderStatusChangedPayload struct {
+		From      func(childComplexity int) int
+		To        func(childComplexity int) int
+		WorkOrder func(childComplexity int) int
+	}
+
 	WorkOrderTemplate struct {
 		AssigneeCanCompleteWorkOrder func(childComplexity int) int
 		CheckListCategoryDefinitions func(childComplexity int) int
@@ -1582,6 +1585,7 @@ type MutationResolver interface {
 	AddServiceEndpoint(ctx context.Context, input models.AddServiceEndpointInput) (*ent.Service, error)
 	RemoveServiceEndpoint(ctx context.Context, serviceEndpointID int) (*ent.Service, error)
 	AddServicePort(ctx context.Context, id int, portID int) (*ent.Service, error)
+	AddBulkServiceLinksAndPorts(ctx context.Context, input *models.AddBulkServiceLinksAndPortsInput) (*ent.Service, error)
 	RemoveServicePort(ctx context.Context, id int, portID int) (*ent.Service, error)
 	AddServiceType(ctx context.Context, data models.ServiceTypeCreateData) (*ent.ServiceType, error)
 	EditServiceType(ctx context.Context, data models.ServiceTypeEditData) (*ent.ServiceType, error)
@@ -1686,6 +1690,7 @@ type QueryResolver interface {
 	ActionType(ctx context.Context, id flowschema.ActionTypeID) (actions.ActionType, error)
 	TriggerType(ctx context.Context, id flowschema.TriggerTypeID) (triggers.TriggerType, error)
 	LocationTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.LocationTypeConnection, error)
+	EndToEndPath(ctx context.Context, linkID *int, portID *int) (*models.EndToEndPath, error)
 	Locations(ctx context.Context, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) (*ent.LocationConnection, error)
 	EquipmentPortTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortTypeConnection, error)
 	EquipmentPortDefinitions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortDefinitionConnection, error)
@@ -1701,17 +1706,6 @@ type QueryResolver interface {
 	UsersGroups(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) (*ent.UsersGroupConnection, error)
 	PermissionsPolicies(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) (*ent.PermissionsPolicyConnection, error)
 	SearchForNode(ctx context.Context, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*models.SearchNodesConnection, error)
-	EquipmentSearch(ctx context.Context, filters []*models1.EquipmentFilterInput, limit *int) (*models1.EquipmentSearchResult, error)
-	WorkOrderSearch(ctx context.Context, filters []*models1.WorkOrderFilterInput, limit *int) (*models1.WorkOrderSearchResult, error)
-	LinkSearch(ctx context.Context, filters []*models1.LinkFilterInput, limit *int) (*models1.LinkSearchResult, error)
-	PortSearch(ctx context.Context, filters []*models1.PortFilterInput, limit *int) (*models1.PortSearchResult, error)
-	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models1.LocationSearchResult, error)
-	ProjectSearch(ctx context.Context, filters []*models.ProjectFilterInput, limit *int) ([]*ent.Project, error)
-	CustomerSearch(ctx context.Context, limit *int) ([]*ent.Customer, error)
-	ServiceSearch(ctx context.Context, filters []*models1.ServiceFilterInput, limit *int) (*models1.ServiceSearchResult, error)
-	UserSearch(ctx context.Context, filters []*models.UserFilterInput, limit *int) (*models.UserSearchResult, error)
-	PermissionsPolicySearch(ctx context.Context, filters []*models.PermissionsPolicyFilterInput, limit *int) (*models.PermissionsPolicySearchResult, error)
-	UsersGroupSearch(ctx context.Context, filters []*models.UsersGroupFilterInput, limit *int) (*models.UsersGroupSearchResult, error)
 	PossibleProperties(ctx context.Context, entityType enum.PropertyEntity) ([]*ent.PropertyType, error)
 	Surveys(ctx context.Context) ([]*ent.Survey, error)
 	LatestPythonPackage(ctx context.Context) (*models.LatestPythonPackageResult, error)
@@ -1760,6 +1754,7 @@ type ServiceTypeResolver interface {
 type SubscriptionResolver interface {
 	WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error)
 	WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error)
+	WorkOrderStatusChanged(ctx context.Context) (<-chan *event.WorkOrderStatusChangedPayload, error)
 	FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error)
 }
 type SurveyResolver interface {
@@ -2545,6 +2540,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EndBlock.Params(childComplexity), true
+
+	case "EndToEndPath.links":
+		if e.complexity.EndToEndPath.Links == nil {
+			break
+		}
+
+		return e.complexity.EndToEndPath.Links(childComplexity), true
+
+	case "EndToEndPath.ports":
+		if e.complexity.EndToEndPath.Ports == nil {
+			break
+		}
+
+		return e.complexity.EndToEndPath.Ports(childComplexity), true
 
 	case "EntryPoint.cid":
 		if e.complexity.EntryPoint.Cid == nil {
@@ -4244,6 +4253,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddActionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.ActionBlockInput)), true
 
+	case "Mutation.addBulkServiceLinksAndPorts":
+		if e.complexity.Mutation.AddBulkServiceLinksAndPorts == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addBulkServiceLinksAndPorts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddBulkServiceLinksAndPorts(childComplexity, args["input"].(*models.AddBulkServiceLinksAndPortsInput)), true
+
 	case "Mutation.addCellScans":
 		if e.complexity.Mutation.AddCellScans == nil {
 			break
@@ -5397,13 +5418,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PermissionSettings.AdminPolicy(childComplexity), true
 
-	case "PermissionSettings.canWrite":
-		if e.complexity.PermissionSettings.CanWrite == nil {
-			break
-		}
-
-		return e.complexity.PermissionSettings.CanWrite(childComplexity), true
-
 	case "PermissionSettings.inventoryPolicy":
 		if e.complexity.PermissionSettings.InventoryPolicy == nil {
 			break
@@ -6025,18 +6039,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ActionType(childComplexity, args["id"].(flowschema.ActionTypeID)), true
 
-	case "Query.customerSearch":
-		if e.complexity.Query.CustomerSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_customerSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.CustomerSearch(childComplexity, args["limit"].(*int)), true
-
 	case "Query.customers":
 		if e.complexity.Query.Customers == nil {
 			break
@@ -6048,6 +6050,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Customers(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+
+	case "Query.endToEndPath":
+		if e.complexity.Query.EndToEndPath == nil {
+			break
+		}
+
+		args, err := ec.field_Query_endToEndPath_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EndToEndPath(childComplexity, args["linkId"].(*int), args["portId"].(*int)), true
 
 	case "Query.equipmentPortDefinitions":
 		if e.complexity.Query.EquipmentPortDefinitions == nil {
@@ -6084,18 +6098,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.EquipmentPorts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.PortFilterInput)), true
-
-	case "Query.equipmentSearch":
-		if e.complexity.Query.EquipmentSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_equipmentSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.EquipmentSearch(childComplexity, args["filters"].([]*models1.EquipmentFilterInput), args["limit"].(*int)), true
 
 	case "Query.equipmentTypes":
 		if e.complexity.Query.EquipmentTypes == nil {
@@ -6152,18 +6154,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.LatestPythonPackage(childComplexity), true
 
-	case "Query.linkSearch":
-		if e.complexity.Query.LinkSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_linkSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.LinkSearch(childComplexity, args["filters"].([]*models1.LinkFilterInput), args["limit"].(*int)), true
-
 	case "Query.links":
 		if e.complexity.Query.Links == nil {
 			break
@@ -6175,18 +6165,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Links(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.LinkFilterInput)), true
-
-	case "Query.locationSearch":
-		if e.complexity.Query.LocationSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_locationSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.LocationSearch(childComplexity, args["filters"].([]*models1.LocationFilterInput), args["limit"].(*int)), true
 
 	case "Query.locationTypes":
 		if e.complexity.Query.LocationTypes == nil {
@@ -6255,30 +6233,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PermissionsPolicies(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.PermissionsPolicyFilterInput)), true
 
-	case "Query.permissionsPolicySearch":
-		if e.complexity.Query.PermissionsPolicySearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_permissionsPolicySearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.PermissionsPolicySearch(childComplexity, args["filters"].([]*models.PermissionsPolicyFilterInput), args["limit"].(*int)), true
-
-	case "Query.portSearch":
-		if e.complexity.Query.PortSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_portSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.PortSearch(childComplexity, args["filters"].([]*models1.PortFilterInput), args["limit"].(*int)), true
-
 	case "Query.possibleProperties":
 		if e.complexity.Query.PossibleProperties == nil {
 			break
@@ -6290,18 +6244,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PossibleProperties(childComplexity, args["entityType"].(enum.PropertyEntity)), true
-
-	case "Query.projectSearch":
-		if e.complexity.Query.ProjectSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_projectSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ProjectSearch(childComplexity, args["filters"].([]*models.ProjectFilterInput), args["limit"].(*int)), true
 
 	case "Query.projectTypes":
 		if e.complexity.Query.ProjectTypes == nil {
@@ -6358,18 +6300,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.SearchForNode(childComplexity, args["name"].(string), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
-	case "Query.serviceSearch":
-		if e.complexity.Query.ServiceSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_serviceSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ServiceSearch(childComplexity, args["filters"].([]*models1.ServiceFilterInput), args["limit"].(*int)), true
-
 	case "Query.serviceTypes":
 		if e.complexity.Query.ServiceTypes == nil {
 			break
@@ -6425,18 +6355,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["authID"].(string)), true
 
-	case "Query.userSearch":
-		if e.complexity.Query.UserSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_userSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.UserSearch(childComplexity, args["filters"].([]*models.UserFilterInput), args["limit"].(*int)), true
-
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
 			break
@@ -6448,18 +6366,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Users(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UserFilterInput)), true
-
-	case "Query.usersGroupSearch":
-		if e.complexity.Query.UsersGroupSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_usersGroupSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.UsersGroupSearch(childComplexity, args["filters"].([]*models.UsersGroupFilterInput), args["limit"].(*int)), true
 
 	case "Query.usersGroups":
 		if e.complexity.Query.UsersGroups == nil {
@@ -6484,18 +6390,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Vertex(childComplexity, args["id"].(int)), true
-
-	case "Query.workOrderSearch":
-		if e.complexity.Query.WorkOrderSearch == nil {
-			break
-		}
-
-		args, err := ec.field_Query_workOrderSearch_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.WorkOrderSearch(childComplexity, args["filters"].([]*models1.WorkOrderFilterInput), args["limit"].(*int)), true
 
 	case "Query.workOrderTypes":
 		if e.complexity.Query.WorkOrderTypes == nil {
@@ -7003,6 +6897,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.WorkOrderDone(childComplexity), true
+
+	case "Subscription.workOrderStatusChanged":
+		if e.complexity.Subscription.WorkOrderStatusChanged == nil {
+			break
+		}
+
+		return e.complexity.Subscription.WorkOrderStatusChanged(childComplexity), true
 
 	case "Survey.completionTimestamp":
 		if e.complexity.Survey.CompletionTimestamp == nil {
@@ -8267,6 +8168,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrderSearchResult.WorkOrders(childComplexity), true
 
+	case "WorkOrderStatusChangedPayload.from":
+		if e.complexity.WorkOrderStatusChangedPayload.From == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderStatusChangedPayload.From(childComplexity), true
+
+	case "WorkOrderStatusChangedPayload.to":
+		if e.complexity.WorkOrderStatusChangedPayload.To == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderStatusChangedPayload.To(childComplexity), true
+
+	case "WorkOrderStatusChangedPayload.workOrder":
+		if e.complexity.WorkOrderStatusChangedPayload.WorkOrder == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderStatusChangedPayload.WorkOrder(childComplexity), true
+
 	case "WorkOrderTemplate.assigneeCanCompleteWorkOrder":
 		if e.complexity.WorkOrderTemplate.AssigneeCanCompleteWorkOrder == nil {
 			break
@@ -8584,7 +8506,9 @@ enum UserRole
 }
 
 enum DistanceUnit
-  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit") {
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit"
+  ) {
   KILOMETER
   MILE
 }
@@ -8624,10 +8548,6 @@ type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
   ) {
-  canWrite: Boolean!
-    @deprecated(
-      reason: "Use specific policy in ` + "`" + `adminPolicy` + "`" + `, ` + "`" + `inventoryPolicy` + "`" + ` or ` + "`" + `workforcePolicy` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
@@ -9091,9 +9011,10 @@ enum ActivityField
   CLOCK_OUT
 }
 
-enum ClockOutReason  @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
-) {
+enum ClockOutReason
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
+  ) {
   PAUSE
   SUBMIT
   SUBMIT_INCOMPLETE
@@ -9308,12 +9229,6 @@ input TechnicianCheckListItemInput {
 
 input TechnicianWorkOrderUploadInput {
   workOrderId: ID!
-  checklist: [TechnicianCheckListItemInput!]
-    @deprecatedInput(
-      newField: "checkListCategories"
-      name: "TechnicianWorkOrderUploadInput.checklist"
-      duplicateError: "Use ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` instead. Will be removed on 2020-09-01. You cannot use ` + "`" + `TechnicianWorkOrderUploadInput.checklist` + "`" + ` and ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` together"
-    )
   checkListCategories: [CheckListCategoryInput!]
 }
 
@@ -9383,6 +9298,20 @@ type SearchEntry {
   name: String!
   type: String!
   externalId: String
+}
+
+"""
+End To End Path Descovery.
+"""
+type EndToEndPath {
+  """
+  The links in the path
+  """
+  links: [Link]
+  """
+  The start,end ports in the path
+  """
+  ports: [EquipmentPort]
 }
 
 """
@@ -9947,7 +9876,7 @@ type PropertyType implements Node {
 
 input PropertyTypeInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
   ) {
   id: ID
   externalId: String
@@ -10024,10 +9953,16 @@ enum WorkOrderStatus
   ) {
   PLANNED
   IN_PROGRESS
-  PENDING @deprecated(reason: "Use new status ` + "`" + `IN_PROGRESS` + "`" + ` instead. Will be removed on 2020-11-01")
+  PENDING
+    @deprecated(
+      reason: "Use new status ` + "`" + `IN_PROGRESS` + "`" + ` instead. Will be removed on 2020-11-01"
+    )
   SUBMITTED
   CLOSED
-  DONE @deprecated(reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01")
+  DONE
+    @deprecated(
+      reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01"
+    )
   BLOCKED
 }
 
@@ -10063,7 +9998,7 @@ enum ImageEntity {
 
 enum PropertyEntity
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
   ) {
   EQUIPMENT
   SERVICE
@@ -10895,7 +10830,7 @@ operators to filter search by
 """
 enum FilterOperator
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
   ) {
   IS
   CONTAINS
@@ -10912,7 +10847,7 @@ what type of equipment we filter about
 """
 enum EquipmentFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
   ) {
   EQUIP_INST_NAME
   EQUIP_INST_EXTERNAL_ID
@@ -10924,7 +10859,7 @@ enum EquipmentFilterType
 
 input EquipmentFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
   ) {
   filterType: EquipmentFilterType!
   operator: FilterOperator!
@@ -10937,7 +10872,7 @@ input EquipmentFilterInput
 
 type PortSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
   ) {
   ports: [EquipmentPort]!
   count: Int!
@@ -10945,7 +10880,7 @@ type PortSearchResult
 
 type LinkSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
   ) {
   links: [Link]!
   count: Int!
@@ -10953,7 +10888,7 @@ type LinkSearchResult
 
 type LocationSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
   ) {
   locations: [Location]!
   count: Int!
@@ -10961,7 +10896,7 @@ type LocationSearchResult
 
 type ServiceSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
   ) {
   services: [Service]!
   count: Int!
@@ -10974,7 +10909,7 @@ type UserSearchResult {
 
 type WorkOrderSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
   ) {
   workOrders: [WorkOrder]!
   count: Int!
@@ -10995,7 +10930,7 @@ what filters should we apply on ports
 """
 enum PortFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
   ) {
   PORT_DEF
   PORT_INST_HAS_LINK
@@ -11027,7 +10962,7 @@ what filters should we apply on locations
 """
 enum LocationFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
   ) {
   LOCATION_INST
   LOCATION_INST_NAME
@@ -11042,7 +10977,7 @@ what filters should we apply on services
 """
 enum ServiceFilterType
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
   ) {
   SERVICE_INST_NAME
   SERVICE_STATUS
@@ -11080,7 +11015,7 @@ enum UsersGroupFilterType {
 
 input PortFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
   ) {
   filterType: PortFilterType!
   operator: FilterOperator!
@@ -11094,7 +11029,7 @@ input PortFilterInput
 
 input LinkFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
   ) {
   filterType: LinkFilterType!
   operator: FilterOperator!
@@ -11107,7 +11042,7 @@ input LinkFilterInput
 
 input LocationFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
   ) {
   filterType: LocationFilterType!
   operator: FilterOperator!
@@ -11121,7 +11056,7 @@ input LocationFilterInput
 
 input ServiceFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
   ) {
   filterType: ServiceFilterType!
   operator: FilterOperator!
@@ -11179,7 +11114,7 @@ enum WorkOrderFilterType
 
 input WorkOrderFilterInput
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
   ) {
   filterType: WorkOrderFilterType!
   operator: FilterOperator!
@@ -11359,6 +11294,12 @@ input AddServiceEndpointInput {
   portId: ID
   equipmentID: ID!
   definition: ID!
+}
+
+input AddBulkServiceLinksAndPortsInput {
+  id: ID!
+  portIds: [ID!]
+  linkIds: [ID!]
 }
 
 input ServiceEndpointDefinitionInput {
@@ -11631,7 +11572,7 @@ type SurveyCellScan implements Node {
 
 type EquipmentSearchResult
   @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
   ) {
   equipment: [Equipment]!
   count: Int!
@@ -11664,7 +11605,10 @@ input TechnicianWorkOrderCheckInInput {
   checkInTime: Time
 }
 
-enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType") {
+enum VariableType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType"
+  ) {
   STRING
   INT
   DATE
@@ -11675,13 +11619,19 @@ enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent
   USER
 }
 
-enum VariableUsage @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage") {
+enum VariableUsage
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage"
+  ) {
   INPUT
   OUTPUT
   INPUT_AND_OUTPUT
 }
 
-type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+type VariableDefinition
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition"
+  ) {
   key: String!
   name: String!
   type: VariableType!
@@ -11693,7 +11643,10 @@ type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/p
   nestedVariables(value: String!): [VariableDefinition!]!
 }
 
-input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+input VariableDefinitionInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition"
+  ) {
   key: String!
   type: VariableType!
   mandatory: Boolean
@@ -11702,21 +11655,33 @@ input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symp
   defaultValue: String
 }
 
-type ActionType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType") {
-id: ActionTypeId!
-description: String!
-variables: [VariableDefinition!]!
+type ActionType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType"
+  ) {
+  id: ActionTypeId!
+  description: String!
+  variables: [VariableDefinition!]!
 }
 
-enum TriggerTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID") {
+enum TriggerTypeId
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID"
+  ) {
   work_order
 }
 
-enum ActionTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID") {
+enum ActionTypeId
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID"
+  ) {
   work_order
 }
 
-type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType") {
+type TriggerType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType"
+  ) {
   id: TriggerTypeId!
   description: String!
   variables: [VariableDefinition!]!
@@ -11735,8 +11700,10 @@ type Block implements Node {
   uiRepresentation: BlockUIRepresentation
 }
 
-
-type BlockVariable @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable") {
+type BlockVariable
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
+  ) {
   block: Block!
   outputParamDefinition: VariableDefinition!
 }
@@ -11746,7 +11713,10 @@ input BlockVariableInput {
   variableDefinitionKey: String!
 }
 
-type VariableExpression @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression") {
+type VariableExpression
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
+  ) {
   definition: VariableDefinition!
   expression: String!
   blockVariables: [BlockVariable!]
@@ -11758,31 +11728,35 @@ input VariableExpressionInput {
   blockVariables: [BlockVariableInput!]
 }
 
-type BlockUIRepresentation @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
-) {
+type BlockUIRepresentation
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+  ) {
   name: String!
   xPosition: Int!
   yPosition: Int!
 }
 
-input BlockUIRepresentationInput @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
-) {
+input BlockUIRepresentationInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+  ) {
   name: String!
   xPosition: Int!
   yPosition: Int!
 }
 
-enum EntryPointRole @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
-) {
+enum EntryPointRole
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
+  ) {
   DEFAULT
 }
 
-enum ExitPointRole @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
-) {
+enum ExitPointRole
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
+  ) {
   DEFAULT
   DECISION
 }
@@ -11801,7 +11775,7 @@ type EntryPoint implements Node {
   prevExitPoints: [ExitPoint!]!
 }
 
-type StartBlock  {
+type StartBlock {
   paramDefinitions: [VariableDefinition!]!
   exitPoint: ExitPoint!
 }
@@ -11846,7 +11820,14 @@ type ActionBlock {
   exitPoint: ExitPoint!
 }
 
-union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
+union BlockDetails =
+    StartBlock
+  | EndBlock
+  | DecisionBlock
+  | GotoBlock
+  | SubflowBlock
+  | TriggerBlock
+  | ActionBlock
 
 input StartBlockInput {
   cid: String!
@@ -11941,13 +11922,17 @@ input EditBlockInput {
 
 # Flow Definitions
 
-enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
+enum FlowStatus
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
   PUBLISHED
   UNPUBLISHED
   ARCHIVED
 }
 
-enum FlowNewInstancesPolicy @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy") {
+enum FlowNewInstancesPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy"
+  ) {
   ENABLED
   DISABLED
 }
@@ -11974,7 +11959,10 @@ type FlowDraft implements Node {
   sameAsFlow: Boolean!
 }
 
-enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
+enum FlowInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
+  ) {
   IN_PROGRESS
   FAILED
   COMPLETED
@@ -11998,9 +11986,10 @@ input PublishFlowInput {
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
-input VariableValue @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
-) {
+input VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
   variableDefinitionKey: String!
   value: String!
 }
@@ -12043,6 +12032,21 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
+
+  """
+  Fetches end to end path of links
+  """
+  endToEndPath(
+    """
+    find to end to end path containing this link
+    """
+    linkId: ID
+
+    """
+    find to end to end path containing this port
+    """
+    portId: ID
+  ): EndToEndPath
 
   """
   A list of locations.
@@ -12247,72 +12251,6 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): SearchNodesConnection!
-  equipmentSearch(
-    filters: [EquipmentFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): EquipmentSearchResult!
-    @deprecated(
-      reason: "Use ` + "`" + `equipments` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
-  workOrderSearch(
-    filters: [WorkOrderFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): WorkOrderSearchResult!
-    @deprecated(
-      reason: "Use ` + "`" + `workOrders` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
-  linkSearch(
-    filters: [LinkFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): LinkSearchResult!
-    @deprecated(reason: "Use ` + "`" + `links` + "`" + ` instead. Will be removed on 2020-09-01")
-  portSearch(
-    filters: [PortFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): PortSearchResult!
-    @deprecated(
-      reason: "Use ` + "`" + `equipmentPorts` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
-  locationSearch(
-    filters: [LocationFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): LocationSearchResult!
-    @deprecated(
-      reason: "Use ` + "`" + `locations` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
-  projectSearch(
-    filters: [ProjectFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): [Project]!
-    @deprecated(reason: "Use ` + "`" + `projects` + "`" + ` instead. Will be removed on 2020-09-01")
-  customerSearch(limit: Int = 500 @numberValue(min: 0)): [Customer]!
-    @deprecated(
-      reason: "Use ` + "`" + `customers` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
-  serviceSearch(
-    filters: [ServiceFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): ServiceSearchResult!
-    @deprecated(reason: "Use ` + "`" + `services` + "`" + ` instead. Will be removed on 2020-09-01")
-  userSearch(
-    filters: [UserFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): UserSearchResult!
-    @deprecated(reason: "Use ` + "`" + `users` + "`" + ` instead. Will be removed on 2020-09-01")
-  permissionsPolicySearch(
-    filters: [PermissionsPolicyFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): PermissionsPolicySearchResult!
-    @deprecated(
-      reason: "Use ` + "`" + `permissionsPolicies` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
-  usersGroupSearch(
-    filters: [UsersGroupFilterInput!]!
-    limit: Int = 500 @numberValue(min: 0)
-  ): UsersGroupSearchResult!
-    @deprecated(
-      reason: "Use ` + "`" + `usersGroups` + "`" + ` instead. Will be removed on 2020-09-01"
-    )
   possibleProperties(entityType: PropertyEntity!): [PropertyType!]!
   surveys: [Survey!]!
   latestPythonPackage: LatestPythonPackageResult
@@ -12363,7 +12301,7 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
-  ): ProjectConnection
+  ): ProjectConnection!
   customers(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -12427,6 +12365,7 @@ type Mutation {
   addServiceEndpoint(input: AddServiceEndpointInput!): Service!
   removeServiceEndpoint(serviceEndpointId: ID!): Service!
   addServicePort(id: ID!, portId: ID!): Service!
+  addBulkServiceLinksAndPorts(input: AddBulkServiceLinksAndPortsInput): Service!
   removeServicePort(id: ID!, portId: ID!): Service!
   addServiceType(
     """
@@ -12566,46 +12505,26 @@ type Mutation {
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!
-  @deprecated(
-    reason: "Use ` + "`" + `technicianWorkOrderCheckOut` + "`" + ` instead. Will be removed on 2020-11-01"
-  )
+    @deprecated(
+      reason: "Use ` + "`" + `technicianWorkOrderCheckOut` + "`" + ` instead. Will be removed on 2020-11-01"
+    )
   addReportFilter(input: ReportFilterInput!): ReportFilter!
   editReportFilter(input: EditReportFilterInput!): ReportFilter!
   deleteReportFilter(id: ID!): Boolean!
   addPermissionsPolicy(input: AddPermissionsPolicyInput!): PermissionsPolicy!
   editPermissionsPolicy(input: EditPermissionsPolicyInput!): PermissionsPolicy!
   deletePermissionsPolicy(id: ID!): Boolean!
-  addStartBlock(
-    flowDraftId: ID!
-    input: StartBlockInput!): Block!
-  addEndBlock(
-    flowDraftId: ID!
-    input: EndBlockInput!): Block!
-  addDecisionBlock(
-    flowDraftId: ID!
-    input: DecisionBlockInput!): Block!
-  addGotoBlock(
-    flowDraftId: ID!
-    input: GotoBlockInput!): Block!
-  addSubflowBlock(
-    flowDraftId: ID!
-    input: SubflowBlockInput!): Block!
-  addTriggerBlock(
-    flowDraftId: ID!
-    input: TriggerBlockInput!): Block!
-  addActionBlock(
-    flowDraftId: ID!
-    input: ActionBlockInput!): Block!
+  addStartBlock(flowDraftId: ID!, input: StartBlockInput!): Block!
+  addEndBlock(flowDraftId: ID!, input: EndBlockInput!): Block!
+  addDecisionBlock(flowDraftId: ID!, input: DecisionBlockInput!): Block!
+  addGotoBlock(flowDraftId: ID!, input: GotoBlockInput!): Block!
+  addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
+  addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
+  addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
-  addConnector(
-    flowDraftId: ID!
-    input: ConnectorInput!
-  ): Connector!
-  deleteConnector(
-    flowDraftId: ID!
-    input: ConnectorInput!
-  ): Boolean!
+  addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
+  deleteConnector(flowDraftId: ID!, input: ConnectorInput!): Boolean!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
   publishFlow(input: PublishFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
@@ -12613,9 +12532,33 @@ type Mutation {
   startFlow(input: StartFlowInput!): FlowInstance!
 }
 
+"""
+Payload of the workOrderStatusChanged subscription.
+"""
+type WorkOrderStatusChangedPayload
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/event.WorkOrderStatusChangedPayload"
+  ) {
+  """
+  Previous status of the work order.
+  """
+  from: WorkOrderStatus
+
+  """
+  Current status of the work order.
+  """
+  to: WorkOrderStatus!
+
+  """
+  The work order of which status was modified.
+  """
+  workOrder: WorkOrder!
+}
+
 type Subscription {
   workOrderAdded: WorkOrder
   workOrderDone: WorkOrder
+  workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
 }
 `, BuiltIn: false},
@@ -12984,6 +12927,21 @@ func (ec *executionContext) field_Mutation_addActionBlock_args(ctx context.Conte
 		}
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addBulkServiceLinksAndPorts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *models.AddBulkServiceLinksAndPortsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBulkServiceLinksAndPortsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -14622,40 +14580,6 @@ func (ec *executionContext) field_Query_actionType_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_customerSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg0 = data
-		} else if tmp == nil {
-			arg0 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_customers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14733,6 +14657,30 @@ func (ec *executionContext) field_Query_customers_args(ctx context.Context, rawA
 		}
 	}
 	args["last"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_endToEndPath_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["linkId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkId"))
+		arg0, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["linkId"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["portId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("portId"))
+		arg1, err = ec.unmarshalOID2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["portId"] = arg1
 	return args, nil
 }
 
@@ -14982,49 +14930,6 @@ func (ec *executionContext) field_Query_equipmentPorts_args(ctx context.Context,
 		}
 	}
 	args["filterBy"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_equipmentSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models1.EquipmentFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
 	return args, nil
 }
 
@@ -15366,49 +15271,6 @@ func (ec *executionContext) field_Query_flows_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_linkSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models1.LinkFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_links_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -15495,49 +15357,6 @@ func (ec *executionContext) field_Query_links_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["filterBy"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_locationSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models1.LocationFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNLocationFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
 	return args, nil
 }
 
@@ -15951,92 +15770,6 @@ func (ec *executionContext) field_Query_permissionsPolicies_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_permissionsPolicySearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models.PermissionsPolicyFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNPermissionsPolicyFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicyFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_portSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models1.PortFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_possibleProperties_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -16049,49 +15782,6 @@ func (ec *executionContext) field_Query_possibleProperties_args(ctx context.Cont
 		}
 	}
 	args["entityType"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_projectSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models.ProjectFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNProjectFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
 	return args, nil
 }
 
@@ -16377,49 +16067,6 @@ func (ec *executionContext) field_Query_searchForNode_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_serviceSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models1.ServiceFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_serviceTypes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -16604,49 +16251,6 @@ func (ec *executionContext) field_Query_triggerType_args(ctx context.Context, ra
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_userSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models.UserFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNUserFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -16659,49 +16263,6 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["authID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_usersGroupSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models.UsersGroupFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNUsersGroupFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
 	return args, nil
 }
 
@@ -16895,49 +16456,6 @@ func (ec *executionContext) field_Query_vertex_args(ctx context.Context, rawArgs
 		}
 	}
 	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_workOrderSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []*models1.WorkOrderFilterInput
-	if tmp, ok := rawArgs["filters"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
-		arg0, err = ec.unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInputᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filters"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
-			if err != nil {
-				return nil, err
-			}
-			if ec.directives.NumberValue == nil {
-				return nil, errors.New("directive numberValue is not implemented")
-			}
-			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
-		}
-
-		tmp, err = directive1(ctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if data, ok := tmp.(*int); ok {
-			arg1 = data
-		} else if tmp == nil {
-			arg1 = nil
-		} else {
-			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
-		}
-	}
-	args["limit"] = arg1
 	return args, nil
 }
 
@@ -20519,6 +20037,70 @@ func (ec *executionContext) _EndBlock_entryPoint(ctx context.Context, field grap
 	res := resTmp.(*ent.EntryPoint)
 	fc.Result = res
 	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EndToEndPath_links(ctx context.Context, field graphql.CollectedField, obj *models.EndToEndPath) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EndToEndPath",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Links, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Link)
+	fc.Result = res
+	return ec.marshalOLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EndToEndPath_ports(ctx context.Context, field graphql.CollectedField, obj *models.EndToEndPath) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EndToEndPath",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ports, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.EquipmentPort)
+	fc.Result = res
+	return ec.marshalOEquipmentPort2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _EntryPoint_id(ctx context.Context, field graphql.CollectedField, obj *ent.EntryPoint) (ret graphql.Marshaler) {
@@ -29998,6 +29580,48 @@ func (ec *executionContext) _Mutation_addServicePort(ctx context.Context, field 
 	return ec.marshalNService2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐService(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addBulkServiceLinksAndPorts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addBulkServiceLinksAndPorts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddBulkServiceLinksAndPorts(rctx, args["input"].(*models.AddBulkServiceLinksAndPortsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Service)
+	fc.Result = res
+	return ec.marshalNService2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐService(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_removeServicePort(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -32792,41 +32416,6 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	res := resTmp.(*ent.Cursor)
 	fc.Result = res
 	return ec.marshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PermissionSettings_canWrite(ctx context.Context, field graphql.CollectedField, obj *models2.PermissionSettings) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PermissionSettings",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CanWrite, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PermissionSettings_adminPolicy(ctx context.Context, field graphql.CollectedField, obj *models2.PermissionSettings) (ret graphql.Marshaler) {
@@ -36073,6 +35662,45 @@ func (ec *executionContext) _Query_locationTypes(ctx context.Context, field grap
 	return ec.marshalOLocationTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationTypeConnection(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_endToEndPath(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_endToEndPath_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().EndToEndPath(rctx, args["linkId"].(*int), args["portId"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.EndToEndPath)
+	fc.Result = res
+	return ec.marshalOEndToEndPath2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEndToEndPath(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_locations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -36688,468 +36316,6 @@ func (ec *executionContext) _Query_searchForNode(ctx context.Context, field grap
 	return ec.marshalNSearchNodesConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSearchNodesConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_equipmentSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_equipmentSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().EquipmentSearch(rctx, args["filters"].([]*models1.EquipmentFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models1.EquipmentSearchResult)
-	fc.Result = res
-	return ec.marshalNEquipmentSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_workOrderSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_workOrderSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().WorkOrderSearch(rctx, args["filters"].([]*models1.WorkOrderFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models1.WorkOrderSearchResult)
-	fc.Result = res
-	return ec.marshalNWorkOrderSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_linkSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_linkSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().LinkSearch(rctx, args["filters"].([]*models1.LinkFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models1.LinkSearchResult)
-	fc.Result = res
-	return ec.marshalNLinkSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_portSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_portSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PortSearch(rctx, args["filters"].([]*models1.PortFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models1.PortSearchResult)
-	fc.Result = res
-	return ec.marshalNPortSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_locationSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_locationSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().LocationSearch(rctx, args["filters"].([]*models1.LocationFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models1.LocationSearchResult)
-	fc.Result = res
-	return ec.marshalNLocationSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_projectSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_projectSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ProjectSearch(rctx, args["filters"].([]*models.ProjectFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.Project)
-	fc.Result = res
-	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_customerSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_customerSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CustomerSearch(rctx, args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.Customer)
-	fc.Result = res
-	return ec.marshalNCustomer2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCustomer(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_serviceSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_serviceSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ServiceSearch(rctx, args["filters"].([]*models1.ServiceFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models1.ServiceSearchResult)
-	fc.Result = res
-	return ec.marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_userSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_userSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserSearch(rctx, args["filters"].([]*models.UserFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.UserSearchResult)
-	fc.Result = res
-	return ec.marshalNUserSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserSearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_permissionsPolicySearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_permissionsPolicySearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PermissionsPolicySearch(rctx, args["filters"].([]*models.PermissionsPolicyFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.PermissionsPolicySearchResult)
-	fc.Result = res
-	return ec.marshalNPermissionsPolicySearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicySearchResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_usersGroupSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_usersGroupSearch_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UsersGroupSearch(rctx, args["filters"].([]*models.UsersGroupFilterInput), args["limit"].(*int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.UsersGroupSearchResult)
-	fc.Result = res
-	return ec.marshalNUsersGroupSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupSearchResult(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_possibleProperties(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -37446,11 +36612,14 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.ProjectConnection)
 	fc.Result = res
-	return ec.marshalOProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx, field.Selections, res)
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_customers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -40048,6 +39217,51 @@ func (ec *executionContext) _Subscription_workOrderDone(ctx context.Context, fie
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
 			ec.marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_workOrderStatusChanged(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().WorkOrderStatusChanged(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *event.WorkOrderStatusChangedPayload)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋeventᚐWorkOrderStatusChangedPayload(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -46167,6 +45381,108 @@ func (ec *executionContext) _WorkOrderSearchResult_count(ctx context.Context, fi
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkOrderStatusChangedPayload_from(ctx context.Context, field graphql.CollectedField, obj *event.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrderStatusChangedPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.From, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*workorder.Status)
+	fc.Result = res
+	return ec.marshalOWorkOrderStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload_to(ctx context.Context, field graphql.CollectedField, obj *event.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrderStatusChangedPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.To, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(workorder.Status)
+	fc.Result = res
+	return ec.marshalNWorkOrderStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload_workOrder(ctx context.Context, field graphql.CollectedField, obj *event.WorkOrderStatusChangedPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrderStatusChangedPayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrder)
+	fc.Result = res
+	return ec.marshalNWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkOrderTemplate_name(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderTemplate) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -48302,6 +47618,42 @@ func (ec *executionContext) unmarshalInputActivityFilterInput(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("activityType"))
 			it.ActivityType, err = ec.unmarshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐActivityType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddBulkServiceLinksAndPortsInput(ctx context.Context, obj interface{}) (models.AddBulkServiceLinksAndPortsInput, error) {
+	var it models.AddBulkServiceLinksAndPortsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "portIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("portIds"))
+			it.PortIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "linkIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("linkIds"))
+			it.LinkIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -54205,44 +53557,6 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderUploadInput(ctx con
 			if err != nil {
 				return it, err
 			}
-		case "checklist":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checklist"))
-			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx, v)
-			}
-			directive1 := func(ctx context.Context) (interface{}, error) {
-				name, err := ec.unmarshalNString2string(ctx, "TechnicianWorkOrderUploadInput.checklist")
-				if err != nil {
-					return nil, err
-				}
-				duplicateError, err := ec.unmarshalNString2string(ctx, "Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-09-01. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together")
-				if err != nil {
-					return nil, err
-				}
-				newField, err := ec.unmarshalOString2ᚖstring(ctx, "checkListCategories")
-				if err != nil {
-					return nil, err
-				}
-				if ec.directives.DeprecatedInput == nil {
-					return nil, errors.New("directive deprecatedInput is not implemented")
-				}
-				return ec.directives.DeprecatedInput(ctx, obj, directive0, name, duplicateError, newField)
-			}
-
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return it, graphql.ErrorOnPath(ctx, err)
-			}
-			if data, ok := tmp.([]*models.TechnicianCheckListItemInput); ok {
-				it.Checklist = data
-			} else if tmp == nil {
-				it.Checklist = nil
-			} else {
-				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.TechnicianCheckListItemInput`, tmp)
-				return it, graphql.ErrorOnPath(ctx, err)
-			}
 		case "checkListCategories":
 			var err error
 
@@ -56305,6 +55619,32 @@ func (ec *executionContext) _EndBlock(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var endToEndPathImplementors = []string{"EndToEndPath"}
+
+func (ec *executionContext) _EndToEndPath(ctx context.Context, sel ast.SelectionSet, obj *models.EndToEndPath) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, endToEndPathImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EndToEndPath")
+		case "links":
+			out.Values[i] = ec._EndToEndPath_links(ctx, field, obj)
+		case "ports":
+			out.Values[i] = ec._EndToEndPath_ports(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -59281,6 +58621,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addBulkServiceLinksAndPorts":
+			out.Values[i] = ec._Mutation_addBulkServiceLinksAndPorts(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "removeServicePort":
 			out.Values[i] = ec._Mutation_removeServicePort(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -59669,11 +59014,6 @@ func (ec *executionContext) _PermissionSettings(ctx context.Context, sel ast.Sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("PermissionSettings")
-		case "canWrite":
-			out.Values[i] = ec._PermissionSettings_canWrite(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "adminPolicy":
 			out.Values[i] = ec._PermissionSettings_adminPolicy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -60605,6 +59945,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_locationTypes(ctx, field)
 				return res
 			})
+		case "endToEndPath":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_endToEndPath(ctx, field)
+				return res
+			})
 		case "locations":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -60800,160 +60151,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "equipmentSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_equipmentSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "workOrderSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_workOrderSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "linkSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_linkSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "portSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_portSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "locationSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_locationSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "projectSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_projectSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "customerSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_customerSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "serviceSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_serviceSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "userSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_userSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "permissionsPolicySearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_permissionsPolicySearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "usersGroupSearch":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_usersGroupSearch(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "possibleProperties":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -61052,6 +60249,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_projects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "customers":
@@ -61967,6 +61167,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_workOrderAdded(ctx, fields[0])
 	case "workOrderDone":
 		return ec._Subscription_workOrderDone(ctx, fields[0])
+	case "workOrderStatusChanged":
+		return ec._Subscription_workOrderStatusChanged(ctx, fields[0])
 	case "flowInstanceDone":
 		return ec._Subscription_flowInstanceDone(ctx, fields[0])
 	default:
@@ -63631,6 +62833,40 @@ func (ec *executionContext) _WorkOrderSearchResult(ctx context.Context, sel ast.
 	return out
 }
 
+var workOrderStatusChangedPayloadImplementors = []string{"WorkOrderStatusChangedPayload"}
+
+func (ec *executionContext) _WorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, obj *event.WorkOrderStatusChangedPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workOrderStatusChangedPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkOrderStatusChangedPayload")
+		case "from":
+			out.Values[i] = ec._WorkOrderStatusChangedPayload_from(ctx, field, obj)
+		case "to":
+			out.Values[i] = ec._WorkOrderStatusChangedPayload_to(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workOrder":
+			out.Values[i] = ec._WorkOrderStatusChangedPayload_workOrder(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var workOrderTemplateImplementors = []string{"WorkOrderTemplate"}
 
 func (ec *executionContext) _WorkOrderTemplate(ctx context.Context, sel ast.SelectionSet, obj *ent.WorkOrderTemplate) graphql.Marshaler {
@@ -64913,43 +64149,6 @@ func (ec *executionContext) marshalNCustomer2githubᚗcomᚋfacebookincubatorᚋ
 	return ec._Customer(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCustomer2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCustomer(ctx context.Context, sel ast.SelectionSet, v []*ent.Customer) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOCustomer2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCustomer(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalNCustomer2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCustomer(ctx context.Context, sel ast.SelectionSet, v *ent.Customer) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -65410,27 +64609,6 @@ func (ec *executionContext) marshalNEquipmentEdge2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._EquipmentEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.EquipmentFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.EquipmentFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInput(ctx context.Context, v interface{}) (*models1.EquipmentFilterInput, error) {
@@ -65905,20 +65083,6 @@ func (ec *executionContext) marshalNEquipmentPositionDefinition2ᚖgithubᚗcom�
 func (ec *executionContext) unmarshalNEquipmentPositionInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPositionInput(ctx context.Context, v interface{}) (*models.EquipmentPositionInput, error) {
 	res, err := ec.unmarshalInputEquipmentPositionInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNEquipmentSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.EquipmentSearchResult) graphql.Marshaler {
-	return ec._EquipmentSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNEquipmentSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.EquipmentSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._EquipmentSearchResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEquipmentType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentType(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentType) graphql.Marshaler {
@@ -66748,27 +65912,6 @@ func (ec *executionContext) marshalNLinkEdge2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._LinkEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.LinkFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.LinkFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInput(ctx context.Context, v interface{}) (*models1.LinkFilterInput, error) {
 	res, err := ec.unmarshalInputLinkFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -66788,20 +65931,6 @@ func (ec *executionContext) marshalNLinkFilterType2githubᚗcomᚋfacebookincuba
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNLinkSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.LinkSearchResult) graphql.Marshaler {
-	return ec._LinkSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNLinkSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.LinkSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._LinkSearchResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNLinkSide2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkSideᚄ(ctx context.Context, v interface{}) ([]*models.LinkSide, error) {
@@ -66975,27 +66104,6 @@ func (ec *executionContext) marshalNLocationEdge2ᚖgithubᚗcomᚋfacebookincub
 	return ec._LocationEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNLocationFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.LocationFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.LocationFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNLocationFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNLocationFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationFilterInput(ctx context.Context, v interface{}) (*models1.LocationFilterInput, error) {
 	res, err := ec.unmarshalInputLocationFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -67025,20 +66133,6 @@ func (ec *executionContext) marshalNLocationPermissionRule2ᚖgithubᚗcomᚋfac
 		return graphql.Null
 	}
 	return ec._LocationPermissionRule(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNLocationSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.LocationSearchResult) graphql.Marshaler {
-	return ec._LocationSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNLocationSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.LocationSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._LocationSearchResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNLocationType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationType(ctx context.Context, sel ast.SelectionSet, v ent.LocationType) graphql.Marshaler {
@@ -67373,27 +66467,6 @@ func (ec *executionContext) marshalNPermissionsPolicyEdge2ᚖgithubᚗcomᚋface
 	return ec._PermissionsPolicyEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPermissionsPolicyFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicyFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.PermissionsPolicyFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.PermissionsPolicyFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNPermissionsPolicyFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicyFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNPermissionsPolicyFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicyFilterInput(ctx context.Context, v interface{}) (*models.PermissionsPolicyFilterInput, error) {
 	res, err := ec.unmarshalInputPermissionsPolicyFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -67407,41 +66480,6 @@ func (ec *executionContext) unmarshalNPermissionsPolicyFilterType2githubᚗcom�
 
 func (ec *executionContext) marshalNPermissionsPolicyFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicyFilterType(ctx context.Context, sel ast.SelectionSet, v models.PermissionsPolicyFilterType) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNPermissionsPolicySearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicySearchResult(ctx context.Context, sel ast.SelectionSet, v models.PermissionsPolicySearchResult) graphql.Marshaler {
-	return ec._PermissionsPolicySearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNPermissionsPolicySearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPermissionsPolicySearchResult(ctx context.Context, sel ast.SelectionSet, v *models.PermissionsPolicySearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._PermissionsPolicySearchResult(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.PortFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.PortFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInput(ctx context.Context, v interface{}) (*models1.PortFilterInput, error) {
@@ -67465,59 +66503,8 @@ func (ec *executionContext) marshalNPortFilterType2githubᚗcomᚋfacebookincuba
 	return res
 }
 
-func (ec *executionContext) marshalNPortSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.PortSearchResult) graphql.Marshaler {
-	return ec._PortSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNPortSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.PortSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._PortSearchResult(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNProject2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx context.Context, sel ast.SelectionSet, v ent.Project) graphql.Marshaler {
 	return ec._Project(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx context.Context, sel ast.SelectionSet, v []*ent.Project) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOProject2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Project) graphql.Marshaler {
@@ -67567,6 +66554,20 @@ func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Project(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx context.Context, sel ast.SelectionSet, v ent.ProjectConnection) graphql.Marshaler {
+	return ec._ProjectConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProjectEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ProjectEdge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -67612,27 +66613,6 @@ func (ec *executionContext) marshalNProjectEdge2ᚖgithubᚗcomᚋfacebookincuba
 		return graphql.Null
 	}
 	return ec._ProjectEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNProjectFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ProjectFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.ProjectFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNProjectFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) unmarshalNProjectFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInput(ctx context.Context, v interface{}) (*models.ProjectFilterInput, error) {
@@ -68318,27 +67298,6 @@ func (ec *executionContext) marshalNServiceEndpointDefinition2ᚖgithubᚗcomᚋ
 	return ec._ServiceEndpointDefinition(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.ServiceFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.ServiceFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInput(ctx context.Context, v interface{}) (*models1.ServiceFilterInput, error) {
 	res, err := ec.unmarshalInputServiceFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -68358,20 +67317,6 @@ func (ec *executionContext) marshalNServiceFilterType2githubᚗcomᚋfacebookinc
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNServiceSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.ServiceSearchResult) graphql.Marshaler {
-	return ec._ServiceSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.ServiceSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ServiceSearchResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, v interface{}) (service.Status, error) {
@@ -68865,11 +67810,6 @@ func (ec *executionContext) marshalNSystemPolicy2githubᚗcomᚋfacebookincubato
 	return ec._SystemPolicy(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNTechnicianCheckListItemInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInput(ctx context.Context, v interface{}) (*models.TechnicianCheckListItemInput, error) {
-	res, err := ec.unmarshalInputTechnicianCheckListItemInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNTechnicianWorkOrderCheckOutInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckOutInput(ctx context.Context, v interface{}) (models.TechnicianWorkOrderCheckOutInput, error) {
 	res, err := ec.unmarshalInputTechnicianWorkOrderCheckOutInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -69122,27 +68062,6 @@ func (ec *executionContext) marshalNUserEdge2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._UserEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUserFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.UserFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.UserFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUserFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNUserFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserFilterInput(ctx context.Context, v interface{}) (*models.UserFilterInput, error) {
 	res, err := ec.unmarshalInputUserFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -69166,20 +68085,6 @@ func (ec *executionContext) unmarshalNUserRole2githubᚗcomᚋfacebookincubator�
 
 func (ec *executionContext) marshalNUserRole2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐRole(ctx context.Context, sel ast.SelectionSet, v user.Role) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNUserSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserSearchResult(ctx context.Context, sel ast.SelectionSet, v models.UserSearchResult) graphql.Marshaler {
-	return ec._UserSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUserSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.UserSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._UserSearchResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUserStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐStatus(ctx context.Context, v interface{}) (user.Status, error) {
@@ -69327,27 +68232,6 @@ func (ec *executionContext) marshalNUsersGroupEdge2ᚖgithubᚗcomᚋfacebookinc
 	return ec._UsersGroupEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUsersGroupFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.UsersGroupFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.UsersGroupFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUsersGroupFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNUsersGroupFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupFilterInput(ctx context.Context, v interface{}) (*models.UsersGroupFilterInput, error) {
 	res, err := ec.unmarshalInputUsersGroupFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -69361,20 +68245,6 @@ func (ec *executionContext) unmarshalNUsersGroupFilterType2githubᚗcomᚋfacebo
 
 func (ec *executionContext) marshalNUsersGroupFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupFilterType(ctx context.Context, sel ast.SelectionSet, v models.UsersGroupFilterType) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNUsersGroupSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupSearchResult(ctx context.Context, sel ast.SelectionSet, v models.UsersGroupSearchResult) graphql.Marshaler {
-	return ec._UsersGroupSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUsersGroupSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUsersGroupSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.UsersGroupSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._UsersGroupSearchResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUsersGroupStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋusersgroupᚐStatus(ctx context.Context, v interface{}) (usersgroup.Status, error) {
@@ -69783,27 +68653,6 @@ func (ec *executionContext) marshalNWorkOrderExecutionResult2ᚖgithubᚗcomᚋf
 	return ec._WorkOrderExecutionResult(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.WorkOrderFilterInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.WorkOrderFilterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInput(ctx context.Context, v interface{}) (*models1.WorkOrderFilterInput, error) {
 	res, err := ec.unmarshalInputWorkOrderFilterInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -69835,20 +68684,6 @@ func (ec *executionContext) marshalNWorkOrderPriority2githubᚗcomᚋfacebookinc
 	return v
 }
 
-func (ec *executionContext) marshalNWorkOrderSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.WorkOrderSearchResult) graphql.Marshaler {
-	return ec._WorkOrderSearchResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNWorkOrderSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.WorkOrderSearchResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._WorkOrderSearchResult(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNWorkOrderStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx context.Context, v interface{}) (workorder.Status, error) {
 	var res workorder.Status
 	err := res.UnmarshalGQL(v)
@@ -69857,6 +68692,20 @@ func (ec *executionContext) unmarshalNWorkOrderStatus2githubᚗcomᚋfacebookinc
 
 func (ec *executionContext) marshalNWorkOrderStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐStatus(ctx context.Context, sel ast.SelectionSet, v workorder.Status) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋeventᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v event.WorkOrderStatusChangedPayload) graphql.Marshaler {
+	return ec._WorkOrderStatusChangedPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWorkOrderStatusChangedPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋeventᚐWorkOrderStatusChangedPayload(ctx context.Context, sel ast.SelectionSet, v *event.WorkOrderStatusChangedPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkOrderStatusChangedPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNWorkOrderType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderType(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrderType) graphql.Marshaler {
@@ -70244,6 +69093,14 @@ func (ec *executionContext) unmarshalOActivityFilterInput2ᚖgithubᚗcomᚋface
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputActivityFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBulkServiceLinksAndPortsInput(ctx context.Context, v interface{}) (*models.AddBulkServiceLinksAndPortsInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -70663,6 +69520,13 @@ func (ec *executionContext) unmarshalOEndBlockInput2ᚕᚖgithubᚗcomᚋfaceboo
 	return res, nil
 }
 
+func (ec *executionContext) marshalOEndToEndPath2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEndToEndPath(ctx context.Context, sel ast.SelectionSet, v *models.EndToEndPath) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._EndToEndPath(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOEntryPointInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEntryPointInput(ctx context.Context, v interface{}) (*models.EntryPointInput, error) {
 	if v == nil {
 		return nil, nil
@@ -70740,6 +69604,46 @@ func (ec *executionContext) marshalOEquipmentOrderField2ᚖgithubᚗcomᚋfacebo
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOEquipmentPort2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx context.Context, sel ast.SelectionSet, v []*ent.EquipmentPort) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOEquipmentPort2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOEquipmentPort2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx context.Context, sel ast.SelectionSet, v *ent.EquipmentPort) graphql.Marshaler {
@@ -71355,6 +70259,46 @@ func (ec *executionContext) marshalOLatestPythonPackageResult2ᚖgithubᚗcomᚋ
 	return ec._LatestPythonPackageResult(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx context.Context, sel ast.SelectionSet, v []*ent.Link) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOLink2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalOLink2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx context.Context, sel ast.SelectionSet, v *ent.Link) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -71607,13 +70551,6 @@ func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋfacebookincubator�
 		return graphql.Null
 	}
 	return ec._Project(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOProjectConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectConnection) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ProjectConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOProjectFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ProjectFilterInput, error) {
@@ -72538,30 +71475,6 @@ func (ec *executionContext) unmarshalOSurveyWiFiScanData2ᚖgithubᚗcomᚋfaceb
 	}
 	res, err := ec.unmarshalInputSurveyWiFiScanData(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx context.Context, v interface{}) ([]*models.TechnicianCheckListItemInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.TechnicianCheckListItemInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNTechnicianCheckListItemInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) unmarshalOTechnicianWorkOrderCheckInInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckInInput(ctx context.Context, v interface{}) (*models.TechnicianWorkOrderCheckInInput, error) {

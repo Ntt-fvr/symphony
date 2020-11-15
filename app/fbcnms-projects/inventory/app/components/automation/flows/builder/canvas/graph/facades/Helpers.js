@@ -43,6 +43,7 @@ export const Events = {
   Graph: {
     OnAdd: 'add',
     OnRemove: 'remove',
+    OnChange: 'change',
   },
   Paper: {
     BackdropClick: 'blank:pointerclick',

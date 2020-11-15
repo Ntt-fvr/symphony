@@ -5,8 +5,10 @@
 package exporter
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"image"
 
 	// Imports required for excelize to decode images
 	_ "image/jpeg"
@@ -17,7 +19,6 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -43,6 +44,7 @@ var (
 const (
 	TimeLayout       = "Mon, 02 Jan 2006 15:04:05"
 	SummarySheetName = "Summary"
+	MaxImageWidth    = 300.0
 )
 
 func (er SingleWo) CreateExcelFile(ctx context.Context, id int) (*excelize.File, error) {
@@ -165,14 +167,9 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 		if item.Type == enum.CheckListItemTypeFiles {
 			_ = f.SetCellValue(sheetName, Columns[0]+strconv.Itoa(currRow), item.Title)
 			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), strconv.FormatBool(item.IsMandatory))
-			image, err := er.getFileData(ctx, item)
+			err := er.addFilesToSheet(ctx, sheetName, item, f, &currRow)
 			if err != nil {
-				logger.Error("error getting file data", zap.Error(err))
-			} else {
-				err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(currRow), "", item.Title, ".jpg", image)
-				if err != nil {
-					logger.Error("could not add image to spreadsheet", zap.Error(err))
-				}
+				logger.Error("error adding files to spreadsheet", zap.Error(err))
 			}
 		} else {
 			// Handle Everything else
@@ -276,26 +273,76 @@ func getWifiScanData(ctx context.Context, item *ent.CheckListItem) (string, erro
 	return b.String(), nil
 }
 
-func (er SingleWo) getFileData(ctx context.Context, item *ent.CheckListItem) ([]byte, error) {
+func (er SingleWo) addFilesToSheet(ctx context.Context, sheetName string, item *ent.CheckListItem, f *excelize.File, currRow *int) error {
 	logger := er.Log.For(ctx)
-	// For now we will only support the first file
-	key, err := item.QueryFiles().
-		Limit(1).
-		Select(file.FieldStoreKey).
-		String(ctx)
-	if err != nil {
-		logger.Error("cannot query checklist file store key", zap.Error(err))
-		return nil, err
-	}
 	tenant := viewer.FromContext(ctx).Tenant()
-	data, err := er.Bucket.ReadAll(ctx, tenant+"/"+key)
+
+	files, err := item.QueryFiles().
+		All(ctx)
 	if err != nil {
-		logger.Error("cannot read blob",
+		logger.Error("error getting files for item ID",
 			zap.String("tenant", tenant),
-			zap.String("key", key),
+			zap.Int("item.ID", item.ID),
 		)
+		return err
 	}
-	return data, err
+	for _, file := range files {
+		data, err := er.Bucket.ReadAll(ctx, tenant+"/"+file.StoreKey)
+		if err != nil {
+			logger.Error("cannot read blob",
+				zap.String("tenant", tenant),
+				zap.String("key", file.StoreKey),
+			)
+			return err
+		}
+		attributes, err := er.Bucket.Attributes(ctx, tenant+"/"+file.StoreKey)
+		if err != nil {
+			logger.Error("cannot get file attributes",
+				zap.String("tenant", tenant),
+				zap.String("key", file.StoreKey),
+			)
+			return err
+		}
+		fileExtension := ""
+		switch attributes.ContentType {
+		case "image/jpeg":
+			fileExtension = ".jpg"
+		case "image/jpg":
+			fileExtension = ".jpg"
+		case "image/png":
+			fileExtension = ".png"
+		}
+		config, format, err := image.DecodeConfig(bytes.NewReader(data))
+		if err != nil {
+			logger.Error("issue decoding image", zap.Error(err))
+			return err
+		}
+		logger.Debug("format",
+			zap.String("format", format),
+			zap.Int("width", config.Width),
+			zap.Int("height", config.Height))
+
+		logger.Debug("content type",
+			zap.String("type", attributes.ContentType),
+			zap.String("disposition", attributes.ContentDisposition),
+			zap.String("encoding", attributes.ContentEncoding),
+			zap.String("language", attributes.ContentLanguage),
+			zap.Int64("size", attributes.Size),
+			zap.Any("metadata", attributes.Metadata))
+
+		scale := fmt.Sprintf("%f", MaxImageWidth/float32(config.Width))
+		cellFormat := `{"x_scale": ` + scale + `, "y_scale": ` + scale + `,"positioning": "oneCell"}`
+		logger.Debug("cell format", zap.String("format", cellFormat))
+		err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(*currRow), cellFormat, item.Title, fileExtension, data)
+		if err != nil {
+			logger.Error("issue adding image to spreadsheet", zap.Error(err))
+			return err
+		}
+		_ = f.SetColWidth(sheetName, Columns[2], Columns[2], MaxImageWidth/6)
+		*currRow++
+	}
+
+	return nil
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {

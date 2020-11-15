@@ -56,8 +56,8 @@ func TestPermissionsPolicySearchByName(t *testing.T) {
 		Operator:    enum.FilterOperatorIs,
 		StringValue: &ppName1,
 	}
-	resAll, err := r.Query().PermissionsPolicySearch(ctx, []*models.PermissionsPolicyFilterInput{&f1}, pointer.ToInt(100))
+	resAll, err := r.Query().PermissionsPolicies(ctx, nil, pointer.ToInt(100), nil, nil, []*models.PermissionsPolicyFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, resAll.PermissionsPolicies, 1)
-	require.Equal(t, resAll.Count, 1)
+	require.Len(t, resAll.Edges, 1)
+	require.Equal(t, resAll.TotalCount, 1)
 }

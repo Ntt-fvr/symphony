@@ -297,10 +297,10 @@ func TestSearchLinksFutureState(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 2)
-	require.Equal(t, all.Count, 2)
+	require.Len(t, all.Edges, 2)
+	require.Equal(t, all.TotalCount, 2)
 	maxDepth := 2
 	f1 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeLinkFutureStatus,
@@ -308,10 +308,10 @@ func TestSearchLinksFutureState(t *testing.T) {
 		StringSet:  []string{enum.FutureStateRemove.String()},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 1)
-	ports := res1.Links[0].QueryPorts().AllX(ctx)
+	require.Len(t, res1.Edges, 1)
+	ports := res1.Edges[0].Node.QueryPorts().AllX(ctx)
 	require.NotEqual(t, ports[0].QueryParent().OnlyX(ctx).ID, ports[1].QueryParent().OnlyX(ctx).ID)
 	for _, port := range ports {
 		id := port.QueryParent().OnlyIDX(ctx)
@@ -336,9 +336,9 @@ func TestSearchLinksByLocation(t *testing.T) {
 	*/
 	qr, mr := r.Query(), r.Mutation()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 2)
+	require.Len(t, all.Edges, 2)
 	maxDepth := 2
 	f1 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeLocationInst,
@@ -354,18 +354,18 @@ func TestSearchLinksByLocation(t *testing.T) {
 		Name: "loc",
 		Type: typ.ID,
 	})
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 2)
+	require.Len(t, res1.Edges, 2)
 
 	f1External := pkgmodels.LinkFilterInput{
 		FilterType:  enum.LinkFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("111"),
 	}
-	res1, err = qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1External}, &limit)
+	res1, err = qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1External})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 2)
+	require.Len(t, res1.Edges, 2)
 
 	f2 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeLocationInst,
@@ -373,9 +373,9 @@ func TestSearchLinksByLocation(t *testing.T) {
 		IDSet:      []int{loc.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Links, 0)
+	require.Len(t, res2.Edges, 0)
 }
 
 func TestSearchLinksByEquipmentTyp(t *testing.T) {
@@ -395,9 +395,9 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 	*/
 	qr, mr := r.Query(), r.Mutation()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 2)
+	require.Len(t, all.Edges, 2)
 	maxDepth := 2
 	node1, err := qr.Node(ctx, data.e1)
 	require.NoError(t, err)
@@ -417,9 +417,9 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 		IDSet:      []int{typ1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 2)
+	require.Len(t, res1.Edges, 2)
 
 	f2 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeEquipmentType,
@@ -427,9 +427,9 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 		IDSet:      []int{typ2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Links, 2)
+	require.Len(t, res2.Edges, 2)
 
 	f3 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeLocationInst,
@@ -437,9 +437,9 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 		IDSet:      []int{emptyTyp.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f3}, &limit)
+	res3, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f3})
 	require.NoError(t, err)
-	require.Len(t, res3.Links, 0)
+	require.Len(t, res3.Edges, 0)
 }
 
 func TestSearchLinksByEquipment(t *testing.T) {
@@ -459,9 +459,9 @@ func TestSearchLinksByEquipment(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 2)
+	require.Len(t, all.Edges, 2)
 	maxDepth := 2
 
 	f1 := pkgmodels.LinkFilterInput{
@@ -470,9 +470,9 @@ func TestSearchLinksByEquipment(t *testing.T) {
 		IDSet:      []int{data.e1, data.e2},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 2)
+	require.Len(t, res1.Edges, 2)
 
 	f2 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeEquipmentInst,
@@ -480,9 +480,9 @@ func TestSearchLinksByEquipment(t *testing.T) {
 		IDSet:      []int{data.e2, data.e4},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Links, 1)
+	require.Len(t, res2.Edges, 1)
 }
 
 func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
@@ -507,9 +507,9 @@ func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
 
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 4)
+	require.Len(t, all.Edges, 4)
 	maxDepth := 2
 
 	f1 := pkgmodels.LinkFilterInput{
@@ -518,9 +518,9 @@ func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
 		IDSet:      []int{data.e1},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 4)
+	require.Len(t, res1.Edges, 4)
 
 	f2 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeEquipmentInst,
@@ -528,9 +528,9 @@ func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
 		IDSet:      []int{data.e6},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Links, 1)
+	require.Len(t, res2.Edges, 1)
 }
 
 func TestSearchLinksByService(t *testing.T) {
@@ -575,9 +575,9 @@ func TestSearchLinksByService(t *testing.T) {
 	require.NoError(t, err)
 
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 2)
+	require.Len(t, all.Edges, 2)
 	maxDepth := 2
 
 	f1 := pkgmodels.LinkFilterInput{
@@ -586,9 +586,9 @@ func TestSearchLinksByService(t *testing.T) {
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 1)
+	require.Len(t, res1.Edges, 1)
 
 	f2 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeServiceInst,
@@ -596,9 +596,9 @@ func TestSearchLinksByService(t *testing.T) {
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Links, 2)
+	require.Len(t, res2.Edges, 2)
 
 	f3 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeServiceInst,
@@ -606,9 +606,9 @@ func TestSearchLinksByService(t *testing.T) {
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f3}, &limit)
+	res3, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f3})
 	require.NoError(t, err)
-	require.Len(t, res3.Links, 1)
+	require.Len(t, res3.Edges, 1)
 
 	f4 := pkgmodels.LinkFilterInput{
 		FilterType: enum.LinkFilterTypeServiceInst,
@@ -616,9 +616,9 @@ func TestSearchLinksByService(t *testing.T) {
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res4, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f4}, &limit)
+	res4, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f4})
 	require.NoError(t, err)
-	require.Len(t, res4.Links, 0)
+	require.Len(t, res4.Edges, 0)
 }
 
 func TestSearchLinksByProperty(t *testing.T) {
@@ -649,9 +649,9 @@ func TestSearchLinksByProperty(t *testing.T) {
 		},
 	}
 
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	links := res1.Links
+	links := res1.Edges
 	require.Len(t, links, 1)
 
 	f2 := pkgmodels.LinkFilterInput{
@@ -664,9 +664,9 @@ func TestSearchLinksByProperty(t *testing.T) {
 		},
 	}
 
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	links = res2.Links
+	links = res2.Edges
 	require.Len(t, links, 1)
 }
 
@@ -687,10 +687,10 @@ func TestSearchLinksByServiceName(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
+	all, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Links, 2)
-	require.Equal(t, all.Count, 2)
+	require.Len(t, all.Edges, 2)
+	require.Equal(t, all.TotalCount, 2)
 	maxDepth := 2
 	f1 := pkgmodels.LinkFilterInput{
 		FilterType:  enum.LinkFilterTypeServiceInst,
@@ -698,9 +698,9 @@ func TestSearchLinksByServiceName(t *testing.T) {
 		StringValue: pointer.ToString("S1"),
 		MaxDepth:    &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res1.Links, 2)
+	require.Len(t, res1.Edges, 2)
 
 	f2 := pkgmodels.LinkFilterInput{
 		FilterType:  enum.LinkFilterTypeServiceInst,
@@ -708,7 +708,7 @@ func TestSearchLinksByServiceName(t *testing.T) {
 		StringValue: pointer.ToString("S2"),
 		MaxDepth:    &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.Links(ctx, nil, &limit, nil, nil, []*pkgmodels.LinkFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res2.Links, 0)
+	require.Len(t, res2.Edges, 0)
 }

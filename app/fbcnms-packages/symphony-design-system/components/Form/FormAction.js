@@ -25,6 +25,7 @@ export type ErrorHandlingProps = $ReadOnly<{|
 
 export type EditLocksHandlingProps = $ReadOnly<{|
   ignoreEditLocks?: ?boolean,
+  hideOnEditLocks?: ?boolean,
 |}>;
 
 export type FormActionProps = $ReadOnly<{|
@@ -47,6 +48,7 @@ const FormAction = (props: Props) => {
     tooltip: tooltipProp,
     ignorePermissions = false,
     ignoreEditLocks = false,
+    hideOnEditLocks = false,
     hideOnMissingPermissions = true,
     disableOnFromError = false,
   } = props;
@@ -54,10 +56,12 @@ const FormAction = (props: Props) => {
   const validationContext = useFormAlertsContext();
   const missingPermissions =
     ignorePermissions !== true && validationContext.missingPermissions.detected;
-  const edittingLocked =
-    missingPermissions ||
-    (validationContext.editLock.detected && !ignoreEditLocks);
-  const shouldHide = missingPermissions && hideOnMissingPermissions == true;
+  const hasEdittingLocks =
+    validationContext.editLock.detected && !ignoreEditLocks;
+  const edittingLocked = missingPermissions || hasEdittingLocks;
+  const shouldHide =
+    (missingPermissions && hideOnMissingPermissions == true) ||
+    (hasEdittingLocks && hideOnEditLocks);
   const haveDisablingError =
     validationContext.error.detected && disableOnFromError;
   const disabled: boolean =
@@ -81,7 +85,7 @@ const FormAction = (props: Props) => {
   );
   return (
     <FormElementContext.Provider value={{disabled, tooltip}}>
-      {(!shouldHide && children) || null}
+      {shouldHide === true ? null : children}
     </FormElementContext.Provider>
   );
 };

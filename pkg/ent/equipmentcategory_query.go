@@ -248,6 +248,9 @@ func (ecq *EquipmentCategoryQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (ecq *EquipmentCategoryQuery) Clone() *EquipmentCategoryQuery {
+	if ecq == nil {
+		return nil
+	}
 	return &EquipmentCategoryQuery{
 		config:     ecq.config,
 		limit:      ecq.limit,
@@ -255,6 +258,7 @@ func (ecq *EquipmentCategoryQuery) Clone() *EquipmentCategoryQuery {
 		order:      append([]OrderFunc{}, ecq.order...),
 		unique:     append([]string{}, ecq.unique...),
 		predicates: append([]predicate.EquipmentCategory{}, ecq.predicates...),
+		withTypes:  ecq.withTypes.Clone(),
 		// clone intermediate query.
 		sql:  ecq.sql.Clone(),
 		path: ecq.path,

@@ -6,11 +6,7 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 	"time"
@@ -155,27 +151,12 @@ func TestEmptyDataExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
-
+	ctx := viewertest.NewContext(context.Background(), client)
 	e := &Exporter{Log: log, Rower: WoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.EqualValues(t, WoDataHeader, ln)
 	}
 }
@@ -186,28 +167,13 @@ func TestWOExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 
 	e := &Exporter{Log: log, Rower: WoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), client)
 	data := prepareWOData(ctx, t)
-	require.NoError(t, err)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
 
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		var wo ent.WorkOrder
 		switch {
 		case ln[1] == "Work Order Name":
@@ -259,15 +225,7 @@ func TestExportWOWithFilters(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 
 	e := &Exporter{Log: log, Rower: WoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
 	data := prepareWOData(ctx, t)
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	userID := viewer.FromContext(ctx).(*viewer.UserViewer).User().ID
 	f, err := json.Marshal([]equipmentFilterInput{
@@ -283,23 +241,12 @@ func TestExportWOWithFilters(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	q := req.URL.Query()
-	q.Add("filters", string(f))
-	req.URL.RawQuery = q.Encode()
 
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
 	linesCount := 0
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
+	rows, err := e.Rower.Rows(ctx, string(f))
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		linesCount++
-		require.NoError(t, err, "error reading row")
 		if ln[0] == strconv.Itoa(data.wo1.ID) {
 			wo := data.wo1
 			require.EqualValues(t, ln[1:], []string{

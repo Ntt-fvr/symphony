@@ -532,13 +532,29 @@ func (pq *PropertyQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (pq *PropertyQuery) Clone() *PropertyQuery {
+	if pq == nil {
+		return nil
+	}
 	return &PropertyQuery{
-		config:     pq.config,
-		limit:      pq.limit,
-		offset:     pq.offset,
-		order:      append([]OrderFunc{}, pq.order...),
-		unique:     append([]string{}, pq.unique...),
-		predicates: append([]predicate.Property{}, pq.predicates...),
+		config:             pq.config,
+		limit:              pq.limit,
+		offset:             pq.offset,
+		order:              append([]OrderFunc{}, pq.order...),
+		unique:             append([]string{}, pq.unique...),
+		predicates:         append([]predicate.Property{}, pq.predicates...),
+		withType:           pq.withType.Clone(),
+		withLocation:       pq.withLocation.Clone(),
+		withEquipment:      pq.withEquipment.Clone(),
+		withService:        pq.withService.Clone(),
+		withEquipmentPort:  pq.withEquipmentPort.Clone(),
+		withLink:           pq.withLink.Clone(),
+		withWorkOrder:      pq.withWorkOrder.Clone(),
+		withProject:        pq.withProject.Clone(),
+		withEquipmentValue: pq.withEquipmentValue.Clone(),
+		withLocationValue:  pq.withLocationValue.Clone(),
+		withServiceValue:   pq.withServiceValue.Clone(),
+		withWorkOrderValue: pq.withWorkOrderValue.Clone(),
+		withUserValue:      pq.withUserValue.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,

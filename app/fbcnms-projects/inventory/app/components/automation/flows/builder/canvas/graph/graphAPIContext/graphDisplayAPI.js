@@ -20,6 +20,8 @@ export type GraphDisplayAPI = $ReadOnly<{|
   zoomFit: () => void,
   move: Position => void,
   reset: () => void,
+  setPaperInteractionLocked: boolean => void,
+  paperInteractionIsLocked: () => boolean,
 |}>;
 
 export default function graphDisplayAPIProvider(
@@ -30,6 +32,8 @@ export default function graphDisplayAPIProvider(
   const zoomFit = paperZoomFit.bind(flowWrapper);
   const move = paperMove.bind(flowWrapper);
   const reset = paperReset.bind(flowWrapper);
+  const setPaperInteractionLocked = paperSetLocked.bind(flowWrapper);
+  const paperInteractionIsLocked = interactionIsLocked.bind(flowWrapper);
 
   return {
     zoomIn,
@@ -37,6 +41,8 @@ export default function graphDisplayAPIProvider(
     zoomFit,
     move,
     reset,
+    setPaperInteractionLocked,
+    paperInteractionIsLocked,
   };
 }
 
@@ -122,4 +128,16 @@ function paperMove(translation: Position | 0) {
 function paperReset() {
   paperZoom.call(this, 0);
   paperMove.call(this, 0);
+}
+
+function paperSetLocked(locked: boolean) {
+  if (this.current == null) {
+    return;
+  }
+
+  this.current.paperIsLocked = locked;
+}
+
+function interactionIsLocked() {
+  return this.current?.paperIsLocked === true;
 }

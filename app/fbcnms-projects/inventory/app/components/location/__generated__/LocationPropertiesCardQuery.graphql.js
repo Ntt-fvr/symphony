@@ -21,7 +21,6 @@ type LocationBreadcrumbsTitle_locationDetails$ref = any;
 type LocationDocumentsCard_location$ref = any;
 type LocationFloorPlansTab_location$ref = any;
 type LocationMenu_location$ref = any;
-type LocationSiteSurveyTab_location$ref = any;
 type PropertyFormField_property$ref = any;
 type PropertyTypeFormField_propertyType$ref = any;
 export type LocationPropertiesCardQueryVariables = {|
@@ -64,14 +63,11 @@ export type LocationPropertiesCardQueryResponse = {|
     +hyperlinks?: $ReadOnlyArray<{|
       +id: string
     |}>,
-    +surveys?: $ReadOnlyArray<?{|
-      +id: string
-    |}>,
     +parentCoords?: ?{|
       +latitude: number,
       +longitude: number,
     |},
-    +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref & LocationSiteSurveyTab_location$ref & LocationDocumentsCard_location$ref & LocationFloorPlansTab_location$ref & LocationMenu_location$ref,
+    +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref & LocationDocumentsCard_location$ref & LocationFloorPlansTab_location$ref & LocationMenu_location$ref,
   |}
 |};
 export type LocationPropertiesCardQuery = {|
@@ -129,14 +125,10 @@ query LocationPropertiesCardQuery(
       hyperlinks {
         id
       }
-      surveys {
-        id
-      }
       parentCoords {
         latitude
         longitude
       }
-      ...LocationSiteSurveyTab_location
       ...LocationDocumentsCard_location
       ...LocationFloorPlansTab_location
       ...LocationMenu_location
@@ -312,23 +304,6 @@ fragment LocationMenu_location on Location {
   }
 }
 
-fragment LocationSiteSurveyTab_location on Location {
-  id
-  siteSurveyNeeded
-  surveys {
-    id
-    completionTimestamp
-    name
-    ownerName
-    sourceFile {
-      id
-      fileName
-      storeKey
-    }
-    ...SiteSurveyPane_survey
-  }
-}
-
 fragment PropertyFormField_property on Property {
   id
   propertyType {
@@ -385,63 +360,6 @@ fragment PropertyTypeFormField_propertyType on PropertyType {
   isMandatory
   category
   isDeleted
-}
-
-fragment SiteSurveyPane_survey on Survey {
-  name
-  completionTimestamp
-  surveyResponses {
-    id
-    questionText
-    formName
-    formIndex
-    questionIndex
-    ...SiteSurveyQuestionReply_question
-  }
-}
-
-fragment SiteSurveyQuestionReplyCellData_data on SurveyQuestion {
-  cellData {
-    networkType
-    signalStrength
-    baseStationID
-    cellID
-    locationAreaCode
-    mobileCountryCode
-    mobileNetworkCode
-    id
-  }
-}
-
-fragment SiteSurveyQuestionReplyWifiData_data on SurveyQuestion {
-  wifiData {
-    band
-    bssid
-    channel
-    frequency
-    strength
-    ssid
-    id
-  }
-}
-
-fragment SiteSurveyQuestionReply_question on SurveyQuestion {
-  questionFormat
-  longitude
-  latitude
-  boolData
-  textData
-  emailData
-  phoneData
-  floatData
-  intData
-  dateData
-  photoData {
-    storeKey
-    id
-  }
-  ...SiteSurveyQuestionReplyWifiData_data
-  ...SiteSurveyQuestionReplyCellData_data
 }
 */
 
@@ -849,26 +767,11 @@ return {
                 "selections": (v9/*: any*/),
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Survey",
-                "kind": "LinkedField",
-                "name": "surveys",
-                "plural": true,
-                "selections": (v9/*: any*/),
-                "storageKey": null
-              },
               (v12/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
                 "name": "LocationBreadcrumbsTitle_locationDetails"
-              },
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "LocationSiteSurveyTab_location"
               },
               {
                 "args": null,
@@ -1132,281 +1035,7 @@ return {
                 ],
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Survey",
-                "kind": "LinkedField",
-                "name": "surveys",
-                "plural": true,
-                "selections": [
-                  (v2/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "completionTimestamp",
-                    "storageKey": null
-                  },
-                  (v3/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "ownerName",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "File",
-                    "kind": "LinkedField",
-                    "name": "sourceFile",
-                    "plural": false,
-                    "selections": [
-                      (v2/*: any*/),
-                      (v24/*: any*/),
-                      (v28/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SurveyQuestion",
-                    "kind": "LinkedField",
-                    "name": "surveyResponses",
-                    "plural": true,
-                    "selections": [
-                      (v2/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "questionText",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "formName",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "formIndex",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "questionIndex",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "questionFormat",
-                        "storageKey": null
-                      },
-                      (v5/*: any*/),
-                      (v4/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "boolData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "textData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "emailData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "phoneData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "floatData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "intData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "dateData",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "File",
-                        "kind": "LinkedField",
-                        "name": "photoData",
-                        "plural": false,
-                        "selections": [
-                          (v28/*: any*/),
-                          (v2/*: any*/)
-                        ],
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "SurveyWiFiScan",
-                        "kind": "LinkedField",
-                        "name": "wifiData",
-                        "plural": true,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "band",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "bssid",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "channel",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "frequency",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "strength",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "ssid",
-                            "storageKey": null
-                          },
-                          (v2/*: any*/)
-                        ],
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "SurveyCellScan",
-                        "kind": "LinkedField",
-                        "name": "cellData",
-                        "plural": true,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "networkType",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "signalStrength",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "baseStationID",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "cellID",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "locationAreaCode",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "mobileCountryCode",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "mobileNetworkCode",
-                            "storageKey": null
-                          },
-                          (v2/*: any*/)
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
               (v12/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "siteSurveyNeeded",
-                "storageKey": null
-              },
               {
                 "alias": null,
                 "args": null,
@@ -1437,6 +1066,16 @@ return {
                   }
                 ],
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Survey",
+                "kind": "LinkedField",
+                "name": "surveys",
+                "plural": true,
+                "selections": (v9/*: any*/),
+                "storageKey": null
               }
             ],
             "type": "Location",
@@ -1448,16 +1087,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bae4475dc4b54d33b9a9e665d41524ce",
+    "cacheID": "19fc5d85642619eb60c461a58349b371",
     "id": null,
     "metadata": {},
     "name": "LocationPropertiesCardQuery",
     "operationKind": "query",
-    "text": "query LocationPropertiesCardQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      id\n      name\n      latitude\n      longitude\n      externalId\n      locationType {\n        id\n        name\n        mapType\n        mapZoomLevel\n        propertyTypes {\n          ...PropertyTypeFormField_propertyType\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n      }\n      ...LocationBreadcrumbsTitle_locationDetails\n      parentLocation {\n        id\n      }\n      children {\n        id\n      }\n      equipments {\n        ...EquipmentTable_equipments\n        id\n      }\n      properties {\n        ...PropertyFormField_property\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n      images {\n        id\n      }\n      files {\n        id\n      }\n      hyperlinks {\n        id\n      }\n      surveys {\n        id\n      }\n      parentCoords {\n        latitude\n        longitude\n      }\n      ...LocationSiteSurveyTab_location\n      ...LocationDocumentsCard_location\n      ...LocationFloorPlansTab_location\n      ...LocationMenu_location\n    }\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment LocationDocumentsCard_location on Location {\n  id\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n}\n\nfragment LocationFloorPlansTab_location on Location {\n  id\n  floorPlans {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment LocationMenu_location on Location {\n  id\n  name\n  locationType {\n    id\n  }\n  parentLocation {\n    id\n  }\n  children {\n    id\n  }\n  equipments {\n    id\n  }\n  images {\n    id\n  }\n  files {\n    id\n  }\n  surveys {\n    id\n  }\n}\n\nfragment LocationSiteSurveyTab_location on Location {\n  id\n  siteSurveyNeeded\n  surveys {\n    id\n    completionTimestamp\n    name\n    ownerName\n    sourceFile {\n      id\n      fileName\n      storeKey\n    }\n    ...SiteSurveyPane_survey\n  }\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n\nfragment SiteSurveyPane_survey on Survey {\n  name\n  completionTimestamp\n  surveyResponses {\n    id\n    questionText\n    formName\n    formIndex\n    questionIndex\n    ...SiteSurveyQuestionReply_question\n  }\n}\n\nfragment SiteSurveyQuestionReplyCellData_data on SurveyQuestion {\n  cellData {\n    networkType\n    signalStrength\n    baseStationID\n    cellID\n    locationAreaCode\n    mobileCountryCode\n    mobileNetworkCode\n    id\n  }\n}\n\nfragment SiteSurveyQuestionReplyWifiData_data on SurveyQuestion {\n  wifiData {\n    band\n    bssid\n    channel\n    frequency\n    strength\n    ssid\n    id\n  }\n}\n\nfragment SiteSurveyQuestionReply_question on SurveyQuestion {\n  questionFormat\n  longitude\n  latitude\n  boolData\n  textData\n  emailData\n  phoneData\n  floatData\n  intData\n  dateData\n  photoData {\n    storeKey\n    id\n  }\n  ...SiteSurveyQuestionReplyWifiData_data\n  ...SiteSurveyQuestionReplyCellData_data\n}\n"
+    "text": "query LocationPropertiesCardQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      id\n      name\n      latitude\n      longitude\n      externalId\n      locationType {\n        id\n        name\n        mapType\n        mapZoomLevel\n        propertyTypes {\n          ...PropertyTypeFormField_propertyType\n          ...DynamicPropertiesGrid_propertyTypes\n          id\n        }\n      }\n      ...LocationBreadcrumbsTitle_locationDetails\n      parentLocation {\n        id\n      }\n      children {\n        id\n      }\n      equipments {\n        ...EquipmentTable_equipments\n        id\n      }\n      properties {\n        ...PropertyFormField_property\n        ...DynamicPropertiesGrid_properties\n        id\n      }\n      images {\n        id\n      }\n      files {\n        id\n      }\n      hyperlinks {\n        id\n      }\n      parentCoords {\n        latitude\n        longitude\n      }\n      ...LocationDocumentsCard_location\n      ...LocationFloorPlansTab_location\n      ...LocationMenu_location\n    }\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment DynamicPropertiesGrid_properties on Property {\n  ...PropertyFormField_property\n  propertyType {\n    id\n    index\n  }\n}\n\nfragment DynamicPropertiesGrid_propertyTypes on PropertyType {\n  id\n  name\n  index\n  isInstanceProperty\n  type\n  nodeType\n  stringValue\n  intValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  floatValue\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment LocationDocumentsCard_location on Location {\n  id\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n}\n\nfragment LocationFloorPlansTab_location on Location {\n  id\n  floorPlans {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment LocationMenu_location on Location {\n  id\n  name\n  locationType {\n    id\n  }\n  parentLocation {\n    id\n  }\n  children {\n    id\n  }\n  equipments {\n    id\n  }\n  images {\n    id\n  }\n  files {\n    id\n  }\n  surveys {\n    id\n  }\n}\n\nfragment PropertyFormField_property on Property {\n  id\n  propertyType {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n    category\n    isDeleted\n  }\n  stringValue\n  intValue\n  floatValue\n  booleanValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  nodeValue {\n    __typename\n    id\n    name\n  }\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '716e709d0b224d74a910d2967878b586';
+(node/*: any*/).hash = '818f05007658e119e68bf5d1569c3801';
 
 module.exports = node;

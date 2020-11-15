@@ -11,13 +11,14 @@
 
 import type {ExtendedMouseEvent, Position, Rect} from './Helpers';
 import type {Graph} from './Graph';
+import type {ILinkView, LinkEventCallback} from './shapes/edges/Link';
+import type {IShape} from './shapes/BaseShape';
 import type {
   IVertexModel,
   IVertexView,
   VertexEventCallback,
   VertexPortEventCallback,
 } from './shapes/vertexes/BaseVertext';
-import type {LinkEventCallback} from './shapes/edges/Link';
 
 type EventRegistration = (
   string,
@@ -57,7 +58,7 @@ export type Paper = $ReadOnly<{|
   },
   clientToLocalPoint: Position => Position,
   findViewsFromPoint: Position => Array<{model: IVertexModel}>,
-  findViewByModel: IVertexModel => IVertexView,
+  findViewByModel: IShape => IVertexView | ILinkView,
 |}>;
 
 export type PaperEventCallback = (ExtendedMouseEvent, number, number) => void;
@@ -68,4 +69,5 @@ export type PaperCtorType = ({
   width: number | string,
   height: number | string,
   gridSize: number,
+  interactive: boolean | (IShape => boolean),
 }) => Paper;

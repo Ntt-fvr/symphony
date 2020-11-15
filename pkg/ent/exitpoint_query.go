@@ -273,13 +273,18 @@ func (epq *ExitPointQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (epq *ExitPointQuery) Clone() *ExitPointQuery {
+	if epq == nil {
+		return nil
+	}
 	return &ExitPointQuery{
-		config:     epq.config,
-		limit:      epq.limit,
-		offset:     epq.offset,
-		order:      append([]OrderFunc{}, epq.order...),
-		unique:     append([]string{}, epq.unique...),
-		predicates: append([]predicate.ExitPoint{}, epq.predicates...),
+		config:              epq.config,
+		limit:               epq.limit,
+		offset:              epq.offset,
+		order:               append([]OrderFunc{}, epq.order...),
+		unique:              append([]string{}, epq.unique...),
+		predicates:          append([]predicate.ExitPoint{}, epq.predicates...),
+		withNextEntryPoints: epq.withNextEntryPoints.Clone(),
+		withParentBlock:     epq.withParentBlock.Clone(),
 		// clone intermediate query.
 		sql:  epq.sql.Clone(),
 		path: epq.path,

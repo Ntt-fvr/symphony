@@ -2123,6 +2123,29 @@ func (r mutationResolver) RemoveServicePort(ctx context.Context, id, portID int)
 	return svc, nil
 }
 
+func (r mutationResolver) AddBulkServiceLinksAndPorts(
+	ctx context.Context,
+	input *models.AddBulkServiceLinksAndPortsInput) (*ent.Service, error) {
+	updateQuery := r.ClientFrom(ctx).
+		Service.
+		UpdateOneID(input.ID)
+	if len(input.LinkIds) > 0 {
+		updateQuery = updateQuery.
+			RemoveLinkIDs(input.LinkIds...).
+			AddLinkIDs(input.LinkIds...)
+	}
+	if len(input.PortIds) > 0 {
+		updateQuery = updateQuery.
+			RemovePortIDs(input.PortIds...).
+			AddPortIDs(input.PortIds...)
+	}
+	svc, err := updateQuery.Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("adding ports/links to service %d: %w", input.ID, err)
+	}
+	return svc, nil
+}
+
 func (r mutationResolver) AddServiceType(ctx context.Context, data models.ServiceTypeCreateData) (*ent.ServiceType, error) {
 	st, err := r.ClientFrom(ctx).
 		ServiceType.Create().

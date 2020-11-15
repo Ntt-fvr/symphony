@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"cloud.google.com/go/storage"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -173,13 +174,7 @@ func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u, err := h.bucket.SignedURL(ctx, key, &blob.SignedURLOptions{
-		BeforeSign: func(asFunc func(interface{}) bool) error {
-			var in *s3.GetObjectInput
-			if asFunc(&in) {
-				in.ResponseContentDisposition = aws.String("attachment; filename=" + filename)
-			}
-			return nil
-		},
+		BeforeSign: setResponseContentDisposition(filename),
 	})
 	if err != nil {
 		logger.Error("cannot sign download url", zap.Error(err))
@@ -191,4 +186,23 @@ func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 		zap.String("filename", filename),
 	)
 	http.Redirect(w, r, u, http.StatusSeeOther)
+}
+
+func setResponseContentDisposition(filename string) func(func(interface{}) bool) error {
+	return func(asFunc func(interface{}) bool) error {
+		var in *s3.GetObjectInput
+		if asFunc(&in) {
+			in.ResponseContentDisposition = aws.String("attachment; filename=" + filename)
+			return nil
+		}
+		var opts *storage.SignedURLOptions
+		if asFunc(&opts) {
+			opts.QueryParameters.Add(
+				"response-content-disposition",
+				"attachment; filename="+filename,
+			)
+			return nil
+		}
+		return nil
+	}
 }

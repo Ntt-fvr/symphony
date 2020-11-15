@@ -6,12 +6,8 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"go.uber.org/zap"
@@ -29,27 +25,12 @@ func TestEmptyLocationDataExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
+	ctx := viewertest.NewContext(context.Background(), client)
 
 	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.EqualValues(t, []string{
 			"\ufeffLocation ID",
 			"External ID",
@@ -65,27 +46,11 @@ func TestLocationsExport(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 
 	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-
 	ctx := viewertest.NewContext(context.Background(), client)
 	PrepareData(ctx, t)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		switch {
 		case ln[1] == locTypeNameL:
 			require.EqualValues(t, []string{
@@ -148,16 +113,8 @@ func TestExportLocationWithFilters(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 
 	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
 	ctx := viewertest.NewContext(context.Background(), client)
 	PrepareData(ctx, t)
-
-	req, err := http.NewRequest("GET", server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	f, err := json.Marshal([]locationsFilterInput{
 		{
@@ -167,21 +124,11 @@ func TestExportLocationWithFilters(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	q := req.URL.Query()
-	q.Add("filters", string(f))
-	req.URL.RawQuery = q.Encode()
 
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
+	rows, err := e.Rower.Rows(ctx, string(f))
+	require.NoError(t, err, "error getting rows")
 	linesCount := 0
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
+	for _, ln := range rows {
 		linesCount++
 		require.NoError(t, err, "error reading row")
 		switch ln[4] {
@@ -219,16 +166,9 @@ func TestExportLocationWithPropertyFilters(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
 	ctx := viewertest.NewContext(context.Background(), client)
 	PrepareData(ctx, t)
-
-	req, err := http.NewRequest("GET", server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	f, err := json.Marshal([]locationsFilterInput{
 		{
@@ -242,21 +182,11 @@ func TestExportLocationWithPropertyFilters(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	q := req.URL.Query()
-	q.Add("filters", string(f))
-	req.URL.RawQuery = q.Encode()
 
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
+	rows, err := e.Rower.Rows(ctx, string(f))
+	require.NoError(t, err, "error getting rows")
 	linesCount := 0
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
+	for _, ln := range rows {
 		linesCount++
 		require.NoError(t, err, "error reading row")
 		if ln[3] == childLocation {

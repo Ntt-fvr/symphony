@@ -273,13 +273,18 @@ func (stcq *SurveyTemplateCategoryQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (stcq *SurveyTemplateCategoryQuery) Clone() *SurveyTemplateCategoryQuery {
+	if stcq == nil {
+		return nil
+	}
 	return &SurveyTemplateCategoryQuery{
-		config:     stcq.config,
-		limit:      stcq.limit,
-		offset:     stcq.offset,
-		order:      append([]OrderFunc{}, stcq.order...),
-		unique:     append([]string{}, stcq.unique...),
-		predicates: append([]predicate.SurveyTemplateCategory{}, stcq.predicates...),
+		config:                      stcq.config,
+		limit:                       stcq.limit,
+		offset:                      stcq.offset,
+		order:                       append([]OrderFunc{}, stcq.order...),
+		unique:                      append([]string{}, stcq.unique...),
+		predicates:                  append([]predicate.SurveyTemplateCategory{}, stcq.predicates...),
+		withSurveyTemplateQuestions: stcq.withSurveyTemplateQuestions.Clone(),
+		withLocationType:            stcq.withLocationType.Clone(),
 		// clone intermediate query.
 		sql:  stcq.sql.Clone(),
 		path: stcq.path,

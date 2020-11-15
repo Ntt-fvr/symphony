@@ -297,10 +297,10 @@ func (s Status) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (s *Status) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (s *Status) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*s = Status(str)
 	if err := StatusValidator(*s); err != nil {
@@ -315,10 +315,10 @@ func (pr Priority) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (pr *Priority) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (pr *Priority) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*pr = Priority(str)
 	if err := PriorityValidator(*pr); err != nil {

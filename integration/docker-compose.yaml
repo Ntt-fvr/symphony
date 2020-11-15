@@ -4,6 +4,13 @@
 
 version: "3.7"
 
+x-aliases:
+  - &buildctx
+    context: ..
+    args:
+      GOPROXY: ${COMPOSE_GOPROXY-}
+    network: host
+
 services:
   platform-server:
     build:
@@ -13,7 +20,6 @@ services:
       - conf/front.env
       - conf/telemetry.env
     networks:
-      - public
       - private
     depends_on:
       - mysql
@@ -28,7 +34,6 @@ services:
       context: ../app
       dockerfile: fbcnms-projects/inventory/Dockerfile
     networks:
-      - public
       - private
     healthcheck:
       test: "curl -If localhost:8080"
@@ -36,7 +41,7 @@ services:
 
   admin:
     build:
-      context: ..
+      <<: *buildctx
       dockerfile: admin/Dockerfile
     image: integration_admin
     env_file:
@@ -53,7 +58,7 @@ services:
 
   graph:
     build:
-      context: ..
+      <<: *buildctx
       dockerfile: graph/Dockerfile
     image: integration_graph
     env_file:
@@ -63,7 +68,6 @@ services:
       - conf/telemetry.env
     networks:
       - private
-      - public
     depends_on:
       - migrate-graph
       - mysql
@@ -74,7 +78,7 @@ services:
 
   async:
     build:
-      context: ..
+      <<: *buildctx
       dockerfile: async/Dockerfile
     image: integration_async
     env_file:
@@ -85,7 +89,6 @@ services:
       - conf/cadence_client.env
     networks:
       - private
-      - public
     depends_on:
       - migrate-graph
       - migrate-cadence
@@ -97,7 +100,7 @@ services:
 
   migrate-graph:
     build:
-      context: ..
+      <<: *buildctx
       dockerfile: migrate/Dockerfile
     image: integration_migrate
     env_file:
@@ -115,7 +118,7 @@ services:
 
   migrate-cadence:
     build:
-      context: ..
+      <<: *buildctx
       dockerfile: migrate/Dockerfile
     image: integration_migrate
     env_file:
@@ -131,7 +134,7 @@ services:
 
   store:
     build:
-      context: ..
+      <<: *buildctx
       dockerfile: store/Dockerfile
     env_file:
       - conf/store.env
@@ -156,8 +159,6 @@ services:
       context: fluentd
     networks:
       - private
-    volumes:
-      - ./fluentd/:/fluentd/etc/:ro
     restart: on-failure
 
   nginx:
@@ -210,10 +211,7 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one
-    ports:
-      - 16686:16686
     networks:
-      - public
       - private
     restart: on-failure
 
@@ -221,9 +219,6 @@ services:
     image: prom/prometheus
     networks:
       - private
-      - public
-    ports:
-      - 9090:9090
     volumes:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
     restart: on-failure
@@ -236,12 +231,6 @@ services:
 
   cadence:
     image: ubercadence/server:0.14.1-auto-setup
-    ports:
-      - 7933:7933
-      - 7934:7934
-      - 7935:7935
-      - 7939:7939
-      - 9090:9090
     networks:
       - private
     env_file:

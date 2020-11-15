@@ -131,20 +131,18 @@ func TestMetrics(t *testing.T) {
 		}
 	}
 
-	distributions := []struct {
-		name string
-	}{
-		{name: ocgql.RequestLatencyView.Name},
-		{name: ocgql.ResolveLatencyView.Name},
-		{name: ocgql.RequestComplexityView.Name},
-	}
-	for _, v := range distributions {
-		rows, err := view.RetrieveData(v.name)
+	for _, distribution := range []string{
+		ocgql.RequestLatencyView.Name,
+		ocgql.ResponseBytesView.Name,
+		ocgql.ResolveLatencyView.Name,
+		ocgql.RequestComplexityView.Name,
+	} {
+		rows, err := view.RetrieveData(distribution)
 		require.NoError(t, err)
-		require.Len(t, rows, 1)
+		require.NotEmpty(t, rows)
 		data, ok := rows[0].Data.(*view.DistributionData)
 		require.True(t, ok)
-		require.Greater(t, data.Sum(), float64(0))
+		require.NotZero(t, data.Sum())
 	}
 
 	rows, err := view.RetrieveData(ocgql.NumSubscriptionsView.Name)

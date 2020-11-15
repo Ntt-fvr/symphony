@@ -17,7 +17,11 @@ import type {
   Size,
 } from '../../Helpers';
 import type {Graph} from '../../Graph';
-import type {IBaseShapeAttributes, IShape} from '../../shapes/BaseShape';
+import type {
+  IBaseShapeAttributes,
+  IShape,
+  IShapeView,
+} from '../../shapes/BaseShape';
 import type {Paper} from '../../Paper';
 
 import symphony from '@symphony/design-system/theme/symphony';
@@ -36,6 +40,7 @@ export const VERTEX_COMMON_DISPLAY = {
       refY: '115%',
       fontSize: 14,
       fill: symphony.palette.secondary,
+      strokeWidth: 0,
     },
   },
   defaultAttrProps,
@@ -108,29 +113,13 @@ export interface IVertexModel extends IShape {
 }
 
 export type IVertexView = $ReadOnly<{|
-  model: IVertexModel,
-  highlight: (?IVertexView, options?: KeyValuePair) => void,
-  unhighlight: () => void,
-  isSelected: boolean,
-  findAttribute: (
-    attribute: string,
-    node: HTMLElement,
-  ) => KeyValuePair | Primitive,
+  ...IShapeView<IVertexModel>,
+  portContainerMarkup: string,
 |}>;
 
 export type Port = $ReadOnly<{|
   id: string,
 |}>;
-
-export const DISPLAY_SETTINGS = {
-  body: {
-    stroke: {
-      default: symphony.palette.white,
-      hovered: symphony.palette.B700,
-      selected: symphony.palette.primary,
-    },
-  },
-};
 
 type PortsGroupInitValue = $ReadOnly<{|
   count: number,

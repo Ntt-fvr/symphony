@@ -13,7 +13,7 @@ from psym.common.data_enum import Entity
 from ..exceptions import EntityNotFoundError, assert_ok
 from ..graphql.enum.user_role import UserRole
 from ..graphql.enum.user_status import UserStatus
-from ..graphql.input.edit_user import EditUserInput
+from ..graphql.input.edit_user_input import EditUserInput
 from ..graphql.mutation.edit_user import EditUserMutation
 from ..graphql.query.user import UserQuery
 from ..graphql.query.users import UsersQuery

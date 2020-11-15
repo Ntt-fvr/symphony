@@ -203,10 +203,10 @@ func (nt NetworkType) MarshalGQL(w io.Writer) {
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (nt *NetworkType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
+func (nt *NetworkType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
 	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
+		return fmt.Errorf("enum %T must be a string", val)
 	}
 	*nt = NetworkType(str)
 	if err := NetworkTypeValidator(*nt); err != nil {

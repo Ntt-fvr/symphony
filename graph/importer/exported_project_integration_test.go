@@ -161,9 +161,9 @@ func TestProjectImportData(t *testing.T) {
 	require.Equal(t, 200, code)
 	q := r.importer.r.Query()
 
-	projs, err := q.ProjectSearch(ctx, nil, nil)
+	projs, err := q.Projects(ctx, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
-	require.Equal(t, 3, len(projs))
+	require.Equal(t, 3, len(projs.Edges))
 	client := r.client
 
 	locStruct = map[string]*ent.Location{
@@ -172,7 +172,8 @@ func TestProjectImportData(t *testing.T) {
 		"Building3": client.Location.Query().Where(location.Name("1214 S Roosevelt")).OnlyX(ctx),
 	}
 
-	for _, pjt := range projs {
+	for _, edge := range projs.Edges {
+		pjt := edge.Node
 		switch pjt.Name {
 		case "Project 1":
 			require.Equal(t, "Project 1", *pjt.Description)

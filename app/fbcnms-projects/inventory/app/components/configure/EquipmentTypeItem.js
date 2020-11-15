@@ -11,12 +11,12 @@ import type {EquipmentTypeItem_equipmentType} from './__generated__/EquipmentTyp
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
 
-import ConfigureExpansionPanel from './ConfigureExpansionPanel';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import ConfigureAccordion from './ConfigureAccordionPanel';
 import DynamicPropertyTypesGrid from '../DynamicPropertyTypesGrid';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import PortDefinitionsTable from './PortDefinitionsTable';
 import PositionDefinitionsTable from './PositionDefinitionsTable';
 import React from 'react';
@@ -51,9 +51,9 @@ class EquipmentTypeItem extends React.Component<Props> {
     const {classes, equipmentType, onEdit} = this.props;
     return (
       <div>
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <ConfigureExpansionPanel
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <ConfigureAccordion
               entityName="equipmentType"
               icon={<RouterIcon />}
               name={equipmentType.name}
@@ -63,8 +63,8 @@ class EquipmentTypeItem extends React.Component<Props> {
               onDelete={this.onDelete}
               onEdit={onEdit}
             />
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails className={classes.detailsRoot}>
+          </AccordionSummary>
+          <AccordionDetails className={classes.detailsRoot}>
             <div className={classes.detailsContainer}>
               <div className={classes.section}>
                 <DynamicPropertyTypesGrid
@@ -86,8 +86,8 @@ class EquipmentTypeItem extends React.Component<Props> {
                 />
               </div>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </div>
     );
   }

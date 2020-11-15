@@ -20,7 +20,7 @@ from psym.common.data_enum import Entity
 
 from .._utils import get_graphql_property_inputs
 from ..exceptions import EntityNotFoundError, EquipmentPortIsNotUniqueException
-from ..graphql.input.edit_equipment_port import EditEquipmentPortInput
+from ..graphql.input.edit_equipment_port_input import EditEquipmentPortInput
 from ..graphql.input.link_side import LinkSide
 from ..graphql.mutation.edit_equipment_port import EditEquipmentPortMutation
 from ..graphql.mutation.edit_link import EditLinkInput, EditLinkMutation

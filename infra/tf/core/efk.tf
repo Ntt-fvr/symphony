@@ -199,7 +199,7 @@ resource helm_release fluentd_elasticsearch {
   repository = local.helm_repository.kokuwa
   name       = "fluentd-elasticsearch"
   namespace  = kubernetes_namespace.kube_logging.id
-  version    = "10.0.2"
+  version    = "10.1.0"
 
   values = [yamlencode({
     elasticsearch = {
@@ -208,7 +208,8 @@ resource helm_release fluentd_elasticsearch {
       logstash = {
         prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? ns + '.namespace' : tag == 'inventory' ? 'symphony.http' : 'logstash'}"
       }
-      outputType = "elasticsearch_dynamic"
+      log400Reason = true
+      outputType   = "elasticsearch_dynamic"
     }
     serviceMonitor = {
       enabled = true

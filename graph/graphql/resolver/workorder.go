@@ -896,43 +896,10 @@ func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, inp
 		return nil, err
 	}
 
-	if input.CheckListCategories != nil && len(input.CheckListCategories) > 0 {
-		for _, clInput := range input.CheckListCategories {
-			_, err := r.createOrUpdateCheckListCategory(ctx, clInput, wo.ID)
-			if err != nil {
-				return nil, errors.Wrap(err, "updating check list category")
-			}
-		}
-	} else {
-		for _, clInput := range input.Checklist {
-			checkListItem, err := client.CheckListItem.
-				UpdateOneID(clInput.ID).
-				SetNillableChecked(clInput.Checked).
-				SetNillableStringVal(clInput.StringValue).
-				SetNillableSelectedEnumValues(clInput.SelectedEnumValues).
-				SetNillableYesNoVal(clInput.YesNoResponse).
-				Save(ctx)
-			if clInput.WifiData != nil && len(clInput.WifiData) > 0 {
-				_, err := r.CreateWiFiScans(ctx, clInput.WifiData, ScanParentIDs{checklistItemID: &clInput.ID})
-				if err != nil {
-					return nil, fmt.Errorf("creating wifi scans, item %q: err %w", clInput.ID, err)
-				}
-			}
-			if clInput.CellData != nil && len(clInput.CellData) > 0 {
-				_, err := r.CreateCellScans(ctx, clInput.CellData, ScanParentIDs{checklistItemID: &clInput.ID})
-				if err != nil {
-					return nil, fmt.Errorf("creating cell scans, item %q: err %w", clInput.ID, err)
-				}
-			}
-			if clInput.FilesData != nil && len(clInput.FilesData) > 0 {
-				_, err := r.createOrUpdateCheckListItemFiles(ctx, checkListItem, clInput.FilesData)
-				if err != nil {
-					return nil, fmt.Errorf("creating and saving images while uploading a work order: %q: err %w", input.WorkOrderID, err)
-				}
-			}
-			if err != nil {
-				return nil, fmt.Errorf("updating checklist item %q: err %w", clInput.ID, err)
-			}
+	for _, clInput := range input.CheckListCategories {
+		_, err := r.createOrUpdateCheckListCategory(ctx, clInput, wo.ID)
+		if err != nil {
+			return nil, errors.Wrap(err, "updating check list category")
 		}
 	}
 

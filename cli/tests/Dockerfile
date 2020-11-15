@@ -4,9 +4,7 @@
 
 FROM python:3.7
 
-COPY cli/requirements.txt ./
-
-RUN pip install -r /requirements.txt
+RUN pip install unittest-xml-reporting websocket-client
 
 COPY cli/ ./
 RUN python setup.py -q install

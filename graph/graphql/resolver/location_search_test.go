@@ -102,10 +102,10 @@ func TestSearchLocationAncestors(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{}, &limit)
+	all, err := qr.Locations(ctx, nil, nil, nil, nil, nil, &limit, nil, nil, nil, []*pkgmodels.LocationFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, all.Locations, 2)
-	require.Equal(t, all.Count, 2)
+	require.Len(t, all.Edges, 2)
+	require.Equal(t, all.TotalCount, 2)
 	maxDepth := 2
 	f1 := pkgmodels.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeLocationInst,
@@ -113,10 +113,10 @@ func TestSearchLocationAncestors(t *testing.T) {
 		IDSet:      []int{data.loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, &limit)
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, &limit, nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 2)
-	require.Equal(t, res.Count, 2)
+	require.Len(t, res.Edges, 2)
+	require.Equal(t, res.TotalCount, 2)
 
 	f2 := pkgmodels.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeLocationInst,
@@ -124,10 +124,10 @@ func TestSearchLocationAncestors(t *testing.T) {
 		IDSet:      []int{data.loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res, err = qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f2}, &limit)
+	res, err = qr.Locations(ctx, nil, nil, nil, nil, nil, &limit, nil, nil, nil, []*pkgmodels.LocationFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }
 
 func TestSearchLocationByExternalID(t *testing.T) {
@@ -143,10 +143,10 @@ func TestSearchLocationByExternalID(t *testing.T) {
 			loc2 (loc_type2)
 	*/
 	qr := r.Query()
-	resAll, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{}, pointer.ToInt(100))
+	resAll, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, resAll.Locations, 2)
-	require.Equal(t, resAll.Count, 2)
+	require.Len(t, resAll.Edges, 2)
+	require.Equal(t, resAll.TotalCount, 2)
 
 	f1 := pkgmodels.LocationFilterInput{
 		FilterType:  enum.LocationFilterTypeLocationInstExternalID,
@@ -154,10 +154,10 @@ func TestSearchLocationByExternalID(t *testing.T) {
 		StringValue: &data.loc1.ExternalID,
 	}
 
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, pointer.ToInt(100))
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 
 	// same filter - with 'IS" operator
 	f2 := pkgmodels.LocationFilterInput{
@@ -166,10 +166,10 @@ func TestSearchLocationByExternalID(t *testing.T) {
 		StringValue: &data.loc1.ExternalID,
 	}
 
-	res, err = qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f2}, pointer.ToInt(100))
+	res, err = qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }
 
 func TestSearchLocationByName(t *testing.T) {
@@ -191,15 +191,15 @@ func TestSearchLocationByName(t *testing.T) {
 		Operator:    enum.FilterOperatorIs,
 		StringValue: &data.loc2.Name,
 	}
-	resAll, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{}, pointer.ToInt(100))
+	resAll, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{})
 	require.NoError(t, err)
-	require.Len(t, resAll.Locations, 2)
-	require.Equal(t, resAll.Count, 2)
+	require.Len(t, resAll.Edges, 2)
+	require.Equal(t, resAll.TotalCount, 2)
 
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, pointer.ToInt(100))
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }
 
 func TestSearchLocationByType(t *testing.T) {
@@ -220,10 +220,10 @@ func TestSearchLocationByType(t *testing.T) {
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.locType2.ID},
 	}
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, pointer.ToInt(100))
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }
 
 func TestSearchLocationHasEquipment(t *testing.T) {
@@ -244,20 +244,20 @@ func TestSearchLocationHasEquipment(t *testing.T) {
 		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(true),
 	}
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, pointer.ToInt(100))
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 
 	f2 := pkgmodels.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeLocationInstHasEquipment,
 		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(false),
 	}
-	res, err = qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f2}, pointer.ToInt(100))
+	res, err = qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f2})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }
 
 func TestSearchMultipleFilters(t *testing.T) {
@@ -279,20 +279,20 @@ func TestSearchMultipleFilters(t *testing.T) {
 		IDSet:      []int{data.loc1.ID},
 		MaxDepth:   pointer.ToInt(2),
 	}
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, pointer.ToInt(100))
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 2)
-	require.Equal(t, res.Count, 2)
+	require.Len(t, res.Edges, 2)
+	require.Equal(t, res.TotalCount, 2)
 
 	f2 := pkgmodels.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeLocationType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.locType2.ID},
 	}
-	res, err = qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1, &f2}, pointer.ToInt(100))
+	res, err = qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1, &f2})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }
 
 func TestSearchLocationProperties(t *testing.T) {
@@ -318,10 +318,10 @@ func TestSearchLocationProperties(t *testing.T) {
 		},
 	}
 
-	res, err := qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1}, pointer.ToInt(100))
+	res, err := qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 
 	f2 := pkgmodels.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeProperty,
@@ -332,8 +332,8 @@ func TestSearchLocationProperties(t *testing.T) {
 			StringValue: pointer.ToString("testProp"),
 		},
 	}
-	res, err = qr.LocationSearch(ctx, []*pkgmodels.LocationFilterInput{&f1, &f2}, pointer.ToInt(100))
+	res, err = qr.Locations(ctx, nil, nil, nil, nil, nil, pointer.ToInt(100), nil, nil, nil, []*pkgmodels.LocationFilterInput{&f1, &f2})
 	require.NoError(t, err)
-	require.Len(t, res.Locations, 1)
-	require.Equal(t, res.Count, 1)
+	require.Len(t, res.Edges, 1)
+	require.Equal(t, res.TotalCount, 1)
 }

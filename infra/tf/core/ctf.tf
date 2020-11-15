@@ -296,12 +296,23 @@ resource aws_iam_group_policy_attachment ctf_admin {
 data aws_iam_policy_document ctf_fileserver {
   statement {
     actions = [
-      "s3:GetObject",
       "s3:PutObject",
       "s3:DeleteObject",
     ]
 
     resources = [
+      "${aws_s3_bucket.ctf_datastore.arn}/*",
+    ]
+  }
+
+  statement {
+    actions = [
+      "s3:Get*",
+      "s3:List*",
+    ]
+
+    resources = [
+      aws_s3_bucket.ctf_datastore.arn,
       "${aws_s3_bucket.ctf_datastore.arn}/*",
     ]
   }
@@ -313,7 +324,7 @@ module ctf_fileserver_role {
   role_name_prefix          = "CTFFileServerRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.ctf_fileserver.json
-  service_account_name      = "fileserver"
+  service_account_name      = "ctf-fileserver"
   service_account_namespace = kubernetes_namespace.ctf.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.ctf_tags

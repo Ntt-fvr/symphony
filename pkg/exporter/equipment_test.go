@@ -6,11 +6,7 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 
@@ -31,25 +27,10 @@ func TestEmptyWOExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	e := &Exporter{Log: log, Rower: EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	ctx := viewertest.NewContext(context.Background(), client)
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.EqualValues(t, []string{
 			"\ufeffEquipment ID",
 			nameTitle,
@@ -70,27 +51,12 @@ func TestExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	e := &Exporter{Log: log, Rower: EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), client)
 	PrepareData(ctx, t)
-
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.NoError(t, err, "error reading row")
 		switch {
 		case ln[1] == nameTitle:
@@ -160,15 +126,8 @@ func TestExportWithFilters(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 	ctx := viewertest.NewContext(context.Background(), client)
 	e := &Exporter{Log: log, Rower: EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
 	PrepareData(ctx, t)
-	req, err := http.NewRequest("GET", server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-
 	loc := client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx)
 
 	f, err := json.Marshal([]equipmentFilterInput{
@@ -184,21 +143,10 @@ func TestExportWithFilters(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	q := req.URL.Query()
-	q.Add("filters", string(f))
-	req.URL.RawQuery = q.Encode()
-
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
+	rows, err := e.Rower.Rows(ctx, string(f))
+	require.NoError(t, err, "error getting rows")
 	linesCount := 0
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
+	for _, ln := range rows {
 		linesCount++
 		require.NoError(t, err, "error reading row")
 		if ln[1] == parentEquip {

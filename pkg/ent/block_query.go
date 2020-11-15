@@ -438,13 +438,25 @@ func (bq *BlockQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (bq *BlockQuery) Clone() *BlockQuery {
+	if bq == nil {
+		return nil
+	}
 	return &BlockQuery{
-		config:     bq.config,
-		limit:      bq.limit,
-		offset:     bq.offset,
-		order:      append([]OrderFunc{}, bq.order...),
-		unique:     append([]string{}, bq.unique...),
-		predicates: append([]predicate.Block{}, bq.predicates...),
+		config:           bq.config,
+		limit:            bq.limit,
+		offset:           bq.offset,
+		order:            append([]OrderFunc{}, bq.order...),
+		unique:           append([]string{}, bq.unique...),
+		predicates:       append([]predicate.Block{}, bq.predicates...),
+		withFlow:         bq.withFlow.Clone(),
+		withFlowTemplate: bq.withFlowTemplate.Clone(),
+		withFlowDraft:    bq.withFlowDraft.Clone(),
+		withSubFlow:      bq.withSubFlow.Clone(),
+		withSourceBlock:  bq.withSourceBlock.Clone(),
+		withGotoBlock:    bq.withGotoBlock.Clone(),
+		withInstances:    bq.withInstances.Clone(),
+		withEntryPoint:   bq.withEntryPoint.Clone(),
+		withExitPoints:   bq.withExitPoints.Clone(),
 		// clone intermediate query.
 		sql:  bq.sql.Clone(),
 		path: bq.path,

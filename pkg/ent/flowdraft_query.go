@@ -273,6 +273,9 @@ func (fdq *FlowDraftQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fdq *FlowDraftQuery) Clone() *FlowDraftQuery {
+	if fdq == nil {
+		return nil
+	}
 	return &FlowDraftQuery{
 		config:     fdq.config,
 		limit:      fdq.limit,
@@ -280,6 +283,8 @@ func (fdq *FlowDraftQuery) Clone() *FlowDraftQuery {
 		order:      append([]OrderFunc{}, fdq.order...),
 		unique:     append([]string{}, fdq.unique...),
 		predicates: append([]predicate.FlowDraft{}, fdq.predicates...),
+		withBlocks: fdq.withBlocks.Clone(),
+		withFlow:   fdq.withFlow.Clone(),
 		// clone intermediate query.
 		sql:  fdq.sql.Clone(),
 		path: fdq.path,

@@ -15,10 +15,10 @@ import type {
 } from './ComparisonViewTypes';
 
 import * as React from 'react';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import nullthrows from '@fbcnms/util/nullthrows';
@@ -52,10 +52,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: '12px',
     lineHeight: '16px',
   },
-  expansionPanel: {
+  accordion: {
     margin: '0px 0px',
   },
-  expansionDetails: {
+  accordionDetails: {
     padding: '0px',
   },
   panelExpanded: {
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
       transform: 'rotate(90deg)',
     },
   },
-  expansionSummary: {
+  accordionSummary: {
     minHeight: '28px',
     padding: '0px 12px',
     '&$panelExpanded': {
@@ -90,7 +90,7 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '16px',
     fontWeight: 'bold',
   },
-  expansionSummaryContent: {
+  accordionSummaryContent: {
     margin: '0px',
     '&$panelExpanded': {
       margin: '0px',
@@ -105,9 +105,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     boxShadow: theme.shadows[1],
     position: 'fixed',
-    zIndex: 10,
+    zIndex: 11,
   },
-  expansionPanelRoot: {
+  AccordionRoot: {
     '&:before': {
       display: 'none',
     },
@@ -234,14 +234,14 @@ const FiltersTyepahead = React.forwardRef((props: Props, ref) => {
     throw new Error(`key not found`);
   };
 
-  const expansionRowForSavedSearch = (
+  const accordionRowForSavedSearch = (
     savedSearches: Array<SavedSearchConfig>,
   ): React.Node => {
     if (savedSearches.length === 0) {
       return null;
     }
     return (
-      <ExpansionPanelDetails classes={{root: classes.expansionDetails}}>
+      <AccordionDetails classes={{root: classes.accordionDetails}}>
         <div className={classes.entityFiltersList}>
           {savedSearches.map(savedSearch => (
             <div
@@ -262,10 +262,10 @@ const FiltersTyepahead = React.forwardRef((props: Props, ref) => {
             </div>
           ))}
         </div>
-      </ExpansionPanelDetails>
+      </AccordionDetails>
     );
   };
-  const expansionRowForFilterConfig = (entity: EntityConfig): React.Node => {
+  const accordionRowForFilterConfig = (entity: EntityConfig): React.Node => {
     if (!entityResultExists(entity.type)) {
       return null;
     }
@@ -273,7 +273,7 @@ const FiltersTyepahead = React.forwardRef((props: Props, ref) => {
       filter => filter.entityType === entity.type,
     );
     return (
-      <ExpansionPanelDetails classes={{root: classes.expansionDetails}}>
+      <AccordionDetails classes={{root: classes.accordionDetails}}>
         <div className={classes.entityFiltersList}>
           {entityOptions.map(filter =>
             filterMatchesInput(filter) ? (
@@ -295,26 +295,26 @@ const FiltersTyepahead = React.forwardRef((props: Props, ref) => {
             ) : null,
           )}
         </div>
-      </ExpansionPanelDetails>
+      </AccordionDetails>
     );
   };
 
-  const searchConfigExpansionPanels = searchConfig.map(entity => {
+  const searchConfigAccordions = searchConfig.map(entity => {
     return {
       label: entity.label,
-      options: expansionRowForFilterConfig(entity),
+      options: accordionRowForFilterConfig(entity),
     };
   });
 
-  const labelToExpansionPanelDetails: Array<{
+  const labelToAccordionDetails: Array<{
     label: string,
     options: React.Node,
   }> = [
     {
       label: 'Saved Searches',
-      options: expansionRowForSavedSearch(savedSearches),
+      options: accordionRowForSavedSearch(savedSearches),
     },
-    ...searchConfigExpansionPanels,
+    ...searchConfigAccordions,
   ];
 
   return (
@@ -385,32 +385,32 @@ const FiltersTyepahead = React.forwardRef((props: Props, ref) => {
           {!anyResultExists ? (
             <Text className={classes.noMatchesText}>No matches</Text>
           ) : null}
-          {labelToExpansionPanelDetails.map(entity => {
+          {labelToAccordionDetails.map(entity => {
             if (entity.options == null) {
               return null;
             }
             return (
-              <ExpansionPanel
+              <Accordion
                 key={entity.label}
                 classes={{
-                  root: classes.expansionPanelRoot,
-                  expanded: classes.expansionPanel,
+                  root: classes.AccordionRoot,
+                  expanded: classes.accordion,
                 }}
                 defaultExpanded={true}
                 elevation={0}>
-                <ExpansionPanelSummary
+                <AccordionSummary
                   classes={{
-                    root: classes.expansionSummary,
+                    root: classes.accordionSummary,
                     expanded: classes.panelExpanded,
-                    content: classes.expansionSummaryContent,
+                    content: classes.accordionSummaryContent,
                   }}>
                   <div className={classes.headerRoot}>
                     <Text className={classes.entityHeader}>{entity.label}</Text>
                     <ChevronRightIcon className={classes.arrowRightIcon} />
                   </div>
-                </ExpansionPanelSummary>
+                </AccordionSummary>
                 {entity.options}
-              </ExpansionPanel>
+              </Accordion>
             );
           })}
         </div>

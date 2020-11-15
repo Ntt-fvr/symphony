@@ -560,13 +560,30 @@ func (woq *WorkOrderQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
+	if woq == nil {
+		return nil
+	}
 	return &WorkOrderQuery{
-		config:     woq.config,
-		limit:      woq.limit,
-		offset:     woq.offset,
-		order:      append([]OrderFunc{}, woq.order...),
-		unique:     append([]string{}, woq.unique...),
-		predicates: append([]predicate.WorkOrder{}, woq.predicates...),
+		config:                  woq.config,
+		limit:                   woq.limit,
+		offset:                  woq.offset,
+		order:                   append([]OrderFunc{}, woq.order...),
+		unique:                  append([]string{}, woq.unique...),
+		predicates:              append([]predicate.WorkOrder{}, woq.predicates...),
+		withType:                woq.withType.Clone(),
+		withTemplate:            woq.withTemplate.Clone(),
+		withEquipment:           woq.withEquipment.Clone(),
+		withLinks:               woq.withLinks.Clone(),
+		withFiles:               woq.withFiles.Clone(),
+		withHyperlinks:          woq.withHyperlinks.Clone(),
+		withLocation:            woq.withLocation.Clone(),
+		withComments:            woq.withComments.Clone(),
+		withActivities:          woq.withActivities.Clone(),
+		withProperties:          woq.withProperties.Clone(),
+		withCheckListCategories: woq.withCheckListCategories.Clone(),
+		withProject:             woq.withProject.Clone(),
+		withOwner:               woq.withOwner.Clone(),
+		withAssignee:            woq.withAssignee.Clone(),
 		// clone intermediate query.
 		sql:  woq.sql.Clone(),
 		path: woq.path,

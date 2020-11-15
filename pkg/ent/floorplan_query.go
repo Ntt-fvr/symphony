@@ -321,13 +321,20 @@ func (fpq *FloorPlanQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fpq *FloorPlanQuery) Clone() *FloorPlanQuery {
+	if fpq == nil {
+		return nil
+	}
 	return &FloorPlanQuery{
-		config:     fpq.config,
-		limit:      fpq.limit,
-		offset:     fpq.offset,
-		order:      append([]OrderFunc{}, fpq.order...),
-		unique:     append([]string{}, fpq.unique...),
-		predicates: append([]predicate.FloorPlan{}, fpq.predicates...),
+		config:             fpq.config,
+		limit:              fpq.limit,
+		offset:             fpq.offset,
+		order:              append([]OrderFunc{}, fpq.order...),
+		unique:             append([]string{}, fpq.unique...),
+		predicates:         append([]predicate.FloorPlan{}, fpq.predicates...),
+		withLocation:       fpq.withLocation.Clone(),
+		withReferencePoint: fpq.withReferencePoint.Clone(),
+		withScale:          fpq.withScale.Clone(),
+		withImage:          fpq.withImage.Clone(),
 		// clone intermediate query.
 		sql:  fpq.sql.Clone(),
 		path: fpq.path,

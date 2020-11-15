@@ -439,13 +439,25 @@ func (fq *FileQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fq *FileQuery) Clone() *FileQuery {
+	if fq == nil {
+		return nil
+	}
 	return &FileQuery{
-		config:     fq.config,
-		limit:      fq.limit,
-		offset:     fq.offset,
-		order:      append([]OrderFunc{}, fq.order...),
-		unique:     append([]string{}, fq.unique...),
-		predicates: append([]predicate.File{}, fq.predicates...),
+		config:                  fq.config,
+		limit:                   fq.limit,
+		offset:                  fq.offset,
+		order:                   append([]OrderFunc{}, fq.order...),
+		unique:                  append([]string{}, fq.unique...),
+		predicates:              append([]predicate.File{}, fq.predicates...),
+		withLocation:            fq.withLocation.Clone(),
+		withEquipment:           fq.withEquipment.Clone(),
+		withUser:                fq.withUser.Clone(),
+		withWorkOrder:           fq.withWorkOrder.Clone(),
+		withChecklistItem:       fq.withChecklistItem.Clone(),
+		withSurvey:              fq.withSurvey.Clone(),
+		withFloorPlan:           fq.withFloorPlan.Clone(),
+		withPhotoSurveyQuestion: fq.withPhotoSurveyQuestion.Clone(),
+		withSurveyQuestion:      fq.withSurveyQuestion.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,

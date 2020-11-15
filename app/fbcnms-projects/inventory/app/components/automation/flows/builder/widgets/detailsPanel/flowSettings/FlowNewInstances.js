@@ -9,6 +9,7 @@
  */
 
 import DetailsPanelSection from '../DetailsPanelSection';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import React from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import fbt from 'fbt';
@@ -25,7 +26,11 @@ export default function FlowNewInstances(props: Props) {
       title={fbt('Allow new instances', '')}
       body={fbt('New instances of this flow can be created.', '')}
       className={className}
-      actionItems={[<Switch title=" " checked={false} />]}
+      actionItems={[
+        <FormAction>
+          <Switch title=" " checked={false} />
+        </FormAction>,
+      ]}
     />
   );
 }

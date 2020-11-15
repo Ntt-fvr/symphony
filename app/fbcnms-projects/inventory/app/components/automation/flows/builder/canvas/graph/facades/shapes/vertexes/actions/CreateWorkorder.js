@@ -13,11 +13,7 @@ import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
 import fbt from 'fbt';
-import {
-  DISPLAY_SETTINGS,
-  VERTEX_COMMON_DISPLAY,
-  getInitObject,
-} from '../BaseVertext';
+import {VERTEX_COMMON_DISPLAY, getInitObject} from '../BaseVertext';
 
 export const TYPE = 'actions.CreateWorkorder';
 
@@ -41,7 +37,6 @@ const defaultProperties = {
     body: {
       ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       strokeWidth: BORDER,
-      stroke: DISPLAY_SETTINGS.body.stroke.default,
       fill: FILL_COLOR,
       rx: BORDER_RADIUS,
       ry: BORDER_RADIUS,

@@ -320,13 +320,20 @@ func (fiq *FlowInstanceQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fiq *FlowInstanceQuery) Clone() *FlowInstanceQuery {
+	if fiq == nil {
+		return nil
+	}
 	return &FlowInstanceQuery{
-		config:     fiq.config,
-		limit:      fiq.limit,
-		offset:     fiq.offset,
-		order:      append([]OrderFunc{}, fiq.order...),
-		unique:     append([]string{}, fiq.unique...),
-		predicates: append([]predicate.FlowInstance{}, fiq.predicates...),
+		config:                 fiq.config,
+		limit:                  fiq.limit,
+		offset:                 fiq.offset,
+		order:                  append([]OrderFunc{}, fiq.order...),
+		unique:                 append([]string{}, fiq.unique...),
+		predicates:             append([]predicate.FlowInstance{}, fiq.predicates...),
+		withFlow:               fiq.withFlow.Clone(),
+		withTemplate:           fiq.withTemplate.Clone(),
+		withBlocks:             fiq.withBlocks.Clone(),
+		withParentSubflowBlock: fiq.withParentSubflowBlock.Clone(),
 		// clone intermediate query.
 		sql:  fiq.sql.Clone(),
 		path: fiq.path,

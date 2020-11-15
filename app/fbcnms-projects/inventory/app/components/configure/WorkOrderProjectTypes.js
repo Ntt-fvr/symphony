@@ -12,6 +12,8 @@ import type {WorkOrderProjectTypesQueryResponse} from './__generated__/WorkOrder
 
 import AddEditProjectTypeCard from './AddEditProjectTypeCard';
 import Button from '@symphony/design-system/components/Button';
+import EducationNote from '@symphony/design-system/illustrations/EducationNote';
+import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import InventoryView from '../InventoryViewContainer';
@@ -103,6 +105,28 @@ const WorkOrderProjectTypes = () => {
           );
         }
 
+        const projectTypeData = (props.projectTypes?.edges ?? [])
+          .map(edge => edge.node)
+          .filter(Boolean);
+
+        const createProjectTemplateButton = (
+          <FormActionWithPermissions
+            permissions={{
+              entity: 'projectTemplate',
+              action: 'create',
+            }}>
+            <Button
+              onClick={() => {
+                ServerLogger.info(
+                  LogEvents.ADD_PROJECT_TEMPLATE_BUTTON_CLICKED,
+                );
+                setShowAddEditCard(true);
+              }}>
+              <fbt desc="">Create Project Template</fbt>
+            </Button>
+          </FormActionWithPermissions>
+        );
+
         return (
           <InventoryView
             header={{
@@ -113,32 +137,14 @@ const WorkOrderProjectTypes = () => {
                   are created from more than one work order template.
                 </fbt>
               ),
-              actionButtons: [
-                <FormActionWithPermissions
-                  permissions={{
-                    entity: 'projectTemplate',
-                    action: 'create',
-                  }}>
-                  <Button
-                    onClick={() => {
-                      ServerLogger.info(
-                        LogEvents.ADD_PROJECT_TEMPLATE_BUTTON_CLICKED,
-                      );
-                      setShowAddEditCard(true);
-                    }}>
-                    <fbt desc="">Create Project Template</fbt>
-                  </Button>
-                </FormActionWithPermissions>,
-              ],
+              actionButtons: [createProjectTemplateButton],
             }}
             permissions={{
               entity: 'projectTemplate',
             }}>
-            <div className={classes.typeCards}>
-              {(props.projectTypes?.edges ?? [])
-                .map(edge => edge.node)
-                .filter(Boolean)
-                .map(projectType => (
+            {!!projectTypeData.length ? (
+              <div className={classes.typeCards}>
+                {projectTypeData.map(projectType => (
                   <div key={projectType.id} className={classes.typeCard}>
                     <ProjectTypeCard
                       projectType={projectType}
@@ -146,7 +152,14 @@ const WorkOrderProjectTypes = () => {
                     />
                   </div>
                 ))}
-            </div>
+              </div>
+            ) : (
+              <EmptyStateBackdrop
+                illustration={<EducationNote />}
+                headingText="Start creating project templates">
+                {createProjectTemplateButton}
+              </EmptyStateBackdrop>
+            )}
           </InventoryView>
         );
       }}

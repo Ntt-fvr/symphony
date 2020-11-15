@@ -297,13 +297,19 @@ func (sq *SurveyQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (sq *SurveyQuery) Clone() *SurveyQuery {
+	if sq == nil {
+		return nil
+	}
 	return &SurveyQuery{
-		config:     sq.config,
-		limit:      sq.limit,
-		offset:     sq.offset,
-		order:      append([]OrderFunc{}, sq.order...),
-		unique:     append([]string{}, sq.unique...),
-		predicates: append([]predicate.Survey{}, sq.predicates...),
+		config:         sq.config,
+		limit:          sq.limit,
+		offset:         sq.offset,
+		order:          append([]OrderFunc{}, sq.order...),
+		unique:         append([]string{}, sq.unique...),
+		predicates:     append([]predicate.Survey{}, sq.predicates...),
+		withLocation:   sq.withLocation.Clone(),
+		withSourceFile: sq.withSourceFile.Clone(),
+		withQuestions:  sq.withQuestions.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,

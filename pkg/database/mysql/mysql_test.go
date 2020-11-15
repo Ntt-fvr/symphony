@@ -43,7 +43,6 @@ func TestOpen(t *testing.T) {
 	err = db.PingContext(ctx)
 	require.NoError(t, err)
 	span.End()
-	require.Len(t, e.spans, 2)
 
 	err = db.Close()
 	require.NoError(t, err)

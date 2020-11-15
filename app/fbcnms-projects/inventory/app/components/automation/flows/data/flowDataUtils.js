@@ -19,6 +19,7 @@ import type {
 } from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
+import type {IShape} from '../builder/canvas/graph/facades/shapes/BaseShape';
 import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
 import type {
   PublishFlowInput,
@@ -28,6 +29,7 @@ import type {
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
 import PublishFlowMutation from '../../../../mutations/PublishFlowMutation';
 import {getGraphError} from '../../../../common/EntUtils';
+import {isLasso} from '../builder/canvas/graph/facades/shapes/vertexes/helpers/Lasso';
 
 export function saveFlowDraft(
   input: ImportFlowDraftInput,
@@ -120,4 +122,20 @@ export function mapConnectorsForSave(connector: IConnector): ConnectorInput {
     sourceBlockCid: connector.source?.id ?? '',
     targetBlockCid: connector.target?.id ?? '',
   };
+}
+
+const ignoredAttributes = ['parent'];
+
+export function hasMeaningfulChanges(shape: IShape): boolean {
+  if (isLasso(shape) || shape.changed == null) {
+    return false;
+  }
+
+  const changedAttributes = Object.keys(shape.changed);
+
+  return (
+    changedAttributes.findIndex(
+      attribute => !ignoredAttributes.includes(attribute),
+    ) > -1
+  );
 }

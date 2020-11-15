@@ -292,3 +292,20 @@ export const getPredefinedFilterSetWithValues = (
     stringSet: values,
   };
 };
+
+export const validateIfDefaultStatusFieldsAreApplied = (
+  currentlyAppliedFilters: Array<any>,
+  defaultStatusFilters: Object,
+) => {
+  const isMoreThanOneFilterTypeApplied = currentlyAppliedFilters.length > 1;
+  const isStatusListOfSameLength =
+    currentlyAppliedFilters[0]?.stringSet?.length ===
+    defaultStatusFilters?.stringSet.length;
+  if (isMoreThanOneFilterTypeApplied || !isStatusListOfSameLength) {
+    return false;
+  }
+
+  return currentlyAppliedFilters[0]?.stringSet?.every(status =>
+    defaultStatusFilters?.stringSet?.includes(status),
+  );
+};

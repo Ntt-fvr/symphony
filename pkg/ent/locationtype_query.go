@@ -296,13 +296,19 @@ func (ltq *LocationTypeQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (ltq *LocationTypeQuery) Clone() *LocationTypeQuery {
+	if ltq == nil {
+		return nil
+	}
 	return &LocationTypeQuery{
-		config:     ltq.config,
-		limit:      ltq.limit,
-		offset:     ltq.offset,
-		order:      append([]OrderFunc{}, ltq.order...),
-		unique:     append([]string{}, ltq.unique...),
-		predicates: append([]predicate.LocationType{}, ltq.predicates...),
+		config:                       ltq.config,
+		limit:                        ltq.limit,
+		offset:                       ltq.offset,
+		order:                        append([]OrderFunc{}, ltq.order...),
+		unique:                       append([]string{}, ltq.unique...),
+		predicates:                   append([]predicate.LocationType{}, ltq.predicates...),
+		withLocations:                ltq.withLocations.Clone(),
+		withPropertyTypes:            ltq.withPropertyTypes.Clone(),
+		withSurveyTemplateCategories: ltq.withSurveyTemplateCategories.Clone(),
 		// clone intermediate query.
 		sql:  ltq.sql.Clone(),
 		path: ltq.path,

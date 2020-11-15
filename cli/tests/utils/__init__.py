@@ -7,8 +7,10 @@ import time
 import requests
 
 from typing import Callable
-from gql.gql.graphql_client import GraphqlClient
+from gql_client.runtime.graphql_client import GraphqlClient
 from psym.client import SymphonyClient
+from gql import Client
+from gql.transport.requests import RequestsHTTPTransport
 from psym.common.endpoint import LOCALHOST_SERVER
 
 from .constant import PLATFORM_SERVER_HEALTH_CHECK_URL, TestMode
@@ -61,7 +63,20 @@ def init_cleaner() -> Callable:
 
     session = requests.Session()
     session.verify = False
-    client = GraphqlClient(endpoint, session, "psym")
+    client = GraphqlClient(
+        Client(
+            transport=RequestsHTTPTransport(
+                url=endpoint,
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "User-Agent": "psym",
+                },
+                verify=False,
+            ),
+            fetch_schema_from_transport=True,
+        )
+    )
     mutation = """
         mutation TruncateTenant($name: String!) {
             truncateTenant(input: { name: $name }) {

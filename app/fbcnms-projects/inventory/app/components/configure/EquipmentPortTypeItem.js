@@ -11,13 +11,13 @@ import type {EquipmentPortTypeItem_equipmentPortType} from './__generated__/Equi
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
 
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import CardSection from '../CardSection';
-import ConfigureExpansionPanel from './ConfigureExpansionPanel';
+import ConfigureAccordion from './ConfigureAccordionPanel';
 import DynamicPropertyTypesGrid from '../DynamicPropertyTypesGrid';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import React from 'react';
 import RemoveEquipmentPortTypeMutation from '../../mutations/RemoveEquipmentPortTypeMutation';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
@@ -49,9 +49,9 @@ class EquipmentPortTypeItem extends React.Component<Props> {
     const {classes, equipmentPortType, onEdit} = this.props;
     return (
       <div>
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <ConfigureExpansionPanel
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <ConfigureAccordion
               entityName="portType"
               icon={<SettingsEthernetIcon />}
               name={equipmentPortType.name}
@@ -61,8 +61,8 @@ class EquipmentPortTypeItem extends React.Component<Props> {
               onDelete={this.onDelete}
               onEdit={onEdit}
             />
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails className={classes.detailsRoot}>
+          </AccordionSummary>
+          <AccordionDetails className={classes.detailsRoot}>
             <div className={classes.detailsContainer}>
               <CardSection title="Port Properties">
                 <DynamicPropertyTypesGrid
@@ -79,8 +79,8 @@ class EquipmentPortTypeItem extends React.Component<Props> {
                 />
               </CardSection>
             </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </div>
     );
   }

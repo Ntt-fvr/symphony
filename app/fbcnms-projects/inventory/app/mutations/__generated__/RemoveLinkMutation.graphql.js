@@ -62,16 +62,6 @@ export type RemoveLinkMutationResponse = {|
         +equipmentType: {|
           +id: string,
           +name: string,
-          +portDefinitions: $ReadOnlyArray<?{|
-            +id: string,
-            +name: string,
-            +visibleLabel: ?string,
-            +bandwidth: ?string,
-            +portType: ?{|
-              +id: string,
-              +name: string,
-            |},
-          |}>,
         |},
         +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
       |},
@@ -181,16 +171,6 @@ mutation RemoveLinkMutation(
         equipmentType {
           id
           name
-          portDefinitions {
-            id
-            name
-            visibleLabel
-            bandwidth
-            portType {
-              id
-              name
-            }
-          }
         }
         ...EquipmentBreadcrumbs_equipment
       }
@@ -485,41 +465,7 @@ v17 = {
   "kind": "LinkedField",
   "name": "equipmentType",
   "plural": false,
-  "selections": [
-    (v2/*: any*/),
-    (v4/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "EquipmentPortDefinition",
-      "kind": "LinkedField",
-      "name": "portDefinitions",
-      "plural": true,
-      "selections": [
-        (v2/*: any*/),
-        (v4/*: any*/),
-        (v5/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "bandwidth",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EquipmentPortType",
-          "kind": "LinkedField",
-          "name": "portType",
-          "plural": false,
-          "selections": (v16/*: any*/),
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
+  "selections": (v16/*: any*/),
   "storageKey": null
 },
 v18 = {
@@ -842,16 +788,7 @@ return {
                         "selections": [
                           (v2/*: any*/),
                           (v4/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "EquipmentType",
-                            "kind": "LinkedField",
-                            "name": "equipmentType",
-                            "plural": false,
-                            "selections": (v16/*: any*/),
-                            "storageKey": null
-                          }
+                          (v17/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -948,12 +885,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bff58677463a865771a45495e3d0f5b7",
+    "cacheID": "37ee22ef54d008e8c87e284e2a226dd6",
     "id": null,
     "metadata": {},
     "name": "RemoveLinkMutation",
     "operationKind": "mutation",
-    "text": "mutation RemoveLinkMutation(\n  $id: ID!\n  $workOrderId: ID\n) {\n  removeLink(id: $id, workOrderId: $workOrderId) {\n    id\n    futureState\n    ports {\n      id\n      definition {\n        id\n        name\n        visibleLabel\n        portType {\n          linkPropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isInstanceProperty\n            isMandatory\n            category\n            isDeleted\n          }\n          id\n        }\n      }\n      parentEquipment {\n        id\n        name\n        futureState\n        equipmentType {\n          id\n          name\n          portDefinitions {\n            id\n            name\n            visibleLabel\n            bandwidth\n            portType {\n              id\n              name\n            }\n          }\n        }\n        ...EquipmentBreadcrumbs_equipment\n      }\n      serviceEndpoints {\n        definition {\n          role\n          id\n        }\n        service {\n          name\n          id\n        }\n        id\n      }\n    }\n    workOrder {\n      id\n      status\n    }\n    properties {\n      id\n      propertyType {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isInstanceProperty\n        isMandatory\n        category\n        isDeleted\n      }\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      nodeValue {\n        __typename\n        id\n        name\n      }\n    }\n    services {\n      id\n      name\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "mutation RemoveLinkMutation(\n  $id: ID!\n  $workOrderId: ID\n) {\n  removeLink(id: $id, workOrderId: $workOrderId) {\n    id\n    futureState\n    ports {\n      id\n      definition {\n        id\n        name\n        visibleLabel\n        portType {\n          linkPropertyTypes {\n            id\n            name\n            type\n            nodeType\n            index\n            stringValue\n            intValue\n            booleanValue\n            floatValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n            isEditable\n            isInstanceProperty\n            isMandatory\n            category\n            isDeleted\n          }\n          id\n        }\n      }\n      parentEquipment {\n        id\n        name\n        futureState\n        equipmentType {\n          id\n          name\n        }\n        ...EquipmentBreadcrumbs_equipment\n      }\n      serviceEndpoints {\n        definition {\n          role\n          id\n        }\n        service {\n          name\n          id\n        }\n        id\n      }\n    }\n    workOrder {\n      id\n      status\n    }\n    properties {\n      id\n      propertyType {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isInstanceProperty\n        isMandatory\n        category\n        isDeleted\n      }\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      nodeValue {\n        __typename\n        id\n        name\n      }\n    }\n    services {\n      id\n      name\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();

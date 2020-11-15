@@ -297,13 +297,19 @@ func (sedq *ServiceEndpointDefinitionQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (sedq *ServiceEndpointDefinitionQuery) Clone() *ServiceEndpointDefinitionQuery {
+	if sedq == nil {
+		return nil
+	}
 	return &ServiceEndpointDefinitionQuery{
-		config:     sedq.config,
-		limit:      sedq.limit,
-		offset:     sedq.offset,
-		order:      append([]OrderFunc{}, sedq.order...),
-		unique:     append([]string{}, sedq.unique...),
-		predicates: append([]predicate.ServiceEndpointDefinition{}, sedq.predicates...),
+		config:            sedq.config,
+		limit:             sedq.limit,
+		offset:            sedq.offset,
+		order:             append([]OrderFunc{}, sedq.order...),
+		unique:            append([]string{}, sedq.unique...),
+		predicates:        append([]predicate.ServiceEndpointDefinition{}, sedq.predicates...),
+		withEndpoints:     sedq.withEndpoints.Clone(),
+		withServiceType:   sedq.withServiceType.Clone(),
+		withEquipmentType: sedq.withEquipmentType.Clone(),
 		// clone intermediate query.
 		sql:  sedq.sql.Clone(),
 		path: sedq.path,

@@ -17,7 +17,7 @@ from psym.graphql.fragment.property_type import PropertyTypeFragment
 from psym.graphql.fragment.service_type import ServiceTypeFragment
 from psym.graphql.fragment.work_order import WorkOrderFragment
 from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
-from psym.graphql.input.property_type import PropertyTypeInput
+from psym.graphql.input.property_type_input import PropertyTypeInput
 
 from .data_class import (
     Equipment,

@@ -248,6 +248,9 @@ func (ppq *PermissionsPolicyQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (ppq *PermissionsPolicyQuery) Clone() *PermissionsPolicyQuery {
+	if ppq == nil {
+		return nil
+	}
 	return &PermissionsPolicyQuery{
 		config:     ppq.config,
 		limit:      ppq.limit,
@@ -255,6 +258,7 @@ func (ppq *PermissionsPolicyQuery) Clone() *PermissionsPolicyQuery {
 		order:      append([]OrderFunc{}, ppq.order...),
 		unique:     append([]string{}, ppq.unique...),
 		predicates: append([]predicate.PermissionsPolicy{}, ppq.predicates...),
+		withGroups: ppq.withGroups.Clone(),
 		// clone intermediate query.
 		sql:  ppq.sql.Clone(),
 		path: ppq.path,

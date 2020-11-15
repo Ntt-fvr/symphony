@@ -3,19 +3,20 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from gql.gql.datetime_utils import DATETIME_FIELD
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.client import OperationException
-from gql.gql.reporter import FailedOperationException
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.graphql_client import GraphqlClient
+from gql_client.runtime.reporter import FailedOperationException
+from gql import gql
+from gql.transport.exceptions import TransportQueryError
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
-from ..fragment.equipment_port_definition import EquipmentPortDefinitionFragment, QUERY as EquipmentPortDefinitionFragmentQuery
-from ..fragment.equipment_position_definition import EquipmentPositionDefinitionFragment, QUERY as EquipmentPositionDefinitionFragmentQuery
-from ..fragment.property_type import PropertyTypeFragment, QUERY as PropertyTypeFragmentQuery
+from .equipment_port_definition import EquipmentPortDefinitionFragment, QUERY as EquipmentPortDefinitionFragmentQuery
+from .equipment_position_definition import EquipmentPositionDefinitionFragment, QUERY as EquipmentPositionDefinitionFragmentQuery
+from .property_type import PropertyTypeFragment, QUERY as PropertyTypeFragmentQuery
 QUERY: List[str] = EquipmentPortDefinitionFragmentQuery + EquipmentPositionDefinitionFragmentQuery + PropertyTypeFragmentQuery + ["""
 fragment EquipmentTypeFragment on EquipmentType {
   id

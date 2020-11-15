@@ -25,6 +25,7 @@ func main() {
 		Templates: entgql.AllTemplates,
 		Features: []gen.Feature{
 			gen.FeaturePrivacy,
+			gen.FeatureSnapshot,
 		},
 	}, entc.TemplateDir("./template"))
 	if err != nil {

@@ -36,6 +36,7 @@ import {CloseIcon} from '@symphony/design-system/icons';
 import {Router, withRouter} from 'react-router-dom';
 import {SnackbarProvider} from 'notistack';
 import {getMapStyleForType} from '@fbcnms/ui/insights/map/styles';
+import {isEqual} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = (theme: Theme) => ({
@@ -221,30 +222,30 @@ class MapView<T> extends React.Component<Props<T>, State> {
   }
 
   componentDidUpdate(prevProps: Props<T>) {
-    if (prevProps.layers.length === 0 && this.props.layers.length > 0) {
+    if (!isEqual(prevProps.layers, this.props.layers)) {
       this._fitBounds();
-    }
 
-    /* Assume that same layer source key means same underlying data.
-     * Please use a different source key if underlying data needs update. */
-    const map = nullthrows(this.state.map);
-    if (map.loaded && map.isStyleLoaded()) {
-      prevProps.layers.forEach(prevLayer => {
-        this._removeLayer(
-          prevLayer,
-          this.props.layers.find(
-            layer => layer.source.key === prevLayer.source.key,
-          ),
-        );
-      });
-      this.props.layers.forEach(layer => {
-        this._addLayer(
-          layer,
-          prevProps.layers.find(
-            prevLayer => prevLayer.source.key === layer.source.key,
-          ),
-        );
-      });
+      /* Assume that same layer source key means same underlying data.
+       * Please use a different source key if underlying data needs update. */
+      const map = nullthrows(this.state.map);
+      if (map.loaded && map.isStyleLoaded()) {
+        prevProps.layers.forEach(prevLayer => {
+          this._removeLayer(
+            prevLayer,
+            this.props.layers.find(
+              layer => layer.source.key === prevLayer.source.key,
+            ),
+          );
+        });
+        this.props.layers.forEach(layer => {
+          this._addLayer(
+            layer,
+            prevProps.layers.find(
+              prevLayer => prevLayer.source.key === layer.source.key,
+            ),
+          );
+        });
+      }
     }
   }
 

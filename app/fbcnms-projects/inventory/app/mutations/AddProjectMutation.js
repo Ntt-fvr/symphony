@@ -22,7 +22,22 @@ import {commitMutation, graphql} from 'react-relay';
 const mutation = graphql`
   mutation AddProjectMutation($input: AddProjectInput!) {
     createProject(input: $input) {
-      ...ProjectsTableView_projects
+      id
+      createTime
+      name
+      createdBy {
+        email
+      }
+      location {
+        id
+        name
+      }
+      type {
+        id
+        name
+      }
+      priority
+      numberOfWorkOrders
     }
   }
 `;

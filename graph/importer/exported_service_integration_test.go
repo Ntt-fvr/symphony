@@ -22,6 +22,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/log"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
 
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 
@@ -250,27 +253,13 @@ func verifyServiceData(ctx context.Context, t *testing.T, r *testImporterResolve
 
 func exportServiceData(ctx context.Context, t *testing.T, r *testImporterResolver) bytes.Buffer {
 	var buf bytes.Buffer
-	handler, err := pkgexporter.NewHandler(logtest.NewTestLogger(t))
-	require.NoError(t, err)
-	th := viewer.TenancyHandler(handler, viewer.NewFixedTenancy(r.client), logtest.NewTestLogger(t))
-	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		th.ServeHTTP(w, r.WithContext(ctx))
-	})
-	server := httptest.NewServer(h)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL+"/services", &buf)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	resp, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer resp.Body.Close()
-
-	count, err := buf.ReadFrom(resp.Body)
-	require.NotZero(t, count)
-	require.NoError(t, err)
-
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	err = csv.NewWriter(&buf).WriteAll(rows)
+	require.NoError(t, err, "error writing rows")
 	return buf
 }
 

@@ -136,16 +136,6 @@ export type EquipmentPortsTable_equipment = {|
       +equipmentType: {|
         +id: string,
         +name: string,
-        +portDefinitions: $ReadOnlyArray<?{|
-          +id: string,
-          +name: string,
-          +visibleLabel: ?string,
-          +portType: ?{|
-            +id: string,
-            +name: string,
-          |},
-          +bandwidth: ?string,
-        |}>,
       |},
     |},
     +link: ?{|
@@ -187,16 +177,6 @@ export type EquipmentPortsTable_equipment = {|
           +equipmentType: {|
             +id: string,
             +name: string,
-            +portDefinitions: $ReadOnlyArray<?{|
-              +id: string,
-              +name: string,
-              +visibleLabel: ?string,
-              +bandwidth: ?string,
-              +portType: ?{|
-                +id: string,
-                +name: string,
-              |},
-            |}>,
           |},
           +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
         |},
@@ -359,16 +339,6 @@ export type EquipmentPortsTable_equipment = {|
           +equipmentType: {|
             +id: string,
             +name: string,
-            +portDefinitions: $ReadOnlyArray<?{|
-              +id: string,
-              +name: string,
-              +visibleLabel: ?string,
-              +portType: ?{|
-                +id: string,
-                +name: string,
-              |},
-              +bandwidth: ?string,
-            |}>,
           |},
         |},
         +link: ?{|
@@ -410,16 +380,6 @@ export type EquipmentPortsTable_equipment = {|
               +equipmentType: {|
                 +id: string,
                 +name: string,
-                +portDefinitions: $ReadOnlyArray<?{|
-                  +id: string,
-                  +name: string,
-                  +visibleLabel: ?string,
-                  +bandwidth: ?string,
-                  +portType: ?{|
-                    +id: string,
-                    +name: string,
-                  |},
-                |}>,
               |},
               +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
             |},
@@ -590,16 +550,6 @@ export type EquipmentPortsTable_equipment = {|
               +equipmentType: {|
                 +id: string,
                 +name: string,
-                +portDefinitions: $ReadOnlyArray<?{|
-                  +id: string,
-                  +name: string,
-                  +visibleLabel: ?string,
-                  +portType: ?{|
-                    +id: string,
-                    +name: string,
-                  |},
-                  +bandwidth: ?string,
-                |}>,
               |},
             |},
             +link: ?{|
@@ -641,16 +591,6 @@ export type EquipmentPortsTable_equipment = {|
                   +equipmentType: {|
                     +id: string,
                     +name: string,
-                    +portDefinitions: $ReadOnlyArray<?{|
-                      +id: string,
-                      +name: string,
-                      +visibleLabel: ?string,
-                      +bandwidth: ?string,
-                      +portType: ?{|
-                        +id: string,
-                        +name: string,
-                      |},
-                    |}>,
                   |},
                   +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
                 |},
@@ -821,16 +761,6 @@ export type EquipmentPortsTable_equipment = {|
                   +equipmentType: {|
                     +id: string,
                     +name: string,
-                    +portDefinitions: $ReadOnlyArray<?{|
-                      +id: string,
-                      +name: string,
-                      +visibleLabel: ?string,
-                      +portType: ?{|
-                        +id: string,
-                        +name: string,
-                      |},
-                      +bandwidth: ?string,
-                    |}>,
                   |},
                 |},
                 +link: ?{|
@@ -872,16 +802,6 @@ export type EquipmentPortsTable_equipment = {|
                       +equipmentType: {|
                         +id: string,
                         +name: string,
-                        +portDefinitions: $ReadOnlyArray<?{|
-                          +id: string,
-                          +name: string,
-                          +visibleLabel: ?string,
-                          +bandwidth: ?string,
-                          +portType: ?{|
-                            +id: string,
-                            +name: string,
-                          |},
-                        |}>,
                       |},
                       +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
                     |},
@@ -1052,16 +972,6 @@ export type EquipmentPortsTable_equipment = {|
                       +equipmentType: {|
                         +id: string,
                         +name: string,
-                        +portDefinitions: $ReadOnlyArray<?{|
-                          +id: string,
-                          +name: string,
-                          +visibleLabel: ?string,
-                          +portType: ?{|
-                            +id: string,
-                            +name: string,
-                          |},
-                          +bandwidth: ?string,
-                        |}>,
                       |},
                     |},
                     +link: ?{|
@@ -1103,16 +1013,6 @@ export type EquipmentPortsTable_equipment = {|
                           +equipmentType: {|
                             +id: string,
                             +name: string,
-                            +portDefinitions: $ReadOnlyArray<?{|
-                              +id: string,
-                              +name: string,
-                              +visibleLabel: ?string,
-                              +bandwidth: ?string,
-                              +portType: ?{|
-                                +id: string,
-                                +name: string,
-                              |},
-                            |}>,
                           |},
                           +$fragmentRefs: EquipmentBreadcrumbs_equipment$ref,
                         |},
@@ -1434,9 +1334,9 @@ v15 = [
 v16 = {
   "alias": null,
   "args": null,
-  "concreteType": "EquipmentPortType",
+  "concreteType": "EquipmentType",
   "kind": "LinkedField",
-  "name": "portType",
+  "name": "equipmentType",
   "plural": false,
   "selections": (v15/*: any*/),
   "storageKey": null
@@ -1445,17 +1345,10 @@ v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "bandwidth",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "futureState",
   "storageKey": null
 },
-v19 = {
+v18 = {
   "alias": null,
   "args": null,
   "concreteType": "ServiceEndpoint",
@@ -1496,7 +1389,7 @@ v19 = {
   ],
   "storageKey": null
 },
-v20 = {
+v19 = {
   "alias": null,
   "args": null,
   "concreteType": "Property",
@@ -1536,7 +1429,7 @@ v20 = {
   ],
   "storageKey": null
 },
-v21 = {
+v20 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentPort",
@@ -1565,35 +1458,7 @@ v21 = {
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EquipmentType",
-          "kind": "LinkedField",
-          "name": "equipmentType",
-          "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EquipmentPortDefinition",
-              "kind": "LinkedField",
-              "name": "portDefinitions",
-              "plural": true,
-              "selections": [
-                (v0/*: any*/),
-                (v1/*: any*/),
-                (v3/*: any*/),
-                (v16/*: any*/),
-                (v17/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
+        (v16/*: any*/)
       ],
       "storageKey": null
     },
@@ -1606,7 +1471,7 @@ v21 = {
       "plural": false,
       "selections": [
         (v0/*: any*/),
-        (v18/*: any*/),
+        (v17/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -1652,36 +1517,8 @@ v21 = {
               "selections": [
                 (v0/*: any*/),
                 (v1/*: any*/),
-                (v18/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "EquipmentType",
-                  "kind": "LinkedField",
-                  "name": "equipmentType",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/),
-                    (v1/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "EquipmentPortDefinition",
-                      "kind": "LinkedField",
-                      "name": "portDefinitions",
-                      "plural": true,
-                      "selections": [
-                        (v0/*: any*/),
-                        (v1/*: any*/),
-                        (v3/*: any*/),
-                        (v17/*: any*/),
-                        (v16/*: any*/)
-                      ],
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                },
+                (v17/*: any*/),
+                (v16/*: any*/),
                 {
                   "args": null,
                   "kind": "FragmentSpread",
@@ -1690,7 +1527,7 @@ v21 = {
               ],
               "storageKey": null
             },
-            (v19/*: any*/)
+            (v18/*: any*/)
           ],
           "storageKey": null
         },
@@ -1713,7 +1550,7 @@ v21 = {
           ],
           "storageKey": null
         },
-        (v20/*: any*/),
+        (v19/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -1727,12 +1564,12 @@ v21 = {
       ],
       "storageKey": null
     },
-    (v20/*: any*/),
-    (v19/*: any*/)
+    (v19/*: any*/),
+    (v18/*: any*/)
   ],
   "storageKey": null
 },
-v22 = {
+v21 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentType",
@@ -1751,7 +1588,13 @@ v22 = {
         (v0/*: any*/),
         (v1/*: any*/),
         (v3/*: any*/),
-        (v17/*: any*/)
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "bandwidth",
+          "storageKey": null
+        }
       ],
       "storageKey": null
     }
@@ -1789,7 +1632,7 @@ return {
       ],
       "storageKey": null
     },
-    (v21/*: any*/),
+    (v20/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -1808,8 +1651,8 @@ return {
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
+            (v20/*: any*/),
             (v21/*: any*/),
-            (v22/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -1828,8 +1671,8 @@ return {
                   "selections": [
                     (v0/*: any*/),
                     (v1/*: any*/),
+                    (v20/*: any*/),
                     (v21/*: any*/),
-                    (v22/*: any*/),
                     {
                       "alias": null,
                       "args": null,
@@ -1848,8 +1691,8 @@ return {
                           "selections": [
                             (v0/*: any*/),
                             (v1/*: any*/),
+                            (v20/*: any*/),
                             (v21/*: any*/),
-                            (v22/*: any*/),
                             {
                               "alias": null,
                               "args": null,
@@ -1868,8 +1711,8 @@ return {
                                   "selections": [
                                     (v0/*: any*/),
                                     (v1/*: any*/),
-                                    (v21/*: any*/),
-                                    (v22/*: any*/)
+                                    (v20/*: any*/),
+                                    (v21/*: any*/)
                                   ],
                                   "storageKey": null
                                 }

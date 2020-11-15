@@ -320,13 +320,20 @@ func (seq *ServiceEndpointQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (seq *ServiceEndpointQuery) Clone() *ServiceEndpointQuery {
+	if seq == nil {
+		return nil
+	}
 	return &ServiceEndpointQuery{
-		config:     seq.config,
-		limit:      seq.limit,
-		offset:     seq.offset,
-		order:      append([]OrderFunc{}, seq.order...),
-		unique:     append([]string{}, seq.unique...),
-		predicates: append([]predicate.ServiceEndpoint{}, seq.predicates...),
+		config:         seq.config,
+		limit:          seq.limit,
+		offset:         seq.offset,
+		order:          append([]OrderFunc{}, seq.order...),
+		unique:         append([]string{}, seq.unique...),
+		predicates:     append([]predicate.ServiceEndpoint{}, seq.predicates...),
+		withPort:       seq.withPort.Clone(),
+		withEquipment:  seq.withEquipment.Clone(),
+		withService:    seq.withService.Clone(),
+		withDefinition: seq.withDefinition.Clone(),
 		// clone intermediate query.
 		sql:  seq.sql.Clone(),
 		path: seq.path,

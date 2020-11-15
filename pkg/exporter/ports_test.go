@@ -6,11 +6,7 @@ package exporter
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 
@@ -45,27 +41,12 @@ func TestEmptyPortsDataExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-
+	ctx := viewertest.NewContext(context.Background(), client)
 	e := &Exporter{Log: log, Rower: PortsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		require.EqualValues(t, []string{
 			"\ufeffPort ID",
 			portNameTitle,
@@ -91,28 +72,12 @@ func TestPortsExport(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 
 	e := &Exporter{Log: log, Rower: PortsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), client)
 	PrepareData(ctx, t)
-	require.NoError(t, err)
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	reader := csv.NewReader(res.Body)
-	for {
-		ln, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err, "error reading row")
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	for _, ln := range rows {
 		switch {
 		case ln[1] == portNameTitle:
 			require.EqualValues(t, []string{
@@ -194,9 +159,6 @@ func TestPortWithFilters(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 
 	e := &Exporter{Log: log, Rower: PortsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
 	ctx := viewertest.NewContext(context.Background(), client)
 	PrepareData(ctx, t)
@@ -245,26 +207,11 @@ func TestPortWithFilters(t *testing.T) {
 	require.NoError(t, err)
 
 	for i, filter := range [][]byte{f1, f2, f3} {
-		req, err := http.NewRequest("GET", server.URL, nil)
-		require.NoError(t, err)
-		viewertest.SetDefaultViewerHeaders(req)
-
-		q := req.URL.Query()
-		q.Add("filters", string(filter))
-		req.URL.RawQuery = q.Encode()
-
-		res, err := http.DefaultClient.Do(req)
-		require.NoError(t, err)
-
-		reader := csv.NewReader(res.Body)
+		rows, err := e.Rower.Rows(ctx, string(filter))
+		require.NoError(t, err, "error getting rows")
 		linesCount := 0
-		for {
-			ln, err := reader.Read()
-			if err == io.EOF {
-				break
-			}
+		for _, ln := range rows {
 			linesCount++
-			require.NoError(t, err, "error reading row")
 			if i == 0 {
 				if ln[1] == portName1 {
 					ln[12] = "--"
@@ -323,8 +270,6 @@ func TestPortWithFilters(t *testing.T) {
 				require.Equal(t, 1, linesCount)
 			}
 		}
-		err = res.Body.Close()
-		require.NoError(t, err)
 	}
 }
 

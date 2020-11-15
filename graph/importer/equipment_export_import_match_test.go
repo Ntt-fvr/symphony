@@ -143,25 +143,21 @@ func deleteEquipmentData(ctx context.Context, t *testing.T, r *testExporterResol
 	require.NoError(t, err)
 }
 
-func prepareEquipmentAndExport(t *testing.T, r *testExporterResolver) (context.Context, *http.Response) {
+func prepareEquipmentAndExport(t *testing.T, r *testExporterResolver) (context.Context, *bytes.Buffer) {
+	var buf bytes.Buffer
 	log := r.Exporter.Log
-	var h http.Handler = &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, h, r.Client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 
 	ctx := viewertest.NewContext(context.Background(), r.Client)
 	pkgexporter.PrepareData(ctx, t)
 	locs := r.Client.Location.Query().AllX(ctx)
 	require.Len(t, locs, 3)
 
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	return ctx, res
+	rows, err := e.Rower.Rows(ctx, "")
+	require.NoError(t, err, "error getting rows")
+	err = csv.NewWriter(&buf).WriteAll(rows)
+	require.NoError(t, err, "error writing rows")
+	return ctx, &buf
 }
 
 func TestEquipmentExportAndImportMatch(t *testing.T) {
@@ -170,13 +166,12 @@ func TestEquipmentExportAndImportMatch(t *testing.T) {
 		t.Run("Verify/"+strconv.FormatBool(verify), func(t *testing.T) {
 			r := newExporterTestResolver(t)
 			ctx, res := prepareEquipmentAndExport(t, r)
-			defer res.Body.Close()
 			deleteEquipmentData(ctx, t, r)
 
 			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 0)
 
-			importEquipmentFile(t, r.Client, res.Body, methodAdd, verify)
+			importEquipmentFile(t, r.Client, res, methodAdd, verify)
 			locs = r.Client.Location.Query().AllX(ctx)
 			if verify {
 				require.Len(t, locs, 0)
@@ -196,14 +191,15 @@ func TestEquipmentExportAndImportMatch(t *testing.T) {
 					require.Equal(t, parentEquip, loc.QueryEquipment().OnlyX(ctx).Name)
 				}
 			}
-			equips, err := r.Query().EquipmentSearch(ctx, nil, nil)
+			equips, err := r.Query().Equipments(ctx, nil, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
 			if verify {
-				require.Equal(t, 0, equips.Count)
+				require.Equal(t, 0, equips.TotalCount)
 			} else {
-				require.Equal(t, 2, equips.Count)
+				require.Equal(t, 2, equips.TotalCount)
 			}
-			for _, equip := range equips.Equipment {
+			for _, edge := range equips.Edges {
+				equip := edge.Node
 				switch equip.Name {
 				case currEquip:
 					require.Equal(t, equipmentType2Name, equip.QueryType().OnlyX(ctx).Name)
@@ -234,15 +230,15 @@ func TestEquipmentImportAndEdit(t *testing.T) {
 		t.Run("Verify/"+strconv.FormatBool(verify), func(t *testing.T) {
 			r := newExporterTestResolver(t)
 			ctx, res := prepareEquipmentAndExport(t, r)
-			defer res.Body.Close()
 
-			importEquipmentFile(t, r.Client, res.Body, methodEdit, verify)
+			importEquipmentFile(t, r.Client, res, methodEdit, verify)
 			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
-			equips, err := r.Query().EquipmentSearch(ctx, nil, nil)
+			equips, err := r.Query().Equipments(ctx, nil, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
-			require.Equal(t, 2, equips.Count)
-			for _, equip := range equips.Equipment {
+			require.Equal(t, 2, equips.TotalCount)
+			for _, edge := range equips.Edges {
+				equip := edge.Node
 				switch equip.Name {
 				case parentEquip:
 					require.Equal(t, equipmentTypeName, equip.QueryType().OnlyX(ctx).Name)

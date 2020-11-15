@@ -15,6 +15,11 @@ This is template for release notes
 ***
 -->
 
+***
+## 2.2.1 - release date 1.11.2020
+### Changes
+- Refactor to internally use https://pypi.org/project/py-gql-client/
+***
 
 ***
 ## 2.2.0 - release date 06.10.2020

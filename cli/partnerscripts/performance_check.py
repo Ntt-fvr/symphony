@@ -42,7 +42,6 @@ def main(email: str, password: str, tenant: str) -> List[Tuple[Location, float, 
         for location, external_id in locations_with_external_ids
     ]
     print(f"GATHER in {t.stop():.4f} secs")
-    client.session.close()
     return result
 
 

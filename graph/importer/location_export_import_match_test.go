@@ -117,16 +117,16 @@ func TestExportAndEditLocations(t *testing.T) {
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
-			importLocationsFile(t, r.Client, res.Body, methodEdit, withVerify, skipLines)
-			res.Body.Close()
+			importLocationsFile(t, r.Client, res, methodEdit, withVerify, skipLines)
 
-			locations, err := r.Query().LocationSearch(ctx, nil, nil)
+			locations, err := r.Query().Locations(ctx, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
 			switch {
 			case skipLines || withVerify:
-				require.Equal(t, 3, locations.Count)
-				require.Len(t, locations.Locations, 3)
-				for _, loc := range locations.Locations {
+				require.Equal(t, 3, locations.TotalCount)
+				require.Len(t, locations.Edges, 3)
+				for _, edge := range locations.Edges {
+					loc := edge.Node
 					if loc.Name == childLocation {
 						require.Empty(t, loc.ExternalID)
 						require.Zero(t, loc.Latitude)
@@ -134,8 +134,9 @@ func TestExportAndEditLocations(t *testing.T) {
 					}
 				}
 			default:
-				require.Equal(t, 3, locations.Count)
-				for _, loc := range locations.Locations {
+				require.Equal(t, 3, locations.TotalCount)
+				for _, edge := range locations.Edges {
+					loc := edge.Node
 					props := loc.QueryProperties().AllX(ctx)
 					if loc.Name == childLocation {
 						require.Equal(t, "new-external-id", loc.ExternalID)
@@ -174,21 +175,21 @@ func TestExportAndAddLocations(t *testing.T) {
 			locs = r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 0)
 
-			importLocationsFile(t, r.Client, res.Body, methodAdd, withVerify, skipLines)
-			res.Body.Close()
+			importLocationsFile(t, r.Client, res, methodAdd, withVerify, skipLines)
 
-			locations, err := r.Query().LocationSearch(ctx, nil, nil)
+			locations, err := r.Query().Locations(ctx, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 			require.NoError(t, err)
 			switch {
 			case !skipLines && withVerify:
-				require.Zero(t, 0, locations.Count)
-				require.Empty(t, locations.Locations)
+				require.Zero(t, 0, locations.TotalCount)
+				require.Empty(t, locations.Edges)
 			case skipLines || withVerify:
-				require.Equal(t, 1, locations.Count)
-				require.Len(t, locations.Locations, 1)
+				require.Equal(t, 1, locations.TotalCount)
+				require.Len(t, locations.Edges, 1)
 			default:
-				require.Equal(t, 3, locations.Count)
-				for _, loc := range locations.Locations {
+				require.Equal(t, 3, locations.TotalCount)
+				for _, edge := range locations.Edges {
+					loc := edge.Node
 					props := loc.QueryProperties().AllX(ctx)
 					for _, prop := range props {
 						switch prop.QueryType().OnlyX(ctx).Name {

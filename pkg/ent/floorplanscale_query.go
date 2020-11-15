@@ -222,6 +222,9 @@ func (fpsq *FloorPlanScaleQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (fpsq *FloorPlanScaleQuery) Clone() *FloorPlanScaleQuery {
+	if fpsq == nil {
+		return nil
+	}
 	return &FloorPlanScaleQuery{
 		config:     fpsq.config,
 		limit:      fpsq.limit,

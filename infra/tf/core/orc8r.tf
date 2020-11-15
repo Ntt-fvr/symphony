@@ -21,7 +21,7 @@ module orc8r_db {
   family                     = "postgres9.6"
   major_engine_version       = "9.6"
   engine                     = "postgres"
-  engine_version             = "9.6.15"
+  engine_version             = "9.6.18"
   auto_minor_version_upgrade = true
   instance_class             = terraform.workspace == "default" ? "db.m4.xlarge" : "db.t2.small"
 

@@ -8,26 +8,16 @@
  * @format
  */
 
-import type {BlocksBar_flowDraft} from './__generated__/BlocksBar_flowDraft.graphql';
-import type {WithFlowData} from '../../../data/FlowDataContext';
-
+import * as React from 'react';
 import BlocksCategory from './BlocksCategory';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
 import DecisionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
 import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
-import Logo from '../../../../../../common/Logo';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
-import React from 'react';
 import SideBar from '@symphony/design-system/components/View/SideBar';
-import Text from '@symphony/design-system/components/Text';
-import {InventoryAPIUrls} from '../../../../../../common/InventoryAPI';
-import {Link} from 'react-router-dom';
-import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
-import {useMemo} from 'react';
-import {useState} from 'react';
-import {withFlowData} from '../../../data/FlowDataContext';
+import {useMemo, useState} from 'react';
 
 const COLLAPSED_WIDTH = '80px';
 
@@ -50,29 +40,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = WithFlowData<BlocksBar_flowDraft>;
+type Props = $ReadOnly<{|
+  title: React.Node,
+|}>;
 
-function BlocksBar(props: Props) {
-  const {flowDraft} = props;
+export default function BlocksBar(props: Props) {
+  const {title} = props;
   const flow = useGraph();
   const classes = useStyles();
   const [collapsed, setCollapsed] = useState(false);
-
-  const flowName = flowDraft?.name;
-  const title = useMemo(() => {
-    return (
-      <div className={classes.header}>
-        <Link className={classes.logo} to={InventoryAPIUrls.flows()}>
-          <Logo />
-        </Link>
-        {!collapsed && (
-          <Text className={classes.name} variant="h6" useEllipsis={true}>
-            {flowName}
-          </Text>
-        )}
-      </div>
-    );
-  }, [flowName, classes, collapsed]);
 
   const administrativeTypes = useMemo(
     () => [new ManualStartBlockType(flow), new EndBlockType(flow)],
@@ -113,13 +89,3 @@ function BlocksBar(props: Props) {
     </SideBar>
   );
 }
-
-export default withFlowData(
-  createFragmentContainer(BlocksBar, {
-    flowDraft: graphql`
-      fragment BlocksBar_flowDraft on FlowDraft {
-        name
-      }
-    `,
-  }),
-);

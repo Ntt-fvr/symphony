@@ -722,6 +722,9 @@ store:
     bucket:
       url: ""
 
+    # Additional key/value pairs to be used as environment variables
+    extraEnvVars: []
+
 # Configuration for docs application
 docs:
   # Annotations to be added to docs deployment

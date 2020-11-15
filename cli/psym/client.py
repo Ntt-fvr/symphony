@@ -2,10 +2,15 @@
 
 import re
 from typing import Any, Dict, Optional
+import requests
 
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.reporter import DUMMY_REPORTER, Reporter
-from requests import Session
+from gql_client.runtime.reporter import DUMMY_REPORTER, Reporter
+from gql_client.runtime.graphql_client import GraphqlClient
+
+from gql import Client
+from gql.transport.exceptions import TransportServerError
+from gql.transport.requests import RequestsHTTPTransport
+
 from requests.auth import HTTPBasicAuth
 from requests.models import Response
 
@@ -17,6 +22,10 @@ from .common.endpoint import (
     SYMPHONY_STORE_PUT,
     SYMPHONY_URI,
 )
+
+
+class UserDeactivatedException(Exception):
+    pass
 
 
 class SymphonyClient(GraphqlClient):
@@ -66,11 +75,9 @@ class SymphonyClient(GraphqlClient):
         graphql_endpoint_address = self.address + SYMPHONY_GRAPHQL
         self.app = app
 
-        self.session: Session = Session()
         auth = HTTPBasicAuth(email, password)
-        verify_ssl = not is_local_host and not is_dev_mode
-        self.session.verify = verify_ssl
-        if not verify_ssl:
+        self.verify_ssl = not is_local_host and not is_dev_mode
+        if not self.verify_ssl:
             import urllib3
 
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -78,12 +85,35 @@ class SymphonyClient(GraphqlClient):
         self.put_endpoint: str = self.address + SYMPHONY_STORE_PUT
         self.delete_endpoint: str = self.address + SYMPHONY_STORE_DELETE
 
-        super().__init__(graphql_endpoint_address, self.session, app, auth, reporter)
+        try:
+            client = Client(
+                transport=RequestsHTTPTransport(
+                    url=graphql_endpoint_address,
+                    headers={
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "User-Agent": app,
+                    },
+                    auth=auth,
+                    verify=self.verify_ssl,
+                ),
+                fetch_schema_from_transport=True,
+            )
+            super().__init__(
+                client,
+                reporter,
+            )
+        except TransportServerError as e:
+            err_msg = str(e.args[0])
+            if "Forbidden" in err_msg:
+                raise UserDeactivatedException()
+            raise
+
+        self.session: Optional[requests.Session] = None
 
     def store_file(self, file_path: str, file_type: str, is_global: bool) -> str:
-        # TODO(T64504906): Remove after basic auth is enabled
-        if "x-csrf-token" not in self.session.headers:
-            self._login()
+        if self.session is None:
+            self.session = self._login()
         sign_response = self.session.get(
             self.put_endpoint,
             params={"contentType": file_type},
@@ -100,9 +130,8 @@ class SymphonyClient(GraphqlClient):
         return sign_response_json["key"]
 
     def delete_file(self, key: str, is_global: bool) -> None:
-        # TODO(T64504906): Remove after basic auth is enabled
-        if "x-csrf-token" not in self.session.headers:
-            self._login()
+        if self.session is None:
+            self.session = self._login()
         sign_response = self.session.delete(
             self.delete_endpoint.format(key),
             headers={"Is-Global": str(is_global)},
@@ -115,39 +144,38 @@ class SymphonyClient(GraphqlClient):
         response.raise_for_status()
 
     def get(self, url: str) -> Response:
-        # TODO(T64504906): Remove after basic auth is enabled
-        if "x-csrf-token" not in self.session.headers:
-            self._login()
+        if self.session is None:
+            self.session = self._login()
         return self.session.get(
             "".join([self.address, url]), headers={"User-Agent": self.app}
         )
 
     def post(self, url: str, json: Optional[Dict[str, Any]] = None) -> Response:
-        # TODO(T64504906): Remove after basic auth is enabled
-        if "x-csrf-token" not in self.session.headers:
-            self._login()
+        if self.session is None:
+            self.session = self._login()
         return self.session.post(
             "".join([self.address, url]), json=json, headers={"User-Agent": self.app}
         )
 
     def put(self, url: str, json: Optional[Dict[str, Any]] = None) -> Response:
-        # TODO(T64504906): Remove after basic auth is enabled
-        if "x-csrf-token" not in self.session.headers:
-            self._login()
+        if self.session is None:
+            self.session = self._login()
         return self.session.put(
             "".join([self.address, url]), json=json, headers={"User-Agent": self.app}
         )
 
-    def _login(self) -> None:
+    def _login(self) -> requests.Session:
+        session = requests.Session()
+        session.verify = self.verify_ssl
         login_endpoint = self.address + SYMPHONY_LOGIN
-        response = self.session.get(login_endpoint)
+        response = session.get(login_endpoint)
         match = re.search(b'"csrfToken":"([^"]+)"', response.content)
         assert match is not None, "Problem with symphony login"
         csrf_token = match.group(1).decode("ascii")
         login_data = "_csrf={0}&email={1}&password={2}".format(
             csrf_token, self.email, self.password
         ).encode("ascii")
-        response = self.session.post(
+        response = session.post(
             login_endpoint,
             data=login_data,
             headers={
@@ -160,4 +188,5 @@ class SymphonyClient(GraphqlClient):
             re.search('"email":"{}"'.format(self.email).encode(), response.content)
             is not None
         ), "Credentials are incorrect"
-        self.session.headers.update({"x-csrf-token": csrf_token})
+        session.headers.update({"x-csrf-token": csrf_token})
+        return session

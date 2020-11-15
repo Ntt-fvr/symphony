@@ -15,6 +15,8 @@ import type {
 
 import AddEditWorkOrderTypeCard from './AddEditWorkOrderTypeCard';
 import Button from '@symphony/design-system/components/Button';
+import EducationNote from '@symphony/design-system/illustrations/EducationNote';
+import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryView from '../InventoryViewContainer';
 import React, {useMemo, useState} from 'react';
@@ -163,6 +165,15 @@ const WorkOrderTypes = () => {
           order: TABLE_SORT_ORDER.ascending,
         }}
       />
+      {!tableData.length && (
+        <EmptyStateBackdrop
+          illustration={<EducationNote />}
+          headingText={`${fbt('Start creating work order templates', '')}`}>
+          <Button key="2" onClick={() => showAddEditWorkOrderTypeCard(null)}>
+            <fbt desc="">Create Work Order Template</fbt>
+          </Button>
+        </EmptyStateBackdrop>
+      )}
     </InventoryView>
   );
 };

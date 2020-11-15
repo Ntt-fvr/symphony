@@ -58,6 +58,12 @@ type ActivityFilterInput struct {
 	ActivityType   activity.ActivityType `json:"activityType"`
 }
 
+type AddBulkServiceLinksAndPortsInput struct {
+	ID      int   `json:"id"`
+	PortIds []int `json:"portIds"`
+	LinkIds []int `json:"linkIds"`
+}
+
 type AddCustomerInput struct {
 	Name       string  `json:"name"`
 	ExternalID *string `json:"externalId"`
@@ -468,6 +474,14 @@ type EndBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+// End To End Path Descovery.
+type EndToEndPath struct {
+	// The links in the path
+	Links []*ent.Link `json:"links"`
+	// The start,end ports in the path
+	Ports []*ent.EquipmentPort `json:"ports"`
+}
+
 type EntryPointInput struct {
 	Role *flowschema.EntryPointRole `json:"role"`
 	Cid  *string                    `json:"cid"`
@@ -859,9 +873,8 @@ type TechnicianWorkOrderCheckOutInput struct {
 }
 
 type TechnicianWorkOrderUploadInput struct {
-	WorkOrderID         int                             `json:"workOrderId"`
-	Checklist           []*TechnicianCheckListItemInput `json:"checklist"`
-	CheckListCategories []*CheckListCategoryInput       `json:"checkListCategories"`
+	WorkOrderID         int                       `json:"workOrderId"`
+	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 }
 
 type TopologyLink struct {

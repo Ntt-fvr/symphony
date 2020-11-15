@@ -13,7 +13,6 @@ import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback} from 'react';
 import RenameFlowDialog from '../RenameFlowDialog';
 import Text from '@symphony/design-system/components/Text';
-import {FormContextProvider} from '../../../../../../../common/FormContext';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {RenameOneLineIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
@@ -70,20 +69,18 @@ export default function FlowTitle() {
   }, [dialogShowingContext, hide, flowData]);
 
   return (
-    <FormContextProvider permissions={{adminRightsRequired: true}}>
-      <div className={classes.root}>
-        <div className={classes.name}>
-          <Text variant="h6">{flowData.flowDraft?.name ?? null}</Text>
-        </div>
-        <FormAction disableOnFromError={true}>
-          <IconButton
-            className={classes.renameButton}
-            icon={RenameOneLineIcon}
-            onClick={show}
-            skin="gray"
-          />
-        </FormAction>
+    <div className={classes.root}>
+      <div className={classes.name}>
+        <Text variant="h6">{flowData.flowDraft?.name ?? null}</Text>
       </div>
-    </FormContextProvider>
+      <FormAction hideOnEditLocks={true}>
+        <IconButton
+          className={classes.renameButton}
+          icon={RenameOneLineIcon}
+          onClick={show}
+          skin="gray"
+        />
+      </FormAction>
+    </div>
   );
 }

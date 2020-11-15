@@ -47,7 +47,7 @@ export type ConnectorEventCallback = (
   number,
 ) => void;
 
-export type GraphEvent = 'add' | 'remove';
+export type GraphEvent = 'add' | 'remove' | 'change';
 export type PaperEvent =
   | 'blank:pointerclick'
   | 'blank:pointerdown'
@@ -64,6 +64,7 @@ export type ConnectorEvent =
   | 'link:pointerup';
 
 export type GraphEventsAPI = $ReadOnly<{|
+  onGraphEvent: (GraphEvent, GraphEventCallback) => void,
   onGraphBlockEvent: (GraphEvent, GraphBlockEventCallback) => void,
   onGraphConnectorEvent: (GraphEvent, GraphConnectorEventCallback) => void,
   onPaperEvent: (PaperEvent, PaperEventCallback) => void,
@@ -81,6 +82,7 @@ export default function graphEventsAPIProvider(
   const onConnectorEvent = paperOnConnectorEvent.bind(flowWrapper);
   const onPaperEvent = paperOnPaperEvent.bind(flowWrapper);
   const offPaperEvent = paperOffPaperEvent.bind(flowWrapper);
+  const onGraphEvent = graphOnEvent.bind(flowWrapper);
   const onGraphBlockEvent = graphOnGraphBlockEvent.bind(flowWrapper);
   const onGraphConnectorEvent = graphOnGraphConnectorEvent.bind(flowWrapper);
 
@@ -90,6 +92,7 @@ export default function graphEventsAPIProvider(
     onConnectorEvent,
     onPaperEvent,
     offPaperEvent,
+    onGraphEvent,
     onGraphBlockEvent,
     onGraphConnectorEvent,
   };
@@ -173,7 +176,10 @@ function paperOnConnectorEvent(
   this.current.paper.on(event, wrappedHandler);
 }
 
-function graphOnGraphBlockEvent(event: GraphEvent, handler: IBlock => void) {
+function graphOnGraphBlockEvent(
+  event: GraphEvent,
+  handler: GraphBlockEventCallback,
+) {
   callGraphEventHandler.call<IBlock>(
     this,
     event,
@@ -182,9 +188,16 @@ function graphOnGraphBlockEvent(event: GraphEvent, handler: IBlock => void) {
   );
 }
 
+function graphOnEvent(event: GraphEvent, handler: GraphEventCallback) {
+  if (this.current == null) {
+    return;
+  }
+  this.current.graph.on(event, handler);
+}
+
 function graphOnGraphConnectorEvent(
   event: GraphEvent,
-  handler: IConnector => void,
+  handler: GraphConnectorEventCallback,
 ) {
   callGraphEventHandler.call<IConnector>(
     this,
@@ -195,7 +208,7 @@ function graphOnGraphConnectorEvent(
 }
 
 function callGraphEventHandler<T: IBlock | IConnector>(
-  eventName: string,
+  eventName: GraphEvent,
   elementsMap: ?Map<string, T>,
   handler: T => void,
 ) {
@@ -216,5 +229,5 @@ function callGraphEventHandler<T: IBlock | IConnector>(
       getElementAndCallHandler();
     }
   };
-  this.current.graph.on(eventName, wrappedHandler);
+  graphOnEvent.call(this, eventName, wrappedHandler);
 }

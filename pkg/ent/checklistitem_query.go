@@ -321,13 +321,20 @@ func (cliq *CheckListItemQuery) ExistX(ctx context.Context) bool {
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
 func (cliq *CheckListItemQuery) Clone() *CheckListItemQuery {
+	if cliq == nil {
+		return nil
+	}
 	return &CheckListItemQuery{
-		config:     cliq.config,
-		limit:      cliq.limit,
-		offset:     cliq.offset,
-		order:      append([]OrderFunc{}, cliq.order...),
-		unique:     append([]string{}, cliq.unique...),
-		predicates: append([]predicate.CheckListItem{}, cliq.predicates...),
+		config:                cliq.config,
+		limit:                 cliq.limit,
+		offset:                cliq.offset,
+		order:                 append([]OrderFunc{}, cliq.order...),
+		unique:                append([]string{}, cliq.unique...),
+		predicates:            append([]predicate.CheckListItem{}, cliq.predicates...),
+		withFiles:             cliq.withFiles.Clone(),
+		withWifiScan:          cliq.withWifiScan.Clone(),
+		withCellScan:          cliq.withCellScan.Clone(),
+		withCheckListCategory: cliq.withCheckListCategory.Clone(),
 		// clone intermediate query.
 		sql:  cliq.sql.Clone(),
 		path: cliq.path,

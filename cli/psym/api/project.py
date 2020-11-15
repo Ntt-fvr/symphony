@@ -13,8 +13,8 @@ from psym.common.data_enum import Entity
 from psym.common.data_format import format_to_project
 from psym.exceptions import EntityNotFoundError
 from psym.graphql.enum.project_priority import ProjectPriority
-from psym.graphql.input.add_project import AddProjectInput
-from psym.graphql.input.edit_project import EditProjectInput
+from psym.graphql.input.add_project_input import AddProjectInput
+from psym.graphql.input.edit_project_input import EditProjectInput
 from psym.graphql.mutation.add_project import AddProjectMutation
 from psym.graphql.mutation.edit_project import EditProjectMutation
 from psym.graphql.mutation.remove_project import RemoveProjectMutation

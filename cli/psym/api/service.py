@@ -13,7 +13,7 @@ from psym.common.data_enum import Entity
 from .._utils import PropertyValue, get_graphql_property_inputs
 from ..exceptions import EntityNotFoundError
 from ..graphql.enum.service_status import ServiceStatus
-from ..graphql.input.add_service_endpoint import AddServiceEndpointInput
+from ..graphql.input.add_service_endpoint_input import AddServiceEndpointInput
 from ..graphql.input.service_create_data import ServiceCreateData
 from ..graphql.mutation.add_service import AddServiceMutation
 from ..graphql.mutation.add_service_endpoint import AddServiceEndpointMutation

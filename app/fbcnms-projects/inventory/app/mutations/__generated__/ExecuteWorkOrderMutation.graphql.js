@@ -130,16 +130,6 @@ fragment EquipmentPortsTable_link on Link {
       equipmentType {
         id
         name
-        portDefinitions {
-          id
-          name
-          visibleLabel
-          bandwidth
-          portType {
-            id
-            name
-          }
-        }
       }
       ...EquipmentBreadcrumbs_equipment
     }
@@ -602,50 +592,7 @@ return {
                       (v4/*: any*/),
                       (v5/*: any*/),
                       (v6/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "EquipmentType",
-                        "kind": "LinkedField",
-                        "name": "equipmentType",
-                        "plural": false,
-                        "selections": [
-                          (v4/*: any*/),
-                          (v5/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "EquipmentPortDefinition",
-                            "kind": "LinkedField",
-                            "name": "portDefinitions",
-                            "plural": true,
-                            "selections": [
-                              (v4/*: any*/),
-                              (v5/*: any*/),
-                              (v10/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "bandwidth",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "EquipmentPortType",
-                                "kind": "LinkedField",
-                                "name": "portType",
-                                "plural": false,
-                                "selections": (v7/*: any*/),
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      },
+                      (v8/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -828,12 +775,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "eb642f0bf1bb1816950b9c773c2de347",
+    "cacheID": "82850f129e112c1d8922d1b4d9be8746",
     "id": null,
     "metadata": {},
     "name": "ExecuteWorkOrderMutation",
     "operationKind": "mutation",
-    "text": "mutation ExecuteWorkOrderMutation(\n  $id: ID!\n) {\n  executeWorkOrder(id: $id) {\n    equipmentAdded {\n      ...EquipmentTable_equipments\n      id\n    }\n    equipmentRemoved\n    linkAdded {\n      ...EquipmentPortsTable_link\n      id\n    }\n    linkRemoved\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment EquipmentPortsTable_link on Link {\n  id\n  futureState\n  ports {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n      portType {\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        id\n      }\n    }\n    parentEquipment {\n      id\n      name\n      futureState\n      equipmentType {\n        id\n        name\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n          portType {\n            id\n            name\n          }\n        }\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  workOrder {\n    id\n    status\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  services {\n    id\n    name\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n"
+    "text": "mutation ExecuteWorkOrderMutation(\n  $id: ID!\n) {\n  executeWorkOrder(id: $id) {\n    equipmentAdded {\n      ...EquipmentTable_equipments\n      id\n    }\n    equipmentRemoved\n    linkAdded {\n      ...EquipmentPortsTable_link\n      id\n    }\n    linkRemoved\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment EquipmentPortsTable_link on Link {\n  id\n  futureState\n  ports {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n      portType {\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        id\n      }\n    }\n    parentEquipment {\n      id\n      name\n      futureState\n      equipmentType {\n        id\n        name\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  workOrder {\n    id\n    status\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  services {\n    id\n    name\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n"
   }
 };
 })();

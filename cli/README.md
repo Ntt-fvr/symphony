@@ -3,7 +3,7 @@ Graphql is a query language developed by Facebook (https://graphql.org/)
 
 ## Prerequisites
 
-* Python >= 3.6
+* Python >= 3.7
 
 ## Installation
 

@@ -3,17 +3,18 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from gql.gql.datetime_utils import DATETIME_FIELD
-from gql.gql.graphql_client import GraphqlClient
-from gql.gql.client import OperationException
-from gql.gql.reporter import FailedOperationException
+from gql_client.runtime.datetime_utils import DATETIME_FIELD
+from gql_client.runtime.graphql_client import GraphqlClient
+from gql_client.runtime.reporter import FailedOperationException
+from gql import gql
+from gql.transport.exceptions import TransportQueryError
 from functools import partial
 from numbers import Number
 from typing import Any, Callable, List, Mapping, Optional, Dict
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
-from ..input.import_flow_draft import ImportFlowDraftInput
+from ..input.import_flow_draft_input import ImportFlowDraftInput
 
 
 QUERY: List[str] = ["""
@@ -26,7 +27,6 @@ mutation ImportFlowDraftMutation($input: ImportFlowDraftInput!) {
 
 """]
 
-@dataclass
 class ImportFlowDraftMutation(DataClassJsonMixin):
     @dataclass
     class ImportFlowDraftMutationData(DataClassJsonMixin):
@@ -37,27 +37,22 @@ class ImportFlowDraftMutation(DataClassJsonMixin):
 
         importFlowDraft: FlowDraft
 
-    data: ImportFlowDraftMutationData
-
     @classmethod
-    # fmt: off
     def execute(cls, client: GraphqlClient, input: ImportFlowDraftInput) -> ImportFlowDraftMutationData.FlowDraft:
-        # fmt: off
         variables: Dict[str, Any] = {"input": input}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
             decode_start = perf_counter()
-            res = cls.from_json(response_text).data
+            res = cls.ImportFlowDraftMutationData.from_dict(response_text)
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
             client.reporter.log_successful_operation("ImportFlowDraftMutation", variables, network_time, decode_time)
             return res.importFlowDraft
-        except OperationException as e:
+        except TransportQueryError as e:
             raise FailedOperationException(
                 client.reporter,
-                e.err_msg,
-                e.err_id,
+                str(e.errors),
                 "ImportFlowDraftMutation",
                 variables,
             )
