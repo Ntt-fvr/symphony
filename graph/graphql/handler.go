@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"net/http/httputil"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -34,6 +35,7 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
+	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 )
 
@@ -81,14 +83,32 @@ func NewHandler(cfg HandlerConfig) http.Handler {
 	)
 
 	router := mux.NewRouter()
-	router.Use(func(handler http.Handler) http.Handler {
-		timeouter := http.TimeoutHandler(handler, 3*time.Minute, "request timed out")
+	router.Use(func(next http.Handler) http.Handler {
+		handler := http.TimeoutHandler(next, 3*time.Minute, "request timed out")
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			h := timeouter
+			h := handler
 			if websocket.IsWebSocketUpgrade(r) {
-				h = handler
+				h = next
 			}
 			h.ServeHTTP(w, r)
+		})
+	})
+	router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			span := trace.FromContext(r.Context())
+			if !span.IsRecordingEvents() {
+				next.ServeHTTP(w, r)
+				return
+			}
+			dump, err := httputil.DumpRequest(r, true)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			span.AddAttributes(
+				trace.StringAttribute("http.dump", string(dump)),
+			)
+			next.ServeHTTP(w, r)
 		})
 	})
 
