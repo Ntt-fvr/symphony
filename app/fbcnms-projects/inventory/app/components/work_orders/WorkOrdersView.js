@@ -135,11 +135,13 @@ const WorkOrdersView = (props: Props) => {
           {row.name}
         </Button>
       ),
+      tooltip: row => row.name,
     },
     {
       key: 'type',
       title: `${fbt('Template', '')}`,
       render: row => row.workOrderType?.name ?? '',
+      tooltip: row => row.workOrderType?.name ?? '',
     },
     {
       key: 'project',
@@ -154,11 +156,13 @@ const WorkOrdersView = (props: Props) => {
             {row.project?.name ?? ''}
           </Button>
         ) : null,
+      tooltip: row => row.project?.name ?? '',
     },
     {
       key: 'owner',
       title: 'Owner',
       render: row => row.owner.email ?? '',
+      tooltip: row => row.owner.email ?? '',
     },
     {
       key: 'status',
@@ -168,16 +172,23 @@ const WorkOrdersView = (props: Props) => {
           statusValues.map(({value, label}) => ({value, label})),
           row.status,
         ) ?? '',
+      tooltip: row =>
+        formatMultiSelectValue(
+          statusValues.map(({value, label}) => ({value, label})),
+          row.status,
+        ) ?? '',
     },
     {
       key: 'creationDate',
       title: 'Creation Time',
       render: row => DateTimeFormat.dateTime(row.creationDate),
+      tooltip: row => DateTimeFormat.dateTime(row.creationDate),
     },
     {
       key: 'dueDate',
       title: 'Due Date',
       render: row => DateTimeFormat.dateOnly(row.installDate),
+      tooltip: row => DateTimeFormat.dateOnly(row.installDate),
     },
     ...(showLocation
       ? [
@@ -192,6 +203,7 @@ const WorkOrdersView = (props: Props) => {
                   newTab={true}
                 />
               ) : null,
+            tooltip: row => row.location.name ?? '',
           },
         ]
       : []),
@@ -199,16 +211,19 @@ const WorkOrdersView = (props: Props) => {
       key: 'assignee',
       title: 'Assignee',
       render: row => row.assignedTo?.email || null,
+      tooltip: row => row.assignedTo?.email || null,
     },
     {
       key: 'priority',
       title: 'Priority',
       render: row => <PriorityTag priority={row.priority} />,
+      tooltip: row => row.priority ?? '',
     },
     {
       key: 'closeDate',
       title: 'Close Time',
       render: row => DateTimeFormat.dateTime(row.closeDate),
+      tooltip: row => DateTimeFormat.dateTime(row.closeDate),
     },
   ];
 
