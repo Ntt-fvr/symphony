@@ -100,7 +100,7 @@ resource helm_release symphony {
       for s in [
         { name = "front", replicas = 2 },
         { name = "admin", replicas = 1 },
-        { name = "graph", replicas = 3 },
+        { name = "graph", replicas = 6 },
         { name = "async", replicas = 1 },
         { name = "store", replicas = 1 },
       ] :
