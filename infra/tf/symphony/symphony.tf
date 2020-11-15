@@ -298,11 +298,7 @@ resource kubernetes_cron_job tenant_cleaner {
     testimio = {
       schedule = "25,55 * * * *"
     }
-    } : {
-    ls-test-automation = {
-      schedule = "0 * * * *"
-    }
-  }
+  } : {}
 
   metadata {
     name      = "${local.symphony_name}-${each.key}-cleaner"
