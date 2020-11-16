@@ -5,10 +5,11 @@
 package graphql
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"io/ioutil"
 	"net/http"
-	"net/http/httputil"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -100,14 +101,15 @@ func NewHandler(cfg HandlerConfig) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
-			dump, err := httputil.DumpRequest(r, true)
+			body, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 			span.AddAttributes(
-				trace.StringAttribute("http.dump", string(dump)),
+				trace.StringAttribute("http.body", string(body)),
 			)
+			r.Body = ioutil.NopCloser(bytes.NewReader(body))
 			next.ServeHTTP(w, r)
 		})
 	})
