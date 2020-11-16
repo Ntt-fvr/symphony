@@ -98,7 +98,7 @@ func importEquipmentFile(t *testing.T, client *ent.Client, r io.Reader, method p
 	readr := csv.NewReader(r)
 	buf, contentType := writeExportModifiedCSV(t, readr, method, withVerify)
 
-	h, _ := NewHandler(
+	h := NewHandler(
 		Config{
 			Logger:          logtest.NewTestLogger(t),
 			ReceiverFactory: ev.ErrFactory{},

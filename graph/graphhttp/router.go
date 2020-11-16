@@ -5,7 +5,6 @@
 package graphhttp
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/facebookincubator/symphony/graph/graphql"
@@ -36,7 +35,7 @@ type routerConfig struct {
 	}
 }
 
-func newRouter(cfg routerConfig) (*mux.Router, error) {
+func newRouter(cfg routerConfig) *mux.Router {
 	router := mux.NewRouter()
 	router.Use(
 		func(h http.Handler) http.Handler {
@@ -52,31 +51,23 @@ func newRouter(cfg routerConfig) (*mux.Router, error) {
 			return authz.Handler(h, cfg.logger)
 		},
 	)
-	handler, err := importer.NewHandler(importer.Config{
+	handler := importer.NewHandler(importer.Config{
 		Logger:          cfg.logger,
 		ReceiverFactory: cfg.events.ReceiverFactory,
 	})
-	if err != nil {
-		return nil, fmt.Errorf("creating import handler: %w", err)
-	}
 	router.PathPrefix("/import/").
 		Handler(http.StripPrefix("/import", handler)).
 		Name("import")
 
-	if handler, err = pkgexporter.NewHandler(cfg.logger); err != nil {
-		return nil, fmt.Errorf("creating export handler: %w", err)
-	}
+	handler = pkgexporter.NewHandler(cfg.logger)
 	router.PathPrefix("/export/").
 		Handler(http.StripPrefix("/export", handler)).
 		Name("export")
 
-	handler, err = jobs.NewHandler(jobs.Config{
+	handler = jobs.NewHandler(jobs.Config{
 		Logger:          cfg.logger,
 		ReceiverFactory: cfg.events.ReceiverFactory,
 	})
-	if err != nil {
-		return nil, fmt.Errorf("creating jobs handler: %w", err)
-	}
 	router.PathPrefix("/jobs/").
 		Handler(http.StripPrefix("/jobs", handler)).
 		Name("jobs")
@@ -94,5 +85,5 @@ func newRouter(cfg routerConfig) (*mux.Router, error) {
 		Handler(handler).
 		Name("root")
 
-	return router, nil
+	return router
 }

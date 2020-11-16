@@ -140,7 +140,7 @@ func (m *ExcelExporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // NewHandler creates a upload http handler.
-func NewHandler(log log.Logger) (http.Handler, error) {
+func NewHandler(log log.Logger) http.Handler {
 	router := mux.NewRouter()
 	routes := []struct {
 		name    string
@@ -166,5 +166,5 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 			Handler(&route.handler).
 			Name(route.name)
 	}
-	return router, nil
+	return router
 }

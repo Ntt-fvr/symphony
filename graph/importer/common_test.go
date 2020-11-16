@@ -166,7 +166,7 @@ func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity 
 		buf, contentType = pkgexporter.WriteModifiedPortsCSV(t, readr, skipLines, withVerify)
 	}
 
-	h, _ := NewHandler(
+	h := NewHandler(
 		Config{
 			Logger:          logtest.NewTestLogger(t),
 			ReceiverFactory: ev.ErrFactory{},

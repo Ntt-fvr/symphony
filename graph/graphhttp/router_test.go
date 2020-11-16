@@ -21,8 +21,7 @@ import (
 func TestRouter(t *testing.T) {
 	cfg := routerConfig{logger: logtest.NewTestLogger(t)}
 	cfg.viewer.tenancy = viewer.NewFixedTenancy(&ent.Client{})
-	router, err := newRouter(cfg)
-	require.NoError(t, err)
+	router := newRouter(cfg)
 
 	tests := []struct {
 		target, name string

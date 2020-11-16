@@ -88,7 +88,7 @@ func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method p
 	buf, contentType := writeModifiedLocationsCSV(t, readr, method, withVerify, skipLines)
 
 	logger := logtest.NewTestLogger(t)
-	h, _ := NewHandler(
+	h := NewHandler(
 		Config{
 			Logger:          logger,
 			ReceiverFactory: ev.ErrFactory{},

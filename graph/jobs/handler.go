@@ -29,7 +29,7 @@ type (
 )
 
 // NewHandler creates a upload http handler.
-func NewHandler(cfg Config) (http.Handler, error) {
+func NewHandler(cfg Config) http.Handler {
 	r := resolver.New(
 		resolver.Config{
 			Logger:          cfg.Logger,
@@ -58,5 +58,5 @@ func NewHandler(cfg Config) (http.Handler, error) {
 			HandlerFunc(route.handler).
 			Name(route.name)
 	}
-	return router, nil
+	return router
 }

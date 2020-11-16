@@ -49,7 +49,7 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestJobsResolver {
 }
 
 func syncServicesRequest(t *testing.T, r *TestJobsResolver) {
-	h, _ := NewHandler(
+	h := NewHandler(
 		Config{
 			Logger:          logtest.NewTestLogger(t),
 			ReceiverFactory: ev.ErrFactory{},

@@ -26,10 +26,7 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	router, err := newRouter(graphhttpRouterConfig)
-	if err != nil {
-		return nil, nil, err
-	}
+	router := newRouter(graphhttpRouterConfig)
 	logger := cfg.Logger
 	zapLogger := xserver.NewRequestLogger(logger)
 	v := cfg.HealthChecks
