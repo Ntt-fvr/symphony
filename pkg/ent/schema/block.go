@@ -34,6 +34,7 @@ func (Block) Fields() []ent.Field {
 				"GoTo", "GO_TO",
 				"Trigger", "TRIGGER",
 				"Action", "ACTION",
+				"TrueFalse", "TRUE_FALSE",
 			),
 		field.Enum("action_type").
 			GoType(flowschema.ActionTypeID("")).

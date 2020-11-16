@@ -37,6 +37,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"MetricsAddress",
 			"AuthURL",
 			"EventPubsubURL",
+			"ComplexityLimit",
 			"LogConfig",
 			"TelemetryConfig",
 		),
@@ -72,7 +73,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		provideViews,
 		graphhttp.NewServer,
 		wire.Struct(
-			new(graphhttp.Config), "*",
+			new(graphhttp.Config),
+			"*",
 		),
 	)
 	return nil, nil, nil

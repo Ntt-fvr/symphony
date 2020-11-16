@@ -10,12 +10,17 @@
  */
 import type {
   ActionBlockInput,
+  ActionTypeId,
   ConnectorInput,
   DecisionBlockInput,
   EndBlockInput,
+  GotoBlockInput,
   ImportFlowDraftInput,
   ImportFlowDraftMutationResponse,
   StartBlockInput,
+  TriggerBlockInput,
+  TriggerTypeId,
+  TrueFalseBlockInput,
 } from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
@@ -82,11 +87,37 @@ export function mapDecisionBlockForSave(block: IBlock): DecisionBlockInput {
   };
 }
 
-export function mapActionBlocksForSave(block: IBlock): ActionBlockInput {
+export function mapTrueFalseBlockForSave(block: IBlock): TrueFalseBlockInput {
   return {
     ...mapBlockForSave(block),
+  };
+}
+
+export function mapGoToBlockForSave(block: IBlock): GotoBlockInput {
+  return {
+    ...mapBlockForSave(block),
+  };
+}
+
+export function mapActionBlocksForSave(
+  block: IBlock,
+  actionType: ActionTypeId,
+): ActionBlockInput {
+  return {
+    ...mapBlockForSave(block),
+    actionType,
     params: [],
-    actionType: 'work_order',
+  };
+}
+
+export function mapTriggerBlocksForSave(
+  block: IBlock,
+  triggerType: TriggerTypeId,
+): TriggerBlockInput {
+  return {
+    ...mapBlockForSave(block),
+    triggerType,
+    params: [],
   };
 }
 

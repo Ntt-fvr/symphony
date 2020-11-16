@@ -26,9 +26,9 @@ func addDefaultEntryPoint(ctx context.Context, client *ent.Client, blockID int) 
 	return nil
 }
 
-func addDefaultExitPoint(ctx context.Context, client *ent.Client, blockID int) error {
+func addDefaultExitPoint(ctx context.Context, client *ent.Client, blockID int, role flowschema.ExitPointRole) error {
 	if _, err := client.ExitPoint.Create().
-		SetRole(flowschema.ExitPointRoleDefault).
+		SetRole(role).
 		SetParentBlockID(blockID).
 		Save(ctx); err != nil {
 		return fmt.Errorf("failed to create default exit point: %w", err)
@@ -50,7 +50,7 @@ func VerifyEntryPointTypeHook() ent.Hook {
 				return nil, fmt.Errorf("cannot get parent block: %w", err)
 			}
 			switch blk.Type {
-			case block.TypeEnd, block.TypeGoTo, block.TypeDecision, block.TypeSubFlow, block.TypeAction:
+			case block.TypeEnd, block.TypeGoTo, block.TypeDecision, block.TypeSubFlow, block.TypeAction, block.TypeTrueFalse:
 			default:
 				return nil, fmt.Errorf("block type %v is not allowed entry points", blk.Type)
 			}
@@ -129,6 +129,10 @@ func VerifyExitPointTypeHook() ent.Hook {
 				if role != flowschema.ExitPointRoleDefault && role != flowschema.ExitPointRoleDecision {
 					return nil, fmt.Errorf("exit point role %v not valid for block type %v", role, blk.Type)
 				}
+			case block.TypeTrueFalse:
+				if role != flowschema.ExitPointRoleTrue && role != flowschema.ExitPointRoleFalse {
+					return nil, fmt.Errorf("exit point role %v not valid for block type %v", role, blk.Type)
+				}
 			default:
 				return nil, fmt.Errorf("block type %v is not allowed exit points", blk.Type)
 			}
@@ -156,8 +160,16 @@ func AddDefaultEntryAndExitPointsHook() ent.Hook {
 					return nil, err
 				}
 			}
-			if blk.Type != block.TypeEnd && blk.Type != block.TypeGoTo {
-				if err := addDefaultExitPoint(ctx, client, blk.ID); err != nil {
+			if blk.Type != block.TypeEnd && blk.Type != block.TypeGoTo && blk.Type != block.TypeTrueFalse {
+				if err := addDefaultExitPoint(ctx, client, blk.ID, flowschema.ExitPointRoleDefault); err != nil {
+					return nil, err
+				}
+			}
+			if blk.Type == block.TypeTrueFalse {
+				if err := addDefaultExitPoint(ctx, client, blk.ID, flowschema.ExitPointRoleTrue); err != nil {
+					return nil, err
+				}
+				if err := addDefaultExitPoint(ctx, client, blk.ID, flowschema.ExitPointRoleFalse); err != nil {
 					return nil, err
 				}
 			}

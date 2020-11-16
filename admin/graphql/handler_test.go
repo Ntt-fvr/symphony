@@ -47,7 +47,6 @@ func TestHandler(t *testing.T) {
 			),
 		},
 	)
-	require.NoError(t, err)
 
 	c := client.New(handler, client.Path("/query"))
 	var rsp struct{ Tenant struct{ ID, Name string } }

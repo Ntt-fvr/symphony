@@ -52,6 +52,16 @@ export const VERTEX_COMMON_DISPLAY = {
   ],
 };
 
+// export const DISPLAY_SETTINGS = {
+//   body: {
+//     stroke: {
+//       default: symphony.palette.white,
+//       hovered: symphony.palette.B700,
+//       selected: symphony.palette.primary,
+//     },
+//   },
+// };
+
 export type VertexDescriptor = $ReadOnly<{|
   id: string,
   position: Position,

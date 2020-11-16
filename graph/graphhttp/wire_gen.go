@@ -20,6 +20,7 @@ import (
 
 // Injectors from wire.go:
 
+// NewServer creates a server from config.
 func NewServer(cfg Config) (*server.Server, func(), error) {
 	graphhttpRouterConfig, err := newRouterConfig(cfg)
 	if err != nil {
@@ -71,6 +72,7 @@ type Config struct {
 	TriggerFactory  triggers.Factory
 	ActionFactory   actions.Factory
 	Logger          log.Logger
+	ComplexityLimit int
 	Telemetry       telemetry.Config
 	HealthChecks    []health.Checker
 }
@@ -82,5 +84,6 @@ func newRouterConfig(config Config) (cfg routerConfig, err error) {
 	cfg.events.ReceiverFactory = config.ReceiverFactory
 	cfg.flow.triggerFactory = config.TriggerFactory
 	cfg.flow.actionFactory = config.ActionFactory
+	cfg.graphql.complexityLimit = config.ComplexityLimit
 	return cfg, nil
 }

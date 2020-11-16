@@ -15,6 +15,8 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type FlowHeader_flowDraft$ref = any;
+export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "%future added value";
+export type TriggerTypeId = "work_order" | "%future added value";
 export type FlowDataContext_FlowDraftQueryVariables = {|
   flowId: string
 |};
@@ -26,7 +28,19 @@ export type FlowDataContext_FlowDraftQueryResponse = {|
     +blocks?: $ReadOnlyArray<{|
       +cid: string,
       +details: {|
-        +__typename: string
+        +__typename: "ActionBlock",
+        +actionType: {|
+          +id: ActionTypeId
+        |},
+      |} | {|
+        +__typename: "TriggerBlock",
+        +triggerType: {|
+          +id: TriggerTypeId
+        |},
+      |} | {|
+        // This will never be '%other', but we need some
+        // value in case none of the concrete values match.
+        +__typename: "%other"
       |},
       +uiRepresentation: ?{|
         +name: string,
@@ -66,6 +80,16 @@ query FlowDataContext_FlowDraftQuery(
         cid
         details {
           __typename
+          ... on ActionBlock {
+            actionType {
+              id
+            }
+          }
+          ... on TriggerBlock {
+            triggerType {
+              id
+            }
+          }
         }
         uiRepresentation {
           name
@@ -144,7 +168,10 @@ v6 = {
   "name": "__typename",
   "storageKey": null
 },
-v7 = {
+v7 = [
+  (v2/*: any*/)
+],
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": null,
@@ -152,11 +179,45 @@ v7 = {
   "name": "details",
   "plural": false,
   "selections": [
-    (v6/*: any*/)
+    (v6/*: any*/),
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ActionType",
+          "kind": "LinkedField",
+          "name": "actionType",
+          "plural": false,
+          "selections": (v7/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "type": "ActionBlock",
+      "abstractKey": null
+    },
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "TriggerType",
+          "kind": "LinkedField",
+          "name": "triggerType",
+          "plural": false,
+          "selections": (v7/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "type": "TriggerBlock",
+      "abstractKey": null
+    }
   ],
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "BlockUIRepresentation",
@@ -212,8 +273,8 @@ return {
                 "plural": true,
                 "selections": [
                   (v5/*: any*/),
-                  (v7/*: any*/),
                   (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -223,7 +284,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v5/*: any*/),
-                      (v8/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -276,8 +337,8 @@ return {
                 "plural": true,
                 "selections": [
                   (v5/*: any*/),
-                  (v7/*: any*/),
                   (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -287,7 +348,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v5/*: any*/),
-                      (v8/*: any*/),
+                      (v9/*: any*/),
                       (v2/*: any*/)
                     ],
                     "storageKey": null
@@ -306,16 +367,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "38a02b755afa8f0fc01539a1ae201f37",
+    "cacheID": "253b9cc5b9452ea024ce1785beb50870",
     "id": null,
     "metadata": {},
     "name": "FlowDataContext_FlowDraftQuery",
     "operationKind": "query",
-    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
+    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n          ... on ActionBlock {\n            actionType {\n              id\n            }\n          }\n          ... on TriggerBlock {\n            triggerType {\n              id\n            }\n          }\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        id\n      }\n      ...FlowHeader_flowDraft\n    }\n    id\n  }\n}\n\nfragment FlowHeader_flowDraft on FlowDraft {\n  name\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '131e688bb7a0829709af817d86223b04';
+(node/*: any*/).hash = 'e5bae895b1255c052225fa4b65f51480';
 
 module.exports = node;

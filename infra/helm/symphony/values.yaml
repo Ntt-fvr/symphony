@@ -213,6 +213,9 @@ front:
       user: root
       pass: root
 
+    # Additional key/value pairs to be used as environment variables
+    extraEnvVars: []
+
 # Persistence configuration.
 persistence:
   database:

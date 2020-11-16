@@ -3208,6 +3208,8 @@ enum ActionTypeId
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID"
   ) {
   work_order
+  update_inventory
+  update_workforce
 }
 
 type TriggerType
@@ -3327,6 +3329,12 @@ type DecisionBlock {
   routes: [DecisionRoute!]!
 }
 
+type TrueFalseBlock {
+  entryPoint: EntryPoint!
+  trueExitPoint: ExitPoint!
+  falseExitPoint: ExitPoint!
+}
+
 type SubflowBlock {
   flow: Flow
   params: [VariableExpression!]!
@@ -3360,6 +3368,7 @@ union BlockDetails =
   | SubflowBlock
   | TriggerBlock
   | ActionBlock
+  | TrueFalseBlock
 
 input StartBlockInput {
   cid: String!
@@ -3383,9 +3392,14 @@ input DecisionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
+input TrueFalseBlockInput {
+  cid: String!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 input GotoBlockInput {
   cid: String!
-  targetBlockCid: String!
+  targetBlockCid: String
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -3444,6 +3458,7 @@ input ImportFlowDraftInput {
   subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
+  trueFalseBlocks: [TrueFalseBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -4053,6 +4068,7 @@ type Mutation {
   addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
+  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!

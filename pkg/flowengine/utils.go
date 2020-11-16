@@ -165,7 +165,7 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 	for _, blk := range blocks {
 		newBlock := oldToNewBlock[blk.ID]
 		switch newBlock.Type {
-		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction:
+		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction, block.TypeTrueFalse:
 			if err := copyInputParams(ctx, blk, oldToNewBlock); err != nil {
 				return err
 			}

@@ -22,17 +22,39 @@ import Decision, {
 import End, {
   TYPE as EndType,
 } from '../facades/shapes/vertexes/administrative/End';
+import GoTo, {TYPE as GoToType} from '../facades/shapes/vertexes/logic/GoTo';
 import ManualStart, {
   TYPE as ManualStartType,
 } from '../facades/shapes/vertexes/administrative/ManualStart';
+import TriggerWorkforce, {
+  TYPE as TriggerWorkforceType,
+} from '../facades/shapes/vertexes/triggers/TriggerWorkforce';
+import TrueFalse, {
+  TYPE as TrueFalseType,
+} from '../facades/shapes/vertexes/logic/TrueFalse';
+import UpdateInventory, {
+  TYPE as UpdateInventoryType,
+} from '../facades/shapes/vertexes/actions/UpdateInventory';
+import UpdateWorkforce, {
+  TYPE as UpdateWorkforceType,
+} from '../facades/shapes/vertexes/actions/UpdateWorkforce';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {getCellType} from '../facades/shapes/BaseShape';
 
 const VERTEXES = {
+  // Administrative
   [ManualStartType]: ManualStart,
   [EndType]: End,
-  [DecisionType]: Decision,
+  // Actions
   [CreateWorkorderType]: CreateWorkorder,
+  [UpdateInventoryType]: UpdateInventory,
+  [UpdateWorkforceType]: UpdateWorkforce,
+  // Triggers
+  [TriggerWorkforceType]: TriggerWorkforce,
+  // Logic
+  [DecisionType]: Decision,
+  [GoToType]: GoTo,
+  [TrueFalseType]: TrueFalse,
 };
 const VERTEX_TYPES = Object.keys(VERTEXES);
 

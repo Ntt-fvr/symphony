@@ -86,6 +86,7 @@ def import_flow_draft(
             subflowBlocks=[],
             triggerBlocks=[],
             actionBlocks=[],
+            trueFalseBlocks=[],
             connectors=[],
         ),
     )

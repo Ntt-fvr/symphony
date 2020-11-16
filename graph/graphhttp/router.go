@@ -27,9 +27,10 @@ type routerConfig struct {
 		tenancy viewer.Tenancy
 		authurl string
 	}
-	logger log.Logger
-	events struct{ ev.ReceiverFactory }
-	flow   struct {
+	logger  log.Logger
+	graphql struct{ complexityLimit int }
+	events  struct{ ev.ReceiverFactory }
+	flow    struct {
 		triggerFactory triggers.Factory
 		actionFactory  flowactions.Factory
 	}
@@ -83,6 +84,7 @@ func newRouter(cfg routerConfig) (*mux.Router, error) {
 	handler = graphql.NewHandler(
 		graphql.HandlerConfig{
 			Logger:          cfg.logger,
+			ComplexityLimit: cfg.graphql.complexityLimit,
 			ReceiverFactory: cfg.events.ReceiverFactory,
 			TriggerFactory:  cfg.flow.triggerFactory,
 			ActionFactory:   cfg.flow.actionFactory,

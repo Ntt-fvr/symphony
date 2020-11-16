@@ -185,7 +185,7 @@ func TestGotoBlock(t *testing.T) {
 
 	b, err := mr.AddGotoBlock(ctx, flowDraft.ID, models.GotoBlockInput{
 		Cid:            "goto_end",
-		TargetBlockCid: endBlock.Cid,
+		TargetBlockCid: pointer.ToString(endBlock.Cid),
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)

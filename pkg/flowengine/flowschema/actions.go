@@ -14,13 +14,17 @@ import (
 type ActionTypeID string
 
 const (
-	ActionTypeWorkOrder ActionTypeID = "work_order"
+	ActionTypeWorkOrder       ActionTypeID = "work_order"
+	ActionTypeUpdateInventory ActionTypeID = "update_inventory"
+	ActionTypeUpdateWorkforce ActionTypeID = "update_workforce"
 )
 
 // Values returns action type id possible values.
 func (ActionTypeID) Values() []string {
 	return []string{
 		ActionTypeWorkOrder.String(),
+		ActionTypeUpdateInventory.String(),
+		ActionTypeUpdateWorkforce.String(),
 	}
 }
 

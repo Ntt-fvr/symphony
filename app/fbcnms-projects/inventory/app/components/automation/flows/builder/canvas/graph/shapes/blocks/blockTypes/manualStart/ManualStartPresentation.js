@@ -13,6 +13,6 @@ import ManualStartIcon from './ManualStartIcon';
 import fbt from 'fbt';
 import {BasePresentation} from '../BasePresentation';
 
-export default function DecisionPresentation() {
+export default function ManualStartPresentation() {
   return <BasePresentation icon={ManualStartIcon} text={fbt('Start', '')} />;
 }
