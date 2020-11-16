@@ -3,7 +3,7 @@ module github.com/facebookincubator/symphony
 go 1.14
 
 require (
-	cloud.google.com/go/storage v1.10.0
+	cloud.google.com/go/storage v1.12.0
 	contrib.go.opencensus.io/exporter/jaeger v0.2.1
 	contrib.go.opencensus.io/exporter/prometheus v0.2.0
 	contrib.go.opencensus.io/integrations/ocsql v0.1.6
@@ -22,7 +22,6 @@ require (
 	github.com/facebook/ent v0.4.4-0.20201030185257-8139aca845b1
 	github.com/facebookincubator/ent-contrib v0.0.0-20201101132939-7984b86acfa0
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
-	github.com/golang/mock v1.4.4 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.8.0
@@ -56,9 +55,7 @@ require (
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	golang.org/x/text v0.3.4
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
-	google.golang.org/api v0.30.0 // indirect
 	google.golang.org/genproto v0.0.0-20200929141702-51c3e5b607fe // indirect
-	google.golang.org/grpc v1.32.0 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.5 // indirect
 )
 
