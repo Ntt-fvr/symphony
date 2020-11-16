@@ -229,7 +229,7 @@ func UpdateDraftChangedForExitHook() ent.Hook {
 				if !exists {
 					return nil, fmt.Errorf("parent block id is missing for exit point")
 				}
-				draftID, err = mutation.Client().Block.Query().
+				draftID, _ = mutation.Client().Block.Query().
 					Where(block.ID(blockID)).
 					QueryFlowDraft().
 					OnlyID(ctx)
@@ -238,7 +238,7 @@ func UpdateDraftChangedForExitHook() ent.Hook {
 				if !exists {
 					return nil, fmt.Errorf("exit point has no id")
 				}
-				draftID, err = mutation.Client().ExitPoint.Query().
+				draftID, _ = mutation.Client().ExitPoint.Query().
 					Where(exitpoint.ID(exitPointID)).
 					QueryParentBlock().
 					QueryFlowDraft().
