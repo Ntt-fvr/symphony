@@ -44,6 +44,7 @@ import (
 type HandlerConfig struct {
 	Client          *ent.Client
 	Logger          log.Logger
+	ComplexityLimit int
 	ReceiverFactory ev.ReceiverFactory
 	TriggerFactory  triggers.Factory
 	ActionFactory   actions.Factory
@@ -131,7 +132,11 @@ func NewHandler(cfg HandlerConfig) http.Handler {
 	})
 	srv.SetErrorPresenter(errorPresenter(cfg.Logger))
 	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))
-	srv.Use(extension.FixedComplexityLimit(complexity.Infinite))
+
+	if cfg.ComplexityLimit == 0 {
+		cfg.ComplexityLimit = complexity.Infinite
+	}
+	srv.Use(extension.FixedComplexityLimit(cfg.ComplexityLimit))
 
 	router.Path("/graphiql").
 		Handler(

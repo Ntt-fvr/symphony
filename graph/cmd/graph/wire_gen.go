@@ -64,6 +64,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	tenancy := newTenancy(mySQLTenancy, eventer, flower)
 	url := flags.AuthURL
+	int2 := flags.ComplexityLimit
 	telemetryConfig := flags.TelemetryConfig
 	v := newHealthChecks(mySQLTenancy)
 	graphhttpConfig := graphhttp.Config{
@@ -73,6 +74,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		TriggerFactory:  factory,
 		ActionFactory:   actionsFactory,
 		Logger:          logger,
+		ComplexityLimit: int2,
 		Telemetry:       telemetryConfig,
 		HealthChecks:    v,
 	}
