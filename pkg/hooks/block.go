@@ -66,7 +66,7 @@ func UpdateDraftChangedHook() ent.Hook {
 				if !exists {
 					return nil, fmt.Errorf("block has no id")
 				}
-				draftID, err = mutation.Client().Block.Query().
+				draftID, _ = mutation.Client().Block.Query().
 					Where(block.ID(id)).
 					QueryFlowDraft().
 					OnlyID(ctx)

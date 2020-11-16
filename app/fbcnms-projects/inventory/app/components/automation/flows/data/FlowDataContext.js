@@ -63,9 +63,9 @@ import {
   mapEndBlockForSave,
   mapGoToBlockForSave,
   mapStartBlockForSave,
-  publishFlow,
   mapTriggerBlocksForSave,
   mapTrueFalseBlockForSave,
+  publishFlow,
   saveFlowDraft,
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';

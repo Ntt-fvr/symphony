@@ -179,16 +179,6 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 		flowExists, err := blk.QueryFlow().Exist(ctx)
 		require.NoError(t, err)
 		require.True(t, flowExists)
-		switch blk.Type {
-		case block.TypeStart:
-			require.Equal(t, startBlock.ID, blk.ID)
-		case block.TypeGoTo:
-			require.Equal(t, gotoBlock.ID, blk.ID)
-		case block.TypeEnd:
-			require.Equal(t, endBlock.ID, blk.ID)
-		default:
-			require.Fail(t, "unknown type")
-		}
 	}
 }
 

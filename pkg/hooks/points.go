@@ -73,7 +73,7 @@ func UpdateDraftChangedForEntryHook() ent.Hook {
 				if !exists {
 					return nil, fmt.Errorf("parent block id is missing for entry point")
 				}
-				draftID, err = mutation.Client().Block.Query().
+				draftID, _ = mutation.Client().Block.Query().
 					Where(block.ID(blockID)).
 					QueryFlowDraft().
 					OnlyID(ctx)
@@ -82,7 +82,7 @@ func UpdateDraftChangedForEntryHook() ent.Hook {
 				if !exists {
 					return nil, fmt.Errorf("entry point has no id")
 				}
-				draftID, err = mutation.Client().EntryPoint.Query().
+				draftID, _ = mutation.Client().EntryPoint.Query().
 					Where(entrypoint.ID(entryPointID)).
 					QueryParentBlock().
 					QueryFlowDraft().
