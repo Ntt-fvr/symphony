@@ -203,7 +203,7 @@ const WorkOrdersView = (props: Props) => {
                   newTab={true}
                 />
               ) : null,
-            tooltip: row => row.location.name ?? '',
+            tooltip: row => row.location?.name ?? '',
           },
         ]
       : []),
