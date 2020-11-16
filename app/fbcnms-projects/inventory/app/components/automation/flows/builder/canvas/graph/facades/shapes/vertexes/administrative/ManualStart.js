@@ -19,7 +19,7 @@ import {
   getInitObject,
 } from '../BaseVertext';
 
-export const TYPE = 'administrative.ManualStart';
+export const TYPE = 'StartBlock';
 
 const FILL_COLOR = '#2ABBA7';
 
@@ -92,7 +92,6 @@ export default class ManualStart extends ManualStartBaseClass
         id,
       ),
     );
-    // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
 }

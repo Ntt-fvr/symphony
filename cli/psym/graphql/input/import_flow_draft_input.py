@@ -18,6 +18,7 @@ from ..input.goto_block_input import GotoBlockInput
 from ..input.start_block_input import StartBlockInput
 from ..input.subflow_block_input import SubflowBlockInput
 from ..input.trigger_block_input import TriggerBlockInput
+from ..input.true_false_block_input import TrueFalseBlockInput
 from ..input.variable_definition_input import VariableDefinitionInput
 @dataclass
 class ImportFlowDraftInput(DataClassJsonMixin):
@@ -30,6 +31,7 @@ class ImportFlowDraftInput(DataClassJsonMixin):
     subflowBlocks: List[SubflowBlockInput]
     triggerBlocks: List[TriggerBlockInput]
     actionBlocks: List[ActionBlockInput]
+    trueFalseBlocks: List[TrueFalseBlockInput]
     connectors: List[ConnectorInput]
     description: Optional[str] = None
     startBlock: Optional[StartBlockInput] = None

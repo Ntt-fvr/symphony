@@ -20,6 +20,7 @@ import (
 
 // Injectors from wire.go:
 
+// NewServer creates a server from config.
 func NewServer(cfg Config) (*server.Server, func(), error) {
 	graphhttpRouterConfig, err := newRouterConfig(cfg)
 	if err != nil {

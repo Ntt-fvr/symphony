@@ -721,6 +721,7 @@ type ComplexityRoot struct {
 		AddStartBlock                            func(childComplexity int, flowDraftID int, input models.StartBlockInput) int
 		AddSubflowBlock                          func(childComplexity int, flowDraftID int, input models.SubflowBlockInput) int
 		AddTriggerBlock                          func(childComplexity int, flowDraftID int, input models.TriggerBlockInput) int
+		AddTrueFalseBlock                        func(childComplexity int, flowDraftID int, input models.TrueFalseBlockInput) int
 		AddUsersGroup                            func(childComplexity int, input models.AddUsersGroupInput) int
 		AddWiFiScans                             func(childComplexity int, data []*models.SurveyWiFiScanData, locationID int) int
 		AddWorkOrder                             func(childComplexity int, input models.AddWorkOrderInput) int
@@ -1205,6 +1206,12 @@ type ComplexityRoot struct {
 		Variables   func(childComplexity int) int
 	}
 
+	TrueFalseBlock struct {
+		EntryPoint     func(childComplexity int) int
+		FalseExitPoint func(childComplexity int) int
+		TrueExitPoint  func(childComplexity int) int
+	}
+
 	User struct {
 		AuthID       func(childComplexity int) int
 		DistanceUnit func(childComplexity int) int
@@ -1638,6 +1645,7 @@ type MutationResolver interface {
 	AddSubflowBlock(ctx context.Context, flowDraftID int, input models.SubflowBlockInput) (*ent.Block, error)
 	AddTriggerBlock(ctx context.Context, flowDraftID int, input models.TriggerBlockInput) (*ent.Block, error)
 	AddActionBlock(ctx context.Context, flowDraftID int, input models.ActionBlockInput) (*ent.Block, error)
+	AddTrueFalseBlock(ctx context.Context, flowDraftID int, input models.TrueFalseBlockInput) (*ent.Block, error)
 	EditBlock(ctx context.Context, input models.EditBlockInput) (*ent.Block, error)
 	DeleteBlock(ctx context.Context, id int) (bool, error)
 	AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*models.Connector, error)
@@ -4581,6 +4589,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddTriggerBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.TriggerBlockInput)), true
 
+	case "Mutation.addTrueFalseBlock":
+		if e.complexity.Mutation.AddTrueFalseBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addTrueFalseBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddTrueFalseBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.TrueFalseBlockInput)), true
+
 	case "Mutation.addUsersGroup":
 		if e.complexity.Mutation.AddUsersGroup == nil {
 			break
@@ -7505,6 +7525,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TriggerType.Variables(childComplexity), true
+
+	case "TrueFalseBlock.entryPoint":
+		if e.complexity.TrueFalseBlock.EntryPoint == nil {
+			break
+		}
+
+		return e.complexity.TrueFalseBlock.EntryPoint(childComplexity), true
+
+	case "TrueFalseBlock.falseExitPoint":
+		if e.complexity.TrueFalseBlock.FalseExitPoint == nil {
+			break
+		}
+
+		return e.complexity.TrueFalseBlock.FalseExitPoint(childComplexity), true
+
+	case "TrueFalseBlock.trueExitPoint":
+		if e.complexity.TrueFalseBlock.TrueExitPoint == nil {
+			break
+		}
+
+		return e.complexity.TrueFalseBlock.TrueExitPoint(childComplexity), true
 
 	case "User.authID":
 		if e.complexity.User.AuthID == nil {
@@ -11668,6 +11709,8 @@ enum ActionTypeId
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID"
   ) {
   work_order
+  update_inventory
+  update_workforce
 }
 
 type TriggerType
@@ -11787,6 +11830,12 @@ type DecisionBlock {
   routes: [DecisionRoute!]!
 }
 
+type TrueFalseBlock {
+  entryPoint: EntryPoint!
+  trueExitPoint: ExitPoint!
+  falseExitPoint: ExitPoint!
+}
+
 type SubflowBlock {
   flow: Flow
   params: [VariableExpression!]!
@@ -11820,6 +11869,7 @@ union BlockDetails =
   | SubflowBlock
   | TriggerBlock
   | ActionBlock
+  | TrueFalseBlock
 
 input StartBlockInput {
   cid: String!
@@ -11843,9 +11893,14 @@ input DecisionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
+input TrueFalseBlockInput {
+  cid: String!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 input GotoBlockInput {
   cid: String!
-  targetBlockCid: String!
+  targetBlockCid: String
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -11904,6 +11959,7 @@ input ImportFlowDraftInput {
   subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
   actionBlocks: [ActionBlockInput!]
+  trueFalseBlocks: [TrueFalseBlockInput!]
   connectors: [ConnectorInput!]
 }
 
@@ -12512,6 +12568,7 @@ type Mutation {
   addSubflowBlock(flowDraftId: ID!, input: SubflowBlockInput!): Block!
   addTriggerBlock(flowDraftId: ID!, input: TriggerBlockInput!): Block!
   addActionBlock(flowDraftId: ID!, input: ActionBlockInput!): Block!
+  addTrueFalseBlock(flowDraftId: ID!, input: TrueFalseBlockInput!): Block!
   editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(flowDraftId: ID!, input: ConnectorInput!): Connector!
@@ -13423,6 +13480,30 @@ func (ec *executionContext) field_Mutation_addTriggerBlock_args(ctx context.Cont
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNTriggerBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTriggerBlockInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addTrueFalseBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["flowDraftId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("flowDraftId"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["flowDraftId"] = arg0
+	var arg1 models.TrueFalseBlockInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNTrueFalseBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTrueFalseBlockInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -31792,6 +31873,48 @@ func (ec *executionContext) _Mutation_addActionBlock(ctx context.Context, field 
 	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addTrueFalseBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addTrueFalseBlock_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddTrueFalseBlock(rctx, args["flowDraftId"].(int), args["input"].(models.TrueFalseBlockInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_editBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -42157,6 +42280,111 @@ func (ec *executionContext) _TriggerType_variables(ctx context.Context, field gr
 	return ec.marshalNVariableDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinitionᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _TrueFalseBlock_entryPoint(ctx context.Context, field graphql.CollectedField, obj *models.TrueFalseBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TrueFalseBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntryPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EntryPoint)
+	fc.Result = res
+	return ec.marshalNEntryPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TrueFalseBlock_trueExitPoint(ctx context.Context, field graphql.CollectedField, obj *models.TrueFalseBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TrueFalseBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrueExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TrueFalseBlock_falseExitPoint(ctx context.Context, field graphql.CollectedField, obj *models.TrueFalseBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TrueFalseBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FalseExitPoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ExitPoint)
+	fc.Result = res
+	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -51085,7 +51313,7 @@ func (ec *executionContext) unmarshalInputGotoBlockInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetBlockCid"))
-			it.TargetBlockCid, err = ec.unmarshalNString2string(ctx, v)
+			it.TargetBlockCid, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51194,6 +51422,14 @@ func (ec *executionContext) unmarshalInputImportFlowDraftInput(ctx context.Conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actionBlocks"))
 			it.ActionBlocks, err = ec.unmarshalOActionBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐActionBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "trueFalseBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trueFalseBlocks"))
+			it.TrueFalseBlocks, err = ec.unmarshalOTrueFalseBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTrueFalseBlockInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53571,6 +53807,34 @@ func (ec *executionContext) unmarshalInputTriggerBlockInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTrueFalseBlockInput(ctx context.Context, obj interface{}) (models.TrueFalseBlockInput, error) {
+	var it models.TrueFalseBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateUserGroupsInput(ctx context.Context, obj interface{}) (models.UpdateUserGroupsInput, error) {
 	var it models.UpdateUserGroupsInput
 	var asMap = obj.(map[string]interface{})
@@ -54184,6 +54448,13 @@ func (ec *executionContext) _BlockDetails(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._ActionBlock(ctx, sel, obj)
+	case models.TrueFalseBlock:
+		return ec._TrueFalseBlock(ctx, sel, &obj)
+	case *models.TrueFalseBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TrueFalseBlock(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -58830,6 +59101,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addTrueFalseBlock":
+			out.Values[i] = ec._Mutation_addTrueFalseBlock(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "editBlock":
 			out.Values[i] = ec._Mutation_editBlock(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -61725,6 +62001,43 @@ func (ec *executionContext) _TriggerType(ctx context.Context, sel ast.SelectionS
 			}
 		case "variables":
 			out.Values[i] = ec._TriggerType_variables(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var trueFalseBlockImplementors = []string{"TrueFalseBlock", "BlockDetails"}
+
+func (ec *executionContext) _TrueFalseBlock(ctx context.Context, sel ast.SelectionSet, obj *models.TrueFalseBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, trueFalseBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TrueFalseBlock")
+		case "entryPoint":
+			out.Values[i] = ec._TrueFalseBlock_entryPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "trueExitPoint":
+			out.Values[i] = ec._TrueFalseBlock_trueExitPoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "falseExitPoint":
+			out.Values[i] = ec._TrueFalseBlock_falseExitPoint(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -67873,6 +68186,16 @@ func (ec *executionContext) marshalNTriggerTypeId2githubᚗcomᚋfacebookincubat
 	return v
 }
 
+func (ec *executionContext) unmarshalNTrueFalseBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTrueFalseBlockInput(ctx context.Context, v interface{}) (models.TrueFalseBlockInput, error) {
+	res, err := ec.unmarshalInputTrueFalseBlockInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNTrueFalseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTrueFalseBlockInput(ctx context.Context, v interface{}) (*models.TrueFalseBlockInput, error) {
+	res, err := ec.unmarshalInputTrueFalseBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdateUserGroupsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUpdateUserGroupsInput(ctx context.Context, v interface{}) (models.UpdateUserGroupsInput, error) {
 	res, err := ec.unmarshalInputUpdateUserGroupsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -71489,6 +71812,30 @@ func (ec *executionContext) marshalOTriggerType2githubᚗcomᚋfacebookincubator
 		return graphql.Null
 	}
 	return ec._TriggerType(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTrueFalseBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTrueFalseBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.TrueFalseBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.TrueFalseBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTrueFalseBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTrueFalseBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v *ent.User) graphql.Marshaler {

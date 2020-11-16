@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type ActionTypeId = "work_order" | "%future added value";
+export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
@@ -31,6 +31,7 @@ export type ImportFlowDraftInput = {|
   subflowBlocks?: ?$ReadOnlyArray<SubflowBlockInput>,
   triggerBlocks?: ?$ReadOnlyArray<TriggerBlockInput>,
   actionBlocks?: ?$ReadOnlyArray<ActionBlockInput>,
+  trueFalseBlocks?: ?$ReadOnlyArray<TrueFalseBlockInput>,
   connectors?: ?$ReadOnlyArray<ConnectorInput>,
 |};
 export type VariableDefinitionInput = {|
@@ -75,7 +76,7 @@ export type DecisionRouteInput = {|
 |};
 export type GotoBlockInput = {|
   cid: string,
-  targetBlockCid: string,
+  targetBlockCid?: ?string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type SubflowBlockInput = {|
@@ -94,6 +95,10 @@ export type ActionBlockInput = {|
   cid: string,
   actionType: ActionTypeId,
   params: $ReadOnlyArray<VariableExpressionInput>,
+  uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type TrueFalseBlockInput = {|
+  cid: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type ConnectorInput = {|

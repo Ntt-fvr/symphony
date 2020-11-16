@@ -20,13 +20,34 @@ import * as React from 'react';
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock.js';
 import fbt from 'fbt';
 import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
-import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
+import {
+  ACTION_TYPE_ID as CreateWorkorderActionTypeID,
+  TYPE as CreateWorkorderType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
 import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {Events} from '../builder/canvas/graph/facades/Helpers.js';
+import {TYPE as GoToType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/GoTo';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
+import {
+  TYPE as TriggerWorkforceBlockType,
+  TRIGGER_TYPE_ID as TriggerWorkforceTriggerTypeID,
+} from '../builder/canvas/graph/facades/shapes/vertexes/triggers/TriggerWorkforce';
+import {TYPE as TrueFalseType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/TrueFalse';
+import {
+  ACTION_TYPE_ID as UpdateInventoryActionTypeID,
+  TYPE as UpdateInventoryBlockType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateInventory';
+import {
+  ACTION_TYPE_ID as UpdateWorkforceActionTypeID,
+  TYPE as UpdateWorkforceBlockType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/UpdateWorkforce';
+import {
+  getActionType,
+  getTriggerType,
+} from '../builder/canvas/graph/facades/shapes/vertexes/actions/utils';
 import {graphql} from 'react-relay';
 import {
   hasMeaningfulChanges,
@@ -34,7 +55,10 @@ import {
   mapConnectorsForSave,
   mapDecisionBlockForSave,
   mapEndBlockForSave,
+  mapGoToBlockForSave,
   mapStartBlockForSave,
+  mapTriggerBlocksForSave,
+  mapTrueFalseBlockForSave,
   saveFlowDraft,
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
@@ -43,13 +67,6 @@ import {useGraph} from '../builder/canvas/graph/graphAPIContext/GraphContext';
 import {useHistory} from 'react-router-dom';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useRef, useState} from 'react';
-
-const BLOCK_TYPES = {
-  StartBlock: ManualStartType,
-  ActionBlock: CreateWorkorderType,
-  DecisionBlock: DecisionType,
-  EndBlock: EndType,
-};
 
 type FlowDraftResponse = $ElementType<
   FlowDataContext_FlowDraftQueryResponse,
@@ -90,6 +107,16 @@ const flowQuery = graphql`
           cid
           details {
             __typename
+            ... on ActionBlock {
+              actionType {
+                id
+              }
+            }
+            ... on TriggerBlock {
+              triggerType {
+                id
+              }
+            }
           }
           uiRepresentation {
             name
@@ -155,17 +182,7 @@ function FlowDataContextProviderComponent(props: Props) {
     blocks => {
       const errors: Array<{id: string, name: string}> = [];
       blocks.forEach(block => {
-        const createdBlock = flow.addBlock(
-          BLOCK_TYPES[block.details.__typename],
-          {
-            id: block.cid,
-            text: block.uiRepresentation?.name ?? '',
-            position: {
-              x: block.uiRepresentation?.xPosition ?? 0,
-              y: block.uiRepresentation?.yPosition ?? 0,
-            },
-          },
-        );
+        const createdBlock = createBlock(block, flow);
         if (!(createdBlock instanceof BaseBlock)) {
           errors.push({
             id: block.cid,
@@ -174,22 +191,7 @@ function FlowDataContextProviderComponent(props: Props) {
         }
       });
 
-      let logMessage = '';
-      let clientMessage = '';
-      if (errors.length === 1) {
-        logMessage = `Failed loading Block cid: ${errors[0].id}.`;
-        clientMessage = `Failed loading Block: ${errors[0].name}.`;
-      } else if (errors.length > 1) {
-        if (errors.length === blocks.length) {
-          logMessage = `failed to load flow Blocks.`;
-          clientMessage = 'Flow Blocks failed to get loaded.';
-        } else {
-          logMessage = `Blocks with cids ${errors
-            .map(el => el.id)
-            .toString()} failed to load.`;
-          clientMessage = 'Some Blocks failed to get loaded.';
-        }
-      }
+      const {logMessage, clientMessage} = getErrorMessages(errors, blocks);
 
       if (errors.length > 0) {
         ServerLogger.error(LogEvents.LOAD_BLOCK_ERROR, {
@@ -271,9 +273,44 @@ function FlowDataContextProviderComponent(props: Props) {
       const decisionBlocks = flow
         .getBlocksByType(DecisionType)
         .map(mapDecisionBlockForSave);
-      const actionBlocks = flow
+      const gotoBlocks = flow
+        .getBlocksByType(GoToType)
+        .map(mapGoToBlockForSave);
+      const trueFalseBlocks = flow
+        .getBlocksByType(TrueFalseType)
+        .map(mapTrueFalseBlockForSave);
+
+      // Action Blocks
+      const updateInventoryBlocks = flow
+        .getBlocksByType(UpdateInventoryBlockType)
+        .map(block =>
+          mapActionBlocksForSave(block, UpdateInventoryActionTypeID),
+        );
+      const updateWorkforceBlocks = flow
+        .getBlocksByType(UpdateWorkforceBlockType)
+        .map(block =>
+          mapActionBlocksForSave(block, UpdateWorkforceActionTypeID),
+        );
+      const createWorkOrderBlocks = flow
         .getBlocksByType(CreateWorkorderType)
-        .map(mapActionBlocksForSave);
+        .map(block =>
+          mapActionBlocksForSave(block, CreateWorkorderActionTypeID),
+        );
+
+      const actionBlocks = [
+        ...createWorkOrderBlocks,
+        ...updateInventoryBlocks,
+        ...updateWorkforceBlocks,
+      ];
+
+      // TriggerBlocks
+      const triggerWorkforceBlocks = flow
+        .getBlocksByType(TriggerWorkforceBlockType)
+        .map(block =>
+          mapTriggerBlocksForSave(block, TriggerWorkforceTriggerTypeID),
+        );
+
+      const triggerBlocks = [...triggerWorkforceBlocks];
       const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
       if (startBlocks.length > 0) {
@@ -283,12 +320,25 @@ function FlowDataContextProviderComponent(props: Props) {
       if (endBlocks.length > 0) {
         flowData.endBlocks = endBlocks;
       }
+
+      if (actionBlocks.length > 0) {
+        flowData.actionBlocks = actionBlocks;
+      }
+
+      if (triggerBlocks.length > 0) {
+        flowData.triggerBlocks = triggerBlocks;
+      }
+
       if (decisionBlocks.length > 0) {
         flowData.decisionBlocks = decisionBlocks;
       }
 
-      if (actionBlocks.length > 0) {
-        flowData.actionBlocks = actionBlocks;
+      if (gotoBlocks.length > 0) {
+        flowData.gotoBlocks = gotoBlocks;
+      }
+
+      if (trueFalseBlocks.length > 0) {
+        flowData.trueFalseBlocks = trueFalseBlocks;
       }
 
       if (connectors.length > 0) {
@@ -343,3 +393,45 @@ export type WithFlowData<T: {+$refType: FragmentReference}> = {
 };
 
 export default FlowDataContext;
+
+function createBlock(block, flow) {
+  let blockType = block.details.__typename;
+
+  if (block.details.actionType) {
+    blockType = getActionType(block.details.actionType.id);
+  }
+
+  if (block.details.triggerType) {
+    blockType = getTriggerType(block.details.triggerType.id);
+  }
+
+  return flow.addBlock(blockType, {
+    id: block.cid,
+    text: block.uiRepresentation?.name ?? '',
+    position: {
+      x: block.uiRepresentation?.xPosition ?? 0,
+      y: block.uiRepresentation?.yPosition ?? 0,
+    },
+  });
+}
+
+function getErrorMessages(errors, blocks) {
+  let logMessage = '';
+  let clientMessage = '';
+  if (errors.length === 1) {
+    logMessage = `Failed loading Block cid: ${errors[0].id}.`;
+    clientMessage = `Failed loading Block: ${errors[0].name}.`;
+  } else if (errors.length > 1) {
+    if (errors.length === blocks.length) {
+      logMessage = `failed to load flow Blocks.`;
+      clientMessage = 'Flow Blocks failed to get loaded.';
+    } else {
+      logMessage = `Blocks with cids ${errors
+        .map(el => el.id)
+        .toString()} failed to load.`;
+      clientMessage = 'Some Blocks failed to get loaded.';
+    }
+  }
+
+  return {logMessage, clientMessage};
+}

@@ -528,10 +528,13 @@ func TestNestedMandatoryPropertiesEnforced(t *testing.T) {
 	}
 }
 
-func connectBlocks(ctx context.Context, t *testing.T, source *ent.Block, target *ent.Block, sourceCid *string) {
+func connectBlocks(ctx context.Context, t *testing.T, source *ent.Block, target *ent.Block, sourceCid *string, sourceRole *flowschema.ExitPointRole) {
 	pred := exitpoint.RoleEQ(flowschema.ExitPointRoleDefault)
 	if sourceCid != nil {
 		pred = exitpoint.Cid(*sourceCid)
+	}
+	if sourceRole != nil {
+		pred = exitpoint.RoleEQ(*sourceRole)
 	}
 	exitPoint, err := source.QueryExitPoints().
 		Where(pred).
@@ -625,7 +628,6 @@ func TestFlowInstanceCreation(t *testing.T) {
 		SetInputParams(actionInputParams).
 		Save(ctx)
 	require.NoError(t, err)
-	connectBlocks(ctx, t, startBlock, actionBlock, nil)
 
 	decisionBlock, err := client.Block.Create().
 		SetCid("decision").
@@ -633,14 +635,20 @@ func TestFlowInstanceCreation(t *testing.T) {
 		SetFlow(flw).
 		Save(ctx)
 	require.NoError(t, err)
-	connectBlocks(ctx, t, actionBlock, decisionBlock, nil)
-
 	_, err = client.ExitPoint.Create().
 		SetParentBlock(decisionBlock).
 		SetRole(flowschema.ExitPointRoleDecision).
 		SetCid("true").
 		Save(ctx)
 	require.NoError(t, err)
+
+	trueFalseBlock, err := client.Block.Create().
+		SetCid("trueFalseBlock").
+		SetType(block.TypeTrueFalse).
+		SetFlow(flw).
+		Save(ctx)
+	require.NoError(t, err)
+
 	endBlock, err := client.Block.Create().
 		SetCid("the_end").
 		SetType(block.TypeEnd).
@@ -648,7 +656,6 @@ func TestFlowInstanceCreation(t *testing.T) {
 		SetInputParams(endInputParams).
 		Save(ctx)
 	require.NoError(t, err)
-	connectBlocks(ctx, t, decisionBlock, endBlock, pointer.ToString("true"))
 
 	_, err = client.ExitPoint.Create().
 		SetParentBlock(decisionBlock).
@@ -663,7 +670,11 @@ func TestFlowInstanceCreation(t *testing.T) {
 		SetGotoBlockID(endBlock.ID).
 		Save(ctx)
 	require.NoError(t, err)
-	connectBlocks(ctx, t, decisionBlock, gotoBlock, pointer.ToString("false"))
+
+	connectBlocks(ctx, t, startBlock, actionBlock, nil, nil)
+	connectBlocks(ctx, t, actionBlock, decisionBlock, nil, nil)
+	connectBlocks(ctx, t, decisionBlock, trueFalseBlock, pointer.ToString("true"), nil)
+	connectBlocks(ctx, t, decisionBlock, gotoBlock, pointer.ToString("false"), nil)
 
 	_, err = client.FlowInstance.Create().
 		SetFlow(flw).
@@ -691,7 +702,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 		WithGotoBlock().
 		All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blocks, 5)
+	require.Len(t, blocks, 6)
 
 	var newActionInputParams []*flowschema.VariableExpression
 	var startBlockID int
@@ -725,6 +736,20 @@ func TestFlowInstanceCreation(t *testing.T) {
 			require.Len(t, blk.Edges.ExitPoints, 1)
 			require.Len(t, blk.Edges.ExitPoints[0].Edges.NextEntryPoints, 1)
 			newActionInputParams = blk.InputParams
+		case block.TypeTrueFalse:
+			require.Equal(t, "trueFalseBlock", blk.Cid)
+			require.Len(t, blk.Edges.ExitPoints, 2)
+			for _, exitPoint := range blk.Edges.ExitPoints {
+				switch {
+				case exitPoint.Role == flowschema.ExitPointRoleFalse:
+					require.Len(t, exitPoint.Edges.NextEntryPoints, 0)
+				case exitPoint.Role == flowschema.ExitPointRoleTrue:
+					require.Len(t, exitPoint.Edges.NextEntryPoints, 0)
+				default:
+					t.Fail()
+				}
+			}
+
 		case block.TypeEnd:
 			require.Equal(t, "the_end", blk.Cid)
 			require.Len(t, blk.InputParams, 1)

@@ -14,6 +14,6 @@ from ..input.block_u_i_representation_input import BlockUIRepresentationInput
 @dataclass
 class GotoBlockInput(DataClassJsonMixin):
     cid: str
-    targetBlockCid: str
+    targetBlockCid: Optional[str] = None
     uiRepresentation: Optional[BlockUIRepresentationInput] = None
 

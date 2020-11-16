@@ -92,7 +92,7 @@ func getDefaultEntryExitPoints(ctx context.Context, obj *ent.Block) (*ent.EntryP
 			return nil, nil, err
 		}
 	}
-	if obj.Type != block.TypeEnd && obj.Type != block.TypeGoTo {
+	if obj.Type != block.TypeEnd && obj.Type != block.TypeGoTo && obj.Type != block.TypeTrueFalse {
 		exitPoint, err = getDefaultExitPoint(ctx, obj)
 		if err != nil {
 			return nil, nil, err
@@ -132,6 +132,24 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			EntryPoint:       entryPoint,
 			DefaultExitPoint: exitPoint,
 			Routes:           routes,
+		}, nil
+	case block.TypeTrueFalse:
+		trueExitPoint, err := obj.QueryExitPoints().
+			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleTrue)).
+			Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query true exit point: %w", err)
+		}
+		falseExitPoint, err := obj.QueryExitPoints().
+			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleFalse)).
+			Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query false exit point: %w", err)
+		}
+		return &models.TrueFalseBlock{
+			EntryPoint:     entryPoint,
+			TrueExitPoint:  trueExitPoint,
+			FalseExitPoint: falseExitPoint,
 		}, nil
 	case block.TypeSubFlow:
 		flow, err := obj.QuerySubFlow().
@@ -273,14 +291,21 @@ func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int,
 	return b, nil
 }
 
+func (r mutationResolver) AddTrueFalseBlock(ctx context.Context, flowDraftID int, input models.TrueFalseBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeTrueFalse, flowDraftID, input.UIRepresentation)
+	return mutation.Save(ctx)
+}
+
 func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, input models.GotoBlockInput) (*ent.Block, error) {
-	targetBlockID, err := getDraftBlock(ctx, flowDraftID, input.TargetBlockCid)
-	if err != nil {
-		return nil, err
-	}
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeGoTo, flowDraftID, input.UIRepresentation)
+	if input.TargetBlockCid != nil {
+		targetBlockID, err := getDraftBlock(ctx, flowDraftID, *input.TargetBlockCid)
+		if err != nil {
+			return nil, err
+		}
+		mutation.SetGotoBlock(targetBlockID)
+	}
 	return mutation.
-		SetGotoBlock(targetBlockID).
 		Save(ctx)
 }
 

@@ -265,8 +265,17 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 					return err
 				}
 				createdBlockCIDs[blkInput.Cid] = struct{}{}
+			case *models.TrueFalseBlockInput:
+				if _, err := r.AddTrueFalseBlock(ctx, input.ID, *blkInput); err != nil {
+					return err
+				}
+				createdBlockCIDs[blkInput.Cid] = struct{}{}
 			case *models.GotoBlockInput:
-				if _, ok := createdBlockCIDs[blkInput.TargetBlockCid]; ok {
+				ok := true
+				if blkInput.TargetBlockCid != nil {
+					_, ok = createdBlockCIDs[*blkInput.TargetBlockCid]
+				}
+				if ok {
 					if _, err := r.AddGotoBlock(ctx, input.ID, *blkInput); err != nil {
 						return err
 					}
@@ -329,6 +338,9 @@ func (r mutationResolver) collectBlocksInputs(ctx context.Context, input models.
 		blockInputs = append(blockInputs, blk)
 	}
 	for _, blk := range input.ActionBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.TrueFalseBlocks {
 		blockInputs = append(blockInputs, blk)
 	}
 	return blockInputs

@@ -19,7 +19,7 @@ import {
   getInitObject,
 } from '../BaseVertext';
 
-export const TYPE = 'administrative.End';
+export const TYPE = 'EndBlock';
 
 const FILL_COLOR = '#d03346';
 

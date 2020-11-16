@@ -12,6 +12,8 @@ import (
 
 var actions = []ActionType{
 	workOrderAction{},
+	updateInventoryAction{},
+	updateWorkforceAction{},
 }
 
 // ActionType is an interface for the configuration and execution of action block in flow

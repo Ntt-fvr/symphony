@@ -19,7 +19,7 @@ import {
   getInitObject,
 } from '../BaseVertext';
 
-export const TYPE = 'administrative.Decision';
+export const TYPE = 'DecisionBlock';
 
 const FILL_COLOR = '#9360f7';
 

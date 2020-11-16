@@ -144,7 +144,7 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	require.NoError(t, err)
 	gotoBlock, err := mr.AddGotoBlock(ctx, flowDraft.ID, models.GotoBlockInput{
 		Cid:            "shortcut",
-		TargetBlockCid: endBlock.Cid,
+		TargetBlockCid: pointer.ToString(endBlock.Cid),
 	})
 	require.NoError(t, err)
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
@@ -382,6 +382,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	})
 	require.NoError(t, err)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()
+	trueRole := flowschema.ExitPointRoleTrue
 	connectorInputs := []*models.ConnectorInput{
 		{
 			SourceBlockCid: "start",
@@ -403,7 +404,14 @@ func TestImportEmptyFlow(t *testing.T) {
 			SourcePoint: &models.ExitPointInput{
 				Cid: pointer.ToString("true"),
 			},
-			TargetBlockCid: "shortcut",
+			TargetBlockCid: "trueFalse",
+		},
+		{
+			SourceBlockCid: "trueFalse",
+			SourcePoint: &models.ExitPointInput{
+				Role: &trueRole,
+			},
+			TargetBlockCid: "end",
 		},
 		{
 			SourceBlockCid: "trig",
@@ -480,7 +488,12 @@ func TestImportEmptyFlow(t *testing.T) {
 		GotoBlocks: []*models.GotoBlockInput{
 			{
 				Cid:            "shortcut",
-				TargetBlockCid: "end",
+				TargetBlockCid: pointer.ToString("end"),
+			},
+		},
+		TrueFalseBlocks: []*models.TrueFalseBlockInput{
+			{
+				Cid: "trueFalse",
 			},
 		},
 		Connectors: connectorInputs,
@@ -491,7 +504,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
 	blocks, err := fdr.Blocks(ctx, newDraft)
 	require.NoError(t, err)
-	require.Len(t, blocks, 6)
+	require.Len(t, blocks, 7)
 	for _, blk := range blocks {
 		switch blk.Type {
 		case block.TypeStart:
@@ -515,13 +528,15 @@ func TestImportEmptyFlow(t *testing.T) {
 		case block.TypeGoTo:
 			require.Equal(t, "shortcut", blk.Cid)
 			require.Equal(t, draft.QueryBlocks().Where(block.TypeEQ(block.TypeEnd)).OnlyIDX(ctx), blk.QueryGotoBlock().OnlyIDX(ctx))
+		case block.TypeTrueFalse:
+			require.Equal(t, "trueFalse", blk.Cid)
 		default:
 			t.Fatalf("block type not found: %v", blk.Type)
 		}
 	}
 	connectors, err := fdr.Connectors(ctx, newDraft)
 	require.NoError(t, err)
-	require.Len(t, connectors, 5)
+	require.Len(t, connectors, 6)
 	for _, connector := range connectors {
 		sourceBlock, err := opr.ParentBlock(ctx, connector.Source)
 		require.NoError(t, err)
@@ -620,7 +635,7 @@ func TestBadImports(t *testing.T) {
 			GotoBlocks: []*models.GotoBlockInput{
 				{
 					Cid:            "goto",
-					TargetBlockCid: "target",
+					TargetBlockCid: pointer.ToString("target"),
 				},
 			},
 		})

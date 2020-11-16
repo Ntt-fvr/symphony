@@ -557,7 +557,7 @@ func (GotoBlock) IsBlockDetails() {}
 
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
-	TargetBlockCid   string                            `json:"targetBlockCid"`
+	TargetBlockCid   *string                           `json:"targetBlockCid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -573,6 +573,7 @@ type ImportFlowDraftInput struct {
 	SubflowBlocks       []*SubflowBlockInput             `json:"subflowBlocks"`
 	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
+	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
 }
 
@@ -895,6 +896,19 @@ type TriggerBlockInput struct {
 	Cid              string                            `json:"cid"`
 	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
 	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type TrueFalseBlock struct {
+	EntryPoint     *ent.EntryPoint `json:"entryPoint"`
+	TrueExitPoint  *ent.ExitPoint  `json:"trueExitPoint"`
+	FalseExitPoint *ent.ExitPoint  `json:"falseExitPoint"`
+}
+
+func (TrueFalseBlock) IsBlockDetails() {}
+
+type TrueFalseBlockInput struct {
+	Cid              string                            `json:"cid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
