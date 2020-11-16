@@ -365,7 +365,7 @@ function FlowDataContextProviderComponent(props: Props) {
 
   const publish = useCallback(() => {
     if (flowDraft == null) {
-      return Promise.reject('There was not flowDraft to publish.');
+      return Promise.reject('There was no flowDraft to publish.');
     }
     const flowData: PublishFlowInput = {
       flowDraftID: flowDraft.id ?? '',

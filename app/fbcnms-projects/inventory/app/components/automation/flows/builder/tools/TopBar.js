@@ -88,6 +88,24 @@ function BuilderTopBar() {
   }, [enqueueSnackbar, flowData]);
   useKeyboardShortcut(PREDICATES.key('s'), save);
 
+  const publish = useCallback(() => {
+    flowData
+      .publish()
+      .then(() => {
+        enqueueSnackbar(`${fbt('Flow has been published!', '')}`, {
+          variant: 'success',
+        });
+      })
+      .catch(() => {
+        enqueueSnackbar(
+          `${fbt('There was an error when trying to publish the flow.', '')}`,
+          {
+            variant: 'error',
+          },
+        );
+      });
+  }, [enqueueSnackbar, flowData]);
+
   return (
     <ToolsBar className={classes.root}>
       <div className={classes.left}>
@@ -118,29 +136,7 @@ function BuilderTopBar() {
           onClick={save}>
           {Strings.common.saveButton}
         </Button>
-        <Button
-          onClick={() =>
-            flowData
-              .publish()
-              .then(() => {
-                enqueueSnackbar(`${fbt('Flow has been published!', '')}`, {
-                  variant: 'success',
-                });
-              })
-              .catch(() => {
-                enqueueSnackbar(
-                  `${fbt(
-                    'There was an error when trying to publish the flow.',
-                    '',
-                  )}`,
-                  {
-                    variant: 'error',
-                  },
-                );
-              })
-          }>
-          {`${fbt('Publish', '')}`}
-        </Button>
+        <Button onClick={publish}>{`${fbt('Publish', '')}`}</Button>
       </div>
     </ToolsBar>
   );
