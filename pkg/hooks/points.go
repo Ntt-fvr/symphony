@@ -61,7 +61,7 @@ func VerifyEntryPointTypeHook() ent.Hook {
 }
 
 // UpdateDraftChangedForEntryHook marks the entry point's draft has changes from the flow
-// nolint: funlen
+// nolint: dupl
 func UpdateDraftChangedForEntryHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.EntryPointFunc(func(ctx context.Context, mutation *ent.EntryPointMutation) (ent.Value, error) {
@@ -218,7 +218,7 @@ func DeleteEntryAndExitPointsHook() ent.Hook {
 }
 
 // UpdateDraftChangedForExitHook marks the exit point's draft has changes from the flow
-// nolint: funlen
+// nolint: dupl
 func UpdateDraftChangedForExitHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.ExitPointFunc(func(ctx context.Context, mutation *ent.ExitPointMutation) (ent.Value, error) {
