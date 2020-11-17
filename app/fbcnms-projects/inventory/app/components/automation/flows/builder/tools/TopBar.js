@@ -136,7 +136,10 @@ function BuilderTopBar() {
           onClick={save}>
           {Strings.common.saveButton}
         </Button>
-        <Button onClick={publish}>{`${fbt('Publish', '')}`}</Button>
+        <Button onClick={publish} tooltip="publish last saved version">{`${fbt(
+          'Publish',
+          '',
+        )}`}</Button>
       </div>
     </ToolsBar>
   );
