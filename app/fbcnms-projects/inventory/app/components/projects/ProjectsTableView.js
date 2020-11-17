@@ -22,7 +22,6 @@ import fbt from 'fbt';
 import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
-import {prioritySortingValues} from '../../common/FilterTypes';
 import {usePaginationFragment} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
@@ -109,7 +108,6 @@ const ProjectsTableView = (props: Props) => {
     {
       key: 'numberOfWorkOrders',
       title: 'Work Orders',
-      getSortingValue: row => row?.numberOfWorkOrders,
       render: row =>
         row?.numberOfWorkOrders ? (
           <Button
@@ -122,13 +120,11 @@ const ProjectsTableView = (props: Props) => {
     {
       key: 'type',
       title: `${fbt('Template', '')}`,
-      getSortingValue: row => row.type?.name,
       render: row => row.type?.name ?? '',
     },
     {
       key: 'location',
       title: 'Location',
-      getSortingValue: row => row.location?.name,
       render: row =>
         row.location ? (
           <LocationLink title={row.location.name} id={row.location.id} />
@@ -139,19 +135,16 @@ const ProjectsTableView = (props: Props) => {
     {
       key: 'owner',
       title: 'Owner',
-      getSortingValue: row => row?.createdBy?.email,
       render: row => row?.createdBy?.email ?? '',
     },
     {
       key: 'priority',
       title: 'Priority',
-      getSortingValue: row => prioritySortingValues[row.priority],
       render: row => <PriorityTag priority={row.priority} />,
     },
     {
       key: 'createTime',
       title: 'Creation Time',
-      getSortingValue: row => new Date(row.createTime).getTime(),
       render: row => DateTimeFormat.dateTime(row.createTime),
     },
   ];
