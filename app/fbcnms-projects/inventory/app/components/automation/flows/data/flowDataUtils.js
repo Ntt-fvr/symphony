@@ -16,6 +16,7 @@ import type {
   EndBlockInput,
   GotoBlockInput,
   ImportFlowDraftInput,
+  ImportFlowDraftMutationResponse,
   StartBlockInput,
   TriggerBlockInput,
   TriggerTypeId,
@@ -24,10 +25,14 @@ import type {
 import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
 import type {IShape} from '../builder/canvas/graph/facades/shapes/BaseShape';
-import type {ImportFlowDraftMutationResponse} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
+import type {
+  PublishFlowInput,
+  PublishFlowMutationResponse,
+} from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
 
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
+import PublishFlowMutation from '../../../../mutations/PublishFlowMutation';
 import {getGraphError} from '../../../../common/EntUtils';
 import {isLasso} from '../builder/canvas/graph/facades/shapes/vertexes/helpers/Lasso';
 
@@ -47,6 +52,25 @@ export function saveFlowDraft(
       },
     };
     ImportFlowDraftMutation({input}, callbacks);
+  });
+}
+
+export function publishFlow(
+  input: PublishFlowInput,
+): Promise<PublishFlowMutationResponse> {
+  return new Promise<PublishFlowMutationResponse>((resolve, reject) => {
+    const callbacks: MutationCallbacks<PublishFlowMutationResponse> = {
+      onCompleted: (response, errors) => {
+        if (errors && errors[0]) {
+          reject(getGraphError(errors[0]));
+        }
+        resolve(response);
+      },
+      onError: error => {
+        reject(getGraphError(error));
+      },
+    };
+    PublishFlowMutation({input}, callbacks);
   });
 }
 

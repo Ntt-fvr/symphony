@@ -51,6 +51,41 @@ func VerifyStartParamDefinitionsHook() ent.Hook {
 		))
 }
 
+// UpdateDraftChangedHook marks the block's draft has changes from the flow
+func UpdateDraftChangedHook() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.BlockFunc(func(ctx context.Context, mutation *ent.BlockMutation) (ent.Value, error) {
+			var (
+				draftID int
+				err     error
+			)
+			if mutation.Op().Is(ent.OpCreate) {
+				draftID, _ = mutation.FlowDraftID()
+			} else {
+				id, exists := mutation.ID()
+				if !exists {
+					return nil, fmt.Errorf("block has no id")
+				}
+				draftID, _ = mutation.Client().Block.Query().
+					Where(block.ID(id)).
+					QueryFlowDraft().
+					OnlyID(ctx)
+			}
+
+			if draftID != 0 {
+				if err = mutation.Client().FlowDraft.UpdateOneID(draftID).
+					SetSameAsFlow(false).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update flow draft: %w", err)
+				}
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpDeleteOne)
+}
+
 func getBlockType(ctx context.Context, mutation *ent.BlockMutation) (*block.Type, error) {
 	blockType, exists := mutation.GetType()
 	if exists {

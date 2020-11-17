@@ -99,6 +99,7 @@ func (Block) Hooks() []ent.Hook {
 		hooks.VerifyStartParamDefinitionsHook(),
 		hooks.AddDefaultEntryAndExitPointsHook(),
 		hooks.DeleteEntryAndExitPointsHook(),
+		hooks.UpdateDraftChangedHook(),
 	}
 }
 

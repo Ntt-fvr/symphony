@@ -13,8 +13,14 @@ import type {
   FlowDataContext_FlowDraftQueryResponse,
 } from './__generated__/FlowDataContext_FlowDraftQuery.graphql';
 import type {FragmentReference} from 'relay-runtime';
-import type {ImportFlowDraftInput} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
-import type {ImportFlowDraftMutationResponse} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
+import type {
+  ImportFlowDraftInput,
+  ImportFlowDraftMutationResponse,
+} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
+import type {
+  PublishFlowInput,
+  PublishFlowMutationResponse,
+} from '../../../../mutations/__generated__/PublishFlowMutation.graphql';
 
 import * as React from 'react';
 import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock.js';
@@ -59,6 +65,7 @@ import {
   mapStartBlockForSave,
   mapTriggerBlocksForSave,
   mapTrueFalseBlockForSave,
+  publishFlow,
   saveFlowDraft,
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
@@ -84,12 +91,14 @@ export type FlowDataContextType = $ReadOnly<{|
   save: (
     flowSettingsUpdate?: FlowSettingsUpdateType,
   ) => Promise<ImportFlowDraftMutationResponse>,
+  publish: () => Promise<PublishFlowMutationResponse>,
 |}>;
 
 const FlowDataContextDefaults = {
   flowDraft: null,
   hasChanges: false,
   save: () => Promise.reject(),
+  publish: () => Promise.reject(),
 };
 
 const FlowDataContext = React.createContext<FlowDataContextType>(
@@ -354,8 +363,19 @@ function FlowDataContextProviderComponent(props: Props) {
     [flow, flowDraft],
   );
 
+  const publish = useCallback(() => {
+    if (flowDraft == null) {
+      return Promise.reject('There was no flowDraft to publish.');
+    }
+    const flowData: PublishFlowInput = {
+      flowDraftID: flowDraft.id ?? '',
+      flowInstancesPolicy: 'ENABLED',
+    };
+    return publishFlow(flowData);
+  }, [flowDraft]);
+
   return (
-    <FlowDataContext.Provider value={{flowDraft, hasChanges, save}}>
+    <FlowDataContext.Provider value={{flowDraft, hasChanges, save, publish}}>
       {props.children}
     </FlowDataContext.Provider>
   );

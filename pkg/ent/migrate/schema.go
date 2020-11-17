@@ -870,6 +870,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
+		{Name: "same_as_flow", Type: field.TypeBool, Default: true},
 		{Name: "flow_draft", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// FlowDraftsTable holds the schema information for the "flow_drafts" table.
@@ -880,7 +881,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "flow_drafts_flows_draft",
-				Columns: []*schema.Column{FlowDraftsColumns[6]},
+				Columns: []*schema.Column{FlowDraftsColumns[7]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,

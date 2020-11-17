@@ -120,6 +120,8 @@ func init() {
 	block.Hooks[2] = blockHooks[1]
 
 	block.Hooks[3] = blockHooks[2]
+
+	block.Hooks[4] = blockHooks[3]
 	blockMixinFields0 := blockMixin[0].Fields()
 	blockFields := schema.Block{}.Fields()
 	_ = blockFields
@@ -309,6 +311,8 @@ func init() {
 	entrypointHooks := schema.EntryPoint{}.Hooks()
 
 	entrypoint.Hooks[1] = entrypointHooks[0]
+
+	entrypoint.Hooks[2] = entrypointHooks[1]
 	entrypointMixinFields0 := entrypointMixin[0].Fields()
 	entrypointFields := schema.EntryPoint{}.Fields()
 	_ = entrypointFields
@@ -527,6 +531,8 @@ func init() {
 	exitpointHooks := schema.ExitPoint{}.Hooks()
 
 	exitpoint.Hooks[1] = exitpointHooks[0]
+
+	exitpoint.Hooks[2] = exitpointHooks[1]
 	exitpointMixinFields0 := exitpointMixin[0].Fields()
 	exitpointFields := schema.ExitPoint{}.Fields()
 	_ = exitpointFields
@@ -734,8 +740,11 @@ func init() {
 		})
 	}
 	flowdraftMixinHooks1 := flowdraftMixin[1].Hooks()
+	flowdraftHooks := schema.FlowDraft{}.Hooks()
 
 	flowdraft.Hooks[1] = flowdraftMixinHooks1[0]
+
+	flowdraft.Hooks[2] = flowdraftHooks[0]
 	flowdraftMixinFields0 := flowdraftMixin[0].Fields()
 	flowdraftMixinFields1 := flowdraftMixin[1].Fields()
 	flowdraftFields := schema.FlowDraft{}.Fields()
@@ -754,6 +763,10 @@ func init() {
 	flowdraftDescName := flowdraftMixinFields1[0].Descriptor()
 	// flowdraft.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowdraft.NameValidator = flowdraftDescName.Validators[0].(func(string) error)
+	// flowdraftDescSameAsFlow is the schema descriptor for sameAsFlow field.
+	flowdraftDescSameAsFlow := flowdraftFields[0].Descriptor()
+	// flowdraft.DefaultSameAsFlow holds the default value on creation for the sameAsFlow field.
+	flowdraft.DefaultSameAsFlow = flowdraftDescSameAsFlow.Default.(bool)
 	flowexecutiontemplateMixin := schema.FlowExecutionTemplate{}.Mixin()
 	flowexecutiontemplate.Policy = privacy.NewPolicies(schema.FlowExecutionTemplate{})
 	flowexecutiontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

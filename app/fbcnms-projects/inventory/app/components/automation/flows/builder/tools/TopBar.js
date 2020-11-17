@@ -14,6 +14,7 @@ import FlowHeader from './FlowHeader';
 import React, {useCallback} from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
+import fbt from 'fbt';
 import {
   PREDICATES,
   useKeyboardShortcut,
@@ -69,13 +70,16 @@ function BuilderTopBar() {
     flowData
       .save()
       .then(() => {
-        enqueueSnackbar('Flow draft has been saved!', {
+        enqueueSnackbar(`${fbt('Flow draft has been saved!', '')}`, {
           variant: 'success',
         });
       })
       .catch(() => {
         enqueueSnackbar(
-          'There was an error when trying to save the flow draft.',
+          `${fbt(
+            'There was an error when trying to save the flow draft.',
+            '',
+          )}`,
           {
             variant: 'error',
           },
@@ -83,6 +87,24 @@ function BuilderTopBar() {
       });
   }, [enqueueSnackbar, flowData]);
   useKeyboardShortcut(PREDICATES.key('s'), save);
+
+  const publish = useCallback(() => {
+    flowData
+      .publish()
+      .then(() => {
+        enqueueSnackbar(`${fbt('Flow has been published!', '')}`, {
+          variant: 'success',
+        });
+      })
+      .catch(() => {
+        enqueueSnackbar(
+          `${fbt('There was an error when trying to publish the flow.', '')}`,
+          {
+            variant: 'error',
+          },
+        );
+      });
+  }, [enqueueSnackbar, flowData]);
 
   return (
     <ToolsBar className={classes.root}>
@@ -114,6 +136,10 @@ function BuilderTopBar() {
           onClick={save}>
           {Strings.common.saveButton}
         </Button>
+        <Button onClick={publish} tooltip="publish last saved version">{`${fbt(
+          'Publish',
+          '',
+        )}`}</Button>
       </div>
     </ToolsBar>
   );

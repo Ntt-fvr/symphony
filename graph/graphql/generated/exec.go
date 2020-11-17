@@ -527,6 +527,7 @@ type ComplexityRoot struct {
 		EndParamDefinitions func(childComplexity int) int
 		ID                  func(childComplexity int) int
 		Name                func(childComplexity int) int
+		SameAsFlow          func(childComplexity int) int
 	}
 
 	FlowDraftConnection struct {
@@ -3553,6 +3554,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FlowDraft.Name(childComplexity), true
+
+	case "FlowDraft.sameAsFlow":
+		if e.complexity.FlowDraft.SameAsFlow == nil {
+			break
+		}
+
+		return e.complexity.FlowDraft.SameAsFlow(childComplexity), true
 
 	case "FlowDraftConnection.edges":
 		if e.complexity.FlowDraftConnection.Edges == nil {
@@ -12004,6 +12012,7 @@ type FlowDraft implements Node {
   endParamDefinitions: [VariableDefinition!]!
   blocks: [Block!]!
   connectors: [Connector!]!
+  sameAsFlow: Boolean!
 }
 
 enum FlowInstanceStatus
@@ -25013,6 +25022,41 @@ func (ec *executionContext) _FlowDraft_connectors(ctx context.Context, field gra
 	res := resTmp.([]*models.Connector)
 	fc.Result = res
 	return ec.marshalNConnector2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐConnectorᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraft_sameAsFlow(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraft) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FlowDraft",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SameAsFlow, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FlowDraftConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraftConnection) (ret graphql.Marshaler) {
@@ -57554,6 +57598,11 @@ func (ec *executionContext) _FlowDraft(ctx context.Context, sel ast.SelectionSet
 				}
 				return res
 			})
+		case "sameAsFlow":
+			out.Values[i] = ec._FlowDraft_sameAsFlow(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -26,7 +26,8 @@ export type AutomationFlowCard_flow = {|
   +status: FlowStatus,
   +newInstancesPolicy: FlowNewInstancesPolicy,
   +draft: ?{|
-    +id: string
+    +id: string,
+    +sameAsFlow: boolean,
   |},
   +$refType: AutomationFlowCard_flow$ref,
 |};
@@ -90,7 +91,14 @@ return {
       "name": "draft",
       "plural": false,
       "selections": [
-        (v0/*: any*/)
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "sameAsFlow",
+          "storageKey": null
+        }
       ],
       "storageKey": null
     }
@@ -100,6 +108,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e6384236f9cd5572d8f2c1f3deb2218c';
+(node/*: any*/).hash = '0195fe5bd257450ba0ebfd27dcd0abe3';
 
 module.exports = node;

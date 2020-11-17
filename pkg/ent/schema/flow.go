@@ -43,7 +43,7 @@ func (FlowMixin) Edges() []ent.Edge {
 	}
 }
 
-// Edges returns flow mixin hooks.
+// Hooks returns flow mixin hooks.
 func (FlowMixin) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.VerifyEndParamDefinitionsHook(),
@@ -131,6 +131,14 @@ func (f FlowDraft) Mixin() []ent.Mixin {
 	return append(f.schema.Mixin(), FlowMixin{})
 }
 
+// Fields returns flow draft fields.
+func (FlowDraft) Fields() []ent.Field {
+	return []ent.Field{
+		field.Bool("sameAsFlow").
+			Default(true),
+	}
+}
+
 // Edges returns flow draft edges.
 func (FlowDraft) Edges() []ent.Edge {
 	return []ent.Edge{
@@ -138,6 +146,13 @@ func (FlowDraft) Edges() []ent.Edge {
 			Unique().
 			Required().
 			Ref("draft"),
+	}
+}
+
+// Hooks returns flow draft hooks.
+func (FlowDraft) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.UpdateSameAsFlowOnDraftChangeHook(),
 	}
 }
 

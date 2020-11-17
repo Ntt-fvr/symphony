@@ -72,6 +72,20 @@ func (fdu *FlowDraftUpdate) ClearEndParamDefinitions() *FlowDraftUpdate {
 	return fdu
 }
 
+// SetSameAsFlow sets the sameAsFlow field.
+func (fdu *FlowDraftUpdate) SetSameAsFlow(b bool) *FlowDraftUpdate {
+	fdu.mutation.SetSameAsFlow(b)
+	return fdu
+}
+
+// SetNillableSameAsFlow sets the sameAsFlow field if the given value is not nil.
+func (fdu *FlowDraftUpdate) SetNillableSameAsFlow(b *bool) *FlowDraftUpdate {
+	if b != nil {
+		fdu.SetSameAsFlow(*b)
+	}
+	return fdu
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fdu *FlowDraftUpdate) AddBlockIDs(ids ...int) *FlowDraftUpdate {
 	fdu.mutation.AddBlockIDs(ids...)
@@ -267,6 +281,13 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: flowdraft.FieldEndParamDefinitions,
 		})
 	}
+	if value, ok := fdu.mutation.SameAsFlow(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: flowdraft.FieldSameAsFlow,
+		})
+	}
 	if fdu.mutation.BlocksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -409,6 +430,20 @@ func (fduo *FlowDraftUpdateOne) SetEndParamDefinitions(fd []*flowschema.Variable
 // ClearEndParamDefinitions clears the value of end_param_definitions.
 func (fduo *FlowDraftUpdateOne) ClearEndParamDefinitions() *FlowDraftUpdateOne {
 	fduo.mutation.ClearEndParamDefinitions()
+	return fduo
+}
+
+// SetSameAsFlow sets the sameAsFlow field.
+func (fduo *FlowDraftUpdateOne) SetSameAsFlow(b bool) *FlowDraftUpdateOne {
+	fduo.mutation.SetSameAsFlow(b)
+	return fduo
+}
+
+// SetNillableSameAsFlow sets the sameAsFlow field if the given value is not nil.
+func (fduo *FlowDraftUpdateOne) SetNillableSameAsFlow(b *bool) *FlowDraftUpdateOne {
+	if b != nil {
+		fduo.SetSameAsFlow(*b)
+	}
 	return fduo
 }
 
@@ -603,6 +638,13 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (_node *FlowDraft, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: flowdraft.FieldEndParamDefinitions,
+		})
+	}
+	if value, ok := fduo.mutation.SameAsFlow(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: flowdraft.FieldSameAsFlow,
 		})
 	}
 	if fduo.mutation.BlocksCleared() {
