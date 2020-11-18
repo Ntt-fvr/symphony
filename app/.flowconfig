@@ -45,6 +45,8 @@
 ; remove this when we update it
 .*/node_modules/express-graphql/.*
 
+.*/mobile/.*
+
 [untyped]
 .*/node_modules/express-graphql/.*
 

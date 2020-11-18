@@ -9,3 +9,4 @@ flow-typed/npm/**/*.js
 config/webpack.*.js
 fbcnms-packages/eslint-config-fbcnms/index.js
 fbcnms-projects/inventory/**/__generated__/*.js
+mobile/**

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Automatically generated file. DO NOT MODIFY -->
+
+    <!-- Values from build type: debug -->
+    <integer name="react_native_dev_server_port">8081</integer>
+    <integer name="react_native_inspector_proxy_port">8081</integer>
+    <!-- Values from product flavor: platform -->
+    <string name="build_config_package" translatable="false">com.fbc</string>
+    <!-- Values from default config. -->
+    <string name="APP_NAME" translatable="false">"platform"</string>
+    <string name="MAPBOX_TOKEN" translatable="false">"pk.eyJ1IjoiZmJtYXBzIiwiYSI6ImNqOGFmamkxdTBmbzUyd28xY3lybnEwamIifQ.oabgbuGc81ENlOJoPhv4OQ"</string>
+
+</resources>
