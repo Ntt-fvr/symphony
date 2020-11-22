@@ -7,7 +7,6 @@ package server
 import (
 	"context"
 	"net/http"
-	_ "net/http/pprof"
 	"path"
 	"sync"
 	"time"
@@ -20,6 +19,9 @@ import (
 	"go.opencensus.io/trace"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/requestlog"
+
+	// register pprof handlers with http.DefaultServeMux
+	_ "net/http/pprof"
 )
 
 // Set is a Wire provider set that produces a *Server given the fields of Options.

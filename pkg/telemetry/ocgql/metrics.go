@@ -47,12 +47,12 @@ func (Metrics) InterceptOperation(ctx context.Context, next graphql.OperationHan
 			stats.Record(ctx, NumSubscriptions.M(
 				atomic.AddInt64(&numSubscriptions, 1),
 			))
-			go func() {
+			go func(ctx context.Context) {
 				<-ctx.Done()
 				stats.Record(ctx, NumSubscriptions.M(
 					atomic.AddInt64(&numSubscriptions, -1),
 				))
-			}()
+			}(ctx)
 		}
 		ctx, _ = tag.New(ctx,
 			tag.Upsert(Operation, string(op.Operation)),

@@ -20,7 +20,6 @@ import (
 
 // Injectors from wire.go:
 
-// NewServer creates a server from config.
 func NewServer(cfg Config) (*server.Server, func(), error) {
 	graphhttpRouterConfig, err := newRouterConfig(cfg)
 	if err != nil {
@@ -35,7 +34,7 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	profilingEnabler := _wireProfilingEnablerValue
+	profilingAddress := _wireProfilingAddressValue
 	sampler := telemetry.ProvideTraceSampler(config)
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
@@ -43,7 +42,7 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 		RequestLogger:         zapLogger,
 		HealthChecks:          v,
 		TraceExporter:         exporter,
-		EnableProfiling:       profilingEnabler,
+		ProfilingAddress:      profilingAddress,
 		DefaultSamplingPolicy: sampler,
 		RecoveryHandler:       handlerFunc,
 		Driver:                defaultDriver,
@@ -55,7 +54,7 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 }
 
 var (
-	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
+	_wireProfilingAddressValue = server.ProfilingAddress(":6060")
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )
 

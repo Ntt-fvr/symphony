@@ -63,10 +63,10 @@ func TestMiddleware(t *testing.T) {
 	td.On("ListenAndServe", ":6060", mock.Anything).
 		Run(func(args mock.Arguments) {
 			handler, _ := args.Get(1).(http.Handler)
-			require.Nil(t, handler)
+			require.NotNil(t, handler)
 		}).
 		Return(nil).
-		Once()
+		Maybe()
 	td.On("Shutdown", mock.Anything).
 		Return(nil).
 		Maybe()

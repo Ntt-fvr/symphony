@@ -72,3 +72,6 @@ issues:
     - text: "can be `fmt.Stringer`"
       linters:
         - interfacer
+    - text: Profiling endpoint is automatically exposed on /debug/pprof
+      linters:
+        - gosec
