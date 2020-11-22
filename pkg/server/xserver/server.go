@@ -24,7 +24,7 @@ import (
 var ServiceSet = wire.NewSet(
 	Set,
 	telemetry.Provider,
-	wire.Value(server.ProfilingEnabler(true)),
+	wire.Value(server.ProfilingAddress(":6060")),
 )
 
 // Set is a wire provider set that provides the diagnostic hooks for *server.Server.

@@ -307,6 +307,10 @@ imagePullSecrets: {{- toYaml . | nindent 2 }}
   name: http
 - containerPort: {{ .service.metrics.targetPort }}
   name: http-metrics
+{{- if .service.profile }}
+- containerPort: 6060
+  name: http-profile
+{{- end }}
 {{- end }}
 
 {{/* Create service ports */}}
@@ -317,6 +321,11 @@ imagePullSecrets: {{- toYaml . | nindent 2 }}
 - name: http-metrics
   port: {{ .service.metrics.port }}
   targetPort: http-metrics
+{{- if .service.profile }}
+- name: http-profile
+  port: {{ .service.profile.port }}
+  targetPort: http-profile
+{{- end }}
 {{- end }}
 
 {{/* Create service listen args */}}

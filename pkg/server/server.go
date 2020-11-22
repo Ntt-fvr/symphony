@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 	"net/http"
-	"net/http/pprof"
+	_ "net/http/pprof"
 	"path"
 	"sync"
 	"time"
@@ -38,7 +38,10 @@ type Server struct {
 	health  health.Handler
 	te      trace.Exporter
 	sampler trace.Sampler
-	profile ProfilingEnabler
+	profile struct {
+		addr   string
+		driver driver.Server
+	}
 	recover recovery.HandlerFunc
 	once    sync.Once
 	driver  driver.Server
@@ -57,7 +60,10 @@ type Options struct {
 	TraceExporter trace.Exporter
 
 	// EnableProfiling enables server profiling.
-	EnableProfiling ProfilingEnabler
+	ProfilingAddress ProfilingAddress
+
+	// ProfilingDriver serves profiling requests.
+	ProfilingDriver driver.Server `wire:"-"`
 
 	// DefaultSamplingPolicy is a function that takes a
 	// trace.SamplingParameters struct and returns a true or false decision about
@@ -71,8 +77,8 @@ type Options struct {
 	Driver driver.Server
 }
 
-// ProfilingEnabler toggles server profiling.
-type ProfilingEnabler bool
+// ProfilingAddress sets pprof listening address.
+type ProfilingAddress string
 
 // New creates a new server.
 func New(h http.Handler, opts *Options) *Server {
@@ -84,7 +90,8 @@ func New(h http.Handler, opts *Options) *Server {
 		}
 		srv.te = opts.TraceExporter
 		srv.sampler = opts.DefaultSamplingPolicy
-		srv.profile = opts.EnableProfiling
+		srv.profile.addr = string(opts.ProfilingAddress)
+		srv.profile.driver = opts.ProfilingDriver
 		srv.recover = opts.RecoveryHandler
 		srv.driver = opts.Driver
 	}
@@ -99,6 +106,9 @@ func (srv *Server) init() {
 		if srv.sampler != nil {
 			trace.ApplyConfig(trace.Config{DefaultSampler: srv.sampler})
 		}
+		if srv.profile.driver == nil {
+			srv.profile.driver = NewDefaultDriver()
+		}
 		if srv.driver == nil {
 			srv.driver = NewDefaultDriver()
 		}
@@ -111,7 +121,7 @@ func (srv *Server) init() {
 // ListenAndServe is a wrapper to use wherever http.ListenAndServe is used.
 // It wraps the passed-in http.Handler with a handler that handles metrics, tracing
 // and request logging. If the handler is nil, then http.DefaultServeMux will be used.
-func (srv *Server) ListenAndServe(addr string) error {
+func (srv *Server) ListenAndServe(addr string) (err error) {
 	srv.init()
 
 	// Setup health checks, /healthz route is taken by health checks by default.
@@ -121,13 +131,14 @@ func (srv *Server) ListenAndServe(addr string) error {
 	mux.HandleFunc(path.Join(hr, "liveness"), health.HandleLive)
 	mux.Handle(path.Join(hr, "readiness"), &srv.health)
 
-	// Setup profiling, /debug/pprof route is taken by default.
-	if srv.profile {
-		mux.HandleFunc("/debug/pprof/", pprof.Index)
-		mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-		mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-		mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-		mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+	// Setup profiling.
+	if srv.profile.addr != "" {
+		var h http.Handler = http.DefaultServeMux
+		if srv.reqlog != nil {
+			h = requestlog.NewHandler(srv.reqlog, h)
+		}
+		go func() { _ = srv.profile.driver.ListenAndServe(srv.profile.addr, h) }()
+		defer func() { _ = srv.profile.driver.Shutdown(context.Background()) }()
 	}
 
 	// Setup middleware chain

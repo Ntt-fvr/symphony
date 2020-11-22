@@ -68,7 +68,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	profilingEnabler := _wireProfilingEnablerValue
+	profilingAddress := _wireProfilingAddressValue
 	sampler := telemetry.ProvideTraceSampler(telemetryConfig)
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
@@ -76,7 +76,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
 		TraceExporter:         exporter,
-		EnableProfiling:       profilingEnabler,
+		ProfilingAddress:      profilingAddress,
 		DefaultSamplingPolicy: sampler,
 		RecoveryHandler:       handlerFunc,
 		Driver:                defaultDriver,
@@ -114,7 +114,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 
 var (
 	_wireStringerValue         = strutil.Stringer(dialect.MySQL)
-	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
+	_wireProfilingAddressValue = server.ProfilingAddress(":6060")
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )
 

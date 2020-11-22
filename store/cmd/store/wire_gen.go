@@ -51,7 +51,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	profilingEnabler := _wireProfilingEnablerValue
+	profilingAddress := _wireProfilingAddressValue
 	sampler := telemetry.ProvideTraceSampler(telemetryConfig)
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
@@ -59,7 +59,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
 		TraceExporter:         exporter,
-		EnableProfiling:       profilingEnabler,
+		ProfilingAddress:      profilingAddress,
 		DefaultSamplingPolicy: sampler,
 		RecoveryHandler:       handlerFunc,
 		Driver:                defaultDriver,
@@ -97,7 +97,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 
 var (
 	_wireValue                 = []health.Checker(nil)
-	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
+	_wireProfilingAddressValue = server.ProfilingAddress(":6060")
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )
 

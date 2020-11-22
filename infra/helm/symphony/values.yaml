@@ -270,6 +270,10 @@ admin:
       port: 9464
       # Metrics target port
       targetPort: 9464
+    # Configuration for profile service
+    profile:
+      # Profile external port
+      port: 6060
 
   # Configuration for admin service account
   serviceAccount:
@@ -381,6 +385,10 @@ graph:
       port: 9464
       # Metrics target port
       targetPort: 9464
+    # Configuration for profile service
+    profile:
+      # Profile external port
+      port: 6060
 
   # Configuration for graph service account
   serviceAccount:
@@ -496,6 +504,10 @@ async:
       port: 9464
       # Metrics target port
       targetPort: 9464
+    # Configuration for profile service
+    profile:
+      # Profile external port
+      port: 6060
 
   # Configuration for async service account
   serviceAccount:
@@ -648,6 +660,10 @@ store:
       port: 9464
       # Metrics target port
       targetPort: 9464
+    # Configuration for profile service
+    profile:
+      # Profile external port
+      port: 6060
 
   # Configuration for store service account
   serviceAccount:

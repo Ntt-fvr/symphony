@@ -48,38 +48,28 @@ func TestMiddleware(t *testing.T) {
 	defer tl.AssertExpectations(t)
 
 	var td testDriver
-	td.On("ListenAndServe", mock.Anything, mock.Anything).
+	td.On("ListenAndServe", ":8080", mock.Anything).
 		Run(func(args mock.Arguments) {
 			handler, _ := args.Get(1).(http.Handler)
 			require.NotNil(t, handler)
-			tests := []struct {
-				target string
-				expect func(*testing.T, *httptest.ResponseRecorder)
-			}{
-				{
-					target: "/",
-					expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-						assert.Equal(t, http.StatusInternalServerError, rec.Code)
-						assert.NotEmpty(t, rec.Header().Get("X-Correlation-ID"))
-					},
-				},
-				{
-					target: "/debug/pprof/",
-					expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-						assert.Equal(t, http.StatusOK, rec.Code)
-						assert.NotZero(t, rec.Body.Len())
-					},
-				},
-			}
-			for _, tt := range tests {
-				req := httptest.NewRequest(http.MethodGet, tt.target, nil)
-				rec := httptest.NewRecorder()
-				handler.ServeHTTP(rec, req)
-				tt.expect(t, rec)
-			}
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			rec := httptest.NewRecorder()
+			handler.ServeHTTP(rec, req)
+			assert.Equal(t, http.StatusInternalServerError, rec.Code)
+			assert.NotEmpty(t, rec.Header().Get("X-Correlation-ID"))
 		}).
 		Return(nil).
 		Once()
+	td.On("ListenAndServe", ":6060", mock.Anything).
+		Run(func(args mock.Arguments) {
+			handler, _ := args.Get(1).(http.Handler)
+			require.Nil(t, handler)
+		}).
+		Return(nil).
+		Once()
+	td.On("Shutdown", mock.Anything).
+		Return(nil).
+		Maybe()
 	defer td.AssertExpectations(t)
 
 	var te testExporter
@@ -107,8 +97,9 @@ func TestMiddleware(t *testing.T) {
 		RequestLogger:         &tl,
 		TraceExporter:         &te,
 		DefaultSamplingPolicy: trace.AlwaysSample(),
-		EnableProfiling:       true,
 		RecoveryHandler:       tr.Recover,
+		ProfilingAddress:      ":6060",
+		ProfilingDriver:       &td,
 		Driver:                &td,
 	})
 	err := s.ListenAndServe(":8080")
