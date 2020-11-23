@@ -1,9 +1,6 @@
 # Symphony Mobile App (Symphony App)
 Symphony Mobile App is the mobile interface for the Symphony Platform.  It is intended to be used in the field as an alternative to the web interface, and has features that make use of sensors and capabilitites available on mobile devices (GPS, Wi-Fi/Cell radios, Camera, etc).
 
-# Terragraph Network Installer Application (TG App)
-Terragraph Network Installer Application is an Android Application Package (APK) that enables network administrators to manage Terragraph networks using an Android phone. With this APK, network administrators can add and manage multiple sites, nodes, and links on multiple Terragraph networks. Terragraph links can be established by scanning the QR images from the Terragraph nodes.
-
 ## Tech Stack
 * The apps are mainly written with ReactNative + Relay GraphQL
 * UI is based on material design with react native material ui
