@@ -78,6 +78,39 @@ fragment ProjectsTableView_query_1O5gLD on Query {
           name
         }
         priority
+        properties {
+          id
+          stringValue
+          intValue
+          floatValue
+          booleanValue
+          latitudeValue
+          longitudeValue
+          rangeFromValue
+          rangeToValue
+          nodeValue {
+            __typename
+            id
+            name
+          }
+          propertyType {
+            id
+            name
+            type
+            nodeType
+            isEditable
+            isMandatory
+            isInstanceProperty
+            stringValue
+            intValue
+            floatValue
+            booleanValue
+            latitudeValue
+            longitudeValue
+            rangeFromValue
+            rangeToValue
+          }
+        }
         numberOfWorkOrders
         __typename
       }
@@ -156,7 +189,70 @@ v6 = {
 v7 = [
   (v5/*: any*/),
   (v6/*: any*/)
-];
+],
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -277,17 +373,101 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "numberOfWorkOrders",
+                    "concreteType": "Property",
+                    "kind": "LinkedField",
+                    "name": "properties",
+                    "plural": true,
+                    "selections": [
+                      (v5/*: any*/),
+                      (v8/*: any*/),
+                      (v9/*: any*/),
+                      (v10/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
+                      (v13/*: any*/),
+                      (v14/*: any*/),
+                      (v15/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": null,
+                        "kind": "LinkedField",
+                        "name": "nodeValue",
+                        "plural": false,
+                        "selections": [
+                          (v16/*: any*/),
+                          (v5/*: any*/),
+                          (v6/*: any*/)
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "PropertyType",
+                        "kind": "LinkedField",
+                        "name": "propertyType",
+                        "plural": false,
+                        "selections": [
+                          (v5/*: any*/),
+                          (v6/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "type",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "nodeType",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "isEditable",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "isMandatory",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "isInstanceProperty",
+                            "storageKey": null
+                          },
+                          (v8/*: any*/),
+                          (v9/*: any*/),
+                          (v10/*: any*/),
+                          (v11/*: any*/),
+                          (v12/*: any*/),
+                          (v13/*: any*/),
+                          (v14/*: any*/),
+                          (v15/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "__typename",
+                    "name": "numberOfWorkOrders",
                     "storageKey": null
-                  }
+                  },
+                  (v16/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -344,16 +524,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "228e1e268bca6d0fed796b16e237b174",
+    "cacheID": "a935a89c5917a0c14d80fbd4bb0bc819",
     "id": null,
     "metadata": {},
     "name": "ProjectsTableViewPaginationQuery",
     "operationKind": "query",
-    "text": "query ProjectsTableViewPaginationQuery(\n  $cursor: Cursor\n  $filterBy: [ProjectFilterInput!]\n  $first: Int\n  $orderBy: ProjectOrder\n) {\n  ...ProjectsTableView_query_1O5gLD\n}\n\nfragment ProjectsTableView_query_1O5gLD on Query {\n  projects(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {\n    totalCount\n    edges {\n      node {\n        id\n        createTime\n        name\n        createdBy {\n          email\n          id\n        }\n        location {\n          id\n          name\n        }\n        type {\n          id\n          name\n        }\n        priority\n        numberOfWorkOrders\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query ProjectsTableViewPaginationQuery(\n  $cursor: Cursor\n  $filterBy: [ProjectFilterInput!]\n  $first: Int\n  $orderBy: ProjectOrder\n) {\n  ...ProjectsTableView_query_1O5gLD\n}\n\nfragment ProjectsTableView_query_1O5gLD on Query {\n  projects(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {\n    totalCount\n    edges {\n      node {\n        id\n        createTime\n        name\n        createdBy {\n          email\n          id\n        }\n        location {\n          id\n          name\n        }\n        type {\n          id\n          name\n        }\n        priority\n        properties {\n          id\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          nodeValue {\n            __typename\n            id\n            name\n          }\n          propertyType {\n            id\n            name\n            type\n            nodeType\n            isEditable\n            isMandatory\n            isInstanceProperty\n            stringValue\n            intValue\n            floatValue\n            booleanValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n          }\n        }\n        numberOfWorkOrders\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4be74bfc22190c3eb9389898e5d1725f';
+(node/*: any*/).hash = 'e8c11af9de7c51b252233eb2281c1530';
 
 module.exports = node;

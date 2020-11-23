@@ -19,7 +19,9 @@ import PriorityTag from '../work_orders/PriorityTag';
 import React, {useMemo} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
+import {getPropertyValue} from '../../common/Property';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {usePaginationFragment} from 'react-relay/hooks';
@@ -46,6 +48,7 @@ type Props = $ReadOnly<{|
 const ProjectsTableView = (props: Props) => {
   const {onProjectSelected, orderBy, onOrderChanged} = props;
   const classes = useStyles();
+  const useColumnSelector = useFeatureFlag('projects_column_selector');
 
   // $FlowFixMe[missing-type-arg] $FlowFixMe T74239404 Found via relay types
   const {data, loadNext} = usePaginationFragment<
@@ -85,6 +88,38 @@ const ProjectsTableView = (props: Props) => {
                 name
               }
               priority
+              properties {
+                id
+                stringValue
+                intValue
+                floatValue
+                booleanValue
+                latitudeValue
+                longitudeValue
+                rangeFromValue
+                rangeToValue
+                nodeValue {
+                  id
+                  name
+                }
+                propertyType {
+                  id
+                  name
+                  type
+                  nodeType
+                  isEditable
+                  isMandatory
+                  isInstanceProperty
+                  stringValue
+                  intValue
+                  floatValue
+                  booleanValue
+                  latitudeValue
+                  longitudeValue
+                  rangeFromValue
+                  rangeToValue
+                }
+              }
               numberOfWorkOrders
             }
           }
@@ -93,6 +128,10 @@ const ProjectsTableView = (props: Props) => {
     `,
     props.projects,
   );
+
+  const allProjectPropertyNames = data?.projects?.edges
+    .flatMap(({node}) => node?.properties.map(p => p.propertyType.name))
+    .filter((propertyName, i, self) => self.indexOf(propertyName) === i);
 
   const columns = [
     {
@@ -147,6 +186,27 @@ const ProjectsTableView = (props: Props) => {
       title: 'Creation Time',
       render: row => DateTimeFormat.dateTime(row.createTime),
     },
+
+    ...(useColumnSelector
+      ? allProjectPropertyNames
+          .filter(name => !!name)
+          .map((name = '') => ({
+            key: name,
+            title: name,
+            getSortingValue: row => row.type?.name,
+            render: row => {
+              const indexOfProperty = row.properties.findIndex(
+                property => property.propertyType.name === name,
+              );
+
+              return (
+                (indexOfProperty >= 0 &&
+                  getPropertyValue(row.properties[indexOfProperty])) ||
+                null
+              );
+            },
+          }))
+      : []),
   ];
 
   const projectsData = useMemo(
@@ -161,6 +221,10 @@ const ProjectsTableView = (props: Props) => {
 
   if (projectsData == null || projectsData.length === 0) {
     return <div />;
+  }
+
+  if (projectsData.length === 0) {
+    return null;
   }
 
   return (

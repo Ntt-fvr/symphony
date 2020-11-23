@@ -24,7 +24,7 @@
     "@fbcnms/projects": "^0.1.0",
     "@fbcnms/sequelize-models": "^0.1.0",
     "@fbcnms/strings": "^0.1.0",
-    "@fbcnms/types": "^0.1.10",
+    "@fbcnms/types": "^0.1.11",
     "@fbcnms/ui": "^0.1.4",
     "@fbcnms/util": "^0.1.0",
     "babel-plugin-fbt": "^0.10.4",
