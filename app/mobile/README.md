@@ -30,14 +30,6 @@ APP_NAME='platform'
 MAPBOX_TOKEN='[token here]'
 4. run: `yarn install:platform` to build the symphony version
 
-## Build and Install the TG App
-1. launch an Android emulator or connect an Android device to your dev computer
-2. to download the node modules locally run: `yarn`
-3. create a file called .env.terragraph and include the following information:
-APP_NAME='terragraph'
-MAPBOX_TOKEN='[token here]'
-4. run: `yarn install:terragraph` to build the Terragraph version
-
 ## Full documentation
 WIP
 
