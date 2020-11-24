@@ -11,7 +11,7 @@ keywords:
   - inventory
   - workforce
 sources:
-  - https://github.com/facebookincubator/symphony
+  - https://github.com/Telecominfraproject/symphony
 maintainers:
   - name: Alex Snast
     email: alexsn@fb.com

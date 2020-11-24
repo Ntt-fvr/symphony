@@ -3,9 +3,13 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - infra/helm/**
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - infra/helm/**
 
 jobs:
   lint:
