@@ -16,9 +16,6 @@ defaults:
   run:
     working-directory: infra/helm
 
-env:
-  CI: true
-
 jobs:
   lint:
     runs-on: ubuntu-latest
