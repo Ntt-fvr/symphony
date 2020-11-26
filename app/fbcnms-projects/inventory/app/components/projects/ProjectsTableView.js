@@ -8,7 +8,10 @@
  * @format
  */
 
-import type {ProjectOrder} from './__generated__/ProjectsTableViewPaginationQuery.graphql';
+import type {
+  ProjectOrder,
+  ProjectOrderField,
+} from './__generated__/ProjectsTableViewPaginationQuery.graphql';
 import type {ProjectsTableViewPaginationQuery} from './__generated__/ProjectsTableViewPaginationQuery.graphql';
 import type {ProjectsTableView_query$key} from './__generated__/ProjectsTableView_query.graphql';
 
@@ -142,7 +145,7 @@ const ProjectsTableView = (props: Props) => {
           {row.name}
         </Button>
       ),
-      getSortingValue: row => row.name,
+      isSortable: true,
     },
     {
       key: 'numberOfWorkOrders',
@@ -180,11 +183,13 @@ const ProjectsTableView = (props: Props) => {
       key: 'priority',
       title: 'Priority',
       render: row => <PriorityTag priority={row.priority} />,
+      isSortable: true,
     },
     {
       key: 'createTime',
       title: 'Creation Time',
       render: row => DateTimeFormat.dateTime(row.createTime),
+      isSortable: true,
     },
 
     ...(useColumnSelector
@@ -223,6 +228,41 @@ const ProjectsTableView = (props: Props) => {
     return <div />;
   }
 
+  const orderByObj: {[string]: ProjectOrderField} = {
+    name: 'NAME',
+    createTime: 'UPDATED_AT',
+    priority: 'PRIORITY',
+    owner: 'PROJECT_OWNER',
+    location: 'PROJECT_LOCATION',
+    numberOfWorkOrders: 'NUMBER_OF_WORKORDERS',
+    type: 'PROJECT_TEMPLATE',
+  };
+
+  const getSortSettings = orderBy => {
+    const orderByColumnObj: {[ProjectOrderField]: string} = {
+      NAME: 'name',
+      UPDATED_AT: 'createTime',
+      PRIORITY: 'priority',
+      PROJECT_OWNER: 'owner',
+      PROJECT_LOCATION: 'location',
+      NUMBER_OF_WORKORDERS: 'numberOfWorkOrders',
+      PROJECT_TEMPLATE: 'type',
+    };
+
+    if (!orderBy.field || !orderByColumnObj[orderBy.field]) {
+      return undefined;
+    }
+
+    return {
+      columnKey: orderByColumnObj[orderBy.field],
+      order:
+        orderBy.direction === 'ASC'
+          ? TABLE_SORT_ORDER.ascending
+          : TABLE_SORT_ORDER.descending,
+      overrideSorting: true,
+    };
+  };
+
   if (projectsData.length === 0) {
     return null;
   }
@@ -232,15 +272,17 @@ const ProjectsTableView = (props: Props) => {
       className={classes.table}
       data={projectsData}
       columns={columns}
-      onSortChanged={newSortSettings =>
-        onOrderChanged({
+      onSortChanged={newSortSettings => {
+        return onOrderChanged({
           direction:
             newSortSettings.order === TABLE_SORT_ORDER.ascending
               ? 'ASC'
               : 'DESC',
-          field: newSortSettings.columnKey === 'name' ? 'NAME' : 'UPDATED_AT',
-        })
-      }
+          field: orderByObj[newSortSettings.columnKey]
+            ? orderByObj[newSortSettings.columnKey]
+            : 'UPDATED_AT',
+        });
+      }}
       paginationSettings={{
         loadNext: onCompleted => {
           loadNext(PROJECTS_PAGE_SIZE, {
@@ -251,18 +293,7 @@ const ProjectsTableView = (props: Props) => {
         pageSize: PROJECTS_PAGE_SIZE,
         totalRowsCount: data.projects.totalCount,
       }}
-      sortSettings={
-        orderBy.field === 'NAME'
-          ? {
-              columnKey: 'name',
-              order:
-                orderBy.direction === 'ASC'
-                  ? TABLE_SORT_ORDER.ascending
-                  : TABLE_SORT_ORDER.descending,
-              overrideSorting: true,
-            }
-          : undefined
-      }
+      sortSettings={getSortSettings(orderBy)}
     />
   );
 };

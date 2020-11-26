@@ -28,6 +28,12 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldProjectCreator holds the string denoting the project_creator field in the database.
+	FieldProjectCreator = "project_creator"
+	// FieldProjectLocation holds the string denoting the project_location field in the database.
+	FieldProjectLocation = "project_location"
+	// FieldProjectTemplate holds the string denoting the project_template field in the database.
+	FieldProjectTemplate = "project_template"
 	// FieldPriority holds the string denoting the priority field in the database.
 	FieldPriority = "priority"
 
@@ -106,6 +112,9 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldDescription,
+	FieldProjectCreator,
+	FieldProjectLocation,
+	FieldProjectTemplate,
 	FieldPriority,
 }
 

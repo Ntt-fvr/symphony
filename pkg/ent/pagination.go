@@ -8054,6 +8054,46 @@ var (
 			}
 		},
 	}
+	// ProjectOrderFieldProjectCreator orders Project by project_creator.
+	ProjectOrderFieldProjectCreator = &ProjectOrderField{
+		field: project.FieldProjectCreator,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.ProjectCreator,
+			}
+		},
+	}
+	// ProjectOrderFieldProjectLocation orders Project by project_location.
+	ProjectOrderFieldProjectLocation = &ProjectOrderField{
+		field: project.FieldProjectLocation,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.ProjectLocation,
+			}
+		},
+	}
+	// ProjectOrderFieldProjectTemplate orders Project by project_template.
+	ProjectOrderFieldProjectTemplate = &ProjectOrderField{
+		field: project.FieldProjectTemplate,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.ProjectTemplate,
+			}
+		},
+	}
+	// ProjectOrderFieldPriority orders Project by priority.
+	ProjectOrderFieldPriority = &ProjectOrderField{
+		field: project.FieldPriority,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.Priority,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
@@ -8064,6 +8104,14 @@ func (f ProjectOrderField) String() string {
 		str = "UPDATED_AT"
 	case project.FieldName:
 		str = "NAME"
+	case project.FieldProjectCreator:
+		str = "PROJECT_OWNER"
+	case project.FieldProjectLocation:
+		str = "PROJECT_LOCATION"
+	case project.FieldProjectTemplate:
+		str = "PROJECT_TEMPLATE"
+	case project.FieldPriority:
+		str = "PRIORITY"
 	}
 	return str
 }
@@ -8084,6 +8132,14 @@ func (f *ProjectOrderField) UnmarshalGQL(v interface{}) error {
 		*f = *ProjectOrderFieldUpdateTime
 	case "NAME":
 		*f = *ProjectOrderFieldName
+	case "PROJECT_OWNER":
+		*f = *ProjectOrderFieldProjectCreator
+	case "PROJECT_LOCATION":
+		*f = *ProjectOrderFieldProjectLocation
+	case "PROJECT_TEMPLATE":
+		*f = *ProjectOrderFieldProjectTemplate
+	case "PRIORITY":
+		*f = *ProjectOrderFieldPriority
 	default:
 		return fmt.Errorf("%s is not a valid ProjectOrderField", str)
 	}

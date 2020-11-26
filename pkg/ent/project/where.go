@@ -125,6 +125,27 @@ func Description(v string) predicate.Project {
 	})
 }
 
+// ProjectCreator applies equality check predicate on the "project_creator" field. It's identical to ProjectCreatorEQ.
+func ProjectCreator(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectLocation applies equality check predicate on the "project_location" field. It's identical to ProjectLocationEQ.
+func ProjectLocation(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectTemplate applies equality check predicate on the "project_template" field. It's identical to ProjectTemplateEQ.
+func ProjectTemplate(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProjectTemplate), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Project {
 	return predicate.Project(func(s *sql.Selector) {
@@ -510,6 +531,276 @@ func DescriptionEqualFold(v string) predicate.Project {
 func DescriptionContainsFold(v string) predicate.Project {
 	return predicate.Project(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDescription), v))
+	})
+}
+
+// ProjectCreatorEQ applies the EQ predicate on the "project_creator" field.
+func ProjectCreatorEQ(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectCreatorNEQ applies the NEQ predicate on the "project_creator" field.
+func ProjectCreatorNEQ(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectCreatorIn applies the In predicate on the "project_creator" field.
+func ProjectCreatorIn(vs ...int) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProjectCreator), v...))
+	})
+}
+
+// ProjectCreatorNotIn applies the NotIn predicate on the "project_creator" field.
+func ProjectCreatorNotIn(vs ...int) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProjectCreator), v...))
+	})
+}
+
+// ProjectCreatorGT applies the GT predicate on the "project_creator" field.
+func ProjectCreatorGT(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectCreatorGTE applies the GTE predicate on the "project_creator" field.
+func ProjectCreatorGTE(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectCreatorLT applies the LT predicate on the "project_creator" field.
+func ProjectCreatorLT(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectCreatorLTE applies the LTE predicate on the "project_creator" field.
+func ProjectCreatorLTE(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProjectCreator), v))
+	})
+}
+
+// ProjectCreatorIsNil applies the IsNil predicate on the "project_creator" field.
+func ProjectCreatorIsNil() predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldProjectCreator)))
+	})
+}
+
+// ProjectCreatorNotNil applies the NotNil predicate on the "project_creator" field.
+func ProjectCreatorNotNil() predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldProjectCreator)))
+	})
+}
+
+// ProjectLocationEQ applies the EQ predicate on the "project_location" field.
+func ProjectLocationEQ(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectLocationNEQ applies the NEQ predicate on the "project_location" field.
+func ProjectLocationNEQ(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectLocationIn applies the In predicate on the "project_location" field.
+func ProjectLocationIn(vs ...int) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProjectLocation), v...))
+	})
+}
+
+// ProjectLocationNotIn applies the NotIn predicate on the "project_location" field.
+func ProjectLocationNotIn(vs ...int) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProjectLocation), v...))
+	})
+}
+
+// ProjectLocationGT applies the GT predicate on the "project_location" field.
+func ProjectLocationGT(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectLocationGTE applies the GTE predicate on the "project_location" field.
+func ProjectLocationGTE(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectLocationLT applies the LT predicate on the "project_location" field.
+func ProjectLocationLT(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectLocationLTE applies the LTE predicate on the "project_location" field.
+func ProjectLocationLTE(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProjectLocation), v))
+	})
+}
+
+// ProjectLocationIsNil applies the IsNil predicate on the "project_location" field.
+func ProjectLocationIsNil() predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldProjectLocation)))
+	})
+}
+
+// ProjectLocationNotNil applies the NotNil predicate on the "project_location" field.
+func ProjectLocationNotNil() predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldProjectLocation)))
+	})
+}
+
+// ProjectTemplateEQ applies the EQ predicate on the "project_template" field.
+func ProjectTemplateEQ(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProjectTemplate), v))
+	})
+}
+
+// ProjectTemplateNEQ applies the NEQ predicate on the "project_template" field.
+func ProjectTemplateNEQ(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProjectTemplate), v))
+	})
+}
+
+// ProjectTemplateIn applies the In predicate on the "project_template" field.
+func ProjectTemplateIn(vs ...int) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProjectTemplate), v...))
+	})
+}
+
+// ProjectTemplateNotIn applies the NotIn predicate on the "project_template" field.
+func ProjectTemplateNotIn(vs ...int) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProjectTemplate), v...))
+	})
+}
+
+// ProjectTemplateGT applies the GT predicate on the "project_template" field.
+func ProjectTemplateGT(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProjectTemplate), v))
+	})
+}
+
+// ProjectTemplateGTE applies the GTE predicate on the "project_template" field.
+func ProjectTemplateGTE(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProjectTemplate), v))
+	})
+}
+
+// ProjectTemplateLT applies the LT predicate on the "project_template" field.
+func ProjectTemplateLT(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProjectTemplate), v))
+	})
+}
+
+// ProjectTemplateLTE applies the LTE predicate on the "project_template" field.
+func ProjectTemplateLTE(v int) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProjectTemplate), v))
+	})
+}
+
+// ProjectTemplateIsNil applies the IsNil predicate on the "project_template" field.
+func ProjectTemplateIsNil() predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldProjectTemplate)))
+	})
+}
+
+// ProjectTemplateNotNil applies the NotNil predicate on the "project_template" field.
+func ProjectTemplateNotNil() predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldProjectTemplate)))
 	})
 }
 

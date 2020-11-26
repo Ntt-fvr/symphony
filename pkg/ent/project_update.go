@@ -64,6 +64,87 @@ func (pu *ProjectUpdate) ClearDescription() *ProjectUpdate {
 	return pu
 }
 
+// SetProjectCreator sets the project_creator field.
+func (pu *ProjectUpdate) SetProjectCreator(i int) *ProjectUpdate {
+	pu.mutation.ResetProjectCreator()
+	pu.mutation.SetProjectCreator(i)
+	return pu
+}
+
+// SetNillableProjectCreator sets the project_creator field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableProjectCreator(i *int) *ProjectUpdate {
+	if i != nil {
+		pu.SetProjectCreator(*i)
+	}
+	return pu
+}
+
+// AddProjectCreator adds i to project_creator.
+func (pu *ProjectUpdate) AddProjectCreator(i int) *ProjectUpdate {
+	pu.mutation.AddProjectCreator(i)
+	return pu
+}
+
+// ClearProjectCreator clears the value of project_creator.
+func (pu *ProjectUpdate) ClearProjectCreator() *ProjectUpdate {
+	pu.mutation.ClearProjectCreator()
+	return pu
+}
+
+// SetProjectLocation sets the project_location field.
+func (pu *ProjectUpdate) SetProjectLocation(i int) *ProjectUpdate {
+	pu.mutation.ResetProjectLocation()
+	pu.mutation.SetProjectLocation(i)
+	return pu
+}
+
+// SetNillableProjectLocation sets the project_location field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableProjectLocation(i *int) *ProjectUpdate {
+	if i != nil {
+		pu.SetProjectLocation(*i)
+	}
+	return pu
+}
+
+// AddProjectLocation adds i to project_location.
+func (pu *ProjectUpdate) AddProjectLocation(i int) *ProjectUpdate {
+	pu.mutation.AddProjectLocation(i)
+	return pu
+}
+
+// ClearProjectLocation clears the value of project_location.
+func (pu *ProjectUpdate) ClearProjectLocation() *ProjectUpdate {
+	pu.mutation.ClearProjectLocation()
+	return pu
+}
+
+// SetProjectTemplate sets the project_template field.
+func (pu *ProjectUpdate) SetProjectTemplate(i int) *ProjectUpdate {
+	pu.mutation.ResetProjectTemplate()
+	pu.mutation.SetProjectTemplate(i)
+	return pu
+}
+
+// SetNillableProjectTemplate sets the project_template field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableProjectTemplate(i *int) *ProjectUpdate {
+	if i != nil {
+		pu.SetProjectTemplate(*i)
+	}
+	return pu
+}
+
+// AddProjectTemplate adds i to project_template.
+func (pu *ProjectUpdate) AddProjectTemplate(i int) *ProjectUpdate {
+	pu.mutation.AddProjectTemplate(i)
+	return pu
+}
+
+// ClearProjectTemplate clears the value of project_template.
+func (pu *ProjectUpdate) ClearProjectTemplate() *ProjectUpdate {
+	pu.mutation.ClearProjectTemplate()
+	return pu
+}
+
 // SetPriority sets the priority field.
 func (pu *ProjectUpdate) SetPriority(pr project.Priority) *ProjectUpdate {
 	pu.mutation.SetPriority(pr)
@@ -410,6 +491,66 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: project.FieldDescription,
+		})
+	}
+	if value, ok := pu.mutation.ProjectCreator(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectCreator,
+		})
+	}
+	if value, ok := pu.mutation.AddedProjectCreator(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectCreator,
+		})
+	}
+	if pu.mutation.ProjectCreatorCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: project.FieldProjectCreator,
+		})
+	}
+	if value, ok := pu.mutation.ProjectLocation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectLocation,
+		})
+	}
+	if value, ok := pu.mutation.AddedProjectLocation(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectLocation,
+		})
+	}
+	if pu.mutation.ProjectLocationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: project.FieldProjectLocation,
+		})
+	}
+	if value, ok := pu.mutation.ProjectTemplate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectTemplate,
+		})
+	}
+	if value, ok := pu.mutation.AddedProjectTemplate(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectTemplate,
+		})
+	}
+	if pu.mutation.ProjectTemplateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: project.FieldProjectTemplate,
 		})
 	}
 	if value, ok := pu.mutation.Priority(); ok {
@@ -765,6 +906,87 @@ func (puo *ProjectUpdateOne) ClearDescription() *ProjectUpdateOne {
 	return puo
 }
 
+// SetProjectCreator sets the project_creator field.
+func (puo *ProjectUpdateOne) SetProjectCreator(i int) *ProjectUpdateOne {
+	puo.mutation.ResetProjectCreator()
+	puo.mutation.SetProjectCreator(i)
+	return puo
+}
+
+// SetNillableProjectCreator sets the project_creator field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableProjectCreator(i *int) *ProjectUpdateOne {
+	if i != nil {
+		puo.SetProjectCreator(*i)
+	}
+	return puo
+}
+
+// AddProjectCreator adds i to project_creator.
+func (puo *ProjectUpdateOne) AddProjectCreator(i int) *ProjectUpdateOne {
+	puo.mutation.AddProjectCreator(i)
+	return puo
+}
+
+// ClearProjectCreator clears the value of project_creator.
+func (puo *ProjectUpdateOne) ClearProjectCreator() *ProjectUpdateOne {
+	puo.mutation.ClearProjectCreator()
+	return puo
+}
+
+// SetProjectLocation sets the project_location field.
+func (puo *ProjectUpdateOne) SetProjectLocation(i int) *ProjectUpdateOne {
+	puo.mutation.ResetProjectLocation()
+	puo.mutation.SetProjectLocation(i)
+	return puo
+}
+
+// SetNillableProjectLocation sets the project_location field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableProjectLocation(i *int) *ProjectUpdateOne {
+	if i != nil {
+		puo.SetProjectLocation(*i)
+	}
+	return puo
+}
+
+// AddProjectLocation adds i to project_location.
+func (puo *ProjectUpdateOne) AddProjectLocation(i int) *ProjectUpdateOne {
+	puo.mutation.AddProjectLocation(i)
+	return puo
+}
+
+// ClearProjectLocation clears the value of project_location.
+func (puo *ProjectUpdateOne) ClearProjectLocation() *ProjectUpdateOne {
+	puo.mutation.ClearProjectLocation()
+	return puo
+}
+
+// SetProjectTemplate sets the project_template field.
+func (puo *ProjectUpdateOne) SetProjectTemplate(i int) *ProjectUpdateOne {
+	puo.mutation.ResetProjectTemplate()
+	puo.mutation.SetProjectTemplate(i)
+	return puo
+}
+
+// SetNillableProjectTemplate sets the project_template field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableProjectTemplate(i *int) *ProjectUpdateOne {
+	if i != nil {
+		puo.SetProjectTemplate(*i)
+	}
+	return puo
+}
+
+// AddProjectTemplate adds i to project_template.
+func (puo *ProjectUpdateOne) AddProjectTemplate(i int) *ProjectUpdateOne {
+	puo.mutation.AddProjectTemplate(i)
+	return puo
+}
+
+// ClearProjectTemplate clears the value of project_template.
+func (puo *ProjectUpdateOne) ClearProjectTemplate() *ProjectUpdateOne {
+	puo.mutation.ClearProjectTemplate()
+	return puo
+}
+
 // SetPriority sets the priority field.
 func (puo *ProjectUpdateOne) SetPriority(pr project.Priority) *ProjectUpdateOne {
 	puo.mutation.SetPriority(pr)
@@ -1109,6 +1331,66 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: project.FieldDescription,
+		})
+	}
+	if value, ok := puo.mutation.ProjectCreator(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectCreator,
+		})
+	}
+	if value, ok := puo.mutation.AddedProjectCreator(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectCreator,
+		})
+	}
+	if puo.mutation.ProjectCreatorCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: project.FieldProjectCreator,
+		})
+	}
+	if value, ok := puo.mutation.ProjectLocation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectLocation,
+		})
+	}
+	if value, ok := puo.mutation.AddedProjectLocation(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectLocation,
+		})
+	}
+	if puo.mutation.ProjectLocationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: project.FieldProjectLocation,
+		})
+	}
+	if value, ok := puo.mutation.ProjectTemplate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectTemplate,
+		})
+	}
+	if value, ok := puo.mutation.AddedProjectTemplate(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectTemplate,
+		})
+	}
+	if puo.mutation.ProjectTemplateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: project.FieldProjectTemplate,
 		})
 	}
 	if value, ok := puo.mutation.Priority(); ok {

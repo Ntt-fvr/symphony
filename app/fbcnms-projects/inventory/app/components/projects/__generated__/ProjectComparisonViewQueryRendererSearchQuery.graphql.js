@@ -19,7 +19,7 @@ type ProjectsTableView_query$ref = any;
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "%future added value";
-export type ProjectOrderField = "NAME" | "UPDATED_AT" | "%future added value";
+export type ProjectOrderField = "NAME" | "NUMBER_OF_WORKORDERS" | "PRIORITY" | "PROJECT_LOCATION" | "PROJECT_OWNER" | "PROJECT_TEMPLATE" | "UPDATED_AT" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,

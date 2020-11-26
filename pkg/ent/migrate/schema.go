@@ -1094,6 +1094,9 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "project_creator", Type: field.TypeInt, Nullable: true},
+		{Name: "project_location", Type: field.TypeInt, Nullable: true},
+		{Name: "project_template", Type: field.TypeInt, Nullable: true},
 		{Name: "priority", Type: field.TypeEnum, Enums: []string{"URGENT", "HIGH", "MEDIUM", "LOW", "NONE"}, Default: "NONE"},
 		{Name: "project_template", Type: field.TypeInt, Nullable: true},
 		{Name: "project_location", Type: field.TypeInt, Nullable: true},
@@ -1108,28 +1111,28 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "projects_project_templates_template",
-				Columns: []*schema.Column{ProjectsColumns[6]},
+				Columns: []*schema.Column{ProjectsColumns[7], ProjectsColumns[9]},
 
 				RefColumns: []*schema.Column{ProjectTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_locations_location",
-				Columns: []*schema.Column{ProjectsColumns[7]},
+				Columns: []*schema.Column{ProjectsColumns[6], ProjectsColumns[10]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_users_creator",
-				Columns: []*schema.Column{ProjectsColumns[8]},
+				Columns: []*schema.Column{ProjectsColumns[5], ProjectsColumns[11]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_project_types_projects",
-				Columns: []*schema.Column{ProjectsColumns[9]},
+				Columns: []*schema.Column{ProjectsColumns[12]},
 
 				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1139,7 +1142,7 @@ var (
 			{
 				Name:    "project_name_project_type_projects",
 				Unique:  true,
-				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[9]},
+				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[12]},
 			},
 			{
 				Name:    "project_update_time",

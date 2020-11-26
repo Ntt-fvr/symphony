@@ -113,6 +113,7 @@ export type TableColumnType<T> = $ReadOnly<{|
   hidden?: boolean,
   /* either pixels or ratio (e.g. 0.33) */
   width?: number,
+  isSortable?: boolean,
 |}>;
 
 export type TableHeaderData<T> = $ReadOnly<{|
@@ -149,7 +150,8 @@ const TableHeader = <T>({
   ]);
 
   const isColumnSortable = useCallback(
-    (col: TableColumnType<T>) => !isLoading && col.getSortingValue != null,
+    (col: TableColumnType<T>) =>
+      !isLoading && (col.getSortingValue != null || col.isSortable),
     [isLoading],
   );
 
@@ -164,7 +166,7 @@ const TableHeader = <T>({
           className={classNames(classes.sortIcon, {
             [classes.hidden]: col.key != sort?.columnKey,
           })}>
-          {sort?.order === TABLE_SORT_ORDER.descending ? (
+          {sort?.order !== TABLE_SORT_ORDER.descending ? (
             <ArrowUpIcon />
           ) : (
             <ArrowDownIcon />

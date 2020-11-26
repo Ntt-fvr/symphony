@@ -10801,6 +10801,11 @@ enum ProjectOrderField {
   Order projects by update time.
   """
   UPDATED_AT
+  PRIORITY
+  PROJECT_OWNER
+  PROJECT_LOCATION
+  NUMBER_OF_WORKORDERS
+  PROJECT_TEMPLATE
 }
 
 """

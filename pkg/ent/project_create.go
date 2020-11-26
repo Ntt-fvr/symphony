@@ -79,6 +79,48 @@ func (pc *ProjectCreate) SetNillableDescription(s *string) *ProjectCreate {
 	return pc
 }
 
+// SetProjectCreator sets the project_creator field.
+func (pc *ProjectCreate) SetProjectCreator(i int) *ProjectCreate {
+	pc.mutation.SetProjectCreator(i)
+	return pc
+}
+
+// SetNillableProjectCreator sets the project_creator field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableProjectCreator(i *int) *ProjectCreate {
+	if i != nil {
+		pc.SetProjectCreator(*i)
+	}
+	return pc
+}
+
+// SetProjectLocation sets the project_location field.
+func (pc *ProjectCreate) SetProjectLocation(i int) *ProjectCreate {
+	pc.mutation.SetProjectLocation(i)
+	return pc
+}
+
+// SetNillableProjectLocation sets the project_location field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableProjectLocation(i *int) *ProjectCreate {
+	if i != nil {
+		pc.SetProjectLocation(*i)
+	}
+	return pc
+}
+
+// SetProjectTemplate sets the project_template field.
+func (pc *ProjectCreate) SetProjectTemplate(i int) *ProjectCreate {
+	pc.mutation.SetProjectTemplate(i)
+	return pc
+}
+
+// SetNillableProjectTemplate sets the project_template field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableProjectTemplate(i *int) *ProjectCreate {
+	if i != nil {
+		pc.SetProjectTemplate(*i)
+	}
+	return pc
+}
+
 // SetPriority sets the priority field.
 func (pc *ProjectCreate) SetPriority(pr project.Priority) *ProjectCreate {
 	pc.mutation.SetPriority(pr)
@@ -357,6 +399,30 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Column: project.FieldDescription,
 		})
 		_node.Description = &value
+	}
+	if value, ok := pc.mutation.ProjectCreator(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectCreator,
+		})
+		_node.ProjectCreator = &value
+	}
+	if value, ok := pc.mutation.ProjectLocation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectLocation,
+		})
+		_node.ProjectLocation = &value
+	}
+	if value, ok := pc.mutation.ProjectTemplate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: project.FieldProjectTemplate,
+		})
+		_node.ProjectTemplate = &value
 	}
 	if value, ok := pc.mutation.Priority(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -32,6 +32,12 @@ type Project struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
+	// ProjectCreator holds the value of the "project_creator" field.
+	ProjectCreator *int `json:"project_creator,omitempty"`
+	// ProjectLocation holds the value of the "project_location" field.
+	ProjectLocation *int `json:"project_location,omitempty"`
+	// ProjectTemplate holds the value of the "project_template" field.
+	ProjectTemplate *int `json:"project_template,omitempty"`
 	// Priority holds the value of the "priority" field.
 	Priority project.Priority `json:"priority,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -155,6 +161,9 @@ func (*Project) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
+		&sql.NullInt64{},  // project_creator
+		&sql.NullInt64{},  // project_location
+		&sql.NullInt64{},  // project_template
 		&sql.NullString{}, // priority
 	}
 }
@@ -202,12 +211,30 @@ func (pr *Project) assignValues(values ...interface{}) error {
 		pr.Description = new(string)
 		*pr.Description = value.String
 	}
-	if value, ok := values[4].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field priority", values[4])
+	if value, ok := values[4].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field project_creator", values[4])
+	} else if value.Valid {
+		pr.ProjectCreator = new(int)
+		*pr.ProjectCreator = int(value.Int64)
+	}
+	if value, ok := values[5].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field project_location", values[5])
+	} else if value.Valid {
+		pr.ProjectLocation = new(int)
+		*pr.ProjectLocation = int(value.Int64)
+	}
+	if value, ok := values[6].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field project_template", values[6])
+	} else if value.Valid {
+		pr.ProjectTemplate = new(int)
+		*pr.ProjectTemplate = int(value.Int64)
+	}
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field priority", values[7])
 	} else if value.Valid {
 		pr.Priority = project.Priority(value.String)
 	}
-	values = values[5:]
+	values = values[8:]
 	if len(values) == len(project.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_template", value)
@@ -304,6 +331,18 @@ func (pr *Project) String() string {
 	if v := pr.Description; v != nil {
 		builder.WriteString(", description=")
 		builder.WriteString(*v)
+	}
+	if v := pr.ProjectCreator; v != nil {
+		builder.WriteString(", project_creator=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := pr.ProjectLocation; v != nil {
+		builder.WriteString(", project_location=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := pr.ProjectTemplate; v != nil {
+		builder.WriteString(", project_template=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", priority=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Priority))

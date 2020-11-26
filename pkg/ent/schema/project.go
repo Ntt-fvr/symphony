@@ -120,6 +120,24 @@ func (Project) Fields() []ent.Field {
 		field.Text("description").
 			Optional().
 			Nillable(),
+		field.Int("project_creator").
+			Optional().
+			Nillable().
+			Annotations(
+				entgql.OrderField("PROJECT_OWNER"),
+			),
+		field.Int("project_location").
+			Optional().
+			Nillable().
+			Annotations(
+				entgql.OrderField("PROJECT_LOCATION"),
+			),
+		field.Int("project_template").
+			Optional().
+			Nillable().
+			Annotations(
+				entgql.OrderField("PROJECT_TEMPLATE"),
+			),
 		field.Enum("priority").
 			NamedValues(
 				"Urgent", "URGENT",
@@ -127,6 +145,9 @@ func (Project) Fields() []ent.Field {
 				"Medium", "MEDIUM",
 				"Low", "LOW",
 				"None", "NONE",
+			).
+			Annotations(
+				entgql.OrderField("PRIORITY"),
 			).
 			Default("NONE"),
 	}
