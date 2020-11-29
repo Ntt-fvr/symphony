@@ -49,7 +49,7 @@ require (
 	go.uber.org/cadence v0.14.1
 	go.uber.org/yarpc v1.48.0
 	go.uber.org/zap v1.16.0
-	gocloud.dev v0.20.1-0.20200914152856-6be5a462804a
+	gocloud.dev v0.20.1-0.20201126173032-b94395a2628c
 	gocloud.dev/pubsub/natspubsub v0.20.0
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
