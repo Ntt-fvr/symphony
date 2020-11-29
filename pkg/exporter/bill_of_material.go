@@ -94,18 +94,17 @@ func equipToBOMSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTy
 		lParents          []string
 		equipmentTypeName string
 		propertyValues    []string
-		err               error
 		futureState       string
 	)
 	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
-	cg.Go(func(ctx context.Context) error {
+	cg.Go(func(ctx context.Context) (err error) {
 		lParents, err = LocationHierarchyForEquipment(ctx, equipment, orderedLocTypes)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
-	cg.Go(func(ctx context.Context) error {
+	cg.Go(func(ctx context.Context) (err error) {
 		propertyValues, err = PropertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
 		return err
 	})
