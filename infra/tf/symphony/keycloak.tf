@@ -69,9 +69,6 @@ resource helm_release keycloak {
       }]
       tls = []
     }
-    startupScripts = {
-      "keycloak-bcrypt.sh" = file("${path.module}/files/keycloak-bcrypt.sh")
-    }
     extraEnv = yamlencode([
       { name = "KEYCLOAK_USER", value = local.keycloak_user },
       { name = "KEYCLOAK_STATISTICS", value = "all" },
