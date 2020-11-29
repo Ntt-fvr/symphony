@@ -121,18 +121,21 @@ func (Project) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 		field.Int("project_creator").
+			StorageKey("project_creator_order").
 			Optional().
 			Nillable().
 			Annotations(
 				entgql.OrderField("PROJECT_OWNER"),
 			),
 		field.Int("project_location").
+			StorageKey("project_location_order").
 			Optional().
 			Nillable().
 			Annotations(
 				entgql.OrderField("PROJECT_LOCATION"),
 			),
 		field.Int("project_template").
+			StorageKey("project_template_order").
 			Optional().
 			Nillable().
 			Annotations(

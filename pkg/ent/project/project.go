@@ -29,11 +29,11 @@ const (
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldProjectCreator holds the string denoting the project_creator field in the database.
-	FieldProjectCreator = "project_creator"
+	FieldProjectCreator = "project_creator_order"
 	// FieldProjectLocation holds the string denoting the project_location field in the database.
-	FieldProjectLocation = "project_location"
+	FieldProjectLocation = "project_location_order"
 	// FieldProjectTemplate holds the string denoting the project_template field in the database.
-	FieldProjectTemplate = "project_template"
+	FieldProjectTemplate = "project_template_order"
 	// FieldPriority holds the string denoting the priority field in the database.
 	FieldPriority = "priority"
 
