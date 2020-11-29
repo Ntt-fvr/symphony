@@ -12,7 +12,7 @@ COPY fbcnms-projects/platform-server/package.json fbcnms-projects/platform-serve
 
 # Install shared dependencies
 COPY fbcnms-packages fbcnms-packages
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install --frozen-lockfile --network-timeout 600000 && yarn cache clean
 
 # Copy app source
 WORKDIR /app/fbcnms-projects/platform-server
