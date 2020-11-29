@@ -8,5 +8,6 @@ locals {
     codecentric = "https://codecentric.github.io/helm-charts"
     banzaicloud = "https://kubernetes-charts.banzaicloud.com"
     bitnami     = "https://charts.bitnami.com/bitnami"
+    kiwigrid    = "https://kiwigrid.github.io"
   }
 }
