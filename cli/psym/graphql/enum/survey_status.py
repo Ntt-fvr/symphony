@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class SurveyStatus(Enum):
     PLANNED = "PLANNED"
     INPROGRESS = "INPROGRESS"

@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class DiscoveryMethod(Enum):
     MANUAL = "MANUAL"
     INVENTORY = "INVENTORY"

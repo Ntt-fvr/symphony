@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class ImageEntity(Enum):
     LOCATION = "LOCATION"
     WORK_ORDER = "WORK_ORDER"

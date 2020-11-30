@@ -4,11 +4,7 @@ import re
 from typing import Any, Dict, Optional
 import requests
 
-from gql_client.runtime.reporter import DUMMY_REPORTER, Reporter
-from gql_client.runtime.graphql_client import GraphqlClient
-
 from gql import Client
-from gql.transport.exceptions import TransportServerError
 from gql.transport.requests import RequestsHTTPTransport
 
 from requests.auth import HTTPBasicAuth
@@ -24,11 +20,7 @@ from .common.endpoint import (
 )
 
 
-class UserDeactivatedException(Exception):
-    pass
-
-
-class SymphonyClient(GraphqlClient):
+class SymphonyClient(Client):
     def __init__(
         self,
         email: str,
@@ -37,7 +29,6 @@ class SymphonyClient(GraphqlClient):
         app: str = "psym",
         is_local_host: bool = False,
         is_dev_mode: bool = False,
-        reporter: Reporter = DUMMY_REPORTER,
     ) -> None:
         """This is the class to use for working with symphony server.
 
@@ -58,10 +49,6 @@ class SymphonyClient(GraphqlClient):
                         local symphony from a container. This changes the
                         address and also disable verification of ssl
                         certificate
-            reporter (object, optional): Use reporter.Reporter to
-                        store reports on all successful and failed mutations
-                        in symphony. The default is DummyReporter that
-                        discards reports
 
         """
 
@@ -85,36 +72,26 @@ class SymphonyClient(GraphqlClient):
         self.put_endpoint: str = self.address + SYMPHONY_STORE_PUT
         self.delete_endpoint: str = self.address + SYMPHONY_STORE_DELETE
 
-        try:
-            client = Client(
-                transport=RequestsHTTPTransport(
-                    url=graphql_endpoint_address,
-                    headers={
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "User-Agent": app,
-                    },
-                    auth=auth,
-                    verify=self.verify_ssl,
-                ),
-                fetch_schema_from_transport=True,
-            )
-            super().__init__(
-                client,
-                reporter,
-            )
-        except TransportServerError as e:
-            err_msg = str(e.args[0])
-            if "Forbidden" in err_msg:
-                raise UserDeactivatedException()
-            raise
+        super().__init__(
+            transport=RequestsHTTPTransport(
+                url=graphql_endpoint_address,
+                headers={
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "User-Agent": app,
+                },
+                auth=auth,
+                verify=self.verify_ssl,
+            ),
+            fetch_schema_from_transport=True,
+        )
 
-        self.session: Optional[requests.Session] = None
+        self._session: Optional[requests.Session] = None
 
     def store_file(self, file_path: str, file_type: str, is_global: bool) -> str:
-        if self.session is None:
-            self.session = self._login()
-        sign_response = self.session.get(
+        if self._session is None:
+            self._session = self._login()
+        sign_response = self._session.get(
             self.put_endpoint,
             params={"contentType": file_type},
             headers={"Is-Global": str(is_global)},
@@ -123,16 +100,16 @@ class SymphonyClient(GraphqlClient):
         signed_url = sign_response_json["URL"]
         with open(file_path, "rb") as f:
             file_data = f.read()
-        response = self.session.put(
+        response = self._session.put(
             signed_url, data=file_data, headers={"Content-Type": file_type}
         )
         response.raise_for_status()
         return sign_response_json["key"]
 
     def delete_file(self, key: str, is_global: bool) -> None:
-        if self.session is None:
-            self.session = self._login()
-        sign_response = self.session.delete(
+        if self._session is None:
+            self._session = self._login()
+        sign_response = self._session.delete(
             self.delete_endpoint.format(key),
             headers={"Is-Global": str(is_global)},
             allow_redirects=False,
@@ -140,27 +117,27 @@ class SymphonyClient(GraphqlClient):
         sign_response.raise_for_status()
         assert sign_response.status_code == 307
         signed_url = sign_response.headers["location"]
-        response = self.session.delete(signed_url)
+        response = self._session.delete(signed_url)
         response.raise_for_status()
 
     def get(self, url: str) -> Response:
-        if self.session is None:
-            self.session = self._login()
-        return self.session.get(
+        if self._session is None:
+            self._session = self._login()
+        return self._session.get(
             "".join([self.address, url]), headers={"User-Agent": self.app}
         )
 
     def post(self, url: str, json: Optional[Dict[str, Any]] = None) -> Response:
-        if self.session is None:
-            self.session = self._login()
-        return self.session.post(
+        if self._session is None:
+            self._session = self._login()
+        return self._session.post(
             "".join([self.address, url]), json=json, headers={"User-Agent": self.app}
         )
 
     def put(self, url: str, json: Optional[Dict[str, Any]] = None) -> Response:
-        if self.session is None:
-            self.session = self._login()
-        return self.session.put(
+        if self._session is None:
+            self._session = self._login()
+        return self._session.put(
             "".join([self.address, url]), json=json, headers={"User-Agent": self.app}
         )
 

@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class ServiceStatus(Enum):
     PENDING = "PENDING"
     IN_SERVICE = "IN_SERVICE"

@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class PropertyKind(Enum):
     string = "string"
     int = "int"

@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class FilterOperator(Enum):
     IS = "IS"
     CONTAINS = "CONTAINS"

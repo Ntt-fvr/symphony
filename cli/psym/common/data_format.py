@@ -94,7 +94,9 @@ def format_to_property_definitions(
 
 
 def format_to_property_type_input(
-    property_definition: PropertyDefinition, is_new: bool = True
+    property_definition: PropertyDefinition,
+    is_new: bool = True,
+    property_type_id=None,
 ) -> PropertyTypeInput:
     """This function gets `PropertyDefinition` object as argument and formats it to `PropertyTypeInput` object
 
@@ -144,8 +146,14 @@ def format_to_property_type_input(
         else:
             string_value = default_raw_value
 
+    new_property_type_id = property_definition.id
+    if is_new:
+        new_property_type_id = None
+    elif property_type_id is not None:
+        new_property_type_id = property_type_id
+
     return PropertyTypeInput(
-        id=property_definition.id if not is_new else None,
+        id=new_property_type_id,
         name=property_definition.property_name,
         type=property_definition.property_kind,
         externalId=property_definition.external_id

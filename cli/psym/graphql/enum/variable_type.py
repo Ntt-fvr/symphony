@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class VariableType(Enum):
     STRING = "STRING"
     INT = "INT"

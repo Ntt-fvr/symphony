@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class DistanceUnit(Enum):
     KILOMETER = "KILOMETER"
     MILE = "MILE"

@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class EntryPointRole(Enum):
     DEFAULT = "DEFAULT"
     MISSING_ENUM = ""

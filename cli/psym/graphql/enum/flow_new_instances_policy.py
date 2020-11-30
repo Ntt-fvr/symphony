@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class FlowNewInstancesPolicy(Enum):
     ENABLED = "ENABLED"
     DISABLED = "DISABLED"

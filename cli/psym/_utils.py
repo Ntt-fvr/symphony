@@ -88,10 +88,29 @@ def update_property_input_ids(
     existing_properties: Dict[str, PropertyFragment],
     property_inputs: List[PropertyInput],
 ) -> List[PropertyInput]:
+    new_property_inputs = []
     for p in property_inputs:
+        input_id = p.id
         if p.propertyTypeID in existing_properties:
-            p.id = existing_properties[p.propertyTypeID].id
-    return property_inputs
+            input_id = existing_properties[p.propertyTypeID].id
+        new_property_inputs.append(
+            PropertyInput(
+                propertyTypeID=p.propertyTypeID,
+                id=input_id,
+                stringValue=p.stringValue,
+                intValue=p.intValue,
+                booleanValue=p.booleanValue,
+                floatValue=p.floatValue,
+                latitudeValue=p.latitudeValue,
+                longitudeValue=p.longitudeValue,
+                rangeFromValue=p.rangeFromValue,
+                rangeToValue=p.rangeToValue,
+                nodeIDValue=p.nodeIDValue,
+                isEditable=p.isEditable,
+                isInstanceProperty=p.isInstanceProperty,
+            )
+        )
+    return new_property_inputs
 
 
 def get_graphql_property_type_inputs(

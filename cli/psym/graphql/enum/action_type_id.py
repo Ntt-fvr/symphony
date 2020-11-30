@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class ActionTypeId(Enum):
     work_order = "work_order"
     update_inventory = "update_inventory"

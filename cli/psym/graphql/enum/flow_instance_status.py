@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class FlowInstanceStatus(Enum):
     IN_PROGRESS = "IN_PROGRESS"
     FAILED = "FAILED"

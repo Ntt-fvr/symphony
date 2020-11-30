@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class WorkOrderStatus(Enum):
     PLANNED = "PLANNED"
     IN_PROGRESS = "IN_PROGRESS"

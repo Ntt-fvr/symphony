@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class ProjectPriority(Enum):
     URGENT = "URGENT"
     HIGH = "HIGH"

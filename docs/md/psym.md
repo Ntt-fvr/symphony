@@ -66,23 +66,6 @@ client.upload_site_survey(location, 'My TSS 4', datetime.now(), '~/site_survey.x
 
 You can also query the site surveys of a location using `client.getSiteSurveys(location)`
 
-## Logging
-* You can use reporting utility to report on successful and failed changes to the database.
-* In order to report on failed changes, the user is required to catch FailedOperationException
-and call logFailedOperation with date identifier (row number) & full data for
-easier debugging later.
-
-* Example
-```python
-from psym.reporter import InventoryReporter, FailedOperationException
-reporter = InventoryReporter(csvOutPath, csvErrPath)
-client = PsymClient(email, password, "fb-test", reporter=reporter)
-try:
-    location = client.add_location(..)
-except FailedOperationException as e:
-    e.log_failed_operation(data_identifier, data)
-```
-
 ## Code Example Of Bulk Import
 ```python
 #!/usr/bin/env python3
@@ -91,10 +74,9 @@ import unicodecsv as csv
 import sys
 from collections import namedtuple
 from psym import PsymClient
-from psym.reporter import InventoryReporter, FailedOperationException
 
 
-def import_tx_row(client, data_identifier, data):
+def import_tx_row(client, data):
     try:
         location = client.add_location(
             data.Latitud,
@@ -121,33 +103,29 @@ def import_tx_row(client, data_identifier, data):
                                 {})
         if VSATEquipment is not None and MWEquipment is not None:
             client.add_link(VSATEquipment, "Port A", MWEquipment, "Port A")
-    except FailedOperationException as e:
-        print(e)
-        e.log_failed_operation(data_identifier, data)
     except Exception as e:
         print(e)
         print(data)
         raise
 
 
-def import_tx(email, password, csvPath, csvOutPath, csvErrPath):
+def import_tx(email, password, csvPath):
     with open(csvPath, mode="rb") as infile:
         reader = csv.reader(infile, delimiter=',', encoding='utf-8')
         columnsRow = next(reader)
         columnsRow = ['ITEM'] + columnsRow[1:]
         Data = namedtuple("Data", columnsRow)
-        reporter = InventoryReporter(csvOutPath, csvErrPath)
-        client = PsymClient(email, password, "ipt", reporter=reporter)
+        client = PsymClient(email, password, "fb-test")
         for i, data in enumerate(map(Data._make, reader)):
-            import_tx_row(client, "{}:{}".format(csvPath, i), data)
+            import_tx_row(client, data)
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:
         # flake8: noqa: E999
-        print("Usage: ipt_tx.py {email} {password} {csv_path} {csv_out_path} {csv_err_path}")
+        print("Usage: ipt_tx.py {email} {password} {csv_path}")
         sys.exit(1)
-    import_tx(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    import_tx(sys.argv[1], sys.argv[2], sys.argv[3])
     sys.exit(0)
 
 ```

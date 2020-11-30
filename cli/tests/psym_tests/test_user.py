@@ -7,7 +7,7 @@
 import random
 import string
 
-from psym.client import UserDeactivatedException
+from psym import UserDeactivatedException
 from psym.api.user import (
     activate_user,
     add_user,

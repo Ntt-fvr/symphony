@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class YesNoResponse(Enum):
     YES = "YES"
     NO = "NO"

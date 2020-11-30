@@ -263,14 +263,16 @@ def edit_property_type(
     edited_property_types = []
 
     for property_type in property_types:
-        property_type_input = format_to_property_type_input(property_type, is_new=False)
-        if property_type_input.id == property_type_id:
-            formated_property_definitions = format_to_property_type_input(
-                new_property_definition, is_new=False
+        if property_type.id == property_type_id:
+            property_type_input = format_to_property_type_input(
+                new_property_definition,
+                is_new=False,
+                property_type_id=property_type_id,
             )
-            formated_property_definitions.id = property_type_input.id
-            property_type_input = formated_property_definitions
-
+        else:
+            property_type_input = format_to_property_type_input(
+                property_type, is_new=False
+            )
         edited_property_types.append(property_type_input)
 
     return edited_property_types

@@ -157,8 +157,8 @@
 <span id="psym-client-module"></span><h2>psym.client module<a class="headerlink" href="#module-psym.client" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="psym.client.SymphonyClient">
-<em class="property">class </em><code class="sig-prename descclassname">psym.client.</code><code class="sig-name descname">SymphonyClient</code><span class="sig-paren">(</span><em class="sig-param">email: str</em>, <em class="sig-param">password: str</em>, <em class="sig-param">tenant: str = 'fb-test'</em>, <em class="sig-param">app: str = 'psym'</em>, <em class="sig-param">is_local_host: bool = False</em>, <em class="sig-param">is_dev_mode: bool = False</em>, <em class="sig-param">reporter: gql_client.runtime.reporter.Reporter = &lt;gql_client.runtime.reporter.DummyReporter object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#psym.client.SymphonyClient" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gql_client.runtime.graphql_client.GraphqlClient</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">psym.client.</code><code class="sig-name descname">SymphonyClient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">password</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">tenant</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fb-test'</span></em>, <em class="sig-param"><span class="n">app</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'psym'</span></em>, <em class="sig-param"><span class="n">is_local_host</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">is_dev_mode</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.client.SymphonyClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gql.client.Client</span></code></p>
 <dl class="py method">
 <dt id="psym.client.SymphonyClient.delete_file">
 <code class="sig-name descname">delete_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">is_global</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.client.SymphonyClient.delete_file" title="Permalink to this definition">¶</a></dt>
@@ -184,12 +184,6 @@
 <code class="sig-name descname">store_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">is_global</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#psym.client.SymphonyClient.store_file" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py exception">
-<dt id="psym.client.UserDeactivatedException">
-<em class="property">exception </em><code class="sig-prename descclassname">psym.client.</code><code class="sig-name descname">UserDeactivatedException</code><a class="headerlink" href="#psym.client.UserDeactivatedException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 </div>
@@ -288,7 +282,7 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-psym" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="psym.PsymClient">
-<em class="property">class </em><code class="sig-prename descclassname">psym.</code><code class="sig-name descname">PsymClient</code><span class="sig-paren">(</span><em class="sig-param">email: str</em>, <em class="sig-param">password: str</em>, <em class="sig-param">tenant: str = 'fb-test'</em>, <em class="sig-param">is_local_host: bool = False</em>, <em class="sig-param">is_dev_mode: bool = False</em>, <em class="sig-param">reporter: gql_client.runtime.reporter.Reporter = &lt;gql_client.runtime.reporter.DummyReporter object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#psym.PsymClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">psym.</code><code class="sig-name descname">PsymClient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">password</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">tenant</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fb-test'</span></em>, <em class="sig-param"><span class="n">is_local_host</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">is_dev_mode</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.PsymClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#psym.client.SymphonyClient" title="psym.client.SymphonyClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">psym.client.SymphonyClient</span></code></a></p>
 <dl class="py method">
 <dt id="psym.PsymClient.activate_user">
@@ -4095,6 +4089,12 @@ in case it is not found, creates one.</p>
 </div>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py exception">
+<dt id="psym.UserDeactivatedException">
+<em class="property">exception </em><code class="sig-prename descclassname">psym.</code><code class="sig-name descname">UserDeactivatedException</code><a class="headerlink" href="#psym.UserDeactivatedException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 </div>

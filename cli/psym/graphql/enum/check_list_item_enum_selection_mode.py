@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class CheckListItemEnumSelectionMode(Enum):
     single = "single"
     multiple = "multiple"

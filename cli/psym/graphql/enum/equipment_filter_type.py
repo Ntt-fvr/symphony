@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class EquipmentFilterType(Enum):
     EQUIP_INST_NAME = "EQUIP_INST_NAME"
     EQUIP_INST_EXTERNAL_ID = "EQUIP_INST_EXTERNAL_ID"

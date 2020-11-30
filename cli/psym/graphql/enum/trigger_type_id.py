@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class TriggerTypeId(Enum):
     work_order = "work_order"
     MISSING_ENUM = ""

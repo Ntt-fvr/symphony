@@ -2,7 +2,8 @@
 # Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
-from gql_client.runtime.reporter import DUMMY_REPORTER, Reporter
+
+from gql.transport.exceptions import TransportServerError
 
 from psym.common.constant import __version__
 
@@ -60,6 +61,10 @@ equipment = client.add_equipment(
 )
 ```
 """
+
+
+class UserDeactivatedException(Exception):
+    pass
 
 
 class PsymClient(SymphonyClient):
@@ -216,7 +221,6 @@ class PsymClient(SymphonyClient):
         tenant: str = "fb-test",
         is_local_host: bool = False,
         is_dev_mode: bool = False,
-        reporter: Reporter = DUMMY_REPORTER,
     ) -> None:
         """This is the class to use for working with inventory. It contains all
         the functions to query and and edit the inventory.
@@ -237,10 +241,6 @@ class PsymClient(SymphonyClient):
                         local inventory from a container. This changes the
                         address and also disable verification of ssl
                         certificate
-            reporter (object, optional): Use reporter.InventoryReporter to
-                        store reports on all successful and failed mutations
-                        in inventory. The default is DummyReporter that
-                        discards reports
 
         """
         super().__init__(
@@ -250,9 +250,14 @@ class PsymClient(SymphonyClient):
             f"Psym/{__version__}",
             is_local_host,
             is_dev_mode,
-            reporter,
         )
-        self.populate_types()
+        try:
+            self.populate_types()
+        except TransportServerError as e:
+            err_msg = str(e.args[0])
+            if "Forbidden" in err_msg:
+                raise UserDeactivatedException()
+            raise
 
     def populate_types(self) -> None:
         _populate_location_types(self)

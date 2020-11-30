@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class WorkOrderPriority(Enum):
     URGENT = "URGENT"
     HIGH = "HIGH"

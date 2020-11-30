@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class ExitPointRole(Enum):
     DEFAULT = "DEFAULT"
     DECISION = "DECISION"

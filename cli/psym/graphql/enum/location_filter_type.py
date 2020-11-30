@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class LocationFilterType(Enum):
     LOCATION_INST = "LOCATION_INST"
     LOCATION_INST_NAME = "LOCATION_INST_NAME"

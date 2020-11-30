@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class FileType(Enum):
     IMAGE = "IMAGE"
     FILE = "FILE"

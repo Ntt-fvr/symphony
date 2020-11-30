@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class CheckListItemType(Enum):
     simple = "simple"
     string = "string"

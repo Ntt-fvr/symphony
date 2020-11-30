@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class CellularNetworkType(Enum):
     CDMA = "CDMA"
     GSM = "GSM"

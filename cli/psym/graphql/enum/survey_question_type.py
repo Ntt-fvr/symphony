@@ -3,6 +3,7 @@
 
 from enum import Enum
 
+
 class SurveyQuestionType(Enum):
     BOOL = "BOOL"
     EMAIL = "EMAIL"

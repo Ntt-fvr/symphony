@@ -5,10 +5,9 @@ from collections import namedtuple
 
 import unicodecsv as csv
 from psym import PsymClient
-from psym.reporter import FailedOperationException, InventoryReporter
 
 
-def import_tx_row(client, data_identifier, data):
+def import_tx_row(client, data):
     try:
         location = client.add_location(
             data.Latitud,
@@ -37,33 +36,28 @@ def import_tx_row(client, data_identifier, data):
             )
         if vsat_equipment is not None and mw_equipment is not None:
             client.add_link(vsat_equipment, "Port A", mw_equipment, "Port A")
-    except FailedOperationException as e:
-        print(e)
-        e.log_failed_operation(data_identifier, data)
     except Exception as e:
         print(e)
         print(data)
         raise
 
 
-def import_tx(email, password, csvPath, csvOutPath, csvErrPath):
+def import_tx(email, password, csvPath):
     with open(csvPath, mode="rb") as infile:
         reader = csv.reader(infile, delimiter=",", encoding="utf-8")
         columns_row = next(reader)
         columns_row = ["ITEM"] + columns_row[1:]
         Data = namedtuple("Data", columns_row)
-        reporter = InventoryReporter(csvOutPath, csvErrPath)
-        client = PsymClient(email, password, "ipt", reporter=reporter)
         for i, data in enumerate(map(Data._make, reader)):
-            import_tx_row(client, "{}:{}".format(csvPath, i), data)
+            import_tx_row(client,, data)
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:
         # flake8: noqa: E999
         print(
-            "Usage: ipt_tx.py {email} {password} {csv_path} {csv_out_path} {csv_err_path}"
+            "Usage: ipt_tx.py {email} {password} {csv_path}"
         )
         sys.exit(1)
-    import_tx(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    import_tx(sys.argv[1], sys.argv[2], sys.argv[3])
     sys.exit(0)
