@@ -121,8 +121,6 @@ jobs:
           JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
       - name: Push & Publish
         env:
-          JFROG_CLI_BUILD_NAME: symphony/${{ matrix.image }}
-          JFROG_CLI_BUILD_NUMBER: ${{ github.sha }}
           TAG: ${{ steps.docker_meta.outputs.tag }}
         run: |
           jfrog rt dp $TAG symphony-dev-docker
@@ -165,9 +163,5 @@ jobs:
       - uses: jfrog/setup-jfrog-cli@v1
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
-      - name: Promote builds
-        run: |
-          props="build.repository=$GITHUB_REPOSITORY;build.actor=$GITHUB_ACTOR;build.run_id=$GITHUB_RUN_ID;build.run_number=$GITHUB_RUN_NUMBER"
-          for image in graph admin async store migrate jobrunner front docs storybook; do
-            jfrog rt bpr --source-repo symphony-dev-docker --props "$props" symphony/$image $GITHUB_SHA symphony-prod-docker
-          done
+      - name: Promote build
+        run: jfrog rt bpr --source-repo symphony-dev-docker symphony-prod-docker
