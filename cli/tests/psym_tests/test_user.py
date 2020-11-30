@@ -54,7 +54,6 @@ class TestUser(BaseTest):
         active_users = get_active_users(client=client2)
         self.assertEqual(2, len(active_users))
 
-    @skip("fixme")
     def test_user_deactivated(self) -> None:
         user_name = f"{self.random_string()}@fb.com"
         u = add_user(client=self.client, email=user_name, password=user_name)

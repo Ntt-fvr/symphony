@@ -7,7 +7,7 @@ import time
 import requests
 
 from typing import Callable
-from psym.client import SymphonyClient
+from psym import PsymClient
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
 from psym.common.endpoint import LOCALHOST_SERVER
@@ -43,13 +43,13 @@ def wait_for_platform() -> None:
     raise Exception("Failed to wait for platform")
 
 
-def init_client(email: str, password: str) -> SymphonyClient:
+def init_client(email: str, password: str) -> PsymClient:
     if TEST_MODE == TestMode.LOCAL:
-        return SymphonyClient(email, password, tenant=TENANT, is_local_host=True)
+        return PsymClient(email, password, tenant=TENANT, is_local_host=True)
     elif TEST_MODE == TestMode.REMOTE:
-        return SymphonyClient(email, password, tenant=f"{TENANT}.staging")
+        return PsymClient(email, password, tenant=f"{TENANT}.staging")
     else:
-        return SymphonyClient(email, password, is_dev_mode=True)
+        return PsymClient(email, password, is_dev_mode=True)
 
 
 def init_cleaner() -> Callable:
