@@ -122,7 +122,7 @@ jobs:
           JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
       - name: Push & Publish
         env:
-          JFROG_CLI_BUILD_NAME: ${{ github.repository }}/${{ matrix.image }}
+          JFROG_CLI_BUILD_NAME: symphony/${{ matrix.image }}
           JFROG_CLI_BUILD_NUMBER: ${{ github.sha }}
           TAG: ${{ steps.docker_meta.outputs.tag }}
         run: |
