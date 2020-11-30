@@ -122,6 +122,7 @@ jobs:
       - name: Push & Publish
         env:
           TAG: ${{ steps.docker_meta.outputs.tag }}
+          JFROG_CLI_BUILD_NAME: symphony
         run: |
           jfrog rt dp $TAG symphony-dev-docker
           jfrog rt bp
@@ -164,4 +165,6 @@ jobs:
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
       - name: Promote build
+        env:
+          JFROG_CLI_BUILD_NAME: symphony
         run: jfrog rt bpr --source-repo symphony-dev-docker symphony-prod-docker
