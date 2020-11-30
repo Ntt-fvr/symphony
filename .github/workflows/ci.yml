@@ -158,3 +158,17 @@ jobs:
       - name: Stop services
         if: ${{ always() }}
         run: docker-compose down
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: integration
+    steps:
+      - uses: jfrog/setup-jfrog-cli@v1
+        env:
+          JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
+      - name: Promote builds
+        run: |
+          props="build.repository=$GITHUB_REPOSITORY;build.actor=$GITHUB_ACTOR;build.run_id=$GITHUB_RUN_ID;build.run_number=$GITHUB_RUN_NUMBER"
+          for image in graph admin async store migrate jobrunner front docs storybook; do
+            jfrog rt bpr --source-repo symphony-dev-docker --props "$props" symphony/$image $GITHUB_SHA symphony-prod-docker
+          done
