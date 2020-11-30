@@ -9,9 +9,6 @@ on:
       - skaffold/**
       - tools/**
 
-env:
-  DOCKER_REGISTRY: facebookconnectivity-symphony-dev-docker.jfrog.io
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -98,37 +95,21 @@ jobs:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: ${{ runner.os }}-buildx-
-      - name: Log into JFrog Docker registry
+      - name: Log into Docker registry
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.DOCKER_REGISTRY }}
+          registry: ${{ secrets.JF_DEV_REGISTRY }}
           username: ${{ secrets.JF_ARTIFACTORY_USER }}
           password: ${{ secrets.JF_ARTIFACTORY_API_KEY }}
-      - name: Docker meta
-        id: docker_meta
-        env:
-          IMAGE: ${{ matrix.image }}
-        run: echo "::set-output name=tag::$DOCKER_REGISTRY/$IMAGE:$GITHUB_SHA"
       - uses: docker/build-push-action@v2
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
-          tags: ${{ steps.docker_meta.outputs.tag }}
+          tags: ${{ secrets.JF_DEV_REGISTRY }}/${{ matrix.image }}:${{ github.sha }}
           pull: true
-          load: true
+          push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-      - uses: jfrog/setup-jfrog-cli@v1
-        env:
-          JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
-      - name: Push & Publish
-        env:
-          TAG: ${{ steps.docker_meta.outputs.tag }}
-          JFROG_CLI_BUILD_NAME: symphony/${{ matrix.image }}
-          JFROG_CLI_BUILD_NUMBER: ${{ github.run_number }}
-        run: |
-          jfrog rt dp $TAG symphony-dev-docker
-          jfrog rt bp
 
   integration:
     runs-on: ubuntu-latest
@@ -143,7 +124,7 @@ jobs:
       - name: Log into docker registry
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.DOCKER_REGISTRY }}
+          registry: ${{ secrets.JF_DEV_REGISTRY }}
           username: ${{ secrets.JF_ARTIFACTORY_USER }}
           password: ${{ secrets.JF_ARTIFACTORY_API_KEY }}
       - name: Pull images
@@ -160,16 +141,32 @@ jobs:
         if: ${{ always() }}
         run: docker-compose down
 
-  publish:
+  promote:
+    name: promote ${{ matrix.image }}
     runs-on: ubuntu-latest
     needs: integration
+    strategy:
+      matrix:
+        image: [graph, admin, async, store, migrate, jobrunner, front, docs, storybook]
+    env:
+      SOURCE_IMAGE: ${{ secrets.JF_DEV_REGISTRY }}/${{ matrix.image }}:${{ github.sha }}
+      TARGET_IMAGE: ${{ secrets.JF_PROD_REGISTRY }}/${ matrix.image }}:${{ github.sha }}
     steps:
-      - uses: jfrog/setup-jfrog-cli@v1
-        env:
-          JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
-      - name: Promote builds
-        run: |
-          props="build.repository=$GITHUB_REPOSITORY;build.actor=$GITHUB_ACTOR;build.sha=$GITHUB_SHA;build.run_id=$GITHUB_RUN_ID;build.run_number=$GITHUB_RUN_NUMBER"
-          for image in graph admin async store migrate jobrunner front docs storybook; do
-            jfrog rt bpr --source-repo symphony-dev-docker --props "$props" symphony/$image $GITHUB_RUN_NUMBER symphony-prod-docker
-          done
+      - name: Log into dev registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.JF_DEV_REGISTRY }}
+          username: ${{ secrets.JF_ARTIFACTORY_USER }}
+          password: ${{ secrets.JF_ARTIFACTORY_API_KEY }}
+      - name: Log into prod registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.JF_PROD_REGISTRY }}
+          username: ${{ secrets.JF_ARTIFACTORY_USER }}
+          password: ${{ secrets.JF_ARTIFACTORY_API_KEY }}
+      - name: Pull image
+        run: docker pull $SOURCE_IMAGE
+      - name: Tag image
+        run: docker tag $SOURCE_IMAGE $TARGET_IMAGE
+      - name: Push image
+        run: docker push $TARGET_IMAGE
