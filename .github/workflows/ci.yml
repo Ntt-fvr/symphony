@@ -118,6 +118,7 @@ jobs:
       COMPOSE_FILE: integration/docker-compose.ci.yaml
       COMPOSE_DOCKER_CLI_BUILD: 1
       DOCKER_BUILDKIT: 1
+      DOCKER_REGISTRY: ${{ secrets.JF_DEV_REGISTRY }}
       TAG: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v2
