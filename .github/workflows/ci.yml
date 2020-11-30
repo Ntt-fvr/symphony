@@ -103,28 +103,20 @@ jobs:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ secrets.JF_ARTIFACTORY_USER }}
           password: ${{ secrets.JF_ARTIFACTORY_API_KEY }}
-      - name: Docker meta
-        id: docker_meta
-        env:
-          IMAGE: ${{ matrix.image }}
-        run: echo "::set-output name=tag::$DOCKER_REGISTRY/$IMAGE:$GITHUB_SHA"
       - uses: docker/build-push-action@v2
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
-          tags: ${{ steps.docker_meta.outputs.tag }}
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ matrix.image }}:${{ github.sha }}
           pull: true
+          push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
       - uses: jfrog/setup-jfrog-cli@v1
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET }}
-      - name: Push & Publish
-        env:
-          TAG: ${{ steps.docker_meta.outputs.tag }}
-        run: |
-          jfrog rt dp $TAG symphony-dev-docker
-          jfrog rt bp
+      - name: Publish build to JFrog
+        run: jfrog rt bp $GITHUB_REPOSITORY $GITHUB_SHA
 
   integration:
     runs-on: ubuntu-latest
