@@ -1,5 +1,1 @@
-# Symphony
-
-Status: [![Continuous Integration](https://github.com/Telecominfraproject/symphony/workflows/Continuous%20Integration/badge.svg)](https://Telecominfraproject/symphony/actions)
-
-More info can be found in the [Symphony Wiki](https://github.com/facebookincubator/symphony/wiki).
+# symphony [![Continuous Integration](https://github.com/Telecominfraproject/symphony/workflows/Continuous%20Integration/badge.svg)](https://Telecominfraproject/symphony/actions) [![See the Wiki](https://badgen.net/badge/docs/available/green)](https://github.com/facebookincubator/symphony/wiki)
