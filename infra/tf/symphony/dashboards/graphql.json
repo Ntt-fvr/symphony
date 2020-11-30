@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1605618075063,
+  "iteration": 1606756356003,
   "links": [],
   "panels": [
     {
@@ -76,7 +76,7 @@
       "pluginVersion": "7.2.1",
       "targets": [
         {
-          "expr": "round(sum(irate(graphql_requests_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\"}[$__rate_interval])), 0.001)",
+          "expr": "round(sum(irate(graphql_requests_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\"}[$__rate_interval])), 0.001)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -132,7 +132,7 @@
       "pluginVersion": "7.2.1",
       "targets": [
         {
-          "expr": "sum(avg_over_time(graphql_current_subscriptions{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\"}[$__interval]))",
+          "expr": "sum(avg_over_time(graphql_current_subscriptions{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\"}[$__interval]))",
           "instant": false,
           "interval": "1m",
           "intervalFactor": 2,
@@ -190,7 +190,7 @@
       "pluginVersion": "7.2.1",
       "targets": [
         {
-          "expr": "sum(rate(graphql_responses_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\", operation=~\"$operation\", errors=\"0\"}[$__rate_interval])) / sum(rate(graphql_responses_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\", operation=~\"$operation\"}[$__rate_interval]))",
+          "expr": "sum(rate(graphql_responses_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", operation=~\"$operation\", errors=\"0\"}[$__rate_interval])) / sum(rate(graphql_responses_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", operation=~\"$operation\"}[$__rate_interval]))",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -273,7 +273,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "round(sum(irate(graphql_requests_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\", operation=~\"$operation\"}[$__rate_interval])) by (viewer_tenant), 0.001)",
+          "expr": "round(sum(irate(graphql_requests_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", operation=~\"$operation\"}[$__rate_interval])) by (viewer_tenant), 0.001)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{ viewer_tenant }}",
@@ -467,7 +467,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(1, sum(rate(graphql_request_complexities_bucket{namespace=~\"$namespace\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\"}[$__rate_interval])) by (viewer_tenant, le))",
+          "expr": "histogram_quantile(1, sum(rate(graphql_request_complexities_bucket{namespace=~\"$namespace\", viewer_tenant=~\"$tenant\"}[$__rate_interval])) by (viewer_tenant, le))",
           "interval": "",
           "legendFormat": "{{ viewer_tenant }}",
           "refId": "A"
@@ -596,7 +596,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(1, sum(rate(graphql_response_bytes_bucket{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\"}[$__rate_interval])) by (viewer_tenant, le)) / 1024",
+          "expr": "histogram_quantile(1, sum(rate(graphql_response_bytes_bucket{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\"}[$__rate_interval])) by (viewer_tenant, le)) / 1024",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
@@ -699,7 +699,7 @@
       "steppedLine": true,
       "targets": [
         {
-          "expr": "sum(rate(graphql_responses_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\", operation=~\"$operation\", errors!=\"0\"}[$__rate_interval])) by (viewer_tenant) * 60",
+          "expr": "sum(rate(graphql_responses_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", operation=~\"$operation\", errors!=\"0\"}[$__rate_interval])) by (viewer_tenant) * 60",
           "instant": false,
           "interval": "",
           "legendFormat": "{{ viewer_tenant }}",
@@ -790,18 +790,18 @@
       "hiddenSeries": false,
       "id": 24,
       "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
         "hideEmpty": false,
         "hideZero": true,
-        "max": true,
+        "max": false,
         "min": false,
-        "rightSide": true,
+        "rightSide": false,
         "show": true,
         "sideWidth": null,
         "total": false,
-        "values": true
+        "values": false
       },
       "lines": true,
       "linewidth": 2,
@@ -820,7 +820,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "round(sum(irate(graphql_resolves_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\", viewer_user=~\"$user\"}[$__rate_interval])) by (viewer_tenant), 0.001)",
+          "expr": "round(sum(irate(graphql_resolves_total{namespace=\"$namespace\", container=~\"$container\", viewer_tenant=~\"$tenant\"}[$__rate_interval])) by (viewer_tenant), 0.001)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{ viewer_tenant }}",
@@ -963,125 +963,6 @@
     },
     {
       "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value (sum)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 53
-      },
-      "id": 28,
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Value (sum)"
-          }
-        ]
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "sum(graphql_resolves_total{viewer_tenant=~\"$tenant\"}) by (object)",
-          "format": "table",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Resolves Per Object",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true
-            },
-            "indexByName": {
-              "Time": 0,
-              "Value": 3,
-              "object": 2,
-              "viewer_tenant": 1
-            },
-            "renameByName": {
-              "Value": "",
-              "object": "Object",
-              "viewer_tenant": "Tenant"
-            }
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Object": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "Value": {
-                "aggregations": [
-                  "sum"
-                ],
-                "operation": "aggregate"
-              }
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 61
-      },
-      "id": 30,
-      "panels": [],
-      "title": "Deprecated",
-      "type": "row"
-    },
-    {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1118,8 +999,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 62
+        "x": 12,
+        "y": 53
       },
       "id": 26,
       "options": {
@@ -1299,32 +1180,6 @@
         "useTags": false
       },
       {
-        "allValue": ".+",
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": "$datasource",
-        "definition": "label_values(graphql_requests_total{namespace=~\"$namespace\", viewer_tenant=~\"$tenant\"}, viewer_user)",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": false,
-        "name": "user",
-        "options": [],
-        "query": "label_values(graphql_requests_total{namespace=~\"$namespace\", viewer_tenant=~\"$tenant\"}, viewer_user)",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
         "allValue": null,
         "current": {
           "selected": true,
@@ -1390,5 +1245,5 @@
   "timezone": "",
   "title": "Symphony / GraphQL",
   "uid": "nnqLX1wZz",
-  "version": 8944
+  "version": 10878
 }

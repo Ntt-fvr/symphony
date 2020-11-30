@@ -173,4 +173,3 @@ jobs:
           for image in graph admin async store migrate jobrunner front docs storybook; do
             jfrog rt bpr --source-repo symphony-dev-docker --props "$props" symphony/$image $GITHUB_RUN_NUMBER symphony-prod-docker
           done
-
