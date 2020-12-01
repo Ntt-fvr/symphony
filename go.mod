@@ -16,7 +16,7 @@ require (
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
 	github.com/alecthomas/kong v0.2.11
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
-	github.com/aws/aws-sdk-go v1.35.28
+	github.com/aws/aws-sdk-go v1.35.35
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
 	github.com/facebook/ent v0.4.4-0.20201030185257-8139aca845b1
@@ -51,7 +51,7 @@ require (
 	go.uber.org/zap v1.16.0
 	gocloud.dev v0.20.1-0.20201126173032-b94395a2628c
 	gocloud.dev/pubsub/natspubsub v0.20.0
-	golang.org/x/net v0.0.0-20201021035429-f5854403a974
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	golang.org/x/text v0.3.4
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
