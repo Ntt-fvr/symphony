@@ -27,6 +27,15 @@ data:
       @type prometheus
     </source>
 
+    # Ensure record contains a tenant key
+    <filter inventory>
+      @type record_transformer
+      enable_ruby
+      <record>
+        tenant ${tenant = record.fetch('tenant', ''); tenant ? tenant : ''}
+      </record>
+    </filter>
+
     # Prometheus filter plugin exporting inventory metrics
     <filter inventory>
       @id filter_inventory
@@ -38,7 +47,6 @@ data:
         <labels>
           event ${event}
           tenant ${tenant}
-          user ${email}
         </labels>
       </metric>
     </filter>
