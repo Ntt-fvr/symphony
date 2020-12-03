@@ -106,12 +106,14 @@ func (t *Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHan
 		span.AddAttributes(t.operationAttrs(ctx, oc)...)
 	}
 	defer func() {
-		span.AddAttributes(
-			trace.Int64Attribute(
-				"graphql.response_bytes",
-				int64(len(rsp.Data)),
-			),
-		)
+		if rsp != nil {
+			span.AddAttributes(
+				trace.Int64Attribute(
+					"graphql.response_bytes",
+					int64(len(rsp.Data)),
+				),
+			)
+		}
 		if errs := graphql.GetErrors(ctx); errs != nil {
 			span.SetStatus(trace.Status{
 				Code:    trace.StatusCodeUnknown,
