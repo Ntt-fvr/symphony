@@ -69,8 +69,13 @@ func (Metrics) InterceptResponse(ctx context.Context, next graphql.ResponseHandl
 
 	measurements := []stats.Measurement{
 		ResponseTotal.M(1),
-		ResponseBytes.M(int64(len(rsp.Data))),
 	}
+	if rsp != nil {
+		measurements = append(measurements,
+			ResponseBytes.M(int64(len(rsp.Data))),
+		)
+	}
+
 	if oc := graphql.GetOperationContext(ctx); oc.Operation == nil || oc.Operation.Operation != ast.Subscription {
 		measurements = append(measurements,
 			RequestLatency.M(
