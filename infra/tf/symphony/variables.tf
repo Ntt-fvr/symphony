@@ -1,4 +1,4 @@
-variable bootstrap {
+variable "bootstrap" {
   type        = bool
   description = "Run in bootstrap mode"
   default     = false
@@ -16,7 +16,7 @@ variable "storybook_tag" {
   default     = null
 }
 
-variable artifactory {
+variable "artifactory" {
   description = "Artifactory urls and credentials"
   type = object({
     docker_registry = string
@@ -28,7 +28,7 @@ variable artifactory {
   default = null
 }
 
-variable front_secret {
+variable "front_secret" {
   description = "Front secret override"
   type = object({
     session_token       = string

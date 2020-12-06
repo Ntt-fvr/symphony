@@ -3,14 +3,14 @@ locals {
   mysql_port = 3306
 }
 
-resource random_pet front_db {}
+resource "random_pet" "front_db" {}
 
-resource random_password front_db {
+resource "random_password" "front_db" {
   length  = 16
   special = false
 }
 
-module front_db {
+module "front_db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -43,14 +43,14 @@ module front_db {
   tags = local.tags
 }
 
-resource random_pet graph_db {}
+resource "random_pet" "graph_db" {}
 
-resource random_password graph_db {
+resource "random_password" "graph_db" {
   length  = 16
   special = false
 }
 
-module graph_db {
+module "graph_db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -103,6 +103,6 @@ module graph_db {
   tags = local.tags
 }
 
-data aws_iam_role rds_monitoring {
+data "aws_iam_role" "rds_monitoring" {
   name = "rds-monitoring-role"
 }

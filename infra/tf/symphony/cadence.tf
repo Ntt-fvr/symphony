@@ -1,9 +1,9 @@
-resource random_password cadence_db {
+resource "random_password" "cadence_db" {
   length  = 16
   special = false
 }
 
-module cadence_db {
+module "cadence_db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -54,7 +54,7 @@ module cadence_db {
   tags = local.tags
 }
 
-resource kubernetes_job create-cadence-db {
+resource "kubernetes_job" "create-cadence-db" {
   metadata {
     name      = "create-cadence-db"
     namespace = kubernetes_namespace.symphony.id
@@ -95,7 +95,7 @@ locals {
 }
 
 # cadence is a distributed, scalable, durable, and highly available orchestration engine to execute asynchronous long-running business logic in a scalable and resilient way
-resource helm_release cadence {
+resource "helm_release" "cadence" {
   name       = "cadence"
   namespace  = kubernetes_namespace.symphony.id
   repository = local.helm_repository.banzaicloud

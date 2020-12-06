@@ -8,7 +8,7 @@ locals {
   }
 }
 
-module store_role {
+module "store_role" {
   source                    = "./../modules/irsa"
   role_name_prefix          = "SymphonyStoreRole"
   role_path                 = data.terraform_remote_state.core.outputs.eks.sa_role_path
@@ -19,7 +19,7 @@ module store_role {
   tags                      = local.tags
 }
 
-data aws_iam_policy_document store {
+data "aws_iam_policy_document" "store" {
   statement {
     actions = [
       "s3:GetObject",
@@ -33,7 +33,7 @@ data aws_iam_policy_document store {
   }
 }
 
-module async_role {
+module "async_role" {
   source                    = "./../modules/irsa"
   role_name_prefix          = "SymphonyAsyncRole"
   role_path                 = data.terraform_remote_state.core.outputs.eks.sa_role_path
@@ -44,7 +44,7 @@ module async_role {
   tags                      = local.tags
 }
 
-data aws_iam_policy_document async {
+data "aws_iam_policy_document" "async" {
   statement {
     actions = [
       "s3:PutObject",
@@ -65,7 +65,7 @@ data aws_iam_policy_document async {
   }
 }
 
-resource helm_release symphony {
+resource "helm_release" "symphony" {
   name                = local.symphony_name
   namespace           = kubernetes_namespace.symphony.id
   chart               = "symphony"
@@ -293,7 +293,7 @@ resource helm_release symphony {
   }
 }
 
-resource kubernetes_cron_job tenant_cleaner {
+resource "kubernetes_cron_job" "tenant_cleaner" {
   for_each = terraform.workspace == "staging" ? {
     testimio = {
       schedule = "25,55 * * * *"
@@ -339,7 +339,7 @@ resource kubernetes_cron_job tenant_cleaner {
   }
 }
 
-resource kubernetes_config_map dashboards {
+resource "kubernetes_config_map" "dashboards" {
   metadata {
     name      = "grafana-dashboards"
     namespace = kubernetes_namespace.symphony.id

@@ -1,12 +1,12 @@
 # kube-system exist by default
-data kubernetes_namespace kube_system {
+data "kubernetes_namespace" "kube_system" {
   metadata {
     name = "kube-system"
   }
 }
 
 # iam role for cluster autoscaler
-module cluster_autoscaler_role {
+module "cluster_autoscaler_role" {
   source                    = "../modules/irsa"
   role_name_prefix          = "ClusterAutoScalerRole"
   role_path                 = local.eks_sa_role_path
@@ -18,7 +18,7 @@ module cluster_autoscaler_role {
 }
 
 # policy required by cluster autoscaler
-data aws_iam_policy_document cluster_autoscaler {
+data "aws_iam_policy_document" "cluster_autoscaler" {
   statement {
     sid    = "ClusterAutoScalerAll"
     effect = "Allow"
@@ -61,7 +61,7 @@ data aws_iam_policy_document cluster_autoscaler {
 }
 
 # autoscaler scales worker nodes within autoscaling groups
-resource helm_release cluster_autoscaler {
+resource "helm_release" "cluster_autoscaler" {
   chart      = "cluster-autoscaler-chart"
   repository = local.helm_repository.autoscaler
   name       = "cluster-autoscaler-chart"
@@ -88,7 +88,7 @@ resource helm_release cluster_autoscaler {
 }
 
 # metrics is a cluster-wide aggregator of resource usage data
-resource helm_release metrics_server {
+resource "helm_release" "metrics_server" {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
@@ -103,7 +103,7 @@ resource helm_release metrics_server {
 }
 
 # monitors extra attributes on nodes
-resource helm_release node_problem_detector {
+resource "helm_release" "node_problem_detector" {
   chart      = "node-problem-detector"
   repository = local.helm_repository.stable
   name       = "node-problem-detector"
@@ -117,7 +117,7 @@ resource helm_release node_problem_detector {
 }
 
 # iam role for aws node
-module aws_node_role {
+module "aws_node_role" {
   source                    = "../modules/irsa"
   role_name_prefix          = "AWSNodeRole"
   role_path                 = local.eks_sa_role_path
@@ -129,7 +129,7 @@ module aws_node_role {
 }
 
 # networking plugin for pod networking using ENI
-resource helm_release aws_vpc_cni {
+resource "helm_release" "aws_vpc_cni" {
   name       = "aws-vpc-cni"
   repository = local.helm_repository.eks
   chart      = "aws-vpc-cni"
@@ -146,7 +146,7 @@ resource helm_release aws_vpc_cni {
   })]
 }
 
-resource helm_release aws_calico {
+resource "helm_release" "aws_calico" {
   name       = "aws-calico"
   repository = local.helm_repository.eks
   chart      = "aws-calico"

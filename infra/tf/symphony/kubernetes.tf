@@ -1,10 +1,10 @@
-resource kubernetes_namespace symphony {
+resource "kubernetes_namespace" "symphony" {
   metadata {
     name = "symphony"
   }
 }
 
-resource kubernetes_role_binding symphony_admins {
+resource "kubernetes_role_binding" "symphony_admins" {
   metadata {
     name      = "admins"
     namespace = kubernetes_namespace.symphony.id
@@ -23,7 +23,7 @@ resource kubernetes_role_binding symphony_admins {
   }
 }
 
-resource kubernetes_secret artifactory {
+resource "kubernetes_secret" "artifactory" {
   metadata {
     name      = "artifactory"
     namespace = kubernetes_namespace.symphony.id

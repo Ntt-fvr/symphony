@@ -1,9 +1,9 @@
-resource random_password keycloak_dbpass {
+resource "random_password" "keycloak_dbpass" {
   length  = 16
   special = false
 }
 
-module keycloak_db {
+module "keycloak_db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -41,12 +41,12 @@ locals {
   keycloak_user = "admin"
 }
 
-resource random_password keycloak_admin {
+resource "random_password" "keycloak_admin" {
   length  = 16
   special = false
 }
 
-resource helm_release keycloak {
+resource "helm_release" "keycloak" {
   name       = "keycloak"
   namespace  = kubernetes_namespace.symphony.id
   chart      = "keycloak"

@@ -7,7 +7,7 @@ locals {
 }
 
 # grant RDS access to EKS worker nodes
-resource aws_security_group eks_rds {
+resource "aws_security_group" "eks_rds" {
   for_each = {
     mysql = {
       name = "MySQL"
@@ -37,6 +37,6 @@ resource aws_security_group eks_rds {
 }
 
 # role allowing enhanced monitoring
-data aws_iam_role rds_enhanced_monitoring {
+data "aws_iam_role" "rds_enhanced_monitoring" {
   name = "rds-monitoring-role"
 }

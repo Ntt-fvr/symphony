@@ -1,8 +1,8 @@
-data aws_arn oidc_provider_arn {
+data "aws_arn" "oidc_provider_arn" {
   arn = var.oidc_provider_arn
 }
 
-data aws_iam_policy_document assume_role_with_oidc {
+data "aws_iam_policy_document" "assume_role_with_oidc" {
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -18,7 +18,7 @@ data aws_iam_policy_document assume_role_with_oidc {
   }
 }
 
-resource aws_iam_role this_role {
+resource "aws_iam_role" "this_role" {
   name                 = var.role_name
   name_prefix          = var.role_name_prefix
   path                 = var.role_path
@@ -28,13 +28,13 @@ resource aws_iam_role this_role {
   tags                 = var.tags
 }
 
-resource aws_iam_role_policy this_role_policy {
+resource "aws_iam_role_policy" "this_role_policy" {
   count  = var.role_policy != null ? 1 : 0
   policy = var.role_policy
   role   = aws_iam_role.this_role.id
 }
 
-resource aws_iam_role_policy_attachment this_role_policy_attachment {
+resource "aws_iam_role_policy_attachment" "this_role_policy_attachment" {
   count      = try(length(var.role_policy_arns), 0)
   policy_arn = var.role_policy_arns[count.index]
   role       = aws_iam_role.this_role.id

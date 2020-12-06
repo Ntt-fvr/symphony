@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 0.13"
 
-  backend s3 {
+  backend "s3" {
     bucket               = "symphony.deployment"
     region               = "us-east-1"
     workspace_key_prefix = "symphony"
@@ -29,7 +29,7 @@ terraform {
   }
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
 locals {
   env = {
@@ -45,7 +45,7 @@ locals {
   production_only_count = terraform.workspace == "production" ? 1 : 0
 }
 
-data terraform_remote_state current {
+data "terraform_remote_state" "current" {
   backend   = "s3"
   workspace = terraform.workspace
 
@@ -67,7 +67,7 @@ locals {
   core_workspace = terraform.workspace != "production" ? terraform.workspace : "default"
 }
 
-data terraform_remote_state core {
+data "terraform_remote_state" "core" {
   backend   = "s3"
   workspace = local.core_workspace
 
@@ -80,27 +80,27 @@ data terraform_remote_state core {
   }
 }
 
-data aws_eks_cluster staging {
+data "aws_eks_cluster" "staging" {
   name     = local.env.staging.cluster
   provider = aws.eu-west-1
 }
 
-data aws_eks_cluster production {
+data "aws_eks_cluster" "production" {
   name     = local.env.production.cluster
   provider = aws.us-east-1
 }
 
-data aws_eks_cluster current {
+data "aws_eks_cluster" "current" {
   name = local.env[terraform.workspace].cluster
 }
 
-data aws_eks_cluster_auth current {
+data "aws_eks_cluster_auth" "current" {
   name     = data.aws_eks_cluster.current.name
   provider = aws.assume-admin-role
   count    = ! var.bootstrap ? 1 : 0
 }
 
-data aws_eks_cluster_auth bootstrap {
+data "aws_eks_cluster_auth" "bootstrap" {
   name  = data.aws_eks_cluster.current.name
   count = var.bootstrap ? 1 : 0
 }

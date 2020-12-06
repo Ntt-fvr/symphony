@@ -1,4 +1,4 @@
-output kubeconfig {
+output "kubeconfig" {
   description = "kubectl config file contents for this EKS cluster."
   value = templatefile("${path.module}/templates/kubeconfig.tpl", {
     cluster_name      = "symphony-${terraform.workspace}"
@@ -12,17 +12,17 @@ output kubeconfig {
   sensitive = true
 }
 
-output symphony_tag {
+output "symphony_tag" {
   description = "Symphony tag currently deployed"
   value       = local.symphony_tag
 }
 
-output storybook_tag {
+output "storybook_tag" {
   description = "Storybook tag currently deployed"
   value       = local.storybook_tag
 }
 
-output keycloak_admin {
+output "keycloak_admin" {
   description = "Keycloak login credentials"
   value = {
     user     = local.keycloak_user

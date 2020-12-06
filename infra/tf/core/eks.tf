@@ -9,7 +9,7 @@ locals {
   eks_asg_capacity = length(module.vpc.azs) * 2
 }
 
-module eks {
+module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "~> 13.0"
   cluster_name    = local.eks_cluster_name
@@ -113,7 +113,7 @@ module eks {
 }
 
 # fargate profile for symphony namespace
-module eks_fargate {
+module "eks_fargate" {
   source  = "terraform-module/eks-fargate-profile/aws"
   version = "~> 2.0"
 
@@ -125,13 +125,13 @@ module eks_fargate {
 }
 
 # generates eks access token
-data aws_eks_cluster_auth eks {
+data "aws_eks_cluster_auth" "eks" {
   name     = module.eks.cluster_id
   provider = aws.eks_admin
 }
 
 # policy delegating assume role check to account root
-data aws_iam_policy_document root_delegate {
+data "aws_iam_policy_document" "root_delegate" {
   statement {
     principals {
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
@@ -145,7 +145,7 @@ data aws_iam_policy_document root_delegate {
 }
 
 # create iam role for eks admin
-resource aws_iam_role eks_admin {
+resource "aws_iam_role" "eks_admin" {
   name = format(
     "Eks%sAdmin",
     terraform.workspace != "default" ? title(terraform.workspace) : "",
@@ -155,7 +155,7 @@ resource aws_iam_role eks_admin {
 }
 
 # policy allowing full access to eks resources
-data aws_iam_policy_document eks_full_access {
+data "aws_iam_policy_document" "eks_full_access" {
   statement {
     actions = [
       "eks:*",
@@ -168,13 +168,13 @@ data aws_iam_policy_document eks_full_access {
 }
 
 # attach full eks access policy to admin role
-resource aws_iam_role_policy eks_admin {
+resource "aws_iam_role_policy" "eks_admin" {
   role   = aws_iam_role.eks_admin.id
   policy = data.aws_iam_policy_document.eks_full_access.json
 }
 
 # document allowing assume eks admin role
-data aws_iam_policy_document eks_admin {
+data "aws_iam_policy_document" "eks_admin" {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -187,12 +187,12 @@ data aws_iam_policy_document eks_admin {
 }
 
 # policy allowing assume eks admin role
-resource aws_iam_policy eks_admin {
+resource "aws_iam_policy" "eks_admin" {
   policy = data.aws_iam_policy_document.eks_admin.json
 }
 
 # role assume policy for eks workers
-data aws_iam_policy_document eks_worker_assumable {
+data "aws_iam_policy_document" "eks_worker_assumable" {
   statement {
     principals {
       identifiers = ["ec2.amazonaws.com"]

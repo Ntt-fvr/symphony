@@ -1,9 +1,9 @@
-resource aws_iam_user deployer {
+resource "aws_iam_user" "deployer" {
   name = var.name
   path = var.path
 }
 
-data aws_iam_policy_document deployer {
+data "aws_iam_policy_document" "deployer" {
   statement {
     actions = [
       "dynamodb:PutItem",
@@ -31,12 +31,12 @@ data aws_iam_policy_document deployer {
   }
 }
 
-resource aws_iam_user_policy deployer {
+resource "aws_iam_user_policy" "deployer" {
   policy = data.aws_iam_policy_document.deployer.json
   user   = aws_iam_user.deployer.name
 }
 
-resource aws_iam_user_policy_attachment deployer_read_only {
+resource "aws_iam_user_policy_attachment" "deployer_read_only" {
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
   user       = aws_iam_user.deployer.name
 }

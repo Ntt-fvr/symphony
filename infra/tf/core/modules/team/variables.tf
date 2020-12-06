@@ -1,3 +1,3 @@
-variable team_name {
+variable "team_name" {
   type = string
 }

@@ -1,10 +1,10 @@
-variable project {
+variable "project" {
   description = "The project name for resource naming and tagging"
   type        = string
   default     = "phb"
 }
 
-variable region {
+variable "region" {
   description = "The region where AWS operations will take place"
   type        = map(string)
 
@@ -14,7 +14,7 @@ variable region {
   }
 }
 
-variable k8s_assume_role {
+variable "k8s_assume_role" {
   description = "kubectl assumes EKS admin role"
   type        = bool
   default     = true

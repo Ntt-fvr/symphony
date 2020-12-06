@@ -2,7 +2,7 @@ locals {
   storybook_tag = var.storybook_tag != null ? var.storybook_tag : data.terraform_remote_state.current.outputs.storybook_tag
 }
 
-resource helm_release storybook {
+resource "helm_release" "storybook" {
   name                = "storybook"
   namespace           = kubernetes_namespace.symphony.id
   chart               = "storybook"

@@ -1,4 +1,4 @@
-resource helm_release log_forwarder {
+resource "helm_release" "log_forwarder" {
   name       = "log-forwarder"
   namespace  = kubernetes_namespace.symphony.id
   repository = local.helm_repository.bitnami
@@ -23,7 +23,7 @@ resource helm_release log_forwarder {
   })]
 }
 
-resource kubernetes_config_map log_forwarder {
+resource "kubernetes_config_map" "log_forwarder" {
   metadata {
     name      = "log-forwarder"
     namespace = kubernetes_namespace.symphony.id
@@ -34,7 +34,7 @@ resource kubernetes_config_map log_forwarder {
   }
 }
 
-resource helm_release logging_pipeline {
+resource "helm_release" "logging_pipeline" {
   name       = "logging-pipeline"
   namespace  = kubernetes_namespace.symphony.id
   repository = local.helm_repository.kiwigrid

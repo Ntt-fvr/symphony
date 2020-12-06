@@ -1,4 +1,4 @@
-resource aws_s3_bucket store {
+resource "aws_s3_bucket" "store" {
   bucket_prefix = "phb-${local.core_workspace}-"
 
   cors_rule {
@@ -44,7 +44,7 @@ resource aws_s3_bucket store {
   tags = local.tags
 }
 
-resource aws_s3_bucket_public_access_block store {
+resource "aws_s3_bucket_public_access_block" "store" {
   bucket                  = aws_s3_bucket.store.id
   block_public_acls       = true
   block_public_policy     = true

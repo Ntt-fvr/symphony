@@ -4,7 +4,7 @@ locals {
 }
 
 # grant efs access to eks cluster and worker nodes
-resource aws_security_group efs_sg {
+resource "aws_security_group" "efs_sg" {
   name        = "efs-mount"
   description = "Allow NFS traffic from k8s cluster and worker nodes."
   vpc_id      = module.vpc.vpc_id
@@ -33,14 +33,14 @@ resource aws_security_group efs_sg {
 }
 
 # efs file system for eks persistent volumes
-resource aws_efs_file_system eks_pv {
+resource "aws_efs_file_system" "eks_pv" {
   tags = {
     Name = "${var.project}.k8s.pv.local"
   }
 }
 
 # efs mount target for eks persistent volumes
-resource aws_efs_mount_target eks_pv_mnt {
+resource "aws_efs_mount_target" "eks_pv_mnt" {
   file_system_id  = aws_efs_file_system.eks_pv.id
   security_groups = [aws_security_group.efs_sg.id]
   subnet_id       = module.vpc.private_subnets[count.index]
@@ -48,7 +48,7 @@ resource aws_efs_mount_target eks_pv_mnt {
 }
 
 # iam role for efs provisioner
-module efs_provisioner_role {
+module "efs_provisioner_role" {
   source                    = "../modules/irsa"
   role_name_prefix          = "EFSProvisionerRole"
   role_path                 = local.eks_sa_role_path
@@ -60,7 +60,7 @@ module efs_provisioner_role {
 }
 
 # k8s requires provisioner to treat efs as a persistent volume
-resource helm_release efs_provisioner {
+resource "helm_release" "efs_provisioner" {
   name       = "efs-provisioner"
   repository = local.helm_repository.stable
   chart      = "efs-provisioner"

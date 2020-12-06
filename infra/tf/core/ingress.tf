@@ -1,5 +1,5 @@
 # iam role for alb ingress controller
-module alb_ingress_controller_role {
+module "alb_ingress_controller_role" {
   source                    = "../modules/irsa"
   role_name_prefix          = "ALBIngressControllerRole"
   role_path                 = local.eks_sa_role_path
@@ -11,7 +11,7 @@ module alb_ingress_controller_role {
 }
 
 # policy required by alb ingress controller
-data aws_iam_policy_document alb_ingress_controller {
+data "aws_iam_policy_document" "alb_ingress_controller" {
   statement {
     actions = [
       "acm:DescribeCertificate",
@@ -159,7 +159,7 @@ data aws_iam_policy_document alb_ingress_controller {
 }
 
 # alb ingress controller exposes ingress resources
-resource helm_release alb_ingress_controller {
+resource "helm_release" "alb_ingress_controller" {
   chart      = "aws-alb-ingress-controller"
   name       = module.alb_ingress_controller_role.service_account_name
   repository = local.helm_repository.incubator
@@ -206,7 +206,7 @@ resource "aws_security_group" "intern_sg" {
 }
 
 # ingress controller using nginx as a reverse proxy and load balancer.
-resource helm_release ingress_nginx {
+resource "helm_release" "ingress_nginx" {
   name       = "ingress-nginx"
   namespace  = data.kubernetes_namespace.kube_system.id
   repository = local.helm_repository.ingress-nginx
@@ -265,7 +265,7 @@ resource helm_release ingress_nginx {
 }
 
 # alb for ingress gateways
-resource kubernetes_ingress gateway {
+resource "kubernetes_ingress" "gateway" {
   for_each = {
     public = {
       waf_acl_id = aws_wafregional_web_acl.wafacl.id
@@ -333,7 +333,7 @@ resource kubernetes_ingress gateway {
 }
 
 # s3 bucket storing load balancers access logs
-resource aws_s3_bucket access_logs {
+resource "aws_s3_bucket" "access_logs" {
   bucket = "symphony.${local.environment}.access-logs"
 
   lifecycle_rule {
@@ -356,7 +356,7 @@ resource aws_s3_bucket access_logs {
 }
 
 # block public access to access logs bucket
-resource aws_s3_bucket_public_access_block access_logs {
+resource "aws_s3_bucket_public_access_block" "access_logs" {
   bucket                  = aws_s3_bucket.access_logs.id
   block_public_acls       = true
   block_public_policy     = true
@@ -375,7 +375,7 @@ locals {
 
 # define access logs bucket policy
 # ref: https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html#attach-bucket-policy
-data aws_iam_policy_document access_logs {
+data "aws_iam_policy_document" "access_logs" {
   statement {
     principals {
       identifiers = [data.aws_elb_service_account.main.arn]
@@ -410,13 +410,13 @@ data aws_iam_policy_document access_logs {
 }
 
 # attach access logs bucket policy
-resource aws_s3_bucket_policy access_logs {
+resource "aws_s3_bucket_policy" "access_logs" {
   bucket = aws_s3_bucket.access_logs.id
   policy = data.aws_iam_policy_document.access_logs.json
 }
 
 # iam role for external dns
-module external_dns_role {
+module "external_dns_role" {
   source                    = "../modules/irsa"
   role_name_prefix          = "ExternalDNSRole"
   role_path                 = local.eks_sa_role_path
@@ -438,7 +438,7 @@ locals {
 }
 
 # policy required by external dns
-data aws_iam_policy_document external_dns {
+data "aws_iam_policy_document" "external_dns" {
   statement {
     actions = [
       "route53:ChangeResourceRecordSets",
@@ -461,7 +461,7 @@ data aws_iam_policy_document external_dns {
 }
 
 # external dns maps route53 to ingress resources
-resource helm_release external_dns {
+resource "helm_release" "external_dns" {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
@@ -487,7 +487,7 @@ resource helm_release external_dns {
 }
 
 # policy required by cert manager
-data aws_iam_policy_document cert_manager {
+data "aws_iam_policy_document" "cert_manager" {
   statement {
     actions = [
       "route53:GetChange",
@@ -522,7 +522,7 @@ data aws_iam_policy_document cert_manager {
 }
 
 # iam role for cert manager
-module cert_manager_role {
+module "cert_manager_role" {
   source                    = "../modules/irsa"
   role_name_prefix          = "CertManagerRole"
   role_path                 = local.eks_sa_role_path
@@ -534,7 +534,7 @@ module cert_manager_role {
 }
 
 # cert manager is a certificate management controller.
-resource helm_release cert_manager {
+resource "helm_release" "cert_manager" {
   name             = "cert-manager"
   repository       = local.helm_repository.jetstack
   chart            = "cert-manager"

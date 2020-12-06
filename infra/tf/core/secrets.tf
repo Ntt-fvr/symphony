@@ -1,24 +1,24 @@
-data aws_secretsmanager_secret artifactory {
+data "aws_secretsmanager_secret" "artifactory" {
   name     = "symphony/artifactory"
   provider = aws.us-east-1
 }
 
-data aws_secretsmanager_secret_version artifactory {
+data "aws_secretsmanager_secret_version" "artifactory" {
   secret_id = data.aws_secretsmanager_secret.artifactory.id
   provider  = aws.us-east-1
 }
 
-data aws_secretsmanager_secret mapbox {
+data "aws_secretsmanager_secret" "mapbox" {
   name     = "phb/mapbox"
   provider = aws.us-east-1
 }
 
-data aws_secretsmanager_secret_version mapbox {
+data "aws_secretsmanager_secret_version" "mapbox" {
   secret_id = data.aws_secretsmanager_secret.mapbox.id
   provider  = aws.us-east-1
 }
 
-data sops_file secrets {
+data "sops_file" "secrets" {
   source_file = "${path.module}/secrets.yaml"
 }
 

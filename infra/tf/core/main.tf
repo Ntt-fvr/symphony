@@ -70,25 +70,25 @@ locals {
 }
 
 # expose deployment bucket
-data aws_s3_bucket deployment {
+data "aws_s3_bucket" "deployment" {
   bucket   = "symphony.deployment"
   provider = aws.us-east-1
 }
 
 # expose state lock table
-data aws_dynamodb_table lock {
+data "aws_dynamodb_table" "lock" {
   name     = "symphony.terraform.lock"
   provider = aws.us-east-1
 }
 
 # expose available azs in current region
-data aws_availability_zones current {}
+data "aws_availability_zones" "current" {}
 
 # expose current user data
-data aws_caller_identity current {}
+data "aws_caller_identity" "current" {}
 
 # expose current region data
-data aws_region current {}
+data "aws_region" "current" {}
 
 # expose elb service account
-data aws_elb_service_account main {}
+data "aws_elb_service_account" "main" {}

@@ -1,10 +1,10 @@
-output grafana_admin_password {
+output "grafana_admin_password" {
   description = "Grafana administrator password"
   value       = random_password.grafana_admin_password.result
   sensitive   = true
 }
 
-output database {
+output "database" {
   description = "Database subnets and security groups"
   value = {
     subnets      = module.vpc.database_subnets
@@ -16,7 +16,7 @@ output database {
   sensitive = true
 }
 
-output eks {
+output "eks" {
   description = "EKS cluster details"
   value = {
     oidc_provider_arn = module.eks.oidc_provider_arn
