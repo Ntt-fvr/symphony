@@ -14,7 +14,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
-	github.com/alecthomas/kong v0.2.11
+	github.com/alecthomas/kong v0.2.12
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aws/aws-sdk-go v1.35.35
 	github.com/badoux/checkmail v1.2.1
