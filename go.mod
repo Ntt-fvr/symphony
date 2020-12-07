@@ -16,7 +16,7 @@ require (
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
 	github.com/alecthomas/kong v0.2.12
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
-	github.com/aws/aws-sdk-go v1.35.35
+	github.com/aws/aws-sdk-go v1.36.2
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
 	github.com/facebook/ent v0.4.4-0.20201030185257-8139aca845b1
