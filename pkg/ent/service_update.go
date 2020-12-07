@@ -343,7 +343,7 @@ func (su *ServiceUpdate) RemoveEndpoints(s ...*ServiceEndpoint) *ServiceUpdate {
 	return su.RemoveEndpointIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (su *ServiceUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

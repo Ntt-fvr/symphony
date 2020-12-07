@@ -117,7 +117,7 @@ func (clcu *CheckListCategoryUpdate) ClearWorkOrder() *CheckListCategoryUpdate {
 	return clcu
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (clcu *CheckListCategoryUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

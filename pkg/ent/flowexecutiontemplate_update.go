@@ -111,7 +111,7 @@ func (fetu *FlowExecutionTemplateUpdate) RemoveBlocks(b ...*Block) *FlowExecutio
 	return fetu.RemoveBlockIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (fetu *FlowExecutionTemplateUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

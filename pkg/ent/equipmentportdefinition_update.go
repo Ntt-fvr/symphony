@@ -233,7 +233,7 @@ func (epdu *EquipmentPortDefinitionUpdate) RemoveConnectedPorts(e ...*EquipmentP
 	return epdu.RemoveConnectedPortIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (epdu *EquipmentPortDefinitionUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

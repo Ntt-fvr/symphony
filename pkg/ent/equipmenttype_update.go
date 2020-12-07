@@ -252,7 +252,7 @@ func (etu *EquipmentTypeUpdate) RemoveServiceEndpointDefinitions(s ...*ServiceEn
 	return etu.RemoveServiceEndpointDefinitionIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (etu *EquipmentTypeUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

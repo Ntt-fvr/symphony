@@ -181,7 +181,7 @@ func (wotu *WorkOrderTemplateUpdate) ClearType() *WorkOrderTemplateUpdate {
 	return wotu
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (wotu *WorkOrderTemplateUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

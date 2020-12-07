@@ -194,7 +194,7 @@ func (stu *ServiceTypeUpdate) RemoveEndpointDefinitions(s ...*ServiceEndpointDef
 	return stu.RemoveEndpointDefinitionIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (stu *ServiceTypeUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

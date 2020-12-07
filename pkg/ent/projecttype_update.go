@@ -172,7 +172,7 @@ func (ptu *ProjectTypeUpdate) RemoveProjects(p ...*Project) *ProjectTypeUpdate {
 	return ptu.RemoveProjectIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (ptu *ProjectTypeUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

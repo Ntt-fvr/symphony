@@ -145,7 +145,7 @@ func (fpu *FloorPlanUpdate) ClearImage() *FloorPlanUpdate {
 	return fpu
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (fpu *FloorPlanUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

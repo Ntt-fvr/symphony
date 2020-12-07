@@ -177,7 +177,7 @@ func (su *SurveyUpdate) RemoveQuestions(s ...*SurveyQuestion) *SurveyUpdate {
 	return su.RemoveQuestionIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (su *SurveyUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

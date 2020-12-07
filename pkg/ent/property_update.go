@@ -564,7 +564,7 @@ func (pu *PropertyUpdate) ClearUserValue() *PropertyUpdate {
 	return pu
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (pu *PropertyUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

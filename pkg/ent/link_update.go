@@ -193,7 +193,7 @@ func (lu *LinkUpdate) RemoveService(s ...*Service) *LinkUpdate {
 	return lu.RemoveServiceIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (lu *LinkUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

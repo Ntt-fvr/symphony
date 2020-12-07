@@ -530,7 +530,7 @@ func (c *ActivityClient) Create() *ActivityCreate {
 	return &ActivityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Activity entities.
+// CreateBulk returns a builder for creating a bulk of Activity entities.
 func (c *ActivityClient) CreateBulk(builders ...*ActivityCreate) *ActivityCreateBulk {
 	return &ActivityCreateBulk{config: c.config, builders: builders}
 }
@@ -651,7 +651,7 @@ func (c *BlockClient) Create() *BlockCreate {
 	return &BlockCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Block entities.
+// CreateBulk returns a builder for creating a bulk of Block entities.
 func (c *BlockClient) CreateBulk(builders ...*BlockCreate) *BlockCreateBulk {
 	return &BlockCreateBulk{config: c.config, builders: builders}
 }
@@ -884,7 +884,7 @@ func (c *BlockInstanceClient) Create() *BlockInstanceCreate {
 	return &BlockInstanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of BlockInstance entities.
+// CreateBulk returns a builder for creating a bulk of BlockInstance entities.
 func (c *BlockInstanceClient) CreateBulk(builders ...*BlockInstanceCreate) *BlockInstanceCreateBulk {
 	return &BlockInstanceCreateBulk{config: c.config, builders: builders}
 }
@@ -1021,7 +1021,7 @@ func (c *CheckListCategoryClient) Create() *CheckListCategoryCreate {
 	return &CheckListCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of CheckListCategory entities.
+// CreateBulk returns a builder for creating a bulk of CheckListCategory entities.
 func (c *CheckListCategoryClient) CreateBulk(builders ...*CheckListCategoryCreate) *CheckListCategoryCreateBulk {
 	return &CheckListCategoryCreateBulk{config: c.config, builders: builders}
 }
@@ -1142,7 +1142,7 @@ func (c *CheckListCategoryDefinitionClient) Create() *CheckListCategoryDefinitio
 	return &CheckListCategoryDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of CheckListCategoryDefinition entities.
+// CreateBulk returns a builder for creating a bulk of CheckListCategoryDefinition entities.
 func (c *CheckListCategoryDefinitionClient) CreateBulk(builders ...*CheckListCategoryDefinitionCreate) *CheckListCategoryDefinitionCreateBulk {
 	return &CheckListCategoryDefinitionCreateBulk{config: c.config, builders: builders}
 }
@@ -1279,7 +1279,7 @@ func (c *CheckListItemClient) Create() *CheckListItemCreate {
 	return &CheckListItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of CheckListItem entities.
+// CreateBulk returns a builder for creating a bulk of CheckListItem entities.
 func (c *CheckListItemClient) CreateBulk(builders ...*CheckListItemCreate) *CheckListItemCreateBulk {
 	return &CheckListItemCreateBulk{config: c.config, builders: builders}
 }
@@ -1432,7 +1432,7 @@ func (c *CheckListItemDefinitionClient) Create() *CheckListItemDefinitionCreate 
 	return &CheckListItemDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of CheckListItemDefinition entities.
+// CreateBulk returns a builder for creating a bulk of CheckListItemDefinition entities.
 func (c *CheckListItemDefinitionClient) CreateBulk(builders ...*CheckListItemDefinitionCreate) *CheckListItemDefinitionCreateBulk {
 	return &CheckListItemDefinitionCreateBulk{config: c.config, builders: builders}
 }
@@ -1537,7 +1537,7 @@ func (c *CommentClient) Create() *CommentCreate {
 	return &CommentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Comment entities.
+// CreateBulk returns a builder for creating a bulk of Comment entities.
 func (c *CommentClient) CreateBulk(builders ...*CommentCreate) *CommentCreateBulk {
 	return &CommentCreateBulk{config: c.config, builders: builders}
 }
@@ -1674,7 +1674,7 @@ func (c *CustomerClient) Create() *CustomerCreate {
 	return &CustomerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Customer entities.
+// CreateBulk returns a builder for creating a bulk of Customer entities.
 func (c *CustomerClient) CreateBulk(builders ...*CustomerCreate) *CustomerCreateBulk {
 	return &CustomerCreateBulk{config: c.config, builders: builders}
 }
@@ -1779,7 +1779,7 @@ func (c *EntryPointClient) Create() *EntryPointCreate {
 	return &EntryPointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EntryPoint entities.
+// CreateBulk returns a builder for creating a bulk of EntryPoint entities.
 func (c *EntryPointClient) CreateBulk(builders ...*EntryPointCreate) *EntryPointCreateBulk {
 	return &EntryPointCreateBulk{config: c.config, builders: builders}
 }
@@ -1900,7 +1900,7 @@ func (c *EquipmentClient) Create() *EquipmentCreate {
 	return &EquipmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Equipment entities.
+// CreateBulk returns a builder for creating a bulk of Equipment entities.
 func (c *EquipmentClient) CreateBulk(builders ...*EquipmentCreate) *EquipmentCreateBulk {
 	return &EquipmentCreateBulk{config: c.config, builders: builders}
 }
@@ -2149,7 +2149,7 @@ func (c *EquipmentCategoryClient) Create() *EquipmentCategoryCreate {
 	return &EquipmentCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentCategory entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentCategory entities.
 func (c *EquipmentCategoryClient) CreateBulk(builders ...*EquipmentCategoryCreate) *EquipmentCategoryCreateBulk {
 	return &EquipmentCategoryCreateBulk{config: c.config, builders: builders}
 }
@@ -2254,7 +2254,7 @@ func (c *EquipmentPortClient) Create() *EquipmentPortCreate {
 	return &EquipmentPortCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentPort entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentPort entities.
 func (c *EquipmentPortClient) CreateBulk(builders ...*EquipmentPortCreate) *EquipmentPortCreateBulk {
 	return &EquipmentPortCreateBulk{config: c.config, builders: builders}
 }
@@ -2439,7 +2439,7 @@ func (c *EquipmentPortDefinitionClient) Create() *EquipmentPortDefinitionCreate 
 	return &EquipmentPortDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentPortDefinition entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentPortDefinition entities.
 func (c *EquipmentPortDefinitionClient) CreateBulk(builders ...*EquipmentPortDefinitionCreate) *EquipmentPortDefinitionCreateBulk {
 	return &EquipmentPortDefinitionCreateBulk{config: c.config, builders: builders}
 }
@@ -2592,7 +2592,7 @@ func (c *EquipmentPortTypeClient) Create() *EquipmentPortTypeCreate {
 	return &EquipmentPortTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentPortType entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentPortType entities.
 func (c *EquipmentPortTypeClient) CreateBulk(builders ...*EquipmentPortTypeCreate) *EquipmentPortTypeCreateBulk {
 	return &EquipmentPortTypeCreateBulk{config: c.config, builders: builders}
 }
@@ -2729,7 +2729,7 @@ func (c *EquipmentPositionClient) Create() *EquipmentPositionCreate {
 	return &EquipmentPositionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentPosition entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentPosition entities.
 func (c *EquipmentPositionClient) CreateBulk(builders ...*EquipmentPositionCreate) *EquipmentPositionCreateBulk {
 	return &EquipmentPositionCreateBulk{config: c.config, builders: builders}
 }
@@ -2866,7 +2866,7 @@ func (c *EquipmentPositionDefinitionClient) Create() *EquipmentPositionDefinitio
 	return &EquipmentPositionDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentPositionDefinition entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentPositionDefinition entities.
 func (c *EquipmentPositionDefinitionClient) CreateBulk(builders ...*EquipmentPositionDefinitionCreate) *EquipmentPositionDefinitionCreateBulk {
 	return &EquipmentPositionDefinitionCreateBulk{config: c.config, builders: builders}
 }
@@ -2987,7 +2987,7 @@ func (c *EquipmentTypeClient) Create() *EquipmentTypeCreate {
 	return &EquipmentTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of EquipmentType entities.
+// CreateBulk returns a builder for creating a bulk of EquipmentType entities.
 func (c *EquipmentTypeClient) CreateBulk(builders ...*EquipmentTypeCreate) *EquipmentTypeCreateBulk {
 	return &EquipmentTypeCreateBulk{config: c.config, builders: builders}
 }
@@ -3172,7 +3172,7 @@ func (c *ExitPointClient) Create() *ExitPointCreate {
 	return &ExitPointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ExitPoint entities.
+// CreateBulk returns a builder for creating a bulk of ExitPoint entities.
 func (c *ExitPointClient) CreateBulk(builders ...*ExitPointCreate) *ExitPointCreateBulk {
 	return &ExitPointCreateBulk{config: c.config, builders: builders}
 }
@@ -3293,7 +3293,7 @@ func (c *ExportTaskClient) Create() *ExportTaskCreate {
 	return &ExportTaskCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ExportTask entities.
+// CreateBulk returns a builder for creating a bulk of ExportTask entities.
 func (c *ExportTaskClient) CreateBulk(builders ...*ExportTaskCreate) *ExportTaskCreateBulk {
 	return &ExportTaskCreateBulk{config: c.config, builders: builders}
 }
@@ -3382,7 +3382,7 @@ func (c *FeatureClient) Create() *FeatureCreate {
 	return &FeatureCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Feature entities.
+// CreateBulk returns a builder for creating a bulk of Feature entities.
 func (c *FeatureClient) CreateBulk(builders ...*FeatureCreate) *FeatureCreateBulk {
 	return &FeatureCreateBulk{config: c.config, builders: builders}
 }
@@ -3503,7 +3503,7 @@ func (c *FileClient) Create() *FileCreate {
 	return &FileCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of File entities.
+// CreateBulk returns a builder for creating a bulk of File entities.
 func (c *FileClient) CreateBulk(builders ...*FileCreate) *FileCreateBulk {
 	return &FileCreateBulk{config: c.config, builders: builders}
 }
@@ -3736,7 +3736,7 @@ func (c *FloorPlanClient) Create() *FloorPlanCreate {
 	return &FloorPlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of FloorPlan entities.
+// CreateBulk returns a builder for creating a bulk of FloorPlan entities.
 func (c *FloorPlanClient) CreateBulk(builders ...*FloorPlanCreate) *FloorPlanCreateBulk {
 	return &FloorPlanCreateBulk{config: c.config, builders: builders}
 }
@@ -3889,7 +3889,7 @@ func (c *FloorPlanReferencePointClient) Create() *FloorPlanReferencePointCreate 
 	return &FloorPlanReferencePointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of FloorPlanReferencePoint entities.
+// CreateBulk returns a builder for creating a bulk of FloorPlanReferencePoint entities.
 func (c *FloorPlanReferencePointClient) CreateBulk(builders ...*FloorPlanReferencePointCreate) *FloorPlanReferencePointCreateBulk {
 	return &FloorPlanReferencePointCreateBulk{config: c.config, builders: builders}
 }
@@ -3978,7 +3978,7 @@ func (c *FloorPlanScaleClient) Create() *FloorPlanScaleCreate {
 	return &FloorPlanScaleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of FloorPlanScale entities.
+// CreateBulk returns a builder for creating a bulk of FloorPlanScale entities.
 func (c *FloorPlanScaleClient) CreateBulk(builders ...*FloorPlanScaleCreate) *FloorPlanScaleCreateBulk {
 	return &FloorPlanScaleCreateBulk{config: c.config, builders: builders}
 }
@@ -4067,7 +4067,7 @@ func (c *FlowClient) Create() *FlowCreate {
 	return &FlowCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Flow entities.
+// CreateBulk returns a builder for creating a bulk of Flow entities.
 func (c *FlowClient) CreateBulk(builders ...*FlowCreate) *FlowCreateBulk {
 	return &FlowCreateBulk{config: c.config, builders: builders}
 }
@@ -4188,7 +4188,7 @@ func (c *FlowDraftClient) Create() *FlowDraftCreate {
 	return &FlowDraftCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of FlowDraft entities.
+// CreateBulk returns a builder for creating a bulk of FlowDraft entities.
 func (c *FlowDraftClient) CreateBulk(builders ...*FlowDraftCreate) *FlowDraftCreateBulk {
 	return &FlowDraftCreateBulk{config: c.config, builders: builders}
 }
@@ -4309,7 +4309,7 @@ func (c *FlowExecutionTemplateClient) Create() *FlowExecutionTemplateCreate {
 	return &FlowExecutionTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of FlowExecutionTemplate entities.
+// CreateBulk returns a builder for creating a bulk of FlowExecutionTemplate entities.
 func (c *FlowExecutionTemplateClient) CreateBulk(builders ...*FlowExecutionTemplateCreate) *FlowExecutionTemplateCreateBulk {
 	return &FlowExecutionTemplateCreateBulk{config: c.config, builders: builders}
 }
@@ -4414,7 +4414,7 @@ func (c *FlowInstanceClient) Create() *FlowInstanceCreate {
 	return &FlowInstanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of FlowInstance entities.
+// CreateBulk returns a builder for creating a bulk of FlowInstance entities.
 func (c *FlowInstanceClient) CreateBulk(builders ...*FlowInstanceCreate) *FlowInstanceCreateBulk {
 	return &FlowInstanceCreateBulk{config: c.config, builders: builders}
 }
@@ -4567,7 +4567,7 @@ func (c *HyperlinkClient) Create() *HyperlinkCreate {
 	return &HyperlinkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Hyperlink entities.
+// CreateBulk returns a builder for creating a bulk of Hyperlink entities.
 func (c *HyperlinkClient) CreateBulk(builders ...*HyperlinkCreate) *HyperlinkCreateBulk {
 	return &HyperlinkCreateBulk{config: c.config, builders: builders}
 }
@@ -4704,7 +4704,7 @@ func (c *LinkClient) Create() *LinkCreate {
 	return &LinkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Link entities.
+// CreateBulk returns a builder for creating a bulk of Link entities.
 func (c *LinkClient) CreateBulk(builders ...*LinkCreate) *LinkCreateBulk {
 	return &LinkCreateBulk{config: c.config, builders: builders}
 }
@@ -4857,7 +4857,7 @@ func (c *LocationClient) Create() *LocationCreate {
 	return &LocationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Location entities.
+// CreateBulk returns a builder for creating a bulk of Location entities.
 func (c *LocationClient) CreateBulk(builders ...*LocationCreate) *LocationCreateBulk {
 	return &LocationCreateBulk{config: c.config, builders: builders}
 }
@@ -5138,7 +5138,7 @@ func (c *LocationTypeClient) Create() *LocationTypeCreate {
 	return &LocationTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of LocationType entities.
+// CreateBulk returns a builder for creating a bulk of LocationType entities.
 func (c *LocationTypeClient) CreateBulk(builders ...*LocationTypeCreate) *LocationTypeCreateBulk {
 	return &LocationTypeCreateBulk{config: c.config, builders: builders}
 }
@@ -5275,7 +5275,7 @@ func (c *PermissionsPolicyClient) Create() *PermissionsPolicyCreate {
 	return &PermissionsPolicyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of PermissionsPolicy entities.
+// CreateBulk returns a builder for creating a bulk of PermissionsPolicy entities.
 func (c *PermissionsPolicyClient) CreateBulk(builders ...*PermissionsPolicyCreate) *PermissionsPolicyCreateBulk {
 	return &PermissionsPolicyCreateBulk{config: c.config, builders: builders}
 }
@@ -5380,7 +5380,7 @@ func (c *ProjectClient) Create() *ProjectCreate {
 	return &ProjectCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Project entities.
+// CreateBulk returns a builder for creating a bulk of Project entities.
 func (c *ProjectClient) CreateBulk(builders ...*ProjectCreate) *ProjectCreateBulk {
 	return &ProjectCreateBulk{config: c.config, builders: builders}
 }
@@ -5581,7 +5581,7 @@ func (c *ProjectTemplateClient) Create() *ProjectTemplateCreate {
 	return &ProjectTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ProjectTemplate entities.
+// CreateBulk returns a builder for creating a bulk of ProjectTemplate entities.
 func (c *ProjectTemplateClient) CreateBulk(builders ...*ProjectTemplateCreate) *ProjectTemplateCreateBulk {
 	return &ProjectTemplateCreateBulk{config: c.config, builders: builders}
 }
@@ -5718,7 +5718,7 @@ func (c *ProjectTypeClient) Create() *ProjectTypeCreate {
 	return &ProjectTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ProjectType entities.
+// CreateBulk returns a builder for creating a bulk of ProjectType entities.
 func (c *ProjectTypeClient) CreateBulk(builders ...*ProjectTypeCreate) *ProjectTypeCreateBulk {
 	return &ProjectTypeCreateBulk{config: c.config, builders: builders}
 }
@@ -5855,7 +5855,7 @@ func (c *PropertyClient) Create() *PropertyCreate {
 	return &PropertyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Property entities.
+// CreateBulk returns a builder for creating a bulk of Property entities.
 func (c *PropertyClient) CreateBulk(builders ...*PropertyCreate) *PropertyCreateBulk {
 	return &PropertyCreateBulk{config: c.config, builders: builders}
 }
@@ -6152,7 +6152,7 @@ func (c *PropertyTypeClient) Create() *PropertyTypeCreate {
 	return &PropertyTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of PropertyType entities.
+// CreateBulk returns a builder for creating a bulk of PropertyType entities.
 func (c *PropertyTypeClient) CreateBulk(builders ...*PropertyTypeCreate) *PropertyTypeCreateBulk {
 	return &PropertyTypeCreateBulk{config: c.config, builders: builders}
 }
@@ -6401,7 +6401,7 @@ func (c *ReportFilterClient) Create() *ReportFilterCreate {
 	return &ReportFilterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ReportFilter entities.
+// CreateBulk returns a builder for creating a bulk of ReportFilter entities.
 func (c *ReportFilterClient) CreateBulk(builders ...*ReportFilterCreate) *ReportFilterCreateBulk {
 	return &ReportFilterCreateBulk{config: c.config, builders: builders}
 }
@@ -6490,7 +6490,7 @@ func (c *ServiceClient) Create() *ServiceCreate {
 	return &ServiceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Service entities.
+// CreateBulk returns a builder for creating a bulk of Service entities.
 func (c *ServiceClient) CreateBulk(builders ...*ServiceCreate) *ServiceCreateBulk {
 	return &ServiceCreateBulk{config: c.config, builders: builders}
 }
@@ -6707,7 +6707,7 @@ func (c *ServiceEndpointClient) Create() *ServiceEndpointCreate {
 	return &ServiceEndpointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ServiceEndpoint entities.
+// CreateBulk returns a builder for creating a bulk of ServiceEndpoint entities.
 func (c *ServiceEndpointClient) CreateBulk(builders ...*ServiceEndpointCreate) *ServiceEndpointCreateBulk {
 	return &ServiceEndpointCreateBulk{config: c.config, builders: builders}
 }
@@ -6860,7 +6860,7 @@ func (c *ServiceEndpointDefinitionClient) Create() *ServiceEndpointDefinitionCre
 	return &ServiceEndpointDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ServiceEndpointDefinition entities.
+// CreateBulk returns a builder for creating a bulk of ServiceEndpointDefinition entities.
 func (c *ServiceEndpointDefinitionClient) CreateBulk(builders ...*ServiceEndpointDefinitionCreate) *ServiceEndpointDefinitionCreateBulk {
 	return &ServiceEndpointDefinitionCreateBulk{config: c.config, builders: builders}
 }
@@ -6997,7 +6997,7 @@ func (c *ServiceTypeClient) Create() *ServiceTypeCreate {
 	return &ServiceTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of ServiceType entities.
+// CreateBulk returns a builder for creating a bulk of ServiceType entities.
 func (c *ServiceTypeClient) CreateBulk(builders ...*ServiceTypeCreate) *ServiceTypeCreateBulk {
 	return &ServiceTypeCreateBulk{config: c.config, builders: builders}
 }
@@ -7134,7 +7134,7 @@ func (c *SurveyClient) Create() *SurveyCreate {
 	return &SurveyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of Survey entities.
+// CreateBulk returns a builder for creating a bulk of Survey entities.
 func (c *SurveyClient) CreateBulk(builders ...*SurveyCreate) *SurveyCreateBulk {
 	return &SurveyCreateBulk{config: c.config, builders: builders}
 }
@@ -7271,7 +7271,7 @@ func (c *SurveyCellScanClient) Create() *SurveyCellScanCreate {
 	return &SurveyCellScanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of SurveyCellScan entities.
+// CreateBulk returns a builder for creating a bulk of SurveyCellScan entities.
 func (c *SurveyCellScanClient) CreateBulk(builders ...*SurveyCellScanCreate) *SurveyCellScanCreateBulk {
 	return &SurveyCellScanCreateBulk{config: c.config, builders: builders}
 }
@@ -7408,7 +7408,7 @@ func (c *SurveyQuestionClient) Create() *SurveyQuestionCreate {
 	return &SurveyQuestionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of SurveyQuestion entities.
+// CreateBulk returns a builder for creating a bulk of SurveyQuestion entities.
 func (c *SurveyQuestionClient) CreateBulk(builders ...*SurveyQuestionCreate) *SurveyQuestionCreateBulk {
 	return &SurveyQuestionCreateBulk{config: c.config, builders: builders}
 }
@@ -7577,7 +7577,7 @@ func (c *SurveyTemplateCategoryClient) Create() *SurveyTemplateCategoryCreate {
 	return &SurveyTemplateCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of SurveyTemplateCategory entities.
+// CreateBulk returns a builder for creating a bulk of SurveyTemplateCategory entities.
 func (c *SurveyTemplateCategoryClient) CreateBulk(builders ...*SurveyTemplateCategoryCreate) *SurveyTemplateCategoryCreateBulk {
 	return &SurveyTemplateCategoryCreateBulk{config: c.config, builders: builders}
 }
@@ -7698,7 +7698,7 @@ func (c *SurveyTemplateQuestionClient) Create() *SurveyTemplateQuestionCreate {
 	return &SurveyTemplateQuestionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of SurveyTemplateQuestion entities.
+// CreateBulk returns a builder for creating a bulk of SurveyTemplateQuestion entities.
 func (c *SurveyTemplateQuestionClient) CreateBulk(builders ...*SurveyTemplateQuestionCreate) *SurveyTemplateQuestionCreateBulk {
 	return &SurveyTemplateQuestionCreateBulk{config: c.config, builders: builders}
 }
@@ -7803,7 +7803,7 @@ func (c *SurveyWiFiScanClient) Create() *SurveyWiFiScanCreate {
 	return &SurveyWiFiScanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of SurveyWiFiScan entities.
+// CreateBulk returns a builder for creating a bulk of SurveyWiFiScan entities.
 func (c *SurveyWiFiScanClient) CreateBulk(builders ...*SurveyWiFiScanCreate) *SurveyWiFiScanCreateBulk {
 	return &SurveyWiFiScanCreateBulk{config: c.config, builders: builders}
 }
@@ -7940,7 +7940,7 @@ func (c *UserClient) Create() *UserCreate {
 	return &UserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of User entities.
+// CreateBulk returns a builder for creating a bulk of User entities.
 func (c *UserClient) CreateBulk(builders ...*UserCreate) *UserCreateBulk {
 	return &UserCreateBulk{config: c.config, builders: builders}
 }
@@ -8125,7 +8125,7 @@ func (c *UsersGroupClient) Create() *UsersGroupCreate {
 	return &UsersGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of UsersGroup entities.
+// CreateBulk returns a builder for creating a bulk of UsersGroup entities.
 func (c *UsersGroupClient) CreateBulk(builders ...*UsersGroupCreate) *UsersGroupCreateBulk {
 	return &UsersGroupCreateBulk{config: c.config, builders: builders}
 }
@@ -8262,7 +8262,7 @@ func (c *WorkOrderClient) Create() *WorkOrderCreate {
 	return &WorkOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of WorkOrder entities.
+// CreateBulk returns a builder for creating a bulk of WorkOrder entities.
 func (c *WorkOrderClient) CreateBulk(builders ...*WorkOrderCreate) *WorkOrderCreateBulk {
 	return &WorkOrderCreateBulk{config: c.config, builders: builders}
 }
@@ -8575,7 +8575,7 @@ func (c *WorkOrderDefinitionClient) Create() *WorkOrderDefinitionCreate {
 	return &WorkOrderDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of WorkOrderDefinition entities.
+// CreateBulk returns a builder for creating a bulk of WorkOrderDefinition entities.
 func (c *WorkOrderDefinitionClient) CreateBulk(builders ...*WorkOrderDefinitionCreate) *WorkOrderDefinitionCreateBulk {
 	return &WorkOrderDefinitionCreateBulk{config: c.config, builders: builders}
 }
@@ -8712,7 +8712,7 @@ func (c *WorkOrderTemplateClient) Create() *WorkOrderTemplateCreate {
 	return &WorkOrderTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of WorkOrderTemplate entities.
+// CreateBulk returns a builder for creating a bulk of WorkOrderTemplate entities.
 func (c *WorkOrderTemplateClient) CreateBulk(builders ...*WorkOrderTemplateCreate) *WorkOrderTemplateCreateBulk {
 	return &WorkOrderTemplateCreateBulk{config: c.config, builders: builders}
 }
@@ -8849,7 +8849,7 @@ func (c *WorkOrderTypeClient) Create() *WorkOrderTypeCreate {
 	return &WorkOrderTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// BulkCreate returns a builder for creating a bulk of WorkOrderType entities.
+// CreateBulk returns a builder for creating a bulk of WorkOrderType entities.
 func (c *WorkOrderTypeClient) CreateBulk(builders ...*WorkOrderTypeCreate) *WorkOrderTypeCreateBulk {
 	return &WorkOrderTypeCreateBulk{config: c.config, builders: builders}
 }

@@ -172,7 +172,7 @@ var _ ent.Mutation = (*ActivityMutation)(nil)
 // activityOption allows to manage the mutation configuration using functional options.
 type activityOption func(*ActivityMutation)
 
-// newActivityMutation creates new mutation for $n.Name.
+// newActivityMutation creates new mutation for Activity.
 func newActivityMutation(c config, op Op, opts ...activityOption) *ActivityMutation {
 	m := &ActivityMutation{
 		config:        c,
@@ -1003,7 +1003,7 @@ var _ ent.Mutation = (*BlockMutation)(nil)
 // blockOption allows to manage the mutation configuration using functional options.
 type blockOption func(*BlockMutation)
 
-// newBlockMutation creates new mutation for $n.Name.
+// newBlockMutation creates new mutation for Block.
 func newBlockMutation(c config, op Op, opts ...blockOption) *BlockMutation {
 	m := &BlockMutation{
 		config:        c,
@@ -2429,7 +2429,7 @@ var _ ent.Mutation = (*BlockInstanceMutation)(nil)
 // blockinstanceOption allows to manage the mutation configuration using functional options.
 type blockinstanceOption func(*BlockInstanceMutation)
 
-// newBlockInstanceMutation creates new mutation for $n.Name.
+// newBlockInstanceMutation creates new mutation for BlockInstance.
 func newBlockInstanceMutation(c config, op Op, opts ...blockinstanceOption) *BlockInstanceMutation {
 	m := &BlockInstanceMutation{
 		config:        c,
@@ -3351,7 +3351,7 @@ var _ ent.Mutation = (*CheckListCategoryMutation)(nil)
 // checklistcategoryOption allows to manage the mutation configuration using functional options.
 type checklistcategoryOption func(*CheckListCategoryMutation)
 
-// newCheckListCategoryMutation creates new mutation for $n.Name.
+// newCheckListCategoryMutation creates new mutation for CheckListCategory.
 func newCheckListCategoryMutation(c config, op Op, opts ...checklistcategoryOption) *CheckListCategoryMutation {
 	m := &CheckListCategoryMutation{
 		config:        c,
@@ -3985,7 +3985,7 @@ var _ ent.Mutation = (*CheckListCategoryDefinitionMutation)(nil)
 // checklistcategorydefinitionOption allows to manage the mutation configuration using functional options.
 type checklistcategorydefinitionOption func(*CheckListCategoryDefinitionMutation)
 
-// newCheckListCategoryDefinitionMutation creates new mutation for $n.Name.
+// newCheckListCategoryDefinitionMutation creates new mutation for CheckListCategoryDefinition.
 func newCheckListCategoryDefinitionMutation(c config, op Op, opts ...checklistcategorydefinitionOption) *CheckListCategoryDefinitionMutation {
 	m := &CheckListCategoryDefinitionMutation{
 		config:        c,
@@ -4688,7 +4688,7 @@ var _ ent.Mutation = (*CheckListItemMutation)(nil)
 // checklistitemOption allows to manage the mutation configuration using functional options.
 type checklistitemOption func(*CheckListItemMutation)
 
-// newCheckListItemMutation creates new mutation for $n.Name.
+// newCheckListItemMutation creates new mutation for CheckListItem.
 func newCheckListItemMutation(c config, op Op, opts ...checklistitemOption) *CheckListItemMutation {
 	m := &CheckListItemMutation{
 		config:        c,
@@ -6047,7 +6047,7 @@ var _ ent.Mutation = (*CheckListItemDefinitionMutation)(nil)
 // checklistitemdefinitionOption allows to manage the mutation configuration using functional options.
 type checklistitemdefinitionOption func(*CheckListItemDefinitionMutation)
 
-// newCheckListItemDefinitionMutation creates new mutation for $n.Name.
+// newCheckListItemDefinitionMutation creates new mutation for CheckListItemDefinition.
 func newCheckListItemDefinitionMutation(c config, op Op, opts ...checklistitemdefinitionOption) *CheckListItemDefinitionMutation {
 	m := &CheckListItemDefinitionMutation{
 		config:        c,
@@ -6982,7 +6982,7 @@ var _ ent.Mutation = (*CommentMutation)(nil)
 // commentOption allows to manage the mutation configuration using functional options.
 type commentOption func(*CommentMutation)
 
-// newCommentMutation creates new mutation for $n.Name.
+// newCommentMutation creates new mutation for Comment.
 func newCommentMutation(c config, op Op, opts ...commentOption) *CommentMutation {
 	m := &CommentMutation{
 		config:        c,
@@ -7571,7 +7571,7 @@ var _ ent.Mutation = (*CustomerMutation)(nil)
 // customerOption allows to manage the mutation configuration using functional options.
 type customerOption func(*CustomerMutation)
 
-// newCustomerMutation creates new mutation for $n.Name.
+// newCustomerMutation creates new mutation for Customer.
 func newCustomerMutation(c config, op Op, opts ...customerOption) *CustomerMutation {
 	m := &CustomerMutation{
 		config:        c,
@@ -8146,7 +8146,7 @@ var _ ent.Mutation = (*EntryPointMutation)(nil)
 // entrypointOption allows to manage the mutation configuration using functional options.
 type entrypointOption func(*EntryPointMutation)
 
-// newEntryPointMutation creates new mutation for $n.Name.
+// newEntryPointMutation creates new mutation for EntryPoint.
 func newEntryPointMutation(c config, op Op, opts ...entrypointOption) *EntryPointMutation {
 	m := &EntryPointMutation{
 		config:        c,
@@ -8801,7 +8801,7 @@ var _ ent.Mutation = (*EquipmentMutation)(nil)
 // equipmentOption allows to manage the mutation configuration using functional options.
 type equipmentOption func(*EquipmentMutation)
 
-// newEquipmentMutation creates new mutation for $n.Name.
+// newEquipmentMutation creates new mutation for Equipment.
 func newEquipmentMutation(c config, op Op, opts ...equipmentOption) *EquipmentMutation {
 	m := &EquipmentMutation{
 		config:        c,
@@ -10142,7 +10142,7 @@ var _ ent.Mutation = (*EquipmentCategoryMutation)(nil)
 // equipmentcategoryOption allows to manage the mutation configuration using functional options.
 type equipmentcategoryOption func(*EquipmentCategoryMutation)
 
-// newEquipmentCategoryMutation creates new mutation for $n.Name.
+// newEquipmentCategoryMutation creates new mutation for EquipmentCategory.
 func newEquipmentCategoryMutation(c config, op Op, opts ...equipmentcategoryOption) *EquipmentCategoryMutation {
 	m := &EquipmentCategoryMutation{
 		config:        c,
@@ -10649,7 +10649,7 @@ var _ ent.Mutation = (*EquipmentPortMutation)(nil)
 // equipmentportOption allows to manage the mutation configuration using functional options.
 type equipmentportOption func(*EquipmentPortMutation)
 
-// newEquipmentPortMutation creates new mutation for $n.Name.
+// newEquipmentPortMutation creates new mutation for EquipmentPort.
 func newEquipmentPortMutation(c config, op Op, opts ...equipmentportOption) *EquipmentPortMutation {
 	m := &EquipmentPortMutation{
 		config:        c,
@@ -11431,7 +11431,7 @@ var _ ent.Mutation = (*EquipmentPortDefinitionMutation)(nil)
 // equipmentportdefinitionOption allows to manage the mutation configuration using functional options.
 type equipmentportdefinitionOption func(*EquipmentPortDefinitionMutation)
 
-// newEquipmentPortDefinitionMutation creates new mutation for $n.Name.
+// newEquipmentPortDefinitionMutation creates new mutation for EquipmentPortDefinition.
 func newEquipmentPortDefinitionMutation(c config, op Op, opts ...equipmentportdefinitionOption) *EquipmentPortDefinitionMutation {
 	m := &EquipmentPortDefinitionMutation{
 		config:        c,
@@ -12384,7 +12384,7 @@ var _ ent.Mutation = (*EquipmentPortTypeMutation)(nil)
 // equipmentporttypeOption allows to manage the mutation configuration using functional options.
 type equipmentporttypeOption func(*EquipmentPortTypeMutation)
 
-// newEquipmentPortTypeMutation creates new mutation for $n.Name.
+// newEquipmentPortTypeMutation creates new mutation for EquipmentPortType.
 func newEquipmentPortTypeMutation(c config, op Op, opts ...equipmentporttypeOption) *EquipmentPortTypeMutation {
 	m := &EquipmentPortTypeMutation{
 		config:        c,
@@ -13040,7 +13040,7 @@ var _ ent.Mutation = (*EquipmentPositionMutation)(nil)
 // equipmentpositionOption allows to manage the mutation configuration using functional options.
 type equipmentpositionOption func(*EquipmentPositionMutation)
 
-// newEquipmentPositionMutation creates new mutation for $n.Name.
+// newEquipmentPositionMutation creates new mutation for EquipmentPosition.
 func newEquipmentPositionMutation(c config, op Op, opts ...equipmentpositionOption) *EquipmentPositionMutation {
 	m := &EquipmentPositionMutation{
 		config:        c,
@@ -13579,7 +13579,7 @@ var _ ent.Mutation = (*EquipmentPositionDefinitionMutation)(nil)
 // equipmentpositiondefinitionOption allows to manage the mutation configuration using functional options.
 type equipmentpositiondefinitionOption func(*EquipmentPositionDefinitionMutation)
 
-// newEquipmentPositionDefinitionMutation creates new mutation for $n.Name.
+// newEquipmentPositionDefinitionMutation creates new mutation for EquipmentPositionDefinition.
 func newEquipmentPositionDefinitionMutation(c config, op Op, opts ...equipmentpositiondefinitionOption) *EquipmentPositionDefinitionMutation {
 	m := &EquipmentPositionDefinitionMutation{
 		config:        c,
@@ -14331,7 +14331,7 @@ var _ ent.Mutation = (*EquipmentTypeMutation)(nil)
 // equipmenttypeOption allows to manage the mutation configuration using functional options.
 type equipmenttypeOption func(*EquipmentTypeMutation)
 
-// newEquipmentTypeMutation creates new mutation for $n.Name.
+// newEquipmentTypeMutation creates new mutation for EquipmentType.
 func newEquipmentTypeMutation(c config, op Op, opts ...equipmenttypeOption) *EquipmentTypeMutation {
 	m := &EquipmentTypeMutation{
 		config:        c,
@@ -15203,7 +15203,7 @@ var _ ent.Mutation = (*ExitPointMutation)(nil)
 // exitpointOption allows to manage the mutation configuration using functional options.
 type exitpointOption func(*ExitPointMutation)
 
-// newExitPointMutation creates new mutation for $n.Name.
+// newExitPointMutation creates new mutation for ExitPoint.
 func newExitPointMutation(c config, op Op, opts ...exitpointOption) *ExitPointMutation {
 	m := &ExitPointMutation{
 		config:        c,
@@ -15834,7 +15834,7 @@ var _ ent.Mutation = (*ExportTaskMutation)(nil)
 // exporttaskOption allows to manage the mutation configuration using functional options.
 type exporttaskOption func(*ExportTaskMutation)
 
-// newExportTaskMutation creates new mutation for $n.Name.
+// newExportTaskMutation creates new mutation for ExportTask.
 func newExportTaskMutation(c config, op Op, opts ...exporttaskOption) *ExportTaskMutation {
 	m := &ExportTaskMutation{
 		config:        c,
@@ -16518,7 +16518,7 @@ var _ ent.Mutation = (*FeatureMutation)(nil)
 // featureOption allows to manage the mutation configuration using functional options.
 type featureOption func(*FeatureMutation)
 
-// newFeatureMutation creates new mutation for $n.Name.
+// newFeatureMutation creates new mutation for Feature.
 func newFeatureMutation(c config, op Op, opts ...featureOption) *FeatureMutation {
 	m := &FeatureMutation{
 		config:        c,
@@ -17301,7 +17301,7 @@ var _ ent.Mutation = (*FileMutation)(nil)
 // fileOption allows to manage the mutation configuration using functional options.
 type fileOption func(*FileMutation)
 
-// newFileMutation creates new mutation for $n.Name.
+// newFileMutation creates new mutation for File.
 func newFileMutation(c config, op Op, opts ...fileOption) *FileMutation {
 	m := &FileMutation{
 		config:        c,
@@ -18802,7 +18802,7 @@ var _ ent.Mutation = (*FloorPlanMutation)(nil)
 // floorplanOption allows to manage the mutation configuration using functional options.
 type floorplanOption func(*FloorPlanMutation)
 
-// newFloorPlanMutation creates new mutation for $n.Name.
+// newFloorPlanMutation creates new mutation for FloorPlan.
 func newFloorPlanMutation(c config, op Op, opts ...floorplanOption) *FloorPlanMutation {
 	m := &FloorPlanMutation{
 		config:        c,
@@ -19451,7 +19451,7 @@ var _ ent.Mutation = (*FloorPlanReferencePointMutation)(nil)
 // floorplanreferencepointOption allows to manage the mutation configuration using functional options.
 type floorplanreferencepointOption func(*FloorPlanReferencePointMutation)
 
-// newFloorPlanReferencePointMutation creates new mutation for $n.Name.
+// newFloorPlanReferencePointMutation creates new mutation for FloorPlanReferencePoint.
 func newFloorPlanReferencePointMutation(c config, op Op, opts ...floorplanreferencepointOption) *FloorPlanReferencePointMutation {
 	m := &FloorPlanReferencePointMutation{
 		config:        c,
@@ -20157,7 +20157,7 @@ var _ ent.Mutation = (*FloorPlanScaleMutation)(nil)
 // floorplanscaleOption allows to manage the mutation configuration using functional options.
 type floorplanscaleOption func(*FloorPlanScaleMutation)
 
-// newFloorPlanScaleMutation creates new mutation for $n.Name.
+// newFloorPlanScaleMutation creates new mutation for FloorPlanScale.
 func newFloorPlanScaleMutation(c config, op Op, opts ...floorplanscaleOption) *FloorPlanScaleMutation {
 	m := &FloorPlanScaleMutation{
 		config:        c,
@@ -20949,7 +20949,7 @@ var _ ent.Mutation = (*FlowMutation)(nil)
 // flowOption allows to manage the mutation configuration using functional options.
 type flowOption func(*FlowMutation)
 
-// newFlowMutation creates new mutation for $n.Name.
+// newFlowMutation creates new mutation for Flow.
 func newFlowMutation(c config, op Op, opts ...flowOption) *FlowMutation {
 	m := &FlowMutation{
 		config:        c,
@@ -21764,7 +21764,7 @@ var _ ent.Mutation = (*FlowDraftMutation)(nil)
 // flowdraftOption allows to manage the mutation configuration using functional options.
 type flowdraftOption func(*FlowDraftMutation)
 
-// newFlowDraftMutation creates new mutation for $n.Name.
+// newFlowDraftMutation creates new mutation for FlowDraft.
 func newFlowDraftMutation(c config, op Op, opts ...flowdraftOption) *FlowDraftMutation {
 	m := &FlowDraftMutation{
 		config:        c,
@@ -22522,7 +22522,7 @@ var _ ent.Mutation = (*FlowExecutionTemplateMutation)(nil)
 // flowexecutiontemplateOption allows to manage the mutation configuration using functional options.
 type flowexecutiontemplateOption func(*FlowExecutionTemplateMutation)
 
-// newFlowExecutionTemplateMutation creates new mutation for $n.Name.
+// newFlowExecutionTemplateMutation creates new mutation for FlowExecutionTemplate.
 func newFlowExecutionTemplateMutation(c config, op Op, opts ...flowexecutiontemplateOption) *FlowExecutionTemplateMutation {
 	m := &FlowExecutionTemplateMutation{
 		config:        c,
@@ -23175,7 +23175,7 @@ var _ ent.Mutation = (*FlowInstanceMutation)(nil)
 // flowinstanceOption allows to manage the mutation configuration using functional options.
 type flowinstanceOption func(*FlowInstanceMutation)
 
-// newFlowInstanceMutation creates new mutation for $n.Name.
+// newFlowInstanceMutation creates new mutation for FlowInstance.
 func newFlowInstanceMutation(c config, op Op, opts ...flowinstanceOption) *FlowInstanceMutation {
 	m := &FlowInstanceMutation{
 		config:        c,
@@ -23996,7 +23996,7 @@ var _ ent.Mutation = (*HyperlinkMutation)(nil)
 // hyperlinkOption allows to manage the mutation configuration using functional options.
 type hyperlinkOption func(*HyperlinkMutation)
 
-// newHyperlinkMutation creates new mutation for $n.Name.
+// newHyperlinkMutation creates new mutation for Hyperlink.
 func newHyperlinkMutation(c config, op Op, opts ...hyperlinkOption) *HyperlinkMutation {
 	m := &HyperlinkMutation{
 		config:        c,
@@ -24741,7 +24741,7 @@ var _ ent.Mutation = (*LinkMutation)(nil)
 // linkOption allows to manage the mutation configuration using functional options.
 type linkOption func(*LinkMutation)
 
-// newLinkMutation creates new mutation for $n.Name.
+// newLinkMutation creates new mutation for Link.
 func newLinkMutation(c config, op Op, opts ...linkOption) *LinkMutation {
 	m := &LinkMutation{
 		config:        c,
@@ -25511,7 +25511,7 @@ var _ ent.Mutation = (*LocationMutation)(nil)
 // locationOption allows to manage the mutation configuration using functional options.
 type locationOption func(*LocationMutation)
 
-// newLocationMutation creates new mutation for $n.Name.
+// newLocationMutation creates new mutation for Location.
 func newLocationMutation(c config, op Op, opts ...locationOption) *LocationMutation {
 	m := &LocationMutation{
 		config:        c,
@@ -27168,7 +27168,7 @@ var _ ent.Mutation = (*LocationTypeMutation)(nil)
 // locationtypeOption allows to manage the mutation configuration using functional options.
 type locationtypeOption func(*LocationTypeMutation)
 
-// newLocationTypeMutation creates new mutation for $n.Name.
+// newLocationTypeMutation creates new mutation for LocationType.
 func newLocationTypeMutation(c config, op Op, opts ...locationtypeOption) *LocationTypeMutation {
 	m := &LocationTypeMutation{
 		config:        c,
@@ -28151,7 +28151,7 @@ var _ ent.Mutation = (*PermissionsPolicyMutation)(nil)
 // permissionspolicyOption allows to manage the mutation configuration using functional options.
 type permissionspolicyOption func(*PermissionsPolicyMutation)
 
-// newPermissionsPolicyMutation creates new mutation for $n.Name.
+// newPermissionsPolicyMutation creates new mutation for PermissionsPolicy.
 func newPermissionsPolicyMutation(c config, op Op, opts ...permissionspolicyOption) *PermissionsPolicyMutation {
 	m := &PermissionsPolicyMutation{
 		config:        c,
@@ -28964,7 +28964,7 @@ var _ ent.Mutation = (*ProjectMutation)(nil)
 // projectOption allows to manage the mutation configuration using functional options.
 type projectOption func(*ProjectMutation)
 
-// newProjectMutation creates new mutation for $n.Name.
+// newProjectMutation creates new mutation for Project.
 func newProjectMutation(c config, op Op, opts ...projectOption) *ProjectMutation {
 	m := &ProjectMutation{
 		config:        c,
@@ -30303,7 +30303,7 @@ var _ ent.Mutation = (*ProjectTemplateMutation)(nil)
 // projecttemplateOption allows to manage the mutation configuration using functional options.
 type projecttemplateOption func(*ProjectTemplateMutation)
 
-// newProjectTemplateMutation creates new mutation for $n.Name.
+// newProjectTemplateMutation creates new mutation for ProjectTemplate.
 func newProjectTemplateMutation(c config, op Op, opts ...projecttemplateOption) *ProjectTemplateMutation {
 	m := &ProjectTemplateMutation{
 		config:        c,
@@ -31018,7 +31018,7 @@ var _ ent.Mutation = (*ProjectTypeMutation)(nil)
 // projecttypeOption allows to manage the mutation configuration using functional options.
 type projecttypeOption func(*ProjectTypeMutation)
 
-// newProjectTypeMutation creates new mutation for $n.Name.
+// newProjectTypeMutation creates new mutation for ProjectType.
 func newProjectTypeMutation(c config, op Op, opts ...projecttypeOption) *ProjectTypeMutation {
 	m := &ProjectTypeMutation{
 		config:        c,
@@ -31784,7 +31784,7 @@ var _ ent.Mutation = (*PropertyMutation)(nil)
 // propertyOption allows to manage the mutation configuration using functional options.
 type propertyOption func(*PropertyMutation)
 
-// newPropertyMutation creates new mutation for $n.Name.
+// newPropertyMutation creates new mutation for Property.
 func newPropertyMutation(c config, op Op, opts ...propertyOption) *PropertyMutation {
 	m := &PropertyMutation{
 		config:        c,
@@ -33718,7 +33718,7 @@ var _ ent.Mutation = (*PropertyTypeMutation)(nil)
 // propertytypeOption allows to manage the mutation configuration using functional options.
 type propertytypeOption func(*PropertyTypeMutation)
 
-// newPropertyTypeMutation creates new mutation for $n.Name.
+// newPropertyTypeMutation creates new mutation for PropertyType.
 func newPropertyTypeMutation(c config, op Op, opts ...propertytypeOption) *PropertyTypeMutation {
 	m := &PropertyTypeMutation{
 		config:        c,
@@ -36109,7 +36109,7 @@ var _ ent.Mutation = (*ReportFilterMutation)(nil)
 // reportfilterOption allows to manage the mutation configuration using functional options.
 type reportfilterOption func(*ReportFilterMutation)
 
-// newReportFilterMutation creates new mutation for $n.Name.
+// newReportFilterMutation creates new mutation for ReportFilter.
 func newReportFilterMutation(c config, op Op, opts ...reportfilterOption) *ReportFilterMutation {
 	m := &ReportFilterMutation{
 		config:        c,
@@ -36646,7 +36646,7 @@ var _ ent.Mutation = (*ServiceMutation)(nil)
 // serviceOption allows to manage the mutation configuration using functional options.
 type serviceOption func(*ServiceMutation)
 
-// newServiceMutation creates new mutation for $n.Name.
+// newServiceMutation creates new mutation for Service.
 func newServiceMutation(c config, op Op, opts ...serviceOption) *ServiceMutation {
 	m := &ServiceMutation{
 		config:        c,
@@ -37807,7 +37807,7 @@ var _ ent.Mutation = (*ServiceEndpointMutation)(nil)
 // serviceendpointOption allows to manage the mutation configuration using functional options.
 type serviceendpointOption func(*ServiceEndpointMutation)
 
-// newServiceEndpointMutation creates new mutation for $n.Name.
+// newServiceEndpointMutation creates new mutation for ServiceEndpoint.
 func newServiceEndpointMutation(c config, op Op, opts ...serviceendpointOption) *ServiceEndpointMutation {
 	m := &ServiceEndpointMutation{
 		config:        c,
@@ -38405,7 +38405,7 @@ var _ ent.Mutation = (*ServiceEndpointDefinitionMutation)(nil)
 // serviceendpointdefinitionOption allows to manage the mutation configuration using functional options.
 type serviceendpointdefinitionOption func(*ServiceEndpointDefinitionMutation)
 
-// newServiceEndpointDefinitionMutation creates new mutation for $n.Name.
+// newServiceEndpointDefinitionMutation creates new mutation for ServiceEndpointDefinition.
 func newServiceEndpointDefinitionMutation(c config, op Op, opts ...serviceendpointdefinitionOption) *ServiceEndpointDefinitionMutation {
 	m := &ServiceEndpointDefinitionMutation{
 		config:        c,
@@ -39189,7 +39189,7 @@ var _ ent.Mutation = (*ServiceTypeMutation)(nil)
 // servicetypeOption allows to manage the mutation configuration using functional options.
 type servicetypeOption func(*ServiceTypeMutation)
 
-// newServiceTypeMutation creates new mutation for $n.Name.
+// newServiceTypeMutation creates new mutation for ServiceType.
 func newServiceTypeMutation(c config, op Op, opts ...servicetypeOption) *ServiceTypeMutation {
 	m := &ServiceTypeMutation{
 		config:        c,
@@ -40012,7 +40012,7 @@ var _ ent.Mutation = (*SurveyMutation)(nil)
 // surveyOption allows to manage the mutation configuration using functional options.
 type surveyOption func(*SurveyMutation)
 
-// newSurveyMutation creates new mutation for $n.Name.
+// newSurveyMutation creates new mutation for Survey.
 func newSurveyMutation(c config, op Op, opts ...surveyOption) *SurveyMutation {
 	m := &SurveyMutation{
 		config:        c,
@@ -40860,7 +40860,7 @@ var _ ent.Mutation = (*SurveyCellScanMutation)(nil)
 // surveycellscanOption allows to manage the mutation configuration using functional options.
 type surveycellscanOption func(*SurveyCellScanMutation)
 
-// newSurveyCellScanMutation creates new mutation for $n.Name.
+// newSurveyCellScanMutation creates new mutation for SurveyCellScan.
 func newSurveyCellScanMutation(c config, op Op, opts ...surveycellscanOption) *SurveyCellScanMutation {
 	m := &SurveyCellScanMutation{
 		config:        c,
@@ -43406,7 +43406,7 @@ var _ ent.Mutation = (*SurveyQuestionMutation)(nil)
 // surveyquestionOption allows to manage the mutation configuration using functional options.
 type surveyquestionOption func(*SurveyQuestionMutation)
 
-// newSurveyQuestionMutation creates new mutation for $n.Name.
+// newSurveyQuestionMutation creates new mutation for SurveyQuestion.
 func newSurveyQuestionMutation(c config, op Op, opts ...surveyquestionOption) *SurveyQuestionMutation {
 	m := &SurveyQuestionMutation{
 		config:        c,
@@ -45689,7 +45689,7 @@ var _ ent.Mutation = (*SurveyTemplateCategoryMutation)(nil)
 // surveytemplatecategoryOption allows to manage the mutation configuration using functional options.
 type surveytemplatecategoryOption func(*SurveyTemplateCategoryMutation)
 
-// newSurveyTemplateCategoryMutation creates new mutation for $n.Name.
+// newSurveyTemplateCategoryMutation creates new mutation for SurveyTemplateCategory.
 func newSurveyTemplateCategoryMutation(c config, op Op, opts ...surveytemplatecategoryOption) *SurveyTemplateCategoryMutation {
 	m := &SurveyTemplateCategoryMutation{
 		config:        c,
@@ -46299,7 +46299,7 @@ var _ ent.Mutation = (*SurveyTemplateQuestionMutation)(nil)
 // surveytemplatequestionOption allows to manage the mutation configuration using functional options.
 type surveytemplatequestionOption func(*SurveyTemplateQuestionMutation)
 
-// newSurveyTemplateQuestionMutation creates new mutation for $n.Name.
+// newSurveyTemplateQuestionMutation creates new mutation for SurveyTemplateQuestion.
 func newSurveyTemplateQuestionMutation(c config, op Op, opts ...surveytemplatequestionOption) *SurveyTemplateQuestionMutation {
 	m := &SurveyTemplateQuestionMutation{
 		config:        c,
@@ -46995,7 +46995,7 @@ var _ ent.Mutation = (*SurveyWiFiScanMutation)(nil)
 // surveywifiscanOption allows to manage the mutation configuration using functional options.
 type surveywifiscanOption func(*SurveyWiFiScanMutation)
 
-// newSurveyWiFiScanMutation creates new mutation for $n.Name.
+// newSurveyWiFiScanMutation creates new mutation for SurveyWiFiScan.
 func newSurveyWiFiScanMutation(c config, op Op, opts ...surveywifiscanOption) *SurveyWiFiScanMutation {
 	m := &SurveyWiFiScanMutation{
 		config:        c,
@@ -48776,7 +48776,7 @@ var _ ent.Mutation = (*UserMutation)(nil)
 // userOption allows to manage the mutation configuration using functional options.
 type userOption func(*UserMutation)
 
-// newUserMutation creates new mutation for $n.Name.
+// newUserMutation creates new mutation for User.
 func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 	m := &UserMutation{
 		config:        c,
@@ -50037,7 +50037,7 @@ var _ ent.Mutation = (*UsersGroupMutation)(nil)
 // usersgroupOption allows to manage the mutation configuration using functional options.
 type usersgroupOption func(*UsersGroupMutation)
 
-// newUsersGroupMutation creates new mutation for $n.Name.
+// newUsersGroupMutation creates new mutation for UsersGroup.
 func newUsersGroupMutation(c config, op Op, opts ...usersgroupOption) *UsersGroupMutation {
 	m := &UsersGroupMutation{
 		config:        c,
@@ -50862,7 +50862,7 @@ var _ ent.Mutation = (*WorkOrderMutation)(nil)
 // workorderOption allows to manage the mutation configuration using functional options.
 type workorderOption func(*WorkOrderMutation)
 
-// newWorkOrderMutation creates new mutation for $n.Name.
+// newWorkOrderMutation creates new mutation for WorkOrder.
 func newWorkOrderMutation(c config, op Op, opts ...workorderOption) *WorkOrderMutation {
 	m := &WorkOrderMutation{
 		config:        c,
@@ -52750,7 +52750,7 @@ var _ ent.Mutation = (*WorkOrderDefinitionMutation)(nil)
 // workorderdefinitionOption allows to manage the mutation configuration using functional options.
 type workorderdefinitionOption func(*WorkOrderDefinitionMutation)
 
-// newWorkOrderDefinitionMutation creates new mutation for $n.Name.
+// newWorkOrderDefinitionMutation creates new mutation for WorkOrderDefinition.
 func newWorkOrderDefinitionMutation(c config, op Op, opts ...workorderdefinitionOption) *WorkOrderDefinitionMutation {
 	m := &WorkOrderDefinitionMutation{
 		config:        c,
@@ -53403,7 +53403,7 @@ var _ ent.Mutation = (*WorkOrderTemplateMutation)(nil)
 // workordertemplateOption allows to manage the mutation configuration using functional options.
 type workordertemplateOption func(*WorkOrderTemplateMutation)
 
-// newWorkOrderTemplateMutation creates new mutation for $n.Name.
+// newWorkOrderTemplateMutation creates new mutation for WorkOrderTemplate.
 func newWorkOrderTemplateMutation(c config, op Op, opts ...workordertemplateOption) *WorkOrderTemplateMutation {
 	m := &WorkOrderTemplateMutation{
 		config:        c,
@@ -54195,7 +54195,7 @@ var _ ent.Mutation = (*WorkOrderTypeMutation)(nil)
 // workordertypeOption allows to manage the mutation configuration using functional options.
 type workordertypeOption func(*WorkOrderTypeMutation)
 
-// newWorkOrderTypeMutation creates new mutation for $n.Name.
+// newWorkOrderTypeMutation creates new mutation for WorkOrderType.
 func newWorkOrderTypeMutation(c config, op Op, opts ...workordertypeOption) *WorkOrderTypeMutation {
 	m := &WorkOrderTypeMutation{
 		config:        c,

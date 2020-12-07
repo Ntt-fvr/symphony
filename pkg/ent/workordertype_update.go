@@ -229,7 +229,7 @@ func (wotu *WorkOrderTypeUpdate) RemoveDefinitions(w ...*WorkOrderDefinition) *W
 	return wotu.RemoveDefinitionIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (wotu *WorkOrderTypeUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

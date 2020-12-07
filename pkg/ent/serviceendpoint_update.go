@@ -124,7 +124,7 @@ func (seu *ServiceEndpointUpdate) ClearDefinition() *ServiceEndpointUpdate {
 	return seu
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (seu *ServiceEndpointUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

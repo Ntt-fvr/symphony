@@ -590,7 +590,7 @@ func (squ *SurveyQuestionUpdate) RemoveImages(f ...*File) *SurveyQuestionUpdate 
 	return squ.RemoveImageIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (squ *SurveyQuestionUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

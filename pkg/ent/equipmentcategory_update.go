@@ -78,7 +78,7 @@ func (ecu *EquipmentCategoryUpdate) RemoveTypes(e ...*EquipmentType) *EquipmentC
 	return ecu.RemoveTypeIDs(ids...)
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (ecu *EquipmentCategoryUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

@@ -112,7 +112,7 @@ func (cu *CommentUpdate) ClearProject() *CommentUpdate {
 	return cu
 }
 
-// Save executes the query and returns the number of rows/vertices matched by this operation.
+// Save executes the query and returns the number of nodes affected by the update operation.
 func (cu *CommentUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error

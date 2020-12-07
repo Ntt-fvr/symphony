@@ -19,7 +19,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.2
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.1.0
-	github.com/facebook/ent v0.4.4-0.20201030185257-8139aca845b1
+	github.com/facebook/ent v0.5.2-0.20201207120713-86b9d850ee78
 	github.com/facebookincubator/ent-contrib v0.0.0-20201101132939-7984b86acfa0
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/google/uuid v1.1.2
