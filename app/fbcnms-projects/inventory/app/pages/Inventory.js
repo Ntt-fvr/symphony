@@ -206,9 +206,10 @@ class Inventory extends React.Component<Props, State> {
     return (
       <>
         <InventoryTopBar
-          onWorkOrderSelected={selectedWorkOrderId =>
-            this.setState({selectedWorkOrderId})
-          }
+          onWorkOrderSelected={selectedWorkOrderId => {
+            console.log('Selected work order id', selectedWorkOrderId);
+            this.setState({selectedWorkOrderId});
+          }}
           onSearchEntitySelected={(entityId, entityType) => {
             switch (entityType) {
               case 'location':

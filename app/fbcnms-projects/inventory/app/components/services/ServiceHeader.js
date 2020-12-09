@@ -10,11 +10,13 @@
 
 import type {Service} from '../../common/Service';
 
+import AppContext from '@fbcnms/ui/context/AppContext';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Button from '@symphony/design-system/components/Button';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
-import React from 'react';
+import React, {useContext} from 'react';
 import ServiceDeleteButton from './ServiceDeleteButton';
+import WorkOrdersPopover from '../work_orders/WorkOrdersPopover';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../common/FormContext';
@@ -45,11 +47,21 @@ type Props = $ReadOnly<{|
   service: Service,
   onBackClicked: () => void,
   onServiceRemoved: () => void,
+  onWorkOrderSelected: (workOrderId: ?string) => void,
+  onNavigateToWorkOrder: (workOrderId: ?string) => void,
 |}>;
 
 const ServiceHeader = (props: Props) => {
   const classes = useStyles();
-  const {service, onBackClicked, onServiceRemoved} = props;
+  const {
+    service,
+    onBackClicked,
+    onServiceRemoved,
+    onWorkOrderSelected,
+    onNavigateToWorkOrder,
+  } = props;
+  const {isFeatureEnabled} = useContext(AppContext);
+  const woPopoverEnabled = isFeatureEnabled('planned_equipment');
   const form = useFormContext();
   return (
     <div className={classes.nameHeader}>
@@ -68,6 +80,14 @@ const ServiceHeader = (props: Props) => {
           ]}
           size="large"
         />
+      </div>
+      <div>
+        {woPopoverEnabled && (
+          <WorkOrdersPopover
+            onSelect={onWorkOrderSelected}
+            onNavigateToWorkOrder={onNavigateToWorkOrder}
+          />
+        )}
       </div>
       <ServiceDeleteButton
         className={classes.deleteButton}
