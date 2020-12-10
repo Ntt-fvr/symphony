@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -27,12 +27,12 @@ func TestParallel(t *testing.T) {
 			return nil
 		})
 	}
-	assert.NoError(t, g.Wait())
+	require.NoError(t, g.Wait())
 	var sum int
 	for i := range v {
 		sum += v[i]
 	}
-	assert.Equal(t, (1+len(v))*len(v)/2, sum)
+	require.Equal(t, (1+len(v))*len(v)/2, sum)
 }
 
 func TestLimited(t *testing.T) {
@@ -50,10 +50,10 @@ func TestLimited(t *testing.T) {
 				return nil
 			})
 		}
-		assert.NoError(t, g.Wait())
+		require.NoError(t, g.Wait())
 	})
 	t.Run("BadLimit", func(t *testing.T) {
-		assert.Panics(t, func() {
+		require.Panics(t, func() {
 			ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(0))
 		})
 	})
@@ -83,7 +83,7 @@ func TestZero(t *testing.T) {
 			if e == nil && err != nil {
 				e = err
 			}
-			assert.Equal(t, e, g.Wait())
+			require.Equal(t, e, g.Wait())
 		}
 	}
 }
@@ -100,5 +100,5 @@ func TestWithContext(t *testing.T) {
 		return err
 	})
 	_ = g.Wait()
-	assert.EqualError(t, err, context.Canceled.Error())
+	require.EqualError(t, err, context.Canceled.Error())
 }

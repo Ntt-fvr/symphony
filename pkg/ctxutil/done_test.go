@@ -8,20 +8,20 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDoneCtx(t *testing.T) {
 	t.Parallel()
 	ctx := DoneCtx()
-	assert.Implements(t, (*context.Context)(nil), ctx)
+	require.Implements(t, (*context.Context)(nil), ctx)
 	select {
 	case <-ctx.Done():
 	default:
-		assert.Fail(t, "unreadable done channel")
+		require.Fail(t, "unreadable done channel")
 	}
-	assert.EqualError(t, ctx.Err(), ErrDone.Error())
+	require.EqualError(t, ctx.Err(), ErrDone.Error())
 	deadline, ok := ctx.Deadline()
-	assert.True(t, deadline.IsZero())
-	assert.False(t, ok)
+	require.True(t, deadline.IsZero())
+	require.False(t, ok)
 }

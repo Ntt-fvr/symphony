@@ -119,7 +119,7 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, fr := r.Mutation(), r.Query(), r.Flow()
+	mr, qr := r.Mutation(), r.Query()
 	name := "4G Deployment"
 	description := "Flow used for managing all technical operation around deployment"
 	endParamDefinitions := []*flowschema.VariableDefinition{
@@ -162,14 +162,14 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	require.Equal(t, endParamDefinitions, flw.EndParamDefinitions)
 	require.Equal(t, flow.StatusPublished, flw.Status)
 	require.Equal(t, flow.NewInstancesPolicyEnabled, flw.NewInstancesPolicy)
-	draft, err := fr.Draft(ctx, flw)
+	draft, err := flw.QueryDraft().Only(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, draft)
 	require.Equal(t, draft.ID, flowDraft.ID)
 	require.Equal(t, true, draft.SameAsFlow)
 	_, err = qr.Node(ctx, flowDraft.ID)
 	require.NoError(t, err)
-	blocks, err := fr.Blocks(ctx, flw)
+	blocks, err := flw.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blocks, 3)
 	for _, blk := range blocks {
@@ -186,7 +186,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, qr, fr, fdr, br, ver, bvr := r.Mutation(), r.Query(), r.Flow(), r.FlowDraft(), r.Block(), r.VariableExpression(), r.BlockVariable()
+	mr, qr, br, ver, bvr := r.Mutation(), r.Query(), r.Block(), r.VariableExpression(), r.BlockVariable()
 	subFlow := prepareBasicFlow(ctx, t, mr, "Subflow", nil, nil)
 	mainFlow := prepareBasicFlow(ctx, t, mr, "Main",
 		&flowschema.BlockUIRepresentation{
@@ -215,7 +215,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Equal(t, "New name", draft.Name)
-	foundDraft, err := fr.Draft(ctx, mainFlow)
+	foundDraft, err := mainFlow.QueryDraft().Only(ctx)
 	require.NoError(t, err)
 	require.Equal(t, draft.ID, foundDraft.ID)
 	foundFlow, err := qr.Node(ctx, mainFlow.ID)
@@ -237,7 +237,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	blks, err := fdr.Blocks(ctx, draft)
+	blks, err := draft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blks, 3)
 	for _, blk := range blks {
@@ -256,7 +256,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			require.Equal(t, 40, blk.UIRepresentation.YPosition)
 		}
 	}
-	blks, err = fr.Blocks(ctx, mainFlow)
+	blks, err = mainFlow.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blks, 2)
 	startWithNext, err := draft.QueryBlocks().
@@ -291,7 +291,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, mainFlow.ID, flw.ID)
 	require.Equal(t, "New name", flw.Name)
-	blks, err = fr.Blocks(ctx, flw)
+	blks, err = flw.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blks, 3)
 	_, err = qr.Node(ctx, draft.ID)
@@ -354,7 +354,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	r := newTestResolver(t, withActionFactory(actions.NewFactory()), withTriggerFactory(triggers.NewFactory()))
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, fdr, ipr, opr := r.Mutation(), r.FlowDraft(), r.EntryPoint(), r.ExitPoint()
+	mr, fdr := r.Mutation(), r.FlowDraft()
 
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "First version",
@@ -493,7 +493,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, newName, newDraft.Name)
 	require.Equal(t, description, *newDraft.Description)
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
-	blocks, err := fdr.Blocks(ctx, newDraft)
+	blocks, err := newDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blocks, 7)
 	for _, blk := range blocks {
@@ -529,9 +529,9 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, connectors, 6)
 	for _, connector := range connectors {
-		sourceBlock, err := opr.ParentBlock(ctx, connector.Source)
+		sourceBlock, err := connector.Source.QueryParentBlock().Only(ctx)
 		require.NoError(t, err)
-		targetBlock, err := ipr.ParentBlock(ctx, connector.Target)
+		targetBlock, err := connector.Target.QueryParentBlock().Only(ctx)
 		require.NoError(t, err)
 		found := false
 		for _, connectorInput := range connectorInputs {
@@ -584,7 +584,7 @@ func TestImportCleanCurrentFlow(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "Second version", draft.Name)
 	require.Nil(t, draft.Description)
-	blocks, err := fdr.Blocks(ctx, draft)
+	blocks, err := draft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Empty(t, blocks)
 	connectors, err := fdr.Connectors(ctx, draft)

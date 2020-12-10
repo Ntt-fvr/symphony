@@ -129,7 +129,7 @@ func TestAddRemoveSurvey(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 100000, ts, "Verifying saved survey vs fetched survey: CompletionTimestamp")
 
-	responses, err := sr.SurveyResponses(ctx, fetchedSurvey)
+	responses, err := fetchedSurvey.QueryQuestions().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, responses, 3, "Verifying number of responses")
 

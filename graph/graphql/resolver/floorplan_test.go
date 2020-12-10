@@ -13,7 +13,6 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -61,31 +60,31 @@ func TestAddFloorPlan(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	assert.Equal(t, floorPlan.Name, "new floor plan")
+	require.Equal(t, floorPlan.Name, "new floor plan")
 
 	floorPlanLocation, err := floorPlan.QueryLocation().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, floorPlanLocation.ID, location.ID)
+	require.Equal(t, floorPlanLocation.ID, location.ID)
 
 	image, err := floorPlan.QueryImage().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, image.StoreKey, imageInput.ImgKey)
-	assert.Equal(t, image.Name, imageInput.FileName)
+	require.Equal(t, image.StoreKey, imageInput.ImgKey)
+	require.Equal(t, image.Name, imageInput.FileName)
 
 	referencePoint, err := floorPlan.QueryReferencePoint().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, referencePoint.X, 1)
-	assert.Equal(t, referencePoint.Y, 2)
-	assert.Equal(t, referencePoint.Latitude, 3.0)
-	assert.Equal(t, referencePoint.Longitude, 4.0)
+	require.Equal(t, referencePoint.X, 1)
+	require.Equal(t, referencePoint.Y, 2)
+	require.Equal(t, referencePoint.Latitude, 3.0)
+	require.Equal(t, referencePoint.Longitude, 4.0)
 
 	scale, err := floorPlan.QueryScale().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, scale.ReferencePoint1X, 5)
-	assert.Equal(t, scale.ReferencePoint1Y, 6)
-	assert.Equal(t, scale.ReferencePoint2X, 7)
-	assert.Equal(t, scale.ReferencePoint2Y, 8)
-	assert.Equal(t, scale.ScaleInMeters, 9.0)
+	require.Equal(t, scale.ReferencePoint1X, 5)
+	require.Equal(t, scale.ReferencePoint1Y, 6)
+	require.Equal(t, scale.ReferencePoint2X, 7)
+	require.Equal(t, scale.ReferencePoint2Y, 8)
+	require.Equal(t, scale.ScaleInMeters, 9.0)
 }
 
 func TestRemoveFloorPlan(t *testing.T) {
@@ -134,14 +133,14 @@ func TestRemoveFloorPlan(t *testing.T) {
 
 	floorPlanFromLocation, err := location.QueryFloorPlans().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, floorPlanFromLocation.ID, floorPlan.ID)
+	require.Equal(t, floorPlanFromLocation.ID, floorPlan.ID)
 
 	res, err := mr.DeleteFloorPlan(ctx, floorPlan.ID)
 	require.NoError(t, err)
-	assert.True(t, res)
+	require.True(t, res)
 	floorPlansFromLocation, err := location.QueryFloorPlans().All(ctx)
 	require.NoError(t, err)
-	assert.Empty(t, floorPlansFromLocation)
+	require.Empty(t, floorPlansFromLocation)
 
 	_, err = mr.DeleteFloorPlan(ctx, floorPlan.ID)
 	require.Error(t, err)

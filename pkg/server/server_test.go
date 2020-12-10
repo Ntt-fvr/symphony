@@ -12,7 +12,6 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/server"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
@@ -24,7 +23,7 @@ func TestListenAndServe(t *testing.T) {
 	td.On("ListenAndServe", mock.Anything, mock.Anything).
 		Run(func(args mock.Arguments) {
 			h, _ := args.Get(1).(http.Handler)
-			assert.NotNil(t, h)
+			require.NotNil(t, h)
 		}).
 		Return(nil).
 		Once()
@@ -41,8 +40,8 @@ func TestMiddleware(t *testing.T) {
 		Run(func(args mock.Arguments) {
 			ent, _ := args.Get(0).(*requestlog.Entry)
 			require.NotNil(t, ent)
-			assert.NotEmpty(t, ent.TraceID)
-			assert.NotEmpty(t, ent.SpanID)
+			require.NotEmpty(t, ent.TraceID)
+			require.NotEmpty(t, ent.SpanID)
 		}).
 		Once()
 	defer tl.AssertExpectations(t)
@@ -55,8 +54,8 @@ func TestMiddleware(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
 			rec := httptest.NewRecorder()
 			handler.ServeHTTP(rec, req)
-			assert.Equal(t, http.StatusInternalServerError, rec.Code)
-			assert.NotEmpty(t, rec.Header().Get("X-Correlation-ID"))
+			require.Equal(t, http.StatusInternalServerError, rec.Code)
+			require.NotEmpty(t, rec.Header().Get("X-Correlation-ID"))
 		}).
 		Return(nil).
 		Once()
@@ -76,7 +75,7 @@ func TestMiddleware(t *testing.T) {
 	te.On("ExportSpan", mock.AnythingOfType("*trace.SpanData")).
 		Run(func(args mock.Arguments) {
 			s, _ := args.Get(0).(*trace.SpanData)
-			assert.Equal(t, "/", s.Name)
+			require.Equal(t, "/", s.Name)
 		}).
 		Once()
 	te.On("ExportView", mock.Anything).
@@ -103,7 +102,7 @@ func TestMiddleware(t *testing.T) {
 		Driver:                &td,
 	})
 	err := s.ListenAndServe(":8080")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 type testDriver struct {

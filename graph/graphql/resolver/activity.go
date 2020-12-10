@@ -14,11 +14,6 @@ import (
 
 type activityResolver struct{}
 
-func (a activityResolver) Author(ctx context.Context, obj *ent.Activity) (*ent.User, error) {
-	author, err := obj.QueryAuthor().Only(ctx)
-	return author, ent.MaskNotFound(err)
-}
-
 func getNode(ctx context.Context, field activity.ActivityType, val string) (ent.Noder, error) {
 	if val == "" {
 		return nil, nil
@@ -43,8 +38,4 @@ func (a activityResolver) NewRelatedNode(ctx context.Context, obj *ent.Activity)
 
 func (a activityResolver) OldRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error) {
 	return getNode(ctx, obj.ActivityType, obj.OldValue)
-}
-
-func (a activityResolver) WorkOrder(ctx context.Context, obj *ent.Activity) (*ent.WorkOrder, error) {
-	return obj.QueryWorkOrder().Only(ctx)
 }

@@ -196,11 +196,11 @@ func getLowestLocationHierarchyIdxForRow(ctx context.Context, line []string) int
 	return len(line) - 1
 }
 
-// Prepare map of locationTypes to indexes and the "lowestHirarchyIndex"
+// Prepare map of locationTypes to indexes and the "lowestHierarchyIndex"
 func (m *importer) populateIndexToLocationTypeMap(ctx context.Context, firstLine []string, populateLocationProperties bool) {
 	indexToLocationTypeID := getImportContext(ctx).indexToLocationTypeID
 	lowestHierarchyIndex := &getImportContext(ctx).lowestHierarchyIndex
-	qr, ltr := m.r.Query(), m.r.LocationType()
+	qr := m.r.Query()
 	var idx int
 	locTypes, _ := qr.LocationTypes(ctx, nil, nil, nil, nil)
 	for _, typeEdge := range locTypes.Edges {
@@ -215,7 +215,7 @@ func (m *importer) populateIndexToLocationTypeMap(ctx context.Context, firstLine
 			if populateLocationProperties {
 				typeIDsToProperties := getImportContext(ctx).typeIDsToProperties
 				propNameToIndex := getImportContext(ctx).propNameToIndex
-				properties, _ := ltr.PropertyTypes(ctx, typeEdge.Node)
+				properties, _ := typeEdge.Node.PropertyTypes(ctx)
 				for _, prop := range properties {
 					typeIDsToProperties[typeID] = append(typeIDsToProperties[typeID], prop.Name)
 					propIdx := findIndex(firstLine, prop.Name)
@@ -249,8 +249,7 @@ func (m *importer) populateEquipmentTypeNameToIDMap(ctx context.Context, firstLi
 		if populateEquipProperties {
 			propNameToIndex := getImportContext(ctx).propNameToIndex
 			equipmentTypeIDToProperties := getImportContext(ctx).equipmentTypeIDToProperties
-			eqr := m.r.EquipmentType()
-			properties, err := eqr.PropertyTypes(ctx, equipTypeNode)
+			properties, err := equipTypeNode.PropertyTypes(ctx)
 			if err != nil {
 				return err
 			}

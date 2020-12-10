@@ -25,12 +25,12 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, fdr, br := r.Mutation(), r.FlowDraft(), r.Block()
+	mr, br := r.Mutation(), r.Block()
 	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "Flow Name",
 	})
 	require.NoError(t, err)
-	blocks, err := fdr.Blocks(ctx, flowDraft)
+	blocks, err := flowDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Empty(t, blocks)
 
@@ -62,12 +62,12 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	_, ok = blockType.(*models.EndBlock)
 	require.True(t, ok)
 
-	blocks, err = fdr.Blocks(ctx, flowDraft)
+	blocks, err = flowDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blocks, 2)
 	_, err = mr.DeleteBlock(ctx, eb.ID)
 	require.NoError(t, err)
-	blocks, err = fdr.Blocks(ctx, flowDraft)
+	blocks, err = flowDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, blocks, 1)
 
@@ -93,7 +93,7 @@ func TestAddDeleteConnectors(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, br, epr, fdr := r.Mutation(), r.Block(), r.ExitPoint(), r.FlowDraft()
+	mr, br, fdr := r.Mutation(), r.Block(), r.FlowDraft()
 	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "Flow Name",
 	})
@@ -115,7 +115,7 @@ func TestAddDeleteConnectors(t *testing.T) {
 		TargetBlockCid: endBlock.Cid,
 	})
 	require.NoError(t, err)
-	sourceBlock, err := epr.ParentBlock(ctx, connector.Source)
+	sourceBlock, err := connector.Source.QueryParentBlock().Only(ctx)
 	require.NoError(t, err)
 	require.Equal(t, startBlock.ID, sourceBlock.ID)
 	_, err = mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{

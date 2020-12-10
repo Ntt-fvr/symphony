@@ -45,7 +45,7 @@ func TestAddAndDeleteProfileImage(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 
-	mr, ur := r.Mutation(), r.User()
+	mr := r.Mutation()
 	file1, err := mr.AddImage(ctx, models.AddImageInput{
 		EntityType:  models.ImageEntityUser,
 		EntityID:    u.ID,
@@ -56,14 +56,14 @@ func TestAddAndDeleteProfileImage(t *testing.T) {
 		ContentType: "image/png",
 	})
 	require.NoError(t, err)
-	file, err := ur.ProfilePhoto(ctx, u)
+	file, err := u.ProfilePhoto(ctx)
 	require.NoError(t, err)
 	require.Equal(t, "profile_photo.png", file.Name)
 
 	_, err = mr.DeleteImage(ctx, models.ImageEntityUser, u.ID, file1.ID)
 	require.NoError(t, err)
 
-	file, err = ur.ProfilePhoto(ctx, u)
+	file, err = u.ProfilePhoto(ctx)
 	require.NoError(t, err)
 	require.Nil(t, file)
 }

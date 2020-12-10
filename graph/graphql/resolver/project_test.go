@@ -20,7 +20,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -66,8 +65,8 @@ func TestProjectQuery(t *testing.T) {
 	require.NoError(t, err)
 	rtyp, ok := node.(*ent.ProjectType)
 	require.True(t, ok)
-	assert.Equal(t, typ.Name, rtyp.Name)
-	assert.Equal(t, typ.Description, rtyp.Description)
+	require.Equal(t, typ.Name, rtyp.Name)
+	require.Equal(t, typ.Description, rtyp.Description)
 
 	proj, err := resolver.Mutation().CreateProject(
 		ctx, models.AddProjectInput{
@@ -81,8 +80,8 @@ func TestProjectQuery(t *testing.T) {
 	require.NoError(t, err)
 	rproj, ok := node.(*ent.Project)
 	require.True(t, ok)
-	assert.Equal(t, proj.Name, rproj.Name)
-	assert.Equal(t, proj.Description, rproj.Description)
+	require.Equal(t, proj.Name, rproj.Name)
+	require.Equal(t, proj.Description, rproj.Description)
 }
 
 func TestProjectWithWorkOrders(t *testing.T) {
@@ -123,7 +122,7 @@ func TestProjectWithWorkOrders(t *testing.T) {
 	require.True(t, ok)
 	woDefs, err := rtyp.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(woDefs))
+	require.Equal(t, 1, len(woDefs))
 
 	location := createLocation(ctx, t, *resolver)
 	input := models.AddProjectInput{Name: "test", Type: typ.ID, Location: &location.ID}
@@ -131,19 +130,19 @@ func TestProjectWithWorkOrders(t *testing.T) {
 	require.NoError(t, err)
 	wos, err := proj.QueryWorkOrders().WithCheckListCategories().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, wos, 1)
+	require.Len(t, wos, 1)
 	wo := wos[0]
-	assert.EqualValues(t, wo.Name, woType.Name)
-	assert.EqualValues(t, wo.Index, *woDef.Index)
-	assert.EqualValues(t, wo.QueryLocation().FirstIDX(ctx), location.ID)
-	assert.Len(t, wo.Edges.CheckListCategories, 1)
+	require.EqualValues(t, wo.Name, woType.Name)
+	require.EqualValues(t, wo.Index, *woDef.Index)
+	require.EqualValues(t, wo.QueryLocation().FirstIDX(ctx), location.ID)
+	require.Len(t, wo.Edges.CheckListCategories, 1)
 
 	clItems, err := wo.QueryCheckListCategories().QueryCheckListItems().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, clItems, 1)
+	require.Len(t, clItems, 1)
 	clItem := clItems[0]
-	assert.EqualValues(t, clItem.Title, "Item 1")
-	assert.EqualValues(t, clItem.IsMandatory, true)
+	require.EqualValues(t, clItem.Title, "Item 1")
+	require.EqualValues(t, clItem.IsMandatory, true)
 }
 
 func TestEditProjectTypeWorkOrders(t *testing.T) {
@@ -168,7 +167,7 @@ func TestEditProjectTypeWorkOrders(t *testing.T) {
 	require.True(t, ok)
 	woDefs, err := rtyp.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(woDefs))
+	require.Equal(t, 1, len(woDefs))
 
 	woDef = models.WorkOrderDefinitionInput{ID: &woDefs[0].ID, Type: woType.ID, Index: pointer.ToInt(2)}
 	typ, err = resolver.Mutation().EditProjectType(
@@ -186,8 +185,8 @@ func TestEditProjectTypeWorkOrders(t *testing.T) {
 	require.True(t, ok)
 	woDefs, err = rtyp.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(woDefs))
-	assert.Equal(t, *woDef.ID, woDefs[0].ID)
+	require.Equal(t, 1, len(woDefs))
+	require.Equal(t, *woDef.ID, woDefs[0].ID)
 
 	woDef2 := models.WorkOrderDefinitionInput{Type: woType.ID, Index: pointer.ToInt(3)}
 	typ, err = resolver.Mutation().EditProjectType(
@@ -205,8 +204,8 @@ func TestEditProjectTypeWorkOrders(t *testing.T) {
 	require.True(t, ok)
 	woDefs, err = rtyp.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(woDefs))
-	assert.NotEqual(t, *woDef.ID, woDefs[0].ID)
+	require.Equal(t, 1, len(woDefs))
+	require.NotEqual(t, *woDef.ID, woDefs[0].ID)
 }
 
 func TestProjectMutation(t *testing.T) {
@@ -221,12 +220,12 @@ func TestProjectMutation(t *testing.T) {
 	require.NoError(t, err)
 	typ, err := mutation.CreateProjectType(ctx, input)
 	require.NoError(t, err)
-	assert.Equal(t, input.Name, typ.Name)
-	assert.EqualValues(t, input.Description, typ.Description)
+	require.Equal(t, input.Name, typ.Name)
+	require.EqualValues(t, input.Description, typ.Description)
 	_, err = mutation.CreateProjectType(ctx, models.AddProjectTypeInput{})
-	assert.Error(t, err, "project type name cannot be empty")
+	require.Error(t, err, "project type name cannot be empty")
 	_, err = mutation.CreateProjectType(ctx, input)
-	assert.Error(t, err, "project type name must be unique")
+	require.Error(t, err, "project type name must be unique")
 
 	var project *ent.Project
 	{
@@ -238,33 +237,33 @@ func TestProjectMutation(t *testing.T) {
 		}
 		project, err = mutation.CreateProject(ctx, input)
 		require.NoError(t, err)
-		assert.Equal(t, input.Name, project.Name)
-		assert.Equal(t, *input.Location, project.QueryLocation().OnlyX(ctx).ID)
+		require.Equal(t, input.Name, project.Name)
+		require.Equal(t, *input.Location, project.QueryLocation().OnlyX(ctx).ID)
 
 		_, err = mutation.CreateProject(ctx, input)
-		assert.Error(t, err, "project name must be unique under type")
+		require.Error(t, err, "project name must be unique under type")
 		_, err = mutation.CreateProject(ctx, models.AddProjectInput{Type: input.Type})
-		assert.Error(t, err, "project name cannot be empty")
+		require.Error(t, err, "project name cannot be empty")
 		_, err = mutation.CreateProject(ctx, models.AddProjectInput{Name: "another", Type: 42424242})
-		assert.Error(t, err, "project type id must be valid")
+		require.Error(t, err, "project type id must be valid")
 	}
 
 	deleted, err := mutation.DeleteProjectType(ctx, typ.ID)
-	assert.Error(t, err, "project type cannot be deleted with associated projects")
-	assert.False(t, deleted)
+	require.Error(t, err, "project type cannot be deleted with associated projects")
+	require.False(t, deleted)
 	deleted, err = mutation.DeleteProject(ctx, project.ID)
-	assert.NoError(t, err)
-	assert.True(t, deleted)
+	require.NoError(t, err)
+	require.True(t, deleted)
 	deleted, err = mutation.DeleteProject(ctx, project.ID)
-	assert.Error(t, err)
-	assert.False(t, deleted)
+	require.Error(t, err)
+	require.False(t, deleted)
 
 	deleted, err = mutation.DeleteProjectType(ctx, typ.ID)
-	assert.NoError(t, err)
-	assert.True(t, deleted)
+	require.NoError(t, err)
+	require.True(t, deleted)
 	deleted, err = mutation.DeleteProjectType(ctx, typ.ID)
-	assert.EqualError(t, err, "input: project type doesn't exist")
-	assert.False(t, deleted)
+	require.EqualError(t, err, "input: project type doesn't exist")
+	require.False(t, deleted)
 }
 
 func TestEditProject(t *testing.T) {
@@ -292,9 +291,9 @@ func TestEditProject(t *testing.T) {
 		}
 		project, err = mutation.CreateProject(ctx, input)
 		require.NoError(t, err)
-		assert.Equal(t, input.Name, project.Name)
-		assert.Equal(t, *input.Location, project.QueryLocation().OnlyX(ctx).ID)
-		assert.Equal(t, *input.CreatorID, project.QueryCreator().OnlyIDX(ctx))
+		require.Equal(t, input.Name, project.Name)
+		require.Equal(t, *input.Location, project.QueryLocation().OnlyX(ctx).ID)
+		require.Equal(t, *input.CreatorID, project.QueryCreator().OnlyIDX(ctx))
 
 		updateInput := models.EditProjectInput{
 			ID:          project.ID,
@@ -304,9 +303,9 @@ func TestEditProject(t *testing.T) {
 		}
 		project, err = mutation.EditProject(ctx, updateInput)
 		require.NoError(t, err)
-		assert.Equal(t, updateInput.Name, project.Name)
-		assert.Equal(t, *updateInput.Description, *project.Description)
-		assert.False(t, project.QueryCreator().ExistX(ctx))
+		require.Equal(t, updateInput.Name, project.Name)
+		require.Equal(t, *updateInput.Description, *project.Description)
+		require.False(t, project.QueryCreator().ExistX(ctx))
 	}
 }
 
@@ -343,7 +342,7 @@ func TestAddProjectWithProperties(t *testing.T) {
 	defer r.Close()
 	mutation, ctx := mutationctx(t)
 
-	mr, qr, pr := r.Mutation(), r.Query(), r.Project()
+	mr, qr := r.Mutation(), r.Query()
 	strPropType := pkgmodels.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
@@ -432,7 +431,7 @@ func TestAddProjectWithProperties(t *testing.T) {
 	require.NotEqual(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
 	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), tRngFetchProp.ID, "Comparing properties: PropertyType value")
 
-	fetchedProps, err := pr.Properties(ctx, fetchedProj)
+	fetchedProps, err := fetchedProj.QueryProperties().All(ctx)
 	require.NoError(t, err)
 	require.Equal(t, len(propInputs), len(fetchedProps))
 
@@ -478,7 +477,7 @@ func TestAddProjectWithProperties(t *testing.T) {
 	require.Equal(t, updatedProj.Name, newProjectName, "Comparing updated project name")
 	fetchedProjectTemplate, err = updatedProj.QueryTemplate().Only(ctx)
 	require.NoError(t, err)
-	fetchedProps, _ = pr.Properties(ctx, updatedProj)
+	fetchedProps = updatedProj.QueryProperties().AllX(ctx)
 	require.Equal(t, len(propInputs), len(fetchedProps), "number of properties should remain he same")
 
 	updatedProp := updatedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
@@ -520,7 +519,7 @@ func TestEditProjectType(t *testing.T) {
 	require.NoError(t, err)
 	typ, ok := node.(*ent.ProjectType)
 	require.True(t, ok)
-	assert.Equal(t, "example_type_name_edited", typ.Name)
+	require.Equal(t, "example_type_name_edited", typ.Name)
 }
 
 func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
@@ -559,7 +558,7 @@ func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
 	require.True(t, ok)
 	woDefs, err := rtyp.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(woDefs))
+	require.Equal(t, 1, len(woDefs))
 
 	location := createLocation(ctx, t, *resolver)
 	input := models.AddProjectInput{Name: "test", Type: typ.ID, Location: &location.ID}
@@ -567,7 +566,7 @@ func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
 	require.NoError(t, err)
 	wos, err := proj.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, wos, 1)
+	require.Len(t, wos, 1)
 	props := wos[0].QueryProperties().Where().AllX(ctx)
 	require.Len(t, props, 2)
 }

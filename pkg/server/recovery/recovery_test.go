@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/server/recovery"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 type testRecoverer struct {
@@ -47,6 +47,6 @@ func TestRecoveryHandler(t *testing.T) {
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusInternalServerError, rec.Code)
-	assert.EqualError(t, err, strings.TrimSuffix(rec.Body.String(), "\n"))
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	require.EqualError(t, err, strings.TrimSuffix(rec.Body.String(), "\n"))
 }

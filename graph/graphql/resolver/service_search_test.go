@@ -19,7 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -262,7 +261,7 @@ func TestSearchServicesByType(t *testing.T) {
 	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
 	require.Len(t, res1.Edges, 1)
-	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
+	require.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceType,
@@ -272,7 +271,7 @@ func TestSearchServicesByType(t *testing.T) {
 	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
 	require.Len(t, res2.Edges, 1)
-	assert.Equal(t, res2.Edges[0].Node.ID, s2.ID)
+	require.Equal(t, res2.Edges[0].Node.ID, s2.ID)
 
 	f3 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceType,
@@ -325,7 +324,7 @@ func TestSearchServicesByExternalID(t *testing.T) {
 	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
 	require.Len(t, res1.Edges, 1)
-	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
+	require.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeServiceInstExternalID,
@@ -335,7 +334,7 @@ func TestSearchServicesByExternalID(t *testing.T) {
 	res2, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f2})
 	require.NoError(t, err)
 	require.Len(t, res2.Edges, 1)
-	assert.Equal(t, res2.Edges[0].Node.ID, s2.ID)
+	require.Equal(t, res2.Edges[0].Node.ID, s2.ID)
 }
 
 func TestSearchServicesByCustomerName(t *testing.T) {
@@ -383,7 +382,7 @@ func TestSearchServicesByCustomerName(t *testing.T) {
 	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
 	require.Len(t, res1.Edges, 1)
-	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
+	require.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType:  enum.ServiceFilterTypeServiceInstCustomerName,
@@ -436,7 +435,7 @@ func TestSearchServicesByDiscoveryMethod(t *testing.T) {
 	res1, err := qr.Services(ctx, nil, &limit, nil, nil, []*pkgmodels.ServiceFilterInput{&f1})
 	require.NoError(t, err)
 	require.Len(t, res1.Edges, 1)
-	assert.Equal(t, res1.Edges[0].Node.ID, s1.ID)
+	require.Equal(t, res1.Edges[0].Node.ID, s1.ID)
 
 	f2 := pkgmodels.ServiceFilterInput{
 		FilterType: enum.ServiceFilterTypeServiceDiscoveryMethod,

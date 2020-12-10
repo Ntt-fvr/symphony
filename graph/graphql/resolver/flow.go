@@ -18,19 +18,6 @@ import (
 
 type flowResolver struct{}
 
-func (r flowResolver) Blocks(ctx context.Context, obj *ent.Flow) ([]*ent.Block, error) {
-	if blocks, err := obj.Edges.BlocksOrErr(); !ent.IsNotLoaded(err) {
-		return blocks, err
-	}
-	return obj.QueryBlocks().All(ctx)
-}
-
-func (r flowResolver) Draft(ctx context.Context, obj *ent.Flow) (*ent.FlowDraft, error) {
-	draft, err := obj.QueryDraft().
-		Only(ctx)
-	return draft, ent.MaskNotFound(err)
-}
-
 func connectors(exitPointsWithNext []*ent.ExitPoint) []*models.Connector {
 	var connectors []*models.Connector
 	for _, exitPoint := range exitPointsWithNext {
@@ -56,13 +43,6 @@ func (r flowResolver) Connectors(ctx context.Context, obj *ent.Flow) ([]*models.
 }
 
 type flowDraftResolver struct{}
-
-func (r flowDraftResolver) Blocks(ctx context.Context, obj *ent.FlowDraft) ([]*ent.Block, error) {
-	if blocks, err := obj.Edges.BlocksOrErr(); !ent.IsNotLoaded(err) {
-		return blocks, err
-	}
-	return obj.QueryBlocks().All(ctx)
-}
 
 func (r flowDraftResolver) Connectors(ctx context.Context, obj *ent.FlowDraft) ([]*models.Connector, error) {
 	exitPoints, err := obj.QueryBlocks().

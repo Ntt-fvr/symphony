@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -35,7 +34,7 @@ func TestQueryNode(t *testing.T) {
 			&rsp,
 			client.Var("id", lt.AddLocationType.ID),
 		)
-		assert.Equal(t, "City", rsp.Node.Name)
+		require.Equal(t, "City", rsp.Node.Name)
 	})
 	t.Run("Location", func(t *testing.T) {
 		var rsp struct{ Location struct{ Name string } }
@@ -44,7 +43,7 @@ func TestQueryNode(t *testing.T) {
 			&rsp,
 			client.Var("id", l.AddLocation.ID),
 		)
-		assert.Equal(t, "TLV", rsp.Location.Name)
+		require.Equal(t, "TLV", rsp.Location.Name)
 	})
 	t.Run("NonExistent", func(t *testing.T) {
 		var rsp struct{ Node struct{ ID string } }
@@ -52,7 +51,7 @@ func TestQueryNode(t *testing.T) {
 		require.True(t, ok)
 		var errs gqlerror.List
 		require.NoError(t, json.Unmarshal(err.RawMessage, &errs))
-		assert.Equal(t, "Could not resolve to a node with the global id of '-1'", errs[0].Message)
-		assert.Equal(t, "NOT_FOUND", errs[0].Extensions["code"])
+		require.Equal(t, "Could not resolve to a node with the global id of '-1'", errs[0].Message)
+		require.Equal(t, "NOT_FOUND", errs[0].Extensions["code"])
 	})
 }

@@ -21,7 +21,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -72,10 +71,10 @@ func TestAddEquipment(t *testing.T) {
 	fetchedEquipment, ok := fetchedNode.(*ent.Equipment)
 	require.True(t, ok)
 
-	assert.Equal(t, equipment.ID, fetchedEquipment.ID)
-	assert.Equal(t, equipment.Name, fetchedEquipment.Name)
-	assert.Equal(t, equipment.QueryType().OnlyIDX(ctx), fetchedEquipment.QueryType().OnlyIDX(ctx))
-	assert.Equal(t, equipment.QueryLocation().OnlyIDX(ctx), fetchedEquipment.QueryLocation().OnlyIDX(ctx))
+	require.Equal(t, equipment.ID, fetchedEquipment.ID)
+	require.Equal(t, equipment.Name, fetchedEquipment.Name)
+	require.Equal(t, equipment.QueryType().OnlyIDX(ctx), fetchedEquipment.QueryType().OnlyIDX(ctx))
+	require.Equal(t, equipment.QueryLocation().OnlyIDX(ctx), fetchedEquipment.QueryLocation().OnlyIDX(ctx))
 	require.Len(t, equipment.QueryPositions().AllX(ctx), 2)
 
 	var (
@@ -84,15 +83,15 @@ func TestAddEquipment(t *testing.T) {
 		fetchedPositionIndices []int
 	)
 	for _, position := range fetchedEquipment.QueryPositions().AllX(ctx) {
-		assert.Equal(t, equipment.ID, position.QueryParent().OnlyIDX(ctx))
+		require.Equal(t, equipment.ID, position.QueryParent().OnlyIDX(ctx))
 		def := position.QueryDefinition().OnlyX(ctx)
 		fetchedPositionNames = append(fetchedPositionNames, def.Name)
 		fetchedPositionLabels = append(fetchedPositionLabels, def.VisibilityLabel)
 		fetchedPositionIndices = append(fetchedPositionIndices, def.Index)
 	}
-	assert.ElementsMatch(t, []string{"Position 1", "Position 2"}, fetchedPositionNames)
-	assert.ElementsMatch(t, []string{"label1", "label2"}, fetchedPositionLabels)
-	assert.ElementsMatch(t, []int{1, 2}, fetchedPositionIndices)
+	require.ElementsMatch(t, []string{"Position 1", "Position 2"}, fetchedPositionNames)
+	require.ElementsMatch(t, []string{"label1", "label2"}, fetchedPositionLabels)
+	require.ElementsMatch(t, []int{1, 2}, fetchedPositionIndices)
 }
 
 func prepareLocation(ctx context.Context, t *testing.T, mr generated.MutationResolver) *ent.Location {
@@ -113,7 +112,7 @@ func TestAddEquipmentWithProperties(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, er := r.Mutation(), r.Equipment()
+	mr := r.Mutation()
 	location := prepareLocation(ctx, t, mr)
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "example_type_name",
@@ -136,13 +135,13 @@ func TestAddEquipmentWithProperties(t *testing.T) {
 		Properties: []*models.PropertyInput{&prop},
 	})
 	require.NoError(t, err)
-	fetchedProperties, err := er.Properties(ctx, equipment)
+	fetchedProperties, err := equipment.QueryProperties().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, fetchedProperties, 1)
 	typ := fetchedProperties[0].QueryType().OnlyX(ctx)
-	assert.Equal(t, typ.Name, "bar_prop")
-	assert.Equal(t, typ.Type, propertytype.TypeString)
-	assert.Equal(t, *fetchedProperties[0].StringVal, val)
+	require.Equal(t, typ.Name, "bar_prop")
+	require.Equal(t, typ.Type, propertytype.TypeString)
+	require.Equal(t, *fetchedProperties[0].StringVal, val)
 }
 
 func TestAddEditEquipmentWithNillableProperties(t *testing.T) {
@@ -150,7 +149,7 @@ func TestAddEditEquipmentWithNillableProperties(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, er, pr, ptr := r.Mutation(), r.Equipment(), r.Property(), r.PropertyType()
+	mr, pr, ptr := r.Mutation(), r.Property(), r.PropertyType()
 	location := prepareLocation(ctx, t, mr)
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "example_type_name",
@@ -245,7 +244,7 @@ func TestAddEditEquipmentWithNillableProperties(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	fetchedProperties, err := er.Properties(ctx, equipment)
+	fetchedProperties, err := equipment.QueryProperties().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, fetchedProperties, 4)
 	for _, prop := range fetchedProperties {
@@ -277,7 +276,7 @@ func TestAddAndDeleteEquipmentHyperlink(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, er := r.Mutation(), r.Equipment()
+	mr := r.Mutation()
 
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "equipment_type_name_1",
@@ -318,7 +317,7 @@ func TestAddAndDeleteEquipmentHyperlink(t *testing.T) {
 	require.Equal(t, displayName, hyperlink.Name, "verifying hyperlink display name")
 	require.Equal(t, category, hyperlink.Category, "verifying 1st hyperlink category")
 
-	hyperlinks, err := er.Hyperlinks(ctx, equipment)
+	hyperlinks, err := equipment.QueryHyperlinks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, hyperlinks, 1, "verifying has 1 hyperlink")
 
@@ -326,9 +325,9 @@ func TestAddAndDeleteEquipmentHyperlink(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, hyperlink.ID, deletedHyperlink.ID, "verifying return id of deleted hyperlink")
 
-	hyperlinks, err = er.Hyperlinks(ctx, equipment)
+	hyperlinks, err = equipment.QueryHyperlinks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, hyperlinks, 0, "verifying no hyperlinks remained")
+	require.Empty(t, hyperlinks, "verifying no hyperlinks remained")
 }
 
 func TestAddEquipmentWithoutLocation(t *testing.T) {
@@ -401,8 +400,8 @@ func TestRemoveEquipmentWithChildren(t *testing.T) {
 
 	for _, e := range []*ent.Equipment{equipment, childEquipment, grandChildEquipment} {
 		node, err := qr.Node(ctx, e.ID)
-		assert.True(t, ent.IsNotFound(err))
-		assert.Nil(t, node)
+		require.True(t, ent.IsNotFound(err))
+		require.Nil(t, node)
 	}
 	require.Zero(t, childEquipment.QueryPositions().CountX(ctx))
 }
@@ -443,8 +442,8 @@ func TestRemoveEquipment(t *testing.T) {
 
 	for _, id := range []int{equipment.ID, pid} {
 		n, err := qr.Node(ctx, id)
-		assert.Nil(t, n)
-		assert.True(t, ent.IsNotFound(err))
+		require.Nil(t, n)
+		require.True(t, ent.IsNotFound(err))
 	}
 }
 
@@ -504,7 +503,7 @@ func TestAttachEquipmentToPosition(t *testing.T) {
 	require.NoError(t, err)
 	fetchedParentEquipment, ok := fetchedParentNode.(*ent.Equipment)
 	require.True(t, ok)
-	assert.Equal(t, fetchedParentEquipment.QueryPositions().CountX(ctx), 3)
+	require.Equal(t, fetchedParentEquipment.QueryPositions().CountX(ctx), 3)
 
 	fetchedPosition := parentEquipment.QueryPositions().Where(equipmentposition.HasDefinitionWith(equipmentpositiondefinition.Name("Position 3"))).OnlyX(ctx)
 	require.NotNil(t, fetchedPosition)
@@ -592,12 +591,12 @@ func TestDetachEquipmentFromPosition(t *testing.T) {
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type_name_1",
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name_1",
 		Type: locationType.ID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	position1 := models.EquipmentPositionInput{
 		Name: "Position 1",
@@ -606,18 +605,18 @@ func TestDetachEquipmentFromPosition(t *testing.T) {
 		Name:      "parent_equipment_type",
 		Positions: []*models.EquipmentPositionInput{&position1},
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	parentEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:     "parent_equipment",
 		Type:     parentEquipmentType.ID,
 		Location: &location.ID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	childEquipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "child_equipment_type",
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
@@ -654,8 +653,8 @@ func TestDetachEquipmentFromPosition(t *testing.T) {
 	//
 	// Verify child equipment is not attached to any position
 	node, err := qr.Node(ctx, childEquipment.ID)
-	assert.True(t, ent.IsNotFound(err))
-	assert.Nil(t, node)
+	require.True(t, ent.IsNotFound(err))
+	require.Nil(t, node)
 
 	// Detach nil equipment from position
 	_, err = mr.RemoveEquipmentFromPosition(ctx, fetchedPosition.ID, nil)
@@ -679,18 +678,18 @@ func TestDetachEquipmentFromPositionWithWorkOrder(t *testing.T) {
 		Name:      "parent_equipment_type",
 		Positions: []*models.EquipmentPositionInput{&position1},
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	parentEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:     "parent_equipment",
 		Type:     parentEquipmentType.ID,
 		Location: &location.ID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	childEquipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "child_equipment_type",
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
@@ -698,16 +697,16 @@ func TestDetachEquipmentFromPositionWithWorkOrder(t *testing.T) {
 		Parent:             &parentEquipment.ID,
 		PositionDefinition: &posDefID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	fetchedParentNode, err := qr.Node(ctx, parentEquipment.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedParentEquipment, ok := fetchedParentNode.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPosition := fetchedParentEquipment.QueryPositions().OnlyX(ctx)
 
-	assert.Equal(t, childEquipment.QueryParentPosition().OnlyIDX(ctx), fetchedPosition.ID)
-	assert.Equal(t, fetchedPosition.QueryAttachment().OnlyIDX(ctx), childEquipment.ID)
+	require.Equal(t, childEquipment.QueryParentPosition().OnlyIDX(ctx), fetchedPosition.ID)
+	require.Equal(t, fetchedPosition.QueryAttachment().OnlyIDX(ctx), childEquipment.ID)
 
 	// Detach equipment
 	_, err = mr.RemoveEquipmentFromPosition(ctx, fetchedPosition.ID, &workOrder.ID)
@@ -720,15 +719,15 @@ func TestDetachEquipmentFromPositionWithWorkOrder(t *testing.T) {
 
 	removedEquipment, err := wor.EquipmentToRemove(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Len(t, removedEquipment, 1)
+	require.Len(t, removedEquipment, 1)
 
 	installedEquipment, err := wor.EquipmentToAdd(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Len(t, installedEquipment, 0)
+	require.Len(t, installedEquipment, 0)
 
 	fetchedEquipment := removedEquipment[0]
-	assert.Equal(t, childEquipment.ID, fetchedEquipment.ID)
-	assert.Equal(t, childEquipment.Name, fetchedEquipment.Name)
+	require.Equal(t, childEquipment.ID, fetchedEquipment.ID)
+	require.Equal(t, childEquipment.Name, fetchedEquipment.Name)
 }
 
 func TestAddDetachEquipmentFromPositionSameWorkOrder(t *testing.T) {
@@ -747,18 +746,18 @@ func TestAddDetachEquipmentFromPositionSameWorkOrder(t *testing.T) {
 		Name:      "parent_equipment_type",
 		Positions: []*models.EquipmentPositionInput{&position1},
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	parentEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:     "parent_equipment",
 		Type:     parentEquipmentType.ID,
 		Location: &location.ID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	posDefID := parentEquipmentType.QueryPositionDefinitions().OnlyIDX(ctx)
 	childEquipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "child_equipment_type",
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               childEquipmentType.ID,
@@ -766,16 +765,16 @@ func TestAddDetachEquipmentFromPositionSameWorkOrder(t *testing.T) {
 		PositionDefinition: &posDefID,
 		WorkOrder:          &workOrder.ID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	fetchedParentNode, err := qr.Node(ctx, parentEquipment.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedParentEquipment, ok := fetchedParentNode.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPosition := fetchedParentEquipment.QueryPositions().FirstX(ctx)
 
-	assert.Equal(t, childEquipment.QueryParentPosition().OnlyIDX(ctx), fetchedPosition.ID)
-	assert.Equal(t, fetchedPosition.QueryAttachment().OnlyIDX(ctx), childEquipment.ID)
+	require.Equal(t, childEquipment.QueryParentPosition().OnlyIDX(ctx), fetchedPosition.ID)
+	require.Equal(t, fetchedPosition.QueryAttachment().OnlyIDX(ctx), childEquipment.ID)
 
 	// Detach equipment
 	_, err = mr.RemoveEquipmentFromPosition(ctx, fetchedPosition.ID, &workOrder.ID)
@@ -788,16 +787,16 @@ func TestAddDetachEquipmentFromPositionSameWorkOrder(t *testing.T) {
 
 	removedEquipment, err := wor.EquipmentToRemove(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Empty(t, removedEquipment)
+	require.Empty(t, removedEquipment)
 
 	installedEquipment, err := wor.EquipmentToAdd(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Empty(t, installedEquipment)
+	require.Empty(t, installedEquipment)
 
 	// Verify child equipment is not attached to any position
 	node, err = qr.Node(ctx, childEquipment.ID)
-	assert.Nil(t, node)
-	assert.True(t, ent.IsNotFound(err))
+	require.Nil(t, node)
+	require.True(t, ent.IsNotFound(err))
 }
 
 func TestEquipmentPortsAreCreatedFromType(t *testing.T) {
@@ -846,17 +845,17 @@ func TestEquipmentPortsAreCreatedFromType(t *testing.T) {
 
 	fetchedPort := fetchedEquipment.QueryPorts().OnlyX(ctx)
 	def := fetchedPort.QueryDefinition().OnlyX(ctx)
-	assert.Equal(t, def.Name, portInput.Name)
-	assert.Equal(t, def.Index, index)
-	assert.Equal(t, def.VisibilityLabel, visibleLabel)
-	assert.Equal(t, def.Bandwidth, bandwidth)
+	require.Equal(t, def.Name, portInput.Name)
+	require.Equal(t, def.Index, index)
+	require.Equal(t, def.VisibilityLabel, visibleLabel)
+	require.Equal(t, def.Bandwidth, bandwidth)
 }
 
 func TestEquipmentParentLocation(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, er := r.Mutation(), r.Equipment()
+	mr := r.Mutation()
 
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type_name_1",
@@ -891,11 +890,13 @@ func TestEquipmentParentLocation(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	parentEqLocation, _ := er.ParentLocation(ctx, parentEquipment)
-	assert.Equal(t, parentEqLocation.ID, location.ID)
+	parentEqLocation, err := parentEquipment.QueryLocation().Only(ctx)
+	require.NoError(t, err)
+	require.Equal(t, parentEqLocation.ID, location.ID)
 
-	childEqLocation, _ := er.ParentLocation(ctx, childEquipment)
-	assert.Nil(t, childEqLocation)
+	childEqLocation, err := childEquipment.Location(ctx)
+	require.NoError(t, err)
+	require.Nil(t, childEqLocation)
 }
 
 func TestEquipmentParentEquipment(t *testing.T) {
@@ -941,14 +942,14 @@ func TestEquipmentParentEquipment(t *testing.T) {
 		PositionDefinition: &posDefID,
 	})
 
-	parentEqPosition, _ := er.ParentPosition(ctx, parentEquipment)
-	assert.Nil(t, parentEqPosition)
+	parentEqPosition, _ := parentEquipment.QueryParentPosition().Only(ctx)
+	require.Nil(t, parentEqPosition)
 
-	childEqPosition, _ := er.ParentPosition(ctx, childEquipment)
-	assert.Equal(t, parentEquipment.ID, childEqPosition.QueryParent().OnlyIDX(ctx))
+	childEqPosition := childEquipment.QueryParentPosition().OnlyX(ctx)
+	require.Equal(t, parentEquipment.ID, childEqPosition.QueryParent().OnlyIDX(ctx))
 
-	descendantEqPosition, _ := er.ParentPosition(ctx, descendantEquipment)
-	assert.Equal(t, childEquipment.ID, descendantEqPosition.QueryParent().OnlyIDX(ctx))
+	descendantEqPosition := descendantEquipment.QueryParentPosition().OnlyX(ctx)
+	require.Equal(t, childEquipment.ID, descendantEqPosition.QueryParent().OnlyIDX(ctx))
 
 	pDescendants, err := er.DescendentsIncludingSelf(ctx, parentEquipment)
 	require.NoError(t, err)
@@ -1121,7 +1122,7 @@ func TestAddLinkToNewlyAddedPortDefinition(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr := r.Mutation(), r.Query(), r.EquipmentPort()
+	mr, qr := r.Mutation(), r.Query()
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type_name_1",
 	})
@@ -1211,7 +1212,7 @@ func TestAddLinkToNewlyAddedPortDefinition(t *testing.T) {
 			{Equipment: equipmentZ.ID, Port: oldPZ.QueryDefinition().OnlyIDX(ctx)},
 		},
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	fetchedNodeA, err := qr.Node(ctx, equipmentA.ID)
 	require.NoError(t, err)
@@ -1224,14 +1225,13 @@ func TestAddLinkToNewlyAddedPortDefinition(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.Name("Port - new"))).OnlyX(ctx)
 	fetchedPortZ := fetchedEquipmentZ.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.Name("Port 1 - edited"))).OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortZ.QueryParent().OnlyIDX(ctx), equipmentZ.ID)
+	require.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	require.Equal(t, fetchedPortZ.QueryParent().OnlyIDX(ctx), equipmentZ.ID)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkZ, _ := pr.Link(ctx, fetchedPortZ)
-
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkZ.ID, createdLink.ID)
+	linkA := fetchedPortA.QueryLink().OnlyX(ctx)
+	linkZ := fetchedPortZ.QueryLink().OnlyX(ctx)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkZ.ID, createdLink.ID)
 }
 
 func TestAddEquipmentTypeWithPortConnections(t *testing.T) {
@@ -1261,11 +1261,11 @@ func TestAddEquipmentTypeWithPortConnections(t *testing.T) {
 	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, definitions)
-	assert.Equal(t, 2, len(definitions))
-	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
-	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
-	assert.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
-	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, 2, len(definitions))
+	require.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	require.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	require.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
 }
 
 func TestAddEquipmentTypeWithMultiplePortConnections(t *testing.T) {
@@ -1313,14 +1313,14 @@ func TestAddEquipmentTypeWithMultiplePortConnections(t *testing.T) {
 	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, definitions)
-	assert.Equal(t, 3, len(definitions))
-	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
-	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
-	assert.Equal(t, 2, len(definitions[2].Edges.ConnectedPorts))
-	assert.Equal(t, portName3, definitions[0].Edges.ConnectedPorts[0].Name)
-	assert.Equal(t, portName3, definitions[1].Edges.ConnectedPorts[0].Name)
-	assert.Equal(t, portName1, definitions[2].Edges.ConnectedPorts[0].Name)
-	assert.Equal(t, portName2, definitions[2].Edges.ConnectedPorts[1].Name)
+	require.Equal(t, 3, len(definitions))
+	require.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	require.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	require.Equal(t, 2, len(definitions[2].Edges.ConnectedPorts))
+	require.Equal(t, portName3, definitions[0].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, portName3, definitions[1].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, portName1, definitions[2].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, portName2, definitions[2].Edges.ConnectedPorts[1].Name)
 }
 
 func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
@@ -1350,11 +1350,11 @@ func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
 	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, definitions)
-	assert.Equal(t, 2, len(definitions))
-	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
-	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
-	assert.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
-	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, 2, len(definitions))
+	require.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	require.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	require.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
+	require.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
 
 	editedEquipmentType, err := mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:   createdEquipment.ID,
@@ -1377,7 +1377,7 @@ func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
 	definitions, err = editedEquipmentType.QueryPortDefinitions().WithConnectedPorts().All(ctx)
 	require.NoError(t, err)
 	require.NotNil(t, definitions)
-	assert.Equal(t, 2, len(definitions))
-	assert.Equal(t, 0, len(definitions[0].Edges.ConnectedPorts))
-	assert.Equal(t, 0, len(definitions[1].Edges.ConnectedPorts))
+	require.Equal(t, 2, len(definitions))
+	require.Equal(t, 0, len(definitions[0].Edges.ConnectedPorts))
+	require.Equal(t, 0, len(definitions[1].Edges.ConnectedPorts))
 }

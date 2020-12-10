@@ -22,7 +22,6 @@ import (
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -62,7 +61,7 @@ func TestAddServiceWithProperties(t *testing.T) {
 
 	fetchedProperty, err := svc.QueryProperties().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, pointer.GetString(fetchedProperty.StringVal), serviceStrValue)
+	require.Equal(t, pointer.GetString(fetchedProperty.StringVal), serviceStrValue)
 }
 
 func TestAddServiceWithExternalIdUnique(t *testing.T) {
@@ -87,7 +86,7 @@ func TestAddServiceWithExternalIdUnique(t *testing.T) {
 		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
-	assert.Equal(t, *s1.ExternalID, externalID1)
+	require.Equal(t, *s1.ExternalID, externalID1)
 
 	_, err = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Kent building, room 202",
@@ -104,7 +103,7 @@ func TestAddServiceWithExternalIdUnique(t *testing.T) {
 		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
-	assert.Equal(t, *s2.ExternalID, externalID2)
+	require.Equal(t, *s2.ExternalID, externalID2)
 }
 
 func TestAddServiceWithCustomer(t *testing.T) {
@@ -138,8 +137,8 @@ func TestAddServiceWithCustomer(t *testing.T) {
 
 	customer = fetchedService.QueryCustomer().OnlyX(ctx)
 
-	assert.Equal(t, customer.Name, "Donald")
-	assert.Equal(t, *customer.ExternalID, customerID)
+	require.Equal(t, customer.Name, "Donald")
+	require.Equal(t, *customer.ExternalID, customerID)
 }
 
 func TestServiceTopologyReturnsCorrectLinksAndEquipment(t *testing.T) {
@@ -999,8 +998,8 @@ func TestAddRemoveServicePort(t *testing.T) {
 		Name: "service_type", HasCustomer: false})
 	require.NoError(t, err)
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "service",
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
+		Name:          "svc",
 		ServiceTypeID: serviceType.ID,
 		Status:        service.StatusPending,
 	})
@@ -1036,17 +1035,17 @@ func TestAddRemoveServicePort(t *testing.T) {
 	ep := eq.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.ID(defs[0].ID))).OnlyX(ctx)
 	require.NoError(t, err)
 
-	updatedService, err := mr.AddServicePort(ctx, service.ID, ep.ID)
+	updatedService, err := mr.AddServicePort(ctx, svc.ID, ep.ID)
 	require.NoError(t, err)
 
-	ports, _ := r.ResolverRoot.Service().Ports(ctx, updatedService)
-	assert.NotEmpty(t, ports)
+	ports := updatedService.QueryPorts().AllX(ctx)
+	require.NotEmpty(t, ports)
 
-	updatedService, err = mr.RemoveServicePort(ctx, service.ID, ep.ID)
+	updatedService, err = mr.RemoveServicePort(ctx, svc.ID, ep.ID)
 	require.NoError(t, err)
 
-	ports, _ = r.ResolverRoot.Service().Ports(ctx, updatedService)
-	assert.Empty(t, ports)
+	ports = updatedService.QueryPorts().AllX(ctx)
+	require.Empty(t, ports)
 }
 
 func TestAddBulkServiceLinksAndPorts(t *testing.T) {
@@ -1142,13 +1141,12 @@ func TestAddBulkServiceLinksAndPorts(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	links, _ := r.ResolverRoot.Service().Links(ctx, updatedService)
-	assert.NotEmpty(t, links)
-	assert.Equal(t, 2, len(links))
+	links := updatedService.QueryLinks().AllX(ctx)
+	require.NotEmpty(t, links)
+	require.Equal(t, 2, len(links))
 
-	ports, _ := r.ResolverRoot.Service().Ports(ctx, updatedService)
-	assert.NotEmpty(t, ports)
-	assert.Equal(t, 2, len(ports))
+	ports := updatedService.QueryPorts().AllX(ctx)
+	require.Len(t, ports, 2)
 }
 
 func TestAddBulkServicePortsInvalidLinksAndPorts(t *testing.T) {
@@ -1161,8 +1159,8 @@ func TestAddBulkServicePortsInvalidLinksAndPorts(t *testing.T) {
 		Name: "service_type", HasCustomer: false})
 	require.NoError(t, err)
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "service",
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
+		Name:          "svc",
 		ServiceTypeID: serviceType.ID,
 		Status:        service.StatusPending,
 	})
@@ -1194,9 +1192,9 @@ func TestAddBulkServicePortsInvalidLinksAndPorts(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = mr.AddBulkServiceLinksAndPorts(ctx, &models.AddBulkServiceLinksAndPortsInput{
-		ID:      service.ID,
+		ID:      svc.ID,
 		PortIds: []int{0, 1, 2, 3, 4, 5},
 		LinkIds: []int{0, 1, 2, 3, 4, 5}},
 	)
-	assert.Error(t, err)
+	require.Error(t, err)
 }

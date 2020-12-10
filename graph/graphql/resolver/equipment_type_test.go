@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,7 +30,7 @@ func TestAddEquipmentTypesSameName(t *testing.T) {
 		Name: "example_type_name",
 	})
 	require.NoError(t, err)
-	assert.Equal(t, "example_type_name", equipmentType.Name)
+	require.Equal(t, "example_type_name", equipmentType.Name)
 	_, err = mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "example_type_name",
 	})
@@ -66,9 +65,9 @@ func TestQueryEquipmentTypes(t *testing.T) {
 		require.Equal(t, "example_type", category.Name)
 	}
 	require.Len(t, categories, 2)
-	assert.Equal(t, categories[0].ID, categories[1].ID)
+	require.Equal(t, categories[0].ID, categories[1].ID)
 	sort.Strings(names)
-	assert.Equal(t, names, []string{"example_type_a", "example_type_b"})
+	require.Equal(t, names, []string{"example_type_a", "example_type_b"})
 }
 
 func TestAddEquipmentTypeWithPositions(t *testing.T) {
@@ -99,7 +98,7 @@ func TestAddEquipmentTypeWithProperties(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, qr, etr := r.Mutation(), r.Query(), r.EquipmentType()
+	mr, qr := r.Mutation(), r.Query()
 	extID := "12345"
 	ptype := pkgmodels.PropertyTypeInput{
 		Name:        "str_prop",
@@ -118,12 +117,12 @@ func TestAddEquipmentTypeWithProperties(t *testing.T) {
 	require.NoError(t, err)
 	fetchedEquipmentType, ok := fetchedNode.(*ent.EquipmentType)
 	require.True(t, ok)
-	fetchedPropertyTypes, _ := etr.PropertyTypes(ctx, fetchedEquipmentType)
+	fetchedPropertyTypes := fetchedEquipmentType.QueryPropertyTypes().AllX(ctx)
 	require.Len(t, fetchedPropertyTypes, 1)
-	assert.Equal(t, fetchedPropertyTypes[0].Name, "str_prop")
-	assert.Equal(t, fetchedPropertyTypes[0].Type, propertytype.TypeString)
-	assert.Equal(t, fetchedPropertyTypes[0].Index, 5)
-	assert.Equal(t, fetchedPropertyTypes[0].ExternalID, extID)
+	require.Equal(t, fetchedPropertyTypes[0].Name, "str_prop")
+	require.Equal(t, fetchedPropertyTypes[0].Type, propertytype.TypeString)
+	require.Equal(t, fetchedPropertyTypes[0].Index, 5)
+	require.Equal(t, fetchedPropertyTypes[0].ExternalID, extID)
 }
 
 func TestAddEquipmentTypeWithoutPositionNames(t *testing.T) {
@@ -138,7 +137,7 @@ func TestAddEquipmentTypeWithoutPositionNames(t *testing.T) {
 	require.NoError(t, err)
 	positions, err := equipmentType.QueryPositionDefinitions().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, positions, 0)
+	require.Len(t, positions, 0)
 }
 
 func TestAddEquipmentTypeWithPorts(t *testing.T) {
@@ -167,9 +166,9 @@ func TestAddEquipmentTypeWithPorts(t *testing.T) {
 	ports := fetchedEquipmentType.QueryPortDefinitions().AllX(ctx)
 	require.Len(t, ports, 1)
 
-	assert.Equal(t, ports[0].Name, "Port 1")
-	assert.Equal(t, ports[0].VisibilityLabel, visibleLabel)
-	assert.Equal(t, ports[0].Bandwidth, bandwidth)
+	require.Equal(t, ports[0].Name, "Port 1")
+	require.Equal(t, ports[0].VisibilityLabel, visibleLabel)
+	require.Equal(t, ports[0].Bandwidth, bandwidth)
 }
 
 func TestRemoveEquipmentTypeWithExistingEquipments(t *testing.T) {
@@ -206,7 +205,7 @@ func TestRemoveEquipmentTypeWithExistingEquipments(t *testing.T) {
 	require.NoError(t, err)
 	fetchedEquipmentType, ok := fetchedNode.(*ent.EquipmentType)
 	require.True(t, ok)
-	assert.Equal(t, fetchedEquipmentType.ID, equipmentType.ID)
+	require.Equal(t, fetchedEquipmentType.ID, equipmentType.ID)
 }
 
 func TestRemoveEquipmentType(t *testing.T) {
@@ -241,9 +240,9 @@ func TestRemoveEquipmentType(t *testing.T) {
 	require.NoError(t, err)
 
 	deletedNode, err := qr.Node(ctx, equipmentType.ID)
-	assert.True(t, ent.IsNotFound(err))
-	assert.Nil(t, deletedNode)
-	assert.Zero(t, equipmentType.QueryPropertyTypes().CountX(ctx))
+	require.True(t, ent.IsNotFound(err))
+	require.Nil(t, deletedNode)
+	require.Zero(t, equipmentType.QueryPropertyTypes().CountX(ctx))
 }
 
 func TestEditEquipmentType(t *testing.T) {

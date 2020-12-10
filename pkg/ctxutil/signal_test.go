@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSignal(t *testing.T) {
@@ -37,8 +37,8 @@ func TestSignal(t *testing.T) {
 				signal(os.Interrupt)
 			},
 			expect: func(t *testing.T, ctx context.Context) {
-				assert.True(t, ctxdone(ctx))
-				assert.EqualError(t, ctx.Err(), ErrSignal{os.Interrupt}.Error())
+				require.True(t, ctxdone(ctx))
+				require.EqualError(t, ctx.Err(), ErrSignal{os.Interrupt}.Error())
 			},
 		},
 		{
@@ -47,16 +47,16 @@ func TestSignal(t *testing.T) {
 				cancel()
 			},
 			expect: func(t *testing.T, ctx context.Context) {
-				assert.True(t, ctxdone(ctx))
-				assert.EqualError(t, ctx.Err(), context.Canceled.Error())
+				require.True(t, ctxdone(ctx))
+				require.EqualError(t, ctx.Err(), context.Canceled.Error())
 			},
 		},
 		{
 			name:   "NoError",
 			notify: func(func(os.Signal), context.CancelFunc) {},
 			expect: func(t *testing.T, ctx context.Context) {
-				assert.False(t, ctxdone(ctx))
-				assert.NoError(t, ctx.Err())
+				require.False(t, ctxdone(ctx))
+				require.NoError(t, ctx.Err())
 			},
 		},
 		{
@@ -66,8 +66,8 @@ func TestSignal(t *testing.T) {
 				signal(syscall.SIGINT)
 			},
 			expect: func(t *testing.T, ctx context.Context) {
-				assert.False(t, ctxdone(ctx))
-				assert.NoError(t, ctx.Err())
+				require.False(t, ctxdone(ctx))
+				require.NoError(t, ctx.Err())
 			},
 		},
 	}

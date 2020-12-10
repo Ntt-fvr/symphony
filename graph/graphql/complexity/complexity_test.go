@@ -11,7 +11,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/complexity"
 	"github.com/scylladb/go-set/strset"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestComplexityRoot(t *testing.T) {
@@ -39,13 +39,13 @@ func TestComplexityRoot(t *testing.T) {
 				exempted.Remove(name)
 				continue
 			}
-			assert.Truef(t, trivial.AssignableTo(inner.Type()),
+			require.Truef(t, trivial.AssignableTo(inner.Type()),
 				`field %q has non trivial complexity func `+
 					"either define one or add it to exempted set", name,
 			)
 		}
 	}
-	assert.Truef(t, exempted.IsEmpty(),
+	require.Truef(t, exempted.IsEmpty(),
 		"exempted set contains unchecked items: %s", exempted,
 	)
 }
@@ -72,12 +72,12 @@ func TestQueryComplexity(t *testing.T) {
 			exempted.Remove(name)
 			continue
 		}
-		assert.Falsef(t, query.Field(i).IsNil(),
+		require.Falsef(t, query.Field(i).IsNil(),
 			"query field %q has no complexity func, "+
 				"either define one or add it to exempted set", name,
 		)
 	}
-	assert.Truef(t, exempted.IsEmpty(),
+	require.Truef(t, exempted.IsEmpty(),
 		"exempted set contains unchecked items: %s", exempted,
 	)
 }
@@ -120,7 +120,7 @@ func TestPaginationComplexity(t *testing.T) {
 			got := complexity.PaginationComplexity(
 				tc.childComplexity, nil, tc.first, nil, tc.last,
 			)
-			assert.Equal(t, tc.want, got)
+			require.Equal(t, tc.want, got)
 		})
 	}
 }
@@ -148,7 +148,7 @@ func TestSearchComplexity(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			got := complexity.SearchComplexity(tc.childComplexity, tc.limit)
-			assert.Equal(t, tc.want, got)
+			require.Equal(t, tc.want, got)
 		})
 	}
 }
