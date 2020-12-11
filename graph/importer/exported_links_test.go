@@ -60,7 +60,7 @@ func TestGeneralLinksEditImport(t *testing.T) {
 	childEquip := r.client.Equipment.GetX(ctx, ids.equipChildID)
 	etyp2 := childEquip.QueryType().OnlyX(ctx)
 	var (
-		row1 = []string{strconv.Itoa(ids.linkID), def1.Name, equip2.Name, etyp1.Name, locationL, locationM, locationS, "", "", "", "", "", "", def2.Name, childEquip.Name, etyp2.Name, locationL, locationM, locationS, "", "", "", "", parentEquip, posName, strings.Join([]string{svcName, svc2Name}, ";"), "44", "2019-01-01", "FALSE"}
+		row1 = []string{strconv.Itoa(ids.linkID), "", def1.Name, equip2.Name, etyp1.Name, locationL, locationM, locationS, "", "", "", "", "", "", def2.Name, childEquip.Name, etyp2.Name, locationL, locationM, locationS, "", "", "", "", parentEquip, posName, strings.Join([]string{svcName, svc2Name}, ";"), "44", "2019-01-01", "FALSE"}
 	)
 	firstPortHeader := append(append(fixedFirstPortLink, locTypeNameL, locTypeNameM, locTypeNameS), parentsAHeader...)
 	secondPortHeader := append(append(fixedSecondPortLink, locTypeNameL, locTypeNameM, locTypeNameS), parentsBHeader...)
@@ -127,7 +127,7 @@ func TestGeneralLinksAddImport(t *testing.T) {
 
 	equipParent2 := r.client.Equipment.GetX(ctx, ids.equipParent2ID)
 	var (
-		row1 = []string{"", def1.Name, equipParent.Name, etyp1.Name, locationL, locationM, locationS, "", "", "", "", "", "", def2.Name, childEquip.Name, etyp2.Name, locationL, locationM, locationS, "", "", "", "", parentEquip2, posName, "", "44", "2019-01-01", "FALSE"}
+		row1 = []string{"", "", def1.Name, equipParent.Name, etyp1.Name, locationL, locationM, locationS, "", "", "", "", "", "", def2.Name, childEquip.Name, etyp2.Name, locationL, locationM, locationS, "", "", "", "", parentEquip2, posName, "", "44", "2019-01-01", "FALSE"}
 	)
 	firstPortHeader := append(append(fixedFirstPortLink, locTypeNameL, locTypeNameM, locTypeNameS), parentsAHeader...)
 	secondPortHeader := append(append(fixedSecondPortLink, locTypeNameL, locTypeNameM, locTypeNameS), parentsBHeader...)
@@ -142,7 +142,7 @@ func TestGeneralLinksAddImport(t *testing.T) {
 	pr1, pr2, err := importer.getTwoPortRecords(r1)
 	require.NoError(t, err)
 	// port1 test
-	require.Equal(t, row1[1:13], pr1.line)
+	require.Equal(t, row1[2:14], pr1.line)
 	parentLoc, err := importer.verifyOrCreateLocationHierarchy(ctx, *pr1, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, locationS, parentLoc.Name)
@@ -150,7 +150,7 @@ func TestGeneralLinksAddImport(t *testing.T) {
 	require.NoError(t, err)
 	require.Nil(t, eqID)
 	require.Nil(t, defID)
-	eq, created, err := importer.getOrCreateEquipment(ctx, importer.r.Mutation(), pr1.PortEquipmentName(), etyp1, nil, parentLoc, nil, nil)
+	eq, created, err := importer.getOrCreateEquipment(ctx, importer.r.Mutation(), pr1.PortEquipmentName(), etyp1, nil, parentLoc, nil, nil, nil)
 	require.NoError(t, err)
 	require.False(t, created)
 	require.Equal(t, equipParent.ID, eq.ID)
@@ -162,7 +162,7 @@ func TestGeneralLinksAddImport(t *testing.T) {
 	require.Len(t, propertyInputs, 1)
 	require.Equal(t, *propertyInputs[0].IntValue, 44)
 	// port2 test
-	require.Equal(t, row1[13:25], pr2.line)
+	require.Equal(t, row1[14:26], pr2.line)
 	parentLoc, err = importer.verifyOrCreateLocationHierarchy(ctx, *pr2, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, locationS, parentLoc.Name)
@@ -172,7 +172,7 @@ func TestGeneralLinksAddImport(t *testing.T) {
 	require.Equal(t, posDef.ID, *defID)
 	pos, err := resolverutil.GetOrCreatePosition(ctx, importer.ClientFrom(ctx), eqID, defID, false)
 	require.NoError(t, err)
-	eq, created, err = importer.getOrCreateEquipment(ctx, importer.r.Mutation(), pr2.PortEquipmentName(), etyp2, nil, nil, pos, nil)
+	eq, created, err = importer.getOrCreateEquipment(ctx, importer.r.Mutation(), pr2.PortEquipmentName(), etyp2, nil, nil, pos, nil, nil)
 	require.NoError(t, err)
 	require.False(t, created)
 	require.Equal(t, ids.equipChild2ID, eq.ID)

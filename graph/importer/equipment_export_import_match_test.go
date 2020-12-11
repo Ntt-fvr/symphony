@@ -59,10 +59,10 @@ func writeExportModifiedCSV(t *testing.T, r *csv.Reader, method pkgexporter.Meth
 			case methodEdit:
 				newLine = line
 				if line[1] == currEquip {
-					newLine[13] = "str-prop-value" + strconv.FormatInt(int64(i), 10)
+					newLine[14] = "str-prop-value" + strconv.FormatInt(int64(i), 10)
 					newLine[1] = "newName" + strconv.FormatInt(int64(i), 10)
-					newLine[14] = "10" + strconv.FormatInt(int64(i), 10)
-					newLine[15] = "new-prop-value" + strconv.FormatInt(int64(i), 10)
+					newLine[15] = "10" + strconv.FormatInt(int64(i), 10)
+					newLine[16] = "new-prop-value" + strconv.FormatInt(int64(i), 10)
 				}
 			default:
 				require.Fail(t, "method should be add or edit")

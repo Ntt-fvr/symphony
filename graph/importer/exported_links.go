@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
@@ -23,7 +25,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var fixedFirstPortLink = []string{"Link ID", "Port A Name", "Equipment A Name", "Equipment A Type"}
+var fixedFirstPortLink = []string{"Link ID", "Work Order", "Port A Name", "Equipment A Name", "Equipment A Type"}
 var fixedSecondPortLink = []string{"Port B Name", "Equipment B Name", "Equipment B Type"}
 
 func minimalLinksLineLength() int {
@@ -123,6 +125,16 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 					continue
 				}
 				id := importLine.ID()
+				client := m.ClientFrom(ctx)
+				workOrderName := importLine.WorkOrderName()
+				var workOrderItem *ent.WorkOrder
+				if workOrderName != "" {
+					workOrderItem, err = client.WorkOrder.Query().Where(workorder.Name(workOrderName)).Only(ctx)
+					if err != nil {
+						errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: fmt.Sprintf("couldn't find work order %q", workOrderName)})
+						continue
+					}
+				}
 				if id == 0 {
 					client := m.ClientFrom(ctx)
 					var linkPropertyInputs []*models.PropertyInput
@@ -153,6 +165,10 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 						continue
 					}
 					if commit {
+						var workOrderId *int
+						if workOrderItem != nil {
+							workOrderId = &workOrderItem.ID
+						}
 						_, err = m.r.Mutation().AddLink(ctx, models.AddLinkInput{
 							Sides: []*models.LinkSide{
 								linkInput[0],
@@ -160,6 +176,7 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 							},
 							Properties: linkPropertyInputs,
 							ServiceIds: serviceIds,
+							WorkOrder:  workOrderId,
 						})
 						if err != nil {
 							errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: "creating/fetching link"})
@@ -180,7 +197,6 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 						errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: "validating services where the link is a part of them: id %v"})
 						continue
 					}
-
 					allPropInputs, msg, err := m.getLinkPropertyInputs(ctx, importLine, importHeader, l)
 					if err != nil {
 						errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: msg})
@@ -288,7 +304,7 @@ func (m *importer) getLinkSide(ctx context.Context, client *ent.Client, portReco
 	}
 	var equipment *ent.Equipment
 	if commit {
-		equipment, _, err = m.getOrCreateEquipment(ctx, m.r.Mutation(), en, equipmentType, nil, parentLoc, pos, nil)
+		equipment, _, err = m.getOrCreateEquipment(ctx, m.r.Mutation(), en, equipmentType, nil, parentLoc, pos, nil, nil)
 	} else {
 		equipment, err = m.getEquipmentIfExist(ctx, en, equipmentType, parentLoc, pos)
 		if equipment == nil && err == nil {
@@ -448,7 +464,7 @@ func (m *importer) inputValidationsLinks(ctx context.Context, importHeader Impor
 	if err != nil {
 		return err
 	}
-	if !equal(ha.line[ha.prnt3Idx:importHeader.LinkSecondPortStartIdx()-1], []string{"Parent Equipment (3) A", "Position (3) A", "Parent Equipment (2) A", "Position (2) A", "Parent Equipment A", "Equipment Position A"}) {
+	if !equal(ha.line[ha.prnt3Idx:importHeader.LinkSecondPortStartIdx()-2], []string{"Parent Equipment (3) A", "Position (3) A", "Parent Equipment (2) A", "Position (2) A", "Parent Equipment A", "Equipment Position A"}) {
 		return errors.New("First port on first line misses sequence: 'Parent Equipment (3) A', 'Position (3) A', 'Parent Equipment (2) A', 'Position (2) A', 'Parent Equipment A' or 'Equipment Position A'")
 	}
 	if !equal(hb.line[hb.prnt3Idx:], []string{"Parent Equipment (3) B", "Position (3) B", "Parent Equipment (2) B", "Position (2) B", "Parent Equipment B", "Equipment Position B"}) {

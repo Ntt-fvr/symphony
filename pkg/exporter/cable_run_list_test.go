@@ -94,6 +94,13 @@ func prepareCRLData(ctx context.Context, t *testing.T) woTestType {
 		SaveX(ctx)
 
 	client.PropertyType.Create().
+		SetName(propNameInt).
+		SetType(propertytype.TypeInt).
+		SetLinkEquipmentPortType(ptyp).
+		SetIntVal(100).
+		SaveX(ctx)
+
+	client.PropertyType.Create().
 		SetName(propStr).
 		SetType(propertytype.TypeString).
 		SetEquipmentPortType(ptyp).
@@ -159,10 +166,18 @@ func prepareCRLData(ctx context.Context, t *testing.T) woTestType {
 		AddPorts(ep2, ep4).
 		SaveX(ctx)
 
-	client.Link.Create().
+	l1 := client.Link.Create().
 		SetWorkOrder(wo1).
 		SetFutureState(enum.FutureStateInstall).
 		AddPorts(ep3, ep4).
+		SaveX(ctx)
+
+	propType2 := ptyp.QueryLinkPropertyTypes().FirstX(ctx)
+
+	client.Property.Create().
+		SetTypeID(propType2.ID).
+		SetIntVal(200).
+		SetLink(l1).
 		SaveX(ctx)
 	return woTestType{
 		wo1,
@@ -171,7 +186,6 @@ func prepareCRLData(ctx context.Context, t *testing.T) woTestType {
 }
 
 func TestGenerateEmptyCRLRows(t *testing.T) {
-
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
 	woTestType := prepareCRLData(ctx, t)
@@ -181,6 +195,7 @@ func TestGenerateEmptyCRLRows(t *testing.T) {
 
 	for _, ln := range rows {
 		require.EqualValues(t, []string{
+
 			"Link State",
 			"Equipment Name A",
 			"Port Name A",
@@ -202,9 +217,10 @@ func TestCRLExport(t *testing.T) {
 
 	for _, ln := range rows {
 		switch {
-		case ln[1] == "Equipment Name A":
+		case ln[2] == "Equipment Name A":
 			require.EqualValues(t, []string{
 				"Link State",
+				propNameInt,
 				"Equipment Name A",
 				"Port Name A",
 				"Port Type A",
@@ -216,9 +232,10 @@ func TestCRLExport(t *testing.T) {
 				propStr,
 				propStr2,
 			}, ln)
-		case ln[2] == portName1:
+		case ln[3] == portName1:
 			require.EqualValues(t, ln, []string{
 				string(enum.FutureStateInstall),
+				"100",
 				parentEquip,
 				portName1,
 				"portType1",
@@ -230,9 +247,10 @@ func TestCRLExport(t *testing.T) {
 				"t1",
 				"t2",
 			})
-		case ln[2] == portName3:
+		case ln[3] == portName3:
 			require.EqualValues(t, ln, []string{
 				string(enum.FutureStateInstall),
+				"200",
 				parentEquip,
 				portName3,
 				"portType1",

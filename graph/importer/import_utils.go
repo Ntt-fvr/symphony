@@ -164,7 +164,7 @@ func (m *importer) getEquipmentIfExist(
 func (m *importer) getOrCreateEquipment(
 	ctx context.Context, mr generated.MutationResolver, name string,
 	equipType *ent.EquipmentType, externalID *string, loc *ent.Location,
-	position *ent.EquipmentPosition, props []*models.PropertyInput,
+	position *ent.EquipmentPosition, props []*models.PropertyInput, workOrder *ent.WorkOrder,
 ) (*ent.Equipment, bool, error) {
 	log := m.logger.For(ctx)
 	eq, err := m.getEquipmentIfExist(ctx, name, equipType, loc, position)
@@ -175,6 +175,11 @@ func (m *importer) getOrCreateEquipment(
 	var locID *int
 	if loc != nil {
 		locID = &loc.ID
+	}
+
+	var workOrderID *int
+	if workOrder != nil {
+		workOrderID = &workOrder.ID
 	}
 
 	var parentEquipmentID, positionDefinitionID *int
@@ -192,6 +197,7 @@ func (m *importer) getOrCreateEquipment(
 		PositionDefinition: positionDefinitionID,
 		Properties:         props,
 		ExternalID:         externalID,
+		WorkOrder:          workOrderID,
 	})
 	if err != nil {
 		log.Error("add equipment", zap.String("name", name), zap.Error(err))

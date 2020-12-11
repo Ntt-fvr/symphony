@@ -29,6 +29,7 @@ func generateCRLRows(ctx context.Context, logger *zap.Logger, workOrder *ent.Wor
 		headerB            = []string{"Equipment Name B", "Port Name B", "Port Type B"}
 		portAPropertyTypes []string
 		portBPropertyTypes []string
+		linkPropertyTypes  []string
 	)
 	client := ent.FromContext(ctx)
 	links, err := client.Link.Query().
@@ -68,19 +69,34 @@ func generateCRLRows(ctx context.Context, logger *zap.Logger, workOrder *ent.Wor
 		}
 		return nil
 	})
+	cg.Go(func(ctx context.Context) (err error) {
+		linkIds := make([]int, len(links))
+		for i, linkItem := range links {
+			linkIds[i] = linkItem.ID
+		}
+		linkPropertyTypes, err = PropertyTypesSlice(ctx, linkIds, client, enum.PropertyEntityLink)
+		if err != nil {
+			logger.Error("cannot query property types", zap.Error(err))
+			return errors.Wrap(err, "cannot query property types")
+		}
+
+		return nil
+	})
 	if err := cg.Wait(); err != nil {
 		return nil, err
 	}
 	headerA = append(headerA, portAPropertyTypes...)
 	headerB = append(headerB, portBPropertyTypes...)
 	allrows := make([][]string, len(links)+1)
-	allrows[0] = headerA
+	allrows[0] = []string{headerA[0]}
+	allrows[0] = append(allrows[0], linkPropertyTypes...)
+	allrows[0] = append(allrows[0], headerA[1:]...)
 	allrows[0] = append(allrows[0], headerB...)
 	cg = ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
 	for i, value := range links {
 		value, i := value, i
 		cg.Go(func(ctx context.Context) error {
-			row, err := linkToCRLSlice(ctx, value, portAPropertyTypes, portBPropertyTypes)
+			row, err := linkToCRLSlice(ctx, value, linkPropertyTypes, portAPropertyTypes, portBPropertyTypes)
 			if err != nil {
 				return err
 			}
@@ -95,10 +111,11 @@ func generateCRLRows(ctx context.Context, logger *zap.Logger, workOrder *ent.Wor
 	return allrows, nil
 }
 
-func linkToCRLSlice(ctx context.Context, link *ent.Link, portAPropertyTypes, portBPropertyTypes []string) ([]string, error) {
+func linkToCRLSlice(ctx context.Context, link *ent.Link, linkPropertyTypes, portAPropertyTypes, portBPropertyTypes []string) ([]string, error) {
 	var (
 		portAPropertyValues []string
 		portBPropertyValues []string
+		linkPropertyValues  []string
 		portAName           string
 		portBName           string
 		portAType           string
@@ -127,6 +144,10 @@ func linkToCRLSlice(ctx context.Context, link *ent.Link, portAPropertyTypes, por
 		portBPropertyValues, err = PropertiesSlice(ctx, portB, portBPropertyTypes, enum.PropertyEntityPort)
 		return err
 	})
+	cg.Go(func(ctx context.Context) error {
+		linkPropertyValues, err = PropertiesSlice(ctx, link, linkPropertyTypes, enum.PropertyEntityLink)
+		return err
+	})
 	if err := cg.Wait(); err != nil {
 		return nil, err
 	}
@@ -145,7 +166,9 @@ func linkToCRLSlice(ctx context.Context, link *ent.Link, portAPropertyTypes, por
 	if link.FutureState != nil {
 		futureState = string(*link.FutureState)
 	}
-	row := []string{futureState, portA.Edges.Parent.Name, portAName, portAType}
+	row := []string{futureState}
+	row = append(row, linkPropertyValues...)
+	row = append(row, portA.Edges.Parent.Name, portAName, portAType)
 	row = append(row, portAPropertyValues...)
 	row = append(row, portB.Edges.Parent.Name, portBName, portBType)
 	row = append(row, portBPropertyValues...)

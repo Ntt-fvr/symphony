@@ -45,7 +45,7 @@ func (er EquipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 		logger          = er.Log.For(ctx)
 		err             error
 		filterInput     []*models.EquipmentFilterInput
-		equipDataHeader = [...]string{bom + "Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{bom + "Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
 	)
 	if filtersParam != "" {
@@ -149,6 +149,7 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 	var (
 		lParents, properties []string
 		eParents             = make([]string, MaxEquipmentParents*2)
+		workOrderName        string
 	)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(ctx context.Context) (err error) {
@@ -170,6 +171,16 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 		}
 		return
 	})
+	g.Go(func(ctx context.Context) error {
+		currentWorkOrder, err := equipment.QueryWorkOrder().Only(ctx)
+		if err != nil && !ent.IsNotFound(err) {
+			return err
+		}
+		if currentWorkOrder != nil {
+			workOrderName = currentWorkOrder.Name
+		}
+		return nil
+	})
 	if err := g.Wait(); err != nil {
 		return nil, err
 	}
@@ -178,7 +189,7 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 		return nil, err
 	}
 
-	row := []string{strconv.Itoa(equipment.ID), equipment.Name, equipmentType.Name, equipment.ExternalID}
+	row := []string{strconv.Itoa(equipment.ID), equipment.Name, equipmentType.Name, equipment.ExternalID, workOrderName}
 	row = append(row, lParents...)
 	row = append(row, eParents...)
 	row = append(row, properties...)

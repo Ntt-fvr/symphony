@@ -41,7 +41,7 @@ func (er LinksRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 		logger          = er.Log.For(ctx)
 		err             error
 		filterInput     []*models.LinkFilterInput
-		portADataHeader = [...]string{bom + "Link ID", "Port A Name", "Equipment A Name", "Equipment A Type"}
+		portADataHeader = [...]string{bom + "Link ID", "Work Order", "Port A Name", "Equipment A Name", "Equipment A Type"}
 		portBDataHeader = [...]string{"Port B Name", "Equipment B Name", "Equipment B Type"}
 		parentsAHeader  = [...]string{"Parent Equipment (3) A", "Position (3) A", "Parent Equipment (2) A", "Position (2) A", "Parent Equipment A", "Equipment Position A"}
 		parentsBHeader  = [...]string{"Parent Equipment (3) B", "Position (3) B", "Parent Equipment (2) B", "Position (2) B", "Parent Equipment B", "Equipment Position B"}
@@ -121,10 +121,18 @@ func (er LinksRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 
 func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocTypes []string) ([]string, error) {
 	var (
-		portData     = make(map[int][]string, 2)
-		locationData = make(map[int][]string, 2)
-		positionData = make(map[int][]string, 2)
+		portData      = make(map[int][]string, 2)
+		locationData  = make(map[int][]string, 2)
+		positionData  = make(map[int][]string, 2)
+		workOrderName string
 	)
+	currentWorkOrder, err := link.QueryWorkOrder().Only(ctx)
+	if err != nil && !ent.IsNotFound(err) {
+		return nil, err
+	}
+	if currentWorkOrder != nil {
+		workOrderName = currentWorkOrder.Name
+	}
 	ports, err := link.QueryPorts().All(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "querying link for ports (id=%d)", link.ID)
@@ -183,7 +191,7 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 	servicesStr := strings.Join(servicesList, ";")
 
 	// Build the slice
-	row := []string{strconv.Itoa(link.ID)}
+	row := []string{strconv.Itoa(link.ID), workOrderName}
 	for i := 0; i < 2; i++ {
 		row = append(row, portData[i]...)
 		row = append(row, locationData[i]...)
