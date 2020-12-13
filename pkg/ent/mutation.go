@@ -28922,41 +28922,35 @@ func (m *PermissionsPolicyMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ProjectMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	create_time         *time.Time
-	update_time         *time.Time
-	name                *string
-	description         *string
-	project_creator     *int
-	addproject_creator  *int
-	project_location    *int
-	addproject_location *int
-	project_template    *int
-	addproject_template *int
-	priority            *project.Priority
-	clearedFields       map[string]struct{}
-	_type               *int
-	cleared_type        bool
-	template            *int
-	clearedtemplate     bool
-	location            *int
-	clearedlocation     bool
-	comments            map[int]struct{}
-	removedcomments     map[int]struct{}
-	clearedcomments     bool
-	work_orders         map[int]struct{}
-	removedwork_orders  map[int]struct{}
-	clearedwork_orders  bool
-	properties          map[int]struct{}
-	removedproperties   map[int]struct{}
-	clearedproperties   bool
-	creator             *int
-	clearedcreator      bool
-	done                bool
-	oldValue            func(context.Context) (*Project, error)
-	predicates          []predicate.Project
+	op                 Op
+	typ                string
+	id                 *int
+	create_time        *time.Time
+	update_time        *time.Time
+	name               *string
+	description        *string
+	priority           *project.Priority
+	clearedFields      map[string]struct{}
+	_type              *int
+	cleared_type       bool
+	template           *int
+	clearedtemplate    bool
+	location           *int
+	clearedlocation    bool
+	comments           map[int]struct{}
+	removedcomments    map[int]struct{}
+	clearedcomments    bool
+	work_orders        map[int]struct{}
+	removedwork_orders map[int]struct{}
+	clearedwork_orders bool
+	properties         map[int]struct{}
+	removedproperties  map[int]struct{}
+	clearedproperties  bool
+	creator            *int
+	clearedcreator     bool
+	done               bool
+	oldValue           func(context.Context) (*Project, error)
+	predicates         []predicate.Project
 }
 
 var _ ent.Mutation = (*ProjectMutation)(nil)
@@ -29197,219 +29191,6 @@ func (m *ProjectMutation) DescriptionCleared() bool {
 func (m *ProjectMutation) ResetDescription() {
 	m.description = nil
 	delete(m.clearedFields, project.FieldDescription)
-}
-
-// SetProjectCreator sets the project_creator field.
-func (m *ProjectMutation) SetProjectCreator(i int) {
-	m.project_creator = &i
-	m.addproject_creator = nil
-}
-
-// ProjectCreator returns the project_creator value in the mutation.
-func (m *ProjectMutation) ProjectCreator() (r int, exists bool) {
-	v := m.project_creator
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldProjectCreator returns the old project_creator value of the Project.
-// If the Project object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ProjectMutation) OldProjectCreator(ctx context.Context) (v *int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldProjectCreator is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldProjectCreator requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldProjectCreator: %w", err)
-	}
-	return oldValue.ProjectCreator, nil
-}
-
-// AddProjectCreator adds i to project_creator.
-func (m *ProjectMutation) AddProjectCreator(i int) {
-	if m.addproject_creator != nil {
-		*m.addproject_creator += i
-	} else {
-		m.addproject_creator = &i
-	}
-}
-
-// AddedProjectCreator returns the value that was added to the project_creator field in this mutation.
-func (m *ProjectMutation) AddedProjectCreator() (r int, exists bool) {
-	v := m.addproject_creator
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearProjectCreator clears the value of project_creator.
-func (m *ProjectMutation) ClearProjectCreator() {
-	m.project_creator = nil
-	m.addproject_creator = nil
-	m.clearedFields[project.FieldProjectCreator] = struct{}{}
-}
-
-// ProjectCreatorCleared returns if the field project_creator was cleared in this mutation.
-func (m *ProjectMutation) ProjectCreatorCleared() bool {
-	_, ok := m.clearedFields[project.FieldProjectCreator]
-	return ok
-}
-
-// ResetProjectCreator reset all changes of the "project_creator" field.
-func (m *ProjectMutation) ResetProjectCreator() {
-	m.project_creator = nil
-	m.addproject_creator = nil
-	delete(m.clearedFields, project.FieldProjectCreator)
-}
-
-// SetProjectLocation sets the project_location field.
-func (m *ProjectMutation) SetProjectLocation(i int) {
-	m.project_location = &i
-	m.addproject_location = nil
-}
-
-// ProjectLocation returns the project_location value in the mutation.
-func (m *ProjectMutation) ProjectLocation() (r int, exists bool) {
-	v := m.project_location
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldProjectLocation returns the old project_location value of the Project.
-// If the Project object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ProjectMutation) OldProjectLocation(ctx context.Context) (v *int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldProjectLocation is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldProjectLocation requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldProjectLocation: %w", err)
-	}
-	return oldValue.ProjectLocation, nil
-}
-
-// AddProjectLocation adds i to project_location.
-func (m *ProjectMutation) AddProjectLocation(i int) {
-	if m.addproject_location != nil {
-		*m.addproject_location += i
-	} else {
-		m.addproject_location = &i
-	}
-}
-
-// AddedProjectLocation returns the value that was added to the project_location field in this mutation.
-func (m *ProjectMutation) AddedProjectLocation() (r int, exists bool) {
-	v := m.addproject_location
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearProjectLocation clears the value of project_location.
-func (m *ProjectMutation) ClearProjectLocation() {
-	m.project_location = nil
-	m.addproject_location = nil
-	m.clearedFields[project.FieldProjectLocation] = struct{}{}
-}
-
-// ProjectLocationCleared returns if the field project_location was cleared in this mutation.
-func (m *ProjectMutation) ProjectLocationCleared() bool {
-	_, ok := m.clearedFields[project.FieldProjectLocation]
-	return ok
-}
-
-// ResetProjectLocation reset all changes of the "project_location" field.
-func (m *ProjectMutation) ResetProjectLocation() {
-	m.project_location = nil
-	m.addproject_location = nil
-	delete(m.clearedFields, project.FieldProjectLocation)
-}
-
-// SetProjectTemplate sets the project_template field.
-func (m *ProjectMutation) SetProjectTemplate(i int) {
-	m.project_template = &i
-	m.addproject_template = nil
-}
-
-// ProjectTemplate returns the project_template value in the mutation.
-func (m *ProjectMutation) ProjectTemplate() (r int, exists bool) {
-	v := m.project_template
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldProjectTemplate returns the old project_template value of the Project.
-// If the Project object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ProjectMutation) OldProjectTemplate(ctx context.Context) (v *int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldProjectTemplate is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldProjectTemplate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldProjectTemplate: %w", err)
-	}
-	return oldValue.ProjectTemplate, nil
-}
-
-// AddProjectTemplate adds i to project_template.
-func (m *ProjectMutation) AddProjectTemplate(i int) {
-	if m.addproject_template != nil {
-		*m.addproject_template += i
-	} else {
-		m.addproject_template = &i
-	}
-}
-
-// AddedProjectTemplate returns the value that was added to the project_template field in this mutation.
-func (m *ProjectMutation) AddedProjectTemplate() (r int, exists bool) {
-	v := m.addproject_template
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearProjectTemplate clears the value of project_template.
-func (m *ProjectMutation) ClearProjectTemplate() {
-	m.project_template = nil
-	m.addproject_template = nil
-	m.clearedFields[project.FieldProjectTemplate] = struct{}{}
-}
-
-// ProjectTemplateCleared returns if the field project_template was cleared in this mutation.
-func (m *ProjectMutation) ProjectTemplateCleared() bool {
-	_, ok := m.clearedFields[project.FieldProjectTemplate]
-	return ok
-}
-
-// ResetProjectTemplate reset all changes of the "project_template" field.
-func (m *ProjectMutation) ResetProjectTemplate() {
-	m.project_template = nil
-	m.addproject_template = nil
-	delete(m.clearedFields, project.FieldProjectTemplate)
 }
 
 // SetPriority sets the priority field.
@@ -29778,7 +29559,7 @@ func (m *ProjectMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ProjectMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, project.FieldCreateTime)
 	}
@@ -29790,15 +29571,6 @@ func (m *ProjectMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, project.FieldDescription)
-	}
-	if m.project_creator != nil {
-		fields = append(fields, project.FieldProjectCreator)
-	}
-	if m.project_location != nil {
-		fields = append(fields, project.FieldProjectLocation)
-	}
-	if m.project_template != nil {
-		fields = append(fields, project.FieldProjectTemplate)
 	}
 	if m.priority != nil {
 		fields = append(fields, project.FieldPriority)
@@ -29819,12 +29591,6 @@ func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case project.FieldDescription:
 		return m.Description()
-	case project.FieldProjectCreator:
-		return m.ProjectCreator()
-	case project.FieldProjectLocation:
-		return m.ProjectLocation()
-	case project.FieldProjectTemplate:
-		return m.ProjectTemplate()
 	case project.FieldPriority:
 		return m.Priority()
 	}
@@ -29844,12 +29610,6 @@ func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case project.FieldDescription:
 		return m.OldDescription(ctx)
-	case project.FieldProjectCreator:
-		return m.OldProjectCreator(ctx)
-	case project.FieldProjectLocation:
-		return m.OldProjectLocation(ctx)
-	case project.FieldProjectTemplate:
-		return m.OldProjectTemplate(ctx)
 	case project.FieldPriority:
 		return m.OldPriority(ctx)
 	}
@@ -29889,27 +29649,6 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
-	case project.FieldProjectCreator:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetProjectCreator(v)
-		return nil
-	case project.FieldProjectLocation:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetProjectLocation(v)
-		return nil
-	case project.FieldProjectTemplate:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetProjectTemplate(v)
-		return nil
 	case project.FieldPriority:
 		v, ok := value.(project.Priority)
 		if !ok {
@@ -29924,31 +29663,13 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *ProjectMutation) AddedFields() []string {
-	var fields []string
-	if m.addproject_creator != nil {
-		fields = append(fields, project.FieldProjectCreator)
-	}
-	if m.addproject_location != nil {
-		fields = append(fields, project.FieldProjectLocation)
-	}
-	if m.addproject_template != nil {
-		fields = append(fields, project.FieldProjectTemplate)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *ProjectMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case project.FieldProjectCreator:
-		return m.AddedProjectCreator()
-	case project.FieldProjectLocation:
-		return m.AddedProjectLocation()
-	case project.FieldProjectTemplate:
-		return m.AddedProjectTemplate()
-	}
 	return nil, false
 }
 
@@ -29957,27 +29678,6 @@ func (m *ProjectMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *ProjectMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case project.FieldProjectCreator:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddProjectCreator(v)
-		return nil
-	case project.FieldProjectLocation:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddProjectLocation(v)
-		return nil
-	case project.FieldProjectTemplate:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddProjectTemplate(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Project numeric field %s", name)
 }
@@ -29988,15 +29688,6 @@ func (m *ProjectMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(project.FieldDescription) {
 		fields = append(fields, project.FieldDescription)
-	}
-	if m.FieldCleared(project.FieldProjectCreator) {
-		fields = append(fields, project.FieldProjectCreator)
-	}
-	if m.FieldCleared(project.FieldProjectLocation) {
-		fields = append(fields, project.FieldProjectLocation)
-	}
-	if m.FieldCleared(project.FieldProjectTemplate) {
-		fields = append(fields, project.FieldProjectTemplate)
 	}
 	return fields
 }
@@ -30014,15 +29705,6 @@ func (m *ProjectMutation) ClearField(name string) error {
 	switch name {
 	case project.FieldDescription:
 		m.ClearDescription()
-		return nil
-	case project.FieldProjectCreator:
-		m.ClearProjectCreator()
-		return nil
-	case project.FieldProjectLocation:
-		m.ClearProjectLocation()
-		return nil
-	case project.FieldProjectTemplate:
-		m.ClearProjectTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown Project nullable field %s", name)
@@ -30044,15 +29726,6 @@ func (m *ProjectMutation) ResetField(name string) error {
 		return nil
 	case project.FieldDescription:
 		m.ResetDescription()
-		return nil
-	case project.FieldProjectCreator:
-		m.ResetProjectCreator()
-		return nil
-	case project.FieldProjectLocation:
-		m.ResetProjectLocation()
-		return nil
-	case project.FieldProjectTemplate:
-		m.ResetProjectTemplate()
 		return nil
 	case project.FieldPriority:
 		m.ResetPriority()

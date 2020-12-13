@@ -43,7 +43,6 @@ services:
     build:
       <<: *buildctx
       dockerfile: admin/Dockerfile
-    image: integration_admin
     env_file:
       - conf/db.env
       - conf/log.env
@@ -60,7 +59,6 @@ services:
     build:
       <<: *buildctx
       dockerfile: graph/Dockerfile
-    image: integration_graph
     env_file:
       - conf/graph.env
       - conf/db.env
@@ -80,7 +78,6 @@ services:
     build:
       <<: *buildctx
       dockerfile: async/Dockerfile
-    image: integration_async
     env_file:
       - conf/async.env
       - conf/db.env

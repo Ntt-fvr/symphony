@@ -230,23 +230,17 @@ const ProjectsTableView = (props: Props) => {
 
   const orderByObj: {[string]: ProjectOrderField} = {
     name: 'NAME',
-    createTime: 'UPDATED_AT',
+    createTime: 'CREATED_AT',
+    updateTime: 'UPDATED_AT',
     priority: 'PRIORITY',
-    owner: 'PROJECT_OWNER',
-    location: 'PROJECT_LOCATION',
-    numberOfWorkOrders: 'NUMBER_OF_WORKORDERS',
-    type: 'PROJECT_TEMPLATE',
   };
 
   const getSortSettings = orderBy => {
     const orderByColumnObj: {[ProjectOrderField]: string} = {
       NAME: 'name',
-      UPDATED_AT: 'createTime',
+      CREATED_AT: 'createTime',
+      UPDATED_AT: 'updateTime',
       PRIORITY: 'priority',
-      PROJECT_OWNER: 'owner',
-      PROJECT_LOCATION: 'location',
-      NUMBER_OF_WORKORDERS: 'numberOfWorkOrders',
-      PROJECT_TEMPLATE: 'type',
     };
 
     if (!orderBy.field || !orderByColumnObj[orderBy.field]) {

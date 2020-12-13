@@ -57,7 +57,6 @@ override.tf.json
 
 # Dependency directories
 **/node_modules/*
-yarn.lock
 
 # .idea
 .idea/

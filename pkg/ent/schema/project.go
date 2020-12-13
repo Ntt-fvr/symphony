@@ -120,27 +120,6 @@ func (Project) Fields() []ent.Field {
 		field.Text("description").
 			Optional().
 			Nillable(),
-		field.Int("project_creator").
-			StorageKey("project_creator_order").
-			Optional().
-			Nillable().
-			Annotations(
-				entgql.OrderField("PROJECT_OWNER"),
-			),
-		field.Int("project_location").
-			StorageKey("project_location_order").
-			Optional().
-			Nillable().
-			Annotations(
-				entgql.OrderField("PROJECT_LOCATION"),
-			),
-		field.Int("project_template").
-			StorageKey("project_template_order").
-			Optional().
-			Nillable().
-			Annotations(
-				entgql.OrderField("PROJECT_TEMPLATE"),
-			),
 		field.Enum("priority").
 			NamedValues(
 				"Urgent", "URGENT",
@@ -190,7 +169,7 @@ func (Project) Indexes() []ent.Index {
 			Edges("type").
 			Unique(),
 	}
-	for _, f := range (mixin.UpdateTime{}).Fields() {
+	for _, f := range (mixin.Time{}).Fields() {
 		indexes = append(indexes,
 			index.Fields(f.Descriptor().Name),
 		)
@@ -201,7 +180,10 @@ func (Project) Indexes() []ent.Index {
 // Mixin returns project mixins.
 func (Project) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.CreateTime{},
+		mixin.AnnotateFields(
+			mixin.CreateTime{},
+			entgql.OrderField("CREATED_AT"),
+		),
 		mixin.AnnotateFields(
 			mixin.UpdateTime{},
 			entgql.OrderField("UPDATED_AT"),
