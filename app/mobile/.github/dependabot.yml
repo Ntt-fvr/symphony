@@ -1,8 +1,0 @@
-version: 2
-updates:
-- package-ecosystem: "npm"
-  directory: "/"
-  schedule:
-    interval: "daily"
-    # Check for npm updates at 16 UTC == 9am PT
-    time: "16:00"
