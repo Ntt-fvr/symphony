@@ -43,7 +43,7 @@
   "dependencies": {
     "@99xt/first-born": "^1.1.8",
     "@fbcmobile/signalscan": "^1.0.1",
-    "@fbcmobile/ui": "^1.0.3",
+    "@fbcmobile/ui": "^1.0.4",
     "@react-native-community/async-storage": "^1.6.2",
     "@react-native-community/datetimepicker": "^2.3.2",
     "@react-native-community/masked-view": "^0.1.7",
