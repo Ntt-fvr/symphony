@@ -744,17 +744,17 @@
   resolved "https://registry.yarnpkg.com/@fbcmobile/signalscan/-/signalscan-1.0.1.tgz#afbb70688c5f433405c92ab7ab14bf57a8091c38"
   integrity sha512-qiv7WsvHe8biNUr4NrzLJOD1jA14+WG0ai1+/aQq7zVghEGiwXPUSFECedv5zqLhb5rK7o4vUxmGhL9qRp7xWg==
 
-"@fbcmobile/ui@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@fbcmobile/ui/-/ui-1.0.3.tgz#ea6c9de8d82079f2130ced4d9e1e9144bef85663"
-  integrity sha512-19BUFa7V4Bqw51fHjC//j5mt6xE/rcdQBaoFDKbK/ZvdsbAl/8kFGCM/Ee4JbQSANfSZJvvqqfhPyCIe94sgYA==
+"@fbcmobile/ui@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@fbcmobile/ui/-/ui-1.0.4.tgz#2941d7813f7615a958fc662b452a3bd4dd028c42"
+  integrity sha512-UKBDIkpyn6XkJntIDnqL6AiZsaMZQJDxsFG6h04i1ic9ZJIfDS2PRG8zOFkazqxncwfcN2k519yoBAlQPdKngg==
   dependencies:
     "@99xt/first-born" "^1.1.8"
     "@react-native-community/async-storage" "^1.6.2"
     "@react-native-community/datetimepicker" "^2.3.2"
     "@react-native-community/netinfo" "^4.7.0"
     "@react-native-mapbox-gl/maps" "^8.0.0"
-    beaver-logger "^4.0.12"
+    beaver-logger "4.0.12"
     mcc-mnc-list-js "^1.0.1"
     moment "^2.24.0"
     react "16.11.0"
@@ -3862,6 +3862,14 @@ bcrypt-pbkdf@^1.0.0:
   integrity sha1-pDAdOJtqQ/m2f/PKEaP2Y342Dp4=
   dependencies:
     tweetnacl "^0.14.3"
+
+beaver-logger@4.0.12:
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/beaver-logger/-/beaver-logger-4.0.12.tgz#2080918a57063b14f0e3b61e7161b963897acfc9"
+  integrity sha512-6RYZsB+YAb2N0GIf7nhtlDg7Zw0ZzqcGkJH5ET45a7SZJk4aHJD5zziIMCo7zYOhV7saTdvXOdfCFCeQPmG3vg==
+  dependencies:
+    belter "^1.0.17"
+    zalgo-promise "^1.0.26"
 
 beaver-logger@^4.0.12:
   version "4.0.21"
