@@ -17,7 +17,7 @@ import (
 )
 
 type AddPropertyArgs struct {
-	Context    context.Context
+	context.Context
 	EntSetter  func(*ent.PropertyCreate)
 	IsTemplate *bool
 }

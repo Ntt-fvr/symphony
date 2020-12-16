@@ -55,14 +55,15 @@ func (r mutationResolver) CreateProjectType(ctx context.Context, input models.Ad
 	}, input.Properties...); err != nil {
 		return nil, fmt.Errorf("creating properties: %w", err)
 	}
-	for _, wo := range input.WorkOrders {
-		if _, err = client.WorkOrderDefinition.Create().
-			SetNillableIndex(wo.Index).
-			SetTypeID(wo.Type).
-			SetProjectType(typ).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating work orders: %w", err)
-		}
+	builders := make([]*ent.WorkOrderDefinitionCreate, len(input.WorkOrders))
+	for i, input := range input.WorkOrders {
+		builders[i] = client.WorkOrderDefinition.Create().
+			SetNillableIndex(input.Index).
+			SetTypeID(input.Type).
+			SetProjectType(typ)
+	}
+	if _, err := client.WorkOrderDefinition.CreateBulk(builders...).Save(ctx); err != nil {
+		return nil, fmt.Errorf("creating work order definitions: %w", err)
 	}
 	return typ, nil
 }

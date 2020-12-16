@@ -164,10 +164,9 @@ func (r mutationResolver) setNodePropertyUpdate(ctx context.Context, setter *ent
 func (r mutationResolver) AddProperty(
 	input *models.PropertyInput,
 	args resolverutil.AddPropertyArgs,
-) (*ent.Property, error) {
-	ctx := args.Context
-	client := r.ClientFrom(ctx)
-	propType, err := client.PropertyType.Get(ctx, input.PropertyTypeID)
+) (*ent.PropertyCreate, error) {
+	client := r.ClientFrom(args)
+	propType, err := client.PropertyType.Get(args, input.PropertyTypeID)
 	if err != nil {
 		return nil, err
 	}
@@ -175,12 +174,11 @@ func (r mutationResolver) AddProperty(
 	if !isTemplate && !propType.IsInstanceProperty {
 		return nil, nil
 	}
-	query := client.Property.Create()
+	builder := client.Property.Create()
 	if args.EntSetter != nil {
-		args.EntSetter(query)
+		args.EntSetter(builder)
 	}
-
-	query = query.
+	builder = builder.
 		SetTypeID(input.PropertyTypeID).
 		SetNillableStringVal(input.StringValue).
 		SetNillableIntVal(input.IntValue).
@@ -190,43 +188,44 @@ func (r mutationResolver) AddProperty(
 		SetNillableLongitudeVal(input.LongitudeValue).
 		SetNillableRangeFromVal(input.RangeFromValue).
 		SetNillableRangeToVal(input.RangeToValue)
-
 	if input.NodeIDValue != nil {
-		if err = r.setNodePropertyCreate(ctx, query, *input.NodeIDValue); err != nil {
+		if err = r.setNodePropertyCreate(args, builder, *input.NodeIDValue); err != nil {
 			return nil, err
 		}
 	}
-
-	p, err := query.Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("creating property: %w", err)
-	}
-	return p, nil
+	return builder, nil
 }
 
 func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args resolverutil.AddPropertyArgs) ([]*ent.Property, error) {
-	properties := make([]*ent.Property, 0, len(inputs))
+	builders := make([]*ent.PropertyCreate, 0, len(inputs))
 	for _, input := range inputs {
-		p, err := r.AddProperty(input, args)
+		builder, err := r.AddProperty(input, args)
 		if err != nil {
 			return nil, err
 		}
-		if p != nil {
-			properties = append(properties, p)
+		if builder != nil {
+			builders = append(builders, builder)
 		}
 	}
-	return properties, nil
+	properties, err := r.ClientFrom(args).Property.CreateBulk(builders...).Save(args)
+	if err != nil {
+		r.logger.For(args).
+			Error("cannot create properties",
+				zap.Error(err),
+			)
+	}
+	return properties, err
 }
 
 func (r mutationResolver) AddPropertyTypes(
 	ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs ...*pkgmodels.PropertyTypeInput,
 ) error {
 	var (
-		client = r.ClientFrom(ctx).PropertyType
-		types  = make([]*ent.PropertyTypeCreate, len(inputs))
+		client   = r.ClientFrom(ctx).PropertyType
+		builders = make([]*ent.PropertyTypeCreate, len(inputs))
 	)
 	for i, input := range inputs {
-		types[i] = client.Create().
+		builders[i] = client.Create().
 			SetName(input.Name).
 			SetType(input.Type).
 			SetNillableNodeType(input.NodeType).
@@ -245,10 +244,14 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
 			SetNillableDeleted(input.IsDeleted)
-		parentSetter(types[i])
+		parentSetter(builders[i])
 	}
-	if _, err := client.CreateBulk(types...).Save(ctx); err != nil {
-		return fmt.Errorf("creating property types: %w", err)
+	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
+		r.logger.For(ctx).
+			Error("cannot create property types",
+				zap.Error(err),
+			)
+		return err
 	}
 	return nil
 }
@@ -257,43 +260,50 @@ func (r mutationResolver) AddSurveyTemplateCategories(
 	ctx context.Context, locationTypeID int, inputs ...*models.SurveyTemplateCategoryInput,
 ) ([]*ent.SurveyTemplateCategory, error) {
 	var (
-		client     = r.ClientFrom(ctx).SurveyTemplateCategory
-		categories = make([]*ent.SurveyTemplateCategory, len(inputs))
+		client   = r.ClientFrom(ctx).SurveyTemplateCategory
+		builders = make([]*ent.SurveyTemplateCategoryCreate, len(inputs))
 	)
 	for i, input := range inputs {
 		questions, err := r.AddSurveyTemplateQuestions(ctx, input.SurveyTemplateQuestions...)
 		if err != nil {
 			return nil, err
 		}
-		if categories[i], err = client.Create().
+		builders[i] = client.Create().
 			SetCategoryTitle(input.CategoryTitle).
 			SetCategoryDescription(input.CategoryDescription).
 			AddSurveyTemplateQuestions(questions...).
-			SetLocationTypeID(locationTypeID).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating survey template categories: %w", err)
-		}
+			SetLocationTypeID(locationTypeID)
 	}
-	return categories, nil
+	categories, err := client.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		r.logger.For(ctx).
+			Error("cannot create survey template categories",
+				zap.Error(err),
+			)
+	}
+	return categories, err
 }
 
 func (r mutationResolver) AddSurveyTemplateQuestions(ctx context.Context, inputs ...*models.SurveyTemplateQuestionInput) ([]*ent.SurveyTemplateQuestion, error) {
 	var (
-		client    = r.ClientFrom(ctx).SurveyTemplateQuestion
-		questions = make([]*ent.SurveyTemplateQuestion, len(inputs))
-		err       error
+		client   = r.ClientFrom(ctx).SurveyTemplateQuestion
+		builders = make([]*ent.SurveyTemplateQuestionCreate, len(inputs))
 	)
 	for i, input := range inputs {
-		if questions[i], err = client.Create().
+		builders[i] = client.Create().
 			SetQuestionTitle(input.QuestionTitle).
 			SetQuestionDescription(input.QuestionDescription).
 			SetQuestionType(input.QuestionType.String()).
-			SetIndex(input.Index).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating survey template questions: %w", err)
-		}
+			SetIndex(input.Index)
 	}
-	return questions, nil
+	questions, err := client.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		r.logger.For(ctx).
+			Error("cannot create survey template questions",
+				zap.Error(err),
+			)
+	}
+	return questions, err
 }
 
 type ScanParentIDs struct {
@@ -319,12 +329,11 @@ func (r mutationResolver) CreateWiFiScans(ctx context.Context, inputs []*models.
 		return nil, err
 	}
 	var (
-		client = r.ClientFrom(ctx).SurveyWiFiScan
-		scans  = make([]*ent.SurveyWiFiScan, len(inputs))
-		err    error
+		client   = r.ClientFrom(ctx).SurveyWiFiScan
+		builders = make([]*ent.SurveyWiFiScanCreate, len(inputs))
 	)
 	for i, input := range inputs {
-		if scans[i], err = client.Create().
+		builders[i] = client.Create().
 			SetTimestamp(time.Unix(int64(input.Timestamp), 0)).
 			SetFrequency(input.Frequency).
 			SetChannel(input.Channel).
@@ -341,12 +350,16 @@ func (r mutationResolver) CreateWiFiScans(ctx context.Context, inputs []*models.
 			SetNillableRssi(input.Rssi).
 			SetNillableSurveyQuestionID(parentIDs.qid).
 			SetNillableLocationID(parentIDs.locationID).
-			SetNillableChecklistItemID(parentIDs.checklistItemID).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating survey wifi scan: %w", err)
-		}
+			SetNillableChecklistItemID(parentIDs.checklistItemID)
 	}
-	return scans, nil
+	scans, err := client.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		r.logger.For(ctx).Error(
+			"cannot create survey wifi scans",
+			zap.Error(err),
+		)
+	}
+	return scans, err
 }
 
 func (r mutationResolver) AddCellScans(ctx context.Context, data []*models.SurveyCellScanData, locationID int) ([]*ent.SurveyCellScan, error) {
@@ -358,9 +371,8 @@ func (r mutationResolver) CreateCellScans(ctx context.Context, inputs []*models.
 		return nil, err
 	}
 	var (
-		client = r.ClientFrom(ctx).SurveyCellScan
-		scans  = make([]*ent.SurveyCellScan, len(inputs))
-		err    error
+		client   = r.ClientFrom(ctx).SurveyCellScan
+		builders = make([]*ent.SurveyCellScanCreate, len(inputs))
 	)
 	for i, input := range inputs {
 		var timestamp *time.Time
@@ -368,7 +380,7 @@ func (r mutationResolver) CreateCellScans(ctx context.Context, inputs []*models.
 			inputTime := time.Unix(int64(*input.Timestamp), 0)
 			timestamp = &inputTime
 		}
-		if scans[i], err = client.Create().
+		builders[i] = client.Create().
 			SetNetworkType(input.NetworkType).
 			SetSignalStrength(input.SignalStrength).
 			SetNillableTimestamp(timestamp).
@@ -394,12 +406,16 @@ func (r mutationResolver) CreateCellScans(ctx context.Context, inputs []*models.
 			SetNillableRssi(input.Rssi).
 			SetNillableSurveyQuestionID(parentIDs.qid).
 			SetNillableLocationID(parentIDs.locationID).
-			SetNillableChecklistItemID(parentIDs.checklistItemID).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating survey cell scan: %w", err)
-		}
+			SetNillableChecklistItemID(parentIDs.checklistItemID)
 	}
-	return scans, nil
+	scans, err := client.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		r.logger.For(ctx).Error(
+			"cannot create cell scans",
+			zap.Error(err),
+		)
+	}
+	return scans, err
 }
 
 func (r mutationResolver) CreateSurvey(ctx context.Context, data models.SurveyCreateData) (int, error) {
@@ -646,41 +662,57 @@ func (r mutationResolver) AddLocationType(
 func (r mutationResolver) AddEquipmentPorts(ctx context.Context, et *ent.EquipmentType, e *ent.Equipment) ([]*ent.EquipmentPort, error) {
 	ids, err := et.QueryPortDefinitions().IDs(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("querying port definitions %q: %w", et.ID, err)
+		r.logger.For(ctx).Error(
+			"cannot query equipment type port definition ids",
+			zap.Int("type", et.ID), zap.Error(err),
+		)
+		return nil, err
 	}
 	var (
-		client = r.ClientFrom(ctx).EquipmentPort
-		ports  = make([]*ent.EquipmentPort, len(ids))
+		client   = r.ClientFrom(ctx).EquipmentPort
+		builders = make([]*ent.EquipmentPortCreate, len(ids))
 	)
 	for i, id := range ids {
-		if ports[i], err = client.Create().
+		builders[i] = client.Create().
 			SetDefinitionID(id).
-			SetParent(e).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating equipment port: %w", err)
-		}
+			SetParent(e)
 	}
-	return ports, nil
+	ports, err := client.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		r.logger.For(ctx).Error(
+			"cannot create equipment ports",
+			zap.Error(err),
+		)
+	}
+	return ports, err
 }
 
 func (r mutationResolver) AddEquipmentPositions(ctx context.Context, et *ent.EquipmentType, e *ent.Equipment) ([]*ent.EquipmentPosition, error) {
 	ids, err := et.QueryPositionDefinitions().IDs(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("querying position definitions %q: %w", et.ID, err)
+		r.logger.For(ctx).Error(
+			"cannot query equipment type position definition ids",
+			zap.Int("type", et.ID), zap.Error(err),
+		)
+		return nil, err
 	}
 	var (
-		client    = r.ClientFrom(ctx).EquipmentPosition
-		positions = make([]*ent.EquipmentPosition, len(ids))
+		client   = r.ClientFrom(ctx).EquipmentPosition
+		builders = make([]*ent.EquipmentPositionCreate, len(ids))
 	)
 	for i, id := range ids {
-		if positions[i], err = client.Create().
+		builders[i] = client.Create().
 			SetDefinitionID(id).
-			SetParent(e).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating equipment position: %w", err)
-		}
+			SetParent(e)
 	}
-	return positions, nil
+	positions, err := client.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		r.logger.For(ctx).Error(
+			"cannot create equipment positions",
+			zap.Error(err),
+		)
+	}
+	return positions, err
 }
 
 func (r mutationResolver) getOrCreatePort(ctx context.Context, side *models.LinkSide) (*ent.EquipmentPort, error) {
