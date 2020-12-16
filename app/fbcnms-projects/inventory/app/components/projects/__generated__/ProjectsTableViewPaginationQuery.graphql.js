@@ -17,8 +17,9 @@ import type { ConcreteRequest } from 'relay-runtime';
 type ProjectsTableView_query$ref = any;
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "%future added value";
+export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "PROPERTY" | "%future added value";
 export type ProjectOrderField = "CREATED_AT" | "NAME" | "PRIORITY" | "UPDATED_AT" | "%future added value";
+export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,
@@ -26,6 +27,28 @@ export type ProjectFilterInput = {|
   idSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
   stringSet?: ?$ReadOnlyArray<string>,
+  propertyValue?: ?PropertyTypeInput,
+|};
+export type PropertyTypeInput = {|
+  id?: ?string,
+  externalId?: ?string,
+  name: string,
+  type: PropertyKind,
+  nodeType?: ?string,
+  index?: ?number,
+  category?: ?string,
+  stringValue?: ?string,
+  intValue?: ?number,
+  booleanValue?: ?boolean,
+  floatValue?: ?number,
+  latitudeValue?: ?number,
+  longitudeValue?: ?number,
+  rangeFromValue?: ?number,
+  rangeToValue?: ?number,
+  isEditable?: ?boolean,
+  isInstanceProperty?: ?boolean,
+  isMandatory?: ?boolean,
+  isDeleted?: ?boolean,
 |};
 export type ProjectOrder = {|
   direction: OrderDirection,

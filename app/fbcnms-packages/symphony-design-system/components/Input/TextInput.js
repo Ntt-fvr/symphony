@@ -160,9 +160,9 @@ type Props = $ReadOnly<{|
   onChange?: (e: SyntheticInputEvent<HTMLInputElement>) => void,
   onFocus?: () => void,
   onBlur?: FocusEventFn<HTMLInputElement>,
-  onEnterPressed?: (e: KeyboardEvent) => void,
-  onEscPressed?: (e: KeyboardEvent) => void,
-  onBackspacePressed?: (e: KeyboardEvent) => void,
+  onEnterPressed?: (e: SyntheticKeyboardEvent<>) => void,
+  onEscPressed?: (e: SyntheticKeyboardEvent<>) => void,
+  onBackspacePressed?: (e: SyntheticKeyboardEvent<>) => void,
   ...ClickableEvents,
 |}>;
 
@@ -227,7 +227,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
   );
 
   const onKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+    (e: SyntheticKeyboardEvent<>) => {
       switch (e.keyCode) {
         case KEYBOARD_KEYS.CODES.ENTER:
           onEnterPressed && onEnterPressed(e);
@@ -289,6 +289,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
                 onKeyDown={onKeyDown}
                 value={value}
                 ref={forwardedRef}
+                autoFocus={autoFocus}
               />
             )}
           </Clickable>

@@ -2017,7 +2017,7 @@ Properties by which work order connections can be ordered.
 """
 enum WorkOrderOrderField {
   """
-  Order work orders by creation time.
+  Order work orders by creation timeProjectFilterType.
   """
   CREATED_AT
 
@@ -2677,6 +2677,7 @@ enum ProjectFilterType {
   PROJECT_TYPE
   LOCATION_INST
   PROJECT_PRIORITY
+  PROPERTY
 }
 
 input ProjectFilterInput {
@@ -2686,6 +2687,7 @@ input ProjectFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  propertyValue: PropertyTypeInput
 }
 
 """

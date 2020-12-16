@@ -40,7 +40,7 @@ type Props<T: Property | PropertyType> = {|
   disabled: boolean,
   onChange: T => void,
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void,
-  onKeyDown?: ?(e: SyntheticKeyboardEvent<>) => void,
+  onKeyDown?: (e: SyntheticKeyboardEvent<>) => void,
   headlineVariant?: 'headline' | 'form',
   fullWidth?: boolean,
 |} & WithStyles<typeof styles>;
@@ -91,6 +91,7 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
       className,
       inputType,
       headlineVariant,
+      onKeyDown,
     } = this.props;
     const disabled = this.props.disabled || showDisabled;
     const property = this.props.property;
@@ -132,6 +133,7 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
             className={classNames(classes.input, className)}
             value={property.stringValue ?? ''}
             onBlur={e => onBlur && onBlur(e)}
+            onEnterPressed={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
                 update(property, {
@@ -154,6 +156,7 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
             placeholder="0"
             value={property.intValue ?? undefined}
             onBlur={e => onBlur && onBlur(e)}
+            onEnterPressed={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
                 update(property, {
@@ -172,6 +175,7 @@ class PropertyValueInput<T: Property | PropertyType> extends React.Component<
             className={classNames(classes.input, className)}
             value={property.floatValue ?? 0}
             onBlur={e => onBlur && onBlur(e)}
+            onEnterPressed={e => onKeyDown && onKeyDown(e)}
             onChange={event =>
               onChange(
                 update(property, {

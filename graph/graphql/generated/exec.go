@@ -10355,7 +10355,7 @@ Properties by which work order connections can be ordered.
 """
 enum WorkOrderOrderField {
   """
-  Order work orders by creation time.
+  Order work orders by creation timeProjectFilterType.
   """
   CREATED_AT
 
@@ -11015,6 +11015,7 @@ enum ProjectFilterType {
   PROJECT_TYPE
   LOCATION_INST
   PROJECT_PRIORITY
+  PROPERTY
 }
 
 input ProjectFilterInput {
@@ -11024,6 +11025,7 @@ input ProjectFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  propertyValue: PropertyTypeInput
 }
 
 """
@@ -51874,6 +51876,14 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
 			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValue"))
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}

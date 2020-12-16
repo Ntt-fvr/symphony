@@ -610,12 +610,13 @@ type PermissionsPolicySearchResult struct {
 }
 
 type ProjectFilterInput struct {
-	FilterType  ProjectFilterType   `json:"filterType"`
-	Operator    enum.FilterOperator `json:"operator"`
-	StringValue *string             `json:"stringValue"`
-	IDSet       []int               `json:"idSet"`
-	MaxDepth    *int                `json:"maxDepth"`
-	StringSet   []string            `json:"stringSet"`
+	FilterType    ProjectFilterType         `json:"filterType"`
+	Operator      enum.FilterOperator       `json:"operator"`
+	StringValue   *string                   `json:"stringValue"`
+	IDSet         []int                     `json:"idSet"`
+	MaxDepth      *int                      `json:"maxDepth"`
+	StringSet     []string                  `json:"stringSet"`
+	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
 }
 
 type PropertyInput struct {
@@ -1154,6 +1155,7 @@ const (
 	ProjectFilterTypeProjectType     ProjectFilterType = "PROJECT_TYPE"
 	ProjectFilterTypeLocationInst    ProjectFilterType = "LOCATION_INST"
 	ProjectFilterTypeProjectPriority ProjectFilterType = "PROJECT_PRIORITY"
+	ProjectFilterTypeProperty        ProjectFilterType = "PROPERTY"
 )
 
 var AllProjectFilterType = []ProjectFilterType{
@@ -1162,11 +1164,12 @@ var AllProjectFilterType = []ProjectFilterType{
 	ProjectFilterTypeProjectType,
 	ProjectFilterTypeLocationInst,
 	ProjectFilterTypeProjectPriority,
+	ProjectFilterTypeProperty,
 }
 
 func (e ProjectFilterType) IsValid() bool {
 	switch e {
-	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority:
+	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority, ProjectFilterTypeProperty:
 		return true
 	}
 	return false

@@ -59,6 +59,11 @@ const ProjectSearchConfig: Array<EntityConfig> = [
     label: 'Location',
     filters: [],
   },
+  {
+    type: 'properties',
+    label: 'Properties',
+    filters: [],
+  },
 ];
 
 export {ProjectSearchConfig};
