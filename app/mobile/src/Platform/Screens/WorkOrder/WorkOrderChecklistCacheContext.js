@@ -40,6 +40,7 @@ export type WorkOrderChecklistCacheContextType = {
     itemId: string,
     data: CachedCheckListItem,
   ) => void,
+  resetCachedImages:(workOrderId: string, images: Array<CachedFileData>) => void,
   setCachedImageItem: (workOrderId: string, data: CachedFileData) => void,
   setCacheImageAsUploaded: (
     workOrderId: string,
@@ -65,6 +66,7 @@ const WorkOrderChecklistCacheContext = React.createContext<WorkOrderChecklistCac
   {
     cache: {},
     setCachedChecklistItem: () => {},
+    resetCachedImages: () => {},
     setCachedImageItem: () => {},
     setCacheImageAsUploaded: async () => {},
     markWorkOrderAsCheckedIn: () => {},
@@ -208,6 +210,28 @@ export function WorkOrderChecklistCacheContextProvider({children}: Props) {
             },
             ...categories.slice(categoryIndex + 1),
           ],
+        },
+      };
+      setCache(updatedCache);
+      LocalStorage.setWorkOrdersCache(JSON.stringify(updatedCache));
+    },
+    [cache],
+  );
+
+  const resetCachedImages = useCallback(
+    (workOrderId: string, imageFiles: Array<CachedFileData>) => {
+      const cachedWorkOrder = getCachedWorkOrder(cache, workOrderId) ?? {
+        id: workOrderId,
+        checkInStatus: undefined,
+        categories: [],
+        images: [],
+      };
+
+      const updatedCache = {
+        ...cache,
+        [workOrderId]: {
+          ...cachedWorkOrder,
+          images:imageFiles,
         },
       };
       setCache(updatedCache);
@@ -402,6 +426,7 @@ export function WorkOrderChecklistCacheContextProvider({children}: Props) {
       value={{
         cache,
         setCachedChecklistItem,
+        resetCachedImages,
         setCachedImageItem,
         setCacheImageAsUploaded,
         markWorkOrderAsCheckedIn,
