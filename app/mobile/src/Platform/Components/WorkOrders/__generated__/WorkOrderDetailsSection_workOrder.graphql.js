@@ -18,6 +18,7 @@ type WorkOrderAssigneeSection_workOrder$ref = any;
 type WorkOrderDatesSection_workOrder$ref = any;
 type WorkOrderLocationSection_workOrder$ref = any;
 type WorkOrderProjectSection_workOrder$ref = any;
+type WorkOrderTemplateNameSection_workOrder$ref = any;
 export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type WorkOrderStatus = "BLOCKED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
@@ -30,6 +31,9 @@ export type WorkOrderDetailsSection_workOrder = {|
   +description: ?string,
   +priority: WorkOrderPriority,
   +status: WorkOrderStatus,
+  +workOrderTemplate: ?{|
+    +name: string
+  |},
   +location: ?{|
     +name: string,
     +latitude: number,
@@ -41,7 +45,7 @@ export type WorkOrderDetailsSection_workOrder = {|
   +assignedTo: ?{|
     +name: string
   |},
-  +$fragmentRefs: WorkOrderLocationSection_workOrder$ref & WorkOrderDatesSection_workOrder$ref & WorkOrderProjectSection_workOrder$ref & WorkOrderAssigneeSection_workOrder$ref,
+  +$fragmentRefs: WorkOrderLocationSection_workOrder$ref & WorkOrderDatesSection_workOrder$ref & WorkOrderProjectSection_workOrder$ref & WorkOrderAssigneeSection_workOrder$ref & WorkOrderTemplateNameSection_workOrder$ref,
   +$refType: WorkOrderDetailsSection_workOrder$ref,
 |};
 export type WorkOrderDetailsSection_workOrder$data = WorkOrderDetailsSection_workOrder;
@@ -115,6 +119,16 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "WorkOrderTemplate",
+      "kind": "LinkedField",
+      "name": "workOrderTemplate",
+      "plural": false,
+      "selections": (v1/*: any*/),
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "Location",
       "kind": "LinkedField",
       "name": "location",
@@ -177,12 +191,17 @@ return {
       "args": null,
       "kind": "FragmentSpread",
       "name": "WorkOrderAssigneeSection_workOrder"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "WorkOrderTemplateNameSection_workOrder"
     }
   ],
   "type": "WorkOrder"
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '5ec77d7efc8c82522d3dd7ed2957a282';
+(node/*: any*/).hash = '4d545e0b259876223a0bce03fb34d5d2';
 
 module.exports = node;
