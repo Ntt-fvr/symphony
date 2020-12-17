@@ -10355,7 +10355,7 @@ Properties by which work order connections can be ordered.
 """
 enum WorkOrderOrderField {
   """
-  Order work orders by creation timeProjectFilterType.
+  Order work orders by creation time.
   """
   CREATED_AT
 
