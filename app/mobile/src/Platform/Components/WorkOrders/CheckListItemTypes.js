@@ -116,6 +116,7 @@ export type WorkOrderCacheItem = $ReadOnly<{|
   categories: $ReadOnlyArray<WorkOrderCategoryCacheItem>,
   checkInStatus?: CheckInStatus,
   images: $ReadOnlyArray<?CachedFileData>,
+  isSubmitting: boolean
 |}>;
 
 export const CheckListItemTypes: {

@@ -49,6 +49,7 @@ export type WorkOrderChecklistCacheContextType = {
   initWorkOrderCacheEntry: (item: WorkOrderCacheItem) => void,
   markWorkOrderAsCheckedIn: (workOrderId: string) => void,
   markWorkOrderAsCheckedOut: (workOrderId: string) => void,
+  setWorkOrderSubmittingStatus: (workOrderId: string, isSubmitting: boolean) => void,
   duplicateChecklistItem: (
     workOrderId: string,
     categoryId: string,
@@ -71,6 +72,7 @@ const WorkOrderChecklistCacheContext = React.createContext<WorkOrderChecklistCac
     setCacheImageAsUploaded: async () => {},
     markWorkOrderAsCheckedIn: () => {},
     markWorkOrderAsCheckedOut: () => {},
+    setWorkOrderSubmittingStatus: () => {},
     initWorkOrderCacheEntry: () => {},
     duplicateChecklistItem: () => {},
     deleteChecklistItem: () => {},
@@ -317,6 +319,20 @@ export function WorkOrderChecklistCacheContextProvider({children}: Props) {
     setWorkOrderCheckInOutStatus(workOrderId, CheckInStatuses.CHECKED_OUT);
   };
 
+  const setWorkOrderSubmittingStatus = (workOrderId: string, isSubmitting: boolean) => {
+    setCache(oldCache => {
+      const updatedCache = {
+        ...oldCache,
+        [workOrderId]: {
+          ...oldCache[workOrderId],
+          isSubmitting,
+        },
+      };
+      LocalStorage.setWorkOrdersCache(JSON.stringify(updatedCache));
+      return updatedCache;
+    });
+  }
+
   const initWorkOrderCacheEntry = (item: WorkOrderCacheItem) => {
     setCache(oldCache => {
       const updatedCache = {
@@ -431,6 +447,7 @@ export function WorkOrderChecklistCacheContextProvider({children}: Props) {
         setCacheImageAsUploaded,
         markWorkOrderAsCheckedIn,
         markWorkOrderAsCheckedOut,
+        setWorkOrderSubmittingStatus,
         initWorkOrderCacheEntry,
         duplicateChecklistItem,
         deleteChecklistItem,
