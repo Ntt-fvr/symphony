@@ -44,7 +44,7 @@ export const useWorkOrderEditingCapability = (
         workOrderStatus === Statuses.BLOCKED ||
         workOrderStatus === Statuses.CLOSED ||
         cachedData == null ||
-        cachedData?.isSubmitting
+        cachedData.isSubmitting
     }),
     [assigneeAuthId, user, workOrderStatus, cachedData],
   );
