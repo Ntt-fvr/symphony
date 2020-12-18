@@ -23,6 +23,7 @@ module.exports = {
     '**/scripts/**/*.js',
     '!**/__tests__/**',
     '!**/node_modules/**',
+    '!**/__generated__/**',
   ],
   reporters: ['default', 'jest-junit'],
   modulePathIgnorePatterns: ['__tests__/__mocks__'],
