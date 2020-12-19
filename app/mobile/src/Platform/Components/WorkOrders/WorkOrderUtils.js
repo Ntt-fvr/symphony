@@ -43,7 +43,8 @@ export const useWorkOrderEditingCapability = (
         workOrderStatus === Statuses.SUBMITTED ||
         workOrderStatus === Statuses.BLOCKED ||
         workOrderStatus === Statuses.CLOSED ||
-        cachedData == null,
+        cachedData == null ||
+        cachedData.isSubmitting
     }),
     [assigneeAuthId, user, workOrderStatus, cachedData],
   );
@@ -186,5 +187,6 @@ export const createWorkOrderCacheEntryFromQuery = (
         };
       }
     }),
+    isSubmitting: false
   };
 };
