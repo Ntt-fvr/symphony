@@ -3,7 +3,7 @@ locals {
 }
 
 module "team" {
-  source     = "../modules/team-iam"
+  source     = "./modules/team-iam"
   group_name = "Symphony"
   role_name  = local.symphony_admin_role
   count      = local.production_only_count

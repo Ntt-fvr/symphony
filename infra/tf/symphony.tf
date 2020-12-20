@@ -9,7 +9,7 @@ locals {
 }
 
 module "store_role" {
-  source                    = "./../modules/irsa"
+  source                    = "./modules/irsa"
   role_name_prefix          = "SymphonyStoreRole"
   role_path                 = data.terraform_remote_state.core.outputs.eks.sa_role_path
   role_policy               = data.aws_iam_policy_document.store.json
@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "store" {
 }
 
 module "async_role" {
-  source                    = "./../modules/irsa"
+  source                    = "./modules/irsa"
   role_name_prefix          = "SymphonyAsyncRole"
   role_path                 = data.terraform_remote_state.core.outputs.eks.sa_role_path
   role_policy               = data.aws_iam_policy_document.async.json
