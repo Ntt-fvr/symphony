@@ -97,7 +97,7 @@ data "aws_eks_cluster" "current" {
 data "aws_eks_cluster_auth" "current" {
   name     = data.aws_eks_cluster.current.name
   provider = aws.assume-admin-role
-  count    = ! var.bootstrap ? 1 : 0
+  count    = !var.bootstrap ? 1 : 0
 }
 
 data "aws_eks_cluster_auth" "bootstrap" {
