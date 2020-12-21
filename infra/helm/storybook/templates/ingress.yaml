@@ -4,7 +4,7 @@ Use of this source code is governed by a BSD-style
 license that can be found in the LICENSE file.
 */ -}}
 {{- if .Values.ingress.enabled -}}
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: {{ template "storybook.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
   name: {{ template "storybook.fullname" . }}
