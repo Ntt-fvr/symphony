@@ -93,6 +93,9 @@ export type RelayStoreUtilsMyTasksQueryResponse = {|
         +priority: WorkOrderPriority,
         +status: WorkOrderStatus,
         +installDate: ?any,
+        +workOrderTemplate: ?{|
+          +name: string
+        |},
         +location: ?{|
           +id: string,
           +name: string,
@@ -156,6 +159,9 @@ query RelayStoreUtilsMyTasksQuery(
         priority
         status
         installDate
+        workOrderTemplate {
+          name
+        }
         location {
           id
           name
@@ -379,6 +385,18 @@ v11 = {
             {
               "alias": null,
               "args": null,
+              "concreteType": "WorkOrderTemplate",
+              "kind": "LinkedField",
+              "name": "workOrderTemplate",
+              "plural": false,
+              "selections": [
+                (v3/*: any*/)
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
               "concreteType": "Location",
               "kind": "LinkedField",
               "name": "location",
@@ -513,11 +531,11 @@ return {
     "metadata": {},
     "name": "RelayStoreUtilsMyTasksQuery",
     "operationKind": "query",
-    "text": "query RelayStoreUtilsMyTasksQuery(\n  $filters: [WorkOrderFilterInput!]!\n) {\n  locations(needsSiteSurvey: true) {\n    edges {\n      ...TasksList_locations\n      node {\n        id\n        name\n        parentCoords {\n          latitude\n          longitude\n        }\n        latitude\n        longitude\n        locationType {\n          surveyTemplateCategories {\n            id\n          }\n          id\n        }\n        surveys {\n          id\n        }\n        locationHierarchy {\n          id\n          name\n        }\n      }\n    }\n  }\n  workOrders(first: 50, filterBy: $filters) {\n    totalCount\n    __typename\n    edges {\n      node {\n        id\n        name\n        priority\n        status\n        installDate\n        location {\n          id\n          name\n          latitude\n          longitude\n          locationHierarchy {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment MyTaskListItem_location on Location {\n  id\n  name\n  latitude\n  longitude\n  locationHierarchy {\n    id\n    name\n  }\n}\n\nfragment TasksList_locations on LocationEdge {\n  node {\n    id\n    name\n    latitude\n    longitude\n    locationType {\n      surveyTemplateCategories {\n        id\n      }\n      id\n    }\n    ...MyTaskListItem_location\n  }\n}\n"
+    "text": "query RelayStoreUtilsMyTasksQuery(\n  $filters: [WorkOrderFilterInput!]!\n) {\n  locations(needsSiteSurvey: true) {\n    edges {\n      ...TasksList_locations\n      node {\n        id\n        name\n        parentCoords {\n          latitude\n          longitude\n        }\n        latitude\n        longitude\n        locationType {\n          surveyTemplateCategories {\n            id\n          }\n          id\n        }\n        surveys {\n          id\n        }\n        locationHierarchy {\n          id\n          name\n        }\n      }\n    }\n  }\n  workOrders(first: 50, filterBy: $filters) {\n    totalCount\n    __typename\n    edges {\n      node {\n        id\n        name\n        priority\n        status\n        installDate\n        workOrderTemplate {\n          name\n        }\n        location {\n          id\n          name\n          latitude\n          longitude\n          locationHierarchy {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment MyTaskListItem_location on Location {\n  id\n  name\n  latitude\n  longitude\n  locationHierarchy {\n    id\n    name\n  }\n}\n\nfragment TasksList_locations on LocationEdge {\n  node {\n    id\n    name\n    latitude\n    longitude\n    locationType {\n      surveyTemplateCategories {\n        id\n      }\n      id\n    }\n    ...MyTaskListItem_location\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bc4966b05f6e78f71de57a291ee9faaa';
+(node/*: any*/).hash = '297bb5a45e87af3b624f6f3c4fcee695';
 
 module.exports = node;
