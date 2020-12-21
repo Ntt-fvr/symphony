@@ -7,6 +7,7 @@ on:
       - infra/**
       - skaffold/**
       - tools/**
+      - app/mobile/**
 
 jobs:
   lint:
