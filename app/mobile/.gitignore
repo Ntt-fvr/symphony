@@ -49,3 +49,5 @@ yarn-error.log
 # Jest, flow, and lint reports
 reports/
 
+# FB app keys
+/android/fb/
