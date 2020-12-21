@@ -31,6 +31,9 @@ export type RelayStoreUtilsWorkOrderNodeQueryResponse = {|
     +id: string,
     +name: string,
     +status: WorkOrderStatus,
+    +workOrderTemplate: ?{|
+      +name: string
+    |},
     +location: ?{|
       +id: string,
       +name: string,
@@ -176,6 +179,9 @@ query RelayStoreUtilsWorkOrderNodeQuery(
       id
       name
       status
+      workOrderTemplate {
+        name
+      }
       location {
         id
         name
@@ -359,21 +365,34 @@ v5 = {
   "name": "status",
   "storageKey": null
 },
-v6 = {
+v6 = [
+  (v4/*: any*/)
+],
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "WorkOrderTemplate",
+  "kind": "LinkedField",
+  "name": "workOrderTemplate",
+  "plural": false,
+  "selections": (v6/*: any*/),
+  "storageKey": null
+},
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "latitude",
   "storageKey": null
 },
-v7 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "longitude",
   "storageKey": null
 },
-v8 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "Location",
@@ -391,13 +410,13 @@ v8 = {
       "name": "parentCoords",
       "plural": false,
       "selections": [
-        (v6/*: any*/),
-        (v7/*: any*/)
+        (v8/*: any*/),
+        (v9/*: any*/)
       ],
       "storageKey": null
     },
-    (v6/*: any*/),
-    (v7/*: any*/),
+    (v8/*: any*/),
+    (v9/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -414,311 +433,308 @@ v8 = {
   ],
   "storageKey": null
 },
-v9 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "creationDate",
   "storageKey": null
 },
-v10 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "installDate",
   "storageKey": null
 },
-v11 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "description",
   "storageKey": null
 },
-v12 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "priority",
   "storageKey": null
 },
-v13 = [
-  (v4/*: any*/)
-],
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "email",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "text",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "createTime",
   "storageKey": null
 },
-v17 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "index",
   "storageKey": null
 },
-v19 = {
+v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v20 = {
+v21 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "helpText",
   "storageKey": null
 },
-v21 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "stringValue",
   "storageKey": null
 },
-v22 = {
+v23 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "checked",
   "storageKey": null
 },
-v23 = {
+v24 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "enumValues",
   "storageKey": null
 },
-v24 = {
+v25 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "selectedEnumValues",
   "storageKey": null
 },
-v25 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "enumSelectionMode",
   "storageKey": null
 },
-v26 = {
+v27 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "yesNoResponse",
   "storageKey": null
 },
-v27 = {
+v28 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "timestamp",
   "storageKey": null
 },
-v28 = {
+v29 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "frequency",
   "storageKey": null
 },
-v29 = {
+v30 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "channel",
   "storageKey": null
 },
-v30 = {
+v31 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "bssid",
   "storageKey": null
 },
-v31 = {
+v32 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "strength",
   "storageKey": null
 },
-v32 = {
+v33 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "ssid",
   "storageKey": null
 },
-v33 = {
+v34 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "band",
   "storageKey": null
 },
-v34 = {
+v35 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "channelWidth",
   "storageKey": null
 },
-v35 = {
+v36 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "capabilities",
   "storageKey": null
 },
-v36 = {
+v37 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "networkType",
   "storageKey": null
 },
-v37 = {
+v38 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "signalStrength",
   "storageKey": null
 },
-v38 = {
+v39 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "baseStationID",
   "storageKey": null
 },
-v39 = {
+v40 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "networkID",
   "storageKey": null
 },
-v40 = {
+v41 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "systemID",
   "storageKey": null
 },
-v41 = {
+v42 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "cellID",
   "storageKey": null
 },
-v42 = {
+v43 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "locationAreaCode",
   "storageKey": null
 },
-v43 = {
+v44 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mobileCountryCode",
   "storageKey": null
 },
-v44 = {
+v45 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mobileNetworkCode",
   "storageKey": null
 },
-v45 = {
+v46 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "primaryScramblingCode",
   "storageKey": null
 },
-v46 = {
+v47 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "operator",
   "storageKey": null
 },
-v47 = {
+v48 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "arfcn",
   "storageKey": null
 },
-v48 = {
+v49 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "physicalCellID",
   "storageKey": null
 },
-v49 = {
+v50 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "trackingAreaCode",
   "storageKey": null
 },
-v50 = {
+v51 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "timingAdvance",
   "storageKey": null
 },
-v51 = {
+v52 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "earfcn",
   "storageKey": null
 },
-v52 = {
+v53 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "uarfcn",
   "storageKey": null
 },
-v53 = {
+v54 = {
   "alias": null,
   "args": null,
   "concreteType": "File",
@@ -772,56 +788,56 @@ v53 = {
   ],
   "storageKey": null
 },
-v54 = {
+v55 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "intValue",
   "storageKey": null
 },
-v55 = {
+v56 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "floatValue",
   "storageKey": null
 },
-v56 = {
+v57 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "booleanValue",
   "storageKey": null
 },
-v57 = {
+v58 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "latitudeValue",
   "storageKey": null
 },
-v58 = {
+v59 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "longitudeValue",
   "storageKey": null
 },
-v59 = {
+v60 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rangeFromValue",
   "storageKey": null
 },
-v60 = {
+v61 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rangeToValue",
   "storageKey": null
 },
-v61 = {
+v62 = {
   "alias": null,
   "args": null,
   "concreteType": "Property",
@@ -840,7 +856,7 @@ v61 = {
       "selections": [
         (v3/*: any*/),
         (v4/*: any*/),
-        (v18/*: any*/),
+        (v19/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -848,30 +864,30 @@ v61 = {
           "name": "isInstanceProperty",
           "storageKey": null
         },
-        (v19/*: any*/),
-        (v21/*: any*/),
-        (v54/*: any*/),
+        (v20/*: any*/),
+        (v22/*: any*/),
         (v55/*: any*/),
         (v56/*: any*/),
         (v57/*: any*/),
         (v58/*: any*/),
         (v59/*: any*/),
-        (v60/*: any*/)
+        (v60/*: any*/),
+        (v61/*: any*/)
       ],
       "storageKey": null
     },
-    (v21/*: any*/),
-    (v54/*: any*/),
+    (v22/*: any*/),
     (v55/*: any*/),
     (v56/*: any*/),
     (v57/*: any*/),
     (v58/*: any*/),
     (v59/*: any*/),
-    (v60/*: any*/)
+    (v60/*: any*/),
+    (v61/*: any*/)
   ],
   "storageKey": null
 },
-v62 = [
+v63 = [
   (v4/*: any*/),
   (v3/*: any*/)
 ];
@@ -897,11 +913,12 @@ return {
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v8/*: any*/),
-              (v9/*: any*/),
+              (v7/*: any*/),
               (v10/*: any*/),
               (v11/*: any*/),
               (v12/*: any*/),
+              (v13/*: any*/),
+              (v14/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -909,7 +926,7 @@ return {
                 "kind": "LinkedField",
                 "name": "project",
                 "plural": false,
-                "selections": (v13/*: any*/),
+                "selections": (v6/*: any*/),
                 "storageKey": null
               },
               {
@@ -919,7 +936,7 @@ return {
                 "kind": "LinkedField",
                 "name": "assignedTo",
                 "plural": false,
-                "selections": (v13/*: any*/),
+                "selections": (v6/*: any*/),
                 "storageKey": null
               },
               {
@@ -939,12 +956,12 @@ return {
                     "name": "author",
                     "plural": false,
                     "selections": [
-                      (v14/*: any*/)
+                      (v15/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v15/*: any*/),
-                  (v16/*: any*/)
+                  (v16/*: any*/),
+                  (v17/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -958,8 +975,8 @@ return {
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v17/*: any*/),
-                  (v11/*: any*/),
+                  (v18/*: any*/),
+                  (v13/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -969,9 +986,8 @@ return {
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
-                      (v18/*: any*/),
-                      (v17/*: any*/),
                       (v19/*: any*/),
+                      (v18/*: any*/),
                       (v20/*: any*/),
                       (v21/*: any*/),
                       (v22/*: any*/),
@@ -979,6 +995,7 @@ return {
                       (v24/*: any*/),
                       (v25/*: any*/),
                       (v26/*: any*/),
+                      (v27/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -987,7 +1004,6 @@ return {
                         "name": "wifiData",
                         "plural": true,
                         "selections": [
-                          (v27/*: any*/),
                           (v28/*: any*/),
                           (v29/*: any*/),
                           (v30/*: any*/),
@@ -996,8 +1012,9 @@ return {
                           (v33/*: any*/),
                           (v34/*: any*/),
                           (v35/*: any*/),
-                          (v6/*: any*/),
-                          (v7/*: any*/)
+                          (v36/*: any*/),
+                          (v8/*: any*/),
+                          (v9/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -1009,10 +1026,9 @@ return {
                         "name": "cellData",
                         "plural": true,
                         "selections": [
-                          (v36/*: any*/),
                           (v37/*: any*/),
-                          (v27/*: any*/),
                           (v38/*: any*/),
+                          (v28/*: any*/),
                           (v39/*: any*/),
                           (v40/*: any*/),
                           (v41/*: any*/),
@@ -1027,12 +1043,13 @@ return {
                           (v50/*: any*/),
                           (v51/*: any*/),
                           (v52/*: any*/),
-                          (v6/*: any*/),
-                          (v7/*: any*/)
+                          (v53/*: any*/),
+                          (v8/*: any*/),
+                          (v9/*: any*/)
                         ],
                         "storageKey": null
                       },
-                      (v53/*: any*/)
+                      (v54/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -1044,7 +1061,7 @@ return {
                 ],
                 "storageKey": null
               },
-              (v61/*: any*/)
+              (v62/*: any*/)
             ],
             "type": "WorkOrder"
           }
@@ -1075,11 +1092,12 @@ return {
             "selections": [
               (v4/*: any*/),
               (v5/*: any*/),
-              (v8/*: any*/),
-              (v9/*: any*/),
+              (v7/*: any*/),
               (v10/*: any*/),
               (v11/*: any*/),
               (v12/*: any*/),
+              (v13/*: any*/),
+              (v14/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1087,7 +1105,7 @@ return {
                 "kind": "LinkedField",
                 "name": "project",
                 "plural": false,
-                "selections": (v62/*: any*/),
+                "selections": (v63/*: any*/),
                 "storageKey": null
               },
               {
@@ -1097,7 +1115,7 @@ return {
                 "kind": "LinkedField",
                 "name": "assignedTo",
                 "plural": false,
-                "selections": (v62/*: any*/),
+                "selections": (v63/*: any*/),
                 "storageKey": null
               },
               {
@@ -1117,13 +1135,13 @@ return {
                     "name": "author",
                     "plural": false,
                     "selections": [
-                      (v14/*: any*/),
+                      (v15/*: any*/),
                       (v3/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v15/*: any*/),
-                  (v16/*: any*/)
+                  (v16/*: any*/),
+                  (v17/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -1137,8 +1155,8 @@ return {
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v17/*: any*/),
-                  (v11/*: any*/),
+                  (v18/*: any*/),
+                  (v13/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -1148,9 +1166,8 @@ return {
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
-                      (v18/*: any*/),
-                      (v17/*: any*/),
                       (v19/*: any*/),
+                      (v18/*: any*/),
                       (v20/*: any*/),
                       (v21/*: any*/),
                       (v22/*: any*/),
@@ -1158,6 +1175,7 @@ return {
                       (v24/*: any*/),
                       (v25/*: any*/),
                       (v26/*: any*/),
+                      (v27/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1166,7 +1184,6 @@ return {
                         "name": "wifiData",
                         "plural": true,
                         "selections": [
-                          (v27/*: any*/),
                           (v28/*: any*/),
                           (v29/*: any*/),
                           (v30/*: any*/),
@@ -1175,8 +1192,9 @@ return {
                           (v33/*: any*/),
                           (v34/*: any*/),
                           (v35/*: any*/),
-                          (v6/*: any*/),
-                          (v7/*: any*/),
+                          (v36/*: any*/),
+                          (v8/*: any*/),
+                          (v9/*: any*/),
                           (v3/*: any*/)
                         ],
                         "storageKey": null
@@ -1189,10 +1207,9 @@ return {
                         "name": "cellData",
                         "plural": true,
                         "selections": [
-                          (v36/*: any*/),
                           (v37/*: any*/),
-                          (v27/*: any*/),
                           (v38/*: any*/),
+                          (v28/*: any*/),
                           (v39/*: any*/),
                           (v40/*: any*/),
                           (v41/*: any*/),
@@ -1207,20 +1224,21 @@ return {
                           (v50/*: any*/),
                           (v51/*: any*/),
                           (v52/*: any*/),
-                          (v6/*: any*/),
-                          (v7/*: any*/),
+                          (v53/*: any*/),
+                          (v8/*: any*/),
+                          (v9/*: any*/),
                           (v3/*: any*/)
                         ],
                         "storageKey": null
                       },
-                      (v53/*: any*/)
+                      (v54/*: any*/)
                     ],
                     "storageKey": null
                   }
                 ],
                 "storageKey": null
               },
-              (v61/*: any*/)
+              (v62/*: any*/)
             ],
             "type": "WorkOrder"
           }
@@ -1234,11 +1252,11 @@ return {
     "metadata": {},
     "name": "RelayStoreUtilsWorkOrderNodeQuery",
     "operationKind": "query",
-    "text": "query RelayStoreUtilsWorkOrderNodeQuery(\n  $workOrderId: ID!\n) {\n  node(id: $workOrderId) {\n    __typename\n    ... on WorkOrder {\n      id\n      name\n      status\n      location {\n        id\n        name\n        parentCoords {\n          latitude\n          longitude\n        }\n        latitude\n        longitude\n        locationHierarchy {\n          id\n          name\n        }\n      }\n      creationDate\n      installDate\n      description\n      priority\n      project {\n        name\n        id\n      }\n      assignedTo {\n        name\n        id\n      }\n      comments {\n        id\n        author {\n          email\n          id\n        }\n        text\n        createTime\n      }\n      checkListCategories {\n        __typename\n        id\n        ...WorkOrderChecklistCategoryNavigationListItem_category\n        title\n        description\n        checkList {\n          id\n          index\n          title\n          type\n          helpText\n          stringValue\n          checked\n          enumValues\n          selectedEnumValues\n          enumSelectionMode\n          yesNoResponse\n          wifiData {\n            timestamp\n            frequency\n            channel\n            bssid\n            strength\n            ssid\n            band\n            channelWidth\n            capabilities\n            latitude\n            longitude\n            id\n          }\n          cellData {\n            networkType\n            signalStrength\n            timestamp\n            baseStationID\n            networkID\n            systemID\n            cellID\n            locationAreaCode\n            mobileCountryCode\n            mobileNetworkCode\n            primaryScramblingCode\n            operator\n            arfcn\n            physicalCellID\n            trackingAreaCode\n            timingAdvance\n            earfcn\n            uarfcn\n            latitude\n            longitude\n            id\n          }\n          files {\n            id\n            fileName\n            storeKey\n            mimeType\n            sizeInBytes\n            modified\n            uploaded\n          }\n        }\n      }\n      properties {\n        id\n        propertyType {\n          id\n          name\n          index\n          isInstanceProperty\n          type\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n        }\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n    id\n  }\n}\n\nfragment WorkOrderChecklistCategoryNavigationListItem_category on CheckListCategory {\n  id\n  title\n  description\n}\n"
+    "text": "query RelayStoreUtilsWorkOrderNodeQuery(\n  $workOrderId: ID!\n) {\n  node(id: $workOrderId) {\n    __typename\n    ... on WorkOrder {\n      id\n      name\n      status\n      workOrderTemplate {\n        name\n      }\n      location {\n        id\n        name\n        parentCoords {\n          latitude\n          longitude\n        }\n        latitude\n        longitude\n        locationHierarchy {\n          id\n          name\n        }\n      }\n      creationDate\n      installDate\n      description\n      priority\n      project {\n        name\n        id\n      }\n      assignedTo {\n        name\n        id\n      }\n      comments {\n        id\n        author {\n          email\n          id\n        }\n        text\n        createTime\n      }\n      checkListCategories {\n        __typename\n        id\n        ...WorkOrderChecklistCategoryNavigationListItem_category\n        title\n        description\n        checkList {\n          id\n          index\n          title\n          type\n          helpText\n          stringValue\n          checked\n          enumValues\n          selectedEnumValues\n          enumSelectionMode\n          yesNoResponse\n          wifiData {\n            timestamp\n            frequency\n            channel\n            bssid\n            strength\n            ssid\n            band\n            channelWidth\n            capabilities\n            latitude\n            longitude\n            id\n          }\n          cellData {\n            networkType\n            signalStrength\n            timestamp\n            baseStationID\n            networkID\n            systemID\n            cellID\n            locationAreaCode\n            mobileCountryCode\n            mobileNetworkCode\n            primaryScramblingCode\n            operator\n            arfcn\n            physicalCellID\n            trackingAreaCode\n            timingAdvance\n            earfcn\n            uarfcn\n            latitude\n            longitude\n            id\n          }\n          files {\n            id\n            fileName\n            storeKey\n            mimeType\n            sizeInBytes\n            modified\n            uploaded\n          }\n        }\n      }\n      properties {\n        id\n        propertyType {\n          id\n          name\n          index\n          isInstanceProperty\n          type\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n        }\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n    id\n  }\n}\n\nfragment WorkOrderChecklistCategoryNavigationListItem_category on CheckListCategory {\n  id\n  title\n  description\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a0fe3b47a42b6d5caf4bcc0f3884f2f5';
+(node/*: any*/).hash = '930f96e5e15384b8fb8b3b88c5e810bb';
 
 module.exports = node;

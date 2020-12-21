@@ -228,12 +228,15 @@ const WorkOrderTechnicianActionBottomBar = ({
           buttonState={buttonState}
         />
       ) : null}
-      <WorkOrderCheckOutDialog
+      {
+        isUploadDialogOpen ?
+        (<WorkOrderCheckOutDialog
         workOrderId={workOrder.id}
         shown={isUploadDialogOpen}
         onDialogClosed={() => setIsUploadDialogOpen(false)}
         onActionClicked={onTechnicianCheckOutPressed}
-      />
+      />) : null
+      }
     </BottomBar>
   );
 };
