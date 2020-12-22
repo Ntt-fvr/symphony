@@ -403,7 +403,7 @@ export type ButtonSkin =
   | 'brightGray'
   | 'orange'
   | 'green';
-type SvgIconComponent =
+export type SvgIconComponent =
   | React.ComponentType<SvgIconStyleProps>
   | React$ComponentType<SvgIconExports>;
 
