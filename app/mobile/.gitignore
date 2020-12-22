@@ -50,6 +50,5 @@ yarn-error.log
 reports/
 junit.xml
 
-
 # FB app keys
 /android/fb/
