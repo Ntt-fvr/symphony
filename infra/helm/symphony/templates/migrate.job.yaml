@@ -25,8 +25,8 @@ spec:
       {{- include "symphony.imagePullSecrets" $ | indent 6 }}
       containers:
         - name: migrate
-          image: {{ $.Values.migrate.image.repository }}:{{ $.Values.migrate.image.tag }}
-          imagePullPolicy: {{ $.Values.migrate.image.pullPolicy }}
+          image: {{ default (print $.Values.global.image.registry "/migrate") $.Values.migrate.image.repository }}:{{ default $.Values.global.image.tag $.Values.migrate.image.tag }}
+          imagePullPolicy: {{ default $.Values.global.image.pullPolicy $.Values.migrate.image.pullPolicy }}
           args:
             - {{ $name }}
             {{- if eq $name "cadence" }}

@@ -41,8 +41,8 @@ spec:
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: store
-          image: {{ .Values.store.image.repository }}:{{ .Values.store.image.tag }}
-          imagePullPolicy: {{ .Values.store.image.pullPolicy }}
+          image: {{ default (print .Values.global.image.registry "/store") .Values.store.image.repository }}:{{ default .Values.global.image.tag .Values.store.image.tag }}
+          imagePullPolicy: {{ default .Values.global.image.pullPolicy .Values.store.image.pullPolicy }}
           args:
             {{- include "symphony.listenArgs" .Values.store | nindent 12 }}
             - --bucket-url={{  required ".Values.store.spec.bucket.url is required" .Values.store.spec.bucket.url }}

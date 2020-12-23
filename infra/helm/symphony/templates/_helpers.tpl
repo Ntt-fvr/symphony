@@ -296,7 +296,7 @@ DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.
 
 {{/* Create image pull secrets list */}}
 {{- define "symphony.imagePullSecrets" -}}
-{{- with .Values.imagePullSecrets }}
+{{- with .Values.global.imagePullSecrets }}
 imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}

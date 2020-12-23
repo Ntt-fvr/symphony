@@ -41,8 +41,8 @@ spec:
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: front
-          image: {{ .Values.front.image.repository }}:{{ .Values.front.image.tag }}
-          imagePullPolicy: {{ .Values.front.image.pullPolicy }}
+          image: {{ default (print .Values.global.image.registry "/front") .Values.front.image.repository }}:{{ default .Values.global.image.tag .Values.front.image.tag }}
+          imagePullPolicy: {{ default .Values.global.image.pullPolicy .Values.front.image.pullPolicy }}
           env:
             - name: PORT
               value: {{ .Values.front.service.targetPort | quote }}

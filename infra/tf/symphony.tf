@@ -72,20 +72,11 @@ resource "helm_release" "symphony" {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "4.3.0"
+  version             = "4.4.0"
   timeout             = 600
   max_history         = 100
 
   values = [
-    yamlencode({
-      for s in toset(["front", "admin", "graph", "async", "store", "migrate", "jobrunner", "docs"]) :
-      s => {
-        image = {
-          repository = "${module.artifactory_secret.data.docker_registry}/${s}"
-          tag        = local.symphony_tag
-        }
-      }
-    }),
     yamlencode({
       for s in toset(["admin", "graph", "async", "store", "migrate"]) :
       s => {
@@ -126,9 +117,15 @@ resource "helm_release" "symphony" {
       )
     }),
     yamlencode({
-      imagePullSecrets = [{
-        name = kubernetes_secret.artifactory.metadata.0.name
-      }]
+      global = {
+        image = {
+          registry = module.artifactory_secret.data.docker_registry
+          tag      = local.symphony_tag
+        }
+        imagePullSecrets = [{
+          name = kubernetes_secret.artifactory.metadata.0.name
+        }]
+      }
       ingress = {
         enabled = true
         annotations = {

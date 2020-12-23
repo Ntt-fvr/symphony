@@ -41,8 +41,8 @@ spec:
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: async
-          image: {{ .Values.async.image.repository }}:{{ .Values.async.image.tag }}
-          imagePullPolicy: {{ .Values.async.image.pullPolicy }}
+          image: {{ default (print .Values.global.image.registry "/async") .Values.async.image.repository }}:{{ default .Values.global.image.tag .Values.async.image.tag }}
+          imagePullPolicy: {{ default .Values.global.image.pullPolicy .Values.async.image.pullPolicy }}
           args: {{- include "symphony.listenArgs" .Values.async | nindent 12 }}
           env:
             - name: EVENT_PUB_URL
