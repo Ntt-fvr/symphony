@@ -20,6 +20,7 @@ import type {
   WorkOrderStatus,
 } from '../../mutations/__generated__/EditWorkOrderMutation.graphql';
 
+import mapboxgl from 'mapbox-gl';
 import {
   closedStatus,
   doneStatus,
@@ -256,3 +257,38 @@ export const polygonToGeoJSONSource = (
     },
   };
 };
+
+export type MapType = 'satellite' | 'streets';
+
+const OSM_STYLE = {
+  version: 8,
+  sources: {
+    'osm-raster': {
+      type: 'raster',
+      tiles: [
+        '//a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        '//b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      ],
+      tileSize: 256,
+    },
+  },
+  layers: [
+    {
+      id: 'osm-raster',
+      type: 'raster',
+      source: 'osm-raster',
+      minzoom: 0,
+      maxzoom: 22,
+    },
+  ],
+};
+
+export function getMapStyleForType(mapType: MapType) {
+  if (mapboxgl.accessToken) {
+    return mapType == 'satellite'
+      ? 'mapbox://styles/mapbox/satellite-v9'
+      : 'mapbox://styles/mapbox/streets-v11';
+  } else {
+    return OSM_STYLE;
+  }
+}

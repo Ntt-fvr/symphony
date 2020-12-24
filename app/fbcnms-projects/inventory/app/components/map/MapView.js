@@ -35,7 +35,8 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {CloseIcon} from '@symphony/design-system/icons';
 import {Router, withRouter} from 'react-router-dom';
 import {SnackbarProvider} from 'notistack';
-import {getMapStyleForType} from '@fbcnms/ui/insights/map/styles';
+import {getMapStyleForType as _} from '@fbcnms/ui/insights/map/styles';
+import {getMapStyleForType} from './MapUtil';
 import {isEqual} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 
