@@ -97,10 +97,7 @@ const WorkOrdersMap = (props: Props) => {
       {
         styles: {
           icon: {
-            iconImage:
-              selectedView == 'status'
-                ? ['get', 'iconStatus']
-                : ['get', 'iconTech'],
+            iconImage: 'suitcase-15',
             textField: selectedView == 'status' ? '' : ['get', 'text'],
             textTransform: 'uppercase',
             iconIgnorePlacement: false,

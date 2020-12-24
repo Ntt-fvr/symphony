@@ -24,7 +24,7 @@ import ReactDOM from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {black, blue70, white} from '@fbcnms/ui/theme/colors';
-import {getMapStyleForType} from '@fbcnms/ui/insights/map/styles';
+import {getMapStyleForType} from './MapUtil';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = () => ({
@@ -48,6 +48,7 @@ const styles = () => ({
     fontFamily: 'Roboto-Bold',
   },
   chip: {
+    maxWidth: '180px',
     borderRadius: '4px',
     color: black,
     opacity: 0.95,
