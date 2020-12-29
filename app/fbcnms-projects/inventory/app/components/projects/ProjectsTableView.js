@@ -24,7 +24,6 @@ import Table from '@symphony/design-system/components/Table/Table';
 import TableColumnSelector from '@symphony/design-system/components/Table/TableColumnSelector';
 import Toolbar from '@material-ui/core/Toolbar';
 import fbt from 'fbt';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
 import {getPropertyValue} from '../../common/Property';
 import {graphql} from 'react-relay';
@@ -53,7 +52,6 @@ type Props = $ReadOnly<{|
 const ProjectsTableView = (props: Props) => {
   const {onProjectSelected, orderBy, onOrderChanged} = props;
   const classes = useStyles();
-  const useColumnSelector = useFeatureFlag('projects_column_selector');
 
   // $FlowFixMe[missing-type-arg] $FlowFixMe T74239404 Found via relay types
   const {data, loadNext} = usePaginationFragment<
@@ -195,27 +193,25 @@ const ProjectsTableView = (props: Props) => {
         isSortable: true,
       },
 
-      ...(useColumnSelector
-        ? allProjectPropertyNames
-            .filter(name => !!name)
-            .map((name = '') => ({
-              hidden: true,
-              key: name,
-              title: name,
-              getSortingValue: row => row.type?.name,
-              render: row => {
-                const indexOfProperty = row.properties.findIndex(
-                  property => property.propertyType.name === name,
-                );
+      ...allProjectPropertyNames
+        .filter(name => !!name)
+        .map((name = '') => ({
+          hidden: true,
+          key: name,
+          title: name,
+          getSortingValue: row => row.type?.name,
+          render: row => {
+            const indexOfProperty = row.properties.findIndex(
+              property => property.propertyType.name === name,
+            );
 
-                return (
-                  (indexOfProperty >= 0 &&
-                    getPropertyValue(row.properties[indexOfProperty])) ||
-                  null
-                );
-              },
-            }))
-        : []),
+            return (
+              (indexOfProperty >= 0 &&
+                getPropertyValue(row.properties[indexOfProperty])) ||
+              null
+            );
+          },
+        })),
     ].map(column => {
       const hidden = column?.hidden || false;
       return {
