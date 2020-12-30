@@ -28,6 +28,11 @@ import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {formatFileSize} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
+import Strings from '../common/InventoryStrings';
+
+
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import Select from '@symphony/design-system/components/Select/Select';
 
 const styles = () => ({
   nameCell: {
@@ -87,6 +92,7 @@ class FileAttachment extends React.Component<Props, State> {
     super(props);
     this.state = {
       isImageDialogOpen: false,
+      enabled: false,
     };
   }
 
@@ -100,7 +106,17 @@ class FileAttachment extends React.Component<Props, State> {
     this.props.onDocumentDeleted(this.props.file);
   };
 
+  handleInputChange = () => {
+    this.checked = !this.checked;
+    this.setState({ enabled: this.checked });    
+  }
+
+  
+
   render() {
+  
+    const enabled = this.state;
+
     const {classes, file} = this.props;
     if (file === null) {
       return null;
@@ -150,6 +166,30 @@ class FileAttachment extends React.Component<Props, State> {
           component="th"
           scope="row">
           {file.uploaded && DateTimeFormat.dateTime(file.uploaded)}
+        </TableCell>
+        <TableCell
+          padding="none"
+          className={classNames(classes.cell, classes.secondaryCell)}
+          component="th"
+          scope="row">
+          <input
+            type="checkbox"
+            onChange={this.handleInputChange} />
+        </TableCell>
+        <TableCell
+          padding="none"
+          className={classNames(classes.cell, classes.secondaryCell)}
+          component="th"
+          scope="row">
+          <FormField label="">
+            <Select 
+              options={ Strings.documents.categories.map((x) => 
+              ( {key: x, value :x, label: x }))}
+              onChange={value =>
+                                _setWorkOrderDetail('priority', value)
+                              }
+            />
+          </FormField>
         </TableCell>
         <TableCell
           padding="none"
