@@ -92,7 +92,8 @@ class FileAttachment extends React.Component<Props, State> {
     super(props);
     this.state = {
       isImageDialogOpen: false,
-      enabled: false,
+      isChecked: false,
+      selectValue: ''
     };
   }
 
@@ -107,15 +108,12 @@ class FileAttachment extends React.Component<Props, State> {
   };
 
   handleInputChange = () => {
-    this.checked = !this.checked;
-    this.setState({ enabled: this.checked });    
+    this.setState({isChecked: !this.state.isChecked});
   }
 
   
 
   render() {
-  
-    const enabled = this.state;
 
     const {classes, file} = this.props;
     if (file === null) {
@@ -181,10 +179,10 @@ class FileAttachment extends React.Component<Props, State> {
           className={classNames(classes.cell, classes.secondaryCell)}
           component="th"
           scope="row">
-          <FormField label="">
+          <FormField label="" disabled={!this.state.isChecked}>
             <Select 
-              options={ Strings.documents.categories.map((x) => 
-              ( {key: x, value :x, label: x }))}
+              options={Strings.documents.categories.map((x) => 
+              ({key: x, value :x, label: x }))}
               onChange={value =>
                                 _setWorkOrderDetail('priority', value)
                               }
