@@ -77,13 +77,13 @@ func prepareProjectData(ctx context.Context, t *testing.T) projectTestType {
 
 	client.Property.Create().
 		SetType(propStrEnt).
-		SetStringVal("string1").
+		SetStringVal("string10").
 		SetProject(project1).
 		SaveX(ctx)
 
 	client.Property.Create().
 		SetType(propStr2Ent).
-		SetStringVal("string2").
+		SetStringVal("string20").
 		SetProject(project1).
 		SaveX(ctx)
 
@@ -211,8 +211,8 @@ func TestProjectExport(t *testing.T) {
 				GetStringDate(pointer.ToTime(time.Now())),
 				"",
 				"",
-				"string1",
-				"string2",
+				"string10",
+				"string20",
 			})
 		case ln[0] == strconv.Itoa(data.project2.ID):
 			projectTest = *data.project2
@@ -270,13 +270,14 @@ func TestExportProjectWithFilters(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"ProjectName1",
 				"ProjectDescription1",
-				project.PriorityHigh.String(),
-				projectTest.QueryType().OnlyX(ctx).Name,
+				"0",
 				projectTest.QueryTemplate().OnlyX(ctx).Name,
 				grandParentLocation + "; " + parentLocation,
 				"tester@example.com",
-				"string1",
-				"string2",
+				project.PriorityHigh.String(),
+				GetStringDate(pointer.ToTime(time.Now())),
+				"string10",
+				"string20",
 			})
 		}
 	}
