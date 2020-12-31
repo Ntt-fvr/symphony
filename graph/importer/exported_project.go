@@ -26,7 +26,6 @@ import (
 const minimalProjectLineLength = 5
 
 // processExportedEquipment imports project csv generated from the export feature
-// nolint: staticcheck, dupl
 func (m *importer) processExportedProject(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)

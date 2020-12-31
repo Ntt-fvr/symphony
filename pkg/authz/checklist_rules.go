@@ -91,7 +91,6 @@ func CheckListItemDefinitionWritePolicyRule() privacy.MutationRule {
 }
 
 // CheckListItemCreatePolicyRule grants create permission to checklist category based on policy.
-// nolint: dupl
 func CheckListCategoryCreatePolicyRule() privacy.MutationRule {
 	return privacy.CheckListCategoryMutationRuleFunc(func(ctx context.Context, m *ent.CheckListCategoryMutation) error {
 		if !m.Op().Is(ent.OpCreate) {
@@ -127,7 +126,6 @@ func CheckListCategoryWritePolicyRule() privacy.MutationRule {
 }
 
 // CheckListItemCreatePolicyRule grants create permission to checklist item based on policy.
-// nolint: dupl
 func CheckListItemCreatePolicyRule() privacy.MutationRule {
 	return privacy.CheckListItemMutationRuleFunc(func(ctx context.Context, m *ent.CheckListItemMutation) error {
 		if !m.Op().Is(ent.OpCreate) {

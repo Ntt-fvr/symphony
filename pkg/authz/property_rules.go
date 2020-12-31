@@ -18,7 +18,6 @@ import (
 )
 
 // PropertyTypeWritePolicyRule grants write permission to property type based on policy.
-// nolint: dupl
 func PropertyTypeWritePolicyRule() privacy.MutationRule {
 	return privacy.PropertyTypeMutationRuleFunc(func(ctx context.Context, m *ent.PropertyTypeMutation) error {
 		propertyTypeID, exists := m.ID()
@@ -70,7 +69,6 @@ func PropertyTypeWritePolicyRule() privacy.MutationRule {
 }
 
 // PropertyTypeCreatePolicyRule grants create permission to property type based on policy.
-// nolint: dupl
 func PropertyTypeCreatePolicyRule() privacy.MutationRule {
 	return privacy.PropertyTypeMutationRuleFunc(func(ctx context.Context, m *ent.PropertyTypeMutation) error {
 		if !m.Op().Is(ent.OpCreate) {
@@ -109,7 +107,6 @@ func PropertyTypeCreatePolicyRule() privacy.MutationRule {
 }
 
 // PropertyWritePolicyRule grants write permission to property based on policy.
-// nolint: dupl
 func PropertyWritePolicyRule() privacy.MutationRule {
 	return privacy.PropertyMutationRuleFunc(func(ctx context.Context, m *ent.PropertyMutation) error {
 		propertyID, exists := m.ID()
@@ -162,7 +159,6 @@ func PropertyWritePolicyRule() privacy.MutationRule {
 }
 
 // PropertyCreatePolicyRule grants create permission to property based on policy.
-// nolint: dupl
 func PropertyCreatePolicyRule() privacy.MutationRule {
 	return privacy.PropertyMutationRuleFunc(func(ctx context.Context, m *ent.PropertyMutation) error {
 		if !m.Op().Is(ent.OpCreate) {

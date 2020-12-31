@@ -24,7 +24,6 @@ import (
 )
 
 // processLocationsCSV imports locations from CSV file to DB
-// nolint: staticcheck
 func (m *importer) processLocationsCSV(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

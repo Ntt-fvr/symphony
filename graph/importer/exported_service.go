@@ -25,7 +25,6 @@ import (
 const minimalLineLength = 22
 
 // processExportedService imports service csv generated from the export feature
-// nolint: staticcheck, dupl
 func (m *importer) processExportedService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)

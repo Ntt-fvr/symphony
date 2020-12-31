@@ -29,7 +29,6 @@ import (
 const minimalEquipmentLineLength = 9
 
 // processExportedEquipment imports equipment csv generated from the export feature
-// nolint: staticcheck, dupl
 func (m *importer) processExportedEquipment(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)

@@ -341,11 +341,7 @@ const (
 )
 
 func (p ProjectFilterType) IsValid() bool {
-	switch p {
-	case ProjectFilterTypeProjectName:
-		return true
-	}
-	return false
+	return p == ProjectFilterTypeProjectName
 }
 
 // String implements Getter interface.
