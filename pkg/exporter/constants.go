@@ -14,4 +14,5 @@ const (
 	ExportEntityPort       ExportEntity = "PORT"
 	ExportEntityLocation   ExportEntity = "LOCATION"
 	ExportEntityWorkOrders ExportEntity = "WORK_ORDERS"
+	ExportEntityProjects   ExportEntity = "PROJECTS"
 )

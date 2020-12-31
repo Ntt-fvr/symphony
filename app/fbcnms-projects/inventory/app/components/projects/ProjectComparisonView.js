@@ -32,7 +32,6 @@ import {
   buildPropertyFilterConfigs,
   getSelectedFilter,
 } from '../comparison_view/FilterUtils';
-import {defaultVisibleColumnsKeys} from './ProjectsTableView';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback} from 'react';
@@ -64,12 +63,6 @@ const ProjectComparisonView = () => {
     direction: 'DESC',
     field: 'UPDATED_AT',
   });
-
-  const [visibleColumns, setVisibleColumns] = useState(
-    Object.values(defaultVisibleColumnsKeys).map(columnKey =>
-      String(columnKey),
-    ),
-  );
 
   const selectedProjectTypeId = useMemo(
     () => extractEntityIdFromUrl('projectType', location.search),
@@ -159,8 +152,6 @@ const ProjectComparisonView = () => {
               : DisplayOptions.table
           }
           createProjectButton={createProjectButton}
-          visibleColumns={visibleColumns}
-          setVisibleColumns={setVisibleColumns}
         />
       ),
     [
@@ -170,8 +161,6 @@ const ProjectComparisonView = () => {
       orderBy,
       resultsDisplayMode,
       shouldRenderTable,
-      visibleColumns,
-      setVisibleColumns,
     ],
   );
 
@@ -212,6 +201,8 @@ const ProjectComparisonView = () => {
           onFiltersChanged={filters => {
             return setFilters(filters);
           }}
+          exportPath={"/projects"}
+          entity={"PROJECT"}
         />
       </div>
     ),
