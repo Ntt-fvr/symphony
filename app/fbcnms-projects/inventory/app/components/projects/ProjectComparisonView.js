@@ -212,8 +212,6 @@ const ProjectComparisonView = () => {
           onFiltersChanged={filters => {
             return setFilters(filters);
           }}
-          exportPath={"/projects"}
-          entity={"PROJECT"}
         />
       </div>
     ),
