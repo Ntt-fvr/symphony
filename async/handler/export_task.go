@@ -69,7 +69,7 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 
 	var key string
 	switch task.Type {
-	case exporttask.TypeLocation, exporttask.TypeEquipment, exporttask.TypePort, exporttask.TypeLink, exporttask.TypeService, exporttask.TypeWorkOrder:
+	case exporttask.TypeLocation, exporttask.TypeEquipment, exporttask.TypePort, exporttask.TypeLink, exporttask.TypeService, exporttask.TypeWorkOrder, exporttask.TypeProject:
 		key, err = eh.export(ctx, logger, task)
 	case exporttask.TypeSingleWorkOrder:
 		_, err := eh.client.StartWorkflow(ctx, client.StartWorkflowOptions{
@@ -139,6 +139,11 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 			Log: logger,
 		}
 		exportEntity = "work-orders"
+	case exporttask.TypeProject:
+		rower = exporter.ProjectRower{
+			Log: logger,
+		}
+		exportEntity = "projects"
 	default:
 		logger.For(ctx).Error("unsupported entity type for export", zap.String("type", task.Type.String()))
 		return "", fmt.Errorf("unsupported entity type %s", task.Type)
