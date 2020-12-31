@@ -165,9 +165,9 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 						continue
 					}
 					if commit {
-						var workOrderID *int
+						var workOrderId *int
 						if workOrderItem != nil {
-							workOrderID = &workOrderItem.ID
+							workOrderId = &workOrderItem.ID
 						}
 						_, err = m.r.Mutation().AddLink(ctx, models.AddLinkInput{
 							Sides: []*models.LinkSide{
@@ -176,7 +176,7 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 							},
 							Properties: linkPropertyInputs,
 							ServiceIds: serviceIds,
-							WorkOrder:  workOrderID,
+							WorkOrder:  workOrderId,
 						})
 						if err != nil {
 							errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: "creating/fetching link"})

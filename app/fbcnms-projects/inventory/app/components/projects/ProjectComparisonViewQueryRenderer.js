@@ -71,8 +71,6 @@ type Props = $ReadOnly<{|
   displayMode?: DisplayOptionTypes,
   onProjectSelected: (projectID: string) => void,
   createProjectButton: React.Node,
-  visibleColumns: string[],
-  setVisibleColumns: (string[]) => void,
 |}>;
 
 const projectSearchQuery = graphql`
@@ -104,8 +102,6 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
     displayMode,
     className,
     onOrderChanged,
-    visibleColumns,
-    setVisibleColumns,
     // createProjectButton,
   } = props;
 
@@ -158,8 +154,6 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
           projects={response}
           onProjectSelected={onProjectSelected}
           onOrderChanged={onOrderChanged}
-          visibleColumns={visibleColumns}
-          setVisibleColumns={setVisibleColumns}
         />
       )}
     </div>

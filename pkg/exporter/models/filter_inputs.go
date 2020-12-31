@@ -72,3 +72,14 @@ type WorkOrderFilterInput struct {
 	TimeValue     *time.Time               `json:"timeValue"`
 	MaxDepth      *int                     `json:"maxDepth"`
 }
+
+type ProjectFilterInput struct {
+	FilterType    enum.ProjectFilterType `json:"filterType"`
+	Operator      enum.FilterOperator    `json:"operator"`
+	StringValue   *string                `json:"stringValue"`
+	IDSet         []int                  `json:"idSet"`
+	StringSet     []string               `json:"stringSet"`
+	PropertyValue *PropertyTypeInput     `json:"propertyValue"`
+	TimeValue     *time.Time             `json:"timeValue"`
+	MaxDepth      *int                   `json:"maxDepth"`
+}

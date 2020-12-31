@@ -133,15 +133,15 @@ func linkToCRLSlice(ctx context.Context, link *ent.Link, linkPropertyTypes, port
 		return nil, errors.Wrap(err, "unable to find ports")
 	}
 	portA, portB := ports[0], ports[1]
+	portAPropertyValues = make([]string, len(portAPropertyTypes))
+	portBPropertyValues = make([]string, len(portBPropertyTypes))
 	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
 	cg.Go(func(ctx context.Context) error {
-		values, err := PropertiesSlice(ctx, portA, portAPropertyTypes, enum.PropertyEntityPort)
-		portAPropertyValues = values
+		portAPropertyValues, err = PropertiesSlice(ctx, portA, portAPropertyTypes, enum.PropertyEntityPort)
 		return err
 	})
 	cg.Go(func(ctx context.Context) error {
-		values, err := PropertiesSlice(ctx, portB, portBPropertyTypes, enum.PropertyEntityPort)
-		portBPropertyValues = values
+		portBPropertyValues, err = PropertiesSlice(ctx, portB, portBPropertyTypes, enum.PropertyEntityPort)
 		return err
 	})
 	cg.Go(func(ctx context.Context) error {
