@@ -18,7 +18,6 @@ import (
 const Infinite = 1<<(bits.UintSize-1) - 1
 
 // New creates a graphql complexity root.
-// nolint: funlen
 func New() (complexity generated.ComplexityRoot) {
 	complexity.Location.Topology = func(childComplexity int, depth int) int {
 		return childComplexity * int(math.Pow10(depth)) / 2

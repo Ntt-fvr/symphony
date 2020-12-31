@@ -39,14 +39,14 @@ type WoRower struct {
 
 var WoDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
-func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er WoRower) Rows(ctx context.Context, filters string) ([][]string, error) {
 	var (
 		logger      = er.Log.For(ctx)
 		err         error
 		filterInput []*models.WorkOrderFilterInput
 	)
-	if filtersParam != "" {
-		filterInput, err = paramToWOFilterInput(filtersParam)
+	if filters != "" {
+		filterInput, err = paramToWOFilterInput(filters)
 		if err != nil {
 			logger.Error("cannot filter work orders", zap.Error(err))
 			return nil, errors.Wrap(err, "cannot filter work orders")
@@ -61,7 +61,7 @@ func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 	}
 
 	wosList := searchResult.WorkOrders
-	allrows := make([][]string, len(wosList)+1)
+	allRows := make([][]string, len(wosList)+1)
 
 	woIDs := make([]int, len(wosList))
 	for i, w := range wosList {
@@ -75,7 +75,7 @@ func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 
 	title := append(WoDataHeader, propertyTypes...)
 
-	allrows[0] = title
+	allRows[0] = title
 	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
 	for i, wo := range wosList {
 		wo, i := wo, i
@@ -85,7 +85,7 @@ func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 			if err != nil {
 				return err
 			}
-			allrows[i+1] = row
+			allRows[i+1] = row
 			return nil
 		})
 	}
@@ -93,7 +93,7 @@ func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 		logger.Error("error in wait", zap.Error(err))
 		return nil, errors.WithMessage(err, "error in wait")
 	}
-	return allrows, nil
+	return allRows, nil
 }
 
 func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) ([]string, error) {

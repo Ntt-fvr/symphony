@@ -33,7 +33,6 @@ func minimalLinksLineLength() int {
 }
 
 // processExportedLinks imports links csv generated from the export feature
-// nolint: staticcheck
 func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)
@@ -165,9 +164,9 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 						continue
 					}
 					if commit {
-						var workOrderId *int
+						var workOrderID *int
 						if workOrderItem != nil {
-							workOrderId = &workOrderItem.ID
+							workOrderID = &workOrderItem.ID
 						}
 						_, err = m.r.Mutation().AddLink(ctx, models.AddLinkInput{
 							Sides: []*models.LinkSide{
@@ -176,7 +175,7 @@ func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) 
 							},
 							Properties: linkPropertyInputs,
 							ServiceIds: serviceIds,
-							WorkOrder:  workOrderId,
+							WorkOrder:  workOrderID,
 						})
 						if err != nil {
 							errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: "creating/fetching link"})
