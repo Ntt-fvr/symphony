@@ -41,16 +41,33 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const PROJECTS_PAGE_SIZE = 15;
+export const defaultVisibleColumnsKeys: {[key: string]: string} = {
+  name: 'name',
+  numberOfWorkOrders: 'numberOfWorkOrders',
+  type: 'type',
+  location: 'location',
+  owner: 'owner',
+  priority: 'priority',
+  createTime: 'createTime',
+};
 
 type Props = $ReadOnly<{|
   projects: ProjectsTableView_query$key,
   onProjectSelected: string => void,
   orderBy: ProjectOrder,
   onOrderChanged: (newOrderSettings: ProjectOrder) => void,
+  visibleColumns: string[],
+  setVisibleColumns: (string[]) => void,
 |}>;
 
 const ProjectsTableView = (props: Props) => {
-  const {onProjectSelected, orderBy, onOrderChanged} = props;
+  const {
+    onProjectSelected,
+    orderBy,
+    onOrderChanged,
+    visibleColumns,
+    setVisibleColumns,
+  } = props;
   const classes = useStyles();
 
   // $FlowFixMe[missing-type-arg] $FlowFixMe T74239404 Found via relay types
@@ -139,7 +156,7 @@ const ProjectsTableView = (props: Props) => {
   const [columns, setColumns] = useState(
     [
       {
-        key: 'name',
+        key: defaultVisibleColumnsKeys.name,
         title: 'Project',
         render: row => (
           <Button variant="text" onClick={() => onProjectSelected(row.id)}>
@@ -149,7 +166,7 @@ const ProjectsTableView = (props: Props) => {
         isSortable: true,
       },
       {
-        key: 'numberOfWorkOrders',
+        key: defaultVisibleColumnsKeys.numberOfWorkOrders,
         title: 'Work Orders',
         render: row =>
           row?.numberOfWorkOrders ? (
@@ -161,12 +178,12 @@ const ProjectsTableView = (props: Props) => {
           ) : null,
       },
       {
-        key: 'type',
+        key: defaultVisibleColumnsKeys.type,
         title: `${fbt('Template', '')}`,
         render: row => row.type?.name ?? '',
       },
       {
-        key: 'location',
+        key: defaultVisibleColumnsKeys.location,
         title: 'Location',
         render: row =>
           row.location ? (
@@ -176,18 +193,18 @@ const ProjectsTableView = (props: Props) => {
           ),
       },
       {
-        key: 'owner',
+        key: defaultVisibleColumnsKeys.owner,
         title: 'Owner',
         render: row => row?.createdBy?.email ?? '',
       },
       {
-        key: 'priority',
+        key: defaultVisibleColumnsKeys.priority,
         title: 'Priority',
         render: row => <PriorityTag priority={row.priority} />,
         isSortable: true,
       },
       {
-        key: 'createTime',
+        key: defaultVisibleColumnsKeys.createTime,
         title: 'Creation Time',
         render: row => DateTimeFormat.dateTime(row.createTime),
         isSortable: true,
@@ -213,7 +230,7 @@ const ProjectsTableView = (props: Props) => {
           },
         })),
     ].map(column => {
-      const hidden = column?.hidden || false;
+      const hidden = !visibleColumns.includes(column.key);
       return {
         ...column,
         hidden,
@@ -281,7 +298,12 @@ const ProjectsTableView = (props: Props) => {
             isSelected,
           }))}
           wrapperStyle={{marginLeft: 'auto'}}
-          handleOnChange={clickedOption =>
+          handleOnChange={clickedOption => {
+            setVisibleColumns(
+              clickedOption.isSelected
+                ? visibleColumns.filter(c => c !== clickedOption.key)
+                : [...visibleColumns, clickedOption.key],
+            );
             setColumns([
               ...columns.map(listOption =>
                 listOption.value === clickedOption?.value
@@ -292,8 +314,8 @@ const ProjectsTableView = (props: Props) => {
                     }
                   : listOption,
               ),
-            ])
-          }
+            ]);
+          }}
         />
       </Toolbar>
       <Table
