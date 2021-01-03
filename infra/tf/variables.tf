@@ -10,12 +10,6 @@ variable "symphony_tag" {
   default     = null
 }
 
-variable "storybook_tag" {
-  type        = string
-  description = "Storybook application image tag"
-  default     = null
-}
-
 variable "artifactory" {
   description = "Artifactory urls and credentials"
   type = object({
