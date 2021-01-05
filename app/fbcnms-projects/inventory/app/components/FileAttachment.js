@@ -74,6 +74,7 @@ const styles = () => ({
 type Props = {|
   file: FileAttachment_file,
   onDocumentDeleted: (file: $ElementType<FileAttachment_file, number>) => void,
+  onChecked: (action: string) => void,
 |} & WithStyles<typeof styles>;
 
 type State = {
@@ -93,7 +94,7 @@ class FileAttachment extends React.Component<Props, State> {
     this.state = {
       isImageDialogOpen: false,
       isChecked: false,
-      selectValue: ''
+      selectValue: ""
     };
   }
 
@@ -108,12 +109,28 @@ class FileAttachment extends React.Component<Props, State> {
   };
 
   handleInputChange = () => {
-    this.setState({isChecked: !this.state.isChecked});
+    this.setState({isChecked: !this.state.isChecked}, () => {
+      if(this.state.isChecked){
+        if(this.state.selectValue !== ""){
+          return this.props.onChecked({type: 'increment'});
+        }else{
+          return;
+        }
+      }else{
+        return this.props.onChecked({type: 'decrement'});
+      }
+    });
   }
 
-  
-
   render() {
+
+    const _setCategory = (value) => {
+      if(this.state.selectValue === ""){
+        this.props.onChecked({type: 'increment'});
+      }
+      this.setState({selectValue: value});
+      return value;
+    } 
 
     const {classes, file} = this.props;
     if (file === null) {
@@ -182,10 +199,9 @@ class FileAttachment extends React.Component<Props, State> {
           <FormField label="" disabled={!this.state.isChecked}>
             <Select 
               options={Strings.documents.categories.map((x) => 
-              ({key: x, value :x, label: x }))}
-              onChange={value =>
-                                _setWorkOrderDetail('priority', value)
-                              }
+                ({key: x, value :x, label: x }))}
+              onChange={value => _setCategory(value)}
+              selectedValue= { this.state.isChecked && this.state.selectValue}
             />
           </FormField>
         </TableCell>

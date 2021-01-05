@@ -34,6 +34,7 @@ import FormFieldWithPermissions from '../../common/FormFieldWithPermissions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LinkIcon from '@symphony/design-system/icons/Actions/LinkIcon';
+import ApplyIcon from '@symphony/design-system/icons/Actions/ApplyIcon';
 import LocationBreadcrumbsTitle from '../location/LocationBreadcrumbsTitle';
 import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
@@ -155,6 +156,8 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
+
+
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
       .filter(Boolean)
@@ -162,6 +165,25 @@ const WorkOrderDetails = ({
       .map<Property>(toMutableProperty)
       .sort(sortPropertiesByIndex),
   );
+
+ 
+
+  function reducerCounter(state, action) {
+    switch (action.type) {
+      case 'increment':
+        return {count: state.count + 1};
+      case 'decrement':
+        if(state.count > 0){
+          return {count: state.count - 1};
+        }else{
+          return {count: 0};
+        }
+      default:
+        throw new Error();
+    }
+  }
+  
+  const [state, countDispatch] = useReducer(reducerCounter, {count: 0});
 
   const [locationId, setLocationId] = useState(propsWorkOrder.location?.id);
   const [isLoadingDocument, setIsLoadingDocument] = useState(false);
@@ -390,6 +412,7 @@ const WorkOrderDetails = ({
                               onChange={value =>
                                 _setWorkOrderDetail('priority', value)
                               }
+
                             />
                           </FormField>
                         </Grid>
@@ -539,7 +562,20 @@ const WorkOrderDetails = ({
                             variant="text"
                             entityType="WORK_ORDER"
                             allowCategories={false}
-                            entityId={workOrder.id}>
+                            entityId={workOrder.id}
+                            disabled = {state.count === 0}
+                            >
+                            <IconButton 
+                            icon={ApplyIcon} 
+                            disabled = {state.count === 0}/>
+                          </AddHyperlinkButton>
+                          <AddHyperlinkButton
+                            className={classes.minimizedButton}
+                            variant="text"
+                            entityType="WORK_ORDER"
+                            allowCategories={false}
+                            entityId={workOrder.id}
+                            >
                             <IconButton icon={LinkIcon} />
                           </AddHyperlinkButton>
                           {isLoadingDocument ? (
@@ -568,6 +604,7 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.images,
                         ]}
                         hyperlinks={propsWorkOrder.hyperlinks}
+                        onChecked = {countDispatch}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider

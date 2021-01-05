@@ -34,6 +34,7 @@ type Props = {|
   files: EntityDocumentsTable_files,
   hyperlinks: EntityDocumentsTable_hyperlinks,
   className?: string,
+  onChecked?: (action: string) => void
 |} & WithAlert &
   WithSnackbarProps;
 
@@ -51,6 +52,7 @@ class EntityDocumentsTable extends React.Component<Props> {
           files={files}
           hyperlinks={hyperlinks}
           onDocumentDeleted={this.onDocumentDeleted}
+          onChecked={this.props.onChecked}
         />
       </div>
     );

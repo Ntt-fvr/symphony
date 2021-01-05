@@ -34,7 +34,8 @@ type Props = WithStyles<typeof styles> & {|
   entityId: string,
   files: DocumentTable_files,
   hyperlinks: DocumentTable_hyperlinks,
-  onDocumentDeleted: (file: $ElementType<DocumentTable_files, number>) => void,
+  onChecked: (action: string) => void,
+  onDocumentDeleted: (file: $ElementType<DocumentTable_files, number>) => void
 |};
 
 const getHyperlinkSortingValue = (hyperlink, categoriesEnabled) => {
@@ -77,6 +78,7 @@ class DocumentTable extends React.Component<Props> {
                   key={doc.id}
                   file={doc}
                   onDocumentDeleted={onDocumentDeleted}
+                  onChecked={this.props.onChecked}
                 />
               )) ||
               (doc.isHyperlink && (
