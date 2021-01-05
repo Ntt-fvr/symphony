@@ -75,6 +75,7 @@ type Props = {|
   file: FileAttachment_file,
   onDocumentDeleted: (file: $ElementType<FileAttachment_file, number>) => void,
   onChecked: (action: string) => void,
+  linkToLocationOptions?: boolean
 |} & WithStyles<typeof styles>;
 
 type State = {
@@ -111,22 +112,23 @@ class FileAttachment extends React.Component<Props, State> {
   handleInputChange = () => {
     this.setState({isChecked: !this.state.isChecked}, () => {
       if(this.state.isChecked){
+        this.props.onChecked({type: 'checkIncrement'});
         if(this.state.selectValue !== ""){
-          return this.props.onChecked({type: 'increment'});
-        }else{
-          return;
+          this.props.onChecked({type: 'valueIncrement'});
         }
       }else{
-        return this.props.onChecked({type: 'decrement'});
+        this.props.onChecked({type: 'checkDecrement'});
+        if(this.state.selectValue !== ""){
+          this.props.onChecked({type: 'valueDecrement'});
+        }
       }
     });
   }
 
   render() {
-
     const _setCategory = (value) => {
       if(this.state.selectValue === ""){
-        this.props.onChecked({type: 'increment'});
+        this.props.onChecked({type: 'valueIncrement'});
       }
       this.setState({selectValue: value});
       return value;
@@ -182,7 +184,7 @@ class FileAttachment extends React.Component<Props, State> {
           scope="row">
           {file.uploaded && DateTimeFormat.dateTime(file.uploaded)}
         </TableCell>
-        <TableCell
+        {this.props.linkToLocationOptions && <TableCell
           padding="none"
           className={classNames(classes.cell, classes.secondaryCell)}
           component="th"
@@ -190,7 +192,8 @@ class FileAttachment extends React.Component<Props, State> {
           <input
             type="checkbox"
             onChange={this.handleInputChange} />
-        </TableCell>
+        </TableCell>}
+        {this.props.linkToLocationOptions &&
         <TableCell
           padding="none"
           className={classNames(classes.cell, classes.secondaryCell)}
@@ -204,7 +207,7 @@ class FileAttachment extends React.Component<Props, State> {
               selectedValue= { this.state.isChecked && this.state.selectValue}
             />
           </FormField>
-        </TableCell>
+        </TableCell>}
         <TableCell
           padding="none"
           className={classNames(classes.cell, classes.secondaryCell)}

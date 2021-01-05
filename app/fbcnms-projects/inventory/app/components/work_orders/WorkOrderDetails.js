@@ -170,20 +170,28 @@ const WorkOrderDetails = ({
 
   function reducerCounter(state, action) {
     switch (action.type) {
-      case 'increment':
-        return {count: state.count + 1};
-      case 'decrement':
-        if(state.count > 0){
-          return {count: state.count - 1};
+      case 'checkIncrement':
+        return {valueCount: state.valueCount, checkCount: state.checkCount + 1};
+      case 'checkDecrement':
+        if(state.checkCount > 0){
+          return {valueCount: state.valueCount, checkCount: state.checkCount - 1};
         }else{
-          return {count: 0};
+          return {valueCount: state.valueCount, checkCount: 0};
+        }
+      case 'valueIncrement':
+        return {valueCount: state.valueCount + 1, checkCount: state.checkCount};
+      case 'valueDecrement':
+        if(state.valueCount > 0){
+          return {valueCount: state.valueCount - 1, checkCount: state.checkCount};
+        }else{
+          return {valueCount: 0, checkCount: state.checkCount};
         }
       default:
         throw new Error();
     }
   }
   
-  const [state, countDispatch] = useReducer(reducerCounter, {count: 0});
+  const [state, countDispatch] = useReducer(reducerCounter, {checkCount: 0, valueCount: 0});
 
   const [locationId, setLocationId] = useState(propsWorkOrder.location?.id);
   const [isLoadingDocument, setIsLoadingDocument] = useState(false);
@@ -563,11 +571,11 @@ const WorkOrderDetails = ({
                             entityType="WORK_ORDER"
                             allowCategories={false}
                             entityId={workOrder.id}
-                            disabled = {state.count === 0}
+                            disabled = {(state.checkCount === 0 || state.valueCount !== state.checkCount) }
                             >
                             <IconButton 
                             icon={ApplyIcon} 
-                            disabled = {state.count === 0}/>
+                            disabled = {(state.checkCount === 0 || state.valueCount !== state.checkCount)}/>
                           </AddHyperlinkButton>
                           <AddHyperlinkButton
                             className={classes.minimizedButton}
@@ -605,6 +613,7 @@ const WorkOrderDetails = ({
                         ]}
                         hyperlinks={propsWorkOrder.hyperlinks}
                         onChecked = {countDispatch}
+                        linkToLocationOptions={true}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider
