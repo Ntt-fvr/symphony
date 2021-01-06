@@ -12,10 +12,17 @@ nameOverride: ""
 # Provide a name to substitute for the full names of resources
 fullnameOverride: ""
 
-# Reference to one or more secrets to be used when pulling images
-# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-# - name: artifactory
+global:
+  # Reference to symphony images.
+  image:
+    registry : thesymphony
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # Reference to one or more secrets to be used when pulling images
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  imagePullSecrets: []
+  # - name: "image-pull-secret"
 
 # Ingress configuration
 ingress:
@@ -134,9 +141,9 @@ front:
 
   # Front image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/front
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Configuration for liveness / readiness probes
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -286,9 +293,9 @@ admin:
 
   # Admin image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/admin
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Configuration for liveness / readiness probes
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -401,9 +408,9 @@ graph:
 
   # Graph image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/graph
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Configuration for liveness / readiness probes
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -520,9 +527,9 @@ async:
 
   # async image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/async
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Configuration for liveness / readiness probes
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -600,9 +607,9 @@ async:
 migrate:
   # Migrate image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/migrate
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # SecurityContext holds pod-level security attributes and common container settings.
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
@@ -676,9 +683,9 @@ store:
 
   # Store image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/store
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Configuration for liveness / readiness probes
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -780,9 +787,9 @@ docs:
 
   # docs image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/docs
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Configuration for liveness / readiness probes
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
@@ -844,9 +851,9 @@ jobrunner:
 
   # Jobrunner image
   image:
-    repository: facebookconnectivity-symphony-docker.jfrog.io/jobrunner
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository:
+    tag:
+    pullPolicy:
 
   # Resource limits & requests
   resources: {}

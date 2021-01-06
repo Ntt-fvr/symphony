@@ -14,7 +14,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,7 +32,7 @@ func TestRouter(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, tc.target, nil)
 		var match mux.RouteMatch
 		require.True(t, router.Match(req, &match))
-		assert.NotNil(t, match.Handler)
-		assert.Equal(t, tc.name, match.Route.GetName())
+		require.NotNil(t, match.Handler)
+		require.Equal(t, tc.name, match.Route.GetName())
 	}
 }

@@ -78,6 +78,10 @@ func (l ImportHeader) ExternalIDIdx() int {
 	return findIndex(l.line, "External ID")
 }
 
+func (l ImportHeader) WorkOrderIdx() int {
+	return findIndex(l.line, "Work Order")
+}
+
 // LatitudeIdx returns the index of "latitude" column
 func (l ImportHeader) LatitudeIdx() int {
 	return findIndex(l.line, "Latitude")
@@ -141,7 +145,7 @@ func (l ImportHeader) LocationTypesRangeArr() []string {
 func (l ImportHeader) LocationsRangeIdx() (int, int) {
 	switch l.entity {
 	case ImportEntityEquipment:
-		return l.ExternalIDIdx() + 1, l.prnt3Idx
+		return l.WorkOrderIdx() + 1, l.prnt3Idx
 	case ImportEntityPort:
 		return 5, l.prnt3Idx
 	case ImportEntityPortInLink:
@@ -216,7 +220,7 @@ func (l ImportHeader) ServiceNamesIdx() int {
 func (l ImportHeader) LinkGetTwoPortsRange() ([]int, []int) {
 	if l.entity == ImportEntityLink {
 		splitIdx := l.LinkSecondPortStartIdx()
-		return []int{1, splitIdx}, []int{splitIdx, l.ServiceNamesIdx()}
+		return []int{2, splitIdx}, []int{splitIdx, l.ServiceNamesIdx()}
 	}
 	return nil, nil
 }

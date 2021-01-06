@@ -87,13 +87,13 @@ deploy:
         createNamespace: true
         valuesFiles:
           - values/minio.yaml
-      - name: nats
-        chartPath: bitnami/nats
+      - name: nats-operator
+        chartPath: nats/nats-operator
         remote: true
-        namespace: messaging
+        namespace: nats-io
         createNamespace: true
         valuesFiles:
-          - values/nats.yaml
+          - values/nats-operator.yaml
       - name: symphony
         chartPath: ../infra/helm/symphony
         artifactOverrides:

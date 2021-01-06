@@ -359,6 +359,8 @@ func (r queryResolver) PossibleProperties(ctx context.Context, entityType enum.P
 		pts, err = client.EquipmentPortType.Query().QueryPropertyTypes().All(ctx)
 	case enum.PropertyEntityLocation:
 		pts, err = client.LocationType.Query().QueryPropertyTypes().All(ctx)
+	case enum.PropertyEntityProject:
+		pts, err = client.ProjectType.Query().QueryProperties().All(ctx)
 	default:
 		return nil, fmt.Errorf("unsupported entity type: %s", entityType)
 	}

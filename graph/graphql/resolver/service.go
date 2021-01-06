@@ -18,58 +18,22 @@ import (
 
 type serviceTypeResolver struct{}
 
-func (r serviceTypeResolver) EndpointDefinitions(ctx context.Context, obj *ent.ServiceType) ([]*ent.ServiceEndpointDefinition, error) {
-	return obj.QueryEndpointDefinitions().All(ctx)
-}
-
-func (serviceTypeResolver) PropertyTypes(ctx context.Context, obj *ent.ServiceType) ([]*ent.PropertyType, error) {
-	return obj.QueryPropertyTypes().All(ctx)
-}
-
-func (serviceTypeResolver) Services(ctx context.Context, obj *ent.ServiceType) ([]*ent.Service, error) {
-	return obj.QueryServices().All(ctx)
-}
-
 func (serviceTypeResolver) NumberOfServices(ctx context.Context, obj *ent.ServiceType) (int, error) {
+	services, err := obj.Edges.ServicesOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(services), err
+	}
 	return obj.QueryServices().Count(ctx)
 }
 
 type serviceResolver struct{}
 
 func (serviceResolver) Customer(ctx context.Context, obj *ent.Service) (*ent.Customer, error) {
-	customer, err := obj.QueryCustomer().First(ctx)
-	if err != nil {
-		return nil, ent.MaskNotFound(err)
+	customers, err := obj.Customer(ctx)
+	if err != nil || len(customers) == 0 {
+		return nil, err
 	}
-	return customer, nil
-}
-
-func (serviceResolver) ServiceType(ctx context.Context, obj *ent.Service) (*ent.ServiceType, error) {
-	return obj.QueryType().Only(ctx)
-}
-
-func (serviceResolver) Upstream(ctx context.Context, obj *ent.Service) ([]*ent.Service, error) {
-	return obj.QueryUpstream().All(ctx)
-}
-
-func (serviceResolver) Downstream(ctx context.Context, obj *ent.Service) ([]*ent.Service, error) {
-	return obj.QueryDownstream().All(ctx)
-}
-
-func (serviceResolver) Properties(ctx context.Context, obj *ent.Service) ([]*ent.Property, error) {
-	return obj.QueryProperties().All(ctx)
-}
-
-func (serviceResolver) Links(ctx context.Context, obj *ent.Service) ([]*ent.Link, error) {
-	return obj.QueryLinks().All(ctx)
-}
-
-func (serviceResolver) Ports(ctx context.Context, obj *ent.Service) ([]*ent.EquipmentPort, error) {
-	return obj.QueryPorts().All(ctx)
-}
-
-func (serviceResolver) Endpoints(ctx context.Context, obj *ent.Service) ([]*ent.ServiceEndpoint, error) {
-	return obj.QueryEndpoints().All(ctx)
+	return customers[0], nil
 }
 
 func (serviceResolver) rootNode(ctx context.Context, eq *ent.Equipment) *ent.Equipment {
@@ -147,25 +111,6 @@ func (r serviceResolver) Topology(ctx context.Context, obj *ent.Service) (*model
 	}
 
 	return &models.NetworkTopology{Nodes: nodes, Links: links}, nil
-}
-
-type serviceEndpointResolver struct{}
-
-func (r serviceEndpointResolver) Definition(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.ServiceEndpointDefinition, error) {
-	return obj.QueryDefinition().Only(ctx)
-}
-
-func (r serviceEndpointResolver) Equipment(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.Equipment, error) {
-	return obj.QueryEquipment().Only(ctx)
-}
-
-func (r serviceEndpointResolver) Port(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.EquipmentPort, error) {
-	p, err := obj.QueryPort().Only(ctx)
-	return p, ent.MaskNotFound(err)
-}
-
-func (serviceEndpointResolver) Service(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.Service, error) {
-	return obj.QueryService().Only(ctx)
 }
 
 func (r mutationResolver) RemoveService(ctx context.Context, id int) (int, error) {

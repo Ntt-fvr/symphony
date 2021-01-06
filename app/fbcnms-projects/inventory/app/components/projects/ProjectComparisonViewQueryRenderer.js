@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     display: 'flex',
+    flexDirection: 'column',
   },
   noResultsRoot: {
     display: 'flex',
@@ -110,6 +111,7 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
         filterType: f.name.toUpperCase(),
         operator: f.operator.toUpperCase(),
         stringValue: f.stringValue,
+        propertyValue: f.propertyValue,
         idSet: f.idSet,
         stringSet: f.stringSet,
       })),

@@ -25,10 +25,14 @@ import ProjectComparisonViewQueryRenderer from './ProjectComparisonViewQueryRend
 import React, {useMemo, useState} from 'react';
 import fbt from 'fbt';
 import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
+import usePropertyFilters from '../comparison_view/hooks/propertiesHook';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {ProjectSearchConfig} from './ProjectsSearchConfig';
+import {
+  buildPropertyFilterConfigs,
+  getSelectedFilter,
+} from '../comparison_view/FilterUtils';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
-import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback} from 'react';
 
@@ -71,6 +75,10 @@ const ProjectComparisonView = () => {
   );
 
   const locationTypesFilterConfigs = useLocationTypes();
+  const possibleProperties = usePropertyFilters('project');
+  const projectPropertiesFilterConfigs = buildPropertyFilterConfigs(
+    possibleProperties,
+  );
 
   const filterConfigs = useMemo(
     () =>
@@ -79,8 +87,9 @@ const ProjectComparisonView = () => {
           (allFilters, currentFilter) => allFilters.concat(currentFilter),
           [],
         )
-        .concat(locationTypesFilterConfigs ?? []),
-    [locationTypesFilterConfigs],
+        .concat(locationTypesFilterConfigs ?? [])
+        .concat(projectPropertiesFilterConfigs ?? []),
+    [locationTypesFilterConfigs, projectPropertiesFilterConfigs],
   );
 
   const navigateToProject = useCallback(
@@ -187,14 +196,13 @@ const ProjectComparisonView = () => {
           searchConfig={ProjectSearchConfig}
           filterValues={filters}
           getSelectedFilter={(filterConfig: FilterConfig) =>
-            getInitialFilterValue(
-              filterConfig.key,
-              filterConfig.name,
-              filterConfig.defaultOperator,
-              null,
-            )
+            getSelectedFilter(filterConfig, possibleProperties ?? [])
           }
-          onFiltersChanged={filters => setFilters(filters)}
+          onFiltersChanged={filters => {
+            return setFilters(filters);
+          }}
+          exportPath={"/projects"}
+          entity={"PROJECT"}
         />
       </div>
     ),

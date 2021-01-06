@@ -66,6 +66,7 @@ import {
 
 type Props = $ReadOnly<{|
   service: ServicePanel_service,
+  selectedWorkOrderId: string,
   onOpenDetailsPanel: () => void,
 |}>;
 
@@ -144,7 +145,7 @@ const useStyles = makeStyles(() => ({
  */
 const ServicePanel = React.forwardRef((props: Props, ref) => {
   const classes = useStyles();
-  const {service, onOpenDetailsPanel} = props;
+  const {service, onOpenDetailsPanel, selectedWorkOrderId} = props;
   const [endpointsExpanded, setEndpointsExpanded] = useState(false);
   const [linksExpanded, setLinksExpanded] = useState(false);
   const [createLink, setCreateLink] = useState(false);
@@ -441,7 +442,7 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
             selectedPort ? selectedPort.parentEquipment : null,
           )}
           port={nullthrows(selectedPort)}
-          workOrderId={null}
+          workOrderId={selectedWorkOrderId}
           open={true}
           isSubFlow={true}
           onClose={(link?: Link) => {

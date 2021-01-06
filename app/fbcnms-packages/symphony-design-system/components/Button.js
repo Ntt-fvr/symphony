@@ -403,7 +403,7 @@ export type ButtonSkin =
   | 'brightGray'
   | 'orange'
   | 'green';
-type SvgIconComponent =
+export type SvgIconComponent =
   | React.ComponentType<SvgIconStyleProps>
   | React$ComponentType<SvgIconExports>;
 
@@ -474,7 +474,7 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
         },
         className,
       )}
-      tooltip={tooltip}
+      tooltip={tooltip ?? ""}
       disabled={disabled}
       onClick={onClick}
       onMouseDown={onMouseDown}

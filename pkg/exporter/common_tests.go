@@ -45,6 +45,7 @@ const (
 	portName1                  = "port1"
 	portName2                  = "port2"
 	portName3                  = "port3"
+	portName4                  = "port4"
 	propNameStr                = "propNameStr"
 	propNameDate               = "propNameDate"
 	propNameBool               = "propNameBool"
@@ -398,6 +399,11 @@ func testAsyncExport(t *testing.T, typ exporttask.Type) {
 			Log: logger,
 		}}
 		exportPath = "/work_orders"
+	case exporttask.TypeProject:
+		e = Exporter{Log: logger, Rower: ProjectRower{
+			Log: logger,
+		}}
+		exportPath = "/projects"
 	}
 
 	th := viewertest.TestHandler(t, &e, client)
@@ -508,11 +514,11 @@ func WriteModifiedLinksCSV(t *testing.T, r *csv.Reader, method Method, skipLines
 				newLine = append([]string{""}, line[1:]...)
 			case methodEdit:
 				newLine = line
-				if line[1] == portName1 {
-					newLine[25] = secondServiceName
-					newLine[26] = "new-prop-value"
-					newLine[27] = "true"
-					newLine[28] = "10"
+				if line[2] == portName1 {
+					newLine[26] = secondServiceName
+					newLine[27] = "new-prop-value"
+					newLine[28] = "true"
+					newLine[29] = "10"
 				}
 			default:
 				require.Fail(t, "method should be add or edit")
@@ -524,9 +530,9 @@ func WriteModifiedLinksCSV(t *testing.T, r *csv.Reader, method Method, skipLines
 		failLine := make([]string, len(lines[1]))
 		copy(failLine, lines[1])
 		lines = append(lines, failLine)
-		lines[2][1] = "this"
-		lines[2][2] = "should"
-		lines[2][3] = "fail"
+		lines[2][2] = "this"
+		lines[2][3] = "should"
+		lines[2][4] = "fail"
 	}
 	for _, l := range lines {
 		stringLine := strings.Join(l, ",")

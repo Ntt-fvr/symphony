@@ -296,7 +296,7 @@ DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.
 
 {{/* Create image pull secrets list */}}
 {{- define "symphony.imagePullSecrets" -}}
-{{- with .Values.imagePullSecrets }}
+{{- with .Values.global.imagePullSecrets }}
 imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
@@ -351,3 +351,12 @@ readinessProbe:
 {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
+
+{{/* Return the appropriate apiVersion for ingress. */}}
+{{- define "symphony.ingress.apiVersion" -}}
+{{- if semverCompare ">=1.19.0-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- print "networking.k8s.io/v1" -}}
+{{- else -}}
+{{- print "networking.k8s.io/v1beta1" -}}
+{{- end -}}
+{{- end -}}

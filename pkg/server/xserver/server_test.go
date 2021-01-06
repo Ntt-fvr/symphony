@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestViews(t *testing.T) {
@@ -17,6 +17,6 @@ func TestViews(t *testing.T) {
 		`http_(request|response)_.*(total|bytes|seconds)`,
 	)
 	for _, v := range xserver.DefaultViews() {
-		assert.Regexp(t, r, v.Name)
+		require.Regexp(t, r, v.Name)
 	}
 }

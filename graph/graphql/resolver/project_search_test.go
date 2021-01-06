@@ -15,7 +15,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -79,7 +78,7 @@ func TestFetchProjects(t *testing.T) {
 	qr := r.Query()
 	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
-	assert.Len(t, res.Edges, 2)
+	require.Len(t, res.Edges, 2)
 	require.Equal(t, res.TotalCount, 2)
 }
 
@@ -106,12 +105,12 @@ func TestSearchProjectsByName(t *testing.T) {
 
 	res1, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter1})
 	require.NoError(t, err)
-	assert.Len(t, res1.Edges, 2)
+	require.Len(t, res1.Edges, 2)
 	require.Equal(t, res1.TotalCount, 2)
 
 	res2, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter2})
 	require.NoError(t, err)
-	assert.Len(t, res2.Edges, 0)
+	require.Len(t, res2.Edges, 0)
 }
 
 func TestSearchProjectsByType(t *testing.T) {
@@ -130,7 +129,7 @@ func TestSearchProjectsByType(t *testing.T) {
 
 	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter})
 	require.NoError(t, err)
-	assert.Len(t, res.Edges, 1)
+	require.Len(t, res.Edges, 1)
 }
 
 func TestSearchProjectsByLocation(t *testing.T) {
@@ -150,7 +149,7 @@ func TestSearchProjectsByLocation(t *testing.T) {
 
 	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter})
 	require.NoError(t, err)
-	assert.Len(t, res.Edges, 2)
+	require.Len(t, res.Edges, 2)
 }
 
 func TestSearchProjectsByOwner(t *testing.T) {
@@ -170,5 +169,5 @@ func TestSearchProjectsByOwner(t *testing.T) {
 
 	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter})
 	require.NoError(t, err)
-	assert.Len(t, res.Edges, 1)
+	require.Len(t, res.Edges, 1)
 }

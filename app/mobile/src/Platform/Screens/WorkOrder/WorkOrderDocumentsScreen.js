@@ -13,9 +13,10 @@
 
 import type {NavigationNavigatorProps} from 'react-navigation';
 import type {NavigationScreenConfig} from 'react-navigation';
+import type {WorkOrderDocumentsScreenQueryResponse} from './__generated__/WorkOrderDocumentsScreenQuery.graphql'
 
 import CachedPhotosSection from 'Platform/Components/CachedPhotosSection';
-import React, {useCallback, useContext} from 'react';
+import React, {useCallback, useContext, useEffect} from 'react';
 import WorkOrderChecklistCacheContext from 'Platform/Screens/WorkOrder/WorkOrderChecklistCacheContext';
 import fbt from 'fbt';
 import nullthrows from '@fbcmobile/ui/Utils/nullthrows';
@@ -23,6 +24,29 @@ import {ApplicationStyles} from '@fbcmobile/ui/Theme';
 import {ScrollView} from 'react-native';
 import {Text} from '@99xt/first-born';
 import {useWorkOrderCachedData} from 'Platform/Screens/WorkOrder/WorkOrderChecklistCacheContext';
+import {fetchQuery} from 'relay-runtime';
+import {graphql} from 'babel-plugin-relay/macro'
+import RelayEnvironment from 'Platform/Relay/RelayEnvironment.js';
+
+const attatchmentsQuery = graphql`
+  query WorkOrderDocumentsScreenQuery($workOrderId: ID!) {
+    node(id: $workOrderId) {
+      ... on WorkOrder {
+        id
+        images {
+          id
+          fileName
+          storeKey
+          mimeType
+          sizeInBytes
+          modified
+          uploaded
+          annotation
+        }
+      }
+    }
+  }
+`;
 
 const UPDATE_DELAY = 3000; // 3 seconds
 let lastCall = null;
@@ -33,7 +57,28 @@ const WorkOrderDocumentsScreen = (props: Props) => {
   const {navigation} = props;
   const workOrderId = nullthrows(navigation.getParam('workOrderId'));
   const cachedData = useWorkOrderCachedData(workOrderId);
-  const {setCachedImageItem} = useContext(WorkOrderChecklistCacheContext);
+  const {setCachedImageItem, resetCachedImages} = useContext(WorkOrderChecklistCacheContext);
+
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, attatchmentsQuery, {workOrderId}).then((response: WorkOrderDocumentsScreenQueryResponse) => {
+        if(response.node?.images) {
+          const imagesArray = response.node.images.map(f => {
+            return {
+                id: f ? f.id : '',
+                fileName: f ? f.fileName : '',
+                storeKey: f ? f.storeKey : '',
+                mimeType: f ? f.mimeType : '',
+                sizeInBytes: f ? f.sizeInBytes : 0,
+                modified: f ? f.modified : '',
+                status: 'server',
+                uploaded: f ? f.uploaded : '',
+                annotation: f ? f.annotation : '',
+              }
+          })
+          resetCachedImages(workOrderId, imagesArray)
+        }
+    })
+  }, [])
 
   const _isUpdateBlocked = function(): boolean {
     const timeNow = Date.now();

@@ -64,53 +64,36 @@ type ResolverRoot interface {
 	Activity() ActivityResolver
 	Block() BlockResolver
 	BlockVariable() BlockVariableResolver
-	CheckListCategory() CheckListCategoryResolver
-	CheckListCategoryDefinition() CheckListCategoryDefinitionResolver
-	CheckListItem() CheckListItemResolver
-	Comment() CommentResolver
-	EntryPoint() EntryPointResolver
 	Equipment() EquipmentResolver
-	EquipmentPort() EquipmentPortResolver
-	EquipmentPortDefinition() EquipmentPortDefinitionResolver
 	EquipmentPortType() EquipmentPortTypeResolver
-	EquipmentPosition() EquipmentPositionResolver
 	EquipmentType() EquipmentTypeResolver
-	ExitPoint() ExitPointResolver
 	ExportTask() ExportTaskResolver
 	FloorPlan() FloorPlanResolver
 	Flow() FlowResolver
 	FlowDraft() FlowDraftResolver
-	Link() LinkResolver
 	Location() LocationResolver
 	LocationType() LocationTypeResolver
 	Mutation() MutationResolver
 	PermissionsPolicy() PermissionsPolicyResolver
 	Project() ProjectResolver
-	ProjectTemplate() ProjectTemplateResolver
 	ProjectType() ProjectTypeResolver
 	Property() PropertyResolver
 	PropertyType() PropertyTypeResolver
 	Query() QueryResolver
 	ReportFilter() ReportFilterResolver
 	Service() ServiceResolver
-	ServiceEndpoint() ServiceEndpointResolver
-	ServiceEndpointDefinition() ServiceEndpointDefinitionResolver
 	ServiceType() ServiceTypeResolver
 	Subscription() SubscriptionResolver
 	Survey() SurveyResolver
 	SurveyCellScan() SurveyCellScanResolver
 	SurveyQuestion() SurveyQuestionResolver
-	SurveyTemplateCategory() SurveyTemplateCategoryResolver
 	SurveyTemplateQuestion() SurveyTemplateQuestionResolver
 	SurveyWiFiScan() SurveyWiFiScanResolver
 	User() UserResolver
-	UsersGroup() UsersGroupResolver
 	VariableDefinition() VariableDefinitionResolver
 	VariableExpression() VariableExpressionResolver
 	Viewer() ViewerResolver
 	WorkOrder() WorkOrderResolver
-	WorkOrderDefinition() WorkOrderDefinitionResolver
-	WorkOrderTemplate() WorkOrderTemplateResolver
 	WorkOrderType() WorkOrderTypeResolver
 }
 
@@ -187,21 +170,21 @@ type ComplexityRoot struct {
 	}
 
 	CheckListCategory struct {
-		CheckList   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Title       func(childComplexity int) int
+		CheckListItems func(childComplexity int) int
+		Description    func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Title          func(childComplexity int) int
 	}
 
 	CheckListCategoryDefinition struct {
-		ChecklistItemDefinitions func(childComplexity int) int
+		CheckListItemDefinitions func(childComplexity int) int
 		Description              func(childComplexity int) int
 		ID                       func(childComplexity int) int
 		Title                    func(childComplexity int) int
 	}
 
 	CheckListItem struct {
-		CellData               func(childComplexity int) int
+		CellScan               func(childComplexity int) int
 		Checked                func(childComplexity int) int
 		EnumSelectionModeValue func(childComplexity int) int
 		EnumValues             func(childComplexity int) int
@@ -214,7 +197,7 @@ type ComplexityRoot struct {
 		StringVal              func(childComplexity int) int
 		Title                  func(childComplexity int) int
 		Type                   func(childComplexity int) int
-		WifiData               func(childComplexity int) int
+		WifiScan               func(childComplexity int) int
 		YesNoVal               func(childComplexity int) int
 	}
 
@@ -310,7 +293,6 @@ type ComplexityRoot struct {
 
 	Equipment struct {
 		DescendentsIncludingSelf func(childComplexity int) int
-		EquipmentType            func(childComplexity int) int
 		ExternalID               func(childComplexity int) int
 		Files                    func(childComplexity int) int
 		FirstLocation            func(childComplexity int) int
@@ -318,15 +300,16 @@ type ComplexityRoot struct {
 		Hyperlinks               func(childComplexity int) int
 		ID                       func(childComplexity int) int
 		Images                   func(childComplexity int) int
+		Location                 func(childComplexity int) int
 		LocationHierarchy        func(childComplexity int) int
 		Name                     func(childComplexity int) int
-		ParentLocation           func(childComplexity int) int
 		ParentPosition           func(childComplexity int) int
 		Ports                    func(childComplexity int, availableOnly *bool) int
 		PositionHierarchy        func(childComplexity int) int
 		Positions                func(childComplexity int) int
 		Properties               func(childComplexity int) int
 		Services                 func(childComplexity int) int
+		Type                     func(childComplexity int) int
 		WorkOrder                func(childComplexity int) int
 	}
 
@@ -342,13 +325,13 @@ type ComplexityRoot struct {
 	}
 
 	EquipmentPort struct {
-		Definition       func(childComplexity int) int
-		ID               func(childComplexity int) int
-		Link             func(childComplexity int) int
-		ParentEquipment  func(childComplexity int) int
-		Properties       func(childComplexity int) int
-		ServiceEndpoints func(childComplexity int) int
-		Services         func(childComplexity int) int
+		Definition func(childComplexity int) int
+		Endpoints  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Link       func(childComplexity int) int
+		Parent     func(childComplexity int) int
+		Properties func(childComplexity int) int
+		Service    func(childComplexity int) int
 	}
 
 	EquipmentPortConnection struct {
@@ -358,13 +341,13 @@ type ComplexityRoot struct {
 	}
 
 	EquipmentPortDefinition struct {
-		Bandwidth       func(childComplexity int) int
-		ConnectedPorts  func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Index           func(childComplexity int) int
-		Name            func(childComplexity int) int
-		PortType        func(childComplexity int) int
-		VisibilityLabel func(childComplexity int) int
+		Bandwidth         func(childComplexity int) int
+		ConnectedPorts    func(childComplexity int) int
+		EquipmentPortType func(childComplexity int) int
+		ID                func(childComplexity int) int
+		Index             func(childComplexity int) int
+		Name              func(childComplexity int) int
+		VisibilityLabel   func(childComplexity int) int
 	}
 
 	EquipmentPortDefinitionConnection struct {
@@ -403,10 +386,10 @@ type ComplexityRoot struct {
 	}
 
 	EquipmentPosition struct {
-		AttachedEquipment func(childComplexity int) int
-		Definition        func(childComplexity int) int
-		ID                func(childComplexity int) int
-		ParentEquipment   func(childComplexity int) int
+		Attachment func(childComplexity int) int
+		Definition func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Parent     func(childComplexity int) int
 	}
 
 	EquipmentPositionDefinition struct {
@@ -423,7 +406,7 @@ type ComplexityRoot struct {
 
 	EquipmentType struct {
 		Category            func(childComplexity int) int
-		Equipments          func(childComplexity int) int
+		Equipment           func(childComplexity int) int
 		ID                  func(childComplexity int) int
 		Name                func(childComplexity int) int
 		NumberOfEquipment   func(childComplexity int) int
@@ -595,7 +578,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Ports       func(childComplexity int) int
 		Properties  func(childComplexity int) int
-		Services    func(childComplexity int) int
+		Service     func(childComplexity int) int
 		WorkOrder   func(childComplexity int) int
 	}
 
@@ -616,10 +599,10 @@ type ComplexityRoot struct {
 	}
 
 	Location struct {
-		CellData          func(childComplexity int) int
+		CellScan          func(childComplexity int) int
 		Children          func(childComplexity int) int
 		DistanceKm        func(childComplexity int, latitude float64, longitude float64) int
-		Equipments        func(childComplexity int) int
+		Equipment         func(childComplexity int) int
 		ExternalID        func(childComplexity int) int
 		Files             func(childComplexity int) int
 		FloorPlans        func(childComplexity int) int
@@ -628,17 +611,17 @@ type ComplexityRoot struct {
 		Images            func(childComplexity int) int
 		Latitude          func(childComplexity int) int
 		LocationHierarchy func(childComplexity int) int
-		LocationType      func(childComplexity int) int
 		Longitude         func(childComplexity int) int
 		Name              func(childComplexity int) int
 		NumChildren       func(childComplexity int) int
+		Parent            func(childComplexity int) int
 		ParentCoords      func(childComplexity int) int
-		ParentLocation    func(childComplexity int) int
 		Properties        func(childComplexity int) int
 		SiteSurveyNeeded  func(childComplexity int) int
-		Surveys           func(childComplexity int) int
+		Survey            func(childComplexity int) int
 		Topology          func(childComplexity int, depth int) int
-		WifiData          func(childComplexity int) int
+		Type              func(childComplexity int) int
+		WifiScan          func(childComplexity int) int
 	}
 
 	LocationCud struct {
@@ -841,7 +824,7 @@ type ComplexityRoot struct {
 	Project struct {
 		Comments           func(childComplexity int) int
 		CreateTime         func(childComplexity int) int
-		CreatedBy          func(childComplexity int) int
+		Creator            func(childComplexity int) int
 		Description        func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		Location           func(childComplexity int) int
@@ -901,11 +884,11 @@ type ComplexityRoot struct {
 		LatitudeVal  func(childComplexity int) int
 		LongitudeVal func(childComplexity int) int
 		NodeValue    func(childComplexity int) int
-		PropertyType func(childComplexity int) int
 		RangeFromVal func(childComplexity int) int
 		RangeToVal   func(childComplexity int) int
 		RawValue     func(childComplexity int) int
 		StringVal    func(childComplexity int) int
+		Type         func(childComplexity int) int
 	}
 
 	PropertyType struct {
@@ -1002,19 +985,19 @@ type ComplexityRoot struct {
 	}
 
 	Service struct {
-		Customer    func(childComplexity int) int
-		Downstream  func(childComplexity int) int
-		Endpoints   func(childComplexity int) int
-		ExternalID  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Links       func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Ports       func(childComplexity int) int
-		Properties  func(childComplexity int) int
-		ServiceType func(childComplexity int) int
-		Status      func(childComplexity int) int
-		Topology    func(childComplexity int) int
-		Upstream    func(childComplexity int) int
+		Customer   func(childComplexity int) int
+		Downstream func(childComplexity int) int
+		Endpoints  func(childComplexity int) int
+		ExternalID func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Links      func(childComplexity int) int
+		Name       func(childComplexity int) int
+		Ports      func(childComplexity int) int
+		Properties func(childComplexity int) int
+		Status     func(childComplexity int) int
+		Topology   func(childComplexity int) int
+		Type       func(childComplexity int) int
+		Upstream   func(childComplexity int) int
 	}
 
 	ServiceConnection struct {
@@ -1100,8 +1083,8 @@ type ComplexityRoot struct {
 		LocationID          func(childComplexity int) int
 		Name                func(childComplexity int) int
 		OwnerName           func(childComplexity int) int
+		Questions           func(childComplexity int) int
 		SourceFile          func(childComplexity int) int
-		SurveyResponses     func(childComplexity int) int
 	}
 
 	SurveyCellScan struct {
@@ -1301,7 +1284,7 @@ type ComplexityRoot struct {
 
 	WorkOrder struct {
 		Activities          func(childComplexity int, filter *models.ActivityFilterInput) int
-		AssignedTo          func(childComplexity int) int
+		Assignee            func(childComplexity int) int
 		CheckListCategories func(childComplexity int) int
 		CloseDate           func(childComplexity int) int
 		Comments            func(childComplexity int) int
@@ -1324,8 +1307,8 @@ type ComplexityRoot struct {
 		Project             func(childComplexity int) int
 		Properties          func(childComplexity int) int
 		Status              func(childComplexity int) int
-		WorkOrderTemplate   func(childComplexity int) int
-		WorkOrderType       func(childComplexity int) int
+		Template            func(childComplexity int) int
+		Type                func(childComplexity int) int
 	}
 
 	WorkOrderConnection struct {
@@ -1416,12 +1399,8 @@ type ComplexityRoot struct {
 }
 
 type ActivityResolver interface {
-	Author(ctx context.Context, obj *ent.Activity) (*ent.User, error)
-
 	NewRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error)
 	OldRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error)
-
-	WorkOrder(ctx context.Context, obj *ent.Activity) (*ent.WorkOrder, error)
 }
 type BlockResolver interface {
 	NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
@@ -1434,131 +1413,53 @@ type BlockVariableResolver interface {
 	Block(ctx context.Context, obj *flowschema.BlockVariable) (*ent.Block, error)
 	OutputParamDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error)
 }
-type CheckListCategoryResolver interface {
-	CheckList(ctx context.Context, obj *ent.CheckListCategory) ([]*ent.CheckListItem, error)
-}
-type CheckListCategoryDefinitionResolver interface {
-	ChecklistItemDefinitions(ctx context.Context, obj *ent.CheckListCategoryDefinition) ([]*ent.CheckListItemDefinition, error)
-}
-type CheckListItemResolver interface {
-	Files(ctx context.Context, obj *ent.CheckListItem) ([]*ent.File, error)
-
-	WifiData(ctx context.Context, obj *ent.CheckListItem) ([]*ent.SurveyWiFiScan, error)
-	CellData(ctx context.Context, obj *ent.CheckListItem) ([]*ent.SurveyCellScan, error)
-}
-type CommentResolver interface {
-	Author(ctx context.Context, obj *ent.Comment) (*ent.User, error)
-}
-type EntryPointResolver interface {
-	ParentBlock(ctx context.Context, obj *ent.EntryPoint) (*ent.Block, error)
-
-	PrevExitPoints(ctx context.Context, obj *ent.EntryPoint) ([]*ent.ExitPoint, error)
-}
 type EquipmentResolver interface {
-	ParentLocation(ctx context.Context, obj *ent.Equipment) (*ent.Location, error)
-	ParentPosition(ctx context.Context, obj *ent.Equipment) (*ent.EquipmentPosition, error)
-	EquipmentType(ctx context.Context, obj *ent.Equipment) (*ent.EquipmentType, error)
-	Positions(ctx context.Context, obj *ent.Equipment) ([]*ent.EquipmentPosition, error)
 	Ports(ctx context.Context, obj *ent.Equipment, availableOnly *bool) ([]*ent.EquipmentPort, error)
 	DescendentsIncludingSelf(ctx context.Context, obj *ent.Equipment) ([]*ent.Equipment, error)
-	Properties(ctx context.Context, obj *ent.Equipment) ([]*ent.Property, error)
 
-	WorkOrder(ctx context.Context, obj *ent.Equipment) (*ent.WorkOrder, error)
 	LocationHierarchy(ctx context.Context, obj *ent.Equipment) ([]*ent.Location, error)
 	FirstLocation(ctx context.Context, obj *ent.Equipment) (*ent.Location, error)
 	PositionHierarchy(ctx context.Context, obj *ent.Equipment) ([]*ent.EquipmentPosition, error)
 	Services(ctx context.Context, obj *ent.Equipment) ([]*ent.Service, error)
 	Images(ctx context.Context, obj *ent.Equipment) ([]*ent.File, error)
 	Files(ctx context.Context, obj *ent.Equipment) ([]*ent.File, error)
-	Hyperlinks(ctx context.Context, obj *ent.Equipment) ([]*ent.Hyperlink, error)
-}
-type EquipmentPortResolver interface {
-	Definition(ctx context.Context, obj *ent.EquipmentPort) (*ent.EquipmentPortDefinition, error)
-	ParentEquipment(ctx context.Context, obj *ent.EquipmentPort) (*ent.Equipment, error)
-	Link(ctx context.Context, obj *ent.EquipmentPort) (*ent.Link, error)
-	Properties(ctx context.Context, obj *ent.EquipmentPort) ([]*ent.Property, error)
-	ServiceEndpoints(ctx context.Context, obj *ent.EquipmentPort) ([]*ent.ServiceEndpoint, error)
-	Services(ctx context.Context, obj *ent.EquipmentPort) ([]*ent.Service, error)
-}
-type EquipmentPortDefinitionResolver interface {
-	PortType(ctx context.Context, obj *ent.EquipmentPortDefinition) (*ent.EquipmentPortType, error)
-
-	ConnectedPorts(ctx context.Context, obj *ent.EquipmentPortDefinition) ([]*ent.EquipmentPortDefinition, error)
 }
 type EquipmentPortTypeResolver interface {
-	PropertyTypes(ctx context.Context, obj *ent.EquipmentPortType) ([]*ent.PropertyType, error)
-	LinkPropertyTypes(ctx context.Context, obj *ent.EquipmentPortType) ([]*ent.PropertyType, error)
 	NumberOfPortDefinitions(ctx context.Context, obj *ent.EquipmentPortType) (int, error)
-}
-type EquipmentPositionResolver interface {
-	Definition(ctx context.Context, obj *ent.EquipmentPosition) (*ent.EquipmentPositionDefinition, error)
-	ParentEquipment(ctx context.Context, obj *ent.EquipmentPosition) (*ent.Equipment, error)
-	AttachedEquipment(ctx context.Context, obj *ent.EquipmentPosition) (*ent.Equipment, error)
 }
 type EquipmentTypeResolver interface {
 	Category(ctx context.Context, obj *ent.EquipmentType) (*string, error)
-	PositionDefinitions(ctx context.Context, obj *ent.EquipmentType) ([]*ent.EquipmentPositionDefinition, error)
-	PortDefinitions(ctx context.Context, obj *ent.EquipmentType) ([]*ent.EquipmentPortDefinition, error)
-	PropertyTypes(ctx context.Context, obj *ent.EquipmentType) ([]*ent.PropertyType, error)
-	Equipments(ctx context.Context, obj *ent.EquipmentType) ([]*ent.Equipment, error)
-	NumberOfEquipment(ctx context.Context, obj *ent.EquipmentType) (int, error)
-}
-type ExitPointResolver interface {
-	ParentBlock(ctx context.Context, obj *ent.ExitPoint) (*ent.Block, error)
 
-	NextEntryPoints(ctx context.Context, obj *ent.ExitPoint) ([]*ent.EntryPoint, error)
+	NumberOfEquipment(ctx context.Context, obj *ent.EquipmentType) (int, error)
 }
 type ExportTaskResolver interface {
 	Filters(ctx context.Context, obj *ent.ExportTask) ([]*models.GeneralFilter, error)
 }
 type FloorPlanResolver interface {
 	LocationID(ctx context.Context, obj *ent.FloorPlan) (int, error)
-	Image(ctx context.Context, obj *ent.FloorPlan) (*ent.File, error)
-	ReferencePoint(ctx context.Context, obj *ent.FloorPlan) (*ent.FloorPlanReferencePoint, error)
-	Scale(ctx context.Context, obj *ent.FloorPlan) (*ent.FloorPlanScale, error)
 }
 type FlowResolver interface {
-	Blocks(ctx context.Context, obj *ent.Flow) ([]*ent.Block, error)
 	Connectors(ctx context.Context, obj *ent.Flow) ([]*models.Connector, error)
-	Draft(ctx context.Context, obj *ent.Flow) (*ent.FlowDraft, error)
 }
 type FlowDraftResolver interface {
-	Blocks(ctx context.Context, obj *ent.FlowDraft) ([]*ent.Block, error)
 	Connectors(ctx context.Context, obj *ent.FlowDraft) ([]*models.Connector, error)
 }
-type LinkResolver interface {
-	Ports(ctx context.Context, obj *ent.Link) ([]*ent.EquipmentPort, error)
-
-	WorkOrder(ctx context.Context, obj *ent.Link) (*ent.WorkOrder, error)
-	Properties(ctx context.Context, obj *ent.Link) ([]*ent.Property, error)
-	Services(ctx context.Context, obj *ent.Link) ([]*ent.Service, error)
-}
 type LocationResolver interface {
-	LocationType(ctx context.Context, obj *ent.Location) (*ent.LocationType, error)
-	ParentLocation(ctx context.Context, obj *ent.Location) (*ent.Location, error)
-	Children(ctx context.Context, obj *ent.Location) ([]*ent.Location, error)
 	NumChildren(ctx context.Context, obj *ent.Location) (int, error)
 
 	ParentCoords(ctx context.Context, obj *ent.Location) (*models.Coordinates, error)
-	Equipments(ctx context.Context, obj *ent.Location) ([]*ent.Equipment, error)
-	Properties(ctx context.Context, obj *ent.Location) ([]*ent.Property, error)
+
 	Images(ctx context.Context, obj *ent.Location) ([]*ent.File, error)
 	Files(ctx context.Context, obj *ent.Location) ([]*ent.File, error)
 
 	Topology(ctx context.Context, obj *ent.Location, depth int) (*models.NetworkTopology, error)
 	LocationHierarchy(ctx context.Context, obj *ent.Location) ([]*ent.Location, error)
-	Surveys(ctx context.Context, obj *ent.Location) ([]*ent.Survey, error)
-	WifiData(ctx context.Context, obj *ent.Location) ([]*ent.SurveyWiFiScan, error)
-	CellData(ctx context.Context, obj *ent.Location) ([]*ent.SurveyCellScan, error)
+
 	DistanceKm(ctx context.Context, obj *ent.Location, latitude float64, longitude float64) (float64, error)
-	FloorPlans(ctx context.Context, obj *ent.Location) ([]*ent.FloorPlan, error)
-	Hyperlinks(ctx context.Context, obj *ent.Location) ([]*ent.Hyperlink, error)
 }
 type LocationTypeResolver interface {
-	PropertyTypes(ctx context.Context, obj *ent.LocationType) ([]*ent.PropertyType, error)
 	NumberOfLocations(ctx context.Context, obj *ent.LocationType) (int, error)
 	Locations(ctx context.Context, obj *ent.LocationType, enforceHasLatLong *bool) (*ent.LocationConnection, error)
-	SurveyTemplateCategories(ctx context.Context, obj *ent.LocationType) ([]*ent.SurveyTemplateCategory, error)
 }
 type MutationResolver interface {
 	EditUser(ctx context.Context, input models.EditUserInput) (*ent.User, error)
@@ -1659,32 +1560,14 @@ type MutationResolver interface {
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
-	Groups(ctx context.Context, obj *ent.PermissionsPolicy) ([]*ent.UsersGroup, error)
 }
 type ProjectResolver interface {
-	CreatedBy(ctx context.Context, obj *ent.Project) (*ent.User, error)
-
-	Type(ctx context.Context, obj *ent.Project) (*ent.ProjectType, error)
-	Template(ctx context.Context, obj *ent.Project) (*ent.ProjectTemplate, error)
-	Location(ctx context.Context, obj *ent.Project) (*ent.Location, error)
-	WorkOrders(ctx context.Context, obj *ent.Project) ([]*ent.WorkOrder, error)
 	NumberOfWorkOrders(ctx context.Context, obj *ent.Project) (int, error)
-	Properties(ctx context.Context, obj *ent.Project) ([]*ent.Property, error)
-	Comments(ctx context.Context, obj *ent.Project) ([]*ent.Comment, error)
-}
-type ProjectTemplateResolver interface {
-	Properties(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.PropertyType, error)
-	WorkOrders(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.WorkOrderDefinition, error)
 }
 type ProjectTypeResolver interface {
-	Projects(ctx context.Context, obj *ent.ProjectType) ([]*ent.Project, error)
 	NumberOfProjects(ctx context.Context, obj *ent.ProjectType) (int, error)
-	Properties(ctx context.Context, obj *ent.ProjectType) ([]*ent.PropertyType, error)
-	WorkOrders(ctx context.Context, obj *ent.ProjectType) ([]*ent.WorkOrderDefinition, error)
 }
 type PropertyResolver interface {
-	PropertyType(ctx context.Context, obj *ent.Property) (*ent.PropertyType, error)
-
 	NodeValue(ctx context.Context, obj *ent.Property) (models.NamedNode, error)
 	RawValue(ctx context.Context, obj *ent.Property) (*string, error)
 }
@@ -1733,31 +1616,11 @@ type ReportFilterResolver interface {
 }
 type ServiceResolver interface {
 	Customer(ctx context.Context, obj *ent.Service) (*ent.Customer, error)
-	ServiceType(ctx context.Context, obj *ent.Service) (*ent.ServiceType, error)
-	Upstream(ctx context.Context, obj *ent.Service) ([]*ent.Service, error)
-	Downstream(ctx context.Context, obj *ent.Service) ([]*ent.Service, error)
-	Properties(ctx context.Context, obj *ent.Service) ([]*ent.Property, error)
-	Endpoints(ctx context.Context, obj *ent.Service) ([]*ent.ServiceEndpoint, error)
-	Links(ctx context.Context, obj *ent.Service) ([]*ent.Link, error)
-	Ports(ctx context.Context, obj *ent.Service) ([]*ent.EquipmentPort, error)
+
 	Topology(ctx context.Context, obj *ent.Service) (*models.NetworkTopology, error)
 }
-type ServiceEndpointResolver interface {
-	Port(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.EquipmentPort, error)
-	Equipment(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.Equipment, error)
-	Service(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.Service, error)
-	Definition(ctx context.Context, obj *ent.ServiceEndpoint) (*ent.ServiceEndpointDefinition, error)
-}
-type ServiceEndpointDefinitionResolver interface {
-	Endpoints(ctx context.Context, obj *ent.ServiceEndpointDefinition) ([]*ent.ServiceEndpoint, error)
-	EquipmentType(ctx context.Context, obj *ent.ServiceEndpointDefinition) (*ent.EquipmentType, error)
-	ServiceType(ctx context.Context, obj *ent.ServiceEndpointDefinition) (*ent.ServiceType, error)
-}
 type ServiceTypeResolver interface {
-	PropertyTypes(ctx context.Context, obj *ent.ServiceType) ([]*ent.PropertyType, error)
-	Services(ctx context.Context, obj *ent.ServiceType) ([]*ent.Service, error)
 	NumberOfServices(ctx context.Context, obj *ent.ServiceType) (int, error)
-	EndpointDefinitions(ctx context.Context, obj *ent.ServiceType) ([]*ent.ServiceEndpointDefinition, error)
 }
 type SubscriptionResolver interface {
 	WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error)
@@ -1769,8 +1632,6 @@ type SurveyResolver interface {
 	CreationTimestamp(ctx context.Context, obj *ent.Survey) (*int, error)
 	CompletionTimestamp(ctx context.Context, obj *ent.Survey) (int, error)
 	LocationID(ctx context.Context, obj *ent.Survey) (int, error)
-	SourceFile(ctx context.Context, obj *ent.Survey) (*ent.File, error)
-	SurveyResponses(ctx context.Context, obj *ent.Survey) ([]*ent.SurveyQuestion, error)
 }
 type SurveyCellScanResolver interface {
 	Timestamp(ctx context.Context, obj *ent.SurveyCellScan) (*int, error)
@@ -1782,10 +1643,6 @@ type SurveyQuestionResolver interface {
 	PhotoData(ctx context.Context, obj *ent.SurveyQuestion) (*ent.File, error)
 	WifiData(ctx context.Context, obj *ent.SurveyQuestion) ([]*ent.SurveyWiFiScan, error)
 	CellData(ctx context.Context, obj *ent.SurveyQuestion) ([]*ent.SurveyCellScan, error)
-	Images(ctx context.Context, obj *ent.SurveyQuestion) ([]*ent.File, error)
-}
-type SurveyTemplateCategoryResolver interface {
-	SurveyTemplateQuestions(ctx context.Context, obj *ent.SurveyTemplateCategory) ([]*ent.SurveyTemplateQuestion, error)
 }
 type SurveyTemplateQuestionResolver interface {
 	QuestionType(ctx context.Context, obj *ent.SurveyTemplateQuestion) (models.SurveyQuestionType, error)
@@ -1795,13 +1652,6 @@ type SurveyWiFiScanResolver interface {
 }
 type UserResolver interface {
 	Name(ctx context.Context, obj *ent.User) (string, error)
-
-	ProfilePhoto(ctx context.Context, obj *ent.User) (*ent.File, error)
-	Groups(ctx context.Context, obj *ent.User) ([]*ent.UsersGroup, error)
-}
-type UsersGroupResolver interface {
-	Members(ctx context.Context, obj *ent.UsersGroup) ([]*ent.User, error)
-	Policies(ctx context.Context, obj *ent.UsersGroup) ([]*ent.PermissionsPolicy, error)
 }
 type VariableDefinitionResolver interface {
 	NestedVariables(ctx context.Context, obj *flowschema.VariableDefinition, value string) ([]*flowschema.VariableDefinition, error)
@@ -1814,38 +1664,17 @@ type ViewerResolver interface {
 	Permissions(ctx context.Context, obj viewer.Viewer) (*models2.PermissionSettings, error)
 }
 type WorkOrderResolver interface {
-	WorkOrderType(ctx context.Context, obj *ent.WorkOrder) (*ent.WorkOrderType, error)
-	WorkOrderTemplate(ctx context.Context, obj *ent.WorkOrder) (*ent.WorkOrderTemplate, error)
-
-	Owner(ctx context.Context, obj *ent.WorkOrder) (*ent.User, error)
-
-	AssignedTo(ctx context.Context, obj *ent.WorkOrder) (*ent.User, error)
-
 	EquipmentToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error)
 	EquipmentToRemove(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error)
 	LinksToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Link, error)
 	LinksToRemove(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Link, error)
 	Images(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error)
 	Files(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error)
-	Comments(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Comment, error)
+
 	Activities(ctx context.Context, obj *ent.WorkOrder, filter *models.ActivityFilterInput) ([]*ent.Activity, error)
-	Location(ctx context.Context, obj *ent.WorkOrder) (*ent.Location, error)
-	Properties(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Property, error)
-	Project(ctx context.Context, obj *ent.WorkOrder) (*ent.Project, error)
-	CheckListCategories(ctx context.Context, obj *ent.WorkOrder) ([]*ent.CheckListCategory, error)
-	Hyperlinks(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Hyperlink, error)
-}
-type WorkOrderDefinitionResolver interface {
-	Type(ctx context.Context, obj *ent.WorkOrderDefinition) (*ent.WorkOrderType, error)
-}
-type WorkOrderTemplateResolver interface {
-	PropertyTypes(ctx context.Context, obj *ent.WorkOrderTemplate) ([]*ent.PropertyType, error)
-	CheckListCategoryDefinitions(ctx context.Context, obj *ent.WorkOrderTemplate) ([]*ent.CheckListCategoryDefinition, error)
 }
 type WorkOrderTypeResolver interface {
-	PropertyTypes(ctx context.Context, obj *ent.WorkOrderType) ([]*ent.PropertyType, error)
 	NumberOfWorkOrders(ctx context.Context, obj *ent.WorkOrderType) (int, error)
-	CheckListCategoryDefinitions(ctx context.Context, obj *ent.WorkOrderType) ([]*ent.CheckListCategoryDefinition, error)
 }
 
 type executableSchema struct {
@@ -2116,11 +1945,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Cud.Update(childComplexity), true
 
 	case "CheckListCategory.checkList":
-		if e.complexity.CheckListCategory.CheckList == nil {
+		if e.complexity.CheckListCategory.CheckListItems == nil {
 			break
 		}
 
-		return e.complexity.CheckListCategory.CheckList(childComplexity), true
+		return e.complexity.CheckListCategory.CheckListItems(childComplexity), true
 
 	case "CheckListCategory.description":
 		if e.complexity.CheckListCategory.Description == nil {
@@ -2144,11 +1973,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.CheckListCategory.Title(childComplexity), true
 
 	case "CheckListCategoryDefinition.checklistItemDefinitions":
-		if e.complexity.CheckListCategoryDefinition.ChecklistItemDefinitions == nil {
+		if e.complexity.CheckListCategoryDefinition.CheckListItemDefinitions == nil {
 			break
 		}
 
-		return e.complexity.CheckListCategoryDefinition.ChecklistItemDefinitions(childComplexity), true
+		return e.complexity.CheckListCategoryDefinition.CheckListItemDefinitions(childComplexity), true
 
 	case "CheckListCategoryDefinition.description":
 		if e.complexity.CheckListCategoryDefinition.Description == nil {
@@ -2172,11 +2001,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.CheckListCategoryDefinition.Title(childComplexity), true
 
 	case "CheckListItem.cellData":
-		if e.complexity.CheckListItem.CellData == nil {
+		if e.complexity.CheckListItem.CellScan == nil {
 			break
 		}
 
-		return e.complexity.CheckListItem.CellData(childComplexity), true
+		return e.complexity.CheckListItem.CellScan(childComplexity), true
 
 	case "CheckListItem.checked":
 		if e.complexity.CheckListItem.Checked == nil {
@@ -2263,11 +2092,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.CheckListItem.Type(childComplexity), true
 
 	case "CheckListItem.wifiData":
-		if e.complexity.CheckListItem.WifiData == nil {
+		if e.complexity.CheckListItem.WifiScan == nil {
 			break
 		}
 
-		return e.complexity.CheckListItem.WifiData(childComplexity), true
+		return e.complexity.CheckListItem.WifiScan(childComplexity), true
 
 	case "CheckListItem.yesNoResponse":
 		if e.complexity.CheckListItem.YesNoVal == nil {
@@ -2598,13 +2427,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Equipment.DescendentsIncludingSelf(childComplexity), true
 
-	case "Equipment.equipmentType":
-		if e.complexity.Equipment.EquipmentType == nil {
-			break
-		}
-
-		return e.complexity.Equipment.EquipmentType(childComplexity), true
-
 	case "Equipment.externalId":
 		if e.complexity.Equipment.ExternalID == nil {
 			break
@@ -2654,6 +2476,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Equipment.Images(childComplexity), true
 
+	case "Equipment.parentLocation":
+		if e.complexity.Equipment.Location == nil {
+			break
+		}
+
+		return e.complexity.Equipment.Location(childComplexity), true
+
 	case "Equipment.locationHierarchy":
 		if e.complexity.Equipment.LocationHierarchy == nil {
 			break
@@ -2667,13 +2496,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Equipment.Name(childComplexity), true
-
-	case "Equipment.parentLocation":
-		if e.complexity.Equipment.ParentLocation == nil {
-			break
-		}
-
-		return e.complexity.Equipment.ParentLocation(childComplexity), true
 
 	case "Equipment.parentPosition":
 		if e.complexity.Equipment.ParentPosition == nil {
@@ -2721,6 +2543,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Equipment.Services(childComplexity), true
+
+	case "Equipment.equipmentType":
+		if e.complexity.Equipment.Type == nil {
+			break
+		}
+
+		return e.complexity.Equipment.Type(childComplexity), true
 
 	case "Equipment.workOrder":
 		if e.complexity.Equipment.WorkOrder == nil {
@@ -2771,6 +2600,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EquipmentPort.Definition(childComplexity), true
 
+	case "EquipmentPort.serviceEndpoints":
+		if e.complexity.EquipmentPort.Endpoints == nil {
+			break
+		}
+
+		return e.complexity.EquipmentPort.Endpoints(childComplexity), true
+
 	case "EquipmentPort.id":
 		if e.complexity.EquipmentPort.ID == nil {
 			break
@@ -2786,11 +2622,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.EquipmentPort.Link(childComplexity), true
 
 	case "EquipmentPort.parentEquipment":
-		if e.complexity.EquipmentPort.ParentEquipment == nil {
+		if e.complexity.EquipmentPort.Parent == nil {
 			break
 		}
 
-		return e.complexity.EquipmentPort.ParentEquipment(childComplexity), true
+		return e.complexity.EquipmentPort.Parent(childComplexity), true
 
 	case "EquipmentPort.properties":
 		if e.complexity.EquipmentPort.Properties == nil {
@@ -2799,19 +2635,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EquipmentPort.Properties(childComplexity), true
 
-	case "EquipmentPort.serviceEndpoints":
-		if e.complexity.EquipmentPort.ServiceEndpoints == nil {
-			break
-		}
-
-		return e.complexity.EquipmentPort.ServiceEndpoints(childComplexity), true
-
 	case "EquipmentPort.services":
-		if e.complexity.EquipmentPort.Services == nil {
+		if e.complexity.EquipmentPort.Service == nil {
 			break
 		}
 
-		return e.complexity.EquipmentPort.Services(childComplexity), true
+		return e.complexity.EquipmentPort.Service(childComplexity), true
 
 	case "EquipmentPortConnection.edges":
 		if e.complexity.EquipmentPortConnection.Edges == nil {
@@ -2848,6 +2677,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EquipmentPortDefinition.ConnectedPorts(childComplexity), true
 
+	case "EquipmentPortDefinition.portType":
+		if e.complexity.EquipmentPortDefinition.EquipmentPortType == nil {
+			break
+		}
+
+		return e.complexity.EquipmentPortDefinition.EquipmentPortType(childComplexity), true
+
 	case "EquipmentPortDefinition.id":
 		if e.complexity.EquipmentPortDefinition.ID == nil {
 			break
@@ -2868,13 +2704,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EquipmentPortDefinition.Name(childComplexity), true
-
-	case "EquipmentPortDefinition.portType":
-		if e.complexity.EquipmentPortDefinition.PortType == nil {
-			break
-		}
-
-		return e.complexity.EquipmentPortDefinition.PortType(childComplexity), true
 
 	case "EquipmentPortDefinition.visibleLabel":
 		if e.complexity.EquipmentPortDefinition.VisibilityLabel == nil {
@@ -3003,11 +2832,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.EquipmentPortTypeEdge.Node(childComplexity), true
 
 	case "EquipmentPosition.attachedEquipment":
-		if e.complexity.EquipmentPosition.AttachedEquipment == nil {
+		if e.complexity.EquipmentPosition.Attachment == nil {
 			break
 		}
 
-		return e.complexity.EquipmentPosition.AttachedEquipment(childComplexity), true
+		return e.complexity.EquipmentPosition.Attachment(childComplexity), true
 
 	case "EquipmentPosition.definition":
 		if e.complexity.EquipmentPosition.Definition == nil {
@@ -3024,11 +2853,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.EquipmentPosition.ID(childComplexity), true
 
 	case "EquipmentPosition.parentEquipment":
-		if e.complexity.EquipmentPosition.ParentEquipment == nil {
+		if e.complexity.EquipmentPosition.Parent == nil {
 			break
 		}
 
-		return e.complexity.EquipmentPosition.ParentEquipment(childComplexity), true
+		return e.complexity.EquipmentPosition.Parent(childComplexity), true
 
 	case "EquipmentPositionDefinition.id":
 		if e.complexity.EquipmentPositionDefinition.ID == nil {
@@ -3080,11 +2909,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.EquipmentType.Category(childComplexity), true
 
 	case "EquipmentType.equipments":
-		if e.complexity.EquipmentType.Equipments == nil {
+		if e.complexity.EquipmentType.Equipment == nil {
 			break
 		}
 
-		return e.complexity.EquipmentType.Equipments(childComplexity), true
+		return e.complexity.EquipmentType.Equipment(childComplexity), true
 
 	case "EquipmentType.id":
 		if e.complexity.EquipmentType.ID == nil {
@@ -3822,11 +3651,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Link.Properties(childComplexity), true
 
 	case "Link.services":
-		if e.complexity.Link.Services == nil {
+		if e.complexity.Link.Service == nil {
 			break
 		}
 
-		return e.complexity.Link.Services(childComplexity), true
+		return e.complexity.Link.Service(childComplexity), true
 
 	case "Link.workOrder":
 		if e.complexity.Link.WorkOrder == nil {
@@ -3885,11 +3714,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.LinkSearchResult.Links(childComplexity), true
 
 	case "Location.cellData":
-		if e.complexity.Location.CellData == nil {
+		if e.complexity.Location.CellScan == nil {
 			break
 		}
 
-		return e.complexity.Location.CellData(childComplexity), true
+		return e.complexity.Location.CellScan(childComplexity), true
 
 	case "Location.children":
 		if e.complexity.Location.Children == nil {
@@ -3911,11 +3740,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Location.DistanceKm(childComplexity, args["latitude"].(float64), args["longitude"].(float64)), true
 
 	case "Location.equipments":
-		if e.complexity.Location.Equipments == nil {
+		if e.complexity.Location.Equipment == nil {
 			break
 		}
 
-		return e.complexity.Location.Equipments(childComplexity), true
+		return e.complexity.Location.Equipment(childComplexity), true
 
 	case "Location.externalId":
 		if e.complexity.Location.ExternalID == nil {
@@ -3973,13 +3802,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Location.LocationHierarchy(childComplexity), true
 
-	case "Location.locationType":
-		if e.complexity.Location.LocationType == nil {
-			break
-		}
-
-		return e.complexity.Location.LocationType(childComplexity), true
-
 	case "Location.longitude":
 		if e.complexity.Location.Longitude == nil {
 			break
@@ -4001,19 +3823,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Location.NumChildren(childComplexity), true
 
+	case "Location.parentLocation":
+		if e.complexity.Location.Parent == nil {
+			break
+		}
+
+		return e.complexity.Location.Parent(childComplexity), true
+
 	case "Location.parentCoords":
 		if e.complexity.Location.ParentCoords == nil {
 			break
 		}
 
 		return e.complexity.Location.ParentCoords(childComplexity), true
-
-	case "Location.parentLocation":
-		if e.complexity.Location.ParentLocation == nil {
-			break
-		}
-
-		return e.complexity.Location.ParentLocation(childComplexity), true
 
 	case "Location.properties":
 		if e.complexity.Location.Properties == nil {
@@ -4030,11 +3852,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Location.SiteSurveyNeeded(childComplexity), true
 
 	case "Location.surveys":
-		if e.complexity.Location.Surveys == nil {
+		if e.complexity.Location.Survey == nil {
 			break
 		}
 
-		return e.complexity.Location.Surveys(childComplexity), true
+		return e.complexity.Location.Survey(childComplexity), true
 
 	case "Location.topology":
 		if e.complexity.Location.Topology == nil {
@@ -4048,12 +3870,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Location.Topology(childComplexity, args["depth"].(int)), true
 
-	case "Location.wifiData":
-		if e.complexity.Location.WifiData == nil {
+	case "Location.locationType":
+		if e.complexity.Location.Type == nil {
 			break
 		}
 
-		return e.complexity.Location.WifiData(childComplexity), true
+		return e.complexity.Location.Type(childComplexity), true
+
+	case "Location.wifiData":
+		if e.complexity.Location.WifiScan == nil {
+			break
+		}
+
+		return e.complexity.Location.WifiScan(childComplexity), true
 
 	case "LocationCUD.create":
 		if e.complexity.LocationCud.Create == nil {
@@ -5572,11 +5401,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.Project.CreateTime(childComplexity), true
 
 	case "Project.createdBy":
-		if e.complexity.Project.CreatedBy == nil {
+		if e.complexity.Project.Creator == nil {
 			break
 		}
 
-		return e.complexity.Project.CreatedBy(childComplexity), true
+		return e.complexity.Project.Creator(childComplexity), true
 
 	case "Project.description":
 		if e.complexity.Project.Description == nil {
@@ -5844,13 +5673,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Property.NodeValue(childComplexity), true
 
-	case "Property.propertyType":
-		if e.complexity.Property.PropertyType == nil {
-			break
-		}
-
-		return e.complexity.Property.PropertyType(childComplexity), true
-
 	case "Property.rangeFromValue":
 		if e.complexity.Property.RangeFromVal == nil {
 			break
@@ -5878,6 +5700,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Property.StringVal(childComplexity), true
+
+	case "Property.propertyType":
+		if e.complexity.Property.Type == nil {
+			break
+		}
+
+		return e.complexity.Property.Type(childComplexity), true
 
 	case "PropertyType.booleanValue":
 		if e.complexity.PropertyType.BoolVal == nil {
@@ -6596,13 +6425,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Service.Properties(childComplexity), true
 
-	case "Service.serviceType":
-		if e.complexity.Service.ServiceType == nil {
-			break
-		}
-
-		return e.complexity.Service.ServiceType(childComplexity), true
-
 	case "Service.status":
 		if e.complexity.Service.Status == nil {
 			break
@@ -6616,6 +6438,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Service.Topology(childComplexity), true
+
+	case "Service.serviceType":
+		if e.complexity.Service.Type == nil {
+			break
+		}
+
+		return e.complexity.Service.Type(childComplexity), true
 
 	case "Service.upstream":
 		if e.complexity.Service.Upstream == nil {
@@ -6967,19 +6796,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Survey.OwnerName(childComplexity), true
 
+	case "Survey.surveyResponses":
+		if e.complexity.Survey.Questions == nil {
+			break
+		}
+
+		return e.complexity.Survey.Questions(childComplexity), true
+
 	case "Survey.sourceFile":
 		if e.complexity.Survey.SourceFile == nil {
 			break
 		}
 
 		return e.complexity.Survey.SourceFile(childComplexity), true
-
-	case "Survey.surveyResponses":
-		if e.complexity.Survey.SurveyResponses == nil {
-			break
-		}
-
-		return e.complexity.Survey.SurveyResponses(childComplexity), true
 
 	case "SurveyCellScan.altitude":
 		if e.complexity.SurveyCellScan.Altitude == nil {
@@ -7923,11 +7752,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.WorkOrder.Activities(childComplexity, args["filter"].(*models.ActivityFilterInput)), true
 
 	case "WorkOrder.assignedTo":
-		if e.complexity.WorkOrder.AssignedTo == nil {
+		if e.complexity.WorkOrder.Assignee == nil {
 			break
 		}
 
-		return e.complexity.WorkOrder.AssignedTo(childComplexity), true
+		return e.complexity.WorkOrder.Assignee(childComplexity), true
 
 	case "WorkOrder.checkListCategories":
 		if e.complexity.WorkOrder.CheckListCategories == nil {
@@ -8084,18 +7913,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.WorkOrder.Status(childComplexity), true
 
 	case "WorkOrder.workOrderTemplate":
-		if e.complexity.WorkOrder.WorkOrderTemplate == nil {
+		if e.complexity.WorkOrder.Template == nil {
 			break
 		}
 
-		return e.complexity.WorkOrder.WorkOrderTemplate(childComplexity), true
+		return e.complexity.WorkOrder.Template(childComplexity), true
 
 	case "WorkOrder.workOrderType":
-		if e.complexity.WorkOrder.WorkOrderType == nil {
+		if e.complexity.WorkOrder.Type == nil {
 			break
 		}
 
-		return e.complexity.WorkOrder.WorkOrderType(childComplexity), true
+		return e.complexity.WorkOrder.Type(childComplexity), true
 
 	case "WorkOrderConnection.edges":
 		if e.complexity.WorkOrderConnection.Edges == nil {
@@ -8854,23 +8683,23 @@ type Location implements Node & NamedNode {
   id: ID!
   externalId: String
   name: String!
-  locationType: LocationType!
-  parentLocation: Location
+  locationType: LocationType! @goField(name: "Type")
+  parentLocation: Location @goField(name: "Parent")
   children: [Location]!
   numChildren: Int!
   latitude: Float!
   longitude: Float!
   parentCoords: Coordinates
-  equipments: [Equipment]!
+  equipments: [Equipment]! @goField(name: "Equipment")
   properties: [Property]!
   images: [File]!
-  files: [File]!
+  files: [File]! @goField(forceResolver: true)
   siteSurveyNeeded: Boolean!
   topology(depth: Int! = 3 @numberValue(min: 0, max: 10)): NetworkTopology!
   locationHierarchy: [Location!]!
-  surveys: [Survey]!
-  wifiData: [SurveyWiFiScan]!
-  cellData: [SurveyCellScan]!
+  surveys: [Survey]! @goField(name: "Survey")
+  wifiData: [SurveyWiFiScan]! @goField(name: "WifiScan")
+  cellData: [SurveyCellScan]! @goField(name: "CellScan")
   distanceKm(latitude: Float!, longitude: Float!): Float!
   floorPlans: [FloorPlan]!
   hyperlinks: [Hyperlink!]!
@@ -8937,6 +8766,7 @@ type LocationType implements Node {
   propertyTypes: [PropertyType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
+    @goField(forceResolver: true)
   surveyTemplateCategories: [SurveyTemplateCategory]
 }
 
@@ -9102,11 +8932,12 @@ type Equipment implements Node & NamedNode {
   id: ID!
   externalId: String
   name: String!
-  parentLocation: Location
+  parentLocation: Location @goField(name: "Location")
   parentPosition: EquipmentPosition
-  equipmentType: EquipmentType!
+  equipmentType: EquipmentType! @goField(name: "Type")
   positions: [EquipmentPosition]!
   ports(availableOnly: Boolean = false): [EquipmentPort]!
+    @goField(forceResolver: true)
   descendentsIncludingSelf: [Equipment]!
   properties: [Property]!
   futureState: FutureState
@@ -9116,7 +8947,7 @@ type Equipment implements Node & NamedNode {
   positionHierarchy: [EquipmentPosition!]!
   services: [Service]!
   images: [File]!
-  files: [File]!
+  files: [File]! @goField(forceResolver: true)
   hyperlinks: [Hyperlink!]!
 }
 
@@ -9152,7 +8983,7 @@ type EquipmentType implements Node {
   positionDefinitions: [EquipmentPositionDefinition]!
   portDefinitions: [EquipmentPortDefinition]!
   propertyTypes: [PropertyType]!
-  equipments: [Equipment]!
+  equipments: [Equipment]! @goField(name: "Equipment")
   numberOfEquipment: Int!
 }
 
@@ -9185,8 +9016,8 @@ type EquipmentPositionDefinition implements Node {
 type EquipmentPosition implements Node {
   id: ID!
   definition: EquipmentPositionDefinition!
-  parentEquipment: Equipment!
-  attachedEquipment: Equipment
+  parentEquipment: Equipment! @goField(name: "Parent")
+  attachedEquipment: Equipment @goField(name: "Attachment")
 }
 
 input EquipmentPositionInput {
@@ -9303,7 +9134,7 @@ type EquipmentPortDefinition implements Node {
   name: String!
   index: Int
   visibleLabel: String
-  portType: EquipmentPortType
+  portType: EquipmentPortType @goField(name: "EquipmentPortType")
   bandwidth: String
   connectedPorts: [EquipmentPortDefinition!]
 }
@@ -9311,11 +9142,11 @@ type EquipmentPortDefinition implements Node {
 type EquipmentPort implements Node {
   id: ID!
   definition: EquipmentPortDefinition!
-  parentEquipment: Equipment!
+  parentEquipment: Equipment! @goField(name: "Parent")
   link: Link
   properties: [Property!]!
-  serviceEndpoints: [ServiceEndpoint!]!
-  services: [Service]!
+  serviceEndpoints: [ServiceEndpoint!]! @goField(name: "Endpoints")
+  services: [Service]! @goField(name: "Service")
 }
 
 input EquipmentPortConnectionInput {
@@ -9942,7 +9773,7 @@ input PropertyTypeInput
 
 type Property implements Node {
   id: ID!
-  propertyType: PropertyType!
+  propertyType: PropertyType! @goField(name: "Type")
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -10062,7 +9893,7 @@ type Link implements Node {
   futureState: FutureState
   workOrder: WorkOrder
   properties: [Property]!
-  services: [Service]!
+  services: [Service]! @goField(name: "Service")
 }
 
 input LinkSide {
@@ -10165,7 +9996,7 @@ type CheckListCategory implements Node {
   id: ID!
   title: String!
   description: String
-  checkList: [CheckListItem!]!
+  checkList: [CheckListItem!]! @goField(name: "CheckListItems")
 }
 
 type CheckListItem implements Node {
@@ -10183,8 +10014,8 @@ type CheckListItem implements Node {
   checked: Boolean
   files: [File!]
   yesNoResponse: YesNoResponse @goField(name: "YesNoVal")
-  wifiData: [SurveyWiFiScan!]
-  cellData: [SurveyCellScan!]
+  wifiData: [SurveyWiFiScan!] @goField(name: "WifiScan")
+  cellData: [SurveyCellScan!] @goField(name: "CellScan")
 }
 
 input CheckListCategoryInput {
@@ -10316,14 +10147,14 @@ Work Order instance - capturing information about a change in the network
 """
 type WorkOrder implements Node & NamedNode {
   id: ID!
-  workOrderType: WorkOrderType!
-  workOrderTemplate: WorkOrderTemplate
+  workOrderType: WorkOrderType! @goField(name: "Type")
+  workOrderTemplate: WorkOrderTemplate @goField(name: "Template")
   name: String!
   description: String
   owner: User!
   creationDate: Time!
   installDate: Time
-  assignedTo: User
+  assignedTo: User @goField(name: "Assignee")
   index: Int!
   status: WorkOrderStatus!
   priority: WorkOrderPriority!
@@ -10332,9 +10163,10 @@ type WorkOrder implements Node & NamedNode {
   linksToAdd: [Link]!
   linksToRemove: [Link]!
   images: [File]!
-  files: [File]!
+  files: [File]! @goField(forceResolver: true)
   comments: [Comment]!
   activities(filter: ActivityFilterInput): [Activity!]!
+    @goField(forceResolver: true)
   location: Location
   properties: [Property]!
   project: Project
@@ -10798,14 +10630,19 @@ enum ProjectOrderField {
   NAME
 
   """
+  Order projects by creation time.
+  """
+  CREATED_AT
+
+  """
   Order projects by update time.
   """
   UPDATED_AT
+
+  """
+  Order projects by priority.
+  """
   PRIORITY
-  PROJECT_OWNER
-  PROJECT_LOCATION
-  NUMBER_OF_WORKORDERS
-  PROJECT_TEMPLATE
 }
 
 """
@@ -10839,7 +10676,7 @@ type Project implements Node {
   name: String! @stringValue(minLength: 1)
   description: String
   priority: ProjectPriority!
-  createdBy: User
+  createdBy: User @goField(name: "Creator")
   createTime: Time!
   type: ProjectType!
   template: ProjectTemplate
@@ -11178,6 +11015,7 @@ enum ProjectFilterType {
   PROJECT_TYPE
   LOCATION_INST
   PROJECT_PRIORITY
+  PROPERTY
 }
 
 input ProjectFilterInput {
@@ -11187,6 +11025,7 @@ input ProjectFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  propertyValue: PropertyTypeInput
 }
 
 """
@@ -11244,7 +11083,7 @@ type Service implements Node & NamedNode {
   externalId: String
   status: ServiceStatus!
   customer: Customer
-  serviceType: ServiceType!
+  serviceType: ServiceType! @goField(name: "Type")
   upstream: [Service]!
   downstream: [Service]!
   properties: [Property]!
@@ -11380,7 +11219,7 @@ type Survey implements Node {
   completionTimestamp: Int!
   locationID: ID!
   sourceFile: File
-  surveyResponses: [SurveyQuestion]!
+  surveyResponses: [SurveyQuestion]! @goField(name: "Questions")
 }
 
 input AddFloorPlanInput {
@@ -17073,13 +16912,13 @@ func (ec *executionContext) _Activity_author(ctx context.Context, field graphql.
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Activity().Author(rctx, obj)
+		return obj.Author(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17338,13 +17177,13 @@ func (ec *executionContext) _Activity_workOrder(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Activity().WorkOrder(rctx, obj)
+		return obj.WorkOrder(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18134,13 +17973,13 @@ func (ec *executionContext) _CheckListCategory_checkList(ctx context.Context, fi
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListCategory().CheckList(rctx, obj)
+		return obj.CheckListItems(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18271,13 +18110,13 @@ func (ec *executionContext) _CheckListCategoryDefinition_checklistItemDefinition
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListCategoryDefinition().ChecklistItemDefinitions(rctx, obj)
+		return obj.CheckListItemDefinitions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18667,13 +18506,13 @@ func (ec *executionContext) _CheckListItem_files(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItem().Files(rctx, obj)
+		return obj.Files(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18731,13 +18570,13 @@ func (ec *executionContext) _CheckListItem_wifiData(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItem().WifiData(rctx, obj)
+		return obj.WifiScan(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18763,13 +18602,13 @@ func (ec *executionContext) _CheckListItem_cellData(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItem().CellData(rctx, obj)
+		return obj.CellScan(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19296,13 +19135,13 @@ func (ec *executionContext) _Comment_author(ctx context.Context, field graphql.C
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Comment().Author(rctx, obj)
+		return obj.Author(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20226,13 +20065,13 @@ func (ec *executionContext) _EntryPoint_parentBlock(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EntryPoint().ParentBlock(rctx, obj)
+		return obj.ParentBlock(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20293,13 +20132,13 @@ func (ec *executionContext) _EntryPoint_prevExitPoints(ctx context.Context, fiel
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EntryPoint().PrevExitPoints(rctx, obj)
+		return obj.PrevExitPoints(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20430,13 +20269,13 @@ func (ec *executionContext) _Equipment_parentLocation(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().ParentLocation(rctx, obj)
+		return obj.Location(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20462,13 +20301,13 @@ func (ec *executionContext) _Equipment_parentPosition(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().ParentPosition(rctx, obj)
+		return obj.ParentPosition(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20494,13 +20333,13 @@ func (ec *executionContext) _Equipment_equipmentType(ctx context.Context, field 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().EquipmentType(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20529,13 +20368,13 @@ func (ec *executionContext) _Equipment_positions(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().Positions(rctx, obj)
+		return obj.Positions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20641,13 +20480,13 @@ func (ec *executionContext) _Equipment_properties(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20708,13 +20547,13 @@ func (ec *executionContext) _Equipment_workOrder(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().WorkOrder(rctx, obj)
+		return obj.WorkOrder(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20950,13 +20789,13 @@ func (ec *executionContext) _Equipment_hyperlinks(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().Hyperlinks(rctx, obj)
+		return obj.Hyperlinks(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21192,13 +21031,13 @@ func (ec *executionContext) _EquipmentPort_definition(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPort().Definition(rctx, obj)
+		return obj.Definition(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21227,13 +21066,13 @@ func (ec *executionContext) _EquipmentPort_parentEquipment(ctx context.Context, 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPort().ParentEquipment(rctx, obj)
+		return obj.Parent(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21262,13 +21101,13 @@ func (ec *executionContext) _EquipmentPort_link(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPort().Link(rctx, obj)
+		return obj.Link(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21294,13 +21133,13 @@ func (ec *executionContext) _EquipmentPort_properties(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPort().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21329,13 +21168,13 @@ func (ec *executionContext) _EquipmentPort_serviceEndpoints(ctx context.Context,
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPort().ServiceEndpoints(rctx, obj)
+		return obj.Endpoints(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21364,13 +21203,13 @@ func (ec *executionContext) _EquipmentPort_services(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPort().Services(rctx, obj)
+		return obj.Service(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21638,13 +21477,13 @@ func (ec *executionContext) _EquipmentPortDefinition_portType(ctx context.Contex
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPortDefinition().PortType(rctx, obj)
+		return obj.EquipmentPortType(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21702,13 +21541,13 @@ func (ec *executionContext) _EquipmentPortDefinition_connectedPorts(ctx context.
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPortDefinition().ConnectedPorts(rctx, obj)
+		return obj.ConnectedPorts(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22043,13 +21882,13 @@ func (ec *executionContext) _EquipmentPortType_propertyTypes(ctx context.Context
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPortType().PropertyTypes(rctx, obj)
+		return obj.PropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22078,13 +21917,13 @@ func (ec *executionContext) _EquipmentPortType_linkPropertyTypes(ctx context.Con
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPortType().LinkPropertyTypes(rctx, obj)
+		return obj.LinkPropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22355,13 +22194,13 @@ func (ec *executionContext) _EquipmentPosition_definition(ctx context.Context, f
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPosition().Definition(rctx, obj)
+		return obj.Definition(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22390,13 +22229,13 @@ func (ec *executionContext) _EquipmentPosition_parentEquipment(ctx context.Conte
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPosition().ParentEquipment(rctx, obj)
+		return obj.Parent(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22425,13 +22264,13 @@ func (ec *executionContext) _EquipmentPosition_attachedEquipment(ctx context.Con
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentPosition().AttachedEquipment(rctx, obj)
+		return obj.Attachment(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22763,13 +22602,13 @@ func (ec *executionContext) _EquipmentType_positionDefinitions(ctx context.Conte
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentType().PositionDefinitions(rctx, obj)
+		return obj.PositionDefinitions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22798,13 +22637,13 @@ func (ec *executionContext) _EquipmentType_portDefinitions(ctx context.Context, 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentType().PortDefinitions(rctx, obj)
+		return obj.PortDefinitions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22833,13 +22672,13 @@ func (ec *executionContext) _EquipmentType_propertyTypes(ctx context.Context, fi
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentType().PropertyTypes(rctx, obj)
+		return obj.PropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22868,13 +22707,13 @@ func (ec *executionContext) _EquipmentType_equipments(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EquipmentType().Equipments(rctx, obj)
+		return obj.Equipment(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23145,13 +22984,13 @@ func (ec *executionContext) _ExitPoint_parentBlock(ctx context.Context, field gr
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ExitPoint().ParentBlock(rctx, obj)
+		return obj.ParentBlock(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23212,13 +23051,13 @@ func (ec *executionContext) _ExitPoint_nextEntryPoints(ctx context.Context, fiel
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ExitPoint().NextEntryPoints(rctx, obj)
+		return obj.NextEntryPoints(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23993,13 +23832,13 @@ func (ec *executionContext) _FloorPlan_image(ctx context.Context, field graphql.
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.FloorPlan().Image(rctx, obj)
+		return obj.Image(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24028,13 +23867,13 @@ func (ec *executionContext) _FloorPlan_referencePoint(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.FloorPlan().ReferencePoint(rctx, obj)
+		return obj.ReferencePoint(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24063,13 +23902,13 @@ func (ec *executionContext) _FloorPlan_scale(ctx context.Context, field graphql.
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.FloorPlan().Scale(rctx, obj)
+		return obj.Scale(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24620,13 +24459,13 @@ func (ec *executionContext) _Flow_blocks(ctx context.Context, field graphql.Coll
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Flow().Blocks(rctx, obj)
+		return obj.Blocks(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24690,13 +24529,13 @@ func (ec *executionContext) _Flow_draft(ctx context.Context, field graphql.Colle
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Flow().Draft(rctx, obj)
+		return obj.Draft(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24961,13 +24800,13 @@ func (ec *executionContext) _FlowDraft_blocks(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.FlowDraft().Blocks(rctx, obj)
+		return obj.Blocks(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26217,13 +26056,13 @@ func (ec *executionContext) _Link_ports(ctx context.Context, field graphql.Colle
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().Ports(rctx, obj)
+		return obj.Ports(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26284,13 +26123,13 @@ func (ec *executionContext) _Link_workOrder(ctx context.Context, field graphql.C
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().WorkOrder(rctx, obj)
+		return obj.WorkOrder(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26316,13 +26155,13 @@ func (ec *executionContext) _Link_properties(ctx context.Context, field graphql.
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26351,13 +26190,13 @@ func (ec *executionContext) _Link_services(ctx context.Context, field graphql.Co
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().Services(rctx, obj)
+		return obj.Service(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26730,13 +26569,13 @@ func (ec *executionContext) _Location_locationType(ctx context.Context, field gr
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().LocationType(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26765,13 +26604,13 @@ func (ec *executionContext) _Location_parentLocation(ctx context.Context, field 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().ParentLocation(rctx, obj)
+		return obj.Parent(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26797,13 +26636,13 @@ func (ec *executionContext) _Location_children(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().Children(rctx, obj)
+		return obj.Children(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26969,13 +26808,13 @@ func (ec *executionContext) _Location_equipments(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().Equipments(rctx, obj)
+		return obj.Equipment(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27004,13 +26843,13 @@ func (ec *executionContext) _Location_properties(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27221,13 +27060,13 @@ func (ec *executionContext) _Location_surveys(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().Surveys(rctx, obj)
+		return obj.Survey(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27256,13 +27095,13 @@ func (ec *executionContext) _Location_wifiData(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().WifiData(rctx, obj)
+		return obj.WifiScan(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27291,13 +27130,13 @@ func (ec *executionContext) _Location_cellData(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().CellData(rctx, obj)
+		return obj.CellScan(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27368,13 +27207,13 @@ func (ec *executionContext) _Location_floorPlans(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().FloorPlans(rctx, obj)
+		return obj.FloorPlans(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27403,13 +27242,13 @@ func (ec *executionContext) _Location_hyperlinks(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Location().Hyperlinks(rctx, obj)
+		return obj.Hyperlinks(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28053,13 +27892,13 @@ func (ec *executionContext) _LocationType_propertyTypes(ctx context.Context, fie
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.LocationType().PropertyTypes(rctx, obj)
+		return obj.PropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28162,13 +28001,13 @@ func (ec *executionContext) _LocationType_surveyTemplateCategories(ctx context.C
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.LocationType().SurveyTemplateCategories(rctx, obj)
+		return obj.SurveyTemplateCategories(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32825,13 +32664,13 @@ func (ec *executionContext) _PermissionsPolicy_groups(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.PermissionsPolicy().Groups(rctx, obj)
+		return obj.Groups(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33333,13 +33172,13 @@ func (ec *executionContext) _Project_createdBy(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().CreatedBy(rctx, obj)
+		return obj.Creator(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33400,13 +33239,13 @@ func (ec *executionContext) _Project_type(ctx context.Context, field graphql.Col
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Type(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33435,13 +33274,13 @@ func (ec *executionContext) _Project_template(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Template(rctx, obj)
+		return obj.Template(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33467,13 +33306,13 @@ func (ec *executionContext) _Project_location(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Location(rctx, obj)
+		return obj.Location(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33499,13 +33338,13 @@ func (ec *executionContext) _Project_workOrders(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().WorkOrders(rctx, obj)
+		return obj.WorkOrders(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33569,13 +33408,13 @@ func (ec *executionContext) _Project_properties(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33604,13 +33443,13 @@ func (ec *executionContext) _Project_comments(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Comments(rctx, obj)
+		return obj.Comments(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33878,13 +33717,13 @@ func (ec *executionContext) _ProjectTemplate_properties(ctx context.Context, fie
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ProjectTemplate().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33913,13 +33752,13 @@ func (ec *executionContext) _ProjectTemplate_workOrders(ctx context.Context, fie
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ProjectTemplate().WorkOrders(rctx, obj)
+		return obj.WorkOrders(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34074,13 +33913,13 @@ func (ec *executionContext) _ProjectType_projects(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ProjectType().Projects(rctx, obj)
+		return obj.Projects(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34144,13 +33983,13 @@ func (ec *executionContext) _ProjectType_properties(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ProjectType().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34179,13 +34018,13 @@ func (ec *executionContext) _ProjectType_workOrders(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ProjectType().WorkOrders(rctx, obj)
+		return obj.WorkOrders(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34421,13 +34260,13 @@ func (ec *executionContext) _Property_propertyType(ctx context.Context, field gr
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Property().PropertyType(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37638,13 +37477,13 @@ func (ec *executionContext) _Service_serviceType(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().ServiceType(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37673,13 +37512,13 @@ func (ec *executionContext) _Service_upstream(ctx context.Context, field graphql
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Upstream(rctx, obj)
+		return obj.Upstream(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37708,13 +37547,13 @@ func (ec *executionContext) _Service_downstream(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Downstream(rctx, obj)
+		return obj.Downstream(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37743,13 +37582,13 @@ func (ec *executionContext) _Service_properties(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37778,13 +37617,13 @@ func (ec *executionContext) _Service_endpoints(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Endpoints(rctx, obj)
+		return obj.Endpoints(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37813,13 +37652,13 @@ func (ec *executionContext) _Service_links(ctx context.Context, field graphql.Co
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Links(rctx, obj)
+		return obj.Links(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37848,13 +37687,13 @@ func (ec *executionContext) _Service_ports(ctx context.Context, field graphql.Co
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Ports(rctx, obj)
+		return obj.Ports(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38125,13 +37964,13 @@ func (ec *executionContext) _ServiceEndpoint_port(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpoint().Port(rctx, obj)
+		return obj.Port(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38157,13 +37996,13 @@ func (ec *executionContext) _ServiceEndpoint_equipment(ctx context.Context, fiel
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpoint().Equipment(rctx, obj)
+		return obj.Equipment(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38192,13 +38031,13 @@ func (ec *executionContext) _ServiceEndpoint_service(ctx context.Context, field 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpoint().Service(rctx, obj)
+		return obj.Service(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38227,13 +38066,13 @@ func (ec *executionContext) _ServiceEndpoint_definition(ctx context.Context, fie
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpoint().Definition(rctx, obj)
+		return obj.Definition(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38399,13 +38238,13 @@ func (ec *executionContext) _ServiceEndpointDefinition_endpoints(ctx context.Con
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpointDefinition().Endpoints(rctx, obj)
+		return obj.Endpoints(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38434,13 +38273,13 @@ func (ec *executionContext) _ServiceEndpointDefinition_equipmentType(ctx context
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpointDefinition().EquipmentType(rctx, obj)
+		return obj.EquipmentType(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38469,13 +38308,13 @@ func (ec *executionContext) _ServiceEndpointDefinition_serviceType(ctx context.C
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceEndpointDefinition().ServiceType(rctx, obj)
+		return obj.ServiceType(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38714,13 +38553,13 @@ func (ec *executionContext) _ServiceType_propertyTypes(ctx context.Context, fiel
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceType().PropertyTypes(rctx, obj)
+		return obj.PropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38749,13 +38588,13 @@ func (ec *executionContext) _ServiceType_services(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceType().Services(rctx, obj)
+		return obj.Services(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38819,13 +38658,13 @@ func (ec *executionContext) _ServiceType_endpointDefinitions(ctx context.Context
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceType().EndpointDefinitions(rctx, obj)
+		return obj.EndpointDefinitions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39646,13 +39485,13 @@ func (ec *executionContext) _Survey_sourceFile(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Survey().SourceFile(rctx, obj)
+		return obj.SourceFile(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39678,13 +39517,13 @@ func (ec *executionContext) _Survey_surveyResponses(ctx context.Context, field g
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Survey().SurveyResponses(rctx, obj)
+		return obj.Questions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -41174,13 +41013,13 @@ func (ec *executionContext) _SurveyQuestion_images(ctx context.Context, field gr
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.SurveyQuestion().Images(rctx, obj)
+		return obj.Images(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -41311,13 +41150,13 @@ func (ec *executionContext) _SurveyTemplateCategory_surveyTemplateQuestions(ctx 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.SurveyTemplateCategory().SurveyTemplateQuestions(rctx, obj)
+		return obj.SurveyTemplateQuestions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42716,13 +42555,13 @@ func (ec *executionContext) _User_profilePhoto(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().ProfilePhoto(rctx, obj)
+		return obj.ProfilePhoto(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42748,13 +42587,13 @@ func (ec *executionContext) _User_groups(ctx context.Context, field graphql.Coll
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().Groups(rctx, obj)
+		return obj.Groups(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43194,13 +43033,13 @@ func (ec *executionContext) _UsersGroup_members(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.UsersGroup().Members(rctx, obj)
+		return obj.Members(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43229,13 +43068,13 @@ func (ec *executionContext) _UsersGroup_policies(ctx context.Context, field grap
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.UsersGroup().Policies(rctx, obj)
+		return obj.Policies(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44201,13 +44040,13 @@ func (ec *executionContext) _WorkOrder_workOrderType(ctx context.Context, field 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().WorkOrderType(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44236,13 +44075,13 @@ func (ec *executionContext) _WorkOrder_workOrderTemplate(ctx context.Context, fi
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().WorkOrderTemplate(rctx, obj)
+		return obj.Template(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44335,13 +44174,13 @@ func (ec *executionContext) _WorkOrder_owner(ctx context.Context, field graphql.
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Owner(rctx, obj)
+		return obj.Owner(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44437,13 +44276,13 @@ func (ec *executionContext) _WorkOrder_assignedTo(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().AssignedTo(rctx, obj)
+		return obj.Assignee(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44784,13 +44623,13 @@ func (ec *executionContext) _WorkOrder_comments(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Comments(rctx, obj)
+		return obj.Comments(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44861,13 +44700,13 @@ func (ec *executionContext) _WorkOrder_location(ctx context.Context, field graph
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Location(rctx, obj)
+		return obj.Location(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44893,13 +44732,13 @@ func (ec *executionContext) _WorkOrder_properties(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Properties(rctx, obj)
+		return obj.Properties(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44928,13 +44767,13 @@ func (ec *executionContext) _WorkOrder_project(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Project(rctx, obj)
+		return obj.Project(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44960,13 +44799,13 @@ func (ec *executionContext) _WorkOrder_checkListCategories(ctx context.Context, 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().CheckListCategories(rctx, obj)
+		return obj.CheckListCategories(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -44995,13 +44834,13 @@ func (ec *executionContext) _WorkOrder_hyperlinks(ctx context.Context, field gra
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Hyperlinks(rctx, obj)
+		return obj.Hyperlinks(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45234,13 +45073,13 @@ func (ec *executionContext) _WorkOrderDefinition_type(ctx context.Context, field
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrderDefinition().Type(rctx, obj)
+		return obj.Type(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45785,13 +45624,13 @@ func (ec *executionContext) _WorkOrderTemplate_propertyTypes(ctx context.Context
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrderTemplate().PropertyTypes(rctx, obj)
+		return obj.PropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45820,13 +45659,13 @@ func (ec *executionContext) _WorkOrderTemplate_checkListCategoryDefinitions(ctx 
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrderTemplate().CheckListCategoryDefinitions(rctx, obj)
+		return obj.CheckListCategoryDefinitions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45989,13 +45828,13 @@ func (ec *executionContext) _WorkOrderType_propertyTypes(ctx context.Context, fi
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrderType().PropertyTypes(rctx, obj)
+		return obj.PropertyTypes(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -46059,13 +45898,13 @@ func (ec *executionContext) _WorkOrderType_checkListCategoryDefinitions(ctx cont
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrderType().CheckListCategoryDefinitions(rctx, obj)
+		return obj.CheckListCategoryDefinitions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -52037,6 +51876,14 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
 			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValue"))
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -65010,10 +64857,6 @@ func (ec *executionContext) unmarshalNEquipmentPortConnectionInput2ᚖgithubᚗc
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNEquipmentPortDefinition2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinition(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentPortDefinition) graphql.Marshaler {
-	return ec._EquipmentPortDefinition(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNEquipmentPortDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinition(ctx context.Context, sel ast.SelectionSet, v []*ent.EquipmentPortDefinition) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -65335,10 +65178,6 @@ func (ec *executionContext) marshalNEquipmentPosition2ᚖgithubᚗcomᚋfacebook
 		return graphql.Null
 	}
 	return ec._EquipmentPosition(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNEquipmentPositionDefinition2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPositionDefinition(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentPositionDefinition) graphql.Marshaler {
-	return ec._EquipmentPositionDefinition(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNEquipmentPositionDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPositionDefinition(ctx context.Context, sel ast.SelectionSet, v []*ent.EquipmentPositionDefinition) graphql.Marshaler {
@@ -65730,10 +65569,6 @@ func (ec *executionContext) marshalNFloorPlan2ᚖgithubᚗcomᚋfacebookincubato
 	return ec._FloorPlan(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFloorPlanReferencePoint2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFloorPlanReferencePoint(ctx context.Context, sel ast.SelectionSet, v ent.FloorPlanReferencePoint) graphql.Marshaler {
-	return ec._FloorPlanReferencePoint(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNFloorPlanReferencePoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFloorPlanReferencePoint(ctx context.Context, sel ast.SelectionSet, v *ent.FloorPlanReferencePoint) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -65742,10 +65577,6 @@ func (ec *executionContext) marshalNFloorPlanReferencePoint2ᚖgithubᚗcomᚋfa
 		return graphql.Null
 	}
 	return ec._FloorPlanReferencePoint(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNFloorPlanScale2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFloorPlanScale(ctx context.Context, sel ast.SelectionSet, v ent.FloorPlanScale) graphql.Marshaler {
-	return ec._FloorPlanScale(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNFloorPlanScale2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFloorPlanScale(ctx context.Context, sel ast.SelectionSet, v *ent.FloorPlanScale) graphql.Marshaler {
@@ -67124,10 +66955,6 @@ func (ec *executionContext) marshalNPropertyKind2githubᚗcomᚋfacebookincubato
 	return v
 }
 
-func (ec *executionContext) marshalNPropertyType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx context.Context, sel ast.SelectionSet, v ent.PropertyType) graphql.Marshaler {
-	return ec._PropertyType(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx context.Context, sel ast.SelectionSet, v []*ent.PropertyType) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -67553,10 +67380,6 @@ func (ec *executionContext) marshalNServiceEndpoint2ᚖgithubᚗcomᚋfacebookin
 		return graphql.Null
 	}
 	return ec._ServiceEndpoint(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNServiceEndpointDefinition2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐServiceEndpointDefinition(ctx context.Context, sel ast.SelectionSet, v ent.ServiceEndpointDefinition) graphql.Marshaler {
-	return ec._ServiceEndpointDefinition(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNServiceEndpointDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐServiceEndpointDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ServiceEndpointDefinition) graphql.Marshaler {

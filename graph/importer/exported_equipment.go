@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+
 	"github.com/AlekSi/pointer"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -27,7 +29,6 @@ import (
 const minimalEquipmentLineLength = 9
 
 // processExportedEquipment imports equipment csv generated from the export feature
-// nolint: staticcheck, dupl
 func (m *importer) processExportedEquipment(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)
@@ -135,6 +136,15 @@ func (m *importer) processExportedEquipment(w http.ResponseWriter, r *http.Reque
 					errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: fmt.Sprintf("couldn't find equipment type %q", equipTypName)})
 					continue
 				}
+				workOrderName := importLine.WorkOrderName()
+				var workOrderItem *ent.WorkOrder
+				if workOrderName != "" {
+					workOrderItem, err = client.WorkOrder.Query().Where(workorder.Name(workOrderName)).Only(ctx)
+					if err != nil {
+						errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: fmt.Sprintf("couldn't find work order %q", workOrderName)})
+						continue
+					}
+				}
 
 				externalID := importLine.ExternalID()
 				id := importLine.ID()
@@ -178,7 +188,7 @@ func (m *importer) processExportedEquipment(w http.ResponseWriter, r *http.Reque
 						continue
 					}
 					if commit {
-						_, created, err = m.getOrCreateEquipment(ctx, m.r.Mutation(), name, equipType, &externalID, parentLoc, pos, propInputs)
+						_, created, err = m.getOrCreateEquipment(ctx, m.r.Mutation(), name, equipType, &externalID, parentLoc, pos, propInputs, workOrderItem)
 						if created {
 							modifiedCount++
 						} else if err == nil {
@@ -284,13 +294,13 @@ func (m *importer) inputValidations(ctx context.Context, importHeader ImportHead
 		return errors.New("first line too short. should include: 'Equipment ID', 'Equipment Name', 'Equipment Type', 'External ID' location types and parents")
 	}
 	locStart, _ := importHeader.LocationsRangeIdx()
-	if !equal(firstLine[:locStart], []string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}) {
-		return errors.New("first line misses sequence; 'Equipment ID', 'Equipment Name' or 'Equipment Type' , 'External ID'")
+	if !equal(firstLine[:locStart], []string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}) {
+		return errors.New("first line misses sequence; 'Equipment ID', 'Equipment Name' or 'Equipment Type' or 'External ID', 'Work Order'")
 	}
 	if !equal(firstLine[prnt3Idx:importHeader.PropertyStartIdx()], []string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}) {
 		return errors.New("first line misses sequence: 'Parent Equipment(3)', 'Position (3)', 'Parent Equipment (2)', 'Position (2)', 'Parent Equipment' or 'Equipment Position'")
 	}
-	err := m.validateAllLocationTypeExist(ctx, importHeader.ExternalIDIdx()+1, importHeader.LocationTypesRangeArr(), false)
+	err := m.validateAllLocationTypeExist(ctx, importHeader.WorkOrderIdx()+1, importHeader.LocationTypesRangeArr(), false)
 	return err
 }
 

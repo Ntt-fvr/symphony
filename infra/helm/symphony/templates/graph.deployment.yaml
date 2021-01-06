@@ -41,8 +41,8 @@ spec:
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: graph
-          image: {{ .Values.graph.image.repository }}:{{ .Values.graph.image.tag }}
-          imagePullPolicy: {{ .Values.graph.image.pullPolicy }}
+          image: {{ default (print .Values.global.image.registry "/graph") .Values.graph.image.repository }}:{{ default .Values.global.image.tag .Values.graph.image.tag }}
+          imagePullPolicy: {{ default .Values.global.image.pullPolicy .Values.graph.image.pullPolicy }}
           args: {{- include "symphony.listenArgs" .Values.graph | nindent 12 }}
           env:
             - name: WS_AUTH_URL

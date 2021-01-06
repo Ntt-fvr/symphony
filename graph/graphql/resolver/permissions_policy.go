@@ -21,7 +21,7 @@ import (
 
 type permissionsPolicyResolver struct{}
 
-func (r permissionsPolicyResolver) Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error) {
+func (r permissionsPolicyResolver) Policy(_ context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error) {
 	if obj.InventoryPolicy != nil {
 		return authz.AppendInventoryPolicies(
 			authz.NewInventoryPolicy(false),
@@ -30,10 +30,6 @@ func (r permissionsPolicyResolver) Policy(ctx context.Context, obj *ent.Permissi
 	return authz.AppendWorkforcePolicies(
 		authz.NewWorkforcePolicy(false, false),
 		obj.WorkforcePolicy), nil
-}
-
-func (permissionsPolicyResolver) Groups(ctx context.Context, obj *ent.PermissionsPolicy) ([]*ent.UsersGroup, error) {
-	return obj.QueryGroups().All(ctx)
 }
 
 func (mutationResolver) AddPermissionsPolicy(

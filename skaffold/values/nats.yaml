@@ -1,6 +1,0 @@
-auth:
-  enabled: false
-monitoring:
-  service:
-    type: NodePort
-

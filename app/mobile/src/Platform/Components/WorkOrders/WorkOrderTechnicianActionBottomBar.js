@@ -58,7 +58,7 @@ const WorkOrderTechnicianActionBottomBar = ({
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [lastDistanceMeters, setLastDistanceMeters] = useState<?number>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {cache, initWorkOrderCacheEntry, markWorkOrderAsCheckedIn} = useContext(
+  const {cache, initWorkOrderCacheEntry, markWorkOrderAsCheckedIn, setWorkOrderSubmittingStatus} = useContext(
     WorkOrderChecklistCacheContext,
   );
   const performWorkOrderCheckOut = usePerformWorkOrderCheckOut();
@@ -129,6 +129,7 @@ const WorkOrderTechnicianActionBottomBar = ({
     ) => {
       setIsSubmitting(true);
       setIsUploadDialogOpen(false);
+      setWorkOrderSubmittingStatus(workOrder.id, true)
       try {
         await performWorkOrderCheckOut(
           workOrder.id,
@@ -152,6 +153,7 @@ const WorkOrderTechnicianActionBottomBar = ({
         );
       } finally {
         setIsSubmitting(false);
+        setWorkOrderSubmittingStatus(workOrder.id, false)
       }
     },
     [
@@ -226,12 +228,15 @@ const WorkOrderTechnicianActionBottomBar = ({
           buttonState={buttonState}
         />
       ) : null}
-      <WorkOrderCheckOutDialog
+      {
+        isUploadDialogOpen ?
+        (<WorkOrderCheckOutDialog
         workOrderId={workOrder.id}
         shown={isUploadDialogOpen}
         onDialogClosed={() => setIsUploadDialogOpen(false)}
         onActionClicked={onTechnicianCheckOutPressed}
-      />
+      />) : null
+      }
     </BottomBar>
   );
 };

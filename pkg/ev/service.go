@@ -41,7 +41,7 @@ type LoggingEventHandler struct {
 // HandleEvent logs handled events.
 func (l LoggingEventHandler) HandleEvent(ctx context.Context, evt *Event) (err error) {
 	logger := l.Logger.For(ctx).
-		With(zap.Object("event", evt))
+		With(zap.Object("data", evt))
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Error("event handler panic",

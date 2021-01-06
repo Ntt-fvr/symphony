@@ -41,8 +41,8 @@ spec:
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: docs
-          image: {{ .Values.docs.image.repository }}:{{ .Values.docs.image.tag }}
-          imagePullPolicy: {{ .Values.docs.image.pullPolicy }}
+          image: {{ default (print .Values.global.image.registry "/docs") .Values.docs.image.repository }}:{{ default .Values.global.image.tag .Values.docs.image.tag }}
+          imagePullPolicy: {{ default .Values.global.image.pullPolicy .Values.docs.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.docs.service.targetPort }}
               name: http

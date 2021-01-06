@@ -19,8 +19,10 @@ import Button from '@symphony/design-system/components/Button';
 import DateTimeFormat from '../../common/DateTimeFormat';
 import LocationLink from '../location/LocationLink';
 import PriorityTag from '../work_orders/PriorityTag';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import Table from '@symphony/design-system/components/Table/Table';
+import TableColumnSelector from '@symphony/design-system/components/Table/TableColumnSelector';
+import Toolbar from '@material-ui/core/Toolbar';
 import fbt from 'fbt';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
@@ -136,83 +138,94 @@ const ProjectsTableView = (props: Props) => {
     .flatMap(({node}) => node?.properties.map(p => p.propertyType.name))
     .filter((propertyName, i, self) => self.indexOf(propertyName) === i);
 
-  const columns = [
-    {
-      key: 'name',
-      title: 'Project',
-      render: row => (
-        <Button variant="text" onClick={() => onProjectSelected(row.id)}>
-          {row.name}
-        </Button>
-      ),
-      isSortable: true,
-    },
-    {
-      key: 'numberOfWorkOrders',
-      title: 'Work Orders',
-      render: row =>
-        row?.numberOfWorkOrders ? (
-          <Button
-            className={classes.workOrderCell}
-            onClick={() => onProjectSelected(row.id)}>
-            {row.numberOfWorkOrders}
+  const [columns, setColumns] = useState(
+    [
+      {
+        key: 'name',
+        title: 'Project',
+        render: row => (
+          <Button variant="text" onClick={() => onProjectSelected(row.id)}>
+            {row.name}
           </Button>
-        ) : null,
-    },
-    {
-      key: 'type',
-      title: `${fbt('Template', '')}`,
-      render: row => row.type?.name ?? '',
-    },
-    {
-      key: 'location',
-      title: 'Location',
-      render: row =>
-        row.location ? (
-          <LocationLink title={row.location.name} id={row.location.id} />
-        ) : (
-          ''
         ),
-    },
-    {
-      key: 'owner',
-      title: 'Owner',
-      render: row => row?.createdBy?.email ?? '',
-    },
-    {
-      key: 'priority',
-      title: 'Priority',
-      render: row => <PriorityTag priority={row.priority} />,
-      isSortable: true,
-    },
-    {
-      key: 'createTime',
-      title: 'Creation Time',
-      render: row => DateTimeFormat.dateTime(row.createTime),
-      isSortable: true,
-    },
+        isSortable: true,
+      },
+      {
+        key: 'numberOfWorkOrders',
+        title: 'Work Orders',
+        render: row =>
+          row?.numberOfWorkOrders ? (
+            <Button
+              className={classes.workOrderCell}
+              onClick={() => onProjectSelected(row.id)}>
+              {row.numberOfWorkOrders}
+            </Button>
+          ) : null,
+      },
+      {
+        key: 'type',
+        title: `${fbt('Template', '')}`,
+        render: row => row.type?.name ?? '',
+      },
+      {
+        key: 'location',
+        title: 'Location',
+        render: row =>
+          row.location ? (
+            <LocationLink title={row.location.name} id={row.location.id} />
+          ) : (
+            ''
+          ),
+      },
+      {
+        key: 'owner',
+        title: 'Owner',
+        render: row => row?.createdBy?.email ?? '',
+      },
+      {
+        key: 'priority',
+        title: 'Priority',
+        render: row => <PriorityTag priority={row.priority} />,
+        isSortable: true,
+      },
+      {
+        key: 'createTime',
+        title: 'Creation Time',
+        render: row => DateTimeFormat.dateTime(row.createTime),
+        isSortable: true,
+      },
 
-    ...(useColumnSelector
-      ? allProjectPropertyNames
-          .filter(name => !!name)
-          .map((name = '') => ({
-            key: name,
-            title: name,
-            getSortingValue: row => row.type?.name,
-            render: row => {
-              const indexOfProperty = row.properties.findIndex(
-                property => property.propertyType.name === name,
-              );
+      ...(useColumnSelector
+        ? allProjectPropertyNames
+            .filter(name => !!name)
+            .map((name = '') => ({
+              hidden: true,
+              key: name,
+              title: name,
+              getSortingValue: row => row.type?.name,
+              render: row => {
+                const indexOfProperty = row.properties.findIndex(
+                  property => property.propertyType.name === name,
+                );
 
-              return (
-                (indexOfProperty >= 0 &&
-                  getPropertyValue(row.properties[indexOfProperty])) ||
-                null
-              );
-            },
-          }))
-      : []),
-  ];
+                return (
+                  (indexOfProperty >= 0 &&
+                    getPropertyValue(row.properties[indexOfProperty])) ||
+                  null
+                );
+              },
+            }))
+        : []),
+    ].map(column => {
+      const hidden = column?.hidden || false;
+      return {
+        ...column,
+        hidden,
+        value: column.title,
+        isSelected: !hidden,
+      };
+    }),
+  );
 
   const projectsData = useMemo(
     () =>
@@ -230,23 +243,17 @@ const ProjectsTableView = (props: Props) => {
 
   const orderByObj: {[string]: ProjectOrderField} = {
     name: 'NAME',
-    createTime: 'UPDATED_AT',
+    createTime: 'CREATED_AT',
+    updateTime: 'UPDATED_AT',
     priority: 'PRIORITY',
-    owner: 'PROJECT_OWNER',
-    location: 'PROJECT_LOCATION',
-    numberOfWorkOrders: 'NUMBER_OF_WORKORDERS',
-    type: 'PROJECT_TEMPLATE',
   };
 
   const getSortSettings = orderBy => {
     const orderByColumnObj: {[ProjectOrderField]: string} = {
       NAME: 'name',
-      UPDATED_AT: 'createTime',
+      CREATED_AT: 'createTime',
+      UPDATED_AT: 'updateTime',
       PRIORITY: 'priority',
-      PROJECT_OWNER: 'owner',
-      PROJECT_LOCATION: 'location',
-      NUMBER_OF_WORKORDERS: 'numberOfWorkOrders',
-      PROJECT_TEMPLATE: 'type',
     };
 
     if (!orderBy.field || !orderByColumnObj[orderBy.field]) {
@@ -268,33 +275,61 @@ const ProjectsTableView = (props: Props) => {
   }
 
   return (
-    <Table
-      className={classes.table}
-      data={projectsData}
-      columns={columns}
-      onSortChanged={newSortSettings => {
-        return onOrderChanged({
-          direction:
-            newSortSettings.order === TABLE_SORT_ORDER.ascending
-              ? 'ASC'
-              : 'DESC',
-          field: orderByObj[newSortSettings.columnKey]
-            ? orderByObj[newSortSettings.columnKey]
-            : 'UPDATED_AT',
-        });
-      }}
-      paginationSettings={{
-        loadNext: onCompleted => {
-          loadNext(PROJECTS_PAGE_SIZE, {
-            // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
-            onComplete: () => onCompleted && onCompleted(),
+    <>
+      <Toolbar>
+        <TableColumnSelector
+          columnDataList={columns.map(({key, title, value, isSelected}) => ({
+            key,
+            title,
+            value,
+            isSelected,
+          }))}
+          wrapperStyle={{marginLeft: 'auto'}}
+          handleOnChange={clickedOption =>
+            setColumns([
+              ...columns.map(listOption =>
+                listOption.value === clickedOption?.value
+                  ? {
+                      ...listOption,
+                      isSelected: !listOption.isSelected,
+                      hidden: !listOption.hidden,
+                    }
+                  : listOption,
+              ),
+            ])
+          }
+        />
+      </Toolbar>
+      <Table
+        className={classes.table}
+        data={projectsData}
+        columns={columns.map(
+          ({isSelected: _isSelected, value: _value, ...rest}) => rest,
+        )}
+        onSortChanged={newSortSettings => {
+          return onOrderChanged({
+            direction:
+              newSortSettings.order === TABLE_SORT_ORDER.ascending
+                ? 'ASC'
+                : 'DESC',
+            field: orderByObj[newSortSettings.columnKey]
+              ? orderByObj[newSortSettings.columnKey]
+              : 'UPDATED_AT',
           });
-        },
-        pageSize: PROJECTS_PAGE_SIZE,
-        totalRowsCount: data.projects.totalCount,
-      }}
-      sortSettings={getSortSettings(orderBy)}
-    />
+        }}
+        paginationSettings={{
+          loadNext: onCompleted => {
+            loadNext(PROJECTS_PAGE_SIZE, {
+              // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
+              onComplete: () => onCompleted && onCompleted(),
+            });
+          },
+          pageSize: PROJECTS_PAGE_SIZE,
+          totalRowsCount: data.projects.totalCount,
+        }}
+        sortSettings={getSortSettings(orderBy)}
+      />
+    </>
   );
 };
 

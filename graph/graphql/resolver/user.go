@@ -17,23 +17,11 @@ import (
 
 type userResolver struct{}
 
-func (userResolver) ProfilePhoto(ctx context.Context, user *ent.User) (*ent.File, error) {
-	photo, err := user.Edges.ProfilePhotoOrErr()
-	if ent.IsNotLoaded(err) {
-		photo, err = user.QueryProfilePhoto().Only(ctx)
-	}
-	return photo, ent.MaskNotFound(err)
-}
-
 func (r queryResolver) User(ctx context.Context, authID string) (*ent.User, error) {
 	u, err := r.ClientFrom(ctx).User.Query().
 		Where(user.AuthID(authID)).
 		Only(ctx)
 	return u, ent.MaskNotFound(err)
-}
-
-func (userResolver) Groups(ctx context.Context, user *ent.User) ([]*ent.UsersGroup, error) {
-	return user.QueryGroups().All(ctx)
 }
 
 func (userResolver) Name(_ context.Context, user *ent.User) (string, error) {

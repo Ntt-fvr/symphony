@@ -8034,6 +8034,16 @@ func (pr *ProjectQuery) Paginate(
 }
 
 var (
+	// ProjectOrderFieldCreateTime orders Project by create_time.
+	ProjectOrderFieldCreateTime = &ProjectOrderField{
+		field: project.FieldCreateTime,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.CreateTime,
+			}
+		},
+	}
 	// ProjectOrderFieldUpdateTime orders Project by update_time.
 	ProjectOrderFieldUpdateTime = &ProjectOrderField{
 		field: project.FieldUpdateTime,
@@ -8054,36 +8064,6 @@ var (
 			}
 		},
 	}
-	// ProjectOrderFieldProjectCreator orders Project by project_creator.
-	ProjectOrderFieldProjectCreator = &ProjectOrderField{
-		field: project.FieldProjectCreator,
-		toCursor: func(pr *Project) Cursor {
-			return Cursor{
-				ID:    pr.ID,
-				Value: pr.ProjectCreator,
-			}
-		},
-	}
-	// ProjectOrderFieldProjectLocation orders Project by project_location.
-	ProjectOrderFieldProjectLocation = &ProjectOrderField{
-		field: project.FieldProjectLocation,
-		toCursor: func(pr *Project) Cursor {
-			return Cursor{
-				ID:    pr.ID,
-				Value: pr.ProjectLocation,
-			}
-		},
-	}
-	// ProjectOrderFieldProjectTemplate orders Project by project_template.
-	ProjectOrderFieldProjectTemplate = &ProjectOrderField{
-		field: project.FieldProjectTemplate,
-		toCursor: func(pr *Project) Cursor {
-			return Cursor{
-				ID:    pr.ID,
-				Value: pr.ProjectTemplate,
-			}
-		},
-	}
 	// ProjectOrderFieldPriority orders Project by priority.
 	ProjectOrderFieldPriority = &ProjectOrderField{
 		field: project.FieldPriority,
@@ -8100,16 +8080,12 @@ var (
 func (f ProjectOrderField) String() string {
 	var str string
 	switch f.field {
+	case project.FieldCreateTime:
+		str = "CREATED_AT"
 	case project.FieldUpdateTime:
 		str = "UPDATED_AT"
 	case project.FieldName:
 		str = "NAME"
-	case project.FieldProjectCreator:
-		str = "PROJECT_OWNER"
-	case project.FieldProjectLocation:
-		str = "PROJECT_LOCATION"
-	case project.FieldProjectTemplate:
-		str = "PROJECT_TEMPLATE"
 	case project.FieldPriority:
 		str = "PRIORITY"
 	}
@@ -8128,16 +8104,12 @@ func (f *ProjectOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("ProjectOrderField %T must be a string", v)
 	}
 	switch str {
+	case "CREATED_AT":
+		*f = *ProjectOrderFieldCreateTime
 	case "UPDATED_AT":
 		*f = *ProjectOrderFieldUpdateTime
 	case "NAME":
 		*f = *ProjectOrderFieldName
-	case "PROJECT_OWNER":
-		*f = *ProjectOrderFieldProjectCreator
-	case "PROJECT_LOCATION":
-		*f = *ProjectOrderFieldProjectLocation
-	case "PROJECT_TEMPLATE":
-		*f = *ProjectOrderFieldProjectTemplate
 	case "PRIORITY":
 		*f = *ProjectOrderFieldPriority
 	default:

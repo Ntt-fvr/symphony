@@ -57,3 +57,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/* Return the appropriate apiVersion for ingress. */}}
+{{- define "storybook.ingress.apiVersion" -}}
+{{- if semverCompare ">=1.19.0-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- print "networking.k8s.io/v1" -}}
+{{- else -}}
+{{- print "networking.k8s.io/v1beta1" -}}
+{{- end -}}
+{{- end -}}

@@ -25,6 +25,7 @@ import WorkOrderAssigneeSection from 'Platform/Components/WorkOrders/WorkOrderAs
 import WorkOrderDatesSection from 'Platform/Components/WorkOrders/WorkOrderDatesSection';
 import WorkOrderLocationSection from 'Platform/Components/WorkOrders/WorkOrderLocationSection';
 import WorkOrderProjectSection from 'Platform/Components/WorkOrders/WorkOrderProjectSection';
+import WorkOrderTemplateNameSection from 'Platform/Components/WorkOrders/WorkOrderTemplateNameSection';
 import fbt from 'fbt';
 import graphql from 'babel-plugin-relay/macro';
 import {StyleSheet, View} from 'react-native';
@@ -45,6 +46,9 @@ const WorkOrderDetailsSection = ({workOrder}: Props) => {
     ) : null,
     workOrder.creationDate || workOrder.installDate ? (
       <WorkOrderDatesSection workOrder={workOrder} />
+    ) : null,
+    workOrder.workOrderTemplate ? (
+      <WorkOrderTemplateNameSection workOrder={workOrder} />
     ) : null,
     workOrder.description ? (
       <LabeledTextSection
@@ -109,6 +113,9 @@ export default createFragmentContainer(WorkOrderDetailsSection, {
       description
       priority
       status
+      workOrderTemplate {
+        name
+      }
       location {
         name
         latitude
@@ -124,6 +131,7 @@ export default createFragmentContainer(WorkOrderDetailsSection, {
       ...WorkOrderDatesSection_workOrder
       ...WorkOrderProjectSection_workOrder
       ...WorkOrderAssigneeSection_workOrder
+      ...WorkOrderTemplateNameSection_workOrder
     }
   `,
 });

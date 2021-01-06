@@ -8,8 +8,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestQueryMe(t *testing.T) {
@@ -26,6 +25,6 @@ func TestQueryMe(t *testing.T) {
 		}
 	}
 	c.MustPost("query { me { tenant, user { authID } } }", &rsp)
-	assert.Equal(t, viewertest.DefaultTenant, rsp.Me.Tenant)
-	assert.Equal(t, viewertest.DefaultUser, rsp.Me.User.AuthID)
+	require.Equal(t, viewertest.DefaultTenant, rsp.Me.Tenant)
+	require.Equal(t, viewertest.DefaultUser, rsp.Me.User.AuthID)
 }

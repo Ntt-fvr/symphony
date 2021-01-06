@@ -71,6 +71,7 @@ const ServiceCard = (props: Props) => {
   // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
   const {classes, service, history, match} = props;
   const [detailsPanelShown, setDetailsPanelShown] = useState(false);
+  const [selectedWorkOrderId, setSelectedWorkOrderId] = useState(null);
   const panelRef = useRef();
 
   let panelWidth = undefined;
@@ -85,6 +86,13 @@ const ServiceCard = (props: Props) => {
     });
     history.push(match.url);
   };
+  const navigateToWorkOrder = (selectedWorkOrderCardId: ?string) => {
+    const {history} = props;
+    if (selectedWorkOrderCardId) {
+      history.push(`/workorders/search?workorder=${selectedWorkOrderCardId}`);
+    }
+  };
+
   return (
     <FormContextProvider
       permissions={{
@@ -98,6 +106,12 @@ const ServiceCard = (props: Props) => {
               service={service}
               onBackClicked={navigateToMainPage}
               onServiceRemoved={navigateToMainPage}
+              onWorkOrderSelected={selectedWorkOrderId =>
+                setSelectedWorkOrderId(selectedWorkOrderId)
+              }
+              onNavigateToWorkOrder={selectedWorkOrderCardId =>
+                navigateToWorkOrder(selectedWorkOrderCardId)
+              }
             />
             <Card className={classes.topologyCard}>
               <CardHeader className={classes.titleText}>Topology</CardHeader>
@@ -113,6 +127,7 @@ const ServiceCard = (props: Props) => {
             service={service}
             onOpenDetailsPanel={() => setDetailsPanelShown(true)}
             ref={panelRef}
+            selectedWorkOrderId={selectedWorkOrderId}
           />
           <ServiceDetailsPanel
             shown={detailsPanelShown}

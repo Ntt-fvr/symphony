@@ -37,15 +37,6 @@ func (surveyResolver) LocationID(ctx context.Context, obj *ent.Survey) (int, err
 	return obj.QueryLocation().OnlyID(ctx)
 }
 
-func (surveyResolver) SurveyResponses(ctx context.Context, obj *ent.Survey) ([]*ent.SurveyQuestion, error) {
-	return obj.QueryQuestions().All(ctx)
-}
-
-func (surveyResolver) SourceFile(ctx context.Context, obj *ent.Survey) (*ent.File, error) {
-	survey, err := obj.QuerySourceFile().Only(ctx)
-	return survey, ent.MaskNotFound(err)
-}
-
 type surveyCellScanResolver struct{}
 
 func (surveyCellScanResolver) Timestamp(_ context.Context, scs *ent.SurveyCellScan) (ts *int, _ error) {

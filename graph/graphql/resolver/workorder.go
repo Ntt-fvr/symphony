@@ -30,42 +30,14 @@ import (
 	"go.uber.org/zap"
 )
 
-type workOrderDefinitionResolver struct{}
-
-func (checkListCategoryResolver) CheckListCategoryDefinitions(ctx context.Context, obj *ent.WorkOrderType) ([]*ent.CheckListCategoryDefinition, error) {
-	return obj.QueryCheckListCategoryDefinitions().All(ctx)
-}
-
-func (workOrderTypeResolver) CheckListCategoryDefinitions(ctx context.Context, obj *ent.WorkOrderType) ([]*ent.CheckListCategoryDefinition, error) {
-	return obj.QueryCheckListCategoryDefinitions().All(ctx)
-}
-
-func (workOrderDefinitionResolver) Type(ctx context.Context, obj *ent.WorkOrderDefinition) (*ent.WorkOrderType, error) {
-	typ, err := obj.Edges.TypeOrErr()
-	if ent.IsNotLoaded(err) {
-		return obj.QueryType().Only(ctx)
-	}
-	return typ, err
-}
-
 type workOrderTypeResolver struct{}
 
-func (workOrderTypeResolver) PropertyTypes(ctx context.Context, obj *ent.WorkOrderType) ([]*ent.PropertyType, error) {
-	return obj.QueryPropertyTypes().All(ctx)
-}
-
 func (workOrderTypeResolver) NumberOfWorkOrders(ctx context.Context, obj *ent.WorkOrderType) (int, error) {
+	workOrders, err := obj.Edges.WorkOrdersOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(workOrders), err
+	}
 	return obj.QueryWorkOrders().Count(ctx)
-}
-
-type workOrderTemplateResolver struct{}
-
-func (workOrderTemplateResolver) PropertyTypes(ctx context.Context, obj *ent.WorkOrderTemplate) ([]*ent.PropertyType, error) {
-	return obj.QueryPropertyTypes().All(ctx)
-}
-
-func (workOrderTemplateResolver) CheckListCategoryDefinitions(ctx context.Context, obj *ent.WorkOrderTemplate) ([]*ent.CheckListCategoryDefinition, error) {
-	return obj.QueryCheckListCategoryDefinitions().All(ctx)
 }
 
 type workOrderResolver struct{}
@@ -87,35 +59,6 @@ func (r workOrderResolver) Activities(ctx context.Context, obj *ent.WorkOrder, f
 	return obj.QueryActivities().All(ctx)
 }
 
-func (workOrderResolver) WorkOrderType(ctx context.Context, obj *ent.WorkOrder) (*ent.WorkOrderType, error) {
-	typ, err := obj.Edges.TypeOrErr()
-	if ent.IsNotLoaded(err) {
-		return obj.QueryType().Only(ctx)
-	}
-	return typ, err
-}
-
-func (workOrderResolver) WorkOrderTemplate(ctx context.Context, obj *ent.WorkOrder) (*ent.WorkOrderTemplate, error) {
-	t, err := obj.QueryTemplate().Only(ctx)
-	return t, ent.MaskNotFound(err)
-}
-
-func (workOrderResolver) Location(ctx context.Context, obj *ent.WorkOrder) (*ent.Location, error) {
-	loc, err := obj.Edges.LocationOrErr()
-	if ent.IsNotLoaded(err) {
-		loc, err = obj.QueryLocation().Only(ctx)
-	}
-	return loc, ent.MaskNotFound(err)
-}
-
-func (workOrderResolver) Project(ctx context.Context, obj *ent.WorkOrder) (*ent.Project, error) {
-	prj, err := obj.Edges.ProjectOrErr()
-	if ent.IsNotLoaded(err) {
-		prj, err = obj.QueryProject().Only(ctx)
-	}
-	return prj, ent.MaskNotFound(err)
-}
-
 func (workOrderResolver) EquipmentToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error) {
 	return obj.QueryEquipment().Where(equipment.FutureStateEQ(enum.FutureStateInstall)).All(ctx)
 }
@@ -132,18 +75,6 @@ func (workOrderResolver) LinksToRemove(ctx context.Context, obj *ent.WorkOrder) 
 	return obj.QueryLinks().Where(link.FutureStateEQ(enum.FutureStateRemove)).All(ctx)
 }
 
-func (workOrderResolver) Properties(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Property, error) {
-	props, err := obj.Edges.PropertiesOrErr()
-	if ent.IsNotLoaded(err) {
-		return obj.QueryProperties().All(ctx)
-	}
-	return props, err
-}
-
-func (workOrderResolver) CheckListCategories(ctx context.Context, obj *ent.WorkOrder) ([]*ent.CheckListCategory, error) {
-	return obj.QueryCheckListCategories().All(ctx)
-}
-
 func (workOrderResolver) fileOfType(ctx context.Context, workOrder *ent.WorkOrder, typ file.Type) ([]*ent.File, error) {
 	return workOrder.QueryFiles().Where(file.TypeEQ(typ)).All(ctx)
 }
@@ -154,36 +85,6 @@ func (r workOrderResolver) Images(ctx context.Context, obj *ent.WorkOrder) ([]*e
 
 func (r workOrderResolver) Files(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error) {
 	return r.fileOfType(ctx, obj, file.TypeFile)
-}
-
-func (workOrderResolver) Hyperlinks(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Hyperlink, error) {
-	return obj.QueryHyperlinks().All(ctx)
-}
-
-func (workOrderResolver) Comments(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Comment, error) {
-	return obj.QueryComments().All(ctx)
-}
-
-func (workOrderResolver) Owner(ctx context.Context, obj *ent.WorkOrder) (*ent.User, error) {
-	owner, err := obj.Edges.OwnerOrErr()
-	if ent.IsNotLoaded(err) {
-		owner, err = obj.QueryOwner().Only(ctx)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("querying owner: %w", err)
-	}
-	return owner, nil
-}
-
-func (workOrderResolver) AssignedTo(ctx context.Context, obj *ent.WorkOrder) (*ent.User, error) {
-	assignee, err := obj.Edges.AssigneeOrErr()
-	if ent.IsNotLoaded(err) {
-		assignee, err = obj.QueryAssignee().Only(ctx)
-	}
-	if err != nil && !ent.IsNotFound(err) {
-		return nil, fmt.Errorf("querying assignee: %w", err)
-	}
-	return assignee, nil
 }
 
 func (r mutationResolver) AddWorkOrder(

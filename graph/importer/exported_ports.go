@@ -20,7 +20,6 @@ import (
 const minimalPortsLineLength = 15
 
 // processExportedPorts imports ports csv generated from the export feature
-// nolint: staticcheck
 func (m *importer) processExportedPorts(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)

@@ -637,7 +637,7 @@ var (
 	// ExportTasksColumns holds the columns for the "export_tasks" table.
 	ExportTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION", "PORT", "LINK", "SERVICE", "WORK_ORDER", "SINGLE_WORK_ORDER"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION", "PORT", "LINK", "SERVICE", "WORK_ORDER", "PROJECT", "SINGLE_WORK_ORDER"}},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED"}},
 		{Name: "progress", Type: field.TypeFloat64},
 		{Name: "filters", Type: field.TypeString, Size: 2147483647, Default: "[]"},
@@ -1094,9 +1094,6 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "project_creator_order", Type: field.TypeInt, Nullable: true},
-		{Name: "project_location_order", Type: field.TypeInt, Nullable: true},
-		{Name: "project_template_order", Type: field.TypeInt, Nullable: true},
 		{Name: "priority", Type: field.TypeEnum, Enums: []string{"URGENT", "HIGH", "MEDIUM", "LOW", "NONE"}, Default: "NONE"},
 		{Name: "project_template", Type: field.TypeInt, Nullable: true},
 		{Name: "project_location", Type: field.TypeInt, Nullable: true},
@@ -1111,28 +1108,28 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "projects_project_templates_template",
-				Columns: []*schema.Column{ProjectsColumns[9]},
+				Columns: []*schema.Column{ProjectsColumns[6]},
 
 				RefColumns: []*schema.Column{ProjectTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_locations_location",
-				Columns: []*schema.Column{ProjectsColumns[10]},
+				Columns: []*schema.Column{ProjectsColumns[7]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_users_creator",
-				Columns: []*schema.Column{ProjectsColumns[11]},
+				Columns: []*schema.Column{ProjectsColumns[8]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_project_types_projects",
-				Columns: []*schema.Column{ProjectsColumns[12]},
+				Columns: []*schema.Column{ProjectsColumns[9]},
 
 				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1142,7 +1139,12 @@ var (
 			{
 				Name:    "project_name_project_type_projects",
 				Unique:  true,
-				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[12]},
+				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[9]},
+			},
+			{
+				Name:    "project_create_time",
+				Unique:  false,
+				Columns: []*schema.Column{ProjectsColumns[1]},
 			},
 			{
 				Name:    "project_update_time",

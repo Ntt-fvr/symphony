@@ -12,8 +12,8 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 type testRule struct {
@@ -58,10 +58,10 @@ func TestPolicy(t *testing.T) {
 	)
 	t.Run("Query", func(t *testing.T) {
 		err := policy.EvalQuery(context.Background(), nil)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 	t.Run("Mutation", func(t *testing.T) {
 		err := policy.EvalMutation(context.Background(), nil)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }

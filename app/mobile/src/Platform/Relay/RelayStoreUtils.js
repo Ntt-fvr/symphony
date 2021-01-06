@@ -62,6 +62,9 @@ const myTasksQuery = graphql`
           priority
           status
           installDate
+          workOrderTemplate {
+            name
+          }
           location {
             id
             name
@@ -117,6 +120,9 @@ const workOrderQuery = graphql`
         id
         name
         status
+        workOrderTemplate {
+          name
+        }
         location {
           id
           name

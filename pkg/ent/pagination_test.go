@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCursorEncoding(t *testing.T) {
@@ -26,14 +26,14 @@ func TestCursorEncoding(t *testing.T) {
 		c := ent.Cursor{ID: id, Value: value}
 		c.MarshalGQL(&buf)
 		s := buf.String()
-		assert.Equal(t, quote, s[0])
+		require.Equal(t, quote, s[0])
 		n := len(s) - 1
-		assert.Equal(t, quote, s[n])
+		require.Equal(t, quote, s[n])
 		c = ent.Cursor{}
 		err := c.UnmarshalGQL(s[1:n])
-		assert.NoError(t, err)
-		assert.Equal(t, id, c.ID)
-		assert.Equal(t, value, c.Value)
+		require.NoError(t, err)
+		require.Equal(t, id, c.ID)
+		require.Equal(t, value, c.Value)
 	})
 	t.Run("EncodeNoValue", func(t *testing.T) {
 		const id = 55
@@ -41,12 +41,12 @@ func TestCursorEncoding(t *testing.T) {
 		c := ent.Cursor{ID: id}
 		c.MarshalGQL(&buf)
 		s, err := strconv.Unquote(buf.String())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		c = ent.Cursor{}
 		err = c.UnmarshalGQL(s)
-		assert.NoError(t, err)
-		assert.Equal(t, id, c.ID)
-		assert.Nil(t, c.Value)
+		require.NoError(t, err)
+		require.Equal(t, id, c.ID)
+		require.Nil(t, c.Value)
 	})
 	t.Run("DecodeBadInput", func(t *testing.T) {
 		inputs := []interface{}{
@@ -57,7 +57,7 @@ func TestCursorEncoding(t *testing.T) {
 		for _, input := range inputs {
 			var c ent.Cursor
 			err := c.UnmarshalGQL(input)
-			assert.Error(t, err)
+			require.Error(t, err)
 		}
 	})
 }

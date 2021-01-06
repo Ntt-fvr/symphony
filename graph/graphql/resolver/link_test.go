@@ -15,7 +15,6 @@ import (
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,7 +23,7 @@ func TestAddLink(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr, lr, eqr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link(), r.Equipment()
+	mr, qr, eqr := r.Mutation(), r.Query(), r.Equipment()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -69,30 +68,30 @@ func TestAddLink(t *testing.T) {
 			{Equipment: equipmentB.ID, Port: portDef.ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := nodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
+	require.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	require.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkB, _ := pr.Link(ctx, fetchedPortB)
+	linkA := fetchedPortA.QueryLink().OnlyX(ctx)
+	linkB := fetchedPortA.QueryLink().OnlyX(ctx)
 
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkB.ID, createdLink.ID)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkB.ID, createdLink.ID)
 
-	fetchedPorts, err := lr.Ports(ctx, createdLink)
+	fetchedPorts, err := createdLink.QueryPorts().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, fetchedPorts, 2)
+	require.Len(t, fetchedPorts, 2)
 
 	availablePorts, err = eqr.Ports(ctx, equipmentA, pointer.ToBool(true))
 	require.NoError(t, err)
@@ -107,7 +106,7 @@ func TestAddLinkWithProperties(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr, lr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link()
+	mr, qr := r.Mutation(), r.Query()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -126,7 +125,7 @@ func TestAddLinkWithProperties(t *testing.T) {
 		Name:           "example_type_a",
 		LinkProperties: linkPropTypeInput,
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	visibleLabel := "Eth1"
 	bandwidth := "10/100/1000BASE-T"
@@ -167,39 +166,39 @@ func TestAddLinkWithProperties(t *testing.T) {
 		},
 		Properties: propInput,
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	fetchedNodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := fetchedNodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedNodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := fetchedNodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
+	require.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	require.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkB, _ := pr.Link(ctx, fetchedPortB)
+	linkA := fetchedPortA.QueryLink().OnlyX(ctx)
+	linkB := fetchedPortB.QueryLink().OnlyX(ctx)
 
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkB.ID, createdLink.ID)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkB.ID, createdLink.ID)
 
-	fetchedPorts, err := lr.Ports(ctx, createdLink)
+	fetchedPorts, err := createdLink.QueryPorts().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, fetchedPorts, 2)
+	require.Len(t, fetchedPorts, 2)
 
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkB.ID, createdLink.ID)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkB.ID, createdLink.ID)
 
 	propA := linkA.QueryProperties().FirstX(ctx)
 	propZ := linkB.QueryProperties().FirstX(ctx)
 
-	assert.Equal(t, pointer.GetString(propA.StringVal), linkVal)
-	assert.Equal(t, pointer.GetString(propZ.StringVal), linkVal)
+	require.Equal(t, pointer.GetString(propA.StringVal), linkVal)
+	require.Equal(t, pointer.GetString(propZ.StringVal), linkVal)
 }
 
 func TestEditLinkWithProperties(t *testing.T) {
@@ -207,7 +206,7 @@ func TestEditLinkWithProperties(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr, lr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link()
+	mr, qr := r.Mutation(), r.Query()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type",
 	})
@@ -268,7 +267,7 @@ func TestEditLinkWithProperties(t *testing.T) {
 		},
 		Properties: propInput,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	propID := createdLink.QueryProperties().FirstIDX(ctx)
 
 	editedLinkVal := "Baz"
@@ -282,41 +281,41 @@ func TestEditLinkWithProperties(t *testing.T) {
 		ID:         createdLink.ID,
 		Properties: editedPropInput,
 	})
-	assert.Nil(t, err)
-	assert.Equal(t, editedLink.ID, createdLink.ID)
+	require.Nil(t, err)
+	require.Equal(t, editedLink.ID, createdLink.ID)
 
 	fetchedNodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := fetchedNodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedNodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := fetchedNodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
+	require.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	require.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkB, _ := pr.Link(ctx, fetchedPortB)
+	linkA := fetchedPortA.QueryLink().OnlyX(ctx)
+	linkB := fetchedPortB.QueryLink().OnlyX(ctx)
 
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkB.ID, createdLink.ID)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkB.ID, createdLink.ID)
 
-	fetchedPorts, err := lr.Ports(ctx, createdLink)
+	fetchedPorts, err := createdLink.QueryPorts().All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, fetchedPorts, 2)
+	require.Len(t, fetchedPorts, 2)
 
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkB.ID, createdLink.ID)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkB.ID, createdLink.ID)
 
 	propA := linkA.QueryProperties().FirstX(ctx)
 	propZ := linkB.QueryProperties().FirstX(ctx)
 
-	assert.Equal(t, pointer.GetString(propA.StringVal), editedLinkVal)
-	assert.Equal(t, pointer.GetString(propZ.StringVal), editedLinkVal)
+	require.Equal(t, pointer.GetString(propA.StringVal), editedLinkVal)
+	require.Equal(t, pointer.GetString(propZ.StringVal), editedLinkVal)
 }
 
 func TestRemoveLink(t *testing.T) {
@@ -324,7 +323,7 @@ func TestRemoveLink(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr := r.Mutation(), r.Query(), r.EquipmentPort()
+	mr, qr := r.Mutation(), r.Query()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type",
 	})
@@ -363,27 +362,25 @@ func TestRemoveLink(t *testing.T) {
 			{Equipment: equipmentB.ID, Port: portDef.ID},
 		},
 	})
-	assert.Nil(t, err)
-	assert.NotNil(t, link)
+	require.Nil(t, err)
+	require.NotNil(t, link)
 
 	_, _ = mr.RemoveLink(ctx, link.ID, nil)
-
 	fetchedNodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := fetchedNodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedNodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := fetchedNodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkB, _ := pr.Link(ctx, fetchedPortB)
-
-	assert.Nil(t, linkA)
-	assert.Nil(t, linkB)
+	linkA, _ := fetchedPortA.QueryLink().Only(ctx)
+	linkB, _ := fetchedPortB.QueryLink().Only(ctx)
+	require.Nil(t, linkA)
+	require.Nil(t, linkB)
 }
 
 func TestAddLinkWithWorkOrder(t *testing.T) {
@@ -391,7 +388,7 @@ func TestAddLinkWithWorkOrder(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr, wor := r.Mutation(), r.Query(), r.EquipmentPort(), r.WorkOrder()
+	mr, qr, wor := r.Mutation(), r.Query(), r.WorkOrder()
 
 	workOrder := createWorkOrder(ctx, t, *r, "work_order_name_102")
 	location := workOrder.QueryLocation().FirstX(ctx)
@@ -427,26 +424,26 @@ func TestAddLinkWithWorkOrder(t *testing.T) {
 		},
 		WorkOrder: &workOrder.ID,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedNodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := fetchedNodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedNodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := fetchedNodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
+	require.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	require.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkB, _ := pr.Link(ctx, fetchedPortB)
+	linkA := fetchedPortA.QueryLink().OnlyX(ctx)
+	linkB := fetchedPortB.QueryLink().OnlyX(ctx)
 
-	assert.Equal(t, linkA.ID, createdLink.ID)
-	assert.Equal(t, linkB.ID, createdLink.ID)
+	require.Equal(t, linkA.ID, createdLink.ID)
+	require.Equal(t, linkB.ID, createdLink.ID)
 
 	node, err := qr.Node(ctx, workOrder.ID)
 	require.NoError(t, err)
@@ -455,12 +452,12 @@ func TestAddLinkWithWorkOrder(t *testing.T) {
 
 	linksToRemove, err := wor.LinksToRemove(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Len(t, linksToRemove, 0)
+	require.Len(t, linksToRemove, 0)
 
 	linksToAdd, err := wor.LinksToAdd(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Len(t, linksToAdd, 1)
-	assert.Equal(t, linksToAdd[0].ID, createdLink.ID)
+	require.Len(t, linksToAdd, 1)
+	require.Equal(t, linksToAdd[0].ID, createdLink.ID)
 }
 
 func TestRemoveLinkWithWorkOrder(t *testing.T) {
@@ -468,7 +465,7 @@ func TestRemoveLinkWithWorkOrder(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr, wor := r.Mutation(), r.Query(), r.EquipmentPort(), r.WorkOrder()
+	mr, qr, wor := r.Mutation(), r.Query(), r.WorkOrder()
 
 	workOrder := createWorkOrder(ctx, t, *r, "example_work_order")
 	location := workOrder.QueryLocation().FirstX(ctx)
@@ -504,26 +501,25 @@ func TestRemoveLinkWithWorkOrder(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	assert.NotNil(t, link)
+	require.NotNil(t, link)
 
 	_, _ = mr.RemoveLink(ctx, link.ID, &workOrder.ID)
 
 	fetchedNodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := fetchedNodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedNodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := fetchedNodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	linkA, _ := pr.Link(ctx, fetchedPortA)
-	linkB, _ := pr.Link(ctx, fetchedPortB)
-
-	assert.NotNil(t, linkA)
-	assert.NotNil(t, linkB)
+	linkA := fetchedPortA.QueryLink().OnlyX(ctx)
+	linkB := fetchedPortB.QueryLink().OnlyX(ctx)
+	require.NotNil(t, linkA)
+	require.NotNil(t, linkB)
 
 	node, err := qr.Node(ctx, workOrder.ID)
 	require.NoError(t, err)
@@ -532,10 +528,10 @@ func TestRemoveLinkWithWorkOrder(t *testing.T) {
 
 	linksToRemove, err := wor.LinksToRemove(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Len(t, linksToRemove, 1)
-	assert.Equal(t, linksToRemove[0].ID, link.ID)
+	require.Len(t, linksToRemove, 1)
+	require.Equal(t, linksToRemove[0].ID, link.ID)
 
 	linksToAdd, err := wor.LinksToAdd(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
-	assert.Len(t, linksToAdd, 0)
+	require.Empty(t, linksToAdd)
 }

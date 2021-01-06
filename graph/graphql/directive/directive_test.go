@@ -15,8 +15,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 type testResolver struct {
@@ -148,10 +148,10 @@ func TestDirectiveNumberValue(t *testing.T) {
 				tc.oneOf, tc.equals,
 			)(tc.input, tr.resolve)
 			if !tc.wantErr {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.input, output)
+				require.NoError(t, err)
+				require.Equal(t, tc.input, output)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		})
 	}
@@ -287,10 +287,10 @@ func TestDirectiveStringValue(t *testing.T) {
 				tc.oneOf, tc.equals,
 			)(tc.input, tr.resolve)
 			if !tc.wantErr {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.input, output)
+				require.NoError(t, err)
+				require.Equal(t, tc.input, output)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		})
 	}
@@ -424,10 +424,10 @@ func TestDirectiveList(t *testing.T) {
 
 			output, err := listFunc(tc.maxItems, tc.minItems, tc.uniqueItems)(tc.input, tr.resolve)
 			if !tc.wantErr {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.input, output)
+				require.NoError(t, err)
+				require.Equal(t, tc.input, output)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		})
 	}
@@ -455,8 +455,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := uniqueName(inputs, tr.resolve)
-		assert.Nil(t, outputs)
-		assert.Error(t, err)
+		require.Nil(t, outputs)
+		require.Error(t, err)
 	})
 	t.Run("SliceOfStructs", func(t *testing.T) {
 		inputs := []struct {
@@ -473,8 +473,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := uniqueName(inputs, tr.resolve)
-		assert.Equal(t, inputs, outputs)
-		assert.NoError(t, err)
+		require.Equal(t, inputs, outputs)
+		require.NoError(t, err)
 	})
 	t.Run("NoName", func(t *testing.T) {
 		inputs := []struct {
@@ -490,8 +490,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := uniqueName(inputs, tr.resolve)
-		assert.Equal(t, inputs, outputs)
-		assert.NoError(t, err)
+		require.Equal(t, inputs, outputs)
+		require.NoError(t, err)
 	})
 	t.Run("NoStringName", func(t *testing.T) {
 		inputs := []struct {
@@ -507,8 +507,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := uniqueName(inputs, tr.resolve)
-		assert.Equal(t, inputs, outputs)
-		assert.NoError(t, err)
+		require.Equal(t, inputs, outputs)
+		require.NoError(t, err)
 	})
 	t.Run("NonSlice", func(t *testing.T) {
 		var (
@@ -521,8 +521,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		r, err := uniqueName(nr, tr.resolve)
-		assert.Equal(t, nr, r)
-		assert.NoError(t, err)
+		require.Equal(t, nr, r)
+		require.NoError(t, err)
 	})
 	t.Run("IntPointerSlice", func(t *testing.T) {
 		gen := func(v int) *int { return &v }
@@ -536,8 +536,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		r, err := uniqueName(nr, tr.resolve)
-		assert.Equal(t, nr, r)
-		assert.NoError(t, err)
+		require.Equal(t, nr, r)
+		require.NoError(t, err)
 	})
 	t.Run("FuncSlice", func(t *testing.T) {
 		inputs := []func(){func() {}}
@@ -548,8 +548,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := uniqueName(inputs, tr.resolve)
-		assert.Equal(t, inputs, outputs)
-		assert.NoError(t, err)
+		require.Equal(t, inputs, outputs)
+		require.NoError(t, err)
 	})
 	t.Run("ResolveError", func(t *testing.T) {
 		var tr testResolver
@@ -559,8 +559,8 @@ func TestDirectiveUniqueField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		r, err := uniqueName(42, tr.resolve)
-		assert.Nil(t, r)
-		assert.EqualError(t, err, io.EOF.Error())
+		require.Nil(t, r)
+		require.EqualError(t, err, io.EOF.Error())
 	})
 }
 
@@ -582,8 +582,8 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Equal(t, "Valid", outputs)
-		assert.NoError(t, err)
+		require.Equal(t, "Valid", outputs)
+		require.NoError(t, err)
 	})
 	t.Run("OnlyNewField", func(t *testing.T) {
 		input := map[string]interface{}{
@@ -596,8 +596,8 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Nil(t, outputs)
-		assert.NoError(t, err)
+		require.Nil(t, outputs)
+		require.NoError(t, err)
 	})
 	t.Run("OnlyNewFieldWithEmptyDeprecated", func(t *testing.T) {
 		input := map[string]interface{}{
@@ -611,8 +611,8 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Equal(t, []string{}, outputs)
-		assert.NoError(t, err)
+		require.Equal(t, []string{}, outputs)
+		require.NoError(t, err)
 	})
 	t.Run("BothFields", func(t *testing.T) {
 		input := map[string]interface{}{
@@ -626,8 +626,8 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Nil(t, outputs)
-		assert.Error(t, err)
+		require.Nil(t, outputs)
+		require.Error(t, err)
 	})
 	t.Run("BothFieldWithDeprecatedEmpty", func(t *testing.T) {
 		input := map[string]interface{}{
@@ -641,8 +641,8 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Nil(t, outputs)
-		assert.Error(t, err)
+		require.Nil(t, outputs)
+		require.Error(t, err)
 	})
 	t.Run("BothFieldWithDeprecatedNotEmptyList", func(t *testing.T) {
 		input := map[string]interface{}{
@@ -656,8 +656,8 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Nil(t, outputs)
-		assert.Error(t, err)
+		require.Nil(t, outputs)
+		require.Error(t, err)
 	})
 	t.Run("BothFieldWithNewEmpty", func(t *testing.T) {
 		input := map[string]interface{}{
@@ -671,7 +671,7 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Nil(t, outputs)
-		assert.Error(t, err)
+		require.Nil(t, outputs)
+		require.Error(t, err)
 	})
 }

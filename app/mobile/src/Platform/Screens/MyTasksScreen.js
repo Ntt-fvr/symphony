@@ -57,6 +57,9 @@ const locationsNeedSiteSurveyQuery = graphql`
         node {
           id
           installDate
+          workOrderTemplate {
+            name
+          }
           ...TasksList_workOrders
           name
           status

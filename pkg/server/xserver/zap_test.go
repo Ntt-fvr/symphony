@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
 	"go.uber.org/zap"
@@ -33,12 +32,12 @@ func TestLoggerMiddleware(t *testing.T) {
 
 	fields := o.TakeAll()
 	require.Len(t, fields, 1)
-	assert.Equal(t, "http request", fields[0].Message)
-	assert.Equal(t, zap.InfoLevel, fields[0].Level)
+	require.Equal(t, "http request", fields[0].Message)
+	require.Equal(t, zap.InfoLevel, fields[0].Level)
 	m := fields[0].ContextMap()
-	assert.Equal(t, http.MethodPost, m["method"])
-	assert.EqualValues(t, http.StatusInsufficientStorage, m["status"])
-	assert.Equal(t, "/foo/bar", m["url"])
-	assert.Equal(t, span.SpanContext().TraceID.String(), m["trace_id"])
-	assert.Equal(t, span.SpanContext().SpanID.String(), m["span_id"])
+	require.Equal(t, http.MethodPost, m["method"])
+	require.EqualValues(t, http.StatusInsufficientStorage, m["status"])
+	require.Equal(t, "/foo/bar", m["url"])
+	require.Equal(t, span.SpanContext().TraceID.String(), m["trace_id"])
+	require.Equal(t, span.SpanContext().SpanID.String(), m["span_id"])
 }

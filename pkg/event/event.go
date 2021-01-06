@@ -37,7 +37,7 @@ func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {
 
 	logger := e.Logger.For(ctx).With(
 		zap.Object("viewer", current),
-		zap.Object("event", event),
+		zap.Object("data", event),
 	)
 	emit := func() {
 		if err := e.Emitter.Emit(ctx, event); err != nil {

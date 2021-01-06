@@ -148,7 +148,7 @@ func TestTitleLocationTypeInputValidation(t *testing.T) {
 	ctx := newImportContext(viewertest.NewContext(context.Background(), r.client))
 	ic := getImportContext(ctx)
 	var (
-		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
 	)
 	locTypeIDS := prepareBasicData(ctx, t, *r)
@@ -172,9 +172,9 @@ func TestTitleLocationTypeInputValidation(t *testing.T) {
 	err = importer.inputValidations(ctx, header)
 	require.NoError(t, err)
 	require.EqualValues(t, ic.indexToLocationTypeID, map[int]int{
-		4: locTypeIDS.locTypeIDL,
-		5: locTypeIDS.locTypeIDM,
-		6: locTypeIDS.locTypeIDS,
+		5: locTypeIDS.locTypeIDL,
+		6: locTypeIDS.locTypeIDM,
+		7: locTypeIDS.locTypeIDS,
 	})
 }
 
@@ -186,7 +186,7 @@ func TestTitleEquipmentTypeInputValidation(t *testing.T) {
 	ctx := newImportContext(viewertest.NewContext(context.Background(), r.client))
 	ic := getImportContext(ctx)
 	var (
-		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
 	)
 	locationTypeInOrder := append(append(equipDataHeader[:], []string{locTypeNameL, locTypeNameM, locTypeNameS}...), parentsHeader[:]...)
@@ -208,10 +208,10 @@ func TestTitleEquipmentTypeInputValidation(t *testing.T) {
 		equipmentType3Name: ids.equipTypeID3,
 	})
 	require.EqualValues(t, ic.propNameToIndex, map[string]int{
-		propName1: 13,
-		propName2: 14,
-		propName3: 15,
-		propName4: 16,
+		propName1: 14,
+		propName2: 15,
+		propName3: 16,
+		propName4: 17,
 	})
 	require.EqualValues(t, ic.equipmentTypeIDToProperties[ic.equipmentTypeNameToID[equipmentTypeName]], []string{
 		propName1,
@@ -236,11 +236,11 @@ func TestLocationHierarchy(t *testing.T) {
 	ids := prepareEquipmentTypeData(ctx, t, *r)
 
 	var (
-		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
-		test1           = []string{"", "", equipmentTypeName, "1", "locNameL", "", "", "", "", "", ""}
-		test2           = []string{"", "", equipmentTypeName, "1", "locNameL", "locNameM", "locNameS", "", "", "", ""}
-		test3           = []string{"", "", equipmentTypeName, "1", "", "locNameM", "", "", "", "", ""}
+		test1           = []string{"", "", equipmentTypeName, "1", "", "locNameL", "", "", "", "", "", ""}
+		test2           = []string{"", "", equipmentTypeName, "1", "", "locNameL", "locNameM", "locNameS", "", "", "", ""}
+		test3           = []string{"", "", equipmentTypeName, "1", "", "", "locNameM", "", "", "", "", ""}
 	)
 	locationTypeInOrder := append(append(equipDataHeader[:], []string{locTypeNameL, locTypeNameM, locTypeNameS}...), parentsHeader[:]...)
 	title, _ := NewImportHeader(locationTypeInOrder, ImportEntityEquipment)
@@ -280,13 +280,13 @@ func TestPosition(t *testing.T) {
 		Name: "pos1",
 	}
 	var (
-		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
-		locCreate       = []string{"", "", equipmentTypeName, "1", "locNameL", "locNameM", "", "", "", "", "", "", ""}
-		test1           = []string{"", "test", "type1", "1", "locNameL", "locNameM", "", "", "", "", "", "", "pos1"}
-		test2           = []string{"", "test", "type1", "1", "locNameL", "locNameM", "", "", "", "", "", "equip1", ""}
-		test3           = []string{"", "test", "type1", "1", "locNameL", "locNameM", "", "", "", "equip1", "", "", "pos1"}
-		test4           = []string{"", "test", "type1", "1", "locNameL", "locNameM", "", "", "", "", "", "equip1", "pos1"}
+		locCreate       = []string{"", "", equipmentTypeName, "1", "", "locNameL", "locNameM", "", "", "", "", "", "", ""}
+		test1           = []string{"", "test", "type1", "1", "", "locNameL", "locNameM", "", "", "", "", "", "", "pos1"}
+		test2           = []string{"", "test", "type1", "1", "", "locNameL", "locNameM", "", "", "", "", "", "equip1", ""}
+		test3           = []string{"", "test", "type1", "1", "", "locNameL", "locNameM", "", "", "", "equip1", "", "", "pos1"}
+		test4           = []string{"", "test", "type1", "1", "", "locNameL", "locNameM", "", "", "", "", "", "equip1", "pos1"}
 	)
 	locationTypeInOrder := append(append(equipDataHeader[:], []string{locTypeNameL, locTypeNameM, locTypeNameS}...), parentsHeader[:]...)
 	title, _ := NewImportHeader(locationTypeInOrder, ImportEntityEquipment)
@@ -344,11 +344,11 @@ func TestValidatePropertiesForType(t *testing.T) {
 	data := prepareEquipmentTypeData(ctx, t, *r)
 
 	var (
-		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
-		row1            = []string{"", "e1", equipmentTypeName, "1id", "locNameL", "locNameM", "", "", "", "", "", "", "", "strVal", "54", "", "", "", ""}
-		row2            = []string{"", "e2", equipmentType2Name, "1id", "locNameL", "locNameM", "", "", "", "", "", "", "", "", "", "29/03/88", "false", "", ""}
-		row3            = []string{"", "e3", equipmentType3Name, "1id", "locNameL", "locNameM", "", "", "", "", "", "", "", "", "", "", "", "30.23-50", "45.8,88.9"}
+		row1            = []string{"", "e1", equipmentTypeName, "1id", "", "locNameL", "locNameM", "", "", "", "", "", "", "", "strVal", "54", "", "", "", ""}
+		row2            = []string{"", "e2", equipmentType2Name, "1id", "", "locNameL", "locNameM", "", "", "", "", "", "", "", "", "", "29/03/88", "false", "", ""}
+		row3            = []string{"", "e3", equipmentType3Name, "1id", "", "locNameL", "locNameM", "", "", "", "", "", "", "", "", "", "", "", "30.23-50", "45.8,88.9"}
 	)
 
 	locationTypeInOrder := append(append(equipDataHeader[:], []string{locTypeNameL, locTypeNameM, locTypeNameS}...), parentsHeader[:]...)
@@ -446,9 +446,9 @@ func TestValidateForExistingEquipment(t *testing.T) {
 		Name: "pos2",
 	}
 	var (
-		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
+		equipDataHeader = [...]string{"Equipment ID", "Equipment Name", "Equipment Type", "External ID", "Work Order"}
 		parentsHeader   = [...]string{"Parent Equipment (3)", "Position (3)", "Parent Equipment (2)", "Position (2)", "Parent Equipment", "Equipment Position"}
-		locCreate       = []string{"", "", equipmentTypeName, "1id", "locNameL", "locNameM", "", "", "", "", ""}
+		locCreate       = []string{"", "", equipmentTypeName, "1id", "", "locNameL", "locNameM", "", "", "", "", ""}
 	)
 	locationTypeInOrder := append(append(equipDataHeader[:], []string{locTypeNameL, locTypeNameM, locTypeNameS}...), parentsHeader[:]...)
 	title, _ := NewImportHeader(locationTypeInOrder, ImportEntityEquipment)
@@ -485,8 +485,8 @@ func TestValidateForExistingEquipment(t *testing.T) {
 	})
 	require.NoError(t, err)
 	var (
-		test1 = []string{strconv.Itoa(child.ID), "c_new_name", "type1", "1id", "locNameL", "locNameM", "", "", "", "", "", "parent", "pos1"}
-		test2 = []string{strconv.Itoa(grandchild.ID), "gc_new_name", "type1", "1id", "locNameL", "locNameM", "", "", "", "parent", "pos1", "child", "pos2"}
+		test1 = []string{strconv.Itoa(child.ID), "c_new_name", "type1", "1id", "", "locNameL", "locNameM", "", "", "", "", "", "parent", "pos1"}
+		test2 = []string{strconv.Itoa(grandchild.ID), "gc_new_name", "type1", "1id", "", "locNameL", "locNameM", "", "", "", "parent", "pos1", "child", "pos2"}
 	)
 
 	rec1, _ := NewImportRecord(test1, title)

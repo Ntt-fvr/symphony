@@ -149,6 +149,10 @@ func ProjectFilter(query *ent.ProjectQuery, filters []*models.ProjectFilterInput
 			if query, err = handleProjectLocationFilter(query, f); err != nil {
 				return nil, err
 			}
+		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
+			if query, err = handleProjectPropertyFilter(query, f); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return query, nil

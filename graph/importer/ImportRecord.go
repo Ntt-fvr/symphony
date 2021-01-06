@@ -186,6 +186,10 @@ func (l ImportRecord) Name() string {
 	return l.line[l.Header().NameIdx()]
 }
 
+func (l ImportRecord) WorkOrderName() string {
+	return l.line[l.Header().WorkOrderIdx()]
+}
+
 func (l ImportRecord) Description() string {
 	return l.line[l.Header().DescriptionIdx()]
 }

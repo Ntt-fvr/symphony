@@ -12,12 +12,11 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func prepareLinks(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Link, []*ent.EquipmentPort) {
-	mr, qr, pr, _, eqr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link(), r.Equipment()
+	mr, qr, eqr := r.Mutation(), r.Query(), r.Equipment()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -83,7 +82,7 @@ func prepareLinks(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Li
 			{Equipment: equipmentB.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	createdLink2, err := mr.AddLink(ctx, models.AddLinkInput{
 		Sides: []*models.LinkSide{
@@ -91,7 +90,7 @@ func prepareLinks(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Li
 			{Equipment: equipmentC.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	createdLink3, err := mr.AddLink(ctx, models.AddLinkInput{
 		Sides: []*models.LinkSide{
@@ -99,41 +98,41 @@ func prepareLinks(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Li
 			{Equipment: equipmentD.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := nodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeC, err := qr.Node(ctx, equipmentC.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentC, ok := nodeC.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeD, err := qr.Node(ctx, equipmentD.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentD, ok := nodeD.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortsA := fetchedEquipmentA.QueryPorts().AllX(ctx)
 	fetchedPortsB := fetchedEquipmentB.QueryPorts().AllX(ctx)
 	fetchedPortsC := fetchedEquipmentC.QueryPorts().AllX(ctx)
 	fetchedPortsD := fetchedEquipmentD.QueryPorts().AllX(ctx)
 
-	assert.Equal(t, 2, len(fetchedPortsA))
-	assert.Equal(t, 2, len(fetchedPortsB))
-	assert.Equal(t, 2, len(fetchedPortsC))
-	assert.Equal(t, 2, len(fetchedPortsD))
+	require.Equal(t, 2, len(fetchedPortsA))
+	require.Equal(t, 2, len(fetchedPortsB))
+	require.Equal(t, 2, len(fetchedPortsC))
+	require.Equal(t, 2, len(fetchedPortsD))
 
-	linkA, _ := pr.Link(ctx, fetchedPortsA[1])
-	linkB, _ := pr.Link(ctx, fetchedPortsB[1])
-	linkC, _ := pr.Link(ctx, fetchedPortsC[1])
-	assert.Equal(t, linkA.ID, createdLink1.ID)
-	assert.Equal(t, linkB.ID, createdLink2.ID)
-	assert.Equal(t, linkC.ID, createdLink3.ID)
-	var ports = []*ent.EquipmentPort{}
+	linkA := fetchedPortsA[1].QueryLink().OnlyX(ctx)
+	linkB := fetchedPortsB[1].QueryLink().OnlyX(ctx)
+	linkC := fetchedPortsC[1].QueryLink().OnlyX(ctx)
+	require.Equal(t, linkA.ID, createdLink1.ID)
+	require.Equal(t, linkB.ID, createdLink2.ID)
+	require.Equal(t, linkC.ID, createdLink3.ID)
+	var ports []*ent.EquipmentPort
 	ports = append(ports, fetchedPortsA...)
 	ports = append(ports, fetchedPortsB...)
 	ports = append(ports, fetchedPortsC...)
@@ -142,7 +141,7 @@ func prepareLinks(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Li
 }
 
 func prepareWith1Link(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Link, []*ent.EquipmentPort) {
-	mr, qr, pr, _, eqr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link(), r.Equipment()
+	mr, qr, eqr := r.Mutation(), r.Query(), r.Equipment()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -197,32 +196,32 @@ func prepareWith1Link(ctx context.Context, r *TestResolver, t *testing.T) ([]*en
 			{Equipment: equipmentB.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := nodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 
 	fetchedPortsA := fetchedEquipmentA.QueryPorts().AllX(ctx)
 	fetchedPortsB := fetchedEquipmentB.QueryPorts().AllX(ctx)
-	assert.Equal(t, 2, len(fetchedPortsA))
-	assert.Equal(t, 2, len(fetchedPortsB))
+	require.Equal(t, 2, len(fetchedPortsA))
+	require.Equal(t, 2, len(fetchedPortsB))
 
-	linkA, _ := pr.Link(ctx, fetchedPortsA[1])
-	assert.Equal(t, linkA.ID, createdLink1.ID)
-	var ports = []*ent.EquipmentPort{}
+	linkA := fetchedPortsA[1].QueryLink().OnlyX(ctx)
+	require.Equal(t, linkA.ID, createdLink1.ID)
+	var ports []*ent.EquipmentPort
 	ports = append(ports, fetchedPortsA...)
 	ports = append(ports, fetchedPortsB...)
 	return []*ent.Link{linkA}, ports
 }
 
 func prepareWith1LinkNoBackplanePorts(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Link, []*ent.EquipmentPort) {
-	mr, qr, pr, _, eqr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link(), r.Equipment()
+	mr, qr, eqr := r.Mutation(), r.Query(), r.Equipment()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -272,32 +271,32 @@ func prepareWith1LinkNoBackplanePorts(ctx context.Context, r *TestResolver, t *t
 			{Equipment: equipmentB.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := nodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 
 	fetchedPortsA := fetchedEquipmentA.QueryPorts().AllX(ctx)
 	fetchedPortsB := fetchedEquipmentB.QueryPorts().AllX(ctx)
-	assert.Equal(t, 2, len(fetchedPortsA))
-	assert.Equal(t, 2, len(fetchedPortsB))
+	require.Equal(t, 2, len(fetchedPortsA))
+	require.Equal(t, 2, len(fetchedPortsB))
 
-	linkA, _ := pr.Link(ctx, fetchedPortsA[1])
-	assert.Equal(t, linkA.ID, createdLink1.ID)
-	var ports = []*ent.EquipmentPort{}
+	linkA := fetchedPortsA[1].QueryLink().OnlyX(ctx)
+	require.Equal(t, linkA.ID, createdLink1.ID)
+	var ports []*ent.EquipmentPort
 	ports = append(ports, fetchedPortsA...)
 	ports = append(ports, fetchedPortsB...)
 	return []*ent.Link{linkA}, ports
 }
 
 func prepareMultiplePathLinks(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Link, []*ent.EquipmentPort) {
-	mr, qr, pr, _, eqr := r.Mutation(), r.Query(), r.EquipmentPort(), r.Link(), r.Equipment()
+	mr, qr, eqr := r.Mutation(), r.Query(), r.Equipment()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -376,7 +375,7 @@ func prepareMultiplePathLinks(ctx context.Context, r *TestResolver, t *testing.T
 			{Equipment: equipmentB.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	createdLink2, err := mr.AddLink(ctx, models.AddLinkInput{
 		Sides: []*models.LinkSide{
@@ -384,7 +383,7 @@ func prepareMultiplePathLinks(ctx context.Context, r *TestResolver, t *testing.T
 			{Equipment: equipmentC.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	createdLink3, err := mr.AddLink(ctx, models.AddLinkInput{
 		Sides: []*models.LinkSide{
@@ -392,41 +391,41 @@ func prepareMultiplePathLinks(ctx context.Context, r *TestResolver, t *testing.T
 			{Equipment: equipmentD.ID, Port: portDefs[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := nodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeC, err := qr.Node(ctx, equipmentC.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentC, ok := nodeC.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeD, err := qr.Node(ctx, equipmentD.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentD, ok := nodeD.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortsA := fetchedEquipmentA.QueryPorts().AllX(ctx)
 	fetchedPortsB := fetchedEquipmentB.QueryPorts().AllX(ctx)
 	fetchedPortsC := fetchedEquipmentC.QueryPorts().AllX(ctx)
 	fetchedPortsD := fetchedEquipmentD.QueryPorts().AllX(ctx)
 
-	assert.Equal(t, 3, len(fetchedPortsA))
-	assert.Equal(t, 3, len(fetchedPortsB))
-	assert.Equal(t, 3, len(fetchedPortsC))
-	assert.Equal(t, 3, len(fetchedPortsD))
+	require.Equal(t, 3, len(fetchedPortsA))
+	require.Equal(t, 3, len(fetchedPortsB))
+	require.Equal(t, 3, len(fetchedPortsC))
+	require.Equal(t, 3, len(fetchedPortsD))
 
-	linkA, _ := pr.Link(ctx, fetchedPortsA[1])
-	linkB, _ := pr.Link(ctx, fetchedPortsB[1])
-	linkC, _ := pr.Link(ctx, fetchedPortsC[1])
-	assert.Equal(t, linkA.ID, createdLink1.ID)
-	assert.Equal(t, linkB.ID, createdLink2.ID)
-	assert.Equal(t, linkC.ID, createdLink3.ID)
-	var ports = []*ent.EquipmentPort{}
+	linkA := fetchedPortsA[1].QueryLink().OnlyX(ctx)
+	linkB := fetchedPortsB[1].QueryLink().OnlyX(ctx)
+	linkC := fetchedPortsC[1].QueryLink().OnlyX(ctx)
+	require.Equal(t, linkA.ID, createdLink1.ID)
+	require.Equal(t, linkB.ID, createdLink2.ID)
+	require.Equal(t, linkC.ID, createdLink3.ID)
+	var ports []*ent.EquipmentPort
 	ports = append(ports, fetchedPortsA...)
 	ports = append(ports, fetchedPortsB...)
 	ports = append(ports, fetchedPortsC...)
@@ -461,16 +460,16 @@ func prepareStandalonePort(ctx context.Context, r *TestResolver, t *testing.T) *
 		Location: &location.ID,
 	})
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	fetchedPortsA := fetchedEquipmentA.QueryPorts().AllX(ctx)
 	require.Equal(t, 1, len(fetchedPortsA))
 	return fetchedPortsA[0]
 }
 
 func prepareLinksStandAloneNDirection(ctx context.Context, r *TestResolver, t *testing.T) ([]*ent.Link, []*ent.EquipmentPort) {
-	mr, qr, pr := r.Mutation(), r.Query(), r.EquipmentPort()
+	mr, qr := r.Mutation(), r.Query()
 	locationType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type"})
 	location, err := mr.AddLocation(ctx, models.AddLocationInput{
 		Name: "location_name",
@@ -547,25 +546,25 @@ func prepareLinksStandAloneNDirection(ctx context.Context, r *TestResolver, t *t
 			{Equipment: equipmentB.ID, Port: portDefsEquipment2[0].ID},
 		},
 	})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	nodeA, err := qr.Node(ctx, equipmentA.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentA, ok := nodeA.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 	nodeB, err := qr.Node(ctx, equipmentB.ID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fetchedEquipmentB, ok := nodeB.(*ent.Equipment)
-	assert.True(t, ok)
+	require.True(t, ok)
 
 	fetchedPortsA := fetchedEquipmentA.QueryPorts().AllX(ctx)
 	fetchedPortsB := fetchedEquipmentB.QueryPorts().AllX(ctx)
 
-	assert.Equal(t, 2, len(fetchedPortsA))
-	assert.Equal(t, 3, len(fetchedPortsB))
+	require.Equal(t, 2, len(fetchedPortsA))
+	require.Equal(t, 3, len(fetchedPortsB))
 
-	linkA, _ := pr.Link(ctx, fetchedPortsA[1])
-	assert.Equal(t, linkA.ID, createdLink1.ID)
-	var ports = []*ent.EquipmentPort{}
+	linkA := fetchedPortsA[1].QueryLink().OnlyX(ctx)
+	require.Equal(t, linkA.ID, createdLink1.ID)
+	var ports []*ent.EquipmentPort
 	ports = append(ports, fetchedPortsA...)
 	ports = append(ports, fetchedPortsB...)
 	return []*ent.Link{linkA}, ports
@@ -582,18 +581,18 @@ func TestSearchEndToEndPathByLinkID(t *testing.T) {
 
 	path1, err := qr.EndToEndPath(ctx, &linkA.ID, nil)
 	require.NoError(t, err)
-	assert.Equal(t, 3, len(path1.Links))
-	assert.Equal(t, 2, len(path1.Ports))
+	require.Equal(t, 3, len(path1.Links))
+	require.Equal(t, 2, len(path1.Ports))
 
 	path2, err := qr.EndToEndPath(ctx, &linkB.ID, nil)
 	require.NoError(t, err)
-	assert.Equal(t, 3, len(path2.Links))
-	assert.Equal(t, 2, len(path2.Ports))
+	require.Equal(t, 3, len(path2.Links))
+	require.Equal(t, 2, len(path2.Ports))
 
 	path3, err := qr.EndToEndPath(ctx, &linkC.ID, nil)
 	require.NoError(t, err)
-	assert.Equal(t, 3, len(path3.Links))
-	assert.Equal(t, 2, len(path3.Ports))
+	require.Equal(t, 3, len(path3.Links))
+	require.Equal(t, 2, len(path3.Ports))
 }
 
 func TestSearchSingleEndToEndPathByLinkID(t *testing.T) {
@@ -607,8 +606,8 @@ func TestSearchSingleEndToEndPathByLinkID(t *testing.T) {
 
 	path1, err := qr.EndToEndPath(ctx, &linkA.ID, nil)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(path1.Links))
-	assert.Equal(t, 2, len(path1.Ports))
+	require.Equal(t, 1, len(path1.Links))
+	require.Equal(t, 2, len(path1.Ports))
 }
 
 func TestSearchSingleEndToEndPathByLinkIDWithoutBackplaneConnections(t *testing.T) {
@@ -622,8 +621,8 @@ func TestSearchSingleEndToEndPathByLinkIDWithoutBackplaneConnections(t *testing.
 
 	path1, err := qr.EndToEndPath(ctx, &linkA.ID, nil)
 	require.NoError(t, err)
-	assert.Equal(t, 1, len(path1.Links))
-	assert.Equal(t, 0, len(path1.Ports))
+	require.Equal(t, 1, len(path1.Links))
+	require.Equal(t, 0, len(path1.Ports))
 }
 
 func TestSearchEndToEndPathByPort(t *testing.T) {
@@ -636,15 +635,15 @@ func TestSearchEndToEndPathByPort(t *testing.T) {
 
 	// first end port
 	path1, err := qr.EndToEndPath(ctx, nil, &preparedPorts[0].ID)
-	assert.NoError(t, err)
-	assert.Equal(t, 3, len(path1.Links))
-	assert.Equal(t, 2, len(path1.Ports))
+	require.NoError(t, err)
+	require.Equal(t, 3, len(path1.Links))
+	require.Equal(t, 2, len(path1.Ports))
 
 	// last end port
 	path2, err := qr.EndToEndPath(ctx, nil, &preparedPorts[len(preparedPorts)-1].ID)
-	assert.NoError(t, err)
-	assert.Equal(t, 3, len(path2.Links))
-	assert.Equal(t, 2, len(path2.Ports))
+	require.NoError(t, err)
+	require.Equal(t, 3, len(path2.Links))
+	require.Equal(t, 2, len(path2.Ports))
 }
 
 func TestSearchEndToEndPathMultiplePathsByPort(t *testing.T) {
@@ -657,11 +656,11 @@ func TestSearchEndToEndPathMultiplePathsByPort(t *testing.T) {
 
 	// first end port
 	_, err := qr.EndToEndPath(ctx, nil, &preparedPorts[0].ID)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	// last end port
 	_, err = qr.EndToEndPath(ctx, nil, &preparedPorts[len(preparedPorts)-1].ID)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestSearchEndToEndPathStandAlonePort(t *testing.T) {
@@ -674,9 +673,9 @@ func TestSearchEndToEndPathStandAlonePort(t *testing.T) {
 
 	// first end port
 	result, err := qr.EndToEndPath(ctx, nil, &preparedPort.ID)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(result.Ports))
-	assert.Equal(t, 0, len(result.Links))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(result.Ports))
+	require.Equal(t, 0, len(result.Links))
 }
 
 func TestSearchEndToEndPathNDirectionByPort(t *testing.T) {
@@ -689,7 +688,7 @@ func TestSearchEndToEndPathNDirectionByPort(t *testing.T) {
 
 	// first end port
 	path1, err := qr.EndToEndPath(ctx, nil, &preparedPorts[3].ID)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(path1.Links))
-	assert.Equal(t, 2, len(path1.Ports))
+	require.NoError(t, err)
+	require.Equal(t, 1, len(path1.Links))
+	require.Equal(t, 2, len(path1.Ports))
 }

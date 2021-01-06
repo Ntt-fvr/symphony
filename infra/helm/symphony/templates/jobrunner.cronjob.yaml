@@ -30,8 +30,8 @@ spec:
           {{- include "symphony.imagePullSecrets" $ | indent 10 }}
           containers:
             - name: jobrunner
-              image: {{ $.Values.jobrunner.image.repository }}:{{ $.Values.jobrunner.image.tag }}
-              imagePullPolicy: {{ $.Values.jobrunner.image.pullPolicy }}
+              image: {{ default (print $.Values.global.image.registry "/jobrunner") $.Values.jobrunner.image.repository }}:{{ default $.Values.global.image.tag $.Values.jobrunner.image.tag }}
+              imagePullPolicy: {{ default $.Values.global.image.pullPolicy $.Values.jobrunner.image.pullPolicy }}
               args:
                 - {{ $job.name }}
               env:

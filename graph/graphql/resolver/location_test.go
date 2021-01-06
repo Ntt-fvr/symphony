@@ -21,7 +21,6 @@ import (
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -38,7 +37,7 @@ func TestAddLocation(t *testing.T) {
 		}
 	}`, &typ)
 	require.NoError(t, err)
-	assert.Equal(t, "Planet", typ.AddLocationType.Name)
+	require.Equal(t, "Planet", typ.AddLocationType.Name)
 
 	type Location struct {
 		ID           string
@@ -62,7 +61,7 @@ func TestAddLocation(t *testing.T) {
 		}
 	}`, &rsp, client.Var("type", typ.AddLocationType.ID))
 	require.NoError(t, err)
-	assert.Equal(t, typ.AddLocationType.ID, rsp.AddLocation.LocationType.ID)
+	require.Equal(t, typ.AddLocationType.ID, rsp.AddLocation.LocationType.ID)
 
 	var n struct{ Node struct{ Name string } }
 	err = c.Post(`query($id: ID!) {
@@ -73,9 +72,9 @@ func TestAddLocation(t *testing.T) {
 		}
 	}`, &n, client.Var("id", rsp.AddLocation.ID))
 	require.NoError(t, err)
-	assert.Equal(t, rsp.AddLocation.Name, n.Node.Name)
-	assert.Zero(t, rsp.AddLocation.Latitude)
-	assert.Zero(t, rsp.AddLocation.Longitude)
+	require.Equal(t, rsp.AddLocation.Name, n.Node.Name)
+	require.Zero(t, rsp.AddLocation.Latitude)
+	require.Zero(t, rsp.AddLocation.Longitude)
 
 	var conn struct {
 		Locations struct {
@@ -101,7 +100,7 @@ func TestAddLocation(t *testing.T) {
 	}`, &conn)
 	require.NoError(t, err)
 	require.Len(t, conn.Locations.Edges, 1)
-	assert.Equal(t, rsp.AddLocation, conn.Locations.Edges[0].Node)
+	require.Equal(t, rsp.AddLocation, conn.Locations.Edges[0].Node)
 }
 
 func TestAddLocationWithExternalID(t *testing.T) {
@@ -167,7 +166,7 @@ func TestAddLocationWithSameName(t *testing.T) {
 	require.NoError(t, err)
 	parentLocation, ok := parentNode.(*ent.Location)
 	require.True(t, ok)
-	children, _ := r.Location().Children(ctx, parentLocation)
+	children := parentLocation.QueryChildren().AllX(ctx)
 
 	onlyTopLevel := true
 	require.Len(t, children, 2, "Parent location has two children")
@@ -462,7 +461,7 @@ func TestAddMultiLevelLocations(t *testing.T) {
 		} else if loc.Node.Name == "b2" || loc.Node.Name == "b3" || loc.Node.Name == "e" {
 			expeChildren = 0
 		}
-		childCound, _ := lr.Children(ctx, loc.Node)
+		childCound := loc.Node.QueryChildren().AllX(ctx)
 		require.Len(t, childCound, expeChildren, "Counting children for every instance")
 	}
 }
@@ -813,7 +812,7 @@ func TestAddAndDeleteLocationHyperlink(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, lr := r.Mutation(), r.Location()
+	mr := r.Mutation()
 
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type_name_1",
@@ -843,7 +842,7 @@ func TestAddAndDeleteLocationHyperlink(t *testing.T) {
 	require.Equal(t, displayName, hyperlink.Name, "verifying hyperlink display name")
 	require.Equal(t, category, hyperlink.Category, "verifying 1st hyperlink category")
 
-	hyperlinks, err := lr.Hyperlinks(ctx, location)
+	hyperlinks, err := location.QueryHyperlinks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, hyperlinks, 1, "verifying has 1 hyperlink")
 
@@ -851,7 +850,7 @@ func TestAddAndDeleteLocationHyperlink(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, hyperlink.ID, deletedHyperlink.ID, "verifying return id of deleted hyperlink")
 
-	hyperlinks, err = lr.Hyperlinks(ctx, location)
+	hyperlinks, err = location.QueryHyperlinks().All(ctx)
 	require.NoError(t, err)
 	require.Len(t, hyperlinks, 0, "verifying no hyperlinks remained")
 }
@@ -958,7 +957,7 @@ func TestQueryParentLocation(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, loc := r.Mutation(), r.Location()
+	mr := r.Mutation()
 
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type",
@@ -978,11 +977,11 @@ func TestQueryParentLocation(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	parentParent, err := loc.ParentLocation(ctx, parentLocation)
+	parentParent, err := parentLocation.Parent(ctx)
 	require.NoError(t, err)
 	require.Nil(t, parentParent, "nil returns for parent if there isn't one")
 
-	childParent, err := loc.ParentLocation(ctx, childLocation)
+	childParent, err := childLocation.QueryParent().Only(ctx)
 	require.NoError(t, err)
 	require.Equal(t, childParent.ID, parentLocation.ID, "verify parent id for child location")
 }
@@ -1087,11 +1086,11 @@ func TestGetLocationsByName(t *testing.T) {
 	var rsp struct{ Locations struct{ TotalCount int } }
 	err = c.Post(query, &rsp, client.Var("name", "new"))
 	require.NoError(t, err)
-	assert.Equal(t, len(names), rsp.Locations.TotalCount)
+	require.Equal(t, len(names), rsp.Locations.TotalCount)
 
 	err = c.Post(query, &rsp, client.Var("name", "old"))
 	require.NoError(t, err)
-	assert.Zero(t, rsp.Locations.TotalCount)
+	require.Zero(t, rsp.Locations.TotalCount)
 }
 
 func TestMoveLocation(t *testing.T) {

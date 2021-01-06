@@ -22,7 +22,6 @@ import (
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/AlekSi/pointer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -244,7 +243,7 @@ func TestSearchEquipmentByName(t *testing.T) {
 		client.Var("name", "equip"),
 	)
 	require.Len(t, rsp.SearchForNode.Edges, 1)
-	assert.Equal(t, e.Name, rsp.SearchForNode.Edges[0].Node.Name)
+	require.Equal(t, e.Name, rsp.SearchForNode.Edges[0].Node.Name)
 	require.NoError(t, err)
 
 	_, _ = mr.AddEquipment(ctx, models.AddEquipmentInput{
@@ -266,7 +265,7 @@ func TestSearchEquipmentByName(t *testing.T) {
 		client.Var("name", "cation"),
 	)
 	require.Len(t, rsp.SearchForNode.Edges, 1)
-	assert.Equal(t, location.Name, rsp.SearchForNode.Edges[0].Node.Name)
+	require.Equal(t, location.Name, rsp.SearchForNode.Edges[0].Node.Name)
 	require.NoError(t, err)
 }
 
@@ -437,9 +436,9 @@ func TestQueryEquipmentPossibleProperties(t *testing.T) {
 	propDefs, err := qr.PossibleProperties(ctx, enum.PropertyEntityEquipment)
 	require.NoError(t, err)
 	for _, propDef := range propDefs {
-		assert.True(t, propDef.Name == namePropType.Name || propDef.Name == widthPropType.Name)
+		require.True(t, propDef.Name == namePropType.Name || propDef.Name == widthPropType.Name)
 	}
-	assert.Len(t, propDefs, 2)
+	require.Len(t, propDefs, 2)
 }
 
 func TestSearchEquipmentByLocation(t *testing.T) {

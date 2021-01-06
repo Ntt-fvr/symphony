@@ -219,6 +219,7 @@ func TestEmptyLinksDataExport(t *testing.T) {
 	for _, ln := range rows {
 		require.EqualValues(t, []string{
 			"\ufeffLink ID",
+			"Work Order",
 			portANameTitle,
 			equipmentANameTitle,
 			equipmentATypeTitle,
@@ -254,9 +255,10 @@ func TestLinksExport(t *testing.T) {
 	require.NoError(t, err, "error getting rows")
 	for _, ln := range rows {
 		switch {
-		case ln[1] == portANameTitle:
+		case ln[2] == portANameTitle:
 			require.EqualValues(t, []string{
 				"\ufeffLink ID",
+				"Work Order",
 				portANameTitle,
 				equipmentANameTitle,
 				equipmentATypeTitle,
@@ -283,8 +285,9 @@ func TestLinksExport(t *testing.T) {
 				propStr,
 				propStr2,
 			}, ln)
-		case ln[1] == portName1:
+		case ln[2] == portName1:
 			require.EqualValues(t, ln[1:], []string{
+				"",
 				portName1,
 				parentEquip,
 				equipmentTypeName,
@@ -311,8 +314,9 @@ func TestLinksExport(t *testing.T) {
 				"t1",
 				"p2",
 			})
-		case ln[1] == portName3:
+		case ln[2] == portName3:
 			require.EqualValues(t, ln[1:], []string{
+				"",
 				portName3,
 				currEquip,
 				equipmentType2Name,
@@ -407,9 +411,10 @@ func TestLinksWithFilters(t *testing.T) {
 		for _, ln := range rows {
 			linesCount++
 			require.NoError(t, err, "error reading row")
-			require.True(t, ln[1] == portName1 || ln[1] == portANameTitle)
+			require.True(t, ln[2] == portName1 || ln[2] == portANameTitle)
 			if ln[2] == portName1 {
 				require.EqualValues(t, []string{
+					"",
 					portName1,
 					parentEquip,
 					equipmentTypeName,

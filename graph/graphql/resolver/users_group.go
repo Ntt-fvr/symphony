@@ -17,16 +17,6 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type usersGroupResolver struct{}
-
-func (usersGroupResolver) Members(ctx context.Context, obj *ent.UsersGroup) ([]*ent.User, error) {
-	return obj.QueryMembers().All(ctx)
-}
-
-func (usersGroupResolver) Policies(ctx context.Context, obj *ent.UsersGroup) ([]*ent.PermissionsPolicy, error) {
-	return obj.QueryPolicies().All(ctx)
-}
-
 func (r mutationResolver) AddUsersGroup(ctx context.Context, input models.AddUsersGroupInput) (*ent.UsersGroup, error) {
 	client := r.ClientFrom(ctx)
 	mutation := client.UsersGroup.Create().

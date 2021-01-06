@@ -15,15 +15,3 @@ type floorPlanResolver struct{}
 func (floorPlanResolver) LocationID(ctx context.Context, obj *ent.FloorPlan) (int, error) {
 	return obj.QueryLocation().FirstID(ctx)
 }
-
-func (floorPlanResolver) Image(ctx context.Context, obj *ent.FloorPlan) (*ent.File, error) {
-	return obj.QueryImage().First(ctx)
-}
-
-func (floorPlanResolver) ReferencePoint(ctx context.Context, obj *ent.FloorPlan) (*ent.FloorPlanReferencePoint, error) {
-	return obj.QueryReferencePoint().First(ctx)
-}
-
-func (floorPlanResolver) Scale(ctx context.Context, obj *ent.FloorPlan) (*ent.FloorPlanScale, error) {
-	return obj.QueryScale().First(ctx)
-}

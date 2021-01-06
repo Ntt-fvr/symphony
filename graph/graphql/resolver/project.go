@@ -24,53 +24,16 @@ import (
 )
 
 type (
-	projectTemplateResolver struct{}
-	projectTypeResolver     struct{}
-	projectResolver         struct{}
+	projectTypeResolver struct{}
+	projectResolver     struct{}
 )
 
-func (projectTemplateResolver) Properties(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.PropertyType, error) {
-	properties, err := obj.QueryProperties().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying properties: %w", err)
-	}
-	return properties, nil
-}
-
-func (projectTemplateResolver) WorkOrders(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.WorkOrderDefinition, error) {
-	properties, err := obj.QueryWorkOrders().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying work order definitions: %w", err)
-	}
-	return properties, nil
-}
-
 func (projectTypeResolver) NumberOfProjects(ctx context.Context, obj *ent.ProjectType) (int, error) {
+	projects, err := obj.Edges.ProjectsOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(projects), err
+	}
 	return obj.QueryProjects().Count(ctx)
-}
-
-func (projectTypeResolver) Projects(ctx context.Context, obj *ent.ProjectType) ([]*ent.Project, error) {
-	projects, err := obj.QueryProjects().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying projects: %w", err)
-	}
-	return projects, nil
-}
-
-func (projectTypeResolver) Properties(ctx context.Context, obj *ent.ProjectType) ([]*ent.PropertyType, error) {
-	properties, err := obj.QueryProperties().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying properties: %w", err)
-	}
-	return properties, nil
-}
-
-func (projectTypeResolver) WorkOrders(ctx context.Context, obj *ent.ProjectType) ([]*ent.WorkOrderDefinition, error) {
-	properties, err := obj.QueryWorkOrders().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying work order definitions: %w", err)
-	}
-	return properties, nil
 }
 
 func (r mutationResolver) CreateProjectType(ctx context.Context, input models.AddProjectTypeInput) (*ent.ProjectType, error) {
@@ -92,14 +55,15 @@ func (r mutationResolver) CreateProjectType(ctx context.Context, input models.Ad
 	}, input.Properties...); err != nil {
 		return nil, fmt.Errorf("creating properties: %w", err)
 	}
-	for _, wo := range input.WorkOrders {
-		if _, err = client.WorkOrderDefinition.Create().
-			SetNillableIndex(wo.Index).
-			SetTypeID(wo.Type).
-			SetProjectType(typ).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating work orders: %w", err)
-		}
+	builders := make([]*ent.WorkOrderDefinitionCreate, len(input.WorkOrders))
+	for i, input := range input.WorkOrders {
+		builders[i] = client.WorkOrderDefinition.Create().
+			SetNillableIndex(input.Index).
+			SetTypeID(input.Type).
+			SetProjectType(typ)
+	}
+	if _, err := client.WorkOrderDefinition.CreateBulk(builders...).Save(ctx); err != nil {
+		return nil, fmt.Errorf("creating work order definitions: %w", err)
 	}
 	return typ, nil
 }
@@ -205,59 +169,11 @@ func (r queryResolver) ProjectTypes(
 		Paginate(ctx, after, first, before, last)
 }
 
-func (projectResolver) CreatedBy(ctx context.Context, obj *ent.Project) (*ent.User, error) {
-	c, err := obj.QueryCreator().Only(ctx)
-	if err != nil && !ent.IsNotFound(err) {
-		return nil, fmt.Errorf("querying creator: %w", err)
-	}
-	return c, nil
-}
-
-func (projectResolver) Type(ctx context.Context, obj *ent.Project) (*ent.ProjectType, error) {
-	typ, err := obj.Edges.TypeOrErr()
-	if ent.IsNotLoaded(err) {
-		return obj.QueryType().Only(ctx)
-	}
-	return typ, err
-}
-
-func (projectResolver) Template(ctx context.Context, obj *ent.Project) (*ent.ProjectTemplate, error) {
-	t, err := obj.Edges.TemplateOrErr()
-	if ent.IsNotLoaded(err) {
-		return obj.QueryTemplate().Only(ctx)
-	}
-	return t, err
-}
-
-func (projectResolver) Location(ctx context.Context, obj *ent.Project) (*ent.Location, error) {
-	l, err := obj.QueryLocation().Only(ctx)
-	if err != nil && !ent.IsNotFound(err) {
-		return nil, fmt.Errorf("querying location: %w", err)
-	}
-	return l, nil
-}
-
-func (projectResolver) WorkOrders(ctx context.Context, obj *ent.Project) ([]*ent.WorkOrder, error) {
-	wo, err := obj.QueryWorkOrders().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying work orders: %w", err)
-	}
-	return wo, nil
-}
-
-func (projectResolver) Properties(ctx context.Context, obj *ent.Project) ([]*ent.Property, error) {
-	properties, err := obj.QueryProperties().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying properties: %w", err)
-	}
-	return properties, nil
-}
-
-func (projectResolver) Comments(ctx context.Context, obj *ent.Project) ([]*ent.Comment, error) {
-	return obj.QueryComments().All(ctx)
-}
-
 func (projectResolver) NumberOfWorkOrders(ctx context.Context, obj *ent.Project) (int, error) {
+	workOrders, err := obj.Edges.WorkOrdersOrErr()
+	if !ent.IsNotLoaded(err) {
+		return len(workOrders), err
+	}
 	return obj.QueryWorkOrders().Count(ctx)
 }
 

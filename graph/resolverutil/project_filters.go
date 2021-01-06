@@ -11,6 +11,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
+	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
@@ -32,6 +34,13 @@ func handleProjectFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput)
 	}
 	if filter.FilterType == models.ProjectFilterTypeProjectPriority {
 		return projectPriorityFilter(q, filter)
+	}
+	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
+}
+
+func handleProjectPropertyFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
+	if filter.FilterType == models.ProjectFilterTypeProperty {
+		return projectPropertiesFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
@@ -98,4 +107,46 @@ func projectPriorityFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInpu
 		priorities = append(priorities, priority)
 	}
 	return q.Where(project.PriorityIn(priorities...)), nil
+}
+
+func projectPropertiesFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
+	p := filter.PropertyValue
+	switch filter.Operator {
+	case enum.FilterOperatorIs:
+		pred, err := pkgexporter.GetPropertyPredicate(*p)
+		if err != nil {
+			return nil, err
+		}
+		predForType, err := pkgexporter.GetPropertyTypePredicate(*p)
+		if err != nil {
+			return nil, err
+		}
+
+		q = q.Where(
+			project.Or(
+				project.HasPropertiesWith(
+					property.And(
+						property.HasTypeWith(
+							propertytype.Name(p.Name),
+							propertytype.TypeEQ(p.Type),
+						),
+						pred,
+					),
+				),
+				project.And(
+					project.HasTypeWith(projecttype.HasPropertiesWith(
+						propertytype.Name(p.Name),
+						propertytype.TypeEQ(p.Type),
+						predForType,
+					)),
+					project.Not(project.HasPropertiesWith(
+						property.HasTypeWith(
+							propertytype.Name(p.Name),
+							propertytype.TypeEQ(p.Type),
+						)),
+					))))
+		return q, nil
+	default:
+		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+	}
 }

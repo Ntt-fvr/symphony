@@ -561,3 +561,27 @@ func (s *SingleWoTestSuite) TestSingleWOAsyncExport() {
 	s.Require().NotEmpty(taskID)
 	s.Require().True(len(response.TaskID) > 1)
 }
+
+func (s *SingleWoTestSuite) TestSingleWorkOrderExportCRL() {
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
+
+	file, err := e.CreateExcelFile(s.ctx, s.workOrder.ID)
+	s.Require().NoError(err)
+
+	rows, err := file.GetRows(CRLSheetName)
+	s.Require().NoError(err)
+	for _, ln := range rows {
+		s.Require().EqualValues([]string{
+			"Link State",
+			"Equipment Name A",
+			"Port Name A",
+			"Port Type A",
+			"Equipment Name B",
+			"Port Name B",
+			"Port Type B",
+		}, ln)
+	}
+}

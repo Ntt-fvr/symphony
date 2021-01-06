@@ -66,18 +66,6 @@ func (r resolver) Equipment() generated.EquipmentResolver {
 	return equipmentResolver{r}
 }
 
-func (resolver) EquipmentPort() generated.EquipmentPortResolver {
-	return equipmentPortResolver{}
-}
-
-func (resolver) EquipmentPosition() generated.EquipmentPositionResolver {
-	return equipmentPositionResolver{}
-}
-
-func (resolver) EquipmentPortDefinition() generated.EquipmentPortDefinitionResolver {
-	return equipmentPortDefinitionResolver{}
-}
-
 func (resolver) EquipmentPortType() generated.EquipmentPortTypeResolver {
 	return equipmentPortTypeResolver{}
 }
@@ -88,14 +76,6 @@ func (resolver) EquipmentType() generated.EquipmentTypeResolver {
 
 func (resolver) User() generated.UserResolver {
 	return userResolver{}
-}
-
-func (resolver) UsersGroup() generated.UsersGroupResolver {
-	return usersGroupResolver{}
-}
-
-func (resolver) Link() generated.LinkResolver {
-	return linkResolver{}
 }
 
 func (resolver) Location() generated.LocationResolver {
@@ -130,14 +110,6 @@ func (resolver) WorkOrderType() generated.WorkOrderTypeResolver {
 	return workOrderTypeResolver{}
 }
 
-func (resolver) WorkOrderTemplate() generated.WorkOrderTemplateResolver {
-	return workOrderTemplateResolver{}
-}
-
-func (resolver) WorkOrderDefinition() generated.WorkOrderDefinitionResolver {
-	return workOrderDefinitionResolver{}
-}
-
 func (r resolver) Survey() generated.SurveyResolver {
 	return surveyResolver{}
 }
@@ -148,10 +120,6 @@ func (r resolver) SurveyQuestion() generated.SurveyQuestionResolver {
 
 func (r resolver) SurveyTemplateQuestion() generated.SurveyTemplateQuestionResolver {
 	return surveyTemplateQuestionResolver{}
-}
-
-func (r resolver) SurveyTemplateCategory() generated.SurveyTemplateCategoryResolver {
-	return surveyTemplateCategoryResolver{}
 }
 
 func (r resolver) SurveyCellScan() generated.SurveyCellScanResolver {
@@ -178,32 +146,12 @@ func (r resolver) ServiceType() generated.ServiceTypeResolver {
 	return serviceTypeResolver{}
 }
 
-func (r resolver) ServiceEndpoint() generated.ServiceEndpointResolver {
-	return serviceEndpointResolver{}
-}
-
 func (resolver) Project() generated.ProjectResolver {
 	return projectResolver{}
 }
 
 func (resolver) ProjectType() generated.ProjectTypeResolver {
 	return projectTypeResolver{}
-}
-
-func (resolver) ProjectTemplate() generated.ProjectTemplateResolver {
-	return projectTemplateResolver{}
-}
-
-func (resolver) CheckListCategory() generated.CheckListCategoryResolver {
-	return checkListCategoryResolver{}
-}
-
-func (resolver) CheckListItem() generated.CheckListItemResolver {
-	return checkListItemResolver{}
-}
-
-func (resolver) CheckListCategoryDefinition() generated.CheckListCategoryDefinitionResolver {
-	return checkListCategoryDefinitionResolver{}
 }
 
 func (resolver) Viewer() generated.ViewerResolver {
@@ -216,14 +164,6 @@ func (r resolver) ReportFilter() generated.ReportFilterResolver {
 
 func (r resolver) ExportTask() generated.ExportTaskResolver {
 	return exportTaskResolver{}
-}
-
-func (r resolver) Comment() generated.CommentResolver {
-	return commentResolver{}
-}
-
-func (r resolver) ServiceEndpointDefinition() generated.ServiceEndpointDefinitionResolver {
-	return serviceEndpointTypeResolver{}
 }
 
 func (r resolver) PermissionsPolicy() generated.PermissionsPolicyResolver {
@@ -256,12 +196,4 @@ func (r resolver) VariableExpression() generated.VariableExpressionResolver {
 
 func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
-}
-
-func (r resolver) ExitPoint() generated.ExitPointResolver {
-	return exitPointResolver{}
-}
-
-func (r resolver) EntryPoint() generated.EntryPointResolver {
-	return entryPointResolver{}
 }

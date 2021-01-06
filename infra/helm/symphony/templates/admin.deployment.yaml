@@ -41,8 +41,8 @@ spec:
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: admin
-          image: {{ .Values.admin.image.repository }}:{{ .Values.admin.image.tag }}
-          imagePullPolicy: {{ .Values.admin.image.pullPolicy }}
+          image: {{ default (print .Values.global.image.registry "/admin") .Values.admin.image.repository }}:{{ default .Values.global.image.tag .Values.admin.image.tag }}
+          imagePullPolicy: {{ default .Values.global.image.pullPolicy .Values.admin.image.pullPolicy }}
           args: {{- include "symphony.listenArgs" .Values.admin | nindent 12 }}
           env:
           {{- include "symphony.loggingEnv" .Values.admin | nindent 12 }}

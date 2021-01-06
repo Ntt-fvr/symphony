@@ -3118,7 +3118,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pr.ID,
 		Type:   "Project",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 7),
 	}
 	var buf []byte
@@ -3154,34 +3154,10 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "description",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(pr.ProjectCreator); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "int",
-		Name:  "project_creator",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(pr.ProjectLocation); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "int",
-		Name:  "project_location",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(pr.ProjectTemplate); err != nil {
-		return nil, err
-	}
-	node.Fields[6] = &Field{
-		Type:  "int",
-		Name:  "project_template",
-		Value: string(buf),
-	}
 	if buf, err = json.Marshal(pr.Priority); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "project.Priority",
 		Name:  "priority",
 		Value: string(buf),

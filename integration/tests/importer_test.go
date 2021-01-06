@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -46,26 +45,26 @@ func TestImportLocations(t *testing.T) {
 		c.log.Debug("inspecting node", zap.String("name", string(node.Name)))
 		switch node.Name {
 		case "Houston":
-			assert.Len(t, node.Children, 5)
-			assert.EqualValues(t, "Texas", node.Parent.Name)
+			require.Len(t, node.Children, 5)
+			require.EqualValues(t, "Texas", node.Parent.Name)
 		case "F1":
 			require.NotZero(t, len(node.Properties))
 			property := node.Properties[0]
-			assert.EqualValues(t, "200 sq ft", property.Value)
-			assert.EqualValues(t, "Floor Size", property.Type.Name)
-			assert.Empty(t, node.Children)
-			assert.EqualValues(t, "2392 S Wayside D", node.Parent.Name)
+			require.EqualValues(t, "200 sq ft", property.Value)
+			require.EqualValues(t, "Floor Size", property.Type.Name)
+			require.Empty(t, node.Children)
+			require.EqualValues(t, "2392 S Wayside D", node.Parent.Name)
 		case "C001":
 			require.NotZero(t, len(node.Properties))
 			property := node.Properties[0]
-			assert.EqualValues(t, "Room Owner", property.Type.Name)
-			assert.EqualValues(t, "Elaine", property.Value)
-			assert.EqualValues(t, "F2", node.Parent.Name)
+			require.EqualValues(t, "Room Owner", property.Type.Name)
+			require.EqualValues(t, "Elaine", property.Value)
+			require.EqualValues(t, "F2", node.Parent.Name)
 		default:
 			casesFound--
 		}
 	}
-	assert.Equal(t, 3, casesFound)
+	require.Equal(t, 3, casesFound)
 }
 
 func TestImportLocationsEdit(t *testing.T) {
@@ -93,22 +92,22 @@ func TestImportLocationsEdit(t *testing.T) {
 		c.log.Debug("inspecting node", zap.String("name", string(node.Name)))
 		switch node.Name {
 		case "2391 S Wayside D":
-			assert.EqualValues(t, "id1", node.ExternalID)
-			assert.EqualValues(t, 34, node.Latitude)
-			assert.EqualValues(t, 35, node.Longitude)
+			require.EqualValues(t, "id1", node.ExternalID)
+			require.EqualValues(t, 34, node.Latitude)
+			require.EqualValues(t, 35, node.Longitude)
 		case "F1":
 			require.NotZero(t, len(node.Properties))
 			property := node.Properties[0]
-			assert.EqualValues(t, "300 sq ft", property.Value)
-			assert.EqualValues(t, "id2", node.ExternalID)
-			assert.EqualValues(t, 66, node.Latitude)
-			assert.EqualValues(t, 67, node.Longitude)
-			assert.Empty(t, node.Children)
+			require.EqualValues(t, "300 sq ft", property.Value)
+			require.EqualValues(t, "id2", node.ExternalID)
+			require.EqualValues(t, 66, node.Latitude)
+			require.EqualValues(t, 67, node.Longitude)
+			require.Empty(t, node.Children)
 		default:
 			casesFound--
 		}
 	}
-	assert.Equal(t, 2, casesFound)
+	require.Equal(t, 2, casesFound)
 }
 
 func importLocations(t *testing.T, organization, user, filename string) {
@@ -154,13 +153,13 @@ func addLocationTypes(t *testing.T, c *client) {
 	for _, typ := range types {
 		if typ.property == "" {
 			_, err := c.addLocationType(typ.name)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		} else {
 			_, err := c.addLocationType(typ.name, &pkgmodels.PropertyTypeInput{
 				Name: typ.property,
 				Type: propertytype.TypeString,
 			})
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}
 	}
 }

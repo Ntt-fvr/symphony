@@ -76,7 +76,7 @@ graph:
       url: nats://graph.event
     extraEnvVars:
       - name: NATS_SERVER_URL
-        value: nats://nats-client.messaging.svc.cluster.local
+        value: nats://nats-cluster.nats-io.svc.cluster.local
 
 async:
   deploymentAnnotations:
@@ -94,7 +94,7 @@ async:
       bucket_url: s3://store.blobs?region=us-east-1
     extraEnvVars:
       - name: NATS_SERVER_URL
-        value: nats://nats-client.messaging.svc.cluster.local
+        value: nats://nats-cluster.nats-io.svc.cluster.local
       - name: AWS_ACCESS_KEY_ID
         value: AKIAIOSFODNN7EXAMPLE
       - name: AWS_SECRET_ACCESS_KEY

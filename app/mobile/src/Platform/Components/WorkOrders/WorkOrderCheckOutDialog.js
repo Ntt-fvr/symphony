@@ -16,14 +16,13 @@ import type {ClockOutReason} from 'Platform/Relay/Mutations/__generated__/Techni
 import Modal from 'react-native-modal';
 import ModalActions from '@fbcmobile/ui/Components/Core/Modal/ModalActions';
 import ModalContent from '@fbcmobile/ui/Components/Core/Modal/ModalContent';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Text from '@fbcmobile/ui/Components/Core/Text';
 import fbt from 'fbt';
 import {Colors, Fonts} from '@fbcmobile/ui/Theme';
 import {Dimensions, StyleSheet, TextInput, View} from 'react-native';
 import {RadioButton} from 'react-native-material-ui';
 import {
-  useIsAnyWorkOrderChecklistItemsDone,
   useIsWorkOrderChecklistItemsDone,
 } from 'Platform/Components/WorkOrders/WorkOrderUtils';
 
@@ -50,40 +49,34 @@ const WorkOrderCheckOutDialog = ({
   const [dialogStep, setDialogStep] = useState<DialogStep>('checkout_reason');
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState<?CheckOutReason>(null);
-  const isWorkOrderChecklistItemsDone = useIsWorkOrderChecklistItemsDone(
-    workOrderId,
-  );
-  const isAnyCheckListItemDone = useIsAnyWorkOrderChecklistItemsDone(
-    workOrderId,
-  );
-
-  const checkOutOptions: Array<{|
-    +key: CheckOutReason,
-    +label: string,
-  |}> = [
-    {
+  const [checkOutOptions, setCheckoutOptions] = useState(
+    [{
       key: 'pause',
       label: fbt(
         'Pause work order',
         'Radio button label. Pauses the work order.',
-      ).toString(),
-    },
-    isAnyCheckListItemDone
-      ? {
+      ).toString()
+    }]);
+  const isWorkOrderChecklistItemsDone = useIsWorkOrderChecklistItemsDone(
+    workOrderId,
+  );
+
+  useEffect(() => {
+  setCheckoutOptions(isWorkOrderChecklistItemsDone ? [...checkOutOptions, {
           key: 'submit',
           label: fbt(
             'Submit work order',
             'Radio button label. Submits the work order.',
           ).toString(),
-        }
-      : {
+        }]
+        : [...checkOutOptions, {
           key: 'blocked',
           label: fbt(
             'Report as blocked',
             'Radio button label. Reports this work order cannot be completed.',
           ).toString(),
-        },
-  ];
+        }])
+  }, []);
 
   const resetDialogState = () => {
     setDialogStep('checkout_reason');

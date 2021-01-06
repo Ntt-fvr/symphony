@@ -69,6 +69,9 @@ export type MyTasksScreenLocationsNeedSiteSurveyQueryResponse = {|
       +node: ?{|
         +id: string,
         +installDate: ?any,
+        +workOrderTemplate: ?{|
+          +name: string
+        |},
         +name: string,
         +status: WorkOrderStatus,
         +location: ?{|
@@ -106,6 +109,9 @@ query MyTasksScreenLocationsNeedSiteSurveyQuery(
       node {
         id
         installDate
+        workOrderTemplate {
+          name
+        }
         ...TasksList_workOrders
         name
         status
@@ -194,6 +200,9 @@ fragment WorkOrderDetailsSection_workOrder on WorkOrder {
   description
   priority
   status
+  workOrderTemplate {
+    name
+  }
   location {
     name
     latitude
@@ -212,6 +221,7 @@ fragment WorkOrderDetailsSection_workOrder on WorkOrder {
   ...WorkOrderDatesSection_workOrder
   ...WorkOrderProjectSection_workOrder
   ...WorkOrderAssigneeSection_workOrder
+  ...WorkOrderTemplateNameSection_workOrder
 }
 
 fragment WorkOrderListItem_workOrder on WorkOrder {
@@ -331,6 +341,12 @@ fragment WorkOrderTechnicianActionBottomBar_workOrder on WorkOrder {
     annotation
   }
 }
+
+fragment WorkOrderTemplateNameSection_workOrder on WorkOrder {
+  workOrderTemplate {
+    name
+  }
+}
 */
 
 const node/*: ConcreteRequest*/ = (function(){
@@ -392,11 +408,23 @@ v6 = {
 v7 = {
   "alias": null,
   "args": null,
+  "concreteType": "WorkOrderTemplate",
+  "kind": "LinkedField",
+  "name": "workOrderTemplate",
+  "plural": false,
+  "selections": [
+    (v6/*: any*/)
+  ],
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "Location",
@@ -409,35 +437,35 @@ v8 = {
   ],
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "latitude",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "longitude",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "timestamp",
   "storageKey": null
 },
-v13 = [
+v14 = [
   (v4/*: any*/),
   {
     "alias": null,
@@ -550,8 +578,9 @@ return {
                 "selections": [
                   (v4/*: any*/),
                   (v5/*: any*/),
-                  (v6/*: any*/),
                   (v7/*: any*/),
+                  (v6/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -562,7 +591,7 @@ return {
                     "selections": [
                       (v4/*: any*/),
                       (v6/*: any*/),
-                      (v8/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -630,8 +659,8 @@ return {
                 "selections": [
                   (v4/*: any*/),
                   (v6/*: any*/),
-                  (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -656,7 +685,7 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v8/*: any*/)
+                  (v9/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -693,6 +722,7 @@ return {
                 "selections": [
                   (v4/*: any*/),
                   (v5/*: any*/),
+                  (v7/*: any*/),
                   (v6/*: any*/),
                   {
                     "alias": null,
@@ -701,7 +731,7 @@ return {
                     "name": "priority",
                     "storageKey": null
                   },
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -712,9 +742,9 @@ return {
                     "selections": [
                       (v4/*: any*/),
                       (v6/*: any*/),
-                      (v9/*: any*/),
                       (v10/*: any*/),
-                      (v8/*: any*/),
+                      (v11/*: any*/),
+                      (v9/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -723,8 +753,8 @@ return {
                         "name": "parentCoords",
                         "plural": false,
                         "selections": [
-                          (v9/*: any*/),
-                          (v10/*: any*/)
+                          (v10/*: any*/),
+                          (v11/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -787,7 +817,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v4/*: any*/),
-                      (v11/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -797,7 +827,7 @@ return {
                         "plural": true,
                         "selections": [
                           (v4/*: any*/),
-                          (v11/*: any*/),
+                          (v12/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -876,7 +906,7 @@ return {
                             "name": "wifiData",
                             "plural": true,
                             "selections": [
-                              (v12/*: any*/),
+                              (v13/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -933,8 +963,8 @@ return {
                                 "name": "capabilities",
                                 "storageKey": null
                               },
-                              (v9/*: any*/),
                               (v10/*: any*/),
+                              (v11/*: any*/),
                               (v4/*: any*/)
                             ],
                             "storageKey": null
@@ -961,7 +991,7 @@ return {
                                 "name": "signalStrength",
                                 "storageKey": null
                               },
-                              (v12/*: any*/),
+                              (v13/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -1067,8 +1097,8 @@ return {
                                 "name": "uarfcn",
                                 "storageKey": null
                               },
-                              (v9/*: any*/),
                               (v10/*: any*/),
+                              (v11/*: any*/),
                               (v4/*: any*/)
                             ],
                             "storageKey": null
@@ -1080,7 +1110,7 @@ return {
                             "kind": "LinkedField",
                             "name": "files",
                             "plural": true,
-                            "selections": (v13/*: any*/),
+                            "selections": (v14/*: any*/),
                             "storageKey": null
                           }
                         ],
@@ -1096,7 +1126,7 @@ return {
                     "kind": "LinkedField",
                     "name": "images",
                     "plural": true,
-                    "selections": (v13/*: any*/),
+                    "selections": (v14/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -1160,11 +1190,11 @@ return {
     "metadata": {},
     "name": "MyTasksScreenLocationsNeedSiteSurveyQuery",
     "operationKind": "query",
-    "text": "query MyTasksScreenLocationsNeedSiteSurveyQuery(\n  $filters: [WorkOrderFilterInput!]!\n) {\n  locations(needsSiteSurvey: true) {\n    edges {\n      ...TasksList_locations\n    }\n  }\n  workOrders(first: 50, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        installDate\n        ...TasksList_workOrders\n        name\n        status\n        location {\n          id\n          name\n          locationHierarchy {\n            id\n            name\n          }\n        }\n        ...WorkOrderDetailsSection_workOrder\n        ...WorkOrderTechnicianActionBottomBar_workOrder\n        ...WorkOrderCommentsSection_workOrder\n      }\n    }\n  }\n}\n\nfragment MyTaskListItem_location on Location {\n  id\n  name\n  latitude\n  longitude\n  locationHierarchy {\n    id\n    name\n  }\n}\n\nfragment TasksList_locations on LocationEdge {\n  node {\n    id\n    name\n    latitude\n    longitude\n    locationType {\n      surveyTemplateCategories {\n        id\n      }\n      id\n    }\n    ...MyTaskListItem_location\n  }\n}\n\nfragment TasksList_workOrders on WorkOrder {\n  id\n  ...WorkOrderListItem_workOrder\n}\n\nfragment WorkOrderAssigneeSection_workOrder on WorkOrder {\n  assignedTo {\n    name\n    id\n  }\n}\n\nfragment WorkOrderCommentListItem_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n\nfragment WorkOrderCommentsSection_workOrder on WorkOrder {\n  id\n  comments {\n    id\n    ...WorkOrderCommentListItem_comment\n  }\n}\n\nfragment WorkOrderDatesSection_workOrder on WorkOrder {\n  creationDate\n  installDate\n}\n\nfragment WorkOrderDetailsSection_workOrder on WorkOrder {\n  id\n  creationDate\n  installDate\n  description\n  priority\n  status\n  location {\n    name\n    latitude\n    longitude\n    id\n  }\n  project {\n    name\n    id\n  }\n  assignedTo {\n    name\n    id\n  }\n  ...WorkOrderLocationSection_workOrder\n  ...WorkOrderDatesSection_workOrder\n  ...WorkOrderProjectSection_workOrder\n  ...WorkOrderAssigneeSection_workOrder\n}\n\nfragment WorkOrderListItem_workOrder on WorkOrder {\n  id\n  name\n  priority\n  status\n  location {\n    ...MyTaskListItem_location\n    id\n  }\n}\n\nfragment WorkOrderLocationSection_workOrder on WorkOrder {\n  location {\n    name\n    latitude\n    longitude\n    id\n  }\n}\n\nfragment WorkOrderProjectSection_workOrder on WorkOrder {\n  project {\n    name\n    id\n  }\n}\n\nfragment WorkOrderTechnicianActionBottomBar_workOrder on WorkOrder {\n  id\n  status\n  assignedTo {\n    authID\n    id\n  }\n  location {\n    parentCoords {\n      latitude\n      longitude\n    }\n    id\n  }\n  checkListCategories {\n    id\n    title\n    checkList {\n      id\n      title\n      helpText\n      index\n      isMandatory\n      type\n      enumSelectionMode\n      selectedEnumValues\n      enumValues\n      stringValue\n      checked\n      yesNoResponse\n      wifiData {\n        timestamp\n        frequency\n        channel\n        bssid\n        strength\n        ssid\n        band\n        channelWidth\n        capabilities\n        latitude\n        longitude\n        id\n      }\n      cellData {\n        networkType\n        signalStrength\n        timestamp\n        baseStationID\n        networkID\n        systemID\n        cellID\n        locationAreaCode\n        mobileCountryCode\n        mobileNetworkCode\n        primaryScramblingCode\n        operator\n        arfcn\n        physicalCellID\n        trackingAreaCode\n        timingAdvance\n        earfcn\n        uarfcn\n        latitude\n        longitude\n        id\n      }\n      files {\n        id\n        fileName\n        storeKey\n        mimeType\n        sizeInBytes\n        modified\n        uploaded\n        annotation\n      }\n    }\n  }\n  images {\n    id\n    fileName\n    storeKey\n    mimeType\n    sizeInBytes\n    modified\n    uploaded\n    annotation\n  }\n}\n"
+    "text": "query MyTasksScreenLocationsNeedSiteSurveyQuery(\n  $filters: [WorkOrderFilterInput!]!\n) {\n  locations(needsSiteSurvey: true) {\n    edges {\n      ...TasksList_locations\n    }\n  }\n  workOrders(first: 50, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        installDate\n        workOrderTemplate {\n          name\n        }\n        ...TasksList_workOrders\n        name\n        status\n        location {\n          id\n          name\n          locationHierarchy {\n            id\n            name\n          }\n        }\n        ...WorkOrderDetailsSection_workOrder\n        ...WorkOrderTechnicianActionBottomBar_workOrder\n        ...WorkOrderCommentsSection_workOrder\n      }\n    }\n  }\n}\n\nfragment MyTaskListItem_location on Location {\n  id\n  name\n  latitude\n  longitude\n  locationHierarchy {\n    id\n    name\n  }\n}\n\nfragment TasksList_locations on LocationEdge {\n  node {\n    id\n    name\n    latitude\n    longitude\n    locationType {\n      surveyTemplateCategories {\n        id\n      }\n      id\n    }\n    ...MyTaskListItem_location\n  }\n}\n\nfragment TasksList_workOrders on WorkOrder {\n  id\n  ...WorkOrderListItem_workOrder\n}\n\nfragment WorkOrderAssigneeSection_workOrder on WorkOrder {\n  assignedTo {\n    name\n    id\n  }\n}\n\nfragment WorkOrderCommentListItem_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n\nfragment WorkOrderCommentsSection_workOrder on WorkOrder {\n  id\n  comments {\n    id\n    ...WorkOrderCommentListItem_comment\n  }\n}\n\nfragment WorkOrderDatesSection_workOrder on WorkOrder {\n  creationDate\n  installDate\n}\n\nfragment WorkOrderDetailsSection_workOrder on WorkOrder {\n  id\n  creationDate\n  installDate\n  description\n  priority\n  status\n  workOrderTemplate {\n    name\n  }\n  location {\n    name\n    latitude\n    longitude\n    id\n  }\n  project {\n    name\n    id\n  }\n  assignedTo {\n    name\n    id\n  }\n  ...WorkOrderLocationSection_workOrder\n  ...WorkOrderDatesSection_workOrder\n  ...WorkOrderProjectSection_workOrder\n  ...WorkOrderAssigneeSection_workOrder\n  ...WorkOrderTemplateNameSection_workOrder\n}\n\nfragment WorkOrderListItem_workOrder on WorkOrder {\n  id\n  name\n  priority\n  status\n  location {\n    ...MyTaskListItem_location\n    id\n  }\n}\n\nfragment WorkOrderLocationSection_workOrder on WorkOrder {\n  location {\n    name\n    latitude\n    longitude\n    id\n  }\n}\n\nfragment WorkOrderProjectSection_workOrder on WorkOrder {\n  project {\n    name\n    id\n  }\n}\n\nfragment WorkOrderTechnicianActionBottomBar_workOrder on WorkOrder {\n  id\n  status\n  assignedTo {\n    authID\n    id\n  }\n  location {\n    parentCoords {\n      latitude\n      longitude\n    }\n    id\n  }\n  checkListCategories {\n    id\n    title\n    checkList {\n      id\n      title\n      helpText\n      index\n      isMandatory\n      type\n      enumSelectionMode\n      selectedEnumValues\n      enumValues\n      stringValue\n      checked\n      yesNoResponse\n      wifiData {\n        timestamp\n        frequency\n        channel\n        bssid\n        strength\n        ssid\n        band\n        channelWidth\n        capabilities\n        latitude\n        longitude\n        id\n      }\n      cellData {\n        networkType\n        signalStrength\n        timestamp\n        baseStationID\n        networkID\n        systemID\n        cellID\n        locationAreaCode\n        mobileCountryCode\n        mobileNetworkCode\n        primaryScramblingCode\n        operator\n        arfcn\n        physicalCellID\n        trackingAreaCode\n        timingAdvance\n        earfcn\n        uarfcn\n        latitude\n        longitude\n        id\n      }\n      files {\n        id\n        fileName\n        storeKey\n        mimeType\n        sizeInBytes\n        modified\n        uploaded\n        annotation\n      }\n    }\n  }\n  images {\n    id\n    fileName\n    storeKey\n    mimeType\n    sizeInBytes\n    modified\n    uploaded\n    annotation\n  }\n}\n\nfragment WorkOrderTemplateNameSection_workOrder on WorkOrder {\n  workOrderTemplate {\n    name\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd82b5a5a6424cb0fbdc2c6e581636e46';
+(node/*: any*/).hash = '215f25a1228bdfa571fa15b74f4669d0';
 
 module.exports = node;

@@ -18,7 +18,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -35,7 +34,7 @@ func TestAddWorkOrderType(t *testing.T) {
 	require.NoError(t, err)
 	typ, ok := node.(*ent.WorkOrderType)
 	require.True(t, ok)
-	assert.Equal(t, typ.Name, "example_type", "verifying work order type name")
+	require.Equal(t, typ.Name, "example_type", "verifying work order type name")
 }
 
 func TestAddWorkOrderTypes(t *testing.T) {
@@ -99,7 +98,7 @@ func TestAddWorkOrderTypeWithDescription(t *testing.T) {
 	require.NoError(t, err)
 	typ, ok := node.(*ent.WorkOrderType)
 	require.True(t, ok)
-	assert.Equal(t, *typ.Description, "wo_type_desc", "verifying work order type description")
+	require.Equal(t, *typ.Description, "wo_type_desc", "verifying work order type description")
 }
 
 func TestAddWorkOrderTypeWithProperties(t *testing.T) {
@@ -107,7 +106,7 @@ func TestAddWorkOrderTypeWithProperties(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, wtr := r.Mutation(), r.WorkOrderType()
+	mr := r.Mutation()
 	strValue, strIndex := "Foo", 7
 	intValue, intIndex := 5, 12
 
@@ -142,9 +141,9 @@ func TestAddWorkOrderTypeWithProperties(t *testing.T) {
 	require.Nil(t, strProp.IntVal, "verifying int property type's int value")
 	require.Equal(t, strIndex, strProp.Index, "verifying string property type's index")
 
-	pt, err := wtr.PropertyTypes(ctx, woType)
+	pt, err := woType.PropertyTypes(ctx)
 	require.NoError(t, err)
-	require.Equal(t, 2, len(pt))
+	require.Len(t, pt, 2)
 }
 
 func TestAddWorkOrderTypeWithCheckListCategories(t *testing.T) {

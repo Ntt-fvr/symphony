@@ -345,23 +345,23 @@ type Location implements Node & NamedNode {
   id: ID!
   externalId: String
   name: String!
-  locationType: LocationType!
-  parentLocation: Location
+  locationType: LocationType! @goField(name: "Type")
+  parentLocation: Location @goField(name: "Parent")
   children: [Location]!
   numChildren: Int!
   latitude: Float!
   longitude: Float!
   parentCoords: Coordinates
-  equipments: [Equipment]!
+  equipments: [Equipment]! @goField(name: "Equipment")
   properties: [Property]!
   images: [File]!
-  files: [File]!
+  files: [File]! @goField(forceResolver: true)
   siteSurveyNeeded: Boolean!
   topology(depth: Int! = 3 @numberValue(min: 0, max: 10)): NetworkTopology!
   locationHierarchy: [Location!]!
-  surveys: [Survey]!
-  wifiData: [SurveyWiFiScan]!
-  cellData: [SurveyCellScan]!
+  surveys: [Survey]! @goField(name: "Survey")
+  wifiData: [SurveyWiFiScan]! @goField(name: "WifiScan")
+  cellData: [SurveyCellScan]! @goField(name: "CellScan")
   distanceKm(latitude: Float!, longitude: Float!): Float!
   floorPlans: [FloorPlan]!
   hyperlinks: [Hyperlink!]!
@@ -428,6 +428,7 @@ type LocationType implements Node {
   propertyTypes: [PropertyType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
+    @goField(forceResolver: true)
   surveyTemplateCategories: [SurveyTemplateCategory]
 }
 
@@ -593,11 +594,12 @@ type Equipment implements Node & NamedNode {
   id: ID!
   externalId: String
   name: String!
-  parentLocation: Location
+  parentLocation: Location @goField(name: "Location")
   parentPosition: EquipmentPosition
-  equipmentType: EquipmentType!
+  equipmentType: EquipmentType! @goField(name: "Type")
   positions: [EquipmentPosition]!
   ports(availableOnly: Boolean = false): [EquipmentPort]!
+    @goField(forceResolver: true)
   descendentsIncludingSelf: [Equipment]!
   properties: [Property]!
   futureState: FutureState
@@ -607,7 +609,7 @@ type Equipment implements Node & NamedNode {
   positionHierarchy: [EquipmentPosition!]!
   services: [Service]!
   images: [File]!
-  files: [File]!
+  files: [File]! @goField(forceResolver: true)
   hyperlinks: [Hyperlink!]!
 }
 
@@ -643,7 +645,7 @@ type EquipmentType implements Node {
   positionDefinitions: [EquipmentPositionDefinition]!
   portDefinitions: [EquipmentPortDefinition]!
   propertyTypes: [PropertyType]!
-  equipments: [Equipment]!
+  equipments: [Equipment]! @goField(name: "Equipment")
   numberOfEquipment: Int!
 }
 
@@ -676,8 +678,8 @@ type EquipmentPositionDefinition implements Node {
 type EquipmentPosition implements Node {
   id: ID!
   definition: EquipmentPositionDefinition!
-  parentEquipment: Equipment!
-  attachedEquipment: Equipment
+  parentEquipment: Equipment! @goField(name: "Parent")
+  attachedEquipment: Equipment @goField(name: "Attachment")
 }
 
 input EquipmentPositionInput {
@@ -794,7 +796,7 @@ type EquipmentPortDefinition implements Node {
   name: String!
   index: Int
   visibleLabel: String
-  portType: EquipmentPortType
+  portType: EquipmentPortType @goField(name: "EquipmentPortType")
   bandwidth: String
   connectedPorts: [EquipmentPortDefinition!]
 }
@@ -802,11 +804,11 @@ type EquipmentPortDefinition implements Node {
 type EquipmentPort implements Node {
   id: ID!
   definition: EquipmentPortDefinition!
-  parentEquipment: Equipment!
+  parentEquipment: Equipment! @goField(name: "Parent")
   link: Link
   properties: [Property!]!
-  serviceEndpoints: [ServiceEndpoint!]!
-  services: [Service]!
+  serviceEndpoints: [ServiceEndpoint!]! @goField(name: "Endpoints")
+  services: [Service]! @goField(name: "Service")
 }
 
 input EquipmentPortConnectionInput {
@@ -1433,7 +1435,7 @@ input PropertyTypeInput
 
 type Property implements Node {
   id: ID!
-  propertyType: PropertyType!
+  propertyType: PropertyType! @goField(name: "Type")
   stringValue: String
   intValue: Int
   booleanValue: Boolean
@@ -1553,7 +1555,7 @@ type Link implements Node {
   futureState: FutureState
   workOrder: WorkOrder
   properties: [Property]!
-  services: [Service]!
+  services: [Service]! @goField(name: "Service")
 }
 
 input LinkSide {
@@ -1656,7 +1658,7 @@ type CheckListCategory implements Node {
   id: ID!
   title: String!
   description: String
-  checkList: [CheckListItem!]!
+  checkList: [CheckListItem!]! @goField(name: "CheckListItems")
 }
 
 type CheckListItem implements Node {
@@ -1674,8 +1676,8 @@ type CheckListItem implements Node {
   checked: Boolean
   files: [File!]
   yesNoResponse: YesNoResponse @goField(name: "YesNoVal")
-  wifiData: [SurveyWiFiScan!]
-  cellData: [SurveyCellScan!]
+  wifiData: [SurveyWiFiScan!] @goField(name: "WifiScan")
+  cellData: [SurveyCellScan!] @goField(name: "CellScan")
 }
 
 input CheckListCategoryInput {
@@ -1710,6 +1712,7 @@ enum FilterEntity {
   LINK
   LOCATION
   SERVICE
+  PROJECT
 }
 
 type GeneralFilter {
@@ -1762,6 +1765,7 @@ enum ExportType
   LINK
   SERVICE
   WORK_ORDER
+  PROJECT
 }
 enum ExportStatus
   @goModel(
@@ -1807,14 +1811,14 @@ Work Order instance - capturing information about a change in the network
 """
 type WorkOrder implements Node & NamedNode {
   id: ID!
-  workOrderType: WorkOrderType!
-  workOrderTemplate: WorkOrderTemplate
+  workOrderType: WorkOrderType! @goField(name: "Type")
+  workOrderTemplate: WorkOrderTemplate @goField(name: "Template")
   name: String!
   description: String
   owner: User!
   creationDate: Time!
   installDate: Time
-  assignedTo: User
+  assignedTo: User @goField(name: "Assignee")
   index: Int!
   status: WorkOrderStatus!
   priority: WorkOrderPriority!
@@ -1823,9 +1827,10 @@ type WorkOrder implements Node & NamedNode {
   linksToAdd: [Link]!
   linksToRemove: [Link]!
   images: [File]!
-  files: [File]!
+  files: [File]! @goField(forceResolver: true)
   comments: [Comment]!
   activities(filter: ActivityFilterInput): [Activity!]!
+    @goField(forceResolver: true)
   location: Location
   properties: [Property]!
   project: Project
@@ -2289,14 +2294,19 @@ enum ProjectOrderField {
   NAME
 
   """
+  Order projects by creation time.
+  """
+  CREATED_AT
+
+  """
   Order projects by update time.
   """
   UPDATED_AT
+
+  """
+  Order projects by priority.
+  """
   PRIORITY
-  PROJECT_OWNER
-  PROJECT_LOCATION
-  NUMBER_OF_WORKORDERS
-  PROJECT_TEMPLATE
 }
 
 """
@@ -2330,7 +2340,7 @@ type Project implements Node {
   name: String! @stringValue(minLength: 1)
   description: String
   priority: ProjectPriority!
-  createdBy: User
+  createdBy: User @goField(name: "Creator")
   createTime: Time!
   type: ProjectType!
   template: ProjectTemplate
@@ -2669,6 +2679,7 @@ enum ProjectFilterType {
   PROJECT_TYPE
   LOCATION_INST
   PROJECT_PRIORITY
+  PROPERTY
 }
 
 input ProjectFilterInput {
@@ -2678,6 +2689,7 @@ input ProjectFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  propertyValue: PropertyTypeInput
 }
 
 """
@@ -2735,7 +2747,7 @@ type Service implements Node & NamedNode {
   externalId: String
   status: ServiceStatus!
   customer: Customer
-  serviceType: ServiceType!
+  serviceType: ServiceType! @goField(name: "Type")
   upstream: [Service]!
   downstream: [Service]!
   properties: [Property]!
@@ -2871,7 +2883,7 @@ type Survey implements Node {
   completionTimestamp: Int!
   locationID: ID!
   sourceFile: File
-  surveyResponses: [SurveyQuestion]!
+  surveyResponses: [SurveyQuestion]! @goField(name: "Questions")
 }
 
 input AddFloorPlanInput {

@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/migrate"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -55,7 +54,7 @@ func TestMigrator(t *testing.T) {
 		Logger:  logtest.NewTestLogger(t),
 		Creator: func(dialect.Driver) migrate.Creator { return &c },
 	}).Migrate(context.Background(), "foo", "bar", "baz")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestMigratorError(t *testing.T) {
@@ -80,5 +79,5 @@ func TestMigratorError(t *testing.T) {
 		Logger:  logtest.NewTestLogger(t),
 		Creator: func(dialect.Driver) migrate.Creator { return &c },
 	}).Migrate(context.Background(), "foo", "bar", "baz")
-	assert.EqualError(t, err, "migrating schema: bad database")
+	require.EqualError(t, err, "migrating schema: bad database")
 }

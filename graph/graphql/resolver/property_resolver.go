@@ -24,7 +24,7 @@ func (propertyTypeResolver) RawValue(ctx context.Context, propertyType *ent.Prop
 type propertyResolver struct{}
 
 func (propertyResolver) RawValue(ctx context.Context, property *ent.Property) (*string, error) {
-	propertyType, err := property.QueryType().Only(ctx)
+	propertyType, err := property.Type(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("querying property type %w", err)
 	}
@@ -32,16 +32,8 @@ func (propertyResolver) RawValue(ctx context.Context, property *ent.Property) (*
 	return &raw, err
 }
 
-func (propertyResolver) PropertyType(ctx context.Context, obj *ent.Property) (*ent.PropertyType, error) {
-	typ, err := obj.Edges.TypeOrErr()
-	if ent.IsNotLoaded(err) {
-		return obj.QueryType().Only(ctx)
-	}
-	return typ, err
-}
-
 func (propertyResolver) NodeValue(ctx context.Context, property *ent.Property) (models.NamedNode, error) {
-	propertyType, err := property.QueryType().Only(ctx)
+	propertyType, err := property.Type(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("querying property type %w", err)
 	}
