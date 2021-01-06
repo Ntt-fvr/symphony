@@ -30,7 +30,6 @@ import {formatFileSize} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 import Strings from '../common/InventoryStrings';
 
-
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Select from '@symphony/design-system/components/Select/Select';
 
@@ -114,12 +113,12 @@ class FileAttachment extends React.Component<Props, State> {
       if(this.state.isChecked){
         this.props.onChecked({type: 'checkIncrement'});
         if(this.state.selectValue !== ""){
-          this.props.onChecked({type: 'valueIncrement'});
+          this.props.onChecked({type: 'valueIncrement',file: this.props.file, value: this.state.selectValue});
         }
       }else{
         this.props.onChecked({type: 'checkDecrement'});
         if(this.state.selectValue !== ""){
-          this.props.onChecked({type: 'valueDecrement'});
+          this.props.onChecked({type: 'valueDecrement', file: this.props.file, value: this.state.selectValue});
         }
       }
     });
@@ -128,7 +127,7 @@ class FileAttachment extends React.Component<Props, State> {
   render() {
     const _setCategory = (value) => {
       if(this.state.selectValue === ""){
-        this.props.onChecked({type: 'valueIncrement'});
+        this.props.onChecked({type: 'valueIncrement',file: this.props.file, value: value});
       }
       this.setState({selectValue: value});
       return value;
@@ -191,7 +190,7 @@ class FileAttachment extends React.Component<Props, State> {
           scope="row">
           <input
             type="checkbox"
-            onChange={this.handleInputChange} />
+            onChange={this.handleInputChange}/>
         </TableCell>}
         {this.props.linkToLocationOptions &&
         <TableCell

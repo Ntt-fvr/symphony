@@ -8,8 +8,10 @@
  * @format
  */
 
-import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
-import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
+import type {
+  AddImageMutationResponse,
+  AddImageMutationVariables,
+} from '../mutations/__generated__/AddImageMutation.graphql';
 import type {ChecklistCategoriesMutateStateActionType} from '../checklist/ChecklistCategoriesMutateAction';
 import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategoriesMutateState';
 import type {ContextRouter} from 'react-router-dom';
@@ -166,32 +168,44 @@ const WorkOrderDetails = ({
       .sort(sortPropertiesByIndex),
   );
 
+  function linkFiles(){
+    console.log('locationId:'+propsWorkOrder.location?.id);
+    state.files.map(item => {
+        console.log(item.file.id, item.category);
+        linkFileToLocation(propsWorkOrder.location?.id,item.file,item.file.storeKey,item.category);
+      }
+    )
+  }
+
  
 
   function reducerCounter(state, action) {
+    
     switch (action.type) {
       case 'checkIncrement':
-        return {valueCount: state.valueCount, checkCount: state.checkCount + 1};
+        return {valueCount: state.valueCount, checkCount: state.checkCount + 1, files: state.files};
       case 'checkDecrement':
         if(state.checkCount > 0){
-          return {valueCount: state.valueCount, checkCount: state.checkCount - 1};
+          return {valueCount: state.valueCount, checkCount: state.checkCount - 1, files: state.files};
         }else{
-          return {valueCount: state.valueCount, checkCount: 0};
+          return {valueCount: state.valueCount, checkCount: 0, files: state.files};
         }
       case 'valueIncrement':
-        return {valueCount: state.valueCount + 1, checkCount: state.checkCount};
+        const newFile = {file: action.file, category: action.value}
+        const newFiles = state.files.concat(newFile);
+        return {valueCount: state.valueCount + 1, checkCount: state.checkCount, files: newFiles};
       case 'valueDecrement':
         if(state.valueCount > 0){
-          return {valueCount: state.valueCount - 1, checkCount: state.checkCount};
+          return {valueCount: state.valueCount - 1, checkCount: state.checkCount, files: state.files.filter((item) => item.file.id !== action.file.id)};
         }else{
-          return {valueCount: 0, checkCount: state.checkCount};
+          return {valueCount: 0, checkCount: state.checkCount, files: state.files};
         }
       default:
         throw new Error();
     }
   }
   
-  const [state, countDispatch] = useReducer(reducerCounter, {checkCount: 0, valueCount: 0});
+  const [state, countDispatch] = useReducer(reducerCounter, {checkCount: 0, valueCount: 0, files:[]});
 
   const [locationId, setLocationId] = useState(propsWorkOrder.location?.id);
   const [isLoadingDocument, setIsLoadingDocument] = useState(false);
@@ -237,14 +251,64 @@ const WorkOrderDetails = ({
     };
 
     const callbacks: MutationCallbacks<AddImageMutationResponse> = {
+      onCompleted: (_, errors) => {
+        
+      },
+      onError: (object) => {
+        console.log(object);
+      },
+    };
+
+    AddImageMutation(variables, callbacks, updater);
+  };
+
+
+  const linkFileToLocation = (locationId,file,key,category) => {
+    
+    const variables: AddImageMutationVariables = {
+      input: {
+        entityType: 'LOCATION',
+        entityId: locationId,
+        imgKey: key,
+        fileName: file.fileName,
+        fileSize: file.sizeInBytes,
+        modified: file.uploaded,
+        contentType: file.fileType,
+        category: category,
+      },
+    };
+
+    const updater = store => {
+      const newNode = store.getRootField('addImage');
+      const locationProxy = store.get(locationId);
+      if (newNode == null || locationProxy == null) {
+        return;
+      }
+
+      const fileType = newNode.getValue('fileType');
+      if (fileType === FileTypeEnum.IMAGE) {
+        const imageNodes = locationProxy.getLinkedRecords('images') || [];
+        locationProxy.setLinkedRecords([...imageNodes, newNode], 'images');
+      } else {
+        const fileNodes = locationProxy.getLinkedRecords('files') || [];
+        locationProxy.setLinkedRecords([...fileNodes, newNode], 'files');
+      }
+    };
+
+    const callbacks: MutationCallbacks<AddImageMutationResponse> = {
       onCompleted: () => {
-        setIsLoadingDocument(false);
+        clearFilesState();
       },
       onError: () => {},
     };
 
     AddImageMutation(variables, callbacks, updater);
   };
+
+
+  const clearFilesState = () => {
+    useState({checkCount: 0, valueCount: 0, files:[]});
+  }
 
   const setWorkOrderStatus = value => {
     if (!value || value === workOrder.status) {
@@ -565,18 +629,11 @@ const WorkOrderDetails = ({
                       title="Attachments"
                       rightContent={
                         <div className={classes.uploadButtonContainer}>
-                          <AddHyperlinkButton
-                            className={classes.minimizedButton}
-                            variant="text"
-                            entityType="WORK_ORDER"
-                            allowCategories={false}
-                            entityId={workOrder.id}
-                            disabled = {(state.checkCount === 0 || state.valueCount !== state.checkCount) }
-                            >
-                            <IconButton 
+                          <IconButton 
                             icon={ApplyIcon} 
-                            disabled = {(state.checkCount === 0 || state.valueCount !== state.checkCount)}/>
-                          </AddHyperlinkButton>
+                            disabled = {(state.checkCount === 0 || state.valueCount !== state.checkCount)}
+                            onClick = { linkFiles }
+                          />
                           <AddHyperlinkButton
                             className={classes.minimizedButton}
                             variant="text"
