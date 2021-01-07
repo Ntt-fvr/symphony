@@ -68,6 +68,12 @@ import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
 
+import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
+
+import { useSnackbar } from 'notistack';
+
+
+
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
@@ -168,8 +174,11 @@ const WorkOrderDetails = ({
       .sort(sortPropertiesByIndex),
   );
 
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   const linkFiles = () => {
     countDispatch({type:'apply'});
+    enqueueSnackbar('Linking files');
     state.files.map(item => {
         linkFileToLocation(propsWorkOrder.location?.id,item.file,item.file.storeKey,item.category);
       }
@@ -251,7 +260,6 @@ const WorkOrderDetails = ({
 
     const callbacks: MutationCallbacks<AddImageMutationResponse> = {
       onCompleted: (_, errors) => {
-        
       },
       onError: (object) => {
         console.log(object);
@@ -302,9 +310,11 @@ const WorkOrderDetails = ({
 
     const callbacks: MutationCallbacks<AddImageMutationResponse> = {
       onCompleted: () => {
-        
+        enqueueSnackbar(file.fileName+' linked to location with category "'+category+'"');
       },
-      onError: () => {},
+      onError: () => {
+        enqueueSnackbar('There was an error linking '+file.fileName+' to location with category "'+category+'"');
+      },
     };
 
     AddImageMutation(variables, callbacks, updater);
