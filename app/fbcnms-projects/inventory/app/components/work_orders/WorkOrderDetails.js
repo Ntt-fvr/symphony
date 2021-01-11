@@ -185,7 +185,7 @@ const WorkOrderDetails = ({
     )
   }
 
-  function reducerCounter(state, action) {
+  function reducerCounter(state, action: {file: Object, type: string, value: string}) {
     
     switch (action.type) {
       case 'checkIncrement':
@@ -687,7 +687,7 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.images,
                         ]}
                         hyperlinks={propsWorkOrder.hyperlinks}
-                        onChecked = {countDispatch}
+                        onChecked = { countDispatch }
                         linkToLocationOptions={true}
                       />
                     </ExpandingPanel>
