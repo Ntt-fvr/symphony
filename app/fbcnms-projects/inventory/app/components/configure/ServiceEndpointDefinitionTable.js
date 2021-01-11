@@ -63,7 +63,7 @@ type EquipmentTypeOption = {
 
 graphql`
   fragment ServiceEndpointDefinitionTable_serviceEndpointDefinitions on ServiceEndpointDefinition
-    @relay(plural: true) {
+  @relay(plural: true) {
     id
     index
     role

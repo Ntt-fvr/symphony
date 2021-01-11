@@ -224,7 +224,7 @@ const useStyles = makeStyles(theme => ({
 export default createFragmentContainer(LocationCellScanCoverageMap, {
   cellData: graphql`
     fragment LocationCellScanCoverageMap_cellData on SurveyCellScan
-      @relay(plural: true) {
+    @relay(plural: true) {
       id
       latitude
       longitude

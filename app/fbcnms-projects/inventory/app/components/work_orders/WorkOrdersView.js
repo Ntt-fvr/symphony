@@ -57,13 +57,13 @@ const WorkOrdersView = (props: Props) => {
   >(
     graphql`
       fragment WorkOrdersView_query on Query
-        @argumentDefinitions(
-          first: {type: "Int"}
-          orderBy: {type: "WorkOrderOrder"}
-          filterBy: {type: "[WorkOrderFilterInput!]"}
-          cursor: {type: "Cursor"}
-        )
-        @refetchable(queryName: "WorkOrdersViewPaginationQuery") {
+      @argumentDefinitions(
+        first: {type: "Int"}
+        orderBy: {type: "WorkOrderOrder"}
+        filterBy: {type: "[WorkOrderFilterInput!]"}
+        cursor: {type: "Cursor"}
+      )
+      @refetchable(queryName: "WorkOrdersViewPaginationQuery") {
         workOrders(
           after: $cursor
           first: $first

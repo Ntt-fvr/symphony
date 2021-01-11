@@ -82,7 +82,8 @@ const DecisionBaseClass = jointJS.dia.Element.define(
   markup,
 );
 
-export default class Decision extends DecisionBaseClass
+export default class Decision
+  extends DecisionBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

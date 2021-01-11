@@ -15,7 +15,8 @@ import DecisionPresentation from './DecisionPresentation';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/logic/Decision';
 
-export default class DecisionBlockType extends BaseBlockType
+export default class DecisionBlockType
+  extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = DecisionPresentation;

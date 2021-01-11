@@ -303,7 +303,7 @@ export default withRouter(
       createFragmentContainer(PowerSearchLinksResultsTable, {
         links: graphql`
           fragment PowerSearchLinksResultsTable_links on Link
-            @relay(plural: true) {
+          @relay(plural: true) {
             id
             futureState
             ports {

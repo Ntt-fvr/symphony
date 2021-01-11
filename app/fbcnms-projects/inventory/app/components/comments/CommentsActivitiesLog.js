@@ -122,7 +122,7 @@ export default withAlert(
     createFragmentContainer(CommentsActivitiesLog, {
       comments: graphql`
         fragment CommentsActivitiesLog_comments on Comment
-          @relay(plural: true) {
+        @relay(plural: true) {
           id
           createTime
           ...TextCommentPost_comment
@@ -130,7 +130,7 @@ export default withAlert(
       `,
       activities: graphql`
         fragment CommentsActivitiesLog_activities on Activity
-          @relay(plural: true) {
+        @relay(plural: true) {
           id
           createTime
           ...ActivityPost_activity

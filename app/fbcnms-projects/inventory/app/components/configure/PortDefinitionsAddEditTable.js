@@ -54,7 +54,7 @@ const useStyles = makeStyles(_theme => ({
 
 graphql`
   fragment PortDefinitionsAddEditTable_portDefinitions on EquipmentPortDefinition
-    @relay(plural: true) {
+  @relay(plural: true) {
     id
     name
     index
