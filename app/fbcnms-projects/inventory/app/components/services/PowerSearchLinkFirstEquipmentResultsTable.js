@@ -186,7 +186,7 @@ export default createFragmentContainer(
   {
     equipment: graphql`
       fragment PowerSearchLinkFirstEquipmentResultsTable_equipment on Equipment
-        @relay(plural: true) {
+      @relay(plural: true) {
         id
         name
         futureState

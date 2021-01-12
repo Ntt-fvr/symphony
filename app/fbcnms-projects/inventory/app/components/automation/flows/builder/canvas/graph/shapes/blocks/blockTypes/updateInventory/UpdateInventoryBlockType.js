@@ -15,7 +15,8 @@ import UpdateInventoryPresentation from './UpdateInventoryPresentation';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/actions/UpdateInventory';
 
-export default class UpdateInventoryBlockType extends BaseBlockType
+export default class UpdateInventoryBlockType
+  extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = UpdateInventoryPresentation;

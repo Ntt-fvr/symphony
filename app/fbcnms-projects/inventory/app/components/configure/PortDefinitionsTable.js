@@ -107,7 +107,7 @@ const PortDefinitionsTable = (props: Props) => {
 export default createFragmentContainer(PortDefinitionsTable, {
   portDefinitions: graphql`
     fragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition
-      @relay(plural: true) {
+    @relay(plural: true) {
       id
       name
       index

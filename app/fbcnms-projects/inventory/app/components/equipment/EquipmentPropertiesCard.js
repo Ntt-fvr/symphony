@@ -36,7 +36,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 
 graphql`
   fragment EquipmentPropertiesCard_baseEquipmentProps on Equipment
-    @relay(mask: false) {
+  @relay(mask: false) {
     id
     name
     futureState
@@ -49,7 +49,7 @@ graphql`
 
 graphql`
   fragment EquipmentPropertiesCard_position on EquipmentPosition
-    @relay(mask: false) {
+  @relay(mask: false) {
     id
     definition {
       id
