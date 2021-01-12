@@ -1,4 +1,4 @@
-py-gql-client==0.0.14
+py-gql-client>=1.0.0
 tqdm>=4.32.2
 unicodecsv>=0.14.1
 requests>=2.22.0

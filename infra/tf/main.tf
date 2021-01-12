@@ -59,7 +59,6 @@ data "terraform_remote_state" "current" {
 
   defaults = {
     symphony_tag  = "latest"
-    storybook_tag = "latest"
   }
 }
 
