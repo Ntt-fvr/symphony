@@ -15,7 +15,8 @@ import CreateWorkorderPresentation from './CreateWorkorderPresentation';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/actions/CreateWorkorder';
 
-export default class CreateWorkorderBlockType extends BaseBlockType
+export default class CreateWorkorderBlockType
+  extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = CreateWorkorderPresentation;

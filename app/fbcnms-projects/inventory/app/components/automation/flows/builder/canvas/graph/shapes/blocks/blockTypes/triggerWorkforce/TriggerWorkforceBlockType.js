@@ -15,7 +15,8 @@ import TriggerWorkforcePresentation from './TriggerWorkforcePresentation';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/triggers/TriggerWorkforce';
 
-export default class TriggerWorkforceBlockType extends BaseBlockType
+export default class TriggerWorkforceBlockType
+  extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = TriggerWorkforcePresentation;

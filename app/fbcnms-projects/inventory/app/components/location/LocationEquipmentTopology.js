@@ -60,7 +60,7 @@ export default createFragmentContainer(LocationEquipmentTopology, {
   `,
   equipment: graphql`
     fragment LocationEquipmentTopology_equipment on Equipment
-      @relay(plural: true) {
+    @relay(plural: true) {
       id
     }
   `,
