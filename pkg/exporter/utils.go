@@ -7,7 +7,6 @@ package exporter
 import (
 	"context"
 	"fmt"
-	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"reflect"
 	"sort"
 	"strconv"
@@ -74,9 +73,6 @@ func GetQueryFields(e ExportEntity) []string {
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityService:
 		model := models.ServiceSearchResult{}
-		v = reflect.ValueOf(&model).Elem()
-	case ExportEntityProjects:
-		model := models.ProjectSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	default:
 		return []string{}
@@ -414,14 +410,6 @@ func PropertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity en
 			return nil, err
 		}
 		return types, nil
-	case enum.PropertyEntityProject:
-		types, err := c.PropertyType.Query().
-			Where(propertytype.HasPropertiesWith(property.HasProjectWith(project.IDIn(ids...)))).
-			GroupBy(propertytype.FieldName).Strings(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return types, nil
 	default:
 		return nil, errors.Errorf("entity not supported %s", entity)
 	}
@@ -503,13 +491,6 @@ func PropertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		props, err = entity.QueryProperties().All(ctx)
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying property types for work order %s (id=%d)", entity.Name, entity.ID)
-		}
-	case enum.PropertyEntityProject:
-		entity := instance.(*ent.Project)
-		var err error
-		props, err = entity.QueryProperties().All(ctx)
-		if err != nil {
-			return nil, errors.Wrapf(err, "querying property types for project %s (id=%d)", entity.Name, entity.ID)
 		}
 	default:
 		return nil, errors.Errorf("entityType not supported %s", entityType)

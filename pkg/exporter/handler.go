@@ -68,8 +68,6 @@ func createExportTask(ctx context.Context, url *url.URL, log log.Logger) (*ent.E
 		etType = exporttask.TypeService
 	case "/work_orders":
 		etType = exporttask.TypeWorkOrder
-	case "/projects":
-		etType = exporttask.TypeProject
 	case "/single_work_order":
 		etType = exporttask.TypeSingleWorkOrder
 		singleWOId, err = strconv.Atoi(url.Query().Get("id"))
@@ -154,7 +152,6 @@ func NewHandler(log log.Logger) http.Handler {
 		{name: "links", handler: Exporter{Log: log, Rower: LinksRower{Log: log}}},
 		{name: "locations", handler: Exporter{Log: log, Rower: LocationsRower{Log: log}}},
 		{name: "services", handler: Exporter{Log: log, Rower: ServicesRower{Log: log}}},
-		{name: "projects", handler: Exporter{Log: log, Rower: ProjectRower{Log: log}}},
 	}
 
 	router.Path("/single_work_order").
