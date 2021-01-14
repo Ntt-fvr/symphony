@@ -119,10 +119,10 @@ func writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int, log l
 // ServerHTTP handles requests to returns an export CSV file
 func (m *Exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := m.Log.For(ctx)
+	log := m.Log.For(ctx)
 	et, err := createExportTask(ctx, r.URL, m.Log)
 	if err != nil {
-		logger.Error("error in async export", zap.Error(err))
+		log.Error("error in async export", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 	} else {
 		writeExportTaskID(ctx, w, et.ID, m.Log)

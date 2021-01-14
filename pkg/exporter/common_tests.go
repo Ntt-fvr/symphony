@@ -399,11 +399,6 @@ func testAsyncExport(t *testing.T, typ exporttask.Type) {
 			Log: logger,
 		}}
 		exportPath = "/work_orders"
-	case exporttask.TypeProject:
-		e = Exporter{Log: logger, Rower: ProjectRower{
-			Log: logger,
-		}}
-		exportPath = "/projects"
 	}
 
 	th := viewertest.TestHandler(t, &e, client)

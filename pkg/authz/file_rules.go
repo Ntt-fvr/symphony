@@ -21,6 +21,7 @@ import (
 )
 
 // FileWritePolicyRule grants write permission to file type based on policy.
+// nolint: dupl
 func FileWritePolicyRule() privacy.MutationRule {
 	return privacy.FileMutationRuleFunc(func(ctx context.Context, m *ent.FileMutation) error {
 		fileID, exists := m.ID()
@@ -72,6 +73,7 @@ func FileWritePolicyRule() privacy.MutationRule {
 }
 
 // FileCreatePolicyRule grants create permission to file type based on policy.
+// nolint: dupl
 func FileCreatePolicyRule() privacy.MutationRule {
 	return privacy.FileMutationRuleFunc(func(ctx context.Context, m *ent.FileMutation) error {
 		if !m.Op().Is(ent.OpCreate) {

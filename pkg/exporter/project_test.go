@@ -6,10 +6,7 @@ package exporter
 
 import (
 	"context"
-	"strconv"
-	"testing"
-	"time"
-
+	"encoding/json"
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
@@ -21,12 +18,13 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"strconv"
+	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
-
-	"encoding/json"
 )
 
 type projectTestType struct {
