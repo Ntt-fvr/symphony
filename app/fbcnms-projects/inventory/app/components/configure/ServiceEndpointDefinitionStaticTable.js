@@ -86,7 +86,7 @@ const ServiceEndpointDefinitionStaticTable = (props: Props) => {
 export default createFragmentContainer(ServiceEndpointDefinitionStaticTable, {
   serviceEndpointDefinitions: graphql`
     fragment ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions on ServiceEndpointDefinition
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       name
       role

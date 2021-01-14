@@ -62,13 +62,13 @@ const ProjectsTableView = (props: Props) => {
   >(
     graphql`
       fragment ProjectsTableView_query on Query
-      @argumentDefinitions(
-        first: {type: "Int"}
-        orderBy: {type: "ProjectOrder"}
-        filterBy: {type: "[ProjectFilterInput!]"}
-        cursor: {type: "Cursor"}
-      )
-      @refetchable(queryName: "ProjectsTableViewPaginationQuery") {
+        @argumentDefinitions(
+          first: {type: "Int"}
+          orderBy: {type: "ProjectOrder"}
+          filterBy: {type: "[ProjectFilterInput!]"}
+          cursor: {type: "Cursor"}
+        )
+        @refetchable(queryName: "ProjectsTableViewPaginationQuery") {
         projects(
           after: $cursor
           first: $first

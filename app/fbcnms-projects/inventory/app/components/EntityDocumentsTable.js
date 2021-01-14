@@ -34,8 +34,8 @@ type Props = {|
   files: EntityDocumentsTable_files,
   hyperlinks: EntityDocumentsTable_hyperlinks,
   className?: string,
-  onChecked?: any,
-  linkToLocationOptions?: boolean,
+  onChecked?: (action: string) => void,
+  linkToLocationOptions?: boolean
 |} & WithAlert &
   WithSnackbarProps;
 
@@ -128,7 +128,7 @@ export default withAlert(
       `,
       hyperlinks: graphql`
         fragment EntityDocumentsTable_hyperlinks on Hyperlink
-        @relay(plural: true) {
+          @relay(plural: true) {
           ...DocumentTable_hyperlinks
         }
       `,

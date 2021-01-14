@@ -80,8 +80,7 @@ const TriggerWorkforceBaseClass = jointJS.dia.Element.define(
   markup,
 );
 
-export default class TriggerWorkforce
-  extends TriggerWorkforceBaseClass
+export default class TriggerWorkforce extends TriggerWorkforceBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

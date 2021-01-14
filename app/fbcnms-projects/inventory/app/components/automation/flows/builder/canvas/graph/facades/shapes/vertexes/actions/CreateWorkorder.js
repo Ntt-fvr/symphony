@@ -28,8 +28,7 @@ const UpdateInventoryBaseClass = CreateActionBaseClass({
 const TOTAL_SIZE = 72;
 const PADDING = 5;
 
-export default class UpdateInventory
-  extends UpdateInventoryBaseClass
+export default class UpdateInventory extends UpdateInventoryBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(getInitObject(FILL_COLOR, {}, id));

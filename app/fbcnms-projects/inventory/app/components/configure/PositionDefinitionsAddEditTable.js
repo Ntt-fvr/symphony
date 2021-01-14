@@ -49,7 +49,7 @@ const useStyles = makeStyles(_theme => ({
 
 graphql`
   fragment PositionDefinitionsAddEditTable_positionDefinition on EquipmentPositionDefinition
-  @relay(mask: false) {
+    @relay(mask: false) {
     id
     name
     index

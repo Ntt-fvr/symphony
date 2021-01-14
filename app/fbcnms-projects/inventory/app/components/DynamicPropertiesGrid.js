@@ -87,7 +87,7 @@ export default withStyles(styles)(
   createFragmentContainer(DynamicPropertiesGrid, {
     propertyTypes: graphql`
       fragment DynamicPropertiesGrid_propertyTypes on PropertyType
-      @relay(plural: true) {
+        @relay(plural: true) {
         id
         name
         index
@@ -106,7 +106,7 @@ export default withStyles(styles)(
     `,
     properties: graphql`
       fragment DynamicPropertiesGrid_properties on Property
-      @relay(plural: true) {
+        @relay(plural: true) {
         ...PropertyFormField_property
         propertyType {
           id

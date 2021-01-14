@@ -15,8 +15,7 @@ import TrueFalsePresentation from './TrueFalsePresentation';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/logic/TrueFalse';
 
-export default class TrueFalseBlockType
-  extends BaseBlockType
+export default class TrueFalseBlockType extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = TrueFalsePresentation;
