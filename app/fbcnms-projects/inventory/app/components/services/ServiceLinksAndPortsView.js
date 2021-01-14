@@ -94,7 +94,7 @@ export default createFragmentContainer(ServiceLinksAndPortsView, {
   `,
   ports: graphql`
     fragment ServiceLinksAndPortsView_ports on EquipmentPort
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       parentEquipment {
         id

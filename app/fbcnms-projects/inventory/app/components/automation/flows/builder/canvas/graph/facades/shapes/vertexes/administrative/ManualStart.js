@@ -80,8 +80,7 @@ const ManualStartBaseClass = jointJS.dia.Element.define(
   markup,
 );
 
-export default class ManualStart
-  extends ManualStartBaseClass
+export default class ManualStart extends ManualStartBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

@@ -100,7 +100,7 @@ export default withStyles(styles)(
     `,
     endpoints: graphql`
       fragment ServiceEquipmentTopology_endpoints on ServiceEndpoint
-      @relay(plural: true) {
+        @relay(plural: true) {
         definition {
           role
         }

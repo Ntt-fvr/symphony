@@ -104,7 +104,7 @@ const ProjectWorkOrdersList = (props: Props) => {
 export default createFragmentContainer(ProjectWorkOrdersList, {
   workOrders: graphql`
     fragment ProjectWorkOrdersList_workOrders on WorkOrder
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       workOrderType {
         name

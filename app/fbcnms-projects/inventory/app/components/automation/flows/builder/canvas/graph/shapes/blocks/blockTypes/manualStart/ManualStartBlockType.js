@@ -17,8 +17,7 @@ import fbt from 'fbt';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/administrative/ManualStart';
 
-export default class ManualStartBlockType
-  extends BaseBlockType
+export default class ManualStartBlockType extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = ManualStartPresentation;

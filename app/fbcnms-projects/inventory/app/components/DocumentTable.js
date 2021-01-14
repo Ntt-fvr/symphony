@@ -34,9 +34,9 @@ type Props = WithStyles<typeof styles> & {|
   entityId: string,
   files: DocumentTable_files,
   hyperlinks: DocumentTable_hyperlinks,
-  onChecked: any,
+  onChecked: (action: string) => void,
   onDocumentDeleted: (file: $ElementType<DocumentTable_files, number>) => void,
-  linkToLocationOptions?: boolean,
+  linkToLocationOptions?: boolean
 |};
 
 const getHyperlinkSortingValue = (hyperlink, categoriesEnabled) => {

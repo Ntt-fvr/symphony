@@ -260,7 +260,7 @@ export default withRouter(
       createFragmentContainer(PowerSearchPortsResultsTable, {
         ports: graphql`
           fragment PowerSearchPortsResultsTable_ports on EquipmentPort
-          @relay(plural: true) {
+            @relay(plural: true) {
             id
             definition {
               id

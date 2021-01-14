@@ -15,8 +15,7 @@ import UpdateWorkforcePresentation from './UpdateWorkforcePresentation';
 import {BaseBlockType} from '../BaseBlockType';
 import {TYPE} from '../../../../facades/shapes/vertexes/actions/UpdateWorkforce';
 
-export default class UpdateWorkforceBlockType
-  extends BaseBlockType
+export default class UpdateWorkforceBlockType extends BaseBlockType
   implements IBlockType {
   type = TYPE;
   presentationComponent = UpdateWorkforcePresentation;

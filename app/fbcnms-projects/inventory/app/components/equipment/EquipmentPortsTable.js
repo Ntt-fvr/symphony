@@ -373,7 +373,7 @@ graphql`
 
 graphql`
   fragment EquipmentPortsTable_position on EquipmentPosition
-  @relay(mask: false) {
+    @relay(mask: false) {
     attachedEquipment {
       ...EquipmentPortsTable_positionAttachedEquipment @relay(mask: false)
       positions {

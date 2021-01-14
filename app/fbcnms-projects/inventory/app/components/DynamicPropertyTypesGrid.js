@@ -52,7 +52,7 @@ const DynamicPropertyTypesGrid = (props: Props) => {
 export default createFragmentContainer(DynamicPropertyTypesGrid, {
   propertyTypes: graphql`
     fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType
-    @relay(plural: true) {
+      @relay(plural: true) {
       ...PropertyTypeFormField_propertyType
       id
       index

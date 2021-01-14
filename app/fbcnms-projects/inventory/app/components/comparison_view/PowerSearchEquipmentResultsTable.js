@@ -283,7 +283,7 @@ export default withRouter(
       createFragmentContainer(PowerSearchEquipmentResultsTable, {
         equipment: graphql`
           fragment PowerSearchEquipmentResultsTable_equipment on Equipment
-          @relay(plural: true) {
+            @relay(plural: true) {
             id
             name
             futureState
