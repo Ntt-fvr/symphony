@@ -8,14 +8,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
-	"strings"
-
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"strconv"
+	"strings"
 
 	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
@@ -38,21 +37,20 @@ type ProjectRower struct {
 
 var ProjectDataHeader = []string{bom + "Project ID", "Project Name", "Description", "Work Orders", "Template", "Location", "Owner", "Priority", "Creation Time"}
 
-func (er ProjectRower) Rows(ctx context.Context, filters string) ([][]string, error) {
+func (er ProjectRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.Log.For(ctx)
-		client      = ent.FromContext(ctx)
 		err         error
 		filterInput []*models.ProjectFilterInput
 	)
-	if filters != "" {
-		filterInput, err = paramToProjectFilterInput(filters)
+	if filtersParam != "" {
+		filterInput, err = paramToProjectFilterInput(filtersParam)
 		if err != nil {
 			logger.Error("cannot filter projects", zap.Error(err))
 			return nil, errors.Wrap(err, "cannot filter projects")
 		}
 	}
-
+	client := ent.FromContext(ctx)
 	fields := GetQueryFields(ExportEntityProjects)
 	searchResult, err := ProjectSearch(ctx, client, filterInput, nil, fields)
 	if err != nil {
@@ -182,7 +180,8 @@ func paramToProjectFilterInput(params string) ([]*models.ProjectFilterInput, err
 func ProjectFilter(query *ent.ProjectQuery, filters []*models.ProjectFilterInput) (*ent.ProjectQuery, error) {
 	var err error
 	for _, f := range filters {
-		if strings.HasPrefix(f.FilterType.String(), "PROJECT_") {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "PROJECT_"):
 			if query, err = handleProjectFilter(query, f); err != nil {
 				return nil, err
 			}

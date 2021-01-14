@@ -7,6 +7,7 @@ package exporter
 import (
 	"context"
 	"fmt"
+	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"reflect"
 	"sort"
 	"strconv"
@@ -18,7 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
-	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
