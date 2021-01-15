@@ -33,11 +33,6 @@ type WorkOrderSearchResult struct {
 	Count      int              `json:"count"`
 }
 
-type ProjectSearchResult struct {
-	Projects []*ent.Project `json:"projects"`
-	Count    int            `json:"count"`
-}
-
 type PortSearchResult struct {
 	Ports []*ent.EquipmentPort `json:"ports"`
 	Count int                  `json:"count"`

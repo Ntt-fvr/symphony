@@ -18,7 +18,6 @@ import DocumentMenu from './DocumentMenu';
 import ImageDialog from './ImageDialog';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import React from 'react';
-import Strings from '../common/InventoryStrings';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Text from '@symphony/design-system/components/Text';
@@ -29,9 +28,6 @@ import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {formatFileSize} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
-
-import FormField from '@symphony/design-system/components/FormField/FormField';
-import Select from '@symphony/design-system/components/Select/Select';
 
 const styles = () => ({
   nameCell: {
@@ -73,14 +69,10 @@ const styles = () => ({
 type Props = {|
   file: FileAttachment_file,
   onDocumentDeleted: (file: $ElementType<FileAttachment_file, number>) => void,
-  onChecked?: any,
-  linkToLocationOptions?: boolean,
 |} & WithStyles<typeof styles>;
 
 type State = {
   isImageDialogOpen: boolean,
-  isChecked: boolean,
-  selectValue: string,
 };
 
 class FileAttachment extends React.Component<Props, State> {
@@ -95,8 +87,6 @@ class FileAttachment extends React.Component<Props, State> {
     super(props);
     this.state = {
       isImageDialogOpen: false,
-      isChecked: false,
-      selectValue: '',
     };
   }
 
@@ -110,49 +100,7 @@ class FileAttachment extends React.Component<Props, State> {
     this.props.onDocumentDeleted(this.props.file);
   };
 
-  handleInputChange = () => {
-    this.setState({isChecked: !this.state.isChecked}, () => {
-      if (this.state.isChecked) {
-        if (this.props.onChecked)
-          this.props.onChecked({type: 'checkIncrement'});
-
-        if (this.state.selectValue !== '') {
-          if (this.props.onChecked)
-            this.props.onChecked({
-              type: 'valueIncrement',
-              file: this.props.file,
-              value: this.state.selectValue,
-            });
-        }
-      } else {
-        if (this.props.onChecked)
-          this.props.onChecked({type: 'checkDecrement'});
-        if (this.state.selectValue !== '') {
-          if (this.props.onChecked)
-            this.props.onChecked({
-              type: 'valueDecrement',
-              file: this.props.file,
-              value: this.state.selectValue,
-            });
-        }
-      }
-    });
-  };
-
   render() {
-    const _setCategory = (value: string) => {
-      if (this.state.selectValue === '') {
-        if (this.props.onChecked)
-          this.props.onChecked({
-            type: 'valueIncrement',
-            file: this.props.file,
-            value: value,
-          });
-      }
-      this.setState({selectValue: value});
-      return;
-    };
-
     const {classes, file} = this.props;
     if (file === null) {
       return null;
@@ -203,36 +151,6 @@ class FileAttachment extends React.Component<Props, State> {
           scope="row">
           {file.uploaded && DateTimeFormat.dateTime(file.uploaded)}
         </TableCell>
-        {this.props.linkToLocationOptions && (
-          <TableCell
-            padding="none"
-            className={classNames(classes.cell, classes.secondaryCell)}
-            component="th"
-            scope="row">
-            <input type="checkbox" onChange={this.handleInputChange} />
-          </TableCell>
-        )}
-        {this.props.linkToLocationOptions && (
-          <TableCell
-            padding="none"
-            className={classNames(classes.cell, classes.secondaryCell)}
-            component="th"
-            scope="row">
-            <FormField label="" disabled={!this.state.isChecked}>
-              <Select
-                options={Strings.documents.categories.map(x => ({
-                  key: x,
-                  value: x,
-                  label: x,
-                }))}
-                onChange={value => {
-                  _setCategory(value ? value : '');
-                }}
-                selectedValue={this.state.isChecked && this.state.selectValue}
-              />
-            </FormField>
-          </TableCell>
-        )}
         <TableCell
           padding="none"
           className={classNames(classes.cell, classes.secondaryCell)}

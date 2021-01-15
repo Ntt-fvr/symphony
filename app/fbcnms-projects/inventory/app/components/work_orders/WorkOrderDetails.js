@@ -8,10 +8,8 @@
  * @format
  */
 
-import type {
-  AddImageMutationResponse,
-  AddImageMutationVariables,
-} from '../../mutations/__generated__/AddImageMutation.graphql';
+import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
+import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
 import type {ChecklistCategoriesMutateStateActionType} from '../checklist/ChecklistCategoriesMutateAction';
 import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategoriesMutateState';
 import type {ContextRouter} from 'react-router-dom';
@@ -23,7 +21,6 @@ import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_
 import AddHyperlinkButton from '../AddHyperlinkButton';
 import AddImageMutation from '../../mutations/AddImageMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import ApplyIcon from '@symphony/design-system/icons/Actions/ApplyIcon';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -67,8 +64,6 @@ import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
-
-import {useSnackbar} from 'notistack';
 
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
@@ -160,7 +155,6 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
-
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
       .filter(Boolean)
@@ -168,93 +162,6 @@ const WorkOrderDetails = ({
       .map<Property>(toMutableProperty)
       .sort(sortPropertiesByIndex),
   );
-
-  const {enqueueSnackbar} = useSnackbar();
-
-  const linkFiles = () => {
-    countDispatch({type: 'apply', value: '', file: null});
-    enqueueSnackbar('Linking files');
-    state.files.map(item => {
-      linkFileToLocation(
-        propsWorkOrder.location?.id,
-        item.file,
-        item.file.storeKey,
-        item.category,
-      );
-    });
-  };
-
-  function reducerCounter(
-    state,
-    action: {file: Object, type: string, value: string},
-  ) {
-    switch (action.type) {
-      case 'checkIncrement':
-        return {
-          valueCount: state.valueCount,
-          checkCount: state.checkCount + 1,
-          files: state.files,
-          isApplyButtonEnabled: true,
-        };
-      case 'checkDecrement':
-        if (state.checkCount > 0) {
-          return {
-            valueCount: state.valueCount,
-            checkCount: state.checkCount - 1,
-            files: state.files,
-            isApplyButtonEnabled: true,
-          };
-        } else {
-          return {
-            valueCount: state.valueCount,
-            checkCount: 0,
-            files: state.files,
-            isApplyButtonEnabled: true,
-          };
-        }
-      case 'valueIncrement':
-        const newFile = {file: action.file, category: action.value};
-        const newFiles = state.files.concat(newFile);
-        return {
-          valueCount: state.valueCount + 1,
-          checkCount: state.checkCount,
-          files: newFiles,
-          isApplyButtonEnabled: true,
-        };
-      case 'valueDecrement':
-        if (state.valueCount > 0) {
-          return {
-            valueCount: state.valueCount - 1,
-            checkCount: state.checkCount,
-            files: state.files.filter(item => item.file.id !== action.file.id),
-            isApplyButtonEnabled: true,
-          };
-        } else {
-          return {
-            valueCount: 0,
-            checkCount: state.checkCount,
-            files: state.files,
-            isApplyButtonEnabled: true,
-          };
-        }
-      case 'apply':
-        return {
-          valueCount: state.valueCount,
-          checkCount: state.checkCount,
-          files: state.files,
-          isApplyButtonEnabled: false,
-        };
-      default:
-        throw new Error();
-    }
-  }
-
-  const [state, countDispatch] = useReducer(reducerCounter, {
-    checkCount: 0,
-    valueCount: 0,
-    files: [],
-    isApplyButtonEnabled: true,
-  });
 
   const [locationId, setLocationId] = useState(propsWorkOrder.location?.id);
   const [isLoadingDocument, setIsLoadingDocument] = useState(false);
@@ -300,70 +207,10 @@ const WorkOrderDetails = ({
     };
 
     const callbacks: MutationCallbacks<AddImageMutationResponse> = {
-      onCompleted: () => {},
-      onError: object => {
-        console.log(object);
-      },
-    };
-
-    AddImageMutation(variables, callbacks, updater);
-  };
-
-  const linkFileToLocation = (locationId, file, key, category) => {
-    const locId = locationId;
-
-    if (!locId) {
-      return;
-    }
-
-    const variables: AddImageMutationVariables = {
-      input: {
-        entityType: 'LOCATION',
-        entityId: locId,
-        imgKey: key,
-        fileName: file.fileName,
-        fileSize: file.sizeInBytes,
-        modified: file.uploaded,
-        contentType: file.fileType,
-        category: category,
-      },
-    };
-
-    const updater = store => {
-      const newNode = store.getRootField('addImage');
-      const locationProxy = store.get(locId);
-      if (newNode == null || locationProxy == null) {
-        return;
-      }
-
-      const fileType = newNode.getValue('fileType');
-      if (fileType === FileTypeEnum.IMAGE) {
-        const imageNodes = locationProxy.getLinkedRecords('images') || [];
-        locationProxy.setLinkedRecords([...imageNodes, newNode], 'images');
-      } else {
-        const fileNodes = locationProxy.getLinkedRecords('files') || [];
-        locationProxy.setLinkedRecords([...fileNodes, newNode], 'files');
-      }
-    };
-
-    const callbacks: MutationCallbacks<AddImageMutationResponse> = {
       onCompleted: () => {
-        enqueueSnackbar(
-          file.fileName +
-            ' linked to location with category "' +
-            category +
-            '"',
-        );
+        setIsLoadingDocument(false);
       },
-      onError: () => {
-        enqueueSnackbar(
-          'There was an error linking ' +
-            file.fileName +
-            ' to location with category "' +
-            category +
-            '"',
-        );
-      },
+      onError: () => {},
     };
 
     AddImageMutation(variables, callbacks, updater);
@@ -687,20 +534,6 @@ const WorkOrderDetails = ({
                       title="Attachments"
                       rightContent={
                         <div className={classes.uploadButtonContainer}>
-                          <IconButton
-                            icon={ApplyIcon}
-                            disabled={
-                              state.isApplyButtonEnabled === false
-                                ? true
-                                : state.checkCount === 0 ||
-                                  state.valueCount !== state.checkCount
-                                ? true
-                                : false
-                            }
-                            onClick={() => {
-                              linkFiles();
-                            }}
-                          />
                           <AddHyperlinkButton
                             className={classes.minimizedButton}
                             variant="text"
@@ -735,8 +568,6 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.images,
                         ]}
                         hyperlinks={propsWorkOrder.hyperlinks}
-                        onChecked={countDispatch}
-                        linkToLocationOptions={true}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider

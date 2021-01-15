@@ -474,7 +474,7 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
         },
         className,
       )}
-      tooltip={tooltip ?? ''}
+      tooltip={tooltip ?? ""}
       disabled={disabled}
       onClick={onClick}
       onMouseDown={onMouseDown}

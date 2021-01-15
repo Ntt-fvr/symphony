@@ -28,8 +28,7 @@ const UpdateWorkforceBaseClass = CreateActionBaseClass({
 const TOTAL_SIZE = 72;
 const PADDING = 5;
 
-export default class UpdateWorkforce
-  extends UpdateWorkforceBaseClass
+export default class UpdateWorkforce extends UpdateWorkforceBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(getInitObject(FILL_COLOR, {}, id));

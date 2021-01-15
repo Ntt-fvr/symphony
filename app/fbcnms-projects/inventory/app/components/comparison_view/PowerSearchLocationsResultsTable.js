@@ -235,7 +235,7 @@ export default withRouter(
       createFragmentContainer(PowerSearchLocationsResultsTable, {
         locations: graphql`
           fragment PowerSearchLocationsResultsTable_locations on Location
-          @relay(plural: true) {
+            @relay(plural: true) {
             id
             name
             externalId

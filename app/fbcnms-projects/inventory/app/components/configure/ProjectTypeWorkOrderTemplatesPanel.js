@@ -94,7 +94,7 @@ const ProjectTypeWorkOrderTemplatesPanel = ({
 export default createFragmentContainer(ProjectTypeWorkOrderTemplatesPanel, {
   workOrderTypes: graphql`
     fragment ProjectTypeWorkOrderTemplatesPanel_workOrderTypes on WorkOrderType
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       name
     }

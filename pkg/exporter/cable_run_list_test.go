@@ -24,7 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
-func prepareCRLData(ctx context.Context) woTestType {
+func prepareCRLData(ctx context.Context, t *testing.T) woTestType {
 	client := ent.FromContext(ctx)
 	locTypeL := client.LocationType.Create().
 		SetName(locTypeNameL).
@@ -188,7 +188,7 @@ func prepareCRLData(ctx context.Context) woTestType {
 func TestGenerateEmptyCRLRows(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
-	woTestType := prepareCRLData(ctx)
+	woTestType := prepareCRLData(ctx, t)
 	core, _ := observer.New(zap.DebugLevel)
 	rows, err := generateCRLRows(ctx, zap.New(core), woTestType.wo2)
 	require.NoError(t, err)
@@ -210,7 +210,7 @@ func TestGenerateEmptyCRLRows(t *testing.T) {
 func TestCRLExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
-	woTestType := prepareCRLData(ctx)
+	woTestType := prepareCRLData(ctx, t)
 	core, _ := observer.New(zap.DebugLevel)
 	rows, err := generateCRLRows(ctx, zap.New(core), woTestType.wo1)
 	require.NoError(t, err)

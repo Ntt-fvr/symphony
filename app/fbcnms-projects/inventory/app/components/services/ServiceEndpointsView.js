@@ -43,7 +43,7 @@ const ServiceEndpointsView = (props: Props) => {
 export default createFragmentContainer(ServiceEndpointsView, {
   endpoints: graphql`
     fragment ServiceEndpointsView_endpoints on ServiceEndpoint
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       port {
         parentEquipment {

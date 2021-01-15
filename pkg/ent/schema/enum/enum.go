@@ -328,27 +328,6 @@ func (w WorkOrderFilterType) String() string {
 	return string(w)
 }
 
-// ProjectFilterType specifies what filters should we apply on Projects
-type ProjectFilterType string
-
-const (
-	ProjectFilterTypeProjectName            ProjectFilterType = "PROJECT_NAME"
-	ProjectFilterTypeProjectType            ProjectFilterType = "PROJECT_TYPE"
-	ProjectFilterTypeProjectTemplate        ProjectFilterType = "PROJECT_TEMPLATE"
-	ProjectFilterTypeProjectCreator         ProjectFilterType = "PROJECT_CREATOR"
-	ProjectFilterTypeLocationInst           ProjectFilterType = "LOCATION_INST"
-	ProjectFilterTypeLocationInstExternalID ProjectFilterType = "LOCATION_INST_EXTERNAL_ID"
-)
-
-func (p ProjectFilterType) IsValid() bool {
-	return p == ProjectFilterTypeProjectName
-}
-
-// String implements Getter interface.
-func (p ProjectFilterType) String() string {
-	return string(p)
-}
-
 // FilterOperator is filter operator for the search
 type FilterOperator string
 

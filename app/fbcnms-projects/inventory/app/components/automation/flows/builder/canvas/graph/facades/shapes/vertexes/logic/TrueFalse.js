@@ -83,8 +83,7 @@ const TrueFalseBaseClass = jointJS.dia.Element.define(
   markup,
 );
 
-export default class TrueFalse
-  extends TrueFalseBaseClass
+export default class TrueFalse extends TrueFalseBaseClass
   implements IVertexModel {
   constructor(id?: string) {
     super(

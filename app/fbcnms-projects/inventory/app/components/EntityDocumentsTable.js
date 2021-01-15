@@ -34,8 +34,6 @@ type Props = {|
   files: EntityDocumentsTable_files,
   hyperlinks: EntityDocumentsTable_hyperlinks,
   className?: string,
-  onChecked?: any,
-  linkToLocationOptions?: boolean,
 |} & WithAlert &
   WithSnackbarProps;
 
@@ -53,8 +51,6 @@ class EntityDocumentsTable extends React.Component<Props> {
           files={files}
           hyperlinks={hyperlinks}
           onDocumentDeleted={this.onDocumentDeleted}
-          onChecked={this.props.onChecked}
-          linkToLocationOptions={this.props.linkToLocationOptions}
         />
       </div>
     );
@@ -128,7 +124,7 @@ export default withAlert(
       `,
       hyperlinks: graphql`
         fragment EntityDocumentsTable_hyperlinks on Hyperlink
-        @relay(plural: true) {
+          @relay(plural: true) {
           ...DocumentTable_hyperlinks
         }
       `,

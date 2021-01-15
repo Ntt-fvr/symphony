@@ -153,7 +153,7 @@ const useStyles = makeStyles(theme => ({
 export default createFragmentContainer(LocationWiFiScanCoverageMap, {
   wifiData: graphql`
     fragment LocationWiFiScanCoverageMap_wifiData on SurveyWiFiScan
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       latitude
       longitude

@@ -80,7 +80,7 @@ const PositionDefinitionsTable = (props: Props) => {
 export default createFragmentContainer(PositionDefinitionsTable, {
   positionDefinitions: graphql`
     fragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition
-    @relay(plural: true) {
+      @relay(plural: true) {
       id
       name
       index

@@ -303,7 +303,7 @@ export default withStyles(styles)(
     `,
     ports: graphql`
       fragment AvailableLinksAndPortsTable_ports on EquipmentPort
-      @relay(plural: true) {
+        @relay(plural: true) {
         id
         parentEquipment {
           id
