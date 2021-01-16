@@ -154,7 +154,7 @@ func NewHandler(log log.Logger) http.Handler {
 		{name: "links", handler: Exporter{Log: log, Rower: LinksRower{Log: log}}},
 		{name: "locations", handler: Exporter{Log: log, Rower: LocationsRower{Log: log}}},
 		{name: "services", handler: Exporter{Log: log, Rower: ServicesRower{Log: log}}},
-		{name: "projects", handler: Exporter{Log: log, Rower: ProjectRower{Log: log}}},																		 
+		{name: "projects", handler: Exporter{Log: log, Rower: ProjectRower{Log: log}}},
 	}
 
 	router.Path("/single_work_order").
