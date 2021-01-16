@@ -28,6 +28,7 @@ func (ExportTask) Fields() []ent.Field {
 				"Service", "SERVICE",
 				"WorkOrder", "WORK_ORDER",
 				"SingleWorkOrder", "SINGLE_WORK_ORDER",
+				"Project", "PROJECT",
 			),
 		field.Enum("status").
 			NamedValues(

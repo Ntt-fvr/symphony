@@ -68,6 +68,8 @@ func createExportTask(ctx context.Context, url *url.URL, log log.Logger) (*ent.E
 		etType = exporttask.TypeService
 	case "/work_orders":
 		etType = exporttask.TypeWorkOrder
+	case "/projects":
+		etType = exporttask.TypeProject			  
 	case "/single_work_order":
 		etType = exporttask.TypeSingleWorkOrder
 		singleWOId, err = strconv.Atoi(url.Query().Get("id"))
@@ -117,10 +119,10 @@ func writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int, log l
 // ServerHTTP handles requests to returns an export CSV file
 func (m *Exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	log := m.Log.For(ctx)
+	logger := m.Log.For(ctx)
 	et, err := createExportTask(ctx, r.URL, m.Log)
 	if err != nil {
-		log.Error("error in async export", zap.Error(err))
+		logger.Error("error in async export", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 	} else {
 		writeExportTaskID(ctx, w, et.ID, m.Log)
@@ -152,6 +154,7 @@ func NewHandler(log log.Logger) http.Handler {
 		{name: "links", handler: Exporter{Log: log, Rower: LinksRower{Log: log}}},
 		{name: "locations", handler: Exporter{Log: log, Rower: LocationsRower{Log: log}}},
 		{name: "services", handler: Exporter{Log: log, Rower: ServicesRower{Log: log}}},
+		{name: "projects", handler: Exporter{Log: log, Rower: ProjectRower{Log: log}}},																		 
 	}
 
 	router.Path("/single_work_order").
