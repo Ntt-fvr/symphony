@@ -421,7 +421,7 @@ func PropertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity en
 		if err != nil {
 			return nil, err
 		}
-		return types, nil							 
+		return types, nil
 	default:
 		return nil, errors.Errorf("entity not supported %s", entity)
 	}
@@ -510,7 +510,7 @@ func PropertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		props, err = entity.QueryProperties().All(ctx)
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying property types for project %s (id=%d)", entity.Name, entity.ID)
-		}							 
+		}
 	default:
 		return nil, errors.Errorf("entityType not supported %s", entityType)
 	}
