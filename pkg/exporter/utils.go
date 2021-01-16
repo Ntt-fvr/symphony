@@ -77,7 +77,7 @@ func GetQueryFields(e ExportEntity) []string {
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityProjects:
 		model := models.ProjectSearchResult{}
-		v = reflect.ValueOf(&model).Elem()					   
+		v = reflect.ValueOf(&model).Elem()
 	default:
 		return []string{}
 	}
