@@ -69,7 +69,7 @@ func createExportTask(ctx context.Context, url *url.URL, log log.Logger) (*ent.E
 	case "/work_orders":
 		etType = exporttask.TypeWorkOrder
 	case "/projects":
-		etType = exporttask.TypeProject			  
+		etType = exporttask.TypeProject
 	case "/single_work_order":
 		etType = exporttask.TypeSingleWorkOrder
 		singleWOId, err = strconv.Atoi(url.Query().Get("id"))
