@@ -33,6 +33,7 @@ func minimalLinksLineLength() int {
 }
 
 // processExportedLinks imports links csv generated from the export feature
+// nolint: staticcheck
 func (m *importer) processExportedLinks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.logger.For(ctx)

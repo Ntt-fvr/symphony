@@ -103,7 +103,7 @@ func projectToSlice(ctx context.Context, project *ent.Project, propertyTypes []s
 		return nil, err
 	}
 
-	var projectTemplate, projectLocation, projectCreator string
+	var projectTemplate, projectLocation, projectCreator, projectDescription string
 
 	template, err := project.QueryTemplate().Only(ctx)
 	if ent.MaskNotFound(err) != nil {
@@ -138,11 +138,16 @@ func projectToSlice(ctx context.Context, project *ent.Project, propertyTypes []s
 		return nil, err
 	}
 
+	if project.Description != nil {
+		projectDescription = *project.Description
+	}
+
 	row := []string{
 		strconv.Itoa(project.ID), project.Name,
-		*project.Description, strconv.Itoa(projectWorkOrders),
+		projectDescription, strconv.Itoa(projectWorkOrders),
 		projectTemplate, projectLocation, projectCreator,
-		project.Priority.String(), GetStringDate(&project.CreateTime),
+		project.Priority.String(),
+		GetStringDate(&project.CreateTime),
 	}
 	row = append(row, properties...)
 

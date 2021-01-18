@@ -1712,7 +1712,6 @@ enum FilterEntity {
   LINK
   LOCATION
   SERVICE
-  PROJECT
 }
 
 type GeneralFilter {
@@ -1765,7 +1764,6 @@ enum ExportType
   LINK
   SERVICE
   WORK_ORDER
-  PROJECT
 }
 enum ExportStatus
   @goModel(
