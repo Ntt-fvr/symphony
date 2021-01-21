@@ -139,7 +139,13 @@ func projectToSlice(ctx context.Context, project *ent.Project, propertyTypes []s
 	}
 
 	if project.Description != nil {
-		projectDescription = *project.Description
+		projectDescription = strings.ReplaceAll(
+			strings.ReplaceAll(
+				strings.ReplaceAll(
+					strings.ReplaceAll(*project.Description, "\n\r", " "),
+					"\r\n", " "),
+				"\n", "|||"),
+			"\r", "|||")
 	}
 
 	row := []string{
