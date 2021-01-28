@@ -158,11 +158,6 @@ func prepareProjectData(ctx context.Context, t *testing.T) projectTestType {
 		SetCreationDate(time.Now()).
 		SaveX(ctx)
 
-	/*
-		Project 1 (of type 'projTemplate')
-			WO1 ( type woTemplate1). loc: parent, (string props)
-		WO2 ( type woTemplate2). loc: child (bool&int props)
-	*/
 	return projectTestType{
 		project1,
 		project2,
@@ -210,7 +205,7 @@ func TestProjectExport(t *testing.T) {
 				grandParentLocation + "; " + parentLocation,
 				"tester@example.com",
 				project.PriorityHigh.String(),
-				GetStringDate(pointer.ToTime(time.Now())),
+				ProjectDateTimeFormat(pointer.ToTime(time.Now())),
 				"",
 				"",
 				"string10",
@@ -226,7 +221,7 @@ func TestProjectExport(t *testing.T) {
 				parentLocation + "; " + childLocation,
 				"tester2@example.com",
 				project.PriorityMedium.String(),
-				GetStringDate(pointer.ToTime(time.Now())),
+				ProjectDateTimeFormat(pointer.ToTime(time.Now())),
 				"true",
 				"600",
 				"",
@@ -277,7 +272,7 @@ func TestExportProjectWithFilters(t *testing.T) {
 				grandParentLocation + "; " + parentLocation,
 				"tester@example.com",
 				project.PriorityHigh.String(),
-				GetStringDate(pointer.ToTime(time.Now())),
+				ProjectDateTimeFormat(pointer.ToTime(time.Now())),
 				"string10",
 				"string20",
 			})
