@@ -152,7 +152,7 @@ func projectToSlice(ctx context.Context, project *ent.Project, propertyTypes []s
 		projectDescription, strconv.Itoa(projectWorkOrders),
 		projectTemplate, projectLocation, projectCreator,
 		project.Priority.String(),
-		projectDateTimeFormat(&project.CreateTime),
+		ProjectDateTimeFormat(&project.CreateTime),
 	}
 	row = append(row, properties...)
 
@@ -231,7 +231,7 @@ func ProjectSearch(ctx context.Context, client *ent.Client, filters []*models.Pr
 	return &projectResult, nil
 }
 
-func projectDateTimeFormat(t *time.Time) string {
+func ProjectDateTimeFormat(t *time.Time) string {
 	return t.Format(dateTimeLayout)
 }
 
