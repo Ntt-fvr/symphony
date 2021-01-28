@@ -948,9 +948,11 @@ type UsersGroupSearchResult struct {
 }
 
 type VariableExpressionInput struct {
-	VariableDefinitionKey string                `json:"variableDefinitionKey"`
-	Expression            string                `json:"expression"`
-	BlockVariables        []*BlockVariableInput `json:"blockVariables"`
+	Type                  enum.VariableExpressionType `json:"type"`
+	VariableDefinitionKey *string                     `json:"variableDefinitionKey"`
+	PropertyTypeID        *int                        `json:"propertyTypeId"`
+	Expression            string                      `json:"expression"`
+	BlockVariables        []*BlockVariableInput       `json:"blockVariables"`
 }
 
 type WorkOrderDefinitionInput struct {

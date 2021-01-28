@@ -52,7 +52,8 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 		Cid: "end",
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "param",
+				Type: enum.VariableDefinition,
+				VariableDefinitionKey: refString("param"),
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
@@ -199,6 +200,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			XPosition: 30,
 			YPosition: 30,
 		})
+
 	firstDraft, err := r.client.Flow.QueryDraft(mainFlow).Only(ctx)
 	require.NoError(t, err)
 	err = r.client.FlowDraft.DeleteOne(firstDraft).Exec(ctx)
@@ -226,7 +228,8 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 		FlowID: subFlow.ID,
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "start_param",
+				Type: enum.VariableDefinition,
+				VariableDefinitionKey: refString("start_param"),
 				Expression:            "\"Start\"",
 			},
 		},
@@ -277,7 +280,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	params := details.(*models.EndBlock).Params
 	require.Len(t, params, 1)
-	paramDef, err := ver.Definition(ctx, params[0])
+	paramDef, err := ver.VariableDefinition(ctx, params[0])
 	require.NoError(t, err)
 	require.Equal(t, "param", paramDef.Key)
 	require.Equal(t, "param", paramDef.Name())
@@ -350,11 +353,15 @@ func TestStartFlow(t *testing.T) {
 	require.Equal(t, blockinstance.StatusPending, startBlock.Status)
 }
 
+func refString(s string) *string { return &s }
+func refInt(s int) *int { return &s }
+
 func TestImportEmptyFlow(t *testing.T) {
 	r := newTestResolver(t, withActionFactory(actions.NewFactory()), withTriggerFactory(triggers.NewFactory()))
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, fdr := r.Mutation(), r.FlowDraft()
+
 
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "First version",
@@ -423,7 +430,8 @@ func TestImportEmptyFlow(t *testing.T) {
 				Cid: "end",
 				Params: []*models.VariableExpressionInput{
 					{
-						VariableDefinitionKey: "param",
+						Type: enum.VariableDefinition,
+						VariableDefinitionKey: refString("param"),
 						Expression:            "${b_0}",
 						BlockVariables: []*models.BlockVariableInput{
 							{
@@ -454,12 +462,19 @@ func TestImportEmptyFlow(t *testing.T) {
 				ActionType: flowschema.ActionTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
-						VariableDefinitionKey: actions.InputVariableType,
+						Type: enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableType),
 						Expression:            strconv.Itoa(woType.ID),
 					},
 					{
-						VariableDefinitionKey: actions.InputVariableOwner,
+						Type: enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableOwner),
 						Expression:            strconv.Itoa(owner.ID),
+					},
+					{
+						Type: enum.PropertyTypeDefinition,
+						PropertyTypeID: refInt(1),
+						Expression: "\"Property\"",
 					},
 				},
 			},
@@ -470,7 +485,8 @@ func TestImportEmptyFlow(t *testing.T) {
 				TriggerType: flowschema.TriggerTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
-						VariableDefinitionKey: triggers.InputVariableType,
+						Type: enum.VariableDefinition,
+						VariableDefinitionKey: refString(triggers.InputVariableType),
 						Expression:            strconv.Quote(triggers.TypeWorkOrderInitiated),
 					},
 				},
@@ -506,7 +522,7 @@ func TestImportEmptyFlow(t *testing.T) {
 		case block.TypeAction:
 			require.Equal(t, "wo", blk.Cid)
 			require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
-			require.Len(t, blk.InputParams, 2)
+			require.Len(t, blk.InputParams, 3)
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)
 			require.Len(t, blk.InputParams, 1)
@@ -647,7 +663,8 @@ func TestBadImports(t *testing.T) {
 					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
-							VariableDefinitionKey: "param",
+							Type: enum.VariableDefinition,
+							VariableDefinitionKey: refString("param"),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
@@ -677,7 +694,8 @@ func TestBadImports(t *testing.T) {
 					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
-							VariableDefinitionKey: "param",
+							Type: enum.VariableDefinition,
+							VariableDefinitionKey: refString("param"),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
@@ -695,7 +713,8 @@ func TestBadImports(t *testing.T) {
 					TriggerType: flowschema.TriggerTypeWorkOrder,
 					Params: []*models.VariableExpressionInput{
 						{
-							VariableDefinitionKey: triggers.InputVariableType,
+							Type: enum.VariableDefinition,
+							VariableDefinitionKey: refString(triggers.InputVariableType),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{

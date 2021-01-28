@@ -51,7 +51,8 @@ func TestEndBlockInputParams(t *testing.T) {
 		Cid: "bad_end",
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "param1",
+				Type: enum.VariableDefinition,
+				VariableDefinitionKey: refString("param1"),
 				Expression:            "\"value\"",
 			},
 		},
@@ -63,7 +64,7 @@ func TestEndBlockInputParams(t *testing.T) {
 	end, ok := endDetails.(*models.EndBlock)
 	require.True(t, ok)
 	require.Len(t, end.Params, 1)
-	def, err := ivr.Definition(ctx, end.Params[0])
+	def, err := ivr.VariableDefinition(ctx, end.Params[0])
 	require.NoError(t, err)
 	require.Equal(t, "param1", def.Key)
 	require.Equal(t, "param1", def.Name())
@@ -106,7 +107,8 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 		Cid: "end",
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "param1",
+				Type: enum.VariableDefinition,
+				VariableDefinitionKey: refString("param1"),
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
@@ -183,7 +185,8 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		FlowID: flw.ID,
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "start_param",
+				Type: enum.VariableDefinition,
+				VariableDefinitionKey: refString("start_param"),
 				Expression:            "\"Value\"",
 			},
 		},
@@ -194,7 +197,7 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 	subflow, ok := subFlowDetails.(*models.SubflowBlock)
 	require.True(t, ok)
 	require.Len(t, subflow.Params, 1)
-	def, err := ver.Definition(ctx, subflow.Params[0])
+	def, err := ver.VariableDefinition(ctx, subflow.Params[0])
 	require.NoError(t, err)
 	require.Equal(t, "start_param", def.Key)
 	require.Equal(t, "start_param", def.Name())

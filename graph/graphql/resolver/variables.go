@@ -7,8 +7,8 @@ package resolver
 import (
 	"context"
 	"fmt"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -30,7 +30,10 @@ type variableExpressionResolver struct {
 	actionFactory  actions.Factory
 }
 
-func (r variableExpressionResolver) Definition(ctx context.Context, obj *flowschema.VariableExpression) (*flowschema.VariableDefinition, error) {
+func (r variableExpressionResolver) VariableDefinition(ctx context.Context, obj *flowschema.VariableExpression) (*flowschema.VariableDefinition, error) {
+	if obj.Type == enum.PropertyTypeDefinition {
+		return nil, nil
+	}
 	client := ent.FromContext(ctx)
 	b, err := client.Block.Get(ctx, obj.BlockID)
 	if err != nil {
@@ -46,6 +49,18 @@ func (r variableExpressionResolver) Definition(ctx context.Context, obj *flowsch
 		}
 	}
 	return nil, fmt.Errorf("failed to find variable definition: block=%q, key=%s", b.ID, obj.VariableDefinitionKey)
+}
+
+func (r variableExpressionResolver) PropertyTypeDefinition(ctx context.Context, obj *flowschema.VariableExpression) (*ent.PropertyType, error) {
+	if obj.Type == enum.VariableDefinition {
+		return nil, nil
+	}
+	client := ent.FromContext(ctx)
+	propertyType, err := client.PropertyType.Get(ctx, obj.PropertyTypeID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find property type: id=%q", obj.PropertyTypeID)
+	}
+	return propertyType, nil
 }
 
 type blockVariableResolver struct {

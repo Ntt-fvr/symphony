@@ -520,3 +520,16 @@ const (
 func (vt NodeType) String() string {
 	return string(vt)
 }
+
+// VariableExpressionType determines the variableExpression type of a block
+type VariableExpressionType string
+
+const (
+	VariableDefinition     VariableExpressionType = "VariableDefinition"
+	PropertyTypeDefinition VariableExpressionType = "PropertyTypeDefinition"
+)
+
+// String implements Getter interface.
+func (vt VariableExpressionType) String() string {
+	return string(vt)
+}

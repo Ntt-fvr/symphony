@@ -41,7 +41,9 @@ type BlockVariable struct {
 // VariableExpression is a an expression inside block that correlates to variable definition
 type VariableExpression struct {
 	BlockID               int
+	Type				  enum.VariableExpressionType
 	VariableDefinitionKey string
+	PropertyTypeID		  int
 	Expression            string
 	BlockVariables        []*BlockVariable
 }

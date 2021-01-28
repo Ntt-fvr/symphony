@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -238,12 +239,23 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 				VariableDefinitionKey: blockVar.VariableDefinitionKey,
 			})
 		}
-		vars = append(vars, &flowschema.VariableExpression{
-			BlockID:               blockID,
-			VariableDefinitionKey: variable.VariableDefinitionKey,
-			Expression:            variable.Expression,
-			BlockVariables:        blockVariables,
-		})
+		if variable.Type == enum.VariableDefinition {
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:               blockID,
+				Type:				   variable.Type,
+				VariableDefinitionKey: *variable.VariableDefinitionKey,
+				Expression:            variable.Expression,
+				BlockVariables:        blockVariables,
+			})
+		} else if variable.Type == enum.PropertyTypeDefinition {
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:               blockID,
+				Type:				   variable.Type,
+				PropertyTypeID: 	   *variable.PropertyTypeID,
+				Expression:            variable.Expression,
+				BlockVariables:        blockVariables,
+			})
+		}
 	}
 	return vars, nil
 }

@@ -3262,17 +3262,32 @@ input BlockVariableInput {
   variableDefinitionKey: String!
 }
 
+"""
+what type variableExpression should we apply
+"""
+enum VariableExpressionType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableExpressionType"
+  ) {
+  VariableDefinition
+  PropertyTypeDefinition
+}
+
 type VariableExpression
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
   ) {
-  definition: VariableDefinition!
+  type:  VariableExpressionType!
+  variableDefinition: VariableDefinition
+  propertyTypeDefinition: PropertyType
   expression: String!
   blockVariables: [BlockVariable!]
 }
 
 input VariableExpressionInput {
-  variableDefinitionKey: String!
+  type: VariableExpressionType!
+  variableDefinitionKey: String
+  propertyTypeId: Int
   expression: String!
   blockVariables: [BlockVariableInput!]
 }

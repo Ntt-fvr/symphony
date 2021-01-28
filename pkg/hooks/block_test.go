@@ -27,6 +27,7 @@ import (
 func getExpressions(key string, value string) []*flowschema.VariableExpression {
 	return []*flowschema.VariableExpression{
 		{
+			Type: enum.VariableDefinition,
 			VariableDefinitionKey: key,
 			Expression:            value,
 		},
@@ -227,6 +228,7 @@ func TestEndParamsVerifications(t *testing.T) {
 				Save(ctx)
 			require.NoError(t, err)
 			for _, input := range tc.inputs {
+				input.Type = enum.VariableDefinition
 				input.BlockID = b.ID
 				inputs = append(inputs, input)
 			}
@@ -291,6 +293,7 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 			name: "key_match",
 			inputs: []*flowschema.VariableExpression{
 				{
+					Type: enum.VariableDefinition,
 					VariableDefinitionKey: "start1",
 					Expression:            "\"Check\"",
 				},
@@ -301,6 +304,7 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 			name: "key_not_match",
 			inputs: []*flowschema.VariableExpression{
 				{
+					Type: enum.VariableDefinition,
 					VariableDefinitionKey: "start2",
 					Expression:            "\"Check\"",
 				},
