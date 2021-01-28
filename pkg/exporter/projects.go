@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -20,6 +21,10 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+)
+
+const (
+	dateTimeLayout = "01/02/2006 15:04"
 )
 
 type projectFilterInput struct {
@@ -139,13 +144,7 @@ func projectToSlice(ctx context.Context, project *ent.Project, propertyTypes []s
 	}
 
 	if project.Description != nil {
-		projectDescription = strings.ReplaceAll(
-			strings.ReplaceAll(
-				strings.ReplaceAll(
-					strings.ReplaceAll(*project.Description, "\n\r", " "),
-					"\r\n", " "),
-				"\n", "|||"),
-			"\r", "|||")
+		projectDescription = projectDescriptionReplaceCharacters(*project.Description)
 	}
 
 	row := []string{
@@ -153,7 +152,7 @@ func projectToSlice(ctx context.Context, project *ent.Project, propertyTypes []s
 		projectDescription, strconv.Itoa(projectWorkOrders),
 		projectTemplate, projectLocation, projectCreator,
 		project.Priority.String(),
-		GetStringDate(&project.CreateTime),
+		projectDateTimeFormat(&project.CreateTime),
 	}
 	row = append(row, properties...)
 
@@ -230,4 +229,20 @@ func ProjectSearch(ctx context.Context, client *ent.Client, filters []*models.Pr
 		}
 	}
 	return &projectResult, nil
+}
+
+func projectDateTimeFormat(t *time.Time) string {
+	return t.Format(dateTimeLayout)
+}
+
+func projectDescriptionReplaceCharacters(value string) string {
+	return strings.ReplaceAll(
+		strings.ReplaceAll(
+			strings.ReplaceAll(
+				strings.ReplaceAll(
+					strings.ReplaceAll(value, "\n\r", " "),
+					"\r\n", " "),
+				"\n", "|||"),
+			"\r", "|||"),
+		",", "&&")
 }
