@@ -55,10 +55,14 @@ func (r variableExpressionResolver) PropertyTypeDefinition(ctx context.Context, 
 	if obj.Type == enum.VariableDefinition {
 		return nil, nil
 	}
+	return getPropertyType(ctx, obj.PropertyTypeID)
+}
+
+func getPropertyType(ctx context.Context, propertyTypeID int) (*ent.PropertyType, error) {
 	client := ent.FromContext(ctx)
-	propertyType, err := client.PropertyType.Get(ctx, obj.PropertyTypeID)
+	propertyType, err := client.PropertyType.Get(ctx, propertyTypeID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find property type: id=%q", obj.PropertyTypeID)
+		return nil, fmt.Errorf("failed to find property type: id=%q", propertyTypeID)
 	}
 	return propertyType, nil
 }
@@ -73,7 +77,7 @@ func (blockVariableResolver) Block(ctx context.Context, obj *flowschema.BlockVar
 	return client.Block.Get(ctx, obj.BlockID)
 }
 
-func (r blockVariableResolver) OutputParamDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error) {
+func (r blockVariableResolver) InputVariableDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error) {
 	client := ent.FromContext(ctx)
 	block, err := client.Block.Get(ctx, obj.BlockID)
 	if err != nil {
@@ -90,3 +94,12 @@ func (r blockVariableResolver) OutputParamDefinition(ctx context.Context, obj *f
 	}
 	return nil, nil
 }
+
+func (r blockVariableResolver) InputPropertyTypeDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*ent.PropertyType, error) {
+	if obj.Type == enum.VariableDefinition {
+		return nil, nil
+	}
+	return getPropertyType(ctx, obj.PropertyTypeID)
+}
+
+

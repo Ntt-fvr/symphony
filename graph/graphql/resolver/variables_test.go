@@ -112,8 +112,9 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
+						Type: enum.VariableDefinition,
 						BlockCid:              startBlock.Cid,
-						VariableDefinitionKey: "start_param",
+						VariableDefinitionKey: refString("start_param"),
 					},
 				},
 			},
@@ -126,9 +127,9 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 	b, err := bvr.Block(ctx, param.BlockVariables[0])
 	require.NoError(t, err)
 	require.Equal(t, startBlock.ID, b.ID)
-	outParam, err := bvr.OutputParamDefinition(ctx, param.BlockVariables[0])
+	inputParam, err := bvr.InputVariableDefinition(ctx, param.BlockVariables[0])
 	require.NoError(t, err)
-	require.EqualValues(t, outputParams[0], outParam)
+	require.EqualValues(t, outputParams[0], inputParam)
 }
 
 func TestSubFlowBlockInputParams(t *testing.T) {

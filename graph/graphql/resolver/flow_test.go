@@ -6,6 +6,8 @@ package resolver_test
 
 import (
 	"context"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"strconv"
 	"testing"
 
@@ -57,8 +59,9 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
+						Type: enum.VariableDefinition,
 						BlockCid:              startBlock.Cid,
-						VariableDefinitionKey: "start_param",
+						VariableDefinitionKey: refString("start_param"),
 					},
 				},
 			},
@@ -375,10 +378,14 @@ func TestImportEmptyFlow(t *testing.T) {
 			Type: enum.VariableTypeInt,
 		},
 	}
-	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
-		Name: "SiteSurvey",
-	})
+	strPropType := pkgmodels.PropertyTypeInput{
+		Name: "str_prop",
+		Type: "string",
+	}
+	propTypeInputs := []*pkgmodels.PropertyTypeInput{&strPropType}
+	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "SiteSurvey", Properties: propTypeInputs})
 	require.NoError(t, err)
+	propertyTypeID := woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	trueRole := flowschema.ExitPointRoleTrue
 	connectorInputs := []*models.ConnectorInput{
@@ -435,8 +442,9 @@ func TestImportEmptyFlow(t *testing.T) {
 						Expression:            "${b_0}",
 						BlockVariables: []*models.BlockVariableInput{
 							{
+								Type: enum.VariableDefinition,
 								BlockCid:              "start",
-								VariableDefinitionKey: "param",
+								VariableDefinitionKey: refString("param"),
 							},
 						},
 					},
@@ -473,7 +481,7 @@ func TestImportEmptyFlow(t *testing.T) {
 					},
 					{
 						Type: enum.PropertyTypeDefinition,
-						PropertyTypeID: refInt(1),
+						PropertyTypeID: refInt(propertyTypeID),
 						Expression: "\"Property\"",
 					},
 				},
@@ -668,8 +676,9 @@ func TestBadImports(t *testing.T) {
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
+									Type: enum.VariableDefinition,
 									BlockCid:              "not_exist",
-									VariableDefinitionKey: "some_param",
+									VariableDefinitionKey: refString("some_param"),
 								},
 							},
 						},
@@ -699,8 +708,9 @@ func TestBadImports(t *testing.T) {
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
+									Type: enum.VariableDefinition,
 									BlockCid:              "trig",
-									VariableDefinitionKey: triggers.OutputVariableWorkOrder,
+									VariableDefinitionKey: refString(triggers.OutputVariableWorkOrder),
 								},
 							},
 						},
@@ -718,8 +728,9 @@ func TestBadImports(t *testing.T) {
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
+									Type: enum.VariableDefinition,
 									BlockCid:              "final",
-									VariableDefinitionKey: "param",
+									VariableDefinitionKey: refString("param"),
 								},
 							},
 						},

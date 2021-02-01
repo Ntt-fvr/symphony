@@ -3254,12 +3254,16 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  outputParamDefinition: VariableDefinition!
+  type:  VariableExpressionType!
+  inputVariableDefinition: VariableDefinition
+  inputPropertyTypeDefinition: PropertyType
 }
 
 input BlockVariableInput {
   blockCid: String!
-  variableDefinitionKey: String!
+  type: VariableExpressionType!
+  variableDefinitionKey: String
+  propertyTypeId: Int
 }
 
 """

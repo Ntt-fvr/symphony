@@ -7,8 +7,6 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -16,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -234,10 +233,20 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 			if err != nil {
 				return nil, err
 			}
-			blockVariables = append(blockVariables, &flowschema.BlockVariable{
-				BlockID:               varBlockID,
-				VariableDefinitionKey: blockVar.VariableDefinitionKey,
-			})
+
+			if blockVar.Type == enum.VariableDefinition {
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:                varBlockID,
+					Type:					blockVar.Type,
+					VariableDefinitionKey:  *blockVar.VariableDefinitionKey,
+				})
+			} else if blockVar.Type == enum.PropertyTypeDefinition {
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:                varBlockID,
+					Type:					blockVar.Type,
+					PropertyTypeID:			*blockVar.PropertyTypeID,
+				})
+			}
 		}
 		if variable.Type == enum.VariableDefinition {
 			vars = append(vars, &flowschema.VariableExpression{

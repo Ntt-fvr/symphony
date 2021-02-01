@@ -159,8 +159,10 @@ type ComplexityRoot struct {
 	}
 
 	BlockVariable struct {
-		Block                 func(childComplexity int) int
-		OutputParamDefinition func(childComplexity int) int
+		Block                       func(childComplexity int) int
+		InputPropertyTypeDefinition func(childComplexity int) int
+		InputVariableDefinition     func(childComplexity int) int
+		Type                        func(childComplexity int) int
 	}
 
 	Cud struct {
@@ -1413,7 +1415,9 @@ type BlockResolver interface {
 }
 type BlockVariableResolver interface {
 	Block(ctx context.Context, obj *flowschema.BlockVariable) (*ent.Block, error)
-	OutputParamDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error)
+
+	InputVariableDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error)
+	InputPropertyTypeDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*ent.PropertyType, error)
 }
 type EquipmentResolver interface {
 	Ports(ctx context.Context, obj *ent.Equipment, availableOnly *bool) ([]*ent.EquipmentPort, error)
@@ -1919,12 +1923,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.BlockVariable.Block(childComplexity), true
 
-	case "BlockVariable.outputParamDefinition":
-		if e.complexity.BlockVariable.OutputParamDefinition == nil {
+	case "BlockVariable.inputPropertyTypeDefinition":
+		if e.complexity.BlockVariable.InputPropertyTypeDefinition == nil {
 			break
 		}
 
-		return e.complexity.BlockVariable.OutputParamDefinition(childComplexity), true
+		return e.complexity.BlockVariable.InputPropertyTypeDefinition(childComplexity), true
+
+	case "BlockVariable.inputVariableDefinition":
+		if e.complexity.BlockVariable.InputVariableDefinition == nil {
+			break
+		}
+
+		return e.complexity.BlockVariable.InputVariableDefinition(childComplexity), true
+
+	case "BlockVariable.type":
+		if e.complexity.BlockVariable.Type == nil {
+			break
+		}
+
+		return e.complexity.BlockVariable.Type(childComplexity), true
 
 	case "CUD.create":
 		if e.complexity.Cud.Create == nil {
@@ -11609,12 +11627,16 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  outputParamDefinition: VariableDefinition!
+  type:  VariableExpressionType!
+  inputVariableDefinition: VariableDefinition
+  inputPropertyTypeDefinition: PropertyType
 }
 
 input BlockVariableInput {
   blockCid: String!
-  variableDefinitionKey: String!
+  type: VariableExpressionType!
+  variableDefinitionKey: String
+  propertyTypeId: Int
 }
 
 """
@@ -17751,7 +17773,42 @@ func (ec *executionContext) _BlockVariable_block(ctx context.Context, field grap
 	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _BlockVariable_outputParamDefinition(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockVariable) (ret graphql.Marshaler) {
+func (ec *executionContext) _BlockVariable_type(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockVariable) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockVariable",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(enum.VariableExpressionType)
+	fc.Result = res
+	return ec.marshalNVariableExpressionType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐVariableExpressionType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockVariable_inputVariableDefinition(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockVariable) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -17769,21 +17826,50 @@ func (ec *executionContext) _BlockVariable_outputParamDefinition(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.BlockVariable().OutputParamDefinition(rctx, obj)
+		return ec.resolvers.BlockVariable().InputVariableDefinition(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*flowschema.VariableDefinition)
 	fc.Result = res
-	return ec.marshalNVariableDefinition2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinition(ctx, field.Selections, res)
+	return ec.marshalOVariableDefinition2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinition(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockVariable_inputPropertyTypeDefinition(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockVariable) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockVariable",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.BlockVariable().InputPropertyTypeDefinition(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalOPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CUD_create(ctx context.Context, field graphql.CollectedField, obj *models2.Cud) (ret graphql.Marshaler) {
@@ -49243,11 +49329,27 @@ func (ec *executionContext) unmarshalInputBlockVariableInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNVariableExpressionType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐVariableExpressionType(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "variableDefinitionKey":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("variableDefinitionKey"))
-			it.VariableDefinitionKey, err = ec.unmarshalNString2string(ctx, v)
+			it.VariableDefinitionKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypeId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypeId"))
+			it.PropertyTypeID, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55152,7 +55254,12 @@ func (ec *executionContext) _BlockVariable(ctx context.Context, sel ast.Selectio
 				}
 				return res
 			})
-		case "outputParamDefinition":
+		case "type":
+			out.Values[i] = ec._BlockVariable_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "inputVariableDefinition":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -55160,10 +55267,18 @@ func (ec *executionContext) _BlockVariable(ctx context.Context, sel ast.Selectio
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._BlockVariable_outputParamDefinition(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
+				res = ec._BlockVariable_inputVariableDefinition(ctx, field, obj)
+				return res
+			})
+		case "inputPropertyTypeDefinition":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._BlockVariable_inputPropertyTypeDefinition(ctx, field, obj)
 				return res
 			})
 		default:
@@ -68521,10 +68636,6 @@ func (ec *executionContext) unmarshalNUsersGroupStatus2githubᚗcomᚋfacebookin
 
 func (ec *executionContext) marshalNUsersGroupStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋusersgroupᚐStatus(ctx context.Context, sel ast.SelectionSet, v usersgroup.Status) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNVariableDefinition2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinition(ctx context.Context, sel ast.SelectionSet, v flowschema.VariableDefinition) graphql.Marshaler {
-	return ec._VariableDefinition(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNVariableDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*flowschema.VariableDefinition) graphql.Marshaler {

@@ -267,16 +267,6 @@ func VerifyVariableExpressions(ctx context.Context, params []*flowschema.Variabl
 				workOrderParam = param
 			}
 		}
-		/*else if param.Type == enum.PropertyTypeDefinition {
-			_, ok := findProperty(ctx, param)
-			if !ok {
-				return fmt.Errorf("PropertyTypeID is not valid: %s", param.PropertyTypeID)
-			}
-			if _, ok := ids[param.PropertyTypeID]; ok {
-				return fmt.Errorf("duplicate propertyType for same id: %s", param.PropertyTypeID)
-			}
-			ids[param.PropertyTypeID] = struct{}{}
-		}*/
 	}
 	for _, param := range params {
 		if param.Type == enum.PropertyTypeDefinition {
@@ -287,9 +277,9 @@ func VerifyVariableExpressions(ctx context.Context, params []*flowschema.Variabl
 			if err != nil {
 				return fmt.Errorf("There is a misktake in the Work Order Type Id: %s", workOrderParam.Expression)
 			}
-			_, ok := findProperty(ctx, param, woTypeID)
+			_, ok := FindProperty(ctx, param.PropertyTypeID, woTypeID)
 			if !ok {
-				return fmt.Errorf("PropertyTypeID is not valid: %q", param.PropertyTypeID)
+				return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q ", param.PropertyTypeID, woTypeID)
 			}
 			if _, ok := ids[param.PropertyTypeID]; ok {
 				return fmt.Errorf("duplicate propertyType for same id: %q", param.PropertyTypeID)
@@ -374,13 +364,13 @@ func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*
 	return nil, false
 }
 
-func findProperty(ctx context.Context, obj *flowschema.VariableExpression, workOrderId int) (*ent.PropertyType, bool) {
+func FindProperty(ctx context.Context, propertyTypeID int, workOrderTypeId int) (*ent.PropertyType, bool) {
 	client := ent.FromContext(ctx)
-	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderId)
+	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeId)
 	if err != nil {
 		return nil, false
 	}
-	propertyType, err := workOrderType.QueryPropertyTypes().Where(propertytype.ID(obj.PropertyTypeID)).Only(ctx)
+	propertyType, err := workOrderType.QueryPropertyTypes().Where(propertytype.ID(propertyTypeID)).Only(ctx)
 	if err != nil {
 		return nil, false
 	}
