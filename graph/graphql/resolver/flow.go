@@ -295,6 +295,18 @@ func (r mutationResolver) collectWorkOrderTypeByBlock(input models.ImportFlowDra
 			}
 		}
 	}
+	for _, blk := range input.TriggerBlocks {
+		for _, param := range blk.Params {
+			if param.Type == enum.VariableDefinition && *param.VariableDefinitionKey == actions.InputVariableType {
+				woTypeID, err := strconv.Atoi(param.Expression)
+				if err != nil {
+					return nil, fmt.Errorf("There is a misktake in the Work Order Type Id: %s for block %s", param.Expression, blk.Cid)
+				}
+				woTypeIds[blk.Cid] = woTypeID
+				break
+			}
+		}
+	}
 	return woTypeIds, nil
 }
 
