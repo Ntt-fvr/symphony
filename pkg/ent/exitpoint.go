@@ -7,6 +7,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -30,6 +31,8 @@ type ExitPoint struct {
 	Role flowschema.ExitPointRole `json:"role,omitempty"`
 	// Cid holds the value of the "cid" field.
 	Cid *string `json:"cid,omitempty"`
+	// Condition holds the value of the "condition" field.
+	Condition *flowschema.VariableExpression `json:"condition,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ExitPointQuery when eager-loading is set.
 	Edges             ExitPointEdges `json:"edges"`
@@ -78,6 +81,7 @@ func (*ExitPoint) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // role
 		&sql.NullString{}, // cid
+		&[]byte{},         // condition
 	}
 }
 
@@ -121,7 +125,15 @@ func (ep *ExitPoint) assignValues(values ...interface{}) error {
 		ep.Cid = new(string)
 		*ep.Cid = value.String
 	}
-	values = values[4:]
+
+	if value, ok := values[4].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field condition", values[4])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &ep.Condition); err != nil {
+			return fmt.Errorf("unmarshal field condition: %v", err)
+		}
+	}
+	values = values[5:]
 	if len(values) == len(exitpoint.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_exit_points", value)
@@ -176,6 +188,8 @@ func (ep *ExitPoint) String() string {
 		builder.WriteString(", cid=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", condition=")
+	builder.WriteString(fmt.Sprintf("%v", ep.Condition))
 	builder.WriteByte(')')
 	return builder.String()
 }

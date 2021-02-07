@@ -446,6 +446,20 @@ func CidContainsFold(v string) predicate.ExitPoint {
 	})
 }
 
+// ConditionIsNil applies the IsNil predicate on the "condition" field.
+func ConditionIsNil() predicate.ExitPoint {
+	return predicate.ExitPoint(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCondition)))
+	})
+}
+
+// ConditionNotNil applies the NotNil predicate on the "condition" field.
+func ConditionNotNil() predicate.ExitPoint {
+	return predicate.ExitPoint(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCondition)))
+	})
+}
+
 // HasNextEntryPoints applies the HasEdge predicate on the "next_entry_points" edge.
 func HasNextEntryPoints() predicate.ExitPoint {
 	return predicate.ExitPoint(func(s *sql.Selector) {

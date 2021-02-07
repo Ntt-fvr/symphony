@@ -7,6 +7,7 @@ package resolver_test
 import (
 	"context"
 	"errors"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -319,17 +320,32 @@ func TestDecisionBlock(t *testing.T) {
 	})
 	require.NoError(t, err)
 
+	condition1 := models.VariableExpressionInput{
+		Type: enum.DecisionDefinition,
+		Expression:            "${b_0}",
+		BlockVariables: []*models.BlockVariableInput{
+			{
+				Type: enum.VariableDefinition,
+				BlockCid:              "start",
+				VariableDefinitionKey: refString("param"),
+			},
+		},
+	}
+
 	decisionBlock, err := mr.AddDecisionBlock(ctx, flowDraft.ID, models.DecisionBlockInput{
 		Cid: "decision",
 		Routes: []*models.DecisionRouteInput{
 			{
 				Cid: pointer.ToString("option1"),
+				Condition: &condition1,
 			},
 			{
 				Cid: pointer.ToString("option2"),
+				Condition: &condition1,
 			},
 			{
 				Cid: pointer.ToString("option3"),
+				Condition: &condition1,
 			},
 		},
 	})

@@ -85,6 +85,8 @@ func (ExitPoint) Fields() []ent.Field {
 		field.String("cid").
 			Optional().
 			Nillable(),
+		field.JSON("condition", &flowschema.VariableExpression{}).
+			Optional(),
 	}
 }
 

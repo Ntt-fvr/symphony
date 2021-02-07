@@ -264,6 +264,13 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 				Expression:            variable.Expression,
 				BlockVariables:        blockVariables,
 			})
+		} else if variable.Type == enum.DecisionDefinition {
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:               blockID,
+				Type:				   variable.Type,
+				Expression:            variable.Expression,
+				BlockVariables:        blockVariables,
+			})
 		}
 	}
 	return vars, nil
@@ -300,10 +307,20 @@ func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int,
 	client := r.ClientFrom(ctx)
 	for _, route := range input.Routes {
 		if route.Cid != nil {
+			var inputVariables []*models.VariableExpressionInput
+			inputVariables = append(inputVariables, route.Condition)
+			variableExpressions, err := getBlockVariables(ctx, inputVariables, b.ID)
+			if err != nil {
+				return nil, err
+			}
+			if len(variableExpressions) != 1 {
+				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
+			}
 			if _, err := client.ExitPoint.Create().
 				SetRole(flowschema.ExitPointRoleDecision).
 				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
+				SetCondition(variableExpressions[0]).
 				Save(ctx); err != nil {
 				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
 			}

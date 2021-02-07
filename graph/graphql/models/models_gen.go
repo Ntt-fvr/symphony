@@ -324,7 +324,8 @@ type DecisionRoute struct {
 }
 
 type DecisionRouteInput struct {
-	Cid *string `json:"cid"`
+	Cid       *string                  `json:"cid"`
+	Condition *VariableExpressionInput `json:"condition"`
 }
 
 type EditBlockInput struct {

@@ -430,6 +430,7 @@ type ComplexityRoot struct {
 
 	ExitPoint struct {
 		Cid             func(childComplexity int) int
+		Condition       func(childComplexity int) int
 		ID              func(childComplexity int) int
 		NextEntryPoints func(childComplexity int) int
 		ParentBlock     func(childComplexity int) int
@@ -3019,6 +3020,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExitPoint.Cid(childComplexity), true
+
+	case "ExitPoint.condition":
+		if e.complexity.ExitPoint.Condition == nil {
+			break
+		}
+
+		return e.complexity.ExitPoint.Condition(childComplexity), true
 
 	case "ExitPoint.id":
 		if e.complexity.ExitPoint.ID == nil {
@@ -11648,6 +11656,7 @@ enum VariableExpressionType
   ) {
   VariableDefinition
   PropertyTypeDefinition
+  DecisionDefinition
 }
 
 type VariableExpression
@@ -11707,6 +11716,7 @@ type ExitPoint implements Node {
   parentBlock: Block!
   cid: String
   nextEntryPoints: [EntryPoint!]!
+  condition: VariableExpression
 }
 
 type EntryPoint implements Node {
@@ -11791,6 +11801,7 @@ input EndBlockInput {
 
 input DecisionRouteInput {
   cid: String
+  condition: VariableExpressionInput!
 }
 
 input DecisionBlockInput {
@@ -23190,6 +23201,38 @@ func (ec *executionContext) _ExitPoint_nextEntryPoints(ctx context.Context, fiel
 	res := resTmp.([]*ent.EntryPoint)
 	fc.Result = res
 	return ec.marshalNEntryPoint2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEntryPointᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExitPoint_condition(ctx context.Context, field graphql.CollectedField, obj *ent.ExitPoint) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExitPoint",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Condition, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*flowschema.VariableExpression)
+	fc.Result = res
+	return ec.marshalOVariableExpression2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableExpression(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExportTask_id(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
@@ -49785,6 +49828,14 @@ func (ec *executionContext) unmarshalInputDecisionRouteInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "condition":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("condition"))
+			it.Condition, err = ec.unmarshalNVariableExpressionInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVariableExpressionInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -57155,6 +57206,8 @@ func (ec *executionContext) _ExitPoint(ctx context.Context, sel ast.SelectionSet
 				}
 				return res
 			})
+		case "condition":
+			out.Values[i] = ec._ExitPoint_condition(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -72071,6 +72124,13 @@ func (ec *executionContext) marshalOVariableDefinition2ᚖgithubᚗcomᚋfaceboo
 		return graphql.Null
 	}
 	return ec._VariableDefinition(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOVariableExpression2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableExpression(ctx context.Context, sel ast.SelectionSet, v *flowschema.VariableExpression) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._VariableExpression(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOVariableValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) (*flowschema.VariableValue, error) {

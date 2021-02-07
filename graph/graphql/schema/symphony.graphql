@@ -3275,6 +3275,7 @@ enum VariableExpressionType
   ) {
   VariableDefinition
   PropertyTypeDefinition
+  DecisionDefinition
 }
 
 type VariableExpression
@@ -3334,6 +3335,7 @@ type ExitPoint implements Node {
   parentBlock: Block!
   cid: String
   nextEntryPoints: [EntryPoint!]!
+  condition: VariableExpression
 }
 
 type EntryPoint implements Node {
@@ -3418,6 +3420,7 @@ input EndBlockInput {
 
 input DecisionRouteInput {
   cid: String
+  condition: VariableExpressionInput!
 }
 
 input DecisionBlockInput {

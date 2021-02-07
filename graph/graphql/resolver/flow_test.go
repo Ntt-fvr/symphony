@@ -423,6 +423,12 @@ func TestImportEmptyFlow(t *testing.T) {
 			TargetBlockCid: "shortcut",
 		},
 	}
+	condition1 := models.VariableExpressionInput{
+		Type: enum.DecisionDefinition,
+		VariableDefinitionKey: refString("param"),
+		Expression:            "${b_0}",
+
+	}
 	newDraft, err := mr.ImportFlowDraft(ctx, models.ImportFlowDraftInput{
 		ID:                  draft.ID,
 		Name:                newName,
@@ -457,9 +463,11 @@ func TestImportEmptyFlow(t *testing.T) {
 				Routes: []*models.DecisionRouteInput{
 					{
 						Cid: pointer.ToString("true"),
+						Condition: &condition1,
 					},
 					{
 						Cid: pointer.ToString("false"),
+						Condition: &condition1,
 					},
 				},
 			},

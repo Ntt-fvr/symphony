@@ -251,6 +251,13 @@ func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInpu
 		}
 
 	}
+	for _, blk := range input.DecisionBlocks {
+		for _, route := range blk.Routes {
+			for _, blockVariable := range route.Condition.BlockVariables {
+				blockVariableInputs = append(blockVariableInputs, blockVariable)
+			}
+		}
+	}
 	return blockVariableInputs
 }
 
