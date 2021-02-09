@@ -169,7 +169,7 @@ const Table = <T>(props: Props<T>) => {
     dataRowClassName,
     dataRowsSeparator,
     detailsCard,
-    resizableColumns = false,
+    resizableColumns = true,
     paginationSettings,
   } = props;
   const classes = useStyles();
