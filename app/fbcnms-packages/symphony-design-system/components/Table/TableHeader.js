@@ -208,6 +208,7 @@ const TableHeader = <T>({
         {shownColumns.map((col, index) => (
           <th
             key={col.key}
+            title={col.title}
             className={classNames(
               commonClasses.cell,
               classes.headerCell,
