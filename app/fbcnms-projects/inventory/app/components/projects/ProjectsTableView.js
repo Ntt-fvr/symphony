@@ -235,14 +235,17 @@ const ProjectsTableView = (props: Props) => {
               null
             );
           },
-          tooltip: row =>
-            getPropertyValue(
-              row.properties[
-                row.properties.findIndex(
-                  property => property.propertyType.name === name,
-                )
-              ],
-            ),
+          tooltip: row => {
+            const indexOfProperty = row.properties.findIndex(
+              property => property.propertyType.name === name,
+            );
+
+            return (
+              (indexOfProperty >= 0 &&
+                getPropertyValue(row.properties[indexOfProperty])) ||
+              null
+            );
+          },
           isSortable: true,
         })),
     ].map(column => {
