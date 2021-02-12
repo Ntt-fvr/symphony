@@ -427,7 +427,13 @@ func TestImportEmptyFlow(t *testing.T) {
 		Type: enum.DecisionDefinition,
 		VariableDefinitionKey: refString("param"),
 		Expression:            "${b_0}",
-
+		BlockVariables: []*models.BlockVariableInput{
+			{
+				Type: enum.PropertyTypeDefinition,
+				BlockCid:              "wo",
+				PropertyTypeID: 		refInt(propertyTypeID),
+			},
+		},
 	}
 	newDraft, err := mr.ImportFlowDraft(ctx, models.ImportFlowDraftInput{
 		ID:                  draft.ID,

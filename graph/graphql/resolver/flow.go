@@ -420,10 +420,19 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}
 			case *models.DecisionBlockInput:
-				if _, err := r.AddDecisionBlock(ctx, input.ID, *blkInput); err != nil {
-					return err
+				routes := blkInput.Routes
+				var paramsDecision []*models.VariableExpressionInput
+				for _, route := range routes {
+					paramsDecision = append(paramsDecision, route.Condition)
 				}
-				createdBlockCIDs[blkInput.Cid] = struct{}{}
+				if ok := r.paramsHaveDependencies(paramsDecision, createdBlockCIDs); ok {
+					if _, err := r.AddDecisionBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
 			case *models.TrueFalseBlockInput:
 				if _, err := r.AddTrueFalseBlock(ctx, input.ID, *blkInput); err != nil {
 					return err
@@ -475,6 +484,7 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 			return fmt.Errorf("there is circular dependency between blocks or dependency doesn't exist. num=%d", len(blockInputs))
 		}
 		blockInputs = newBlockInputs
+		newBlockInputs = nil
 	}
 	return nil
 }
