@@ -18,6 +18,7 @@ export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
+export type VariableExpressionType = "DecisionDefinition" | "PropertyTypeDefinition" | "VariableDefinition" | "%future added value";
 export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type ImportFlowDraftInput = {|
   id: string,
@@ -58,13 +59,17 @@ export type EndBlockInput = {|
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type VariableExpressionInput = {|
-  variableDefinitionKey: string,
+  type: VariableExpressionType,
+  variableDefinitionKey?: ?string,
+  propertyTypeId?: ?number,
   expression: string,
   blockVariables?: ?$ReadOnlyArray<BlockVariableInput>,
 |};
 export type BlockVariableInput = {|
   blockCid: string,
-  variableDefinitionKey: string,
+  type: VariableExpressionType,
+  variableDefinitionKey?: ?string,
+  propertyTypeId?: ?number,
 |};
 export type DecisionBlockInput = {|
   cid: string,
@@ -72,7 +77,8 @@ export type DecisionBlockInput = {|
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type DecisionRouteInput = {|
-  cid?: ?string
+  cid?: ?string,
+  condition: VariableExpressionInput,
 |};
 export type GotoBlockInput = {|
   cid: string,
