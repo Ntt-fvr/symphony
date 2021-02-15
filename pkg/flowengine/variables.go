@@ -8,8 +8,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"strconv"
+
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -271,11 +272,11 @@ func VerifyVariableExpressions(ctx context.Context, params []*flowschema.Variabl
 	for _, param := range params {
 		if param.Type == enum.PropertyTypeDefinition {
 			if workOrderParam == nil {
-				return fmt.Errorf("There are properties but there isn't a Work Order Type assigned to block: %q", param.BlockID)
+				return fmt.Errorf("there are properties but there isn't a Work Order Type assigned to block: %q", param.BlockID)
 			}
 			woTypeID, err := strconv.Atoi(workOrderParam.Expression)
 			if err != nil {
-				return fmt.Errorf("There is a misktake in the Work Order Type Id: %s", workOrderParam.Expression)
+				return fmt.Errorf("there is a misktake in the Work Order Type Id: %s", workOrderParam.Expression)
 			}
 			_, ok := FindProperty(ctx, param.PropertyTypeID, woTypeID)
 			if !ok {
@@ -364,9 +365,9 @@ func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*
 	return nil, false
 }
 
-func FindProperty(ctx context.Context, propertyTypeID int, workOrderTypeId int) (*ent.PropertyType, bool) {
+func FindProperty(ctx context.Context, propertyTypeID int, workOrderTypeID int) (*ent.PropertyType, bool) {
 	client := ent.FromContext(ctx)
-	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeId)
+	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeID)
 	if err != nil {
 		return nil, false
 	}

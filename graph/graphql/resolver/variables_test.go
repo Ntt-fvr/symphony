@@ -51,7 +51,7 @@ func TestEndBlockInputParams(t *testing.T) {
 		Cid: "bad_end",
 		Params: []*models.VariableExpressionInput{
 			{
-				Type: enum.VariableDefinition,
+				Type:                  enum.VariableDefinition,
 				VariableDefinitionKey: refString("param1"),
 				Expression:            "\"value\"",
 			},
@@ -107,12 +107,12 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 		Cid: "end",
 		Params: []*models.VariableExpressionInput{
 			{
-				Type: enum.VariableDefinition,
+				Type:                  enum.VariableDefinition,
 				VariableDefinitionKey: refString("param1"),
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
-						Type: enum.VariableDefinition,
+						Type:                  enum.VariableDefinition,
 						BlockCid:              startBlock.Cid,
 						VariableDefinitionKey: refString("start_param"),
 					},
@@ -186,7 +186,7 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		FlowID: flw.ID,
 		Params: []*models.VariableExpressionInput{
 			{
-				Type: enum.VariableDefinition,
+				Type:                  enum.VariableDefinition,
 				VariableDefinitionKey: refString("start_param"),
 				Expression:            "\"Value\"",
 			},

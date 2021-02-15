@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
@@ -101,5 +102,3 @@ func (r blockVariableResolver) InputPropertyTypeDefinition(ctx context.Context, 
 	}
 	return getPropertyType(ctx, obj.PropertyTypeID)
 }
-
-

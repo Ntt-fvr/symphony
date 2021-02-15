@@ -7,8 +7,9 @@ package resolver_test
 import (
 	"context"
 	"errors"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"testing"
+
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -321,11 +322,11 @@ func TestDecisionBlock(t *testing.T) {
 	require.NoError(t, err)
 
 	condition1 := models.VariableExpressionInput{
-		Type: enum.DecisionDefinition,
-		Expression:            "${b_0}",
+		Type:       enum.DecisionDefinition,
+		Expression: "${b_0}",
 		BlockVariables: []*models.BlockVariableInput{
 			{
-				Type: enum.VariableDefinition,
+				Type:                  enum.VariableDefinition,
 				BlockCid:              "start",
 				VariableDefinitionKey: refString("param"),
 			},
@@ -336,15 +337,15 @@ func TestDecisionBlock(t *testing.T) {
 		Cid: "decision",
 		Routes: []*models.DecisionRouteInput{
 			{
-				Cid: pointer.ToString("option1"),
+				Cid:       pointer.ToString("option1"),
 				Condition: &condition1,
 			},
 			{
-				Cid: pointer.ToString("option2"),
+				Cid:       pointer.ToString("option2"),
 				Condition: &condition1,
 			},
 			{
-				Cid: pointer.ToString("option3"),
+				Cid:       pointer.ToString("option3"),
 				Condition: &condition1,
 			},
 		},

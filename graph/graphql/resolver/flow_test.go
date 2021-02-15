@@ -6,10 +6,11 @@ package resolver_test
 
 import (
 	"context"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"strconv"
 	"testing"
+
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
@@ -54,12 +55,12 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 		Cid: "end",
 		Params: []*models.VariableExpressionInput{
 			{
-				Type: enum.VariableDefinition,
+				Type:                  enum.VariableDefinition,
 				VariableDefinitionKey: refString("param"),
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
-						Type: enum.VariableDefinition,
+						Type:                  enum.VariableDefinition,
 						BlockCid:              startBlock.Cid,
 						VariableDefinitionKey: refString("start_param"),
 					},
@@ -231,7 +232,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 		FlowID: subFlow.ID,
 		Params: []*models.VariableExpressionInput{
 			{
-				Type: enum.VariableDefinition,
+				Type:                  enum.VariableDefinition,
 				VariableDefinitionKey: refString("start_param"),
 				Expression:            "\"Start\"",
 			},
@@ -357,14 +358,13 @@ func TestStartFlow(t *testing.T) {
 }
 
 func refString(s string) *string { return &s }
-func refInt(s int) *int { return &s }
+func refInt(s int) *int          { return &s }
 
 func TestImportEmptyFlow(t *testing.T) {
 	r := newTestResolver(t, withActionFactory(actions.NewFactory()), withTriggerFactory(triggers.NewFactory()))
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, fdr := r.Mutation(), r.FlowDraft()
-
 
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "First version",
@@ -424,14 +424,14 @@ func TestImportEmptyFlow(t *testing.T) {
 		},
 	}
 	condition1 := models.VariableExpressionInput{
-		Type: enum.DecisionDefinition,
+		Type:                  enum.DecisionDefinition,
 		VariableDefinitionKey: refString("param"),
 		Expression:            "${b_0}",
 		BlockVariables: []*models.BlockVariableInput{
 			{
-				Type: enum.PropertyTypeDefinition,
-				BlockCid:              "wo",
-				PropertyTypeID: 		refInt(propertyTypeID),
+				Type:           enum.PropertyTypeDefinition,
+				BlockCid:       "wo",
+				PropertyTypeID: refInt(propertyTypeID),
 			},
 		},
 	}
@@ -449,12 +449,12 @@ func TestImportEmptyFlow(t *testing.T) {
 				Cid: "end",
 				Params: []*models.VariableExpressionInput{
 					{
-						Type: enum.VariableDefinition,
+						Type:                  enum.VariableDefinition,
 						VariableDefinitionKey: refString("param"),
 						Expression:            "${b_0}",
 						BlockVariables: []*models.BlockVariableInput{
 							{
-								Type: enum.VariableDefinition,
+								Type:                  enum.VariableDefinition,
 								BlockCid:              "start",
 								VariableDefinitionKey: refString("param"),
 							},
@@ -468,11 +468,11 @@ func TestImportEmptyFlow(t *testing.T) {
 				Cid: "decision1",
 				Routes: []*models.DecisionRouteInput{
 					{
-						Cid: pointer.ToString("true"),
+						Cid:       pointer.ToString("true"),
 						Condition: &condition1,
 					},
 					{
-						Cid: pointer.ToString("false"),
+						Cid:       pointer.ToString("false"),
 						Condition: &condition1,
 					},
 				},
@@ -484,19 +484,19 @@ func TestImportEmptyFlow(t *testing.T) {
 				ActionType: flowschema.ActionTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
-						Type: enum.VariableDefinition,
+						Type:                  enum.VariableDefinition,
 						VariableDefinitionKey: refString(actions.InputVariableType),
 						Expression:            strconv.Itoa(woType.ID),
 					},
 					{
-						Type: enum.VariableDefinition,
+						Type:                  enum.VariableDefinition,
 						VariableDefinitionKey: refString(actions.InputVariableOwner),
 						Expression:            strconv.Itoa(owner.ID),
 					},
 					{
-						Type: enum.PropertyTypeDefinition,
+						Type:           enum.PropertyTypeDefinition,
 						PropertyTypeID: refInt(propertyTypeID),
-						Expression: "\"Property\"",
+						Expression:     "\"Property\"",
 					},
 				},
 			},
@@ -507,7 +507,7 @@ func TestImportEmptyFlow(t *testing.T) {
 				TriggerType: flowschema.TriggerTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
-						Type: enum.VariableDefinition,
+						Type:                  enum.VariableDefinition,
 						VariableDefinitionKey: refString(triggers.InputVariableType),
 						Expression:            strconv.Quote(triggers.TypeWorkOrderInitiated),
 					},
@@ -685,12 +685,12 @@ func TestBadImports(t *testing.T) {
 					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
-							Type: enum.VariableDefinition,
+							Type:                  enum.VariableDefinition,
 							VariableDefinitionKey: refString("param"),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
-									Type: enum.VariableDefinition,
+									Type:                  enum.VariableDefinition,
 									BlockCid:              "not_exist",
 									VariableDefinitionKey: refString("some_param"),
 								},
@@ -717,12 +717,12 @@ func TestBadImports(t *testing.T) {
 					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
-							Type: enum.VariableDefinition,
+							Type:                  enum.VariableDefinition,
 							VariableDefinitionKey: refString("param"),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
-									Type: enum.VariableDefinition,
+									Type:                  enum.VariableDefinition,
 									BlockCid:              "trig",
 									VariableDefinitionKey: refString(triggers.OutputVariableWorkOrder),
 								},
@@ -737,12 +737,12 @@ func TestBadImports(t *testing.T) {
 					TriggerType: flowschema.TriggerTypeWorkOrder,
 					Params: []*models.VariableExpressionInput{
 						{
-							Type: enum.VariableDefinition,
+							Type:                  enum.VariableDefinition,
 							VariableDefinitionKey: refString(triggers.InputVariableType),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
-									Type: enum.VariableDefinition,
+									Type:                  enum.VariableDefinition,
 									BlockCid:              "final",
 									VariableDefinitionKey: refString("param"),
 								},

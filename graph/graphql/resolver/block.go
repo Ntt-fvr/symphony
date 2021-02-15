@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -236,40 +237,41 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 
 			if blockVar.Type == enum.VariableDefinition {
 				blockVariables = append(blockVariables, &flowschema.BlockVariable{
-					BlockID:                varBlockID,
-					Type:					blockVar.Type,
-					VariableDefinitionKey:  *blockVar.VariableDefinitionKey,
+					BlockID:               varBlockID,
+					Type:                  blockVar.Type,
+					VariableDefinitionKey: *blockVar.VariableDefinitionKey,
 				})
 			} else if blockVar.Type == enum.PropertyTypeDefinition {
 				blockVariables = append(blockVariables, &flowschema.BlockVariable{
-					BlockID:                varBlockID,
-					Type:					blockVar.Type,
-					PropertyTypeID:			*blockVar.PropertyTypeID,
+					BlockID:        varBlockID,
+					Type:           blockVar.Type,
+					PropertyTypeID: *blockVar.PropertyTypeID,
 				})
 			}
 		}
-		if variable.Type == enum.VariableDefinition {
+		switch variable.Type {
+		case enum.VariableDefinition:
 			vars = append(vars, &flowschema.VariableExpression{
 				BlockID:               blockID,
-				Type:				   variable.Type,
+				Type:                  variable.Type,
 				VariableDefinitionKey: *variable.VariableDefinitionKey,
 				Expression:            variable.Expression,
 				BlockVariables:        blockVariables,
 			})
-		} else if variable.Type == enum.PropertyTypeDefinition {
+		case enum.PropertyTypeDefinition:
 			vars = append(vars, &flowschema.VariableExpression{
-				BlockID:               blockID,
-				Type:				   variable.Type,
-				PropertyTypeID: 	   *variable.PropertyTypeID,
-				Expression:            variable.Expression,
-				BlockVariables:        blockVariables,
+				BlockID:        blockID,
+				Type:           variable.Type,
+				PropertyTypeID: *variable.PropertyTypeID,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
 			})
-		} else if variable.Type == enum.DecisionDefinition {
+		case enum.DecisionDefinition:
 			vars = append(vars, &flowschema.VariableExpression{
-				BlockID:               blockID,
-				Type:				   variable.Type,
-				Expression:            variable.Expression,
-				BlockVariables:        blockVariables,
+				BlockID:        blockID,
+				Type:           variable.Type,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
 			})
 		}
 	}

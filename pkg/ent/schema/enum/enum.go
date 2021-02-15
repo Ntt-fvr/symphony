@@ -527,7 +527,7 @@ type VariableExpressionType string
 const (
 	VariableDefinition     VariableExpressionType = "VariableDefinition"
 	PropertyTypeDefinition VariableExpressionType = "PropertyTypeDefinition"
-	DecisionDefinition	   VariableExpressionType = "DecisionDefinition"
+	DecisionDefinition     VariableExpressionType = "DecisionDefinition"
 )
 
 // String implements Getter interface.
