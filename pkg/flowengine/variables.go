@@ -8,6 +8,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -246,17 +249,43 @@ func verifyVariableExpression(ctx context.Context, definition *flowschema.Variab
 // VerifyVariableExpressions verifies if variable expressions of block are according to their definition
 func VerifyVariableExpressions(ctx context.Context, params []*flowschema.VariableExpression, definitions []*flowschema.VariableDefinition) error {
 	keys := make(map[string]struct{}, len(params))
+	ids := make(map[int]struct{}, len(params))
+	var workOrderParam *flowschema.VariableExpression
 	for _, param := range params {
-		definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
-		if !ok {
-			return fmt.Errorf("key is not valid: %s", param.VariableDefinitionKey)
+		if param.Type == enum.VariableDefinition {
+			definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
+			if !ok {
+				return fmt.Errorf("key is not valid: %s", param.VariableDefinitionKey)
+			}
+			if _, ok := keys[param.VariableDefinitionKey]; ok {
+				return fmt.Errorf("duplicate variable for same key: %s", param.VariableDefinitionKey)
+			}
+			keys[param.VariableDefinitionKey] = struct{}{}
+			if err := verifyVariableExpression(ctx, definition, param); err != nil {
+				return err
+			}
+			if param.VariableDefinitionKey == actions.InputVariableType {
+				workOrderParam = param
+			}
 		}
-		if _, ok := keys[param.VariableDefinitionKey]; ok {
-			return fmt.Errorf("duplicate variable for same key: %s", param.VariableDefinitionKey)
-		}
-		keys[param.VariableDefinitionKey] = struct{}{}
-		if err := verifyVariableExpression(ctx, definition, param); err != nil {
-			return err
+	}
+	for _, param := range params {
+		if param.Type == enum.PropertyTypeDefinition {
+			if workOrderParam == nil {
+				return fmt.Errorf("there are properties but there isn't a Work Order Type assigned to block: %q", param.BlockID)
+			}
+			woTypeID, err := strconv.Atoi(workOrderParam.Expression)
+			if err != nil {
+				return fmt.Errorf("there is a misktake in the Work Order Type Id: %s", workOrderParam.Expression)
+			}
+			_, ok := FindProperty(ctx, param.PropertyTypeID, woTypeID)
+			if !ok {
+				return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q ", param.PropertyTypeID, woTypeID)
+			}
+			if _, ok := ids[param.PropertyTypeID]; ok {
+				return fmt.Errorf("duplicate propertyType for same id: %q", param.PropertyTypeID)
+			}
+			ids[param.PropertyTypeID] = struct{}{}
 		}
 	}
 	return nil
@@ -334,6 +363,19 @@ func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*
 		}
 	}
 	return nil, false
+}
+
+func FindProperty(ctx context.Context, propertyTypeID int, workOrderTypeID int) (*ent.PropertyType, bool) {
+	client := ent.FromContext(ctx)
+	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeID)
+	if err != nil {
+		return nil, false
+	}
+	propertyType, err := workOrderType.QueryPropertyTypes().Where(propertytype.ID(propertyTypeID)).Only(ctx)
+	if err != nil {
+		return nil, false
+	}
+	return propertyType, true
 }
 
 // FindAllNestedVariables uses variable expressions to check nested definitions and returns the full list of available definitions

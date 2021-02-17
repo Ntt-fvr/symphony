@@ -60,6 +60,18 @@ func (epu *ExitPointUpdate) ClearCid() *ExitPointUpdate {
 	return epu
 }
 
+// SetCondition sets the condition field.
+func (epu *ExitPointUpdate) SetCondition(fe *flowschema.VariableExpression) *ExitPointUpdate {
+	epu.mutation.SetCondition(fe)
+	return epu
+}
+
+// ClearCondition clears the value of condition.
+func (epu *ExitPointUpdate) ClearCondition() *ExitPointUpdate {
+	epu.mutation.ClearCondition()
+	return epu
+}
+
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (epu *ExitPointUpdate) AddNextEntryPointIDs(ids ...int) *ExitPointUpdate {
 	epu.mutation.AddNextEntryPointIDs(ids...)
@@ -242,6 +254,19 @@ func (epu *ExitPointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exitpoint.FieldCid,
 		})
 	}
+	if value, ok := epu.mutation.Condition(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: exitpoint.FieldCondition,
+		})
+	}
+	if epu.mutation.ConditionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: exitpoint.FieldCondition,
+		})
+	}
 	if epu.mutation.NextEntryPointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -372,6 +397,18 @@ func (epuo *ExitPointUpdateOne) SetNillableCid(s *string) *ExitPointUpdateOne {
 // ClearCid clears the value of cid.
 func (epuo *ExitPointUpdateOne) ClearCid() *ExitPointUpdateOne {
 	epuo.mutation.ClearCid()
+	return epuo
+}
+
+// SetCondition sets the condition field.
+func (epuo *ExitPointUpdateOne) SetCondition(fe *flowschema.VariableExpression) *ExitPointUpdateOne {
+	epuo.mutation.SetCondition(fe)
+	return epuo
+}
+
+// ClearCondition clears the value of condition.
+func (epuo *ExitPointUpdateOne) ClearCondition() *ExitPointUpdateOne {
+	epuo.mutation.ClearCondition()
 	return epuo
 }
 
@@ -553,6 +590,19 @@ func (epuo *ExitPointUpdateOne) sqlSave(ctx context.Context) (_node *ExitPoint, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: exitpoint.FieldCid,
+		})
+	}
+	if value, ok := epuo.mutation.Condition(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: exitpoint.FieldCondition,
+		})
+	}
+	if epuo.mutation.ConditionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: exitpoint.FieldCondition,
 		})
 	}
 	if epuo.mutation.NextEntryPointsCleared() {
