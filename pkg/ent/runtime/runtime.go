@@ -63,6 +63,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -1598,6 +1599,29 @@ func init() {
 	workordertypeDescAssigneeCanCompleteWorkOrder := workordertypeMixinFields1[2].Descriptor()
 	// workordertype.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
 	workordertype.DefaultAssigneeCanCompleteWorkOrder = workordertypeDescAssigneeCanCompleteWorkOrder.Default.(bool)
+	workertypeMixin := schema.WorkerType{}.Mixin()
+	workertype.Policy = privacy.NewPolicies(schema.WorkerType{})
+	workertype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := workertype.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	workertypeMixinFields0 := workertypeMixin[0].Fields()
+	workertypeFields := schema.WorkerType{}.Fields()
+	_ = workertypeFields
+	// workertypeDescCreateTime is the schema descriptor for create_time field.
+	workertypeDescCreateTime := workertypeMixinFields0[0].Descriptor()
+	// workertype.DefaultCreateTime holds the default value on creation for the create_time field.
+	workertype.DefaultCreateTime = workertypeDescCreateTime.Default.(func() time.Time)
+	// workertypeDescUpdateTime is the schema descriptor for update_time field.
+	workertypeDescUpdateTime := workertypeMixinFields0[1].Descriptor()
+	// workertype.DefaultUpdateTime holds the default value on creation for the update_time field.
+	workertype.DefaultUpdateTime = workertypeDescUpdateTime.Default.(func() time.Time)
+	// workertype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	workertype.UpdateDefaultUpdateTime = workertypeDescUpdateTime.UpdateDefault.(func() time.Time)
 }
 
 const (

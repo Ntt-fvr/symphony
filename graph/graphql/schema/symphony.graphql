@@ -3570,6 +3570,57 @@ input TechnicianWorkOrderCheckOutInput {
   checkOutTime: Time
 }
 
+"""
+A connection to a list of worker types.
+"""
+type WorkerTypeConnection {
+  """
+  Total count of worker types in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of worker type edges.
+  """
+  edges: [WorkerTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An worker type edge in a connection.
+"""
+type WorkerTypeEdge {
+  """
+  The worker type at the end of the edge.
+  """
+  node: WorkerType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+type WorkerType implements Node {
+  id: ID!
+  name: String!
+  propertyTypes: [PropertyType]!
+}
+
+input AddWorkerTypeInput {
+  name: String!
+  properties: [PropertyTypeInput!]
+    @uniqueField(typ: "property type", field: "Name")
+}
+
+input EditWorkerTypeInput {
+  id: ID!
+  name: String!
+  properties: [PropertyTypeInput!]
+    @uniqueField(typ: "property type", field: "Name")
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -3883,6 +3934,12 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): FlowConnection!
+  workerTypes(
+      after: Cursor
+      first: Int @numberValue(min: 0)
+      before: Cursor
+      last: Int @numberValue(min: 0)
+    ): WorkerTypeConnection!
 }
 
 type Mutation {
@@ -4093,6 +4150,9 @@ type Mutation {
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
+  addWorkerType(input: AddWorkerTypeInput!): WorkerType!
+  editWorkerType(input: EditWorkerTypeInput!): WorkerType!
+  removeWorkerType(id: ID!): ID!
 }
 
 """

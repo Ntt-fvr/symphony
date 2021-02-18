@@ -226,6 +226,11 @@ type AddWorkOrderTypeInput struct {
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
+type AddWorkerTypeInput struct {
+	Name       string                      `json:"name"`
+	Properties []*models.PropertyTypeInput `json:"properties"`
+}
+
 type BlockVariableInput struct {
 	BlockCid              string `json:"blockCid"`
 	VariableDefinitionKey string `json:"variableDefinitionKey"`
@@ -459,6 +464,12 @@ type EditWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+}
+
+type EditWorkerTypeInput struct {
+	ID         int                         `json:"id"`
+	Name       string                      `json:"name"`
+	Properties []*models.PropertyTypeInput `json:"properties"`
 }
 
 type EndBlock struct {

@@ -73,6 +73,7 @@ func New() (complexity generated.ComplexityRoot) {
 		}
 		return SearchComplexity(childComplexity, limit)
 	}
+	complexity.Query.WorkerTypes = PaginationComplexity
 	return complexity
 }
 

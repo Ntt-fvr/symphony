@@ -1208,6 +1208,14 @@ func (pt *PropertyType) ProjectTemplate(ctx context.Context) (*ProjectTemplate, 
 	return result, MaskNotFound(err)
 }
 
+func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
+	result, err := pt.Edges.WorkerTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = pt.QueryWorkerType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (s *Service) Type(ctx context.Context) (*ServiceType, error) {
 	result, err := s.Edges.TypeOrErr()
 	if IsNotLoaded(err) {
@@ -1748,6 +1756,14 @@ func (wot *WorkOrderType) Definitions(ctx context.Context) ([]*WorkOrderDefiniti
 	result, err := wot.Edges.DefinitionsOrErr()
 	if IsNotLoaded(err) {
 		result, err = wot.QueryDefinitions().All(ctx)
+	}
+	return result, err
+}
+
+func (wt *WorkerType) PropertyTypes(ctx context.Context) ([]*PropertyType, error) {
+	result, err := wt.Edges.PropertyTypesOrErr()
+	if IsNotLoaded(err) {
+		result, err = wt.QueryPropertyTypes().All(ctx)
 	}
 	return result, err
 }

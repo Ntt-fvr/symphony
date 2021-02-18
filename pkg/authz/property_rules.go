@@ -36,6 +36,7 @@ func PropertyTypeWritePolicyRule() privacy.MutationRule {
 			WithWorkOrderTemplate().
 			WithProjectType().
 			WithProjectTemplate().
+			WithWorkerType().
 			Only(ctx)
 
 		if err != nil {
@@ -63,6 +64,8 @@ func PropertyTypeWritePolicyRule() privacy.MutationRule {
 		case propType.Edges.ProjectType != nil:
 			return allowOrSkip(p.WorkforcePolicy.Templates.Update)
 		case propType.Edges.ProjectTemplate != nil:
+			return privacy.Allow
+		case propType.Edges.WorkerType != nil:
 			return privacy.Allow
 		}
 		return privacy.Skip
@@ -104,6 +107,10 @@ func PropertyTypeCreatePolicyRule() privacy.MutationRule {
 		if _, exists := m.ProjectTemplateID(); exists {
 			return privacy.Allow
 		}
+		if _, exists := m.WorkerTypeID(); exists {
+			return privacy.Allow
+		}
+
 		return privacy.Skip
 	})
 }

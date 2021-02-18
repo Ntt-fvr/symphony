@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 )
@@ -80,6 +81,7 @@ type PropertyType struct {
 	service_type_property_types             *int
 	work_order_template_property_types      *int
 	work_order_type_property_types          *int
+	worker_type_property_types              *int
 }
 
 // PropertyTypeEdges holds the relations/edges for other nodes in the graph.
@@ -104,9 +106,11 @@ type PropertyTypeEdges struct {
 	ProjectType *ProjectType
 	// ProjectTemplate holds the value of the project_template edge.
 	ProjectTemplate *ProjectTemplate
+	// WorkerType holds the value of the worker_type edge.
+	WorkerType *WorkerType
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [11]bool
 }
 
 // PropertiesOrErr returns the Properties value or an error if the edge
@@ -244,6 +248,20 @@ func (e PropertyTypeEdges) ProjectTemplateOrErr() (*ProjectTemplate, error) {
 	return nil, &NotLoadedError{edge: "project_template"}
 }
 
+// WorkerTypeOrErr returns the WorkerType value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyTypeEdges) WorkerTypeOrErr() (*WorkerType, error) {
+	if e.loadedTypes[10] {
+		if e.WorkerType == nil {
+			// The edge worker_type was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: workertype.Label}
+		}
+		return e.WorkerType, nil
+	}
+	return nil, &NotLoadedError{edge: "worker_type"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*PropertyType) scanValues() []interface{} {
 	return []interface{}{
@@ -283,6 +301,7 @@ func (*PropertyType) fkValues() []interface{} {
 		&sql.NullInt64{}, // service_type_property_types
 		&sql.NullInt64{}, // work_order_template_property_types
 		&sql.NullInt64{}, // work_order_type_property_types
+		&sql.NullInt64{}, // worker_type_property_types
 	}
 }
 
@@ -462,6 +481,12 @@ func (pt *PropertyType) assignValues(values ...interface{}) error {
 			pt.work_order_type_property_types = new(int)
 			*pt.work_order_type_property_types = int(value.Int64)
 		}
+		if value, ok := values[9].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field worker_type_property_types", value)
+		} else if value.Valid {
+			pt.worker_type_property_types = new(int)
+			*pt.worker_type_property_types = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -514,6 +539,11 @@ func (pt *PropertyType) QueryProjectType() *ProjectTypeQuery {
 // QueryProjectTemplate queries the project_template edge of the PropertyType.
 func (pt *PropertyType) QueryProjectTemplate() *ProjectTemplateQuery {
 	return (&PropertyTypeClient{config: pt.config}).QueryProjectTemplate(pt)
+}
+
+// QueryWorkerType queries the worker_type edge of the PropertyType.
+func (pt *PropertyType) QueryWorkerType() *WorkerTypeQuery {
+	return (&PropertyTypeClient{config: pt.config}).QueryWorkerType(pt)
 }
 
 // Update returns a builder for updating this PropertyType.

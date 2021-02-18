@@ -84,6 +84,7 @@ type hooks struct {
 	WorkOrderDefinition         []ent.Hook
 	WorkOrderTemplate           []ent.Hook
 	WorkOrderType               []ent.Hook
+	WorkerType                  []ent.Hook
 }
 
 // Options applies the options on the config object.

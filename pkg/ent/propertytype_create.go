@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 )
@@ -481,6 +482,25 @@ func (ptc *PropertyTypeCreate) SetNillableProjectTemplateID(id *int) *PropertyTy
 // SetProjectTemplate sets the project_template edge to ProjectTemplate.
 func (ptc *PropertyTypeCreate) SetProjectTemplate(p *ProjectTemplate) *PropertyTypeCreate {
 	return ptc.SetProjectTemplateID(p.ID)
+}
+
+// SetWorkerTypeID sets the worker_type edge to WorkerType by id.
+func (ptc *PropertyTypeCreate) SetWorkerTypeID(id int) *PropertyTypeCreate {
+	ptc.mutation.SetWorkerTypeID(id)
+	return ptc
+}
+
+// SetNillableWorkerTypeID sets the worker_type edge to WorkerType by id if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillableWorkerTypeID(id *int) *PropertyTypeCreate {
+	if id != nil {
+		ptc = ptc.SetWorkerTypeID(*id)
+	}
+	return ptc
+}
+
+// SetWorkerType sets the worker_type edge to WorkerType.
+func (ptc *PropertyTypeCreate) SetWorkerType(w *WorkerType) *PropertyTypeCreate {
+	return ptc.SetWorkerTypeID(w.ID)
 }
 
 // Mutation returns the PropertyTypeMutation object of the builder.
@@ -961,6 +981,25 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptc.mutation.WorkerTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.WorkerTypeTable,
+			Columns: []string{propertytype.WorkerTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workertype.FieldID,
 				},
 			},
 		}
