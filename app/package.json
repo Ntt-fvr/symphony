@@ -65,7 +65,7 @@
     "sqlite3": "^4.0.9"
   },
   "resolutions": {
-    "@babel/runtime": "^7.3.4"
+    "@babel/runtime": "^7.4.4"
   },
   "scripts": {
     "eslint": "./node_modules/.bin/eslint --ignore-path .eslintignore",
