@@ -17,6 +17,7 @@ const (
 	ActionTypeWorkOrder       ActionTypeID = "work_order"
 	ActionTypeUpdateInventory ActionTypeID = "update_inventory"
 	ActionTypeUpdateWorkforce ActionTypeID = "update_workforce"
+	ActionTypeWorker       ActionTypeID = "worker"
 )
 
 // Values returns action type id possible values.

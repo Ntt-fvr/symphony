@@ -11692,6 +11692,7 @@ enum ActionTypeId
   work_order
   update_inventory
   update_workforce
+  worker
 }
 
 type TriggerType
