@@ -30,8 +30,8 @@ APP_NAME='platform'
 MAPBOX_TOKEN='[token here]'
 4. run: `yarn install:platform` to build the symphony version
 
-## Full documentation
-WIP
+## Development against local Symphony Docker instance
+https://github.com/Telecominfraproject/symphony/pull/1833
 
 See the [CONTRIBUTING](CONTRIBUTING.md) file for how to help out.
 
