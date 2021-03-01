@@ -8,6 +8,13 @@ import (
 	"context"
 	"fmt"
 
+	"strconv"
+
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -212,9 +219,188 @@ func (r mutationResolver) paramsHaveDependencies(params []*models.VariableExpres
 	return true
 }
 
+func (r mutationResolver) collectBlockVariables(input models.ImportFlowDraftInput) []*models.BlockVariableInput {
+	var blockVariableInputs []*models.BlockVariableInput
+	for _, blk := range input.EndBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.SubflowBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.TriggerBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.ActionBlocks {
+		for _, variableExpression := range blk.Params {
+			blockVariableInputs = append(blockVariableInputs, variableExpression.BlockVariables...)
+		}
+	}
+	for _, blk := range input.DecisionBlocks {
+		for _, route := range blk.Routes {
+			blockVariableInputs = append(blockVariableInputs, route.Condition.BlockVariables...)
+		}
+	}
+	return blockVariableInputs
+}
+
+func (r mutationResolver) collectBlockCids(input models.ImportFlowDraftInput) []string {
+	var blockCids []string
+	if input.StartBlock != nil {
+		blockCids = append(blockCids, input.StartBlock.Cid)
+	}
+	for _, blk := range input.EndBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.ActionBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.DecisionBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.GotoBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.SubflowBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.TriggerBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	for _, blk := range input.TrueFalseBlocks {
+		blockCids = append(blockCids, blk.Cid)
+	}
+	return blockCids
+}
+
+func (r mutationResolver) getVariableDefinitions(blockCid string, input models.ImportFlowDraftInput) ([]*flowschema.VariableDefinition, error) {
+	actionFactory := actions.NewFactory()
+	triggerFactory := triggers.NewFactory()
+	if input.StartBlock != nil {
+		if input.StartBlock.Cid == blockCid {
+			return input.StartBlock.ParamDefinitions, nil
+		}
+	}
+	for _, blk := range input.ActionBlocks {
+		if blk.Cid == blockCid {
+			actionType, err := actionFactory.GetType(blk.ActionType)
+			if err != nil {
+				return nil, err
+			}
+			return actionType.Variables(), nil
+		}
+	}
+	for _, blk := range input.TriggerBlocks {
+		if blk.Cid == blockCid {
+			triggerType, err := triggerFactory.GetType(blk.TriggerType)
+			if err != nil {
+				return nil, err
+			}
+			return triggerType.Variables(), nil
+		}
+	}
+	return nil, nil
+}
+
+func (r mutationResolver) collectWorkOrderTypeByBlock(input models.ImportFlowDraftInput) (map[string]int, map[string]flowschema.ActionTypeID, error) {
+	woTypeIds := make(map[string]int)
+	woActionTypeIds := make(map[string]flowschema.ActionTypeID)
+	for _, blk := range input.ActionBlocks {
+		for _, param := range blk.Params {
+			if param.Type == enum.VariableDefinition && (*param.VariableDefinitionKey == actions.InputVariableType ||
+				*param.VariableDefinitionKey == actions.InputVariableWorkerType) {
+				woTypeID, err := strconv.Atoi(param.Expression)
+				if err != nil {
+					return nil, nil, fmt.Errorf("there is a misktake in the Template Type Id: %s for block %s", param.Expression, blk.Cid)
+				}
+				woTypeIds[blk.Cid] = woTypeID
+				woActionTypeIds[blk.Cid] = blk.ActionType
+				break
+			}
+		}
+	}
+	for _, blk := range input.TriggerBlocks {
+		for _, param := range blk.Params {
+			if param.Type == enum.VariableDefinition && (*param.VariableDefinitionKey == actions.InputVariableType ||
+				*param.VariableDefinitionKey == actions.InputVariableWorkerType) {
+				woTypeID, err := strconv.Atoi(param.Expression)
+				if err != nil {
+					return nil, nil, fmt.Errorf("there is a misktake in the Template Type Id: %s for block %s", param.Expression, blk.Cid)
+				}
+				woTypeIds[blk.Cid] = woTypeID
+				woActionTypeIds[blk.Cid] = flowschema.ActionTypeWorkOrder
+				break
+			}
+		}
+	}
+	return woTypeIds, woActionTypeIds, nil
+}
+
+func (r mutationResolver) validateBlockVariables(ctx context.Context, input models.ImportFlowDraftInput) error {
+	blockVariableInputs := r.collectBlockVariables(input)
+	blockCids := r.collectBlockCids(input)
+	woTypeIds, woActionTypeIds, err := r.collectWorkOrderTypeByBlock(input)
+	if err != nil {
+		return err
+	}
+	for _, blockVariableInput := range blockVariableInputs {
+		// validate that BlockCId exists in input
+		var isBlockCid bool
+		for _, blockCid := range blockCids {
+			if blockVariableInput.BlockCid == blockCid {
+				isBlockCid = true
+				break
+			}
+		}
+		if !isBlockCid {
+			return fmt.Errorf("BlockCid %s doesn't exist", blockVariableInput.BlockCid)
+		}
+		// validate that the property exists associated with a BlockCI workorderType
+		if blockVariableInput.Type == enum.PropertyTypeDefinition {
+			woTypeID := woTypeIds[blockVariableInput.BlockCid]
+			actionTypeID := woActionTypeIds[blockVariableInput.BlockCid]
+			if actionTypeID == flowschema.ActionTypeWorkOrder {
+				_, ok := flowengine.FindPropertyWorkOrder(ctx, *blockVariableInput.PropertyTypeID, woTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q blockCId: %s", *blockVariableInput.PropertyTypeID, woTypeID, blockVariableInput.BlockCid)
+				}
+			} else if actionTypeID == flowschema.ActionTypeWorker {
+				_, ok := flowengine.FindPropertyWorker(ctx, *blockVariableInput.PropertyTypeID, woTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkerType: %q blockCId: %s", *blockVariableInput.PropertyTypeID, woTypeID, blockVariableInput.BlockCid)
+				}
+			}
+		} else if blockVariableInput.Type == enum.VariableDefinition {
+			variableDefinitions, err := r.getVariableDefinitions(blockVariableInput.BlockCid, input)
+			if err != nil {
+				return err
+			}
+			var isVariableDefinition bool
+			for _, variableDefinition := range variableDefinitions {
+				if variableDefinition.Key == *blockVariableInput.VariableDefinitionKey {
+					isVariableDefinition = true
+				}
+			}
+			if !isVariableDefinition {
+				return fmt.Errorf("variableDefinition %s doesn't exist for block %s", *blockVariableInput.VariableDefinitionKey, blockVariableInput.BlockCid)
+			}
+		}
+	}
+	return nil
+}
+
+// nolint: funlen
 func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportFlowDraftInput) error {
 	var newBlockInputs []interface{}
 	createdBlockCIDs := make(map[string]struct{})
+	if err := r.validateBlockVariables(ctx, input); err != nil {
+		return err
+	}
 	if input.StartBlock != nil {
 		if _, err := r.AddStartBlock(ctx, input.ID, *input.StartBlock); err != nil {
 			return err
@@ -235,10 +421,19 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}
 			case *models.DecisionBlockInput:
-				if _, err := r.AddDecisionBlock(ctx, input.ID, *blkInput); err != nil {
-					return err
+				routes := blkInput.Routes
+				var paramsDecision []*models.VariableExpressionInput
+				for _, route := range routes {
+					paramsDecision = append(paramsDecision, route.Condition)
 				}
-				createdBlockCIDs[blkInput.Cid] = struct{}{}
+				if ok := r.paramsHaveDependencies(paramsDecision, createdBlockCIDs); ok {
+					if _, err := r.AddDecisionBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
 			case *models.TrueFalseBlockInput:
 				if _, err := r.AddTrueFalseBlock(ctx, input.ID, *blkInput); err != nil {
 					return err
@@ -290,6 +485,7 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 			return fmt.Errorf("there is circular dependency between blocks or dependency doesn't exist. num=%d", len(blockInputs))
 		}
 		blockInputs = newBlockInputs
+		newBlockInputs = nil
 	}
 	return nil
 }
@@ -354,5 +550,6 @@ func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.Impo
 			return nil, fmt.Errorf("failed to add connector: %w", err)
 		}
 	}
+
 	return draft, nil
 }

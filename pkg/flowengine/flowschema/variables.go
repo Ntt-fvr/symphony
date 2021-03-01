@@ -35,13 +35,17 @@ func (v VariableDefinition) Name() string {
 // BlockVariable is used to define variable inside expression that references previous block in the flow
 type BlockVariable struct {
 	BlockID               int
+	Type                  enum.VariableExpressionType
 	VariableDefinitionKey string
+	PropertyTypeID        int
 }
 
 // VariableExpression is a an expression inside block that correlates to variable definition
 type VariableExpression struct {
 	BlockID               int
+	Type                  enum.VariableExpressionType
 	VariableDefinitionKey string
+	PropertyTypeID        int
 	Expression            string
 	BlockVariables        []*BlockVariable
 }

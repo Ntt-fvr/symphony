@@ -15189,6 +15189,7 @@ type ExitPointMutation struct {
 	update_time              *time.Time
 	role                     *flowschema.ExitPointRole
 	cid                      *string
+	condition                **flowschema.VariableExpression
 	clearedFields            map[string]struct{}
 	next_entry_points        map[int]struct{}
 	removednext_entry_points map[int]struct{}
@@ -15440,6 +15441,56 @@ func (m *ExitPointMutation) ResetCid() {
 	delete(m.clearedFields, exitpoint.FieldCid)
 }
 
+// SetCondition sets the condition field.
+func (m *ExitPointMutation) SetCondition(fe *flowschema.VariableExpression) {
+	m.condition = &fe
+}
+
+// Condition returns the condition value in the mutation.
+func (m *ExitPointMutation) Condition() (r *flowschema.VariableExpression, exists bool) {
+	v := m.condition
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCondition returns the old condition value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldCondition(ctx context.Context) (v *flowschema.VariableExpression, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCondition is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCondition requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCondition: %w", err)
+	}
+	return oldValue.Condition, nil
+}
+
+// ClearCondition clears the value of condition.
+func (m *ExitPointMutation) ClearCondition() {
+	m.condition = nil
+	m.clearedFields[exitpoint.FieldCondition] = struct{}{}
+}
+
+// ConditionCleared returns if the field condition was cleared in this mutation.
+func (m *ExitPointMutation) ConditionCleared() bool {
+	_, ok := m.clearedFields[exitpoint.FieldCondition]
+	return ok
+}
+
+// ResetCondition reset all changes of the "condition" field.
+func (m *ExitPointMutation) ResetCondition() {
+	m.condition = nil
+	delete(m.clearedFields, exitpoint.FieldCondition)
+}
+
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (m *ExitPointMutation) AddNextEntryPointIDs(ids ...int) {
 	if m.next_entry_points == nil {
@@ -15546,7 +15597,7 @@ func (m *ExitPointMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ExitPointMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, exitpoint.FieldCreateTime)
 	}
@@ -15558,6 +15609,9 @@ func (m *ExitPointMutation) Fields() []string {
 	}
 	if m.cid != nil {
 		fields = append(fields, exitpoint.FieldCid)
+	}
+	if m.condition != nil {
+		fields = append(fields, exitpoint.FieldCondition)
 	}
 	return fields
 }
@@ -15575,6 +15629,8 @@ func (m *ExitPointMutation) Field(name string) (ent.Value, bool) {
 		return m.Role()
 	case exitpoint.FieldCid:
 		return m.Cid()
+	case exitpoint.FieldCondition:
+		return m.Condition()
 	}
 	return nil, false
 }
@@ -15592,6 +15648,8 @@ func (m *ExitPointMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldRole(ctx)
 	case exitpoint.FieldCid:
 		return m.OldCid(ctx)
+	case exitpoint.FieldCondition:
+		return m.OldCondition(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -15629,6 +15687,13 @@ func (m *ExitPointMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCid(v)
 		return nil
+	case exitpoint.FieldCondition:
+		v, ok := value.(*flowschema.VariableExpression)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCondition(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -15662,6 +15727,9 @@ func (m *ExitPointMutation) ClearedFields() []string {
 	if m.FieldCleared(exitpoint.FieldCid) {
 		fields = append(fields, exitpoint.FieldCid)
 	}
+	if m.FieldCleared(exitpoint.FieldCondition) {
+		fields = append(fields, exitpoint.FieldCondition)
+	}
 	return fields
 }
 
@@ -15678,6 +15746,9 @@ func (m *ExitPointMutation) ClearField(name string) error {
 	switch name {
 	case exitpoint.FieldCid:
 		m.ClearCid()
+		return nil
+	case exitpoint.FieldCondition:
+		m.ClearCondition()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint nullable field %s", name)
@@ -15699,6 +15770,9 @@ func (m *ExitPointMutation) ResetField(name string) error {
 		return nil
 	case exitpoint.FieldCid:
 		m.ResetCid()
+		return nil
+	case exitpoint.FieldCondition:
+		m.ResetCondition()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)

@@ -3255,25 +3255,45 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  outputParamDefinition: VariableDefinition!
+  type:  VariableExpressionType!
+  inputVariableDefinition: VariableDefinition
+  inputPropertyTypeDefinition: PropertyType
 }
 
 input BlockVariableInput {
   blockCid: String!
-  variableDefinitionKey: String!
+  type: VariableExpressionType!
+  variableDefinitionKey: String
+  propertyTypeId: Int
+}
+
+"""
+what type variableExpression should we apply
+"""
+enum VariableExpressionType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableExpressionType"
+  ) {
+  VariableDefinition
+  PropertyTypeDefinition
+  DecisionDefinition
 }
 
 type VariableExpression
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
   ) {
-  definition: VariableDefinition!
+  type:  VariableExpressionType!
+  variableDefinition: VariableDefinition
+  propertyTypeDefinition: PropertyType
   expression: String!
   blockVariables: [BlockVariable!]
 }
 
 input VariableExpressionInput {
-  variableDefinitionKey: String!
+  type: VariableExpressionType!
+  variableDefinitionKey: String
+  propertyTypeId: Int
   expression: String!
   blockVariables: [BlockVariableInput!]
 }
@@ -3316,6 +3336,7 @@ type ExitPoint implements Node {
   parentBlock: Block!
   cid: String
   nextEntryPoints: [EntryPoint!]!
+  condition: VariableExpression
 }
 
 type EntryPoint implements Node {
@@ -3400,6 +3421,7 @@ input EndBlockInput {
 
 input DecisionRouteInput {
   cid: String
+  condition: VariableExpressionInput!
 }
 
 input DecisionBlockInput {

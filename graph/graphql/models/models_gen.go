@@ -232,8 +232,10 @@ type AddWorkerTypeInput struct {
 }
 
 type BlockVariableInput struct {
-	BlockCid              string `json:"blockCid"`
-	VariableDefinitionKey string `json:"variableDefinitionKey"`
+	BlockCid              string                      `json:"blockCid"`
+	Type                  enum.VariableExpressionType `json:"type"`
+	VariableDefinitionKey *string                     `json:"variableDefinitionKey"`
+	PropertyTypeID        *int                        `json:"propertyTypeId"`
 }
 
 type CheckListCategoryDefinitionInput struct {
@@ -327,7 +329,8 @@ type DecisionRoute struct {
 }
 
 type DecisionRouteInput struct {
-	Cid *string `json:"cid"`
+	Cid       *string                  `json:"cid"`
+	Condition *VariableExpressionInput `json:"condition"`
 }
 
 type EditBlockInput struct {
@@ -959,9 +962,11 @@ type UsersGroupSearchResult struct {
 }
 
 type VariableExpressionInput struct {
-	VariableDefinitionKey string                `json:"variableDefinitionKey"`
-	Expression            string                `json:"expression"`
-	BlockVariables        []*BlockVariableInput `json:"blockVariables"`
+	Type                  enum.VariableExpressionType `json:"type"`
+	VariableDefinitionKey *string                     `json:"variableDefinitionKey"`
+	PropertyTypeID        *int                        `json:"propertyTypeId"`
+	Expression            string                      `json:"expression"`
+	BlockVariables        []*BlockVariableInput       `json:"blockVariables"`
 }
 
 type WorkOrderDefinitionInput struct {

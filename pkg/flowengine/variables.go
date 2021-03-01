@@ -8,6 +8,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -32,6 +35,8 @@ func parseIntVariable(ctx context.Context, value int, variableType enum.Variable
 		return client.Project.Get(ctx, value)
 	case enum.VariableTypeUser:
 		return client.User.Get(ctx, value)
+	case enum.VariableTypeWorkerType:
+		return client.WorkerType.Get(ctx, value)
 	default:
 		return nil, fmt.Errorf("type not found: %v", variableType)
 	}
@@ -56,7 +61,8 @@ func parseSingleVariable(ctx context.Context, value string, variableType enum.Va
 		enum.VariableTypeWorkOrderType,
 		enum.VariableTypeLocation,
 		enum.VariableTypeProject,
-		enum.VariableTypeUser:
+		enum.VariableTypeUser,
+		enum.VariableTypeWorkerType:
 		if err = json.Unmarshal(byteVal, &intVal); err != nil {
 			return
 		}
@@ -246,17 +252,59 @@ func verifyVariableExpression(ctx context.Context, definition *flowschema.Variab
 // VerifyVariableExpressions verifies if variable expressions of block are according to their definition
 func VerifyVariableExpressions(ctx context.Context, params []*flowschema.VariableExpression, definitions []*flowschema.VariableDefinition) error {
 	keys := make(map[string]struct{}, len(params))
+	ids := make(map[int]struct{}, len(params))
+	var templateParam *flowschema.VariableExpression
+	var templateType flowschema.ActionTypeID
 	for _, param := range params {
-		definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
-		if !ok {
-			return fmt.Errorf("key is not valid: %s", param.VariableDefinitionKey)
+		if param.Type == enum.VariableDefinition {
+			definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
+			if !ok {
+				return fmt.Errorf("key is not valid: %s", param.VariableDefinitionKey)
+			}
+			if _, ok := keys[param.VariableDefinitionKey]; ok {
+				return fmt.Errorf("duplicate variable for same key: %s", param.VariableDefinitionKey)
+			}
+			keys[param.VariableDefinitionKey] = struct{}{}
+			if err := verifyVariableExpression(ctx, definition, param); err != nil {
+				return err
+			}
+			if param.VariableDefinitionKey == actions.InputVariableType {
+				templateParam = param
+				templateType = flowschema.ActionTypeWorkOrder
+			} else if param.VariableDefinitionKey == actions.InputVariableWorkerType {
+				templateParam = param
+				templateType = flowschema.ActionTypeWorker
+			}
 		}
-		if _, ok := keys[param.VariableDefinitionKey]; ok {
-			return fmt.Errorf("duplicate variable for same key: %s", param.VariableDefinitionKey)
-		}
-		keys[param.VariableDefinitionKey] = struct{}{}
-		if err := verifyVariableExpression(ctx, definition, param); err != nil {
-			return err
+	}
+	for _, param := range params {
+		if param.Type == enum.PropertyTypeDefinition {
+			if templateParam == nil {
+				return fmt.Errorf("there are properties but there isn't a Template assigned to block: %q", param.BlockID)
+			}
+			if templateType == flowschema.ActionTypeWorkOrder {
+				woTypeID, err := strconv.Atoi(templateParam.Expression)
+				if err != nil {
+					return fmt.Errorf("there is a misktake in the Work Order Type Id: %s", templateParam.Expression)
+				}
+				_, ok := FindPropertyWorkOrder(ctx, param.PropertyTypeID, woTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q ", param.PropertyTypeID, woTypeID)
+				}
+			} else if templateType == flowschema.ActionTypeWorker {
+				wkTypeID, err := strconv.Atoi(templateParam.Expression)
+				if err != nil {
+					return fmt.Errorf("there is a misktake in the Worker Type Id: %s", templateParam.Expression)
+				}
+				_, ok := FindPropertyWorker(ctx, param.PropertyTypeID, wkTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkerType: %q ", param.PropertyTypeID, wkTypeID)
+				}
+			}
+			if _, ok := ids[param.PropertyTypeID]; ok {
+				return fmt.Errorf("duplicate propertyType for same id: %q", param.PropertyTypeID)
+			}
+			ids[param.PropertyTypeID] = struct{}{}
 		}
 	}
 	return nil
@@ -334,6 +382,32 @@ func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*
 		}
 	}
 	return nil, false
+}
+
+func FindPropertyWorkOrder(ctx context.Context, propertyTypeID int, workOrderTypeID int) (*ent.PropertyType, bool) {
+	client := ent.FromContext(ctx)
+	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeID)
+	if err != nil {
+		return nil, false
+	}
+	propertyType, err := workOrderType.QueryPropertyTypes().Where(propertytype.ID(propertyTypeID)).Only(ctx)
+	if err != nil {
+		return nil, false
+	}
+	return propertyType, true
+}
+
+func FindPropertyWorker(ctx context.Context, propertyTypeID int, workerTypeID int) (*ent.PropertyType, bool) {
+	client := ent.FromContext(ctx)
+	workerType, err := client.WorkerType.Get(ctx, workerTypeID)
+	if err != nil {
+		return nil, false
+	}
+	propertyType, err := workerType.QueryPropertyTypes().Where(propertytype.ID(propertyTypeID)).Only(ctx)
+	if err != nil {
+		return nil, false
+	}
+	return propertyType, true
 }
 
 // FindAllNestedVariables uses variable expressions to check nested definitions and returns the full list of available definitions

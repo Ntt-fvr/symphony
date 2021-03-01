@@ -75,6 +75,12 @@ func (epc *ExitPointCreate) SetNillableCid(s *string) *ExitPointCreate {
 	return epc
 }
 
+// SetCondition sets the condition field.
+func (epc *ExitPointCreate) SetCondition(fe *flowschema.VariableExpression) *ExitPointCreate {
+	epc.mutation.SetCondition(fe)
+	return epc
+}
+
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (epc *ExitPointCreate) AddNextEntryPointIDs(ids ...int) *ExitPointCreate {
 	epc.mutation.AddNextEntryPointIDs(ids...)
@@ -240,6 +246,14 @@ func (epc *ExitPointCreate) createSpec() (*ExitPoint, *sqlgraph.CreateSpec) {
 			Column: exitpoint.FieldCid,
 		})
 		_node.Cid = &value
+	}
+	if value, ok := epc.mutation.Condition(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: exitpoint.FieldCondition,
+		})
+		_node.Condition = value
 	}
 	if nodes := epc.mutation.NextEntryPointsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

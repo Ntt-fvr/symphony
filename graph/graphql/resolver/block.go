@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -233,17 +234,46 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 			if err != nil {
 				return nil, err
 			}
-			blockVariables = append(blockVariables, &flowschema.BlockVariable{
-				BlockID:               varBlockID,
-				VariableDefinitionKey: blockVar.VariableDefinitionKey,
+
+			if blockVar.Type == enum.VariableDefinition {
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:               varBlockID,
+					Type:                  blockVar.Type,
+					VariableDefinitionKey: *blockVar.VariableDefinitionKey,
+				})
+			} else if blockVar.Type == enum.PropertyTypeDefinition {
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:        varBlockID,
+					Type:           blockVar.Type,
+					PropertyTypeID: *blockVar.PropertyTypeID,
+				})
+			}
+		}
+		switch variable.Type {
+		case enum.VariableDefinition:
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:               blockID,
+				Type:                  variable.Type,
+				VariableDefinitionKey: *variable.VariableDefinitionKey,
+				Expression:            variable.Expression,
+				BlockVariables:        blockVariables,
+			})
+		case enum.PropertyTypeDefinition:
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:        blockID,
+				Type:           variable.Type,
+				PropertyTypeID: *variable.PropertyTypeID,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
+			})
+		case enum.DecisionDefinition:
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:        blockID,
+				Type:           variable.Type,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
 			})
 		}
-		vars = append(vars, &flowschema.VariableExpression{
-			BlockID:               blockID,
-			VariableDefinitionKey: variable.VariableDefinitionKey,
-			Expression:            variable.Expression,
-			BlockVariables:        blockVariables,
-		})
 	}
 	return vars, nil
 }
@@ -279,10 +309,20 @@ func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int,
 	client := r.ClientFrom(ctx)
 	for _, route := range input.Routes {
 		if route.Cid != nil {
+			var inputVariables []*models.VariableExpressionInput
+			inputVariables = append(inputVariables, route.Condition)
+			variableExpressions, err := getBlockVariables(ctx, inputVariables, b.ID)
+			if err != nil {
+				return nil, err
+			}
+			if len(variableExpressions) != 1 {
+				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
+			}
 			if _, err := client.ExitPoint.Create().
 				SetRole(flowschema.ExitPointRoleDecision).
 				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
+				SetCondition(variableExpressions[0]).
 				Save(ctx); err != nil {
 				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
 			}
