@@ -235,17 +235,24 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 				return nil, err
 			}
 
-			if blockVar.Type == enum.VariableDefinition {
+			switch blockVar.Type {
+			case enum.VariableDefinition:
 				blockVariables = append(blockVariables, &flowschema.BlockVariable{
 					BlockID:               varBlockID,
 					Type:                  blockVar.Type,
 					VariableDefinitionKey: *blockVar.VariableDefinitionKey,
 				})
-			} else if blockVar.Type == enum.PropertyTypeDefinition {
+			case enum.PropertyTypeDefinition:
 				blockVariables = append(blockVariables, &flowschema.BlockVariable{
 					BlockID:        varBlockID,
 					Type:           blockVar.Type,
 					PropertyTypeID: *blockVar.PropertyTypeID,
+				})
+			case enum.ChekListItemDefinition:
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:                   varBlockID,
+					Type:                      blockVar.Type,
+					CheckListItemDefinitionID: *blockVar.CheckListItemDefinitionID,
 				})
 			}
 		}

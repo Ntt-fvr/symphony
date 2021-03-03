@@ -529,6 +529,7 @@ const (
 	VariableDefinition     VariableExpressionType = "VariableDefinition"
 	PropertyTypeDefinition VariableExpressionType = "PropertyTypeDefinition"
 	DecisionDefinition     VariableExpressionType = "DecisionDefinition"
+	ChekListItemDefinition VariableExpressionType = "ChekListItemDefinition"
 )
 
 // String implements Getter interface.

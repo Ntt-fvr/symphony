@@ -361,7 +361,8 @@ func (r mutationResolver) validateBlockVariables(ctx context.Context, input mode
 			return fmt.Errorf("BlockCid %s doesn't exist", blockVariableInput.BlockCid)
 		}
 		// validate that the property exists associated with a BlockCI workorderType
-		if blockVariableInput.Type == enum.PropertyTypeDefinition {
+		switch blockVariableInput.Type {
+		case enum.PropertyTypeDefinition:
 			woTypeID := woTypeIds[blockVariableInput.BlockCid]
 			actionTypeID := woActionTypeIds[blockVariableInput.BlockCid]
 			if actionTypeID == flowschema.ActionTypeWorkOrder {
@@ -375,7 +376,7 @@ func (r mutationResolver) validateBlockVariables(ctx context.Context, input mode
 					return fmt.Errorf("PropertyTypeID %q is not valid for WorkerType: %q blockCId: %s", *blockVariableInput.PropertyTypeID, woTypeID, blockVariableInput.BlockCid)
 				}
 			}
-		} else if blockVariableInput.Type == enum.VariableDefinition {
+		case enum.VariableDefinition:
 			variableDefinitions, err := r.getVariableDefinitions(blockVariableInput.BlockCid, input)
 			if err != nil {
 				return err
@@ -388,6 +389,12 @@ func (r mutationResolver) validateBlockVariables(ctx context.Context, input mode
 			}
 			if !isVariableDefinition {
 				return fmt.Errorf("variableDefinition %s doesn't exist for block %s", *blockVariableInput.VariableDefinitionKey, blockVariableInput.BlockCid)
+			}
+		case enum.ChekListItemDefinition:
+			woTypeID := woTypeIds[blockVariableInput.BlockCid]
+			_, ok := flowengine.FindCheckListItemWorkOrder(ctx, *blockVariableInput.CheckListItemDefinitionID, woTypeID)
+			if !ok {
+				return fmt.Errorf("CheckListItemID %q is not valid for WorkOrderType: %q blockCId: %s", *blockVariableInput.CheckListItemDefinitionID, woTypeID, blockVariableInput.BlockCid)
 			}
 		}
 	}

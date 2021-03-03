@@ -11775,6 +11775,7 @@ input BlockVariableInput {
   type: VariableExpressionType!
   variableDefinitionKey: String
   propertyTypeId: Int
+  checkListItemDefinitionId: Int
 }
 
 """
@@ -11787,6 +11788,7 @@ enum VariableExpressionType
   VariableDefinition
   PropertyTypeDefinition
   DecisionDefinition
+  ChekListItemDefinition
 }
 
 type VariableExpression
@@ -50207,6 +50209,14 @@ func (ec *executionContext) unmarshalInputBlockVariableInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypeId"))
 			it.PropertyTypeID, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "checkListItemDefinitionId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkListItemDefinitionId"))
+			it.CheckListItemDefinitionID, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
