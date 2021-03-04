@@ -3258,6 +3258,7 @@ type BlockVariable
   type:  VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
+  checkListItemDefinition: CheckListItemDefinition
 }
 
 input BlockVariableInput {
