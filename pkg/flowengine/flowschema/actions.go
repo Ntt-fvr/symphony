@@ -17,6 +17,7 @@ const (
 	ActionTypeWorkOrder       ActionTypeID = "work_order"
 	ActionTypeUpdateInventory ActionTypeID = "update_inventory"
 	ActionTypeUpdateWorkforce ActionTypeID = "update_workforce"
+	ActionTypeWorker          ActionTypeID = "worker"
 )
 
 // Values returns action type id possible values.
@@ -25,6 +26,7 @@ func (ActionTypeID) Values() []string {
 		ActionTypeWorkOrder.String(),
 		ActionTypeUpdateInventory.String(),
 		ActionTypeUpdateWorkforce.String(),
+		ActionTypeWorker.String(),
 	}
 }
 

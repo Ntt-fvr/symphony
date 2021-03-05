@@ -399,6 +399,7 @@ const (
 	VariableTypeLocation      VariableType = "LOCATION"
 	VariableTypeProject       VariableType = "PROJECT"
 	VariableTypeUser          VariableType = "USER"
+	VariableTypeWorkerType    VariableType = "WORKER_TYPE"
 )
 
 // Values returns variable type possible values.

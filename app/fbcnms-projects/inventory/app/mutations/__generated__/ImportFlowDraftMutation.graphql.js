@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "%future added value";
+export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";

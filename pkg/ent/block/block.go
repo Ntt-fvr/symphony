@@ -210,7 +210,7 @@ func TypeValidator(_type Type) error {
 // ActionTypeValidator is a validator for the "action_type" field enum values. It is called by the builders before save.
 func ActionTypeValidator(at flowschema.ActionTypeID) error {
 	switch at {
-	case "work_order", "update_inventory", "update_workforce":
+	case "work_order", "update_inventory", "update_workforce", "worker":
 		return nil
 	default:
 		return fmt.Errorf("block: invalid enum value for action_type field: %q", at)

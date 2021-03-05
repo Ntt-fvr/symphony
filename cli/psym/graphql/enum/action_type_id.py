@@ -8,6 +8,7 @@ class ActionTypeId(Enum):
     work_order = "work_order"
     update_inventory = "update_inventory"
     update_workforce = "update_workforce"
+    worker = "worker"
     MISSING_ENUM = ""
 
     @classmethod

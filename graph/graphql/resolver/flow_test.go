@@ -386,6 +386,9 @@ func TestImportEmptyFlow(t *testing.T) {
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "SiteSurvey", Properties: propTypeInputs})
 	require.NoError(t, err)
 	propertyTypeID := woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
+	wkType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{Name: "worker", Properties: propTypeInputs})
+	require.NoError(t, err)
+	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	trueRole := flowschema.ExitPointRoleTrue
 	connectorInputs := []*models.ConnectorInput{
@@ -500,6 +503,22 @@ func TestImportEmptyFlow(t *testing.T) {
 					},
 				},
 			},
+			{
+				Cid:        "wk",
+				ActionType: flowschema.ActionTypeWorker,
+				Params: []*models.VariableExpressionInput{
+					{
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableWorkerType),
+						Expression:            strconv.Itoa(wkType.ID),
+					},
+					{
+						Type:           enum.PropertyTypeDefinition,
+						PropertyTypeID: refInt(propertyTypeWkID),
+						Expression:     "\"Property\"",
+					},
+				},
+			},
 		},
 		TriggerBlocks: []*models.TriggerBlockInput{
 			{
@@ -533,7 +552,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
 	blocks, err := newDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blocks, 7)
+	require.Len(t, blocks, 8)
 	for _, blk := range blocks {
 		switch blk.Type {
 		case block.TypeStart:
@@ -542,9 +561,14 @@ func TestImportEmptyFlow(t *testing.T) {
 		case block.TypeDecision:
 			require.Equal(t, "decision1", blk.Cid)
 		case block.TypeAction:
-			require.Equal(t, "wo", blk.Cid)
-			require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
-			require.Len(t, blk.InputParams, 3)
+			if blk.Cid == "wk" {
+				require.Equal(t, flowschema.ActionTypeWorker, *blk.ActionType)
+				require.Len(t, blk.InputParams, 2)
+			} else {
+				require.Equal(t, "wo", blk.Cid)
+				require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
+				require.Len(t, blk.InputParams, 3)
+			}
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)
 			require.Len(t, blk.InputParams, 1)

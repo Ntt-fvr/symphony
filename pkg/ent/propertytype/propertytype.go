@@ -81,6 +81,8 @@ const (
 	EdgeProjectType = "project_type"
 	// EdgeProjectTemplate holds the string denoting the project_template edge name in mutations.
 	EdgeProjectTemplate = "project_template"
+	// EdgeWorkerType holds the string denoting the worker_type edge name in mutations.
+	EdgeWorkerType = "worker_type"
 
 	// Table holds the table name of the propertytype in the database.
 	Table = "property_types"
@@ -154,6 +156,13 @@ const (
 	ProjectTemplateInverseTable = "project_templates"
 	// ProjectTemplateColumn is the table column denoting the project_template relation/edge.
 	ProjectTemplateColumn = "project_template_properties"
+	// WorkerTypeTable is the table the holds the worker_type relation/edge.
+	WorkerTypeTable = "property_types"
+	// WorkerTypeInverseTable is the table name for the WorkerType entity.
+	// It exists in this package in order to avoid circular dependency with the "workertype" package.
+	WorkerTypeInverseTable = "worker_types"
+	// WorkerTypeColumn is the table column denoting the worker_type relation/edge.
+	WorkerTypeColumn = "worker_type_property_types"
 )
 
 // Columns holds all SQL columns for propertytype fields.
@@ -192,6 +201,7 @@ var ForeignKeys = []string{
 	"service_type_property_types",
 	"work_order_template_property_types",
 	"work_order_type_property_types",
+	"worker_type_property_types",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -307,39 +307,44 @@ func (r mutationResolver) getVariableDefinitions(blockCid string, input models.I
 	return nil, nil
 }
 
-func (r mutationResolver) collectWorkOrderTypeByBlock(input models.ImportFlowDraftInput) (map[string]int, error) {
+func (r mutationResolver) collectWorkOrderTypeByBlock(input models.ImportFlowDraftInput) (map[string]int, map[string]flowschema.ActionTypeID, error) {
 	woTypeIds := make(map[string]int)
+	woActionTypeIds := make(map[string]flowschema.ActionTypeID)
 	for _, blk := range input.ActionBlocks {
 		for _, param := range blk.Params {
-			if param.Type == enum.VariableDefinition && *param.VariableDefinitionKey == actions.InputVariableType {
+			if param.Type == enum.VariableDefinition && (*param.VariableDefinitionKey == actions.InputVariableType ||
+				*param.VariableDefinitionKey == actions.InputVariableWorkerType) {
 				woTypeID, err := strconv.Atoi(param.Expression)
 				if err != nil {
-					return nil, fmt.Errorf("there is a misktake in the Work Order Type Id: %s for block %s", param.Expression, blk.Cid)
+					return nil, nil, fmt.Errorf("there is a misktake in the Template Type Id: %s for block %s", param.Expression, blk.Cid)
 				}
 				woTypeIds[blk.Cid] = woTypeID
+				woActionTypeIds[blk.Cid] = blk.ActionType
 				break
 			}
 		}
 	}
 	for _, blk := range input.TriggerBlocks {
 		for _, param := range blk.Params {
-			if param.Type == enum.VariableDefinition && *param.VariableDefinitionKey == actions.InputVariableType {
+			if param.Type == enum.VariableDefinition && (*param.VariableDefinitionKey == actions.InputVariableType ||
+				*param.VariableDefinitionKey == actions.InputVariableWorkerType) {
 				woTypeID, err := strconv.Atoi(param.Expression)
 				if err != nil {
-					return nil, fmt.Errorf("there is a misktake in the Work Order Type Id: %s for block %s", param.Expression, blk.Cid)
+					return nil, nil, fmt.Errorf("there is a misktake in the Template Type Id: %s for block %s", param.Expression, blk.Cid)
 				}
 				woTypeIds[blk.Cid] = woTypeID
+				woActionTypeIds[blk.Cid] = flowschema.ActionTypeWorkOrder
 				break
 			}
 		}
 	}
-	return woTypeIds, nil
+	return woTypeIds, woActionTypeIds, nil
 }
 
 func (r mutationResolver) validateBlockVariables(ctx context.Context, input models.ImportFlowDraftInput) error {
 	blockVariableInputs := r.collectBlockVariables(input)
 	blockCids := r.collectBlockCids(input)
-	woTypeIds, err := r.collectWorkOrderTypeByBlock(input)
+	woTypeIds, woActionTypeIds, err := r.collectWorkOrderTypeByBlock(input)
 	if err != nil {
 		return err
 	}
@@ -358,9 +363,17 @@ func (r mutationResolver) validateBlockVariables(ctx context.Context, input mode
 		// validate that the property exists associated with a BlockCI workorderType
 		if blockVariableInput.Type == enum.PropertyTypeDefinition {
 			woTypeID := woTypeIds[blockVariableInput.BlockCid]
-			_, ok := flowengine.FindProperty(ctx, *blockVariableInput.PropertyTypeID, woTypeID)
-			if !ok {
-				return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q blockCId: %s", *blockVariableInput.PropertyTypeID, woTypeID, blockVariableInput.BlockCid)
+			actionTypeID := woActionTypeIds[blockVariableInput.BlockCid]
+			if actionTypeID == flowschema.ActionTypeWorkOrder {
+				_, ok := flowengine.FindPropertyWorkOrder(ctx, *blockVariableInput.PropertyTypeID, woTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q blockCId: %s", *blockVariableInput.PropertyTypeID, woTypeID, blockVariableInput.BlockCid)
+				}
+			} else if actionTypeID == flowschema.ActionTypeWorker {
+				_, ok := flowengine.FindPropertyWorker(ctx, *blockVariableInput.PropertyTypeID, woTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkerType: %q blockCId: %s", *blockVariableInput.PropertyTypeID, woTypeID, blockVariableInput.BlockCid)
+				}
 			}
 		} else if blockVariableInput.Type == enum.VariableDefinition {
 			variableDefinitions, err := r.getVariableDefinitions(blockVariableInput.BlockCid, input)

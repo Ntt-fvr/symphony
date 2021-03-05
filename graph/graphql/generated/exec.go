@@ -713,6 +713,7 @@ type ComplexityRoot struct {
 		AddWiFiScans                             func(childComplexity int, data []*models.SurveyWiFiScanData, locationID int) int
 		AddWorkOrder                             func(childComplexity int, input models.AddWorkOrderInput) int
 		AddWorkOrderType                         func(childComplexity int, input models.AddWorkOrderTypeInput) int
+		AddWorkerType                            func(childComplexity int, input models.AddWorkerTypeInput) int
 		CreateProject                            func(childComplexity int, input models.AddProjectInput) int
 		CreateProjectType                        func(childComplexity int, input models.AddProjectTypeInput) int
 		CreateSurvey                             func(childComplexity int, data models.SurveyCreateData) int
@@ -747,6 +748,7 @@ type ComplexityRoot struct {
 		EditUsersGroup                           func(childComplexity int, input models.EditUsersGroupInput) int
 		EditWorkOrder                            func(childComplexity int, input models.EditWorkOrderInput) int
 		EditWorkOrderType                        func(childComplexity int, input models.EditWorkOrderTypeInput) int
+		EditWorkerType                           func(childComplexity int, input models.EditWorkerTypeInput) int
 		ExecuteWorkOrder                         func(childComplexity int, id int) int
 		ImportFlowDraft                          func(childComplexity int, input models.ImportFlowDraftInput) int
 		MarkSiteSurveyNeeded                     func(childComplexity int, locationID int, needed bool) int
@@ -769,6 +771,7 @@ type ComplexityRoot struct {
 		RemoveSiteSurvey                         func(childComplexity int, id int) int
 		RemoveWorkOrder                          func(childComplexity int, id int) int
 		RemoveWorkOrderType                      func(childComplexity int, id int) int
+		RemoveWorkerType                         func(childComplexity int, id int) int
 		StartFlow                                func(childComplexity int, input models.StartFlowInput) int
 		TechnicianWorkOrderCheckIn               func(childComplexity int, workOrderID int, input *models.TechnicianWorkOrderCheckInInput) int
 		TechnicianWorkOrderCheckOut              func(childComplexity int, input models.TechnicianWorkOrderCheckOutInput) int
@@ -959,6 +962,7 @@ type ComplexityRoot struct {
 		Vertex                   func(childComplexity int, id int) int
 		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
+		WorkerTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 	}
 
 	ReportFilter struct {
@@ -1382,6 +1386,23 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	WorkerType struct {
+		ID            func(childComplexity int) int
+		Name          func(childComplexity int) int
+		PropertyTypes func(childComplexity int) int
+	}
+
+	WorkerTypeConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	WorkerTypeEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	WorkforceCud struct {
 		Assign            func(childComplexity int) int
 		Create            func(childComplexity int) int
@@ -1564,6 +1585,9 @@ type MutationResolver interface {
 	DeleteFlowDraft(ctx context.Context, id int) (bool, error)
 	ImportFlowDraft(ctx context.Context, input models.ImportFlowDraftInput) (*ent.FlowDraft, error)
 	StartFlow(ctx context.Context, input models.StartFlowInput) (*ent.FlowInstance, error)
+	AddWorkerType(ctx context.Context, input models.AddWorkerTypeInput) (*ent.WorkerType, error)
+	EditWorkerType(ctx context.Context, input models.EditWorkerTypeInput) (*ent.WorkerType, error)
+	RemoveWorkerType(ctx context.Context, id int) (int, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -1616,6 +1640,7 @@ type QueryResolver interface {
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
 	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowDraftConnection, error)
 	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowConnection, error)
+	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -4515,6 +4540,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddWorkOrderType(childComplexity, args["input"].(models.AddWorkOrderTypeInput)), true
 
+	case "Mutation.addWorkerType":
+		if e.complexity.Mutation.AddWorkerType == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addWorkerType_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddWorkerType(childComplexity, args["input"].(models.AddWorkerTypeInput)), true
+
 	case "Mutation.createProject":
 		if e.complexity.Mutation.CreateProject == nil {
 			break
@@ -4923,6 +4960,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditWorkOrderType(childComplexity, args["input"].(models.EditWorkOrderTypeInput)), true
 
+	case "Mutation.editWorkerType":
+		if e.complexity.Mutation.EditWorkerType == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editWorkerType_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditWorkerType(childComplexity, args["input"].(models.EditWorkerTypeInput)), true
+
 	case "Mutation.executeWorkOrder":
 		if e.complexity.Mutation.ExecuteWorkOrder == nil {
 			break
@@ -5186,6 +5235,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveWorkOrderType(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeWorkerType":
+		if e.complexity.Mutation.RemoveWorkerType == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeWorkerType_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveWorkerType(childComplexity, args["id"].(int)), true
 
 	case "Mutation.startFlow":
 		if e.complexity.Mutation.StartFlow == nil {
@@ -6292,6 +6353,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.WorkOrders(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models1.WorkOrderFilterInput)), true
+
+	case "Query.workerTypes":
+		if e.complexity.Query.WorkerTypes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_workerTypes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WorkerTypes(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
 	case "ReportFilter.entity":
 		if e.complexity.ReportFilter.Entity == nil {
@@ -8220,6 +8293,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkOrderTypeEdge.Node(childComplexity), true
+
+	case "WorkerType.id":
+		if e.complexity.WorkerType.ID == nil {
+			break
+		}
+
+		return e.complexity.WorkerType.ID(childComplexity), true
+
+	case "WorkerType.name":
+		if e.complexity.WorkerType.Name == nil {
+			break
+		}
+
+		return e.complexity.WorkerType.Name(childComplexity), true
+
+	case "WorkerType.propertyTypes":
+		if e.complexity.WorkerType.PropertyTypes == nil {
+			break
+		}
+
+		return e.complexity.WorkerType.PropertyTypes(childComplexity), true
+
+	case "WorkerTypeConnection.edges":
+		if e.complexity.WorkerTypeConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.WorkerTypeConnection.Edges(childComplexity), true
+
+	case "WorkerTypeConnection.pageInfo":
+		if e.complexity.WorkerTypeConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.WorkerTypeConnection.PageInfo(childComplexity), true
+
+	case "WorkerTypeConnection.totalCount":
+		if e.complexity.WorkerTypeConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.WorkerTypeConnection.TotalCount(childComplexity), true
+
+	case "WorkerTypeEdge.cursor":
+		if e.complexity.WorkerTypeEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.WorkerTypeEdge.Cursor(childComplexity), true
+
+	case "WorkerTypeEdge.node":
+		if e.complexity.WorkerTypeEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.WorkerTypeEdge.Node(childComplexity), true
 
 	case "WorkforceCUD.assign":
 		if e.complexity.WorkforceCud.Assign == nil {
@@ -11606,6 +11735,7 @@ enum ActionTypeId
   work_order
   update_inventory
   update_workforce
+  worker
 }
 
 type TriggerType
@@ -11973,6 +12103,57 @@ input TechnicianWorkOrderCheckOutInput {
   checkOutTime: Time
 }
 
+"""
+A connection to a list of worker types.
+"""
+type WorkerTypeConnection {
+  """
+  Total count of worker types in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of worker type edges.
+  """
+  edges: [WorkerTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An worker type edge in a connection.
+"""
+type WorkerTypeEdge {
+  """
+  The worker type at the end of the edge.
+  """
+  node: WorkerType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+type WorkerType implements Node {
+  id: ID!
+  name: String!
+  propertyTypes: [PropertyType]!
+}
+
+input AddWorkerTypeInput {
+  name: String!
+  properties: [PropertyTypeInput!]
+    @uniqueField(typ: "property type", field: "Name")
+}
+
+input EditWorkerTypeInput {
+  id: ID!
+  name: String!
+  properties: [PropertyTypeInput!]
+    @uniqueField(typ: "property type", field: "Name")
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -12286,6 +12467,12 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): FlowConnection!
+  workerTypes(
+      after: Cursor
+      first: Int @numberValue(min: 0)
+      before: Cursor
+      last: Int @numberValue(min: 0)
+    ): WorkerTypeConnection!
 }
 
 type Mutation {
@@ -12496,6 +12683,9 @@ type Mutation {
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
+  addWorkerType(input: AddWorkerTypeInput!): WorkerType!
+  editWorkerType(input: EditWorkerTypeInput!): WorkerType!
+  removeWorkerType(id: ID!): ID!
 }
 
 """
@@ -13489,6 +13679,21 @@ func (ec *executionContext) field_Mutation_addWorkOrder_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addWorkerType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddWorkerTypeInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddWorkerTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddWorkerTypeInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createProjectType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14035,6 +14240,21 @@ func (ec *executionContext) field_Mutation_editWorkOrder_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editWorkerType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditWorkerTypeInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditWorkerTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditWorkerTypeInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_executeWorkOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14432,6 +14652,21 @@ func (ec *executionContext) field_Mutation_removeWorkOrderType_args(ctx context.
 }
 
 func (ec *executionContext) field_Mutation_removeWorkOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeWorkerType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -16614,6 +16849,86 @@ func (ec *executionContext) field_Query_workOrders_args(ctx context.Context, raw
 		}
 	}
 	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_workerTypes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
 	return args, nil
 }
 
@@ -32332,6 +32647,132 @@ func (ec *executionContext) _Mutation_startFlow(ctx context.Context, field graph
 	return ec.marshalNFlowInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addWorkerType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addWorkerType_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddWorkerType(rctx, args["input"].(models.AddWorkerTypeInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerType)
+	fc.Result = res
+	return ec.marshalNWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editWorkerType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editWorkerType_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditWorkerType(rctx, args["input"].(models.EditWorkerTypeInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerType)
+	fc.Result = res
+	return ec.marshalNWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeWorkerType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeWorkerType_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveWorkerType(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -36903,6 +37344,48 @@ func (ec *executionContext) _Query_flows(ctx context.Context, field graphql.Coll
 	res := resTmp.(*ent.FlowConnection)
 	fc.Result = res
 	return ec.marshalNFlowConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_workerTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_workerTypes_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WorkerTypes(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerTypeConnection)
+	fc.Result = res
+	return ec.marshalNWorkerTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -46350,6 +46833,283 @@ func (ec *executionContext) _WorkOrderTypeEdge_cursor(ctx context.Context, field
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkerType_id(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerType_name(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerType_propertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyTypes(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerTypeConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerTypeConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerTypeConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerTypeConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerTypeConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.WorkerTypeEdge)
+	fc.Result = res
+	return ec.marshalNWorkerTypeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerTypeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerTypeConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerTypeConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerTypeEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerTypeEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerTypeEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerType)
+	fc.Result = res
+	return ec.marshalOWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkerTypeEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerTypeEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerTypeEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkforceCUD_create(ctx context.Context, field graphql.CollectedField, obj *models2.WorkforceCud) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -49266,6 +50026,60 @@ func (ec *executionContext) unmarshalInputAddWorkOrderTypeInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context, obj interface{}) (models.AddWorkerTypeInput, error) {
+	var it models.AddWorkerTypeInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "properties":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			directive0 := func(ctx context.Context) (interface{}, error) {
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+			}
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				typ, err := ec.unmarshalNString2string(ctx, "property type")
+				if err != nil {
+					return nil, err
+				}
+				field, err := ec.unmarshalNString2string(ctx, "Name")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.UniqueField == nil {
+					return nil, errors.New("directive uniqueField is not implemented")
+				}
+				return ec.directives.UniqueField(ctx, obj, directive0, typ, field)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
+				it.Properties = data
+			} else if tmp == nil {
+				it.Properties = nil
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputBasicCUDInput(ctx context.Context, obj interface{}) (models2.BasicCUDInput, error) {
 	var it models2.BasicCUDInput
 	var asMap = obj.(map[string]interface{})
@@ -50923,6 +51737,68 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Context, obj interface{}) (models.EditWorkerTypeInput, error) {
+	var it models.EditWorkerTypeInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "properties":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			directive0 := func(ctx context.Context) (interface{}, error) {
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+			}
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				typ, err := ec.unmarshalNString2string(ctx, "property type")
+				if err != nil {
+					return nil, err
+				}
+				field, err := ec.unmarshalNString2string(ctx, "Name")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.UniqueField == nil {
+					return nil, errors.New("directive uniqueField is not implemented")
+				}
+				return ec.directives.UniqueField(ctx, obj, directive0, typ, field)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
+				it.Properties = data
+			} else if tmp == nil {
+				it.Properties = nil
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
 			}
 		}
 	}
@@ -54879,6 +55755,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._FlowInstance(ctx, sel, obj)
+	case *ent.WorkerType:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._WorkerType(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -59322,6 +60203,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addWorkerType":
+			out.Values[i] = ec._Mutation_addWorkerType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editWorkerType":
+			out.Values[i] = ec._Mutation_editWorkerType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeWorkerType":
+			out.Values[i] = ec._Mutation_removeWorkerType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -60700,6 +61596,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_flows(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "workerTypes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_workerTypes(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -63518,6 +64428,118 @@ func (ec *executionContext) _WorkOrderTypeEdge(ctx context.Context, sel ast.Sele
 	return out
 }
 
+var workerTypeImplementors = []string{"WorkerType", "Node"}
+
+func (ec *executionContext) _WorkerType(ctx context.Context, sel ast.SelectionSet, obj *ent.WorkerType) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workerTypeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkerType")
+		case "id":
+			out.Values[i] = ec._WorkerType_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._WorkerType_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "propertyTypes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._WorkerType_propertyTypes(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var workerTypeConnectionImplementors = []string{"WorkerTypeConnection"}
+
+func (ec *executionContext) _WorkerTypeConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.WorkerTypeConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workerTypeConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkerTypeConnection")
+		case "totalCount":
+			out.Values[i] = ec._WorkerTypeConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._WorkerTypeConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._WorkerTypeConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var workerTypeEdgeImplementors = []string{"WorkerTypeEdge"}
+
+func (ec *executionContext) _WorkerTypeEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.WorkerTypeEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workerTypeEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkerTypeEdge")
+		case "node":
+			out.Values[i] = ec._WorkerTypeEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._WorkerTypeEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var workforceCUDImplementors = []string{"WorkforceCUD"}
 
 func (ec *executionContext) _WorkforceCUD(ctx context.Context, sel ast.SelectionSet, obj *models2.WorkforceCud) graphql.Marshaler {
@@ -64057,6 +65079,11 @@ func (ec *executionContext) unmarshalNAddWorkOrderInput2githubᚗcomᚋfacebooki
 
 func (ec *executionContext) unmarshalNAddWorkOrderTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddWorkOrderTypeInput(ctx context.Context, v interface{}) (models.AddWorkOrderTypeInput, error) {
 	res, err := ec.unmarshalInputAddWorkOrderTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddWorkerTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddWorkerTypeInput(ctx context.Context, v interface{}) (models.AddWorkerTypeInput, error) {
+	res, err := ec.unmarshalInputAddWorkerTypeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -64850,6 +65877,11 @@ func (ec *executionContext) unmarshalNEditWorkOrderInput2githubᚗcomᚋfacebook
 
 func (ec *executionContext) unmarshalNEditWorkOrderTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditWorkOrderTypeInput(ctx context.Context, v interface{}) (models.EditWorkOrderTypeInput, error) {
 	res, err := ec.unmarshalInputEditWorkOrderTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditWorkerTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditWorkerTypeInput(ctx context.Context, v interface{}) (models.EditWorkerTypeInput, error) {
+	res, err := ec.unmarshalInputEditWorkerTypeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -69229,6 +70261,81 @@ func (ec *executionContext) marshalNWorkOrderTypeEdge2ᚖgithubᚗcomᚋfacebook
 	return ec._WorkOrderTypeEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNWorkerType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx context.Context, sel ast.SelectionSet, v ent.WorkerType) graphql.Marshaler {
+	return ec._WorkerType(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx context.Context, sel ast.SelectionSet, v *ent.WorkerType) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkerType(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWorkerTypeConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeConnection(ctx context.Context, sel ast.SelectionSet, v ent.WorkerTypeConnection) graphql.Marshaler {
+	return ec._WorkerTypeConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWorkerTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeConnection(ctx context.Context, sel ast.SelectionSet, v *ent.WorkerTypeConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkerTypeConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWorkerTypeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.WorkerTypeEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWorkerTypeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNWorkerTypeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerTypeEdge(ctx context.Context, sel ast.SelectionSet, v *ent.WorkerTypeEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkerTypeEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNWorkforceCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐWorkforceCud(ctx context.Context, sel ast.SelectionSet, v *models2.WorkforceCud) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -72285,6 +73392,13 @@ func (ec *executionContext) marshalOWorkOrderType2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._WorkOrderType(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx context.Context, sel ast.SelectionSet, v *ent.WorkerType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WorkerType(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOWorkforceCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐWorkforceCUDInput(ctx context.Context, v interface{}) (*models2.WorkforceCUDInput, error) {

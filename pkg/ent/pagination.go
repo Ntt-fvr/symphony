@@ -70,6 +70,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -12821,6 +12822,225 @@ var DefaultWorkOrderTypeOrder = &WorkOrderTypeOrder{
 		field: workordertype.FieldID,
 		toCursor: func(wot *WorkOrderType) Cursor {
 			return Cursor{ID: wot.ID}
+		},
+	},
+}
+
+// WorkerTypeEdge is the edge representation of WorkerType.
+type WorkerTypeEdge struct {
+	Node   *WorkerType `json:"node"`
+	Cursor Cursor      `json:"cursor"`
+}
+
+// WorkerTypeConnection is the connection containing edges to WorkerType.
+type WorkerTypeConnection struct {
+	Edges      []*WorkerTypeEdge `json:"edges"`
+	PageInfo   PageInfo          `json:"pageInfo"`
+	TotalCount int               `json:"totalCount"`
+}
+
+// WorkerTypePaginateOption enables pagination customization.
+type WorkerTypePaginateOption func(*workerTypePager) error
+
+// WithWorkerTypeOrder configures pagination ordering.
+func WithWorkerTypeOrder(order *WorkerTypeOrder) WorkerTypePaginateOption {
+	if order == nil {
+		order = DefaultWorkerTypeOrder
+	}
+	o := *order
+	return func(pager *workerTypePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultWorkerTypeOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithWorkerTypeFilter configures pagination filter.
+func WithWorkerTypeFilter(filter func(*WorkerTypeQuery) (*WorkerTypeQuery, error)) WorkerTypePaginateOption {
+	return func(pager *workerTypePager) error {
+		if filter == nil {
+			return errors.New("WorkerTypeQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type workerTypePager struct {
+	order  *WorkerTypeOrder
+	filter func(*WorkerTypeQuery) (*WorkerTypeQuery, error)
+}
+
+func newWorkerTypePager(opts []WorkerTypePaginateOption) (*workerTypePager, error) {
+	pager := &workerTypePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultWorkerTypeOrder
+	}
+	return pager, nil
+}
+
+func (p *workerTypePager) applyFilter(query *WorkerTypeQuery) (*WorkerTypeQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *workerTypePager) toCursor(wt *WorkerType) Cursor {
+	return p.order.Field.toCursor(wt)
+}
+
+func (p *workerTypePager) applyCursors(query *WorkerTypeQuery, after, before *Cursor) *WorkerTypeQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultWorkerTypeOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *workerTypePager) applyOrder(query *WorkerTypeQuery, reverse bool) *WorkerTypeQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultWorkerTypeOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultWorkerTypeOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to WorkerType.
+func (wt *WorkerTypeQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...WorkerTypePaginateOption,
+) (*WorkerTypeConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newWorkerTypePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if wt, err = pager.applyFilter(wt); err != nil {
+		return nil, err
+	}
+
+	conn := &WorkerTypeConnection{Edges: []*WorkerTypeEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := wt.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := wt.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	wt = pager.applyCursors(wt, after, before)
+	wt = pager.applyOrder(wt, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		wt = wt.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		wt = wt.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := wt.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *WorkerType
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *WorkerType {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *WorkerType {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*WorkerTypeEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &WorkerTypeEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// WorkerTypeOrderField defines the ordering field of WorkerType.
+type WorkerTypeOrderField struct {
+	field    string
+	toCursor func(*WorkerType) Cursor
+}
+
+// WorkerTypeOrder defines the ordering of WorkerType.
+type WorkerTypeOrder struct {
+	Direction OrderDirection        `json:"direction"`
+	Field     *WorkerTypeOrderField `json:"field"`
+}
+
+// DefaultWorkerTypeOrder is the default ordering of WorkerType.
+var DefaultWorkerTypeOrder = &WorkerTypeOrder{
+	Direction: OrderDirectionAsc,
+	Field: &WorkerTypeOrderField{
+		field: workertype.FieldID,
+		toCursor: func(wt *WorkerType) Cursor {
+			return Cursor{ID: wt.ID}
 		},
 	},
 }

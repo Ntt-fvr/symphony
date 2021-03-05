@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 )
@@ -48,6 +49,7 @@ type PropertyTypeQuery struct {
 	withWorkOrderTemplate     *WorkOrderTemplateQuery
 	withProjectType           *ProjectTypeQuery
 	withProjectTemplate       *ProjectTemplateQuery
+	withWorkerType            *WorkerTypeQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -298,6 +300,28 @@ func (ptq *PropertyTypeQuery) QueryProjectTemplate() *ProjectTemplateQuery {
 	return query
 }
 
+// QueryWorkerType chains the current query on the worker_type edge.
+func (ptq *PropertyTypeQuery) QueryWorkerType() *WorkerTypeQuery {
+	query := &WorkerTypeQuery{config: ptq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, selector),
+			sqlgraph.To(workertype.Table, workertype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.WorkerTypeTable, propertytype.WorkerTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first PropertyType entity in the query. Returns *NotFoundError when no propertytype was found.
 func (ptq *PropertyTypeQuery) First(ctx context.Context) (*PropertyType, error) {
 	nodes, err := ptq.Limit(1).All(ctx)
@@ -484,6 +508,7 @@ func (ptq *PropertyTypeQuery) Clone() *PropertyTypeQuery {
 		withWorkOrderTemplate:     ptq.withWorkOrderTemplate.Clone(),
 		withProjectType:           ptq.withProjectType.Clone(),
 		withProjectTemplate:       ptq.withProjectTemplate.Clone(),
+		withWorkerType:            ptq.withWorkerType.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
@@ -600,6 +625,17 @@ func (ptq *PropertyTypeQuery) WithProjectTemplate(opts ...func(*ProjectTemplateQ
 	return ptq
 }
 
+//  WithWorkerType tells the query-builder to eager-loads the nodes that are connected to
+// the "worker_type" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithWorkerType(opts ...func(*WorkerTypeQuery)) *PropertyTypeQuery {
+	query := &WorkerTypeQuery{config: ptq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withWorkerType = query
+	return ptq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -670,7 +706,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		nodes       = []*PropertyType{}
 		withFKs     = ptq.withFKs
 		_spec       = ptq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [11]bool{
 			ptq.withProperties != nil,
 			ptq.withLocationType != nil,
 			ptq.withEquipmentPortType != nil,
@@ -681,9 +717,10 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			ptq.withWorkOrderTemplate != nil,
 			ptq.withProjectType != nil,
 			ptq.withProjectTemplate != nil,
+			ptq.withWorkerType != nil,
 		}
 	)
-	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil {
+	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil || ptq.withWorkerType != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -963,6 +1000,31 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			}
 			for i := range nodes {
 				nodes[i].Edges.ProjectTemplate = n
+			}
+		}
+	}
+
+	if query := ptq.withWorkerType; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*PropertyType)
+		for i := range nodes {
+			if fk := nodes[i].worker_type_property_types; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(workertype.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "worker_type_property_types" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.WorkerType = n
 			}
 		}
 	}

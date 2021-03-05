@@ -123,6 +123,9 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.From("project_template", ProjectTemplate.Type).
 			Ref("properties").
 			Unique(),
+		edge.From("worker_type", WorkerType.Type).
+			Ref("property_types").
+			Unique(),
 	}
 }
 
@@ -143,6 +146,9 @@ func (PropertyType) Indexes() []ent.Index {
 			Unique(),
 		index.Fields("name").
 			Edges("work_order_type").
+			Unique(),
+		index.Fields("name").
+			Edges("worker_type").
 			Unique(),
 	}
 }

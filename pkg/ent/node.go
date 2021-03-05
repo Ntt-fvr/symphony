@@ -69,6 +69,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -3615,7 +3616,7 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pt.ID,
 		Type:   "PropertyType",
 		Fields: make([]*Field, 20),
-		Edges:  make([]*Edge, 10),
+		Edges:  make([]*Edge, 11),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pt.CreateTime); err != nil {
@@ -3874,6 +3875,16 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[9].IDs, err = pt.QueryProjectTemplate().
 		Select(projecttemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[10] = &Edge{
+		Type: "WorkerType",
+		Name: "worker_type",
+	}
+	node.Edges[10].IDs, err = pt.QueryWorkerType().
+		Select(workertype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -5844,6 +5855,51 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (wt *WorkerType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     wt.ID,
+		Type:   "WorkerType",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(wt.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "PropertyType",
+		Name: "property_types",
+	}
+	node.Edges[0].IDs, err = wt.QueryPropertyTypes().
+		Select(propertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	n, err := c.Noder(ctx, id)
 	if err != nil {
@@ -6398,6 +6454,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.WorkOrderType.Query().
 			Where(workordertype.ID(id)).
 			CollectFields(ctx, "WorkOrderType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case workertype.Table:
+		n, err := c.WorkerType.Query().
+			Where(workertype.ID(id)).
+			CollectFields(ctx, "WorkerType").
 			Only(ctx)
 		if err != nil {
 			return nil, err

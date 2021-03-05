@@ -177,3 +177,6 @@ type WorkOrderTemplate func(*sql.Selector)
 
 // WorkOrderType is the predicate function for workordertype builders.
 type WorkOrderType func(*sql.Selector)
+
+// WorkerType is the predicate function for workertype builders.
+type WorkerType func(*sql.Selector)

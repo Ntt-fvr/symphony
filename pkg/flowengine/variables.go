@@ -35,6 +35,8 @@ func parseIntVariable(ctx context.Context, value int, variableType enum.Variable
 		return client.Project.Get(ctx, value)
 	case enum.VariableTypeUser:
 		return client.User.Get(ctx, value)
+	case enum.VariableTypeWorkerType:
+		return client.WorkerType.Get(ctx, value)
 	default:
 		return nil, fmt.Errorf("type not found: %v", variableType)
 	}
@@ -59,7 +61,8 @@ func parseSingleVariable(ctx context.Context, value string, variableType enum.Va
 		enum.VariableTypeWorkOrderType,
 		enum.VariableTypeLocation,
 		enum.VariableTypeProject,
-		enum.VariableTypeUser:
+		enum.VariableTypeUser,
+		enum.VariableTypeWorkerType:
 		if err = json.Unmarshal(byteVal, &intVal); err != nil {
 			return
 		}
@@ -250,7 +253,8 @@ func verifyVariableExpression(ctx context.Context, definition *flowschema.Variab
 func VerifyVariableExpressions(ctx context.Context, params []*flowschema.VariableExpression, definitions []*flowschema.VariableDefinition) error {
 	keys := make(map[string]struct{}, len(params))
 	ids := make(map[int]struct{}, len(params))
-	var workOrderParam *flowschema.VariableExpression
+	var templateParam *flowschema.VariableExpression
+	var templateType flowschema.ActionTypeID
 	for _, param := range params {
 		if param.Type == enum.VariableDefinition {
 			definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
@@ -265,22 +269,37 @@ func VerifyVariableExpressions(ctx context.Context, params []*flowschema.Variabl
 				return err
 			}
 			if param.VariableDefinitionKey == actions.InputVariableType {
-				workOrderParam = param
+				templateParam = param
+				templateType = flowschema.ActionTypeWorkOrder
+			} else if param.VariableDefinitionKey == actions.InputVariableWorkerType {
+				templateParam = param
+				templateType = flowschema.ActionTypeWorker
 			}
 		}
 	}
 	for _, param := range params {
 		if param.Type == enum.PropertyTypeDefinition {
-			if workOrderParam == nil {
-				return fmt.Errorf("there are properties but there isn't a Work Order Type assigned to block: %q", param.BlockID)
+			if templateParam == nil {
+				return fmt.Errorf("there are properties but there isn't a Template assigned to block: %q", param.BlockID)
 			}
-			woTypeID, err := strconv.Atoi(workOrderParam.Expression)
-			if err != nil {
-				return fmt.Errorf("there is a misktake in the Work Order Type Id: %s", workOrderParam.Expression)
-			}
-			_, ok := FindProperty(ctx, param.PropertyTypeID, woTypeID)
-			if !ok {
-				return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q ", param.PropertyTypeID, woTypeID)
+			if templateType == flowschema.ActionTypeWorkOrder {
+				woTypeID, err := strconv.Atoi(templateParam.Expression)
+				if err != nil {
+					return fmt.Errorf("there is a misktake in the Work Order Type Id: %s", templateParam.Expression)
+				}
+				_, ok := FindPropertyWorkOrder(ctx, param.PropertyTypeID, woTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkOrderType: %q ", param.PropertyTypeID, woTypeID)
+				}
+			} else if templateType == flowschema.ActionTypeWorker {
+				wkTypeID, err := strconv.Atoi(templateParam.Expression)
+				if err != nil {
+					return fmt.Errorf("there is a misktake in the Worker Type Id: %s", templateParam.Expression)
+				}
+				_, ok := FindPropertyWorker(ctx, param.PropertyTypeID, wkTypeID)
+				if !ok {
+					return fmt.Errorf("PropertyTypeID %q is not valid for WorkerType: %q ", param.PropertyTypeID, wkTypeID)
+				}
 			}
 			if _, ok := ids[param.PropertyTypeID]; ok {
 				return fmt.Errorf("duplicate propertyType for same id: %q", param.PropertyTypeID)
@@ -365,13 +384,26 @@ func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*
 	return nil, false
 }
 
-func FindProperty(ctx context.Context, propertyTypeID int, workOrderTypeID int) (*ent.PropertyType, bool) {
+func FindPropertyWorkOrder(ctx context.Context, propertyTypeID int, workOrderTypeID int) (*ent.PropertyType, bool) {
 	client := ent.FromContext(ctx)
 	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeID)
 	if err != nil {
 		return nil, false
 	}
 	propertyType, err := workOrderType.QueryPropertyTypes().Where(propertytype.ID(propertyTypeID)).Only(ctx)
+	if err != nil {
+		return nil, false
+	}
+	return propertyType, true
+}
+
+func FindPropertyWorker(ctx context.Context, propertyTypeID int, workerTypeID int) (*ent.PropertyType, bool) {
+	client := ent.FromContext(ctx)
+	workerType, err := client.WorkerType.Get(ctx, workerTypeID)
+	if err != nil {
+		return nil, false
+	}
+	propertyType, err := workerType.QueryPropertyTypes().Where(propertytype.ID(propertyTypeID)).Only(ctx)
 	if err != nil {
 		return nil, false
 	}

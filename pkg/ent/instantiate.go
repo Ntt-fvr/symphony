@@ -341,3 +341,9 @@ func (c *WorkOrderTypeClient) Instantiate(wot *WorkOrderType) *WorkOrderType {
 	wot.config = c.config
 	return wot
 }
+
+// Instantiate entity configuration.
+func (c *WorkerTypeClient) Instantiate(wt *WorkerType) *WorkerType {
+	wt.config = c.config
+	return wt
+}
