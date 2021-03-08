@@ -28,5 +28,9 @@ func (workerAction) Variables() []*flowschema.VariableDefinition {
 			Type:      enum.VariableTypeWorkerType,
 			Mandatory: true,
 		},
+		{
+			Key:  InputVariableTypeName,
+			Type: enum.VariableTypeString,
+		},
 	}
 }
