@@ -19,3 +19,4 @@ class BlockVariableInput(DataClassJsonMixin):
     type: VariableExpressionType = _field(metadata=enum_field_metadata(VariableExpressionType))
     variableDefinitionKey: Optional[str] = None
     propertyTypeId: Optional[int] = None
+    checkListItemDefinitionId: Optional[int] = None
