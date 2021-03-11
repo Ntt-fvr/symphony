@@ -364,7 +364,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	r := newTestResolver(t, withActionFactory(actions.NewFactory()), withTriggerFactory(triggers.NewFactory()))
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, fdr := r.Mutation(), r.FlowDraft()
+	mr, fdr, br := r.Mutation(), r.FlowDraft(), r.Block()
 
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "First version",
@@ -564,10 +564,20 @@ func TestImportEmptyFlow(t *testing.T) {
 			if blk.Cid == "wk" {
 				require.Equal(t, flowschema.ActionTypeWorker, *blk.ActionType)
 				require.Len(t, blk.InputParams, 2)
+				blockType, err := br.Details(ctx, blk)
+				require.NoError(t, err)
+				action, ok := blockType.(*models.ActionBlock)
+				require.True(t, ok)
+				require.Len(t, action.Params, 3)
 			} else {
 				require.Equal(t, "wo", blk.Cid)
 				require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
 				require.Len(t, blk.InputParams, 3)
+				blockType, err := br.Details(ctx, blk)
+				require.NoError(t, err)
+				action, ok := blockType.(*models.ActionBlock)
+				require.True(t, ok)
+				require.Len(t, action.Params, 4)
 			}
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)

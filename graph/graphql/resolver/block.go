@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -102,6 +103,7 @@ func getDefaultEntryExitPoints(ctx context.Context, obj *ent.Block) (*ent.EntryP
 	return entryPoint, exitPoint, nil
 }
 
+// nolint: funlen
 func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.BlockDetails, error) {
 	entryPoint, exitPoint, err := getDefaultEntryExitPoints(ctx, obj)
 	if err != nil {
@@ -194,6 +196,9 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		if err != nil {
 			return nil, err
 		}
+		if templateName, ok := getTemplateName(ctx, obj); ok {
+			obj.InputParams = append(obj.InputParams, templateName)
+		}
 		return &models.ActionBlock{
 			ActionType: actionType,
 			Params:     obj.InputParams,
@@ -203,6 +208,40 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
+}
+
+func getTemplateName(ctx context.Context, obj *ent.Block) (*flowschema.VariableExpression, bool) {
+	client := ent.FromContext(ctx)
+	for _, inputParam := range obj.InputParams {
+		if inputParam.VariableDefinitionKey == actions.InputVariableType || inputParam.VariableDefinitionKey == actions.InputVariableWorkerType {
+			typeID, err := strconv.Atoi(inputParam.Expression)
+			if err != nil {
+				return nil, false
+			}
+			var name string
+			if *obj.ActionType == flowschema.ActionTypeWorkOrder {
+				workOrderType, err := client.WorkOrderType.Get(ctx, typeID)
+				if err != nil {
+					return nil, false
+				}
+				name = workOrderType.Name
+			} else if *obj.ActionType == flowschema.ActionTypeWorker {
+				workerType, err := client.WorkerType.Get(ctx, typeID)
+				if err != nil {
+					return nil, false
+				}
+				name = workerType.Name
+			}
+			templateName := flowschema.VariableExpression{
+				BlockID:               obj.ID,
+				Type:                  enum.VariableDefinition,
+				VariableDefinitionKey: actions.InputVariableTypeName,
+				Expression:            name,
+			}
+			return &templateName, true
+		}
+	}
+	return nil, false
 }
 
 func addBlockMutation(
@@ -224,6 +263,9 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 	vars := make([]*flowschema.VariableExpression, 0, len(inputVariables))
 	for _, variable := range inputVariables {
 		var blockVariables []*flowschema.BlockVariable
+		if variable.Type == actions.InputVariableTypeName {
+			continue
+		}
 		for _, blockVar := range variable.BlockVariables {
 			varBlockID, err := client.Block.Query().
 				Where(block.ID(blockID)).
