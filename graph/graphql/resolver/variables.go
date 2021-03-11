@@ -32,7 +32,7 @@ type variableExpressionResolver struct {
 }
 
 func (r variableExpressionResolver) VariableDefinition(ctx context.Context, obj *flowschema.VariableExpression) (*flowschema.VariableDefinition, error) {
-	if obj.Type == enum.PropertyTypeDefinition {
+	if obj.Type == enum.PropertyTypeDefinition || obj.Type == enum.ChekListItemDefinition {
 		return nil, nil
 	}
 	client := ent.FromContext(ctx)
@@ -53,10 +53,10 @@ func (r variableExpressionResolver) VariableDefinition(ctx context.Context, obj 
 }
 
 func (r variableExpressionResolver) PropertyTypeDefinition(ctx context.Context, obj *flowschema.VariableExpression) (*ent.PropertyType, error) {
-	if obj.Type == enum.VariableDefinition {
-		return nil, nil
+	if obj.Type == enum.PropertyTypeDefinition {
+		return getPropertyType(ctx, obj.PropertyTypeID)
 	}
-	return getPropertyType(ctx, obj.PropertyTypeID)
+	return nil, nil
 }
 
 func getPropertyType(ctx context.Context, propertyTypeID int) (*ent.PropertyType, error) {
@@ -79,26 +79,40 @@ func (blockVariableResolver) Block(ctx context.Context, obj *flowschema.BlockVar
 }
 
 func (r blockVariableResolver) InputVariableDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error) {
-	client := ent.FromContext(ctx)
-	block, err := client.Block.Get(ctx, obj.BlockID)
-	if err != nil {
-		return nil, err
-	}
-	variableDefinitions, err := flowengine.GetOutputVariableDefinitions(ctx, block, r.triggerFactory, r.actionFactory)
-	if err != nil {
-		return nil, err
-	}
-	for _, definition := range variableDefinitions {
-		if definition.Key == obj.VariableDefinitionKey {
-			return definition, err
+	if obj.Type == enum.VariableDefinition {
+		client := ent.FromContext(ctx)
+		block, err := client.Block.Get(ctx, obj.BlockID)
+		if err != nil {
+			return nil, err
+		}
+		variableDefinitions, err := flowengine.GetOutputVariableDefinitions(ctx, block, r.triggerFactory, r.actionFactory)
+		if err != nil {
+			return nil, err
+		}
+		for _, definition := range variableDefinitions {
+			if definition.Key == obj.VariableDefinitionKey {
+				return definition, err
+			}
 		}
 	}
 	return nil, nil
 }
 
 func (r blockVariableResolver) InputPropertyTypeDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*ent.PropertyType, error) {
-	if obj.Type == enum.VariableDefinition {
-		return nil, nil
+	if obj.Type == enum.PropertyTypeDefinition {
+		return getPropertyType(ctx, obj.PropertyTypeID)
 	}
-	return getPropertyType(ctx, obj.PropertyTypeID)
+	return nil, nil
+}
+
+func (r blockVariableResolver) CheckListItemDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*ent.CheckListItemDefinition, error) {
+	if obj.Type == enum.ChekListItemDefinition {
+		client := ent.FromContext(ctx)
+		checkListItemDefinition, err := client.CheckListItemDefinition.Get(ctx, obj.CheckListItemDefinitionID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to find checkListItemDefinition: id=%q", obj.CheckListItemDefinitionID)
+		}
+		return checkListItemDefinition, nil
+	}
+	return nil, nil
 }

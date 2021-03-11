@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
+
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -395,6 +397,19 @@ func FindPropertyWorkOrder(ctx context.Context, propertyTypeID int, workOrderTyp
 		return nil, false
 	}
 	return propertyType, true
+}
+
+func FindCheckListItemWorkOrder(ctx context.Context, checkListItemID int, workOrderTypeID int) (*ent.CheckListItemDefinition, bool) {
+	client := ent.FromContext(ctx)
+	workOrderType, err := client.WorkOrderType.Get(ctx, workOrderTypeID)
+	if err != nil {
+		return nil, false
+	}
+	checkListItem, err := workOrderType.QueryCheckListCategoryDefinitions().QueryCheckListItemDefinitions().Where(checklistitemdefinition.ID(checkListItemID)).Only(ctx)
+	if err != nil {
+		return nil, false
+	}
+	return checkListItem, true
 }
 
 func FindPropertyWorker(ctx context.Context, propertyTypeID int, workerTypeID int) (*ent.PropertyType, bool) {

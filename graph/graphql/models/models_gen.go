@@ -232,10 +232,11 @@ type AddWorkerTypeInput struct {
 }
 
 type BlockVariableInput struct {
-	BlockCid              string                      `json:"blockCid"`
-	Type                  enum.VariableExpressionType `json:"type"`
-	VariableDefinitionKey *string                     `json:"variableDefinitionKey"`
-	PropertyTypeID        *int                        `json:"propertyTypeId"`
+	BlockCid                  string                      `json:"blockCid"`
+	Type                      enum.VariableExpressionType `json:"type"`
+	VariableDefinitionKey     *string                     `json:"variableDefinitionKey"`
+	PropertyTypeID            *int                        `json:"propertyTypeId"`
+	CheckListItemDefinitionID *int                        `json:"checkListItemDefinitionId"`
 }
 
 type CheckListCategoryDefinitionInput struct {

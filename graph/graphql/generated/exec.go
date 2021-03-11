@@ -160,6 +160,7 @@ type ComplexityRoot struct {
 
 	BlockVariable struct {
 		Block                       func(childComplexity int) int
+		CheckListItemDefinition     func(childComplexity int) int
 		InputPropertyTypeDefinition func(childComplexity int) int
 		InputVariableDefinition     func(childComplexity int) int
 		Type                        func(childComplexity int) int
@@ -1440,6 +1441,7 @@ type BlockVariableResolver interface {
 
 	InputVariableDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*flowschema.VariableDefinition, error)
 	InputPropertyTypeDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*ent.PropertyType, error)
+	CheckListItemDefinition(ctx context.Context, obj *flowschema.BlockVariable) (*ent.CheckListItemDefinition, error)
 }
 type EquipmentResolver interface {
 	Ports(ctx context.Context, obj *ent.Equipment, availableOnly *bool) ([]*ent.EquipmentPort, error)
@@ -1948,6 +1950,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.BlockVariable.Block(childComplexity), true
+
+	case "BlockVariable.checkListItemDefinition":
+		if e.complexity.BlockVariable.CheckListItemDefinition == nil {
+			break
+		}
+
+		return e.complexity.BlockVariable.CheckListItemDefinition(childComplexity), true
 
 	case "BlockVariable.inputPropertyTypeDefinition":
 		if e.complexity.BlockVariable.InputPropertyTypeDefinition == nil {
@@ -11768,6 +11777,7 @@ type BlockVariable
   type:  VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
+  checkListItemDefinition: CheckListItemDefinition
 }
 
 input BlockVariableInput {
@@ -11775,6 +11785,7 @@ input BlockVariableInput {
   type: VariableExpressionType!
   variableDefinitionKey: String
   propertyTypeId: Int
+  checkListItemDefinitionId: Int
 }
 
 """
@@ -11787,6 +11798,7 @@ enum VariableExpressionType
   VariableDefinition
   PropertyTypeDefinition
   DecisionDefinition
+  ChekListItemDefinition
 }
 
 type VariableExpression
@@ -18196,6 +18208,38 @@ func (ec *executionContext) _BlockVariable_inputPropertyTypeDefinition(ctx conte
 	res := resTmp.(*ent.PropertyType)
 	fc.Result = res
 	return ec.marshalOPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockVariable_checkListItemDefinition(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockVariable) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockVariable",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.BlockVariable().CheckListItemDefinition(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.CheckListItemDefinition)
+	fc.Result = res
+	return ec.marshalOCheckListItemDefinition2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCheckListItemDefinition(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CUD_create(ctx context.Context, field graphql.CollectedField, obj *models2.Cud) (ret graphql.Marshaler) {
@@ -50210,6 +50254,14 @@ func (ec *executionContext) unmarshalInputBlockVariableInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "checkListItemDefinitionId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkListItemDefinitionId"))
+			it.CheckListItemDefinitionID, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -56211,6 +56263,17 @@ func (ec *executionContext) _BlockVariable(ctx context.Context, sel ast.Selectio
 					}
 				}()
 				res = ec._BlockVariable_inputPropertyTypeDefinition(ctx, field, obj)
+				return res
+			})
+		case "checkListItemDefinition":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._BlockVariable_checkListItemDefinition(ctx, field, obj)
 				return res
 			})
 		default:
@@ -70814,6 +70877,13 @@ func (ec *executionContext) unmarshalOCheckListCategoryInput2ᚕᚖgithubᚗcom�
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) marshalOCheckListItemDefinition2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCheckListItemDefinition(ctx context.Context, sel ast.SelectionSet, v *ent.CheckListItemDefinition) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CheckListItemDefinition(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx context.Context, v interface{}) (*enum.CheckListItemEnumSelectionMode, error) {
