@@ -8,6 +8,7 @@ class VariableExpressionType(Enum):
     VariableDefinition = "VariableDefinition"
     PropertyTypeDefinition = "PropertyTypeDefinition"
     DecisionDefinition = "DecisionDefinition"
+    ChekListItemDefinition = "ChekListItemDefinition"
     MISSING_ENUM = ""
 
     @classmethod

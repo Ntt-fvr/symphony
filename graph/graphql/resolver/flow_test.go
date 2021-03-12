@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
+
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
@@ -378,14 +380,31 @@ func TestImportEmptyFlow(t *testing.T) {
 			Type: enum.VariableTypeInt,
 		},
 	}
+
+	indexValue := 1
+	clcInputs := []*models.CheckListCategoryDefinitionInput{
+		{
+			Title: "Bar",
+			CheckList: []*models.CheckListDefinitionInput{
+				{
+					Title:       "Foo",
+					Type:        "simple",
+					Index:       &indexValue,
+					IsMandatory: pointer.ToBool(true),
+				},
+			},
+		},
+	}
+
 	strPropType := pkgmodels.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
 	propTypeInputs := []*pkgmodels.PropertyTypeInput{&strPropType}
-	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "SiteSurvey", Properties: propTypeInputs})
+	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "SiteSurvey", Properties: propTypeInputs, CheckListCategories: clcInputs})
 	require.NoError(t, err)
 	propertyTypeID := woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
+	checkListItemID := woType.QueryCheckListCategoryDefinitions().QueryCheckListItemDefinitions().Where(checklistitemdefinition.Title("Foo")).OnlyIDX(ctx)
 	wkType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{Name: "worker", Properties: propTypeInputs})
 	require.NoError(t, err)
 	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
@@ -435,6 +454,11 @@ func TestImportEmptyFlow(t *testing.T) {
 				Type:           enum.PropertyTypeDefinition,
 				BlockCid:       "wo",
 				PropertyTypeID: refInt(propertyTypeID),
+			},
+			{
+				Type:                      enum.ChekListItemDefinition,
+				BlockCid:                  "wo",
+				CheckListItemDefinitionID: refInt(checkListItemID),
 			},
 		},
 	}
@@ -560,6 +584,19 @@ func TestImportEmptyFlow(t *testing.T) {
 			require.Equal(t, paramDefinitions, blk.StartParamDefinitions)
 		case block.TypeDecision:
 			require.Equal(t, "decision1", blk.Cid)
+			exitPoints := blk.QueryExitPoints().AllX(ctx)
+			require.Len(t, exitPoints, 3)
+			for _, exitPoint := range exitPoints {
+				switch exitPoint.Role {
+				case flowschema.ExitPointRoleDecision:
+					require.Equal(t, enum.PropertyTypeDefinition, exitPoint.Condition.BlockVariables[0].Type)
+					require.Equal(t, enum.ChekListItemDefinition, exitPoint.Condition.BlockVariables[1].Type)
+				case flowschema.ExitPointRoleDefault:
+					require.Empty(t, exitPoint.Condition)
+				default:
+					t.Fatalf("exit point role not found: %v", exitPoint.Role)
+				}
+			}
 		case block.TypeAction:
 			if blk.Cid == "wk" {
 				require.Equal(t, flowschema.ActionTypeWorker, *blk.ActionType)

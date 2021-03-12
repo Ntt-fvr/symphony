@@ -18,7 +18,7 @@ export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order
 export type EntryPointRole = "DEFAULT" | "%future added value";
 export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
-export type VariableExpressionType = "DecisionDefinition" | "PropertyTypeDefinition" | "VariableDefinition" | "%future added value";
+export type VariableExpressionType = "ChekListItemDefinition" | "DecisionDefinition" | "PropertyTypeDefinition" | "VariableDefinition" | "%future added value";
 export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type ImportFlowDraftInput = {|
   id: string,
@@ -70,6 +70,7 @@ export type BlockVariableInput = {|
   type: VariableExpressionType,
   variableDefinitionKey?: ?string,
   propertyTypeId?: ?number,
+  checkListItemDefinitionId?: ?number,
 |};
 export type DecisionBlockInput = {|
   cid: string,

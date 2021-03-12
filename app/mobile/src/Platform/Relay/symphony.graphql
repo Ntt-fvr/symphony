@@ -3258,6 +3258,7 @@ type BlockVariable
   type:  VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
+  checkListItemDefinition: CheckListItemDefinition
 }
 
 input BlockVariableInput {
@@ -3265,6 +3266,7 @@ input BlockVariableInput {
   type: VariableExpressionType!
   variableDefinitionKey: String
   propertyTypeId: Int
+  checkListItemDefinitionId: Int
 }
 
 """
@@ -3277,6 +3279,7 @@ enum VariableExpressionType
   VariableDefinition
   PropertyTypeDefinition
   DecisionDefinition
+  ChekListItemDefinition
 }
 
 type VariableExpression
