@@ -29,6 +29,7 @@ const Strings = {
       'Reportes de Mantenimiento',
       'Fotos',
       'Site Folder',
+      'Correo de notificación',
     ],
   },
 };
