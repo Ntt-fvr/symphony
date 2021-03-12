@@ -19,7 +19,7 @@ jobs:
         with:
           version: v1.32
           skip-go-installation: true
-          
+
   test:
     runs-on: ubuntu-latest
     services:
