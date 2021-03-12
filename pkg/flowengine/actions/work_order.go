@@ -12,6 +12,7 @@ import (
 
 const (
 	InputVariableType        = "Work Order Template"
+	InputVariableTypeName    = "Template Name"
 	InputVariableEndStatuses = "Work Order Statuses for completing block"
 	InputVariableName        = "Name"
 	InputVariableDescription = "Description"
@@ -40,6 +41,10 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Key:       InputVariableType,
 			Type:      enum.VariableTypeWorkOrderType,
 			Mandatory: true,
+		},
+		{
+			Key:  InputVariableTypeName,
+			Type: enum.VariableTypeString,
 		},
 		{
 			Key:            InputVariableEndStatuses,
