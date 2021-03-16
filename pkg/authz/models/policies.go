@@ -83,5 +83,6 @@ type SystemPolicy interface {
 	IsSystemPolicy()
 }
 
-func (InventoryPolicy) IsSystemPolicy() {}
-func (WorkforcePolicy) IsSystemPolicy() {}
+func (InventoryPolicy) IsSystemPolicy()  {}
+func (WorkforcePolicy) IsSystemPolicy()  {}
+func (AutomationPolicy) IsSystemPolicy() {}

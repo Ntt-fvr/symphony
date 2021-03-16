@@ -137,6 +137,11 @@ type ComplexityRoot struct {
 		Access func(childComplexity int) int
 	}
 
+	AutomationPolicy struct {
+		Read      func(childComplexity int) int
+		Templates func(childComplexity int) int
+	}
+
 	BasicPermissionRule struct {
 		IsAllowed func(childComplexity int) int
 	}
@@ -1859,6 +1864,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AdministrativePolicy.Access(childComplexity), true
+
+	case "AutomationPolicy.read":
+		if e.complexity.AutomationPolicy.Read == nil {
+			break
+		}
+
+		return e.complexity.AutomationPolicy.Read(childComplexity), true
+
+	case "AutomationPolicy.templates":
+		if e.complexity.AutomationPolicy.Templates == nil {
+			break
+		}
+
+		return e.complexity.AutomationPolicy.Templates(childComplexity), true
 
 	case "BasicPermissionRule.isAllowed":
 		if e.complexity.BasicPermissionRule.IsAllowed == nil {
@@ -8704,6 +8723,22 @@ type AdministrativePolicy
   access: BasicPermissionRule!
 }
 
+type AutomationPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AutomationPolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -8776,6 +8811,7 @@ union SystemPolicy
   ) =
     InventoryPolicy
   | WorkforcePolicy
+  | AutomationPolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -8792,6 +8828,7 @@ input AddPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -8802,6 +8839,7 @@ input EditPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -17657,6 +17695,76 @@ func (ec *executionContext) _AdministrativePolicy_access(ctx context.Context, fi
 	res := resTmp.(*models2.BasicPermissionRule)
 	fc.Result = res
 	return ec.marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AutomationPolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.AutomationPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AutomationPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Read, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.BasicPermissionRule)
+	fc.Result = res
+	return ec.marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AutomationPolicy_templates(ctx context.Context, field graphql.CollectedField, obj *models2.AutomationPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AutomationPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Templates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.Cud)
+	fc.Result = res
+	return ec.marshalNCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐCud(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BasicPermissionRule_isAllowed(ctx context.Context, field graphql.CollectedField, obj *models2.BasicPermissionRule) (ret graphql.Marshaler) {
@@ -49600,6 +49708,14 @@ func (ec *executionContext) unmarshalInputAddPermissionsPolicyInput(ctx context.
 			if err != nil {
 				return it, err
 			}
+		case "automationInput":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("automationInput"))
+			it.AutomationInput, err = ec.unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "groups":
 			var err error
 
@@ -50117,6 +50233,34 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAutomationPolicyInput(ctx context.Context, obj interface{}) (models2.AutomationPolicyInput, error) {
+	var it models2.AutomationPolicyInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "read":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("read"))
+			it.Read, err = ec.unmarshalOBasicPermissionRuleInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRuleInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "templates":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templates"))
+			it.Templates, err = ec.unmarshalOBasicCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicCUDInput(ctx, v)
+			if err != nil {
+				return it, err
 			}
 		}
 	}
@@ -51231,6 +51375,14 @@ func (ec *executionContext) unmarshalInputEditPermissionsPolicyInput(ctx context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workforceInput"))
 			it.WorkforceInput, err = ec.unmarshalOWorkforcePolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐWorkforcePolicyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "automationInput":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("automationInput"))
+			it.AutomationInput, err = ec.unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55835,6 +55987,13 @@ func (ec *executionContext) _SystemPolicy(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._WorkforcePolicy(ctx, sel, obj)
+	case models2.AutomationPolicy:
+		return ec._AutomationPolicy(ctx, sel, &obj)
+	case *models2.AutomationPolicy:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AutomationPolicy(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -56031,6 +56190,38 @@ func (ec *executionContext) _AdministrativePolicy(ctx context.Context, sel ast.S
 			out.Values[i] = graphql.MarshalString("AdministrativePolicy")
 		case "access":
 			out.Values[i] = ec._AdministrativePolicy_access(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var automationPolicyImplementors = []string{"AutomationPolicy", "SystemPolicy"}
+
+func (ec *executionContext) _AutomationPolicy(ctx context.Context, sel ast.SelectionSet, obj *models2.AutomationPolicy) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, automationPolicyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AutomationPolicy")
+		case "read":
+			out.Values[i] = ec._AutomationPolicy_read(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "templates":
+			out.Values[i] = ec._AutomationPolicy_templates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -70702,6 +70893,14 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx context.Context, v interface{}) (*models2.AutomationPolicyInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAutomationPolicyInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

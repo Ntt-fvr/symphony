@@ -22,14 +22,22 @@ import (
 type permissionsPolicyResolver struct{}
 
 func (r permissionsPolicyResolver) Policy(_ context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error) {
-	if obj.InventoryPolicy != nil {
+	switch {
+	case obj.InventoryPolicy != nil:
 		return authz.AppendInventoryPolicies(
 			authz.NewInventoryPolicy(false),
 			obj.InventoryPolicy), nil
+	case obj.WorkforcePolicy != nil:
+		return authz.AppendWorkforcePolicies(
+			authz.NewWorkforcePolicy(false, false),
+			obj.WorkforcePolicy), nil
+	case obj.AutomationPolicy != nil:
+		return authz.AppendAutomationPolicies(
+			authz.NewAutomationPolicy(false, false),
+			obj.AutomationPolicy), nil
+	default:
+		return nil, fmt.Errorf("policy not found")
 	}
-	return authz.AppendWorkforcePolicies(
-		authz.NewWorkforcePolicy(false, false),
-		obj.WorkforcePolicy), nil
 }
 
 func (mutationResolver) AddPermissionsPolicy(
@@ -44,14 +52,18 @@ func (mutationResolver) AddPermissionsPolicy(
 	if input.Groups != nil {
 		mutation = mutation.AddGroupIDs(input.Groups...)
 	}
-	if input.InventoryInput != nil && input.WorkforceInput != nil {
-		return nil, fmt.Errorf("policy cannot be of both inventory and workforce types")
+	if (input.InventoryInput != nil && input.WorkforceInput != nil && input.AutomationInput == nil) ||
+		(input.InventoryInput != nil && input.WorkforceInput == nil && input.AutomationInput != nil) ||
+		(input.InventoryInput == nil && input.WorkforceInput != nil && input.AutomationInput != nil) {
+		return nil, fmt.Errorf("policy cannot be of different types")
 	}
 	switch {
 	case input.InventoryInput != nil:
 		mutation.SetInventoryPolicy(input.InventoryInput)
 	case input.WorkforceInput != nil:
 		mutation.SetWorkforcePolicy(input.WorkforceInput)
+	case input.AutomationInput != nil:
+		mutation.SetAutomationPolicy(input.AutomationInput)
 	default:
 		return nil, fmt.Errorf("no policy found in input")
 	}
@@ -89,16 +101,26 @@ func (mutationResolver) EditPermissionsPolicy(
 			RemoveGroupIDs(removeGroupIds...)
 	}
 	switch {
-	case input.InventoryInput != nil && input.WorkforceInput != nil:
+	case input.InventoryInput != nil && input.WorkforceInput != nil && input.AutomationInput != nil:
+		return nil, fmt.Errorf("policy cannot be of inventory, workforce and automation types at the same time")
+	case input.InventoryInput != nil && input.WorkforceInput != nil && input.AutomationInput == nil:
 		return nil, fmt.Errorf("policy cannot be of both inventory and workforce types")
-	case input.InventoryInput != nil && p.WorkforcePolicy != nil:
+	case input.InventoryInput != nil && input.WorkforceInput == nil && input.AutomationInput != nil:
+		return nil, fmt.Errorf("policy cannot be of both inventory and automation types")
+	case input.InventoryInput == nil && input.WorkforceInput != nil && input.AutomationInput != nil:
+		return nil, fmt.Errorf("policy cannot be of both workforce and automation types")
+	case (input.InventoryInput != nil || input.AutomationInput != nil) && p.WorkforcePolicy != nil:
 		return nil, fmt.Errorf("only workforce policy is legal to edit")
-	case input.WorkforceInput != nil && p.InventoryPolicy != nil:
+	case (input.WorkforceInput != nil || input.AutomationInput != nil) && p.InventoryPolicy != nil:
 		return nil, fmt.Errorf("only inventory policy is legal to edit")
+	case (input.InventoryInput != nil || input.WorkforceInput != nil) && p.AutomationPolicy != nil:
+		return nil, fmt.Errorf("only automation policy is legal to edit")
 	case input.InventoryInput != nil && p.InventoryPolicy != nil:
 		upd.SetInventoryPolicy(input.InventoryInput)
 	case input.WorkforceInput != nil && p.WorkforcePolicy != nil:
 		upd.SetWorkforcePolicy(input.WorkforceInput)
+	case input.AutomationInput != nil && p.AutomationPolicy != nil:
+		upd.SetAutomationPolicy(input.AutomationInput)
 	}
 	p, err = upd.Save(ctx)
 
