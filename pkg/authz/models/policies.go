@@ -67,10 +67,16 @@ type WorkforcePolicy struct {
 	Templates *Cud                     `json:"templates"`
 }
 
+type AutomationPolicy struct {
+	Read      *BasicPermissionRule `json:"read"`
+	Templates *Cud                 `json:"templates"`
+}
+
 type PermissionSettings struct {
-	AdminPolicy     *AdministrativePolicy `json:"adminPolicy"`
-	InventoryPolicy *InventoryPolicy      `json:"inventoryPolicy"`
-	WorkforcePolicy *WorkforcePolicy      `json:"workforcePolicy"`
+	AdminPolicy      *AdministrativePolicy `json:"adminPolicy"`
+	InventoryPolicy  *InventoryPolicy      `json:"inventoryPolicy"`
+	WorkforcePolicy  *WorkforcePolicy      `json:"workforcePolicy"`
+	AutomationPolicy *AutomationPolicy     `json:"automationPolicy"`
 }
 
 type SystemPolicy interface {

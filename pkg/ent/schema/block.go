@@ -107,7 +107,7 @@ func (Block) Hooks() []ent.Hook {
 func (Block) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithMutationRules(
-			privacy.AlwaysAllowRule(),
+			authz.AutomationTemplatesWritePolicyRule(),
 		),
 	)
 }

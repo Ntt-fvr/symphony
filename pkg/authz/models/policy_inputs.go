@@ -54,3 +54,8 @@ type WorkforcePolicyInput struct {
 	Data      *WorkforceCUDInput            `json:"data"`
 	Templates *BasicCUDInput                `json:"templates"`
 }
+
+type AutomationPolicyInput struct {
+	Read      *BasicPermissionRuleInput `json:"read"`
+	Templates *BasicCUDInput            `json:"templates"`
+}
