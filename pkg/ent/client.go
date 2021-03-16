@@ -65,6 +65,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -192,6 +193,8 @@ type Client struct {
 	WorkOrderTemplate *WorkOrderTemplateClient
 	// WorkOrderType is the client for interacting with the WorkOrderType builders.
 	WorkOrderType *WorkOrderTypeClient
+	// WorkerType is the client for interacting with the WorkerType builders.
+	WorkerType *WorkerTypeClient
 	// additional fields for node api
 	tables tables
 }
@@ -263,6 +266,7 @@ func (c *Client) init() {
 	c.WorkOrderDefinition = NewWorkOrderDefinitionClient(c.config)
 	c.WorkOrderTemplate = NewWorkOrderTemplateClient(c.config)
 	c.WorkOrderType = NewWorkOrderTypeClient(c.config)
+	c.WorkerType = NewWorkerTypeClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -351,6 +355,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
 		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
 		WorkOrderType:               NewWorkOrderTypeClient(cfg),
+		WorkerType:                  NewWorkerTypeClient(cfg),
 	}, nil
 }
 
@@ -422,6 +427,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
 		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
 		WorkOrderType:               NewWorkOrderTypeClient(cfg),
+		WorkerType:                  NewWorkerTypeClient(cfg),
 	}, nil
 }
 
@@ -506,6 +512,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.WorkOrderDefinition.Use(hooks...)
 	c.WorkOrderTemplate.Use(hooks...)
 	c.WorkOrderType.Use(hooks...)
+	c.WorkerType.Use(hooks...)
 }
 
 // ActivityClient is a client for the Activity schema.
@@ -6373,6 +6380,22 @@ func (c *PropertyTypeClient) QueryProjectTemplate(pt *PropertyType) *ProjectTemp
 	return query
 }
 
+// QueryWorkerType queries the worker_type edge of a PropertyType.
+func (c *PropertyTypeClient) QueryWorkerType(pt *PropertyType) *WorkerTypeQuery {
+	query := &WorkerTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
+			sqlgraph.To(workertype.Table, workertype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.WorkerTypeTable, propertytype.WorkerTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PropertyTypeClient) Hooks() []Hook {
 	hooks := c.hooks.PropertyType
@@ -8978,4 +9001,109 @@ func (c *WorkOrderTypeClient) QueryDefinitions(wot *WorkOrderType) *WorkOrderDef
 func (c *WorkOrderTypeClient) Hooks() []Hook {
 	hooks := c.hooks.WorkOrderType
 	return append(hooks[:len(hooks):len(hooks)], workordertype.Hooks[:]...)
+}
+
+// WorkerTypeClient is a client for the WorkerType schema.
+type WorkerTypeClient struct {
+	config
+}
+
+// NewWorkerTypeClient returns a client for the WorkerType from the given config.
+func NewWorkerTypeClient(c config) *WorkerTypeClient {
+	return &WorkerTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `workertype.Hooks(f(g(h())))`.
+func (c *WorkerTypeClient) Use(hooks ...Hook) {
+	c.hooks.WorkerType = append(c.hooks.WorkerType, hooks...)
+}
+
+// Create returns a create builder for WorkerType.
+func (c *WorkerTypeClient) Create() *WorkerTypeCreate {
+	mutation := newWorkerTypeMutation(c.config, OpCreate)
+	return &WorkerTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of WorkerType entities.
+func (c *WorkerTypeClient) CreateBulk(builders ...*WorkerTypeCreate) *WorkerTypeCreateBulk {
+	return &WorkerTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for WorkerType.
+func (c *WorkerTypeClient) Update() *WorkerTypeUpdate {
+	mutation := newWorkerTypeMutation(c.config, OpUpdate)
+	return &WorkerTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WorkerTypeClient) UpdateOne(wt *WorkerType) *WorkerTypeUpdateOne {
+	mutation := newWorkerTypeMutation(c.config, OpUpdateOne, withWorkerType(wt))
+	return &WorkerTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WorkerTypeClient) UpdateOneID(id int) *WorkerTypeUpdateOne {
+	mutation := newWorkerTypeMutation(c.config, OpUpdateOne, withWorkerTypeID(id))
+	return &WorkerTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for WorkerType.
+func (c *WorkerTypeClient) Delete() *WorkerTypeDelete {
+	mutation := newWorkerTypeMutation(c.config, OpDelete)
+	return &WorkerTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *WorkerTypeClient) DeleteOne(wt *WorkerType) *WorkerTypeDeleteOne {
+	return c.DeleteOneID(wt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *WorkerTypeClient) DeleteOneID(id int) *WorkerTypeDeleteOne {
+	builder := c.Delete().Where(workertype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WorkerTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for WorkerType.
+func (c *WorkerTypeClient) Query() *WorkerTypeQuery {
+	return &WorkerTypeQuery{config: c.config}
+}
+
+// Get returns a WorkerType entity by its id.
+func (c *WorkerTypeClient) Get(ctx context.Context, id int) (*WorkerType, error) {
+	return c.Query().Where(workertype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WorkerTypeClient) GetX(ctx context.Context, id int) *WorkerType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPropertyTypes queries the property_types edge of a WorkerType.
+func (c *WorkerTypeClient) QueryPropertyTypes(wt *WorkerType) *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workertype.Table, workertype.FieldID, id),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, workertype.PropertyTypesTable, workertype.PropertyTypesColumn),
+		)
+		fromV = sqlgraph.Neighbors(wt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *WorkerTypeClient) Hooks() []Hook {
+	hooks := c.hooks.WorkerType
+	return append(hooks[:len(hooks):len(hooks)], workertype.Hooks[:]...)
 }

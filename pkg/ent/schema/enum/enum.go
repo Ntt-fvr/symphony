@@ -399,6 +399,7 @@ const (
 	VariableTypeLocation      VariableType = "LOCATION"
 	VariableTypeProject       VariableType = "PROJECT"
 	VariableTypeUser          VariableType = "USER"
+	VariableTypeWorkerType    VariableType = "WORKER_TYPE"
 )
 
 // Values returns variable type possible values.
@@ -518,5 +519,20 @@ const (
 
 // String implements Getter interface.
 func (vt NodeType) String() string {
+	return string(vt)
+}
+
+// VariableExpressionType determines the variableExpression type of a block
+type VariableExpressionType string
+
+const (
+	VariableDefinition     VariableExpressionType = "VariableDefinition"
+	PropertyTypeDefinition VariableExpressionType = "PropertyTypeDefinition"
+	DecisionDefinition     VariableExpressionType = "DecisionDefinition"
+	ChekListItemDefinition VariableExpressionType = "ChekListItemDefinition"
+)
+
+// String implements Getter interface.
+func (vt VariableExpressionType) String() string {
 	return string(vt)
 }

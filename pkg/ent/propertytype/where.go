@@ -2035,6 +2035,34 @@ func HasProjectTemplateWith(preds ...predicate.ProjectTemplate) predicate.Proper
 	})
 }
 
+// HasWorkerType applies the HasEdge predicate on the "worker_type" edge.
+func HasWorkerType() predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(WorkerTypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, WorkerTypeTable, WorkerTypeColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWorkerTypeWith applies the HasEdge predicate on the "worker_type" edge with a given conditions (other predicates).
+func HasWorkerTypeWith(preds ...predicate.WorkerType) predicate.PropertyType {
+	return predicate.PropertyType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(WorkerTypeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, WorkerTypeTable, WorkerTypeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.PropertyType) predicate.PropertyType {
 	return predicate.PropertyType(func(s *sql.Selector) {

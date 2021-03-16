@@ -9,6 +9,11 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
+
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -52,12 +57,14 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 		Cid: "end",
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "param",
+				Type:                  enum.VariableDefinition,
+				VariableDefinitionKey: refString("param"),
 				Expression:            "${b_0}",
 				BlockVariables: []*models.BlockVariableInput{
 					{
+						Type:                  enum.VariableDefinition,
 						BlockCid:              startBlock.Cid,
-						VariableDefinitionKey: "start_param",
+						VariableDefinitionKey: refString("start_param"),
 					},
 				},
 			},
@@ -199,6 +206,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			XPosition: 30,
 			YPosition: 30,
 		})
+
 	firstDraft, err := r.client.Flow.QueryDraft(mainFlow).Only(ctx)
 	require.NoError(t, err)
 	err = r.client.FlowDraft.DeleteOne(firstDraft).Exec(ctx)
@@ -226,7 +234,8 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 		FlowID: subFlow.ID,
 		Params: []*models.VariableExpressionInput{
 			{
-				VariableDefinitionKey: "start_param",
+				Type:                  enum.VariableDefinition,
+				VariableDefinitionKey: refString("start_param"),
 				Expression:            "\"Start\"",
 			},
 		},
@@ -277,7 +286,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	params := details.(*models.EndBlock).Params
 	require.Len(t, params, 1)
-	paramDef, err := ver.Definition(ctx, params[0])
+	paramDef, err := ver.VariableDefinition(ctx, params[0])
 	require.NoError(t, err)
 	require.Equal(t, "param", paramDef.Key)
 	require.Equal(t, "param", paramDef.Name())
@@ -350,11 +359,14 @@ func TestStartFlow(t *testing.T) {
 	require.Equal(t, blockinstance.StatusPending, startBlock.Status)
 }
 
+func refString(s string) *string { return &s }
+func refInt(s int) *int          { return &s }
+
 func TestImportEmptyFlow(t *testing.T) {
 	r := newTestResolver(t, withActionFactory(actions.NewFactory()), withTriggerFactory(triggers.NewFactory()))
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, fdr := r.Mutation(), r.FlowDraft()
+	mr, fdr, br := r.Mutation(), r.FlowDraft(), r.Block()
 
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "First version",
@@ -368,10 +380,34 @@ func TestImportEmptyFlow(t *testing.T) {
 			Type: enum.VariableTypeInt,
 		},
 	}
-	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
-		Name: "SiteSurvey",
-	})
+
+	indexValue := 1
+	clcInputs := []*models.CheckListCategoryDefinitionInput{
+		{
+			Title: "Bar",
+			CheckList: []*models.CheckListDefinitionInput{
+				{
+					Title:       "Foo",
+					Type:        "simple",
+					Index:       &indexValue,
+					IsMandatory: pointer.ToBool(true),
+				},
+			},
+		},
+	}
+
+	strPropType := pkgmodels.PropertyTypeInput{
+		Name: "str_prop",
+		Type: "string",
+	}
+	propTypeInputs := []*pkgmodels.PropertyTypeInput{&strPropType}
+	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "SiteSurvey", Properties: propTypeInputs, CheckListCategories: clcInputs})
 	require.NoError(t, err)
+	propertyTypeID := woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
+	checkListItemID := woType.QueryCheckListCategoryDefinitions().QueryCheckListItemDefinitions().Where(checklistitemdefinition.Title("Foo")).OnlyIDX(ctx)
+	wkType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{Name: "worker", Properties: propTypeInputs})
+	require.NoError(t, err)
+	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 	trueRole := flowschema.ExitPointRoleTrue
 	connectorInputs := []*models.ConnectorInput{
@@ -409,6 +445,23 @@ func TestImportEmptyFlow(t *testing.T) {
 			TargetBlockCid: "shortcut",
 		},
 	}
+	condition1 := models.VariableExpressionInput{
+		Type:                  enum.DecisionDefinition,
+		VariableDefinitionKey: refString("param"),
+		Expression:            "${b_0}",
+		BlockVariables: []*models.BlockVariableInput{
+			{
+				Type:           enum.PropertyTypeDefinition,
+				BlockCid:       "wo",
+				PropertyTypeID: refInt(propertyTypeID),
+			},
+			{
+				Type:                      enum.ChekListItemDefinition,
+				BlockCid:                  "wo",
+				CheckListItemDefinitionID: refInt(checkListItemID),
+			},
+		},
+	}
 	newDraft, err := mr.ImportFlowDraft(ctx, models.ImportFlowDraftInput{
 		ID:                  draft.ID,
 		Name:                newName,
@@ -423,12 +476,14 @@ func TestImportEmptyFlow(t *testing.T) {
 				Cid: "end",
 				Params: []*models.VariableExpressionInput{
 					{
-						VariableDefinitionKey: "param",
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString("param"),
 						Expression:            "${b_0}",
 						BlockVariables: []*models.BlockVariableInput{
 							{
+								Type:                  enum.VariableDefinition,
 								BlockCid:              "start",
-								VariableDefinitionKey: "param",
+								VariableDefinitionKey: refString("param"),
 							},
 						},
 					},
@@ -440,10 +495,12 @@ func TestImportEmptyFlow(t *testing.T) {
 				Cid: "decision1",
 				Routes: []*models.DecisionRouteInput{
 					{
-						Cid: pointer.ToString("true"),
+						Cid:       pointer.ToString("true"),
+						Condition: &condition1,
 					},
 					{
-						Cid: pointer.ToString("false"),
+						Cid:       pointer.ToString("false"),
+						Condition: &condition1,
 					},
 				},
 			},
@@ -454,12 +511,35 @@ func TestImportEmptyFlow(t *testing.T) {
 				ActionType: flowschema.ActionTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
-						VariableDefinitionKey: actions.InputVariableType,
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableType),
 						Expression:            strconv.Itoa(woType.ID),
 					},
 					{
-						VariableDefinitionKey: actions.InputVariableOwner,
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableOwner),
 						Expression:            strconv.Itoa(owner.ID),
+					},
+					{
+						Type:           enum.PropertyTypeDefinition,
+						PropertyTypeID: refInt(propertyTypeID),
+						Expression:     "\"Property\"",
+					},
+				},
+			},
+			{
+				Cid:        "wk",
+				ActionType: flowschema.ActionTypeWorker,
+				Params: []*models.VariableExpressionInput{
+					{
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableWorkerType),
+						Expression:            strconv.Itoa(wkType.ID),
+					},
+					{
+						Type:           enum.PropertyTypeDefinition,
+						PropertyTypeID: refInt(propertyTypeWkID),
+						Expression:     "\"Property\"",
 					},
 				},
 			},
@@ -470,7 +550,8 @@ func TestImportEmptyFlow(t *testing.T) {
 				TriggerType: flowschema.TriggerTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
-						VariableDefinitionKey: triggers.InputVariableType,
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(triggers.InputVariableType),
 						Expression:            strconv.Quote(triggers.TypeWorkOrderInitiated),
 					},
 				},
@@ -495,7 +576,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
 	blocks, err := newDraft.QueryBlocks().All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blocks, 7)
+	require.Len(t, blocks, 8)
 	for _, blk := range blocks {
 		switch blk.Type {
 		case block.TypeStart:
@@ -503,10 +584,38 @@ func TestImportEmptyFlow(t *testing.T) {
 			require.Equal(t, paramDefinitions, blk.StartParamDefinitions)
 		case block.TypeDecision:
 			require.Equal(t, "decision1", blk.Cid)
+			exitPoints := blk.QueryExitPoints().AllX(ctx)
+			require.Len(t, exitPoints, 3)
+			for _, exitPoint := range exitPoints {
+				switch exitPoint.Role {
+				case flowschema.ExitPointRoleDecision:
+					require.Equal(t, enum.PropertyTypeDefinition, exitPoint.Condition.BlockVariables[0].Type)
+					require.Equal(t, enum.ChekListItemDefinition, exitPoint.Condition.BlockVariables[1].Type)
+				case flowschema.ExitPointRoleDefault:
+					require.Empty(t, exitPoint.Condition)
+				default:
+					t.Fatalf("exit point role not found: %v", exitPoint.Role)
+				}
+			}
 		case block.TypeAction:
-			require.Equal(t, "wo", blk.Cid)
-			require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
-			require.Len(t, blk.InputParams, 2)
+			if blk.Cid == "wk" {
+				require.Equal(t, flowschema.ActionTypeWorker, *blk.ActionType)
+				require.Len(t, blk.InputParams, 2)
+				blockType, err := br.Details(ctx, blk)
+				require.NoError(t, err)
+				action, ok := blockType.(*models.ActionBlock)
+				require.True(t, ok)
+				require.Len(t, action.Params, 3)
+			} else {
+				require.Equal(t, "wo", blk.Cid)
+				require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
+				require.Len(t, blk.InputParams, 3)
+				blockType, err := br.Details(ctx, blk)
+				require.NoError(t, err)
+				action, ok := blockType.(*models.ActionBlock)
+				require.True(t, ok)
+				require.Len(t, action.Params, 4)
+			}
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)
 			require.Len(t, blk.InputParams, 1)
@@ -647,12 +756,14 @@ func TestBadImports(t *testing.T) {
 					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
-							VariableDefinitionKey: "param",
+							Type:                  enum.VariableDefinition,
+							VariableDefinitionKey: refString("param"),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
+									Type:                  enum.VariableDefinition,
 									BlockCid:              "not_exist",
-									VariableDefinitionKey: "some_param",
+									VariableDefinitionKey: refString("some_param"),
 								},
 							},
 						},
@@ -677,12 +788,14 @@ func TestBadImports(t *testing.T) {
 					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
-							VariableDefinitionKey: "param",
+							Type:                  enum.VariableDefinition,
+							VariableDefinitionKey: refString("param"),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
+									Type:                  enum.VariableDefinition,
 									BlockCid:              "trig",
-									VariableDefinitionKey: triggers.OutputVariableWorkOrder,
+									VariableDefinitionKey: refString(triggers.OutputVariableWorkOrder),
 								},
 							},
 						},
@@ -695,12 +808,14 @@ func TestBadImports(t *testing.T) {
 					TriggerType: flowschema.TriggerTypeWorkOrder,
 					Params: []*models.VariableExpressionInput{
 						{
-							VariableDefinitionKey: triggers.InputVariableType,
+							Type:                  enum.VariableDefinition,
+							VariableDefinitionKey: refString(triggers.InputVariableType),
 							Expression:            "${b_0}",
 							BlockVariables: []*models.BlockVariableInput{
 								{
+									Type:                  enum.VariableDefinition,
 									BlockCid:              "final",
-									VariableDefinitionKey: "param",
+									VariableDefinitionKey: refString("param"),
 								},
 							},
 						},

@@ -128,6 +128,8 @@ type Tx struct {
 	WorkOrderTemplate *WorkOrderTemplateClient
 	// WorkOrderType is the client for interacting with the WorkOrderType builders.
 	WorkOrderType *WorkOrderTypeClient
+	// WorkerType is the client for interacting with the WorkerType builders.
+	WorkerType *WorkerTypeClient
 
 	// lazily loaded.
 	client     *Client
@@ -319,6 +321,7 @@ func (tx *Tx) init() {
 	tx.WorkOrderDefinition = NewWorkOrderDefinitionClient(tx.config)
 	tx.WorkOrderTemplate = NewWorkOrderTemplateClient(tx.config)
 	tx.WorkOrderType = NewWorkOrderTypeClient(tx.config)
+	tx.WorkerType = NewWorkerTypeClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

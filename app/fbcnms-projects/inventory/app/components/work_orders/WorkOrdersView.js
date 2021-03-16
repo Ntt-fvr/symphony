@@ -57,13 +57,13 @@ const WorkOrdersView = (props: Props) => {
   >(
     graphql`
       fragment WorkOrdersView_query on Query
-        @argumentDefinitions(
-          first: {type: "Int"}
-          orderBy: {type: "WorkOrderOrder"}
-          filterBy: {type: "[WorkOrderFilterInput!]"}
-          cursor: {type: "Cursor"}
-        )
-        @refetchable(queryName: "WorkOrdersViewPaginationQuery") {
+      @argumentDefinitions(
+        first: {type: "Int"}
+        orderBy: {type: "WorkOrderOrder"}
+        filterBy: {type: "[WorkOrderFilterInput!]"}
+        cursor: {type: "Cursor"}
+      )
+      @refetchable(queryName: "WorkOrdersViewPaginationQuery") {
         workOrders(
           after: $cursor
           first: $first
@@ -131,11 +131,13 @@ const WorkOrdersView = (props: Props) => {
       title: 'Name',
       getSortingValue: row => row.name,
       render: row => (
-        <Button variant="text" onClick={() => onWorkOrderSelected(row.id)}>
+        <Button
+          variant="text"
+          onClick={() => onWorkOrderSelected(row.id)}
+          tooltip={row.name ?? ''}>
           {row.name}
         </Button>
       ),
-      tooltip: row => row.name,
     },
     {
       key: 'type',
@@ -152,11 +154,11 @@ const WorkOrdersView = (props: Props) => {
             variant="text"
             onClick={() =>
               history.push(InventoryAPIUrls.project(nullthrows(row.project).id))
-            }>
+            }
+            tooltip={row.project?.name ?? ''}>
             {row.project?.name ?? ''}
           </Button>
         ) : null,
-      tooltip: row => row.project?.name ?? '',
     },
     {
       key: 'owner',

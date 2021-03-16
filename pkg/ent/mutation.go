@@ -67,6 +67,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -141,6 +142,7 @@ const (
 	TypeWorkOrderDefinition         = "WorkOrderDefinition"
 	TypeWorkOrderTemplate           = "WorkOrderTemplate"
 	TypeWorkOrderType               = "WorkOrderType"
+	TypeWorkerType                  = "WorkerType"
 )
 
 // ActivityMutation represents an operation that mutate the Activities
@@ -15187,6 +15189,7 @@ type ExitPointMutation struct {
 	update_time              *time.Time
 	role                     *flowschema.ExitPointRole
 	cid                      *string
+	condition                **flowschema.VariableExpression
 	clearedFields            map[string]struct{}
 	next_entry_points        map[int]struct{}
 	removednext_entry_points map[int]struct{}
@@ -15438,6 +15441,56 @@ func (m *ExitPointMutation) ResetCid() {
 	delete(m.clearedFields, exitpoint.FieldCid)
 }
 
+// SetCondition sets the condition field.
+func (m *ExitPointMutation) SetCondition(fe *flowschema.VariableExpression) {
+	m.condition = &fe
+}
+
+// Condition returns the condition value in the mutation.
+func (m *ExitPointMutation) Condition() (r *flowschema.VariableExpression, exists bool) {
+	v := m.condition
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCondition returns the old condition value of the ExitPoint.
+// If the ExitPoint object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExitPointMutation) OldCondition(ctx context.Context) (v *flowschema.VariableExpression, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCondition is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCondition requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCondition: %w", err)
+	}
+	return oldValue.Condition, nil
+}
+
+// ClearCondition clears the value of condition.
+func (m *ExitPointMutation) ClearCondition() {
+	m.condition = nil
+	m.clearedFields[exitpoint.FieldCondition] = struct{}{}
+}
+
+// ConditionCleared returns if the field condition was cleared in this mutation.
+func (m *ExitPointMutation) ConditionCleared() bool {
+	_, ok := m.clearedFields[exitpoint.FieldCondition]
+	return ok
+}
+
+// ResetCondition reset all changes of the "condition" field.
+func (m *ExitPointMutation) ResetCondition() {
+	m.condition = nil
+	delete(m.clearedFields, exitpoint.FieldCondition)
+}
+
 // AddNextEntryPointIDs adds the next_entry_points edge to EntryPoint by ids.
 func (m *ExitPointMutation) AddNextEntryPointIDs(ids ...int) {
 	if m.next_entry_points == nil {
@@ -15544,7 +15597,7 @@ func (m *ExitPointMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ExitPointMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, exitpoint.FieldCreateTime)
 	}
@@ -15556,6 +15609,9 @@ func (m *ExitPointMutation) Fields() []string {
 	}
 	if m.cid != nil {
 		fields = append(fields, exitpoint.FieldCid)
+	}
+	if m.condition != nil {
+		fields = append(fields, exitpoint.FieldCondition)
 	}
 	return fields
 }
@@ -15573,6 +15629,8 @@ func (m *ExitPointMutation) Field(name string) (ent.Value, bool) {
 		return m.Role()
 	case exitpoint.FieldCid:
 		return m.Cid()
+	case exitpoint.FieldCondition:
+		return m.Condition()
 	}
 	return nil, false
 }
@@ -15590,6 +15648,8 @@ func (m *ExitPointMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldRole(ctx)
 	case exitpoint.FieldCid:
 		return m.OldCid(ctx)
+	case exitpoint.FieldCondition:
+		return m.OldCondition(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -15627,6 +15687,13 @@ func (m *ExitPointMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCid(v)
 		return nil
+	case exitpoint.FieldCondition:
+		v, ok := value.(*flowschema.VariableExpression)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCondition(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)
 }
@@ -15660,6 +15727,9 @@ func (m *ExitPointMutation) ClearedFields() []string {
 	if m.FieldCleared(exitpoint.FieldCid) {
 		fields = append(fields, exitpoint.FieldCid)
 	}
+	if m.FieldCleared(exitpoint.FieldCondition) {
+		fields = append(fields, exitpoint.FieldCondition)
+	}
 	return fields
 }
 
@@ -15676,6 +15746,9 @@ func (m *ExitPointMutation) ClearField(name string) error {
 	switch name {
 	case exitpoint.FieldCid:
 		m.ClearCid()
+		return nil
+	case exitpoint.FieldCondition:
+		m.ClearCondition()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint nullable field %s", name)
@@ -15697,6 +15770,9 @@ func (m *ExitPointMutation) ResetField(name string) error {
 		return nil
 	case exitpoint.FieldCid:
 		m.ResetCid()
+		return nil
+	case exitpoint.FieldCondition:
+		m.ResetCondition()
 		return nil
 	}
 	return fmt.Errorf("unknown ExitPoint field %s", name)
@@ -33381,6 +33457,8 @@ type PropertyTypeMutation struct {
 	clearedproject_type             bool
 	project_template                *int
 	clearedproject_template         bool
+	worker_type                     *int
+	clearedworker_type              bool
 	done                            bool
 	oldValue                        func(context.Context) (*PropertyType, error)
 	predicates                      []predicate.PropertyType
@@ -34912,6 +34990,45 @@ func (m *PropertyTypeMutation) ResetProjectTemplate() {
 	m.clearedproject_template = false
 }
 
+// SetWorkerTypeID sets the worker_type edge to WorkerType by id.
+func (m *PropertyTypeMutation) SetWorkerTypeID(id int) {
+	m.worker_type = &id
+}
+
+// ClearWorkerType clears the worker_type edge to WorkerType.
+func (m *PropertyTypeMutation) ClearWorkerType() {
+	m.clearedworker_type = true
+}
+
+// WorkerTypeCleared returns if the edge worker_type was cleared.
+func (m *PropertyTypeMutation) WorkerTypeCleared() bool {
+	return m.clearedworker_type
+}
+
+// WorkerTypeID returns the worker_type id in the mutation.
+func (m *PropertyTypeMutation) WorkerTypeID() (id int, exists bool) {
+	if m.worker_type != nil {
+		return *m.worker_type, true
+	}
+	return
+}
+
+// WorkerTypeIDs returns the worker_type ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// WorkerTypeID instead. It exists only for internal usage by the builders.
+func (m *PropertyTypeMutation) WorkerTypeIDs() (ids []int) {
+	if id := m.worker_type; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetWorkerType reset all changes of the "worker_type" edge.
+func (m *PropertyTypeMutation) ResetWorkerType() {
+	m.worker_type = nil
+	m.clearedworker_type = false
+}
+
 // Op returns the operation name.
 func (m *PropertyTypeMutation) Op() Op {
 	return m.op
@@ -35512,7 +35629,7 @@ func (m *PropertyTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.properties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -35542,6 +35659,9 @@ func (m *PropertyTypeMutation) AddedEdges() []string {
 	}
 	if m.project_template != nil {
 		edges = append(edges, propertytype.EdgeProjectTemplate)
+	}
+	if m.worker_type != nil {
+		edges = append(edges, propertytype.EdgeWorkerType)
 	}
 	return edges
 }
@@ -35592,6 +35712,10 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 		if id := m.project_template; id != nil {
 			return []ent.Value{*id}
 		}
+	case propertytype.EdgeWorkerType:
+		if id := m.worker_type; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -35599,7 +35723,7 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.removedproperties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -35623,7 +35747,7 @@ func (m *PropertyTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.clearedproperties {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -35654,6 +35778,9 @@ func (m *PropertyTypeMutation) ClearedEdges() []string {
 	if m.clearedproject_template {
 		edges = append(edges, propertytype.EdgeProjectTemplate)
 	}
+	if m.clearedworker_type {
+		edges = append(edges, propertytype.EdgeWorkerType)
+	}
 	return edges
 }
 
@@ -35681,6 +35808,8 @@ func (m *PropertyTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedproject_type
 	case propertytype.EdgeProjectTemplate:
 		return m.clearedproject_template
+	case propertytype.EdgeWorkerType:
+		return m.clearedworker_type
 	}
 	return false
 }
@@ -35715,6 +35844,9 @@ func (m *PropertyTypeMutation) ClearEdge(name string) error {
 		return nil
 	case propertytype.EdgeProjectTemplate:
 		m.ClearProjectTemplate()
+		return nil
+	case propertytype.EdgeWorkerType:
+		m.ClearWorkerType()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType unique edge %s", name)
@@ -35754,6 +35886,9 @@ func (m *PropertyTypeMutation) ResetEdge(name string) error {
 		return nil
 	case propertytype.EdgeProjectTemplate:
 		m.ResetProjectTemplate()
+		return nil
+	case propertytype.EdgeWorkerType:
+		m.ResetWorkerType()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType edge %s", name)
@@ -54724,4 +54859,500 @@ func (m *WorkOrderTypeMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType edge %s", name)
+}
+
+// WorkerTypeMutation represents an operation that mutate the WorkerTypes
+// nodes in the graph.
+type WorkerTypeMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *int
+	create_time           *time.Time
+	update_time           *time.Time
+	name                  *string
+	clearedFields         map[string]struct{}
+	property_types        map[int]struct{}
+	removedproperty_types map[int]struct{}
+	clearedproperty_types bool
+	done                  bool
+	oldValue              func(context.Context) (*WorkerType, error)
+	predicates            []predicate.WorkerType
+}
+
+var _ ent.Mutation = (*WorkerTypeMutation)(nil)
+
+// workertypeOption allows to manage the mutation configuration using functional options.
+type workertypeOption func(*WorkerTypeMutation)
+
+// newWorkerTypeMutation creates new mutation for WorkerType.
+func newWorkerTypeMutation(c config, op Op, opts ...workertypeOption) *WorkerTypeMutation {
+	m := &WorkerTypeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeWorkerType,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withWorkerTypeID sets the id field of the mutation.
+func withWorkerTypeID(id int) workertypeOption {
+	return func(m *WorkerTypeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *WorkerType
+		)
+		m.oldValue = func(ctx context.Context) (*WorkerType, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().WorkerType.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withWorkerType sets the old WorkerType of the mutation.
+func withWorkerType(node *WorkerType) workertypeOption {
+	return func(m *WorkerTypeMutation) {
+		m.oldValue = func(context.Context) (*WorkerType, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m WorkerTypeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m WorkerTypeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *WorkerTypeMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *WorkerTypeMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *WorkerTypeMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the WorkerType.
+// If the WorkerType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkerTypeMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *WorkerTypeMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *WorkerTypeMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *WorkerTypeMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the WorkerType.
+// If the WorkerType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkerTypeMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *WorkerTypeMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *WorkerTypeMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *WorkerTypeMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the WorkerType.
+// If the WorkerType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkerTypeMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *WorkerTypeMutation) ResetName() {
+	m.name = nil
+}
+
+// AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
+func (m *WorkerTypeMutation) AddPropertyTypeIDs(ids ...int) {
+	if m.property_types == nil {
+		m.property_types = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.property_types[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *WorkerTypeMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *WorkerTypeMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
+}
+
+// RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
+func (m *WorkerTypeMutation) RemovePropertyTypeIDs(ids ...int) {
+	if m.removedproperty_types == nil {
+		m.removedproperty_types = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperty_types[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPropertyTypes returns the removed ids of property_types.
+func (m *WorkerTypeMutation) RemovedPropertyTypesIDs() (ids []int) {
+	for id := range m.removedproperty_types {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertyTypesIDs returns the property_types ids in the mutation.
+func (m *WorkerTypeMutation) PropertyTypesIDs() (ids []int) {
+	for id := range m.property_types {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPropertyTypes reset all changes of the "property_types" edge.
+func (m *WorkerTypeMutation) ResetPropertyTypes() {
+	m.property_types = nil
+	m.clearedproperty_types = false
+	m.removedproperty_types = nil
+}
+
+// Op returns the operation name.
+func (m *WorkerTypeMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (WorkerType).
+func (m *WorkerTypeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *WorkerTypeMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, workertype.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, workertype.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, workertype.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *WorkerTypeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case workertype.FieldCreateTime:
+		return m.CreateTime()
+	case workertype.FieldUpdateTime:
+		return m.UpdateTime()
+	case workertype.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *WorkerTypeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case workertype.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case workertype.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case workertype.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown WorkerType field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *WorkerTypeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case workertype.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case workertype.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case workertype.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown WorkerType field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *WorkerTypeMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *WorkerTypeMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *WorkerTypeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown WorkerType numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *WorkerTypeMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *WorkerTypeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *WorkerTypeMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown WorkerType nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *WorkerTypeMutation) ResetField(name string) error {
+	switch name {
+	case workertype.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case workertype.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case workertype.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown WorkerType field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *WorkerTypeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.property_types != nil {
+		edges = append(edges, workertype.EdgePropertyTypes)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *WorkerTypeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case workertype.EdgePropertyTypes:
+		ids := make([]ent.Value, 0, len(m.property_types))
+		for id := range m.property_types {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *WorkerTypeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedproperty_types != nil {
+		edges = append(edges, workertype.EdgePropertyTypes)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *WorkerTypeMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case workertype.EdgePropertyTypes:
+		ids := make([]ent.Value, 0, len(m.removedproperty_types))
+		for id := range m.removedproperty_types {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *WorkerTypeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedproperty_types {
+		edges = append(edges, workertype.EdgePropertyTypes)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *WorkerTypeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case workertype.EdgePropertyTypes:
+		return m.clearedproperty_types
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *WorkerTypeMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown WorkerType unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *WorkerTypeMutation) ResetEdge(name string) error {
+	switch name {
+	case workertype.EdgePropertyTypes:
+		m.ResetPropertyTypes()
+		return nil
+	}
+	return fmt.Errorf("unknown WorkerType edge %s", name)
 }

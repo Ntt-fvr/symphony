@@ -558,3 +558,8 @@ func (r queryResolver) getNextConnectedPortWithLink(ctx context.Context, port *e
 		}).
 		Only(ctx)
 }
+
+func (r queryResolver) WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error) {
+	return r.ClientFrom(ctx).WorkerType.Query().
+		Paginate(ctx, after, first, before, last)
+}

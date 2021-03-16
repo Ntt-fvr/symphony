@@ -54,7 +54,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "cid", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "DECISION", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION", "TRUE_FALSE"}},
-		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order", "update_inventory", "update_workforce"}},
+		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order", "update_inventory", "update_workforce", "worker"}},
 		{Name: "trigger_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
 		{Name: "start_param_definitions", Type: field.TypeJSON, Nullable: true},
 		{Name: "input_params", Type: field.TypeJSON, Nullable: true},
@@ -610,6 +610,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT", "DECISION", "TRUE", "FALSE"}},
 		{Name: "cid", Type: field.TypeString, Nullable: true},
+		{Name: "condition", Type: field.TypeJSON, Nullable: true},
 		{Name: "block_exit_points", Type: field.TypeInt, Nullable: true},
 	}
 	// ExitPointsTable holds the schema information for the "exit_points" table.
@@ -620,7 +621,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "exit_points_blocks_exit_points",
-				Columns: []*schema.Column{ExitPointsColumns[5]},
+				Columns: []*schema.Column{ExitPointsColumns[6]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -630,7 +631,7 @@ var (
 			{
 				Name:    "exitpoint_cid_block_exit_points",
 				Unique:  true,
-				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[5]},
+				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[6]},
 			},
 		},
 	}
@@ -1394,6 +1395,7 @@ var (
 		{Name: "service_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type_property_types", Type: field.TypeInt, Nullable: true},
+		{Name: "worker_type_property_types", Type: field.TypeInt, Nullable: true},
 	}
 	// PropertyTypesTable holds the schema information for the "property_types" table.
 	PropertyTypesTable = &schema.Table{
@@ -1464,6 +1466,13 @@ var (
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
+			{
+				Symbol:  "property_types_worker_types_property_types",
+				Columns: []*schema.Column{PropertyTypesColumns[30]},
+
+				RefColumns: []*schema.Column{WorkerTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
 		},
 		Indexes: []*schema.Index{
 			{
@@ -1490,6 +1499,11 @@ var (
 				Name:    "propertytype_name_work_order_type_property_types",
 				Unique:  true,
 				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[29]},
+			},
+			{
+				Name:    "propertytype_name_worker_type_property_types",
+				Unique:  true,
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[30]},
 			},
 		},
 	}
@@ -2100,6 +2114,20 @@ var (
 			},
 		},
 	}
+	// WorkerTypesColumns holds the columns for the "worker_types" table.
+	WorkerTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// WorkerTypesTable holds the schema information for the "worker_types" table.
+	WorkerTypesTable = &schema.Table{
+		Name:        "worker_types",
+		Columns:     WorkerTypesColumns,
+		PrimaryKey:  []*schema.Column{WorkerTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// EquipmentPortDefinitionConnectedPortsColumns holds the columns for the "equipment_port_definition_connected_ports" table.
 	EquipmentPortDefinitionConnectedPortsColumns = []*schema.Column{
 		{Name: "equipment_port_definition_id", Type: field.TypeInt},
@@ -2428,6 +2456,7 @@ var (
 		WorkOrderDefinitionsTable,
 		WorkOrderTemplatesTable,
 		WorkOrderTypesTable,
+		WorkerTypesTable,
 		EquipmentPortDefinitionConnectedPortsTable,
 		ExitPointNextEntryPointsTable,
 		ServiceUpstreamTable,
@@ -2523,6 +2552,7 @@ func init() {
 	PropertyTypesTable.ForeignKeys[6].RefTable = ServiceTypesTable
 	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
 	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
+	PropertyTypesTable.ForeignKeys[9].RefTable = WorkerTypesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable
 	ServiceEndpointsTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceEndpointsTable.ForeignKeys[1].RefTable = EquipmentPortsTable

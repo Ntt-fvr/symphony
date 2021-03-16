@@ -28,6 +28,8 @@ const (
 	FieldRole = "role"
 	// FieldCid holds the string denoting the cid field in the database.
 	FieldCid = "cid"
+	// FieldCondition holds the string denoting the condition field in the database.
+	FieldCondition = "condition"
 
 	// EdgeNextEntryPoints holds the string denoting the next_entry_points edge name in mutations.
 	EdgeNextEntryPoints = "next_entry_points"
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldRole,
 	FieldCid,
+	FieldCondition,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the ExitPoint type.

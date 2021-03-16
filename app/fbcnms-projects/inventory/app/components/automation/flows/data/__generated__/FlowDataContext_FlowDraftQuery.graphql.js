@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type FlowHeader_flowDraft$ref = any;
-export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "%future added value";
+export type ActionTypeId = "update_inventory" | "update_workforce" | "work_order" | "worker" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
 export type FlowDataContext_FlowDraftQueryVariables = {|
   flowId: string

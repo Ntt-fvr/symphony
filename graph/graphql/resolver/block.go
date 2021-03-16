@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -15,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -101,6 +103,7 @@ func getDefaultEntryExitPoints(ctx context.Context, obj *ent.Block) (*ent.EntryP
 	return entryPoint, exitPoint, nil
 }
 
+// nolint: funlen
 func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.BlockDetails, error) {
 	entryPoint, exitPoint, err := getDefaultEntryExitPoints(ctx, obj)
 	if err != nil {
@@ -193,6 +196,9 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		if err != nil {
 			return nil, err
 		}
+		if templateName, ok := getTemplateName(ctx, obj); ok {
+			obj.InputParams = append(obj.InputParams, templateName)
+		}
 		return &models.ActionBlock{
 			ActionType: actionType,
 			Params:     obj.InputParams,
@@ -202,6 +208,40 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
+}
+
+func getTemplateName(ctx context.Context, obj *ent.Block) (*flowschema.VariableExpression, bool) {
+	client := ent.FromContext(ctx)
+	for _, inputParam := range obj.InputParams {
+		if inputParam.VariableDefinitionKey == actions.InputVariableType || inputParam.VariableDefinitionKey == actions.InputVariableWorkerType {
+			typeID, err := strconv.Atoi(inputParam.Expression)
+			if err != nil {
+				return nil, false
+			}
+			var name string
+			if *obj.ActionType == flowschema.ActionTypeWorkOrder {
+				workOrderType, err := client.WorkOrderType.Get(ctx, typeID)
+				if err != nil {
+					return nil, false
+				}
+				name = workOrderType.Name
+			} else if *obj.ActionType == flowschema.ActionTypeWorker {
+				workerType, err := client.WorkerType.Get(ctx, typeID)
+				if err != nil {
+					return nil, false
+				}
+				name = workerType.Name
+			}
+			templateName := flowschema.VariableExpression{
+				BlockID:               obj.ID,
+				Type:                  enum.VariableDefinition,
+				VariableDefinitionKey: actions.InputVariableTypeName,
+				Expression:            name,
+			}
+			return &templateName, true
+		}
+	}
+	return nil, false
 }
 
 func addBlockMutation(
@@ -223,6 +263,9 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 	vars := make([]*flowschema.VariableExpression, 0, len(inputVariables))
 	for _, variable := range inputVariables {
 		var blockVariables []*flowschema.BlockVariable
+		if variable.Type == actions.InputVariableTypeName {
+			continue
+		}
 		for _, blockVar := range variable.BlockVariables {
 			varBlockID, err := client.Block.Query().
 				Where(block.ID(blockID)).
@@ -233,17 +276,53 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 			if err != nil {
 				return nil, err
 			}
-			blockVariables = append(blockVariables, &flowschema.BlockVariable{
-				BlockID:               varBlockID,
-				VariableDefinitionKey: blockVar.VariableDefinitionKey,
+
+			switch blockVar.Type {
+			case enum.VariableDefinition:
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:               varBlockID,
+					Type:                  blockVar.Type,
+					VariableDefinitionKey: *blockVar.VariableDefinitionKey,
+				})
+			case enum.PropertyTypeDefinition:
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:        varBlockID,
+					Type:           blockVar.Type,
+					PropertyTypeID: *blockVar.PropertyTypeID,
+				})
+			case enum.ChekListItemDefinition:
+				blockVariables = append(blockVariables, &flowschema.BlockVariable{
+					BlockID:                   varBlockID,
+					Type:                      blockVar.Type,
+					CheckListItemDefinitionID: *blockVar.CheckListItemDefinitionID,
+				})
+			}
+		}
+		switch variable.Type {
+		case enum.VariableDefinition:
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:               blockID,
+				Type:                  variable.Type,
+				VariableDefinitionKey: *variable.VariableDefinitionKey,
+				Expression:            variable.Expression,
+				BlockVariables:        blockVariables,
+			})
+		case enum.PropertyTypeDefinition:
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:        blockID,
+				Type:           variable.Type,
+				PropertyTypeID: *variable.PropertyTypeID,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
+			})
+		case enum.DecisionDefinition:
+			vars = append(vars, &flowschema.VariableExpression{
+				BlockID:        blockID,
+				Type:           variable.Type,
+				Expression:     variable.Expression,
+				BlockVariables: blockVariables,
 			})
 		}
-		vars = append(vars, &flowschema.VariableExpression{
-			BlockID:               blockID,
-			VariableDefinitionKey: variable.VariableDefinitionKey,
-			Expression:            variable.Expression,
-			BlockVariables:        blockVariables,
-		})
 	}
 	return vars, nil
 }
@@ -279,10 +358,20 @@ func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int,
 	client := r.ClientFrom(ctx)
 	for _, route := range input.Routes {
 		if route.Cid != nil {
+			var inputVariables []*models.VariableExpressionInput
+			inputVariables = append(inputVariables, route.Condition)
+			variableExpressions, err := getBlockVariables(ctx, inputVariables, b.ID)
+			if err != nil {
+				return nil, err
+			}
+			if len(variableExpressions) != 1 {
+				return nil, fmt.Errorf("there is not a condition for route %s", *route.Cid)
+			}
 			if _, err := client.ExitPoint.Create().
 				SetRole(flowschema.ExitPointRoleDecision).
 				SetCid(*route.Cid).
 				SetParentBlockID(b.ID).
+				SetCondition(variableExpressions[0]).
 				Save(ctx); err != nil {
 				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
 			}

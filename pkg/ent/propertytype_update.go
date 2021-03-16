@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 )
@@ -582,6 +583,25 @@ func (ptu *PropertyTypeUpdate) SetProjectTemplate(p *ProjectTemplate) *PropertyT
 	return ptu.SetProjectTemplateID(p.ID)
 }
 
+// SetWorkerTypeID sets the worker_type edge to WorkerType by id.
+func (ptu *PropertyTypeUpdate) SetWorkerTypeID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetWorkerTypeID(id)
+	return ptu
+}
+
+// SetNillableWorkerTypeID sets the worker_type edge to WorkerType by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillableWorkerTypeID(id *int) *PropertyTypeUpdate {
+	if id != nil {
+		ptu = ptu.SetWorkerTypeID(*id)
+	}
+	return ptu
+}
+
+// SetWorkerType sets the worker_type edge to WorkerType.
+func (ptu *PropertyTypeUpdate) SetWorkerType(w *WorkerType) *PropertyTypeUpdate {
+	return ptu.SetWorkerTypeID(w.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
@@ -659,6 +679,12 @@ func (ptu *PropertyTypeUpdate) ClearProjectType() *PropertyTypeUpdate {
 // ClearProjectTemplate clears the "project_template" edge to type ProjectTemplate.
 func (ptu *PropertyTypeUpdate) ClearProjectTemplate() *PropertyTypeUpdate {
 	ptu.mutation.ClearProjectTemplate()
+	return ptu
+}
+
+// ClearWorkerType clears the "worker_type" edge to type WorkerType.
+func (ptu *PropertyTypeUpdate) ClearWorkerType() *PropertyTypeUpdate {
+	ptu.mutation.ClearWorkerType()
 	return ptu
 }
 
@@ -1379,6 +1405,41 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptu.mutation.WorkerTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.WorkerTypeTable,
+			Columns: []string{propertytype.WorkerTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workertype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.WorkerTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.WorkerTypeTable,
+			Columns: []string{propertytype.WorkerTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workertype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -1940,6 +2001,25 @@ func (ptuo *PropertyTypeUpdateOne) SetProjectTemplate(p *ProjectTemplate) *Prope
 	return ptuo.SetProjectTemplateID(p.ID)
 }
 
+// SetWorkerTypeID sets the worker_type edge to WorkerType by id.
+func (ptuo *PropertyTypeUpdateOne) SetWorkerTypeID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetWorkerTypeID(id)
+	return ptuo
+}
+
+// SetNillableWorkerTypeID sets the worker_type edge to WorkerType by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillableWorkerTypeID(id *int) *PropertyTypeUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetWorkerTypeID(*id)
+	}
+	return ptuo
+}
+
+// SetWorkerType sets the worker_type edge to WorkerType.
+func (ptuo *PropertyTypeUpdateOne) SetWorkerType(w *WorkerType) *PropertyTypeUpdateOne {
+	return ptuo.SetWorkerTypeID(w.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
@@ -2017,6 +2097,12 @@ func (ptuo *PropertyTypeUpdateOne) ClearProjectType() *PropertyTypeUpdateOne {
 // ClearProjectTemplate clears the "project_template" edge to type ProjectTemplate.
 func (ptuo *PropertyTypeUpdateOne) ClearProjectTemplate() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearProjectTemplate()
+	return ptuo
+}
+
+// ClearWorkerType clears the "worker_type" edge to type WorkerType.
+func (ptuo *PropertyTypeUpdateOne) ClearWorkerType() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearWorkerType()
 	return ptuo
 }
 
@@ -2727,6 +2813,41 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *Property
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.WorkerTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.WorkerTypeTable,
+			Columns: []string{propertytype.WorkerTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workertype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.WorkerTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.WorkerTypeTable,
+			Columns: []string{propertytype.WorkerTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workertype.FieldID,
 				},
 			},
 		}

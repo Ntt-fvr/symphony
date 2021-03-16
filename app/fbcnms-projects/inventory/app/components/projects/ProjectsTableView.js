@@ -77,13 +77,13 @@ const ProjectsTableView = (props: Props) => {
   >(
     graphql`
       fragment ProjectsTableView_query on Query
-        @argumentDefinitions(
-          first: {type: "Int"}
-          orderBy: {type: "ProjectOrder"}
-          filterBy: {type: "[ProjectFilterInput!]"}
-          cursor: {type: "Cursor"}
-        )
-        @refetchable(queryName: "ProjectsTableViewPaginationQuery") {
+      @argumentDefinitions(
+        first: {type: "Int"}
+        orderBy: {type: "ProjectOrder"}
+        filterBy: {type: "[ProjectFilterInput!]"}
+        cursor: {type: "Cursor"}
+      )
+      @refetchable(queryName: "ProjectsTableViewPaginationQuery") {
         projects(
           after: $cursor
           first: $first
@@ -159,7 +159,10 @@ const ProjectsTableView = (props: Props) => {
         key: defaultVisibleColumnsKeys.name,
         title: 'Project',
         render: row => (
-          <Button variant="text" onClick={() => onProjectSelected(row.id)}>
+          <Button
+            variant="text"
+            onClick={() => onProjectSelected(row.id)}
+            tooltip={row.name ?? ''}>
             {row.name}
           </Button>
         ),
@@ -181,6 +184,7 @@ const ProjectsTableView = (props: Props) => {
         key: defaultVisibleColumnsKeys.type,
         title: `${fbt('Template', '')}`,
         render: row => row.type?.name ?? '',
+        tooltip: row => row.type?.name ?? '',
       },
       {
         key: defaultVisibleColumnsKeys.location,
@@ -191,11 +195,13 @@ const ProjectsTableView = (props: Props) => {
           ) : (
             ''
           ),
+        tooltip: row => row.location?.name ?? '',
       },
       {
         key: defaultVisibleColumnsKeys.owner,
         title: 'Owner',
         render: row => row?.createdBy?.email ?? '',
+        tooltip: row => row.createdBy?.email ?? '',
       },
       {
         key: defaultVisibleColumnsKeys.priority,
@@ -207,6 +213,7 @@ const ProjectsTableView = (props: Props) => {
         key: defaultVisibleColumnsKeys.createTime,
         title: 'Creation Time',
         render: row => DateTimeFormat.dateTime(row.createTime),
+        tooltip: row => DateTimeFormat.dateTime(row.createTime),
         isSortable: true,
       },
 
@@ -228,6 +235,18 @@ const ProjectsTableView = (props: Props) => {
               null
             );
           },
+          tooltip: row => {
+            const indexOfProperty = row.properties.findIndex(
+              property => property.propertyType.name === name,
+            );
+
+            return (
+              (indexOfProperty >= 0 &&
+                getPropertyValue(row.properties[indexOfProperty])) ||
+              null
+            );
+          },
+          isSortable: true,
         })),
     ].map(column => {
       const hidden = !visibleColumns.includes(column.key);

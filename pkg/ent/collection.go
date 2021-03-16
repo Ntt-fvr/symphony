@@ -1091,3 +1091,23 @@ func (wot *WorkOrderTypeQuery) collectField(ctx *graphql.OperationContext, field
 	}
 	return wot
 }
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (wt *WorkerTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *WorkerTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		wt = wt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return wt
+}
+
+func (wt *WorkerTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *WorkerTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "propertyTypes":
+			wt = wt.WithPropertyTypes(func(query *PropertyTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return wt
+}

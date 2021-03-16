@@ -127,6 +127,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '85792e6b61c311d8ce3645703deb69b6';
+(node/*: any*/).hash = 'f78d5f49864462b54118081587c24ac0';
 
 module.exports = node;

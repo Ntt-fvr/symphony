@@ -226,9 +226,17 @@ type AddWorkOrderTypeInput struct {
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
+type AddWorkerTypeInput struct {
+	Name       string                      `json:"name"`
+	Properties []*models.PropertyTypeInput `json:"properties"`
+}
+
 type BlockVariableInput struct {
-	BlockCid              string `json:"blockCid"`
-	VariableDefinitionKey string `json:"variableDefinitionKey"`
+	BlockCid                  string                      `json:"blockCid"`
+	Type                      enum.VariableExpressionType `json:"type"`
+	VariableDefinitionKey     *string                     `json:"variableDefinitionKey"`
+	PropertyTypeID            *int                        `json:"propertyTypeId"`
+	CheckListItemDefinitionID *int                        `json:"checkListItemDefinitionId"`
 }
 
 type CheckListCategoryDefinitionInput struct {
@@ -322,7 +330,8 @@ type DecisionRoute struct {
 }
 
 type DecisionRouteInput struct {
-	Cid *string `json:"cid"`
+	Cid       *string                  `json:"cid"`
+	Condition *VariableExpressionInput `json:"condition"`
 }
 
 type EditBlockInput struct {
@@ -459,6 +468,12 @@ type EditWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+}
+
+type EditWorkerTypeInput struct {
+	ID         int                         `json:"id"`
+	Name       string                      `json:"name"`
+	Properties []*models.PropertyTypeInput `json:"properties"`
 }
 
 type EndBlock struct {
@@ -948,9 +963,11 @@ type UsersGroupSearchResult struct {
 }
 
 type VariableExpressionInput struct {
-	VariableDefinitionKey string                `json:"variableDefinitionKey"`
-	Expression            string                `json:"expression"`
-	BlockVariables        []*BlockVariableInput `json:"blockVariables"`
+	Type                  enum.VariableExpressionType `json:"type"`
+	VariableDefinitionKey *string                     `json:"variableDefinitionKey"`
+	PropertyTypeID        *int                        `json:"propertyTypeId"`
+	Expression            string                      `json:"expression"`
+	BlockVariables        []*BlockVariableInput       `json:"blockVariables"`
 }
 
 type WorkOrderDefinitionInput struct {
