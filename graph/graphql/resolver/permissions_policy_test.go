@@ -145,10 +145,10 @@ func TestAddAutomationPolicy(t *testing.T) {
 
 	automationPolicyInput := getAutomationPolicyInput()
 	policy, err := mr.AddPermissionsPolicy(ctx, models.AddPermissionsPolicyInput{
-		Name:           policyName,
-		Description:    pointer.ToString(policyDescription),
-		InventoryInput: nil,
-		WorkforceInput: nil,
+		Name:            policyName,
+		Description:     pointer.ToString(policyDescription),
+		InventoryInput:  nil,
+		WorkforceInput:  nil,
 		AutomationInput: automationPolicyInput,
 	})
 	require.NoError(t, err)
@@ -210,10 +210,10 @@ func TestAddEmptyPermissionsPolicy(t *testing.T) {
 	mr := r.Mutation()
 
 	_, err := mr.AddPermissionsPolicy(ctx, models.AddPermissionsPolicyInput{
-		Name:           policyName,
-		Description:    pointer.ToString(policyDescription),
-		InventoryInput: nil,
-		WorkforceInput: nil,
+		Name:            policyName,
+		Description:     pointer.ToString(policyDescription),
+		InventoryInput:  nil,
+		WorkforceInput:  nil,
 		AutomationInput: nil,
 	})
 	require.Error(t, err)
