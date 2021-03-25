@@ -798,9 +798,10 @@ type ComplexityRoot struct {
 	}
 
 	PermissionSettings struct {
-		AdminPolicy     func(childComplexity int) int
-		InventoryPolicy func(childComplexity int) int
-		WorkforcePolicy func(childComplexity int) int
+		AdminPolicy      func(childComplexity int) int
+		AutomationPolicy func(childComplexity int) int
+		InventoryPolicy  func(childComplexity int) int
+		WorkforcePolicy  func(childComplexity int) int
 	}
 
 	PermissionsPolicy struct {
@@ -5385,6 +5386,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PermissionSettings.AdminPolicy(childComplexity), true
 
+	case "PermissionSettings.automationPolicy":
+		if e.complexity.PermissionSettings.AutomationPolicy == nil {
+			break
+		}
+
+		return e.complexity.PermissionSettings.AutomationPolicy(childComplexity), true
+
 	case "PermissionSettings.inventoryPolicy":
 		if e.complexity.PermissionSettings.InventoryPolicy == nil {
 			break
@@ -8621,6 +8629,7 @@ type PermissionSettings
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
+  automationPolicy: AutomationPolicy!
 }
 
 enum PermissionValue
@@ -33232,6 +33241,41 @@ func (ec *executionContext) _PermissionSettings_workforcePolicy(ctx context.Cont
 	res := resTmp.(*models2.WorkforcePolicy)
 	fc.Result = res
 	return ec.marshalNWorkforcePolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐWorkforcePolicy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PermissionSettings_automationPolicy(ctx context.Context, field graphql.CollectedField, obj *models2.PermissionSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PermissionSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AutomationPolicy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.AutomationPolicy)
+	fc.Result = res
+	return ec.marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicy(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PermissionsPolicy_id(ctx context.Context, field graphql.CollectedField, obj *ent.PermissionsPolicy) (ret graphql.Marshaler) {
@@ -60577,6 +60621,11 @@ func (ec *executionContext) _PermissionSettings(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "automationPolicy":
+			out.Values[i] = ec._PermissionSettings_automationPolicy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -65349,6 +65398,16 @@ func (ec *executionContext) marshalNAdministrativePolicy2ᚖgithubᚗcomᚋfaceb
 		return graphql.Null
 	}
 	return ec._AdministrativePolicy(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicy(ctx context.Context, sel ast.SelectionSet, v *models2.AutomationPolicy) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AutomationPolicy(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx context.Context, sel ast.SelectionSet, v *models2.BasicPermissionRule) graphql.Marshaler {

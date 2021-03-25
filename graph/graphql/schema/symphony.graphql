@@ -83,6 +83,7 @@ type PermissionSettings
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
+  automationPolicy: AutomationPolicy!
 }
 
 enum PermissionValue
