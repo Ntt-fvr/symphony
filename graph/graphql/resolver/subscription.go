@@ -193,3 +193,11 @@ func (r subscriptionResolver) ProjectAdded(ctx context.Context) (<-chan *ent.Pro
 	}
 	return events.(chan *ent.Project), nil
 }
+
+func (r subscriptionResolver) LocationAdded(ctx context.Context) (<-chan *ent.Location, error) {
+	events, err := r.subscribe(ctx, event.LocationAdded, &ent.Location{})
+	if err != nil {
+		return nil, err
+	}
+	return events.(chan *ent.Location), nil
+}
