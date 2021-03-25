@@ -185,3 +185,11 @@ func (r subscriptionResolver) FlowInstanceDone(ctx context.Context) (<-chan *ent
 	}
 	return events.(chan *ent.FlowInstance), nil
 }
+
+func (r subscriptionResolver) ProjectAdded(ctx context.Context) (<-chan *ent.Project, error) {
+	events, err := r.subscribe(ctx, event.ProjectAdded, &ent.Project{})
+	if err != nil {
+		return nil, err
+	}
+	return events.(chan *ent.Project), nil
+}

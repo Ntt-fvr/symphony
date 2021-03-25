@@ -25,6 +25,7 @@ func (e *Eventer) HookTo(client *ent.Client) {
 	client.Use(e.logHook())
 	client.WorkOrder.Use(e.workOrderHook())
 	client.FlowInstance.Use(e.flowInstanceHook())
+	client.Project.Use(e.projectHook())
 }
 
 func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {
