@@ -25,6 +25,7 @@ export type EditPermissionsPolicyInput = {|
   isGlobal?: ?boolean,
   inventoryInput?: ?InventoryPolicyInput,
   workforceInput?: ?WorkforcePolicyInput,
+  automationInput?: ?AutomationPolicyInput,
   groups?: ?$ReadOnlyArray<string>,
 |};
 export type InventoryPolicyInput = {|
@@ -69,6 +70,10 @@ export type WorkforceCUDInput = {|
   delete?: ?BasicPermissionRuleInput,
   assign?: ?BasicPermissionRuleInput,
   transferOwnership?: ?BasicPermissionRuleInput,
+|};
+export type AutomationPolicyInput = {|
+  read?: ?BasicPermissionRuleInput,
+  templates?: ?BasicCUDInput,
 |};
 export type EditPermissionsPolicyMutationVariables = {|
   input: EditPermissionsPolicyInput

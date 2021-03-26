@@ -42,6 +42,17 @@ func getWorkforcePolicyInput() *models2.WorkforcePolicyInput {
 	}
 }
 
+func getAutomationPolicyInput() *models2.AutomationPolicyInput {
+	return &models2.AutomationPolicyInput{
+		Read: &models2.BasicPermissionRuleInput{IsAllowed: models2.PermissionValueYes},
+		Templates: &models2.BasicCUDInput{
+			Create: &models2.BasicPermissionRuleInput{IsAllowed: models2.PermissionValueYes},
+			Update: &models2.BasicPermissionRuleInput{IsAllowed: models2.PermissionValueYes},
+			Delete: &models2.BasicPermissionRuleInput{IsAllowed: models2.PermissionValueNo},
+		},
+	}
+}
+
 func TestQueryInventoryPolicies(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -126,6 +137,35 @@ func TestAddWorkOrderPolicy(t *testing.T) {
 	require.Equal(t, models2.PermissionValueNo, workforcePolicy.Templates.Delete.IsAllowed)
 }
 
+func TestAddAutomationPolicy(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr, ppr := r.Mutation(), r.PermissionsPolicy()
+
+	automationPolicyInput := getAutomationPolicyInput()
+	policy, err := mr.AddPermissionsPolicy(ctx, models.AddPermissionsPolicyInput{
+		Name:            policyName,
+		Description:     pointer.ToString(policyDescription),
+		InventoryInput:  nil,
+		WorkforceInput:  nil,
+		AutomationInput: automationPolicyInput,
+	})
+	require.NoError(t, err)
+	require.Equal(t, policyName, policy.Name)
+	require.Equal(t, policyDescription, policy.Description)
+	res, err := ppr.Policy(ctx, policy)
+	require.NoError(t, err)
+	automationPolicy, ok := res.(*models2.AutomationPolicy)
+	require.True(t, ok)
+
+	require.Equal(t, models2.PermissionValueYes, automationPolicy.Read.IsAllowed)
+
+	require.Equal(t, models2.PermissionValueYes, automationPolicy.Templates.Create.IsAllowed)
+	require.Equal(t, models2.PermissionValueYes, automationPolicy.Templates.Update.IsAllowed)
+	require.Equal(t, models2.PermissionValueNo, automationPolicy.Templates.Delete.IsAllowed)
+}
+
 func TestAddMultipleTypesPermissionsPolicy(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
@@ -170,10 +210,11 @@ func TestAddEmptyPermissionsPolicy(t *testing.T) {
 	mr := r.Mutation()
 
 	_, err := mr.AddPermissionsPolicy(ctx, models.AddPermissionsPolicyInput{
-		Name:           policyName,
-		Description:    pointer.ToString(policyDescription),
-		InventoryInput: nil,
-		WorkforceInput: nil,
+		Name:            policyName,
+		Description:     pointer.ToString(policyDescription),
+		InventoryInput:  nil,
+		WorkforceInput:  nil,
+		AutomationInput: nil,
 	})
 	require.Error(t, err)
 }

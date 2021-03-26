@@ -102,6 +102,18 @@ func (ppu *PermissionsPolicyUpdate) ClearWorkforcePolicy() *PermissionsPolicyUpd
 	return ppu
 }
 
+// SetAutomationPolicy sets the automation_policy field.
+func (ppu *PermissionsPolicyUpdate) SetAutomationPolicy(mpi *models.AutomationPolicyInput) *PermissionsPolicyUpdate {
+	ppu.mutation.SetAutomationPolicy(mpi)
+	return ppu
+}
+
+// ClearAutomationPolicy clears the value of automation_policy.
+func (ppu *PermissionsPolicyUpdate) ClearAutomationPolicy() *PermissionsPolicyUpdate {
+	ppu.mutation.ClearAutomationPolicy()
+	return ppu
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (ppu *PermissionsPolicyUpdate) AddGroupIDs(ids ...int) *PermissionsPolicyUpdate {
 	ppu.mutation.AddGroupIDs(ids...)
@@ -303,6 +315,19 @@ func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: permissionspolicy.FieldWorkforcePolicy,
 		})
 	}
+	if value, ok := ppu.mutation.AutomationPolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: permissionspolicy.FieldAutomationPolicy,
+		})
+	}
+	if ppu.mutation.AutomationPolicyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: permissionspolicy.FieldAutomationPolicy,
+		})
+	}
 	if ppu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -442,6 +467,18 @@ func (ppuo *PermissionsPolicyUpdateOne) SetWorkforcePolicy(mpi *models.Workforce
 // ClearWorkforcePolicy clears the value of workforce_policy.
 func (ppuo *PermissionsPolicyUpdateOne) ClearWorkforcePolicy() *PermissionsPolicyUpdateOne {
 	ppuo.mutation.ClearWorkforcePolicy()
+	return ppuo
+}
+
+// SetAutomationPolicy sets the automation_policy field.
+func (ppuo *PermissionsPolicyUpdateOne) SetAutomationPolicy(mpi *models.AutomationPolicyInput) *PermissionsPolicyUpdateOne {
+	ppuo.mutation.SetAutomationPolicy(mpi)
+	return ppuo
+}
+
+// ClearAutomationPolicy clears the value of automation_policy.
+func (ppuo *PermissionsPolicyUpdateOne) ClearAutomationPolicy() *PermissionsPolicyUpdateOne {
+	ppuo.mutation.ClearAutomationPolicy()
 	return ppuo
 }
 
@@ -642,6 +679,19 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (_node *Per
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: permissionspolicy.FieldWorkforcePolicy,
+		})
+	}
+	if value, ok := ppuo.mutation.AutomationPolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: permissionspolicy.FieldAutomationPolicy,
+		})
+	}
+	if ppuo.mutation.AutomationPolicyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: permissionspolicy.FieldAutomationPolicy,
 		})
 	}
 	if ppuo.mutation.GroupsCleared() {

@@ -163,12 +163,13 @@ type AddLocationTypeInput struct {
 }
 
 type AddPermissionsPolicyInput struct {
-	Name           string                        `json:"name"`
-	Description    *string                       `json:"description"`
-	IsGlobal       *bool                         `json:"isGlobal"`
-	InventoryInput *models1.InventoryPolicyInput `json:"inventoryInput"`
-	WorkforceInput *models1.WorkforcePolicyInput `json:"workforceInput"`
-	Groups         []int                         `json:"groups"`
+	Name            string                         `json:"name"`
+	Description     *string                        `json:"description"`
+	IsGlobal        *bool                          `json:"isGlobal"`
+	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	Groups          []int                          `json:"groups"`
 }
 
 type AddProjectInput struct {
@@ -393,13 +394,14 @@ type EditLocationTypeInput struct {
 }
 
 type EditPermissionsPolicyInput struct {
-	ID             int                           `json:"id"`
-	Name           *string                       `json:"name"`
-	Description    *string                       `json:"description"`
-	IsGlobal       *bool                         `json:"isGlobal"`
-	InventoryInput *models1.InventoryPolicyInput `json:"inventoryInput"`
-	WorkforceInput *models1.WorkforcePolicyInput `json:"workforceInput"`
-	Groups         []int                         `json:"groups"`
+	ID              int                            `json:"id"`
+	Name            *string                        `json:"name"`
+	Description     *string                        `json:"description"`
+	IsGlobal        *bool                          `json:"isGlobal"`
+	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	Groups          []int                          `json:"groups"`
 }
 
 type EditProjectInput struct {

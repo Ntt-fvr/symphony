@@ -3050,7 +3050,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
 		Type:   "PermissionsPolicy",
-		Fields: make([]*Field, 7),
+		Fields: make([]*Field, 8),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -3108,6 +3108,14 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[6] = &Field{
 		Type:  "*models.WorkforcePolicyInput",
 		Name:  "workforce_policy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pp.AutomationPolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "*models.AutomationPolicyInput",
+		Name:  "automation_policy",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

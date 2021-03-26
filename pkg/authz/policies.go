@@ -94,6 +94,14 @@ func NewWorkforcePolicy(readAllowed, writeAllowed bool) *models.WorkforcePolicy 
 	}
 }
 
+// NewAutomationPolicy build a automation policy based on general restriction on read,write
+func NewAutomationPolicy(readAllowed, writeAllowed bool) *models.AutomationPolicy {
+	return &models.AutomationPolicy{
+		Read:      newBasicPermissionRule(readAllowed),
+		Templates: newCUD(writeAllowed),
+	}
+}
+
 // NewAdministrativePolicy builds administrative policy of given user
 func NewAdministrativePolicy(isAdmin bool) *models.AdministrativePolicy {
 	return &models.AdministrativePolicy{
@@ -228,11 +236,24 @@ func AppendWorkforcePolicies(policy *models.WorkforcePolicy, inputs ...*models.W
 	return policy
 }
 
-func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.InventoryPolicy, *models.WorkforcePolicy, error) {
+// AppendAutomationPolicies append a list of workforce policy inputs to a workforce policy
+func AppendAutomationPolicies(policy *models.AutomationPolicy, inputs ...*models.AutomationPolicyInput) *models.AutomationPolicy {
+	for _, input := range inputs {
+		if input == nil {
+			continue
+		}
+		policy.Read = appendBasicPermissionRule(policy.Read, input.Read)
+		policy.Templates = appendCUD(policy.Templates, input.Templates)
+	}
+	return policy
+}
+
+func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.InventoryPolicy, *models.WorkforcePolicy, *models.AutomationPolicy, error) {
 	client := ent.FromContext(ctx)
 	userID := v.User().ID
 	inventoryPolicy := NewInventoryPolicy(false)
 	workforcePolicy := NewWorkforcePolicy(false, false)
+	automationPolicy := NewAutomationPolicy(false, false)
 	policies, err := client.PermissionsPolicy.Query().
 		Where(permissionspolicy.Or(
 			permissionspolicy.IsGlobal(true),
@@ -242,7 +263,7 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 			))).
 		All(ctx)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot query policies: %w", err)
+		return nil, nil, nil, fmt.Errorf("cannot query policies: %w", err)
 	}
 	for _, policy := range policies {
 		switch {
@@ -250,11 +271,13 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 			inventoryPolicy = AppendInventoryPolicies(inventoryPolicy, policy.InventoryPolicy)
 		case policy.WorkforcePolicy != nil:
 			workforcePolicy = AppendWorkforcePolicies(workforcePolicy, policy.WorkforcePolicy)
+		case policy.AutomationPolicy != nil:
+			automationPolicy = AppendAutomationPolicies(automationPolicy, policy.AutomationPolicy)
 		default:
-			return nil, nil, fmt.Errorf("empty policy found: %d", policy.ID)
+			return nil, nil, nil, fmt.Errorf("empty policy found: %d", policy.ID)
 		}
 	}
-	return inventoryPolicy, workforcePolicy, nil
+	return inventoryPolicy, workforcePolicy, automationPolicy, nil
 }
 
 // Permissions builds the aggregated permissions for the given viewer
@@ -263,49 +286,56 @@ func Permissions(ctx context.Context) (*models.PermissionSettings, error) {
 	v := viewer.FromContext(ctx)
 	fullPermissions := userHasFullPermissions(v)
 	var (
-		inventoryPolicy *models.InventoryPolicy
-		workforcePolicy *models.WorkforcePolicy
+		inventoryPolicy  *models.InventoryPolicy
+		workforcePolicy  *models.WorkforcePolicy
+		automationPolicy *models.AutomationPolicy
 	)
 	if fullPermissions {
 		inventoryPolicy = NewInventoryPolicy(true)
 		workforcePolicy = NewWorkforcePolicy(true, true)
+		automationPolicy = NewAutomationPolicy(true, true)
 	} else if uv, ok := v.(*viewer.UserViewer); ok {
-		inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, uv)
+		inventoryPolicy, workforcePolicy, automationPolicy, err = permissionPolicies(ctx, uv)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		inventoryPolicy = NewInventoryPolicy(false)
 		workforcePolicy = NewWorkforcePolicy(false, false)
+		automationPolicy = NewAutomationPolicy(false, false)
 	}
 	res := models.PermissionSettings{
-		AdminPolicy:     NewAdministrativePolicy(fullPermissions),
-		InventoryPolicy: inventoryPolicy,
-		WorkforcePolicy: workforcePolicy,
+		AdminPolicy:      NewAdministrativePolicy(fullPermissions),
+		InventoryPolicy:  inventoryPolicy,
+		WorkforcePolicy:  workforcePolicy,
+		AutomationPolicy: automationPolicy,
 	}
 	return &res, nil
 }
 
 func FullPermissions() *models.PermissionSettings {
 	return &models.PermissionSettings{
-		AdminPolicy:     NewAdministrativePolicy(true),
-		InventoryPolicy: NewInventoryPolicy(true),
-		WorkforcePolicy: NewWorkforcePolicy(true, true),
+		AdminPolicy:      NewAdministrativePolicy(true),
+		InventoryPolicy:  NewInventoryPolicy(true),
+		WorkforcePolicy:  NewWorkforcePolicy(true, true),
+		AutomationPolicy: NewAutomationPolicy(true, true),
 	}
 }
 
 func EmptyPermissions() *models.PermissionSettings {
 	return &models.PermissionSettings{
-		AdminPolicy:     NewAdministrativePolicy(false),
-		InventoryPolicy: NewInventoryPolicy(false),
-		WorkforcePolicy: NewWorkforcePolicy(false, false),
+		AdminPolicy:      NewAdministrativePolicy(false),
+		InventoryPolicy:  NewInventoryPolicy(false),
+		WorkforcePolicy:  NewWorkforcePolicy(false, false),
+		AutomationPolicy: NewAutomationPolicy(false, false),
 	}
 }
 
 func AdminPermissions() *models.PermissionSettings {
 	return &models.PermissionSettings{
-		AdminPolicy:     NewAdministrativePolicy(true),
-		InventoryPolicy: NewInventoryPolicy(false),
-		WorkforcePolicy: NewWorkforcePolicy(false, false),
+		AdminPolicy:      NewAdministrativePolicy(true),
+		InventoryPolicy:  NewInventoryPolicy(false),
+		WorkforcePolicy:  NewWorkforcePolicy(false, false),
+		AutomationPolicy: NewAutomationPolicy(false, false),
 	}
 }

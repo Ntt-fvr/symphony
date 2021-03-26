@@ -83,6 +83,7 @@ type PermissionSettings
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
+  automationPolicy: AutomationPolicy!
 }
 
 enum PermissionValue
@@ -185,6 +186,22 @@ type AdministrativePolicy
   access: BasicPermissionRule!
 }
 
+type AutomationPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AutomationPolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -257,6 +274,7 @@ union SystemPolicy
   ) =
     InventoryPolicy
   | WorkforcePolicy
+  | AutomationPolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -273,6 +291,7 @@ input AddPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -283,6 +302,7 @@ input EditPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
