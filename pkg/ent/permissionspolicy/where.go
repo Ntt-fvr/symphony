@@ -576,6 +576,20 @@ func WorkforcePolicyNotNil() predicate.PermissionsPolicy {
 	})
 }
 
+// AutomationPolicyIsNil applies the IsNil predicate on the "automation_policy" field.
+func AutomationPolicyIsNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAutomationPolicy)))
+	})
+}
+
+// AutomationPolicyNotNil applies the NotNil predicate on the "automation_policy" field.
+func AutomationPolicyNotNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAutomationPolicy)))
+	})
+}
+
 // HasGroups applies the HasEdge predicate on the "groups" edge.
 func HasGroups() predicate.PermissionsPolicy {
 	return predicate.PermissionsPolicy(func(s *sql.Selector) {

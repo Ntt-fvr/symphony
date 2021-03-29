@@ -97,7 +97,7 @@ func (Flow) Indexes() []ent.Index {
 func (Flow) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithMutationRules(
-			privacy.AlwaysAllowRule(),
+			authz.AutomationTemplatesWritePolicyRule(),
 		),
 	)
 }
@@ -160,7 +160,7 @@ func (FlowDraft) Hooks() []ent.Hook {
 func (FlowDraft) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithMutationRules(
-			privacy.AlwaysAllowRule(),
+			authz.AutomationTemplatesWritePolicyRule(),
 		),
 	)
 }

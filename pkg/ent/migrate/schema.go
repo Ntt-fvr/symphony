@@ -1080,6 +1080,7 @@ var (
 		{Name: "is_global", Type: field.TypeBool, Nullable: true},
 		{Name: "inventory_policy", Type: field.TypeJSON, Nullable: true},
 		{Name: "workforce_policy", Type: field.TypeJSON, Nullable: true},
+		{Name: "automation_policy", Type: field.TypeJSON, Nullable: true},
 	}
 	// PermissionsPoliciesTable holds the schema information for the "permissions_policies" table.
 	PermissionsPoliciesTable = &schema.Table{

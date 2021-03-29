@@ -28203,23 +28203,24 @@ func (m *LocationTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type PermissionsPolicyMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	create_time      *time.Time
-	update_time      *time.Time
-	name             *string
-	description      *string
-	is_global        *bool
-	inventory_policy **models.InventoryPolicyInput
-	workforce_policy **models.WorkforcePolicyInput
-	clearedFields    map[string]struct{}
-	groups           map[int]struct{}
-	removedgroups    map[int]struct{}
-	clearedgroups    bool
-	done             bool
-	oldValue         func(context.Context) (*PermissionsPolicy, error)
-	predicates       []predicate.PermissionsPolicy
+	op                Op
+	typ               string
+	id                *int
+	create_time       *time.Time
+	update_time       *time.Time
+	name              *string
+	description       *string
+	is_global         *bool
+	inventory_policy  **models.InventoryPolicyInput
+	workforce_policy  **models.WorkforcePolicyInput
+	automation_policy **models.AutomationPolicyInput
+	clearedFields     map[string]struct{}
+	groups            map[int]struct{}
+	removedgroups     map[int]struct{}
+	clearedgroups     bool
+	done              bool
+	oldValue          func(context.Context) (*PermissionsPolicy, error)
+	predicates        []predicate.PermissionsPolicy
 }
 
 var _ ent.Mutation = (*PermissionsPolicyMutation)(nil)
@@ -28612,6 +28613,56 @@ func (m *PermissionsPolicyMutation) ResetWorkforcePolicy() {
 	delete(m.clearedFields, permissionspolicy.FieldWorkforcePolicy)
 }
 
+// SetAutomationPolicy sets the automation_policy field.
+func (m *PermissionsPolicyMutation) SetAutomationPolicy(mpi *models.AutomationPolicyInput) {
+	m.automation_policy = &mpi
+}
+
+// AutomationPolicy returns the automation_policy value in the mutation.
+func (m *PermissionsPolicyMutation) AutomationPolicy() (r *models.AutomationPolicyInput, exists bool) {
+	v := m.automation_policy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutomationPolicy returns the old automation_policy value of the PermissionsPolicy.
+// If the PermissionsPolicy object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PermissionsPolicyMutation) OldAutomationPolicy(ctx context.Context) (v *models.AutomationPolicyInput, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAutomationPolicy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAutomationPolicy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutomationPolicy: %w", err)
+	}
+	return oldValue.AutomationPolicy, nil
+}
+
+// ClearAutomationPolicy clears the value of automation_policy.
+func (m *PermissionsPolicyMutation) ClearAutomationPolicy() {
+	m.automation_policy = nil
+	m.clearedFields[permissionspolicy.FieldAutomationPolicy] = struct{}{}
+}
+
+// AutomationPolicyCleared returns if the field automation_policy was cleared in this mutation.
+func (m *PermissionsPolicyMutation) AutomationPolicyCleared() bool {
+	_, ok := m.clearedFields[permissionspolicy.FieldAutomationPolicy]
+	return ok
+}
+
+// ResetAutomationPolicy reset all changes of the "automation_policy" field.
+func (m *PermissionsPolicyMutation) ResetAutomationPolicy() {
+	m.automation_policy = nil
+	delete(m.clearedFields, permissionspolicy.FieldAutomationPolicy)
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (m *PermissionsPolicyMutation) AddGroupIDs(ids ...int) {
 	if m.groups == nil {
@@ -28679,7 +28730,7 @@ func (m *PermissionsPolicyMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *PermissionsPolicyMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.create_time != nil {
 		fields = append(fields, permissionspolicy.FieldCreateTime)
 	}
@@ -28700,6 +28751,9 @@ func (m *PermissionsPolicyMutation) Fields() []string {
 	}
 	if m.workforce_policy != nil {
 		fields = append(fields, permissionspolicy.FieldWorkforcePolicy)
+	}
+	if m.automation_policy != nil {
+		fields = append(fields, permissionspolicy.FieldAutomationPolicy)
 	}
 	return fields
 }
@@ -28723,6 +28777,8 @@ func (m *PermissionsPolicyMutation) Field(name string) (ent.Value, bool) {
 		return m.InventoryPolicy()
 	case permissionspolicy.FieldWorkforcePolicy:
 		return m.WorkforcePolicy()
+	case permissionspolicy.FieldAutomationPolicy:
+		return m.AutomationPolicy()
 	}
 	return nil, false
 }
@@ -28746,6 +28802,8 @@ func (m *PermissionsPolicyMutation) OldField(ctx context.Context, name string) (
 		return m.OldInventoryPolicy(ctx)
 	case permissionspolicy.FieldWorkforcePolicy:
 		return m.OldWorkforcePolicy(ctx)
+	case permissionspolicy.FieldAutomationPolicy:
+		return m.OldAutomationPolicy(ctx)
 	}
 	return nil, fmt.Errorf("unknown PermissionsPolicy field %s", name)
 }
@@ -28804,6 +28862,13 @@ func (m *PermissionsPolicyMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetWorkforcePolicy(v)
 		return nil
+	case permissionspolicy.FieldAutomationPolicy:
+		v, ok := value.(*models.AutomationPolicyInput)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutomationPolicy(v)
+		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy field %s", name)
 }
@@ -28846,6 +28911,9 @@ func (m *PermissionsPolicyMutation) ClearedFields() []string {
 	if m.FieldCleared(permissionspolicy.FieldWorkforcePolicy) {
 		fields = append(fields, permissionspolicy.FieldWorkforcePolicy)
 	}
+	if m.FieldCleared(permissionspolicy.FieldAutomationPolicy) {
+		fields = append(fields, permissionspolicy.FieldAutomationPolicy)
+	}
 	return fields
 }
 
@@ -28871,6 +28939,9 @@ func (m *PermissionsPolicyMutation) ClearField(name string) error {
 		return nil
 	case permissionspolicy.FieldWorkforcePolicy:
 		m.ClearWorkforcePolicy()
+		return nil
+	case permissionspolicy.FieldAutomationPolicy:
+		m.ClearAutomationPolicy()
 		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy nullable field %s", name)
@@ -28901,6 +28972,9 @@ func (m *PermissionsPolicyMutation) ResetField(name string) error {
 		return nil
 	case permissionspolicy.FieldWorkforcePolicy:
 		m.ResetWorkforcePolicy()
+		return nil
+	case permissionspolicy.FieldAutomationPolicy:
+		m.ResetAutomationPolicy()
 		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy field %s", name)

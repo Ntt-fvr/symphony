@@ -32,6 +32,8 @@ func (PermissionsPolicy) Fields() []ent.Field {
 			Optional(),
 		field.JSON("workforce_policy", &models.WorkforcePolicyInput{}).
 			Optional(),
+		field.JSON("automation_policy", &models.AutomationPolicyInput{}).
+			Optional(),
 	}
 }
 

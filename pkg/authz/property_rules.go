@@ -66,7 +66,7 @@ func PropertyTypeWritePolicyRule() privacy.MutationRule {
 		case propType.Edges.ProjectTemplate != nil:
 			return privacy.Allow
 		case propType.Edges.WorkerType != nil:
-			return privacy.Allow
+			return allowOrSkip(p.AutomationPolicy.Templates.Update)
 		}
 		return privacy.Skip
 	})
@@ -108,7 +108,7 @@ func PropertyTypeCreatePolicyRule() privacy.MutationRule {
 			return privacy.Allow
 		}
 		if _, exists := m.WorkerTypeID(); exists {
-			return privacy.Allow
+			return allowOrSkip(p.AutomationPolicy.Templates.Update)
 		}
 
 		return privacy.Skip
