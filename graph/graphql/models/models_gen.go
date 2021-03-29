@@ -228,8 +228,9 @@ type AddWorkOrderTypeInput struct {
 }
 
 type AddWorkerTypeInput struct {
-	Name       string                      `json:"name"`
-	Properties []*models.PropertyTypeInput `json:"properties"`
+	Name          string                      `json:"name"`
+	Description   *string                     `json:"description"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type BlockVariableInput struct {
@@ -473,9 +474,10 @@ type EditWorkOrderTypeInput struct {
 }
 
 type EditWorkerTypeInput struct {
-	ID         int                         `json:"id"`
-	Name       string                      `json:"name"`
-	Properties []*models.PropertyTypeInput `json:"properties"`
+	ID            int                         `json:"id"`
+	Name          string                      `json:"name"`
+	Description   *string                     `json:"description"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type EndBlock struct {

@@ -22,6 +22,9 @@ func (WorkerType) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			Unique(),
+		field.Text("description").
+			Optional().
+			Nillable(),
 	}
 }
 

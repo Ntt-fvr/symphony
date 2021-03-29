@@ -59,6 +59,20 @@ func (wtc *WorkerTypeCreate) SetName(s string) *WorkerTypeCreate {
 	return wtc
 }
 
+// SetDescription sets the description field.
+func (wtc *WorkerTypeCreate) SetDescription(s string) *WorkerTypeCreate {
+	wtc.mutation.SetDescription(s)
+	return wtc
+}
+
+// SetNillableDescription sets the description field if the given value is not nil.
+func (wtc *WorkerTypeCreate) SetNillableDescription(s *string) *WorkerTypeCreate {
+	if s != nil {
+		wtc.SetDescription(*s)
+	}
+	return wtc
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wtc *WorkerTypeCreate) AddPropertyTypeIDs(ids ...int) *WorkerTypeCreate {
 	wtc.mutation.AddPropertyTypeIDs(ids...)
@@ -197,6 +211,14 @@ func (wtc *WorkerTypeCreate) createSpec() (*WorkerType, *sqlgraph.CreateSpec) {
 			Column: workertype.FieldName,
 		})
 		_node.Name = value
+	}
+	if value, ok := wtc.mutation.Description(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: workertype.FieldDescription,
+		})
+		_node.Description = &value
 	}
 	if nodes := wtc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

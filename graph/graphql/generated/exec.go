@@ -1396,6 +1396,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkerType struct {
+		Description   func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Name          func(childComplexity int) int
 		PropertyTypes func(childComplexity int) int
@@ -8348,6 +8349,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrderTypeEdge.Node(childComplexity), true
 
+	case "WorkerType.description":
+		if e.complexity.WorkerType.Description == nil {
+			break
+		}
+
+		return e.complexity.WorkerType.Description(childComplexity), true
+
 	case "WorkerType.id":
 		if e.complexity.WorkerType.ID == nil {
 			break
@@ -12215,19 +12223,22 @@ type WorkerTypeEdge {
 type WorkerType implements Node {
   id: ID!
   name: String!
+  description: String
   propertyTypes: [PropertyType]!
 }
 
 input AddWorkerTypeInput {
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
 input EditWorkerTypeInput {
   id: ID!
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
@@ -47203,6 +47214,38 @@ func (ec *executionContext) _WorkerType_name(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkerType_description(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkerType_propertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -50348,10 +50391,18 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "description":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
@@ -50375,9 +50426,9 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.Properties = data
+				it.PropertyTypes = data
 			} else if tmp == nil {
-				it.Properties = nil
+				it.PropertyTypes = nil
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
@@ -52118,10 +52169,18 @@ func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "description":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
@@ -52145,9 +52204,9 @@ func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Contex
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.Properties = data
+				it.PropertyTypes = data
 			} else if tmp == nil {
-				it.Properties = nil
+				it.PropertyTypes = nil
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
@@ -64860,6 +64919,8 @@ func (ec *executionContext) _WorkerType(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "description":
+			out.Values[i] = ec._WorkerType_description(ctx, field, obj)
 		case "propertyTypes":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

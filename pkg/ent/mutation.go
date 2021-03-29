@@ -54945,6 +54945,7 @@ type WorkerTypeMutation struct {
 	create_time           *time.Time
 	update_time           *time.Time
 	name                  *string
+	description           *string
 	clearedFields         map[string]struct{}
 	property_types        map[int]struct{}
 	removedproperty_types map[int]struct{}
@@ -55144,6 +55145,56 @@ func (m *WorkerTypeMutation) ResetName() {
 	m.name = nil
 }
 
+// SetDescription sets the description field.
+func (m *WorkerTypeMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *WorkerTypeMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the WorkerType.
+// If the WorkerType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkerTypeMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of description.
+func (m *WorkerTypeMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[workertype.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the field description was cleared in this mutation.
+func (m *WorkerTypeMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[workertype.FieldDescription]
+	return ok
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *WorkerTypeMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, workertype.FieldDescription)
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (m *WorkerTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	if m.property_types == nil {
@@ -55211,7 +55262,7 @@ func (m *WorkerTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkerTypeMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.create_time != nil {
 		fields = append(fields, workertype.FieldCreateTime)
 	}
@@ -55220,6 +55271,9 @@ func (m *WorkerTypeMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, workertype.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, workertype.FieldDescription)
 	}
 	return fields
 }
@@ -55235,6 +55289,8 @@ func (m *WorkerTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case workertype.FieldName:
 		return m.Name()
+	case workertype.FieldDescription:
+		return m.Description()
 	}
 	return nil, false
 }
@@ -55250,6 +55306,8 @@ func (m *WorkerTypeMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUpdateTime(ctx)
 	case workertype.FieldName:
 		return m.OldName(ctx)
+	case workertype.FieldDescription:
+		return m.OldDescription(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkerType field %s", name)
 }
@@ -55280,6 +55338,13 @@ func (m *WorkerTypeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
+	case workertype.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkerType field %s", name)
 }
@@ -55309,7 +55374,11 @@ func (m *WorkerTypeMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *WorkerTypeMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(workertype.FieldDescription) {
+		fields = append(fields, workertype.FieldDescription)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -55322,6 +55391,11 @@ func (m *WorkerTypeMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *WorkerTypeMutation) ClearField(name string) error {
+	switch name {
+	case workertype.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
 	return fmt.Errorf("unknown WorkerType nullable field %s", name)
 }
 
@@ -55338,6 +55412,9 @@ func (m *WorkerTypeMutation) ResetField(name string) error {
 		return nil
 	case workertype.FieldName:
 		m.ResetName()
+		return nil
+	case workertype.FieldDescription:
+		m.ResetDescription()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkerType field %s", name)
