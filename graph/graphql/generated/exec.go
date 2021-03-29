@@ -1085,6 +1085,8 @@ type ComplexityRoot struct {
 
 	Subscription struct {
 		FlowInstanceDone       func(childComplexity int) int
+		LocationAdded          func(childComplexity int) int
+		ProjectAdded           func(childComplexity int) int
 		WorkOrderAdded         func(childComplexity int) int
 		WorkOrderDone          func(childComplexity int) int
 		WorkOrderStatusChanged func(childComplexity int) int
@@ -1667,6 +1669,8 @@ type SubscriptionResolver interface {
 	WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error)
 	WorkOrderStatusChanged(ctx context.Context) (<-chan *event.WorkOrderStatusChangedPayload, error)
 	FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error)
+	ProjectAdded(ctx context.Context) (<-chan *ent.Project, error)
+	LocationAdded(ctx context.Context) (<-chan *ent.Location, error)
 }
 type SurveyResolver interface {
 	CreationTimestamp(ctx context.Context, obj *ent.Survey) (*int, error)
@@ -6870,6 +6874,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.FlowInstanceDone(childComplexity), true
+
+	case "Subscription.locationAdded":
+		if e.complexity.Subscription.LocationAdded == nil {
+			break
+		}
+
+		return e.complexity.Subscription.LocationAdded(childComplexity), true
+
+	case "Subscription.projectAdded":
+		if e.complexity.Subscription.ProjectAdded == nil {
+			break
+		}
+
+		return e.complexity.Subscription.ProjectAdded(childComplexity), true
 
 	case "Subscription.workOrderAdded":
 		if e.complexity.Subscription.WorkOrderAdded == nil {
@@ -12775,6 +12793,8 @@ type Subscription {
   workOrderDone: WorkOrder
   workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  locationAdded: Location
 }
 `, BuiltIn: false},
 }
@@ -40109,6 +40129,90 @@ func (ec *executionContext) _Subscription_flowInstanceDone(ctx context.Context, 
 	}
 }
 
+func (ec *executionContext) _Subscription_projectAdded(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().ProjectAdded(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.Project)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOProject2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_locationAdded(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().LocationAdded(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.Location)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOLocation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocation(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _Survey_id(ctx context.Context, field graphql.CollectedField, obj *ent.Survey) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -62782,6 +62886,10 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_workOrderStatusChanged(ctx, fields[0])
 	case "flowInstanceDone":
 		return ec._Subscription_flowInstanceDone(ctx, fields[0])
+	case "projectAdded":
+		return ec._Subscription_projectAdded(ctx, fields[0])
+	case "locationAdded":
+		return ec._Subscription_locationAdded(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
