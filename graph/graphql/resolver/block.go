@@ -189,6 +189,8 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			ExitPoint:   exitPoint,
 		}, nil
 	case block.TypeAction:
+		var workOrderType *ent.WorkOrderType
+		var workerType *ent.WorkerType
 		if obj.ActionType == nil {
 			return nil, fmt.Errorf("action type for action block %d not found", obj.ID)
 		}
@@ -199,15 +201,58 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		if templateName, ok := getTemplateName(ctx, obj); ok {
 			obj.InputParams = append(obj.InputParams, templateName)
 		}
+
+		if *obj.ActionType == flowschema.ActionTypeWorkOrder {
+			workOrderType, err = getWorkOrderType(ctx, obj)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if *obj.ActionType == flowschema.ActionTypeWorker {
+			workerType, err = getWorkerType(ctx, obj)
+			if err != nil {
+				return nil, err
+			}
+		}
 		return &models.ActionBlock{
-			ActionType: actionType,
-			Params:     obj.InputParams,
-			EntryPoint: entryPoint,
-			ExitPoint:  exitPoint,
+			ActionType:    actionType,
+			Params:        obj.InputParams,
+			EntryPoint:    entryPoint,
+			ExitPoint:     exitPoint,
+			WorkOrderType: workOrderType,
+			WorkerType:    workerType,
 		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
 	}
+}
+
+func getWorkOrderType(ctx context.Context, obj *ent.Block) (*ent.WorkOrderType, error) {
+	client := ent.FromContext(ctx)
+	for _, inputParam := range obj.InputParams {
+		if inputParam.VariableDefinitionKey == actions.InputVariableType {
+			typeID, err := strconv.Atoi(inputParam.Expression)
+			if err != nil {
+				return nil, nil
+			}
+			return client.WorkOrderType.Get(ctx, typeID)
+		}
+	}
+	return nil, nil
+}
+
+func getWorkerType(ctx context.Context, obj *ent.Block) (*ent.WorkerType, error) {
+	client := ent.FromContext(ctx)
+	for _, inputParam := range obj.InputParams {
+		if inputParam.VariableDefinitionKey == actions.InputVariableWorkerType {
+			typeID, err := strconv.Atoi(inputParam.Expression)
+			if err != nil {
+				return nil, nil
+			}
+			return client.WorkerType.Get(ctx, typeID)
+		}
+	}
+	return nil, nil
 }
 
 func getTemplateName(ctx context.Context, obj *ent.Block) (*flowschema.VariableExpression, bool) {

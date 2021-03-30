@@ -3418,6 +3418,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =

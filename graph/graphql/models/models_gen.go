@@ -37,10 +37,12 @@ type NamedNode interface {
 }
 
 type ActionBlock struct {
-	ActionType actions.ActionType               `json:"actionType"`
-	Params     []*flowschema.VariableExpression `json:"params"`
-	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
+	ActionType    actions.ActionType               `json:"actionType"`
+	Params        []*flowschema.VariableExpression `json:"params"`
+	EntryPoint    *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint     *ent.ExitPoint                   `json:"exitPoint"`
+	WorkOrderType *ent.WorkOrderType               `json:"workOrderType"`
+	WorkerType    *ent.WorkerType                  `json:"workerType"`
 }
 
 func (ActionBlock) IsBlockDetails() {}

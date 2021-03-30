@@ -107,10 +107,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	ActionBlock struct {
-		ActionType func(childComplexity int) int
-		EntryPoint func(childComplexity int) int
-		ExitPoint  func(childComplexity int) int
-		Params     func(childComplexity int) int
+		ActionType    func(childComplexity int) int
+		EntryPoint    func(childComplexity int) int
+		ExitPoint     func(childComplexity int) int
+		Params        func(childComplexity int) int
+		WorkOrderType func(childComplexity int) int
+		WorkerType    func(childComplexity int) int
 	}
 
 	ActionType struct {
@@ -1765,6 +1767,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionBlock.Params(childComplexity), true
+
+	case "ActionBlock.workOrderType":
+		if e.complexity.ActionBlock.WorkOrderType == nil {
+			break
+		}
+
+		return e.complexity.ActionBlock.WorkOrderType(childComplexity), true
+
+	case "ActionBlock.workerType":
+		if e.complexity.ActionBlock.WorkerType == nil {
+			break
+		}
+
+		return e.complexity.ActionBlock.WorkerType(childComplexity), true
 
 	case "ActionType.description":
 		if e.complexity.ActionType.Description == nil {
@@ -11990,6 +12006,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =
@@ -17228,6 +17246,70 @@ func (ec *executionContext) _ActionBlock_exitPoint(ctx context.Context, field gr
 	res := resTmp.(*ent.ExitPoint)
 	fc.Result = res
 	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionBlock_workOrderType(ctx context.Context, field graphql.CollectedField, obj *models.ActionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ActionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrderType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrderType)
+	fc.Result = res
+	return ec.marshalOWorkOrderType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionBlock_workerType(ctx context.Context, field graphql.CollectedField, obj *models.ActionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ActionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkerType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerType)
+	fc.Result = res
+	return ec.marshalOWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ActionType_id(ctx context.Context, field graphql.CollectedField, obj actions.ActionType) (ret graphql.Marshaler) {
@@ -56241,6 +56323,10 @@ func (ec *executionContext) _ActionBlock(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "workOrderType":
+			out.Values[i] = ec._ActionBlock_workOrderType(ctx, field, obj)
+		case "workerType":
+			out.Values[i] = ec._ActionBlock_workerType(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
