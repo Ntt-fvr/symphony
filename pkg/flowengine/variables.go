@@ -188,7 +188,7 @@ func VerifyVariableDefinitions(ctx context.Context, variableDefinitions []*flows
 func verifyVariableValue(ctx context.Context, definition *flowschema.VariableDefinition, param string) error {
 	values, err := ParseVariableValue(ctx, definition, param)
 	if err != nil {
-		return fmt.Errorf("failed to validate variable type: %w", err)
+		return fmt.Errorf("failed to validate key %s type %s with value %s variable type: %w", definition.Key, definition.Type, param, err)
 	}
 	if definition.Choices != nil {
 		var multipleChoiceValues []interface{}

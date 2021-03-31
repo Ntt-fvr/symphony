@@ -11,20 +11,21 @@ import (
 )
 
 const (
-	InputVariableType        = "Work Order Template"
-	InputVariableTypeName    = "Template Name"
-	InputVariableOperation   = "Operation"
-	InputVariableBaseType    = "Base Type"
-	InputVariableEndStatuses = "Work Order Statuses for completing block"
-	InputVariableName        = "Name"
-	InputVariableDescription = "Description"
-	InputVariableLocation    = "Location"
-	InputVariableProject     = "Project"
-	InputVariableOwner       = "Owner"
-	InputVariableAssignee    = "Assignee"
-	InputVariableStatus      = "Status"
-	InputVariablePriority    = "Priority"
-	OutputVariableWorkOrder  = "Created Work Order"
+	InputVariableType             = "Work Order Template"
+	InputVariableTypeName         = "Template Name"
+	InputVariableOperation        = "Operation"
+	InputVariableflagNextActivity = "Flag Next Activity"
+	InputVariableBaseType         = "Base Type"
+	InputVariableEndStatuses      = "Work Order Statuses for completing block"
+	InputVariableName             = "Name"
+	InputVariableDescription      = "Description"
+	InputVariableLocation         = "Location"
+	InputVariableProject          = "Project"
+	InputVariableOwner            = "Owner"
+	InputVariableAssignee         = "Assignee"
+	InputVariableStatus           = "Status"
+	InputVariablePriority         = "Priority"
+	OutputVariableWorkOrder       = "Created Work Order"
 )
 
 type workOrderAction struct{}
@@ -67,6 +68,10 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			},
 		},
 		{
+			Key:  InputVariableflagNextActivity,
+			Type: enum.VariableTypeString,
+		},
+		{
 			Key:            InputVariableEndStatuses,
 			Type:           enum.VariableTypeString,
 			MultipleValues: true,
@@ -91,9 +96,8 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Type: enum.VariableTypeProject,
 		},
 		{
-			Key:       InputVariableOwner,
-			Type:      enum.VariableTypeUser,
-			Mandatory: true,
+			Key:  InputVariableOwner,
+			Type: enum.VariableTypeUser,
 		},
 		{
 			Key:  InputVariableAssignee,
