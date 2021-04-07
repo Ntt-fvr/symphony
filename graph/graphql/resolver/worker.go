@@ -21,6 +21,7 @@ func (r mutationResolver) AddWorkerType(ctx context.Context, input models.AddWor
 	typ, err := client.
 		WorkerType.Create().
 		SetName(input.Name).
+		SetNillableDescription(input.Description).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -30,7 +31,7 @@ func (r mutationResolver) AddWorkerType(ctx context.Context, input models.AddWor
 	}
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetWorkerTypeID(typ.ID)
-	}, input.Properties...); err != nil {
+	}, input.PropertyTypes...); err != nil {
 		return nil, err
 	}
 	return typ, nil
@@ -40,12 +41,16 @@ func (r mutationResolver) EditWorkerType(ctx context.Context, input models.EditW
 	client := r.ClientFrom(ctx)
 	et, err := client.WorkerType.Get(ctx, input.ID)
 	if err != nil {
-		return nil, errors.Wrapf(err, "querying worker type: id=%q", input.ID)
+		if ent.IsNotFound(err) {
+			return nil, gqlerror.Errorf("A worker template with id=%q does not exist", input.ID)
+		}
+		return nil, errors.Wrapf(err, "updating worker template: id=%q", input.ID)
 	}
-	if input.Name != et.Name {
+	if input.Name != et.Name || input.Description != et.Description {
 		if et, err = client.WorkerType.
 			UpdateOne(et).
 			SetName(input.Name).
+			SetNillableDescription(input.Description).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("A worker type with the name %v already exists", input.Name)
@@ -54,7 +59,7 @@ func (r mutationResolver) EditWorkerType(ctx context.Context, input models.EditW
 		}
 	}
 
-	for _, input := range input.Properties {
+	for _, input := range input.PropertyTypes {
 		if input.ID == nil {
 			if err := r.validateAddedNewPropertyType(input); err != nil {
 				return nil, err

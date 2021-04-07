@@ -37,10 +37,12 @@ type NamedNode interface {
 }
 
 type ActionBlock struct {
-	ActionType actions.ActionType               `json:"actionType"`
-	Params     []*flowschema.VariableExpression `json:"params"`
-	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
+	ActionType    actions.ActionType               `json:"actionType"`
+	Params        []*flowschema.VariableExpression `json:"params"`
+	EntryPoint    *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint     *ent.ExitPoint                   `json:"exitPoint"`
+	WorkOrderType *ent.WorkOrderType               `json:"workOrderType"`
+	WorkerType    *ent.WorkerType                  `json:"workerType"`
 }
 
 func (ActionBlock) IsBlockDetails() {}
@@ -228,8 +230,9 @@ type AddWorkOrderTypeInput struct {
 }
 
 type AddWorkerTypeInput struct {
-	Name       string                      `json:"name"`
-	Properties []*models.PropertyTypeInput `json:"properties"`
+	Name          string                      `json:"name"`
+	Description   *string                     `json:"description"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type BlockVariableInput struct {
@@ -473,9 +476,10 @@ type EditWorkOrderTypeInput struct {
 }
 
 type EditWorkerTypeInput struct {
-	ID         int                         `json:"id"`
-	Name       string                      `json:"name"`
-	Properties []*models.PropertyTypeInput `json:"properties"`
+	ID            int                         `json:"id"`
+	Name          string                      `json:"name"`
+	Description   *string                     `json:"description"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type EndBlock struct {

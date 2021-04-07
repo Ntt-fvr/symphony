@@ -3418,6 +3418,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =
@@ -3651,19 +3653,22 @@ type WorkerTypeEdge {
 type WorkerType implements Node {
   id: ID!
   name: String!
+  description: String
   propertyTypes: [PropertyType]!
 }
 
 input AddWorkerTypeInput {
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
 input EditWorkerTypeInput {
   id: ID!
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
@@ -3973,12 +3978,20 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flowDrafts by case sensitive name.
+    """
+    name: String
   ): FlowDraftConnection!
   flows(
     after: Cursor
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
   ): FlowConnection!
   workerTypes(
       after: Cursor

@@ -2121,6 +2121,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// WorkerTypesTable holds the schema information for the "worker_types" table.
 	WorkerTypesTable = &schema.Table{

@@ -9,7 +9,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
-const InputVariableWorkerType = "Worker Type"
+const InputVariableWorkerType = "Worker Template"
 
 type workerAction struct{}
 

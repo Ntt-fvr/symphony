@@ -107,10 +107,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	ActionBlock struct {
-		ActionType func(childComplexity int) int
-		EntryPoint func(childComplexity int) int
-		ExitPoint  func(childComplexity int) int
-		Params     func(childComplexity int) int
+		ActionType    func(childComplexity int) int
+		EntryPoint    func(childComplexity int) int
+		ExitPoint     func(childComplexity int) int
+		Params        func(childComplexity int) int
+		WorkOrderType func(childComplexity int) int
+		WorkerType    func(childComplexity int) int
 	}
 
 	ActionType struct {
@@ -943,8 +945,8 @@ type ComplexityRoot struct {
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
-		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		LatestPythonPackage      func(childComplexity int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
 		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1396,6 +1398,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkerType struct {
+		Description   func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Name          func(childComplexity int) int
 		PropertyTypes func(childComplexity int) int
@@ -1648,8 +1651,8 @@ type QueryResolver interface {
 	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) (*ent.ProjectConnection, error)
 	Customers(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.CustomerConnection, error)
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
-	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowDraftConnection, error)
-	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowConnection, error)
+	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowDraftConnection, error)
+	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowConnection, error)
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 }
 type ReportFilterResolver interface {
@@ -1764,6 +1767,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionBlock.Params(childComplexity), true
+
+	case "ActionBlock.workOrderType":
+		if e.complexity.ActionBlock.WorkOrderType == nil {
+			break
+		}
+
+		return e.complexity.ActionBlock.WorkOrderType(childComplexity), true
+
+	case "ActionBlock.workerType":
+		if e.complexity.ActionBlock.WorkerType == nil {
+			break
+		}
+
+		return e.complexity.ActionBlock.WorkerType(childComplexity), true
 
 	case "ActionType.description":
 		if e.complexity.ActionType.Description == nil {
@@ -6112,7 +6129,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
 	case "Query.flows":
 		if e.complexity.Query.Flows == nil {
@@ -6124,7 +6141,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
 	case "Query.latestPythonPackage":
 		if e.complexity.Query.LatestPythonPackage == nil {
@@ -8347,6 +8364,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkOrderTypeEdge.Node(childComplexity), true
+
+	case "WorkerType.description":
+		if e.complexity.WorkerType.Description == nil {
+			break
+		}
+
+		return e.complexity.WorkerType.Description(childComplexity), true
 
 	case "WorkerType.id":
 		if e.complexity.WorkerType.ID == nil {
@@ -11982,6 +12006,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =
@@ -12215,19 +12241,22 @@ type WorkerTypeEdge {
 type WorkerType implements Node {
   id: ID!
   name: String!
+  description: String
   propertyTypes: [PropertyType]!
 }
 
 input AddWorkerTypeInput {
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
 input EditWorkerTypeInput {
   id: ID!
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
@@ -12537,12 +12566,20 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flowDrafts by case sensitive name.
+    """
+    name: String
   ): FlowDraftConnection!
   flows(
     after: Cursor
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
   ): FlowConnection!
   workerTypes(
       after: Cursor
@@ -15482,6 +15519,15 @@ func (ec *executionContext) field_Query_flowDrafts_args(ctx context.Context, raw
 		}
 	}
 	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -15562,6 +15608,15 @@ func (ec *executionContext) field_Query_flows_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -17217,6 +17272,70 @@ func (ec *executionContext) _ActionBlock_exitPoint(ctx context.Context, field gr
 	res := resTmp.(*ent.ExitPoint)
 	fc.Result = res
 	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionBlock_workOrderType(ctx context.Context, field graphql.CollectedField, obj *models.ActionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ActionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrderType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrderType)
+	fc.Result = res
+	return ec.marshalOWorkOrderType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionBlock_workerType(ctx context.Context, field graphql.CollectedField, obj *models.ActionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ActionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkerType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerType)
+	fc.Result = res
+	return ec.marshalOWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ActionType_id(ctx context.Context, field graphql.CollectedField, obj actions.ActionType) (ret graphql.Marshaler) {
@@ -37503,7 +37622,7 @@ func (ec *executionContext) _Query_flowDrafts(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37545,7 +37664,7 @@ func (ec *executionContext) _Query_flows(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Flows(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().Flows(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -47203,6 +47322,38 @@ func (ec *executionContext) _WorkerType_name(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkerType_description(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkerType_propertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -50348,10 +50499,18 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "description":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
@@ -50375,9 +50534,9 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.Properties = data
+				it.PropertyTypes = data
 			} else if tmp == nil {
-				it.Properties = nil
+				it.PropertyTypes = nil
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
@@ -52118,10 +52277,18 @@ func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "description":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
@@ -52145,9 +52312,9 @@ func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Contex
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.Properties = data
+				it.PropertyTypes = data
 			} else if tmp == nil {
-				it.Properties = nil
+				it.PropertyTypes = nil
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
@@ -56182,6 +56349,10 @@ func (ec *executionContext) _ActionBlock(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "workOrderType":
+			out.Values[i] = ec._ActionBlock_workOrderType(ctx, field, obj)
+		case "workerType":
+			out.Values[i] = ec._ActionBlock_workerType(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -64860,6 +65031,8 @@ func (ec *executionContext) _WorkerType(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "description":
+			out.Values[i] = ec._WorkerType_description(ctx, field, obj)
 		case "propertyTypes":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
