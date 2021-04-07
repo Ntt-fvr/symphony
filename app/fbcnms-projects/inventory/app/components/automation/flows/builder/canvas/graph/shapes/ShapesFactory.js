@@ -38,6 +38,9 @@ import UpdateInventory, {
 import UpdateWorkforce, {
   TYPE as UpdateWorkforceType,
 } from '../facades/shapes/vertexes/actions/UpdateWorkforce';
+import Worker, {
+  TYPE as WorkerType,
+} from '../facades/shapes/vertexes/actions/Worker';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {getCellType} from '../facades/shapes/BaseShape';
 
@@ -47,6 +50,7 @@ const VERTEXES = {
   [EndType]: End,
   // Actions
   [CreateWorkorderType]: CreateWorkorder,
+  [WorkerType]: Worker,
   [UpdateInventoryType]: UpdateInventory,
   [UpdateWorkforceType]: UpdateWorkforce,
   // Triggers
