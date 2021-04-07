@@ -7,8 +7,9 @@ package resolver
 import (
 	"context"
 	"fmt"
-
 	"strconv"
+
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
@@ -194,8 +195,13 @@ func (r queryResolver) FlowDrafts(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
+	name *string,
 ) (*ent.FlowDraftConnection, error) {
-	return r.ClientFrom(ctx).FlowDraft.Query().
+	var predicates []predicate.FlowDraft
+	if name != nil {
+		predicates = append(predicates, flowdraft.NameEQ(*name))
+	}
+	return r.ClientFrom(ctx).FlowDraft.Query().Where(flowdraft.Or(predicates...)).
 		Paginate(ctx, after, first, before, last)
 }
 
@@ -203,8 +209,13 @@ func (r queryResolver) Flows(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
+	name *string,
 ) (*ent.FlowConnection, error) {
-	return r.ClientFrom(ctx).Flow.Query().
+	var predicates []predicate.Flow
+	if name != nil {
+		predicates = append(predicates, flow.NameEQ(*name))
+	}
+	return r.ClientFrom(ctx).Flow.Query().Where(flow.Or(predicates...)).
 		Paginate(ctx, after, first, before, last)
 }
 

@@ -3978,12 +3978,20 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flowDrafts by case sensitive name.
+    """
+    name: String
   ): FlowDraftConnection!
   flows(
     after: Cursor
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
   ): FlowConnection!
   workerTypes(
       after: Cursor

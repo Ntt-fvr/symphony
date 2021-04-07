@@ -945,8 +945,8 @@ type ComplexityRoot struct {
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
-		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		LatestPythonPackage      func(childComplexity int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
 		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1651,8 +1651,8 @@ type QueryResolver interface {
 	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) (*ent.ProjectConnection, error)
 	Customers(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.CustomerConnection, error)
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
-	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowDraftConnection, error)
-	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowConnection, error)
+	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowDraftConnection, error)
+	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowConnection, error)
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 }
 type ReportFilterResolver interface {
@@ -6129,7 +6129,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
 	case "Query.flows":
 		if e.complexity.Query.Flows == nil {
@@ -6141,7 +6141,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
 	case "Query.latestPythonPackage":
 		if e.complexity.Query.LatestPythonPackage == nil {
@@ -12566,12 +12566,20 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flowDrafts by case sensitive name.
+    """
+    name: String
   ): FlowDraftConnection!
   flows(
     after: Cursor
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
   ): FlowConnection!
   workerTypes(
       after: Cursor
@@ -15511,6 +15519,15 @@ func (ec *executionContext) field_Query_flowDrafts_args(ctx context.Context, raw
 		}
 	}
 	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -15591,6 +15608,15 @@ func (ec *executionContext) field_Query_flows_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -37596,7 +37622,7 @@ func (ec *executionContext) _Query_flowDrafts(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37638,7 +37664,7 @@ func (ec *executionContext) _Query_flows(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Flows(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().Flows(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
