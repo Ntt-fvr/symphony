@@ -48,7 +48,7 @@ func NodePropertyValue(ctx context.Context, p *ent.Property, nodeType string) st
 	case enum.NodeTypeProject.String():
 		if i, err := p.QueryProjectValue().OnlyID(ctx); err == nil {
 			id = &i
-	}
+		}
 	default:
 		return ""
 	}
