@@ -132,6 +132,8 @@ func (r mutationResolver) setNodePropertyCreate(ctx context.Context, setter *ent
 		setter.SetWorkOrderValueID(value.ID)
 	case ent.TypeUser:
 		setter.SetUserValueID(value.ID)
+	case ent.TypeProject:
+		setter.SetProjectValueID(value.ID)
 	default:
 		return fmt.Errorf("invalid node type: %d %s", value.ID, value.Type)
 	}
@@ -155,6 +157,8 @@ func (r mutationResolver) setNodePropertyUpdate(ctx context.Context, setter *ent
 		setter.SetWorkOrderValueID(value.ID)
 	case ent.TypeUser:
 		setter.SetUserValueID(value.ID)
+	case ent.TypeProject:
+		setter.SetProjectValueID(value.ID)
 	default:
 		return fmt.Errorf("invalid node type: %d %s", value.ID, value.Type)
 	}

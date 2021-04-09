@@ -74,4 +74,8 @@ export const PropertyTypeLabels: {[string]: PropertyTypeInfo} = {
     label: fbt('User', ''),
     kind: 'node',
   },
+  project: {
+    label: fbt('Project', ''),
+    kind: 'node',
+  },
 };
