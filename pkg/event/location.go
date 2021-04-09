@@ -73,7 +73,7 @@ var ErrLocationUpdateStatusOfMany = errors.New("location update by predicate not
 func (Eventer) locationBlockUpdateStatusOfManyHook() ent.Hook {
 	return hook.If(
 		hook.FixedError(
-			ErrProjectUpdateStatusOfMany,
+			ErrLocationUpdateStatusOfMany,
 		),
 		hook.And(
 			hook.HasOp(ent.OpUpdate),
