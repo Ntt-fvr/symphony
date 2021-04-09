@@ -4243,5 +4243,7 @@ type Subscription {
   workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
   projectAdded: Project
+  projectChanged: Project
   locationAdded: Location
+  locationChanged: Location
 }
