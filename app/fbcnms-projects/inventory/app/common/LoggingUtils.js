@@ -121,6 +121,9 @@ export const LogEvents = {
   // Automation logs:
   ADD_FLOW_BUTTON_CLICKED: 'add_flow_button_clicked',
   LOAD_BLOCK_ERROR: 'load_block_error',
+  AUTOMATION_CONFIGURE_NAV_CLICKED: 'automation_configure_nav_clicked',
+  SAVE_WORKER_TYPE_BUTTON_CLICKED: 'save_worker_template_button_clicked',
+  ADD_WORKER_TYPE_BUTTON_CLICKED: 'add_worker_template_button_clicked',
 };
 
 export const ServerLogger = ServerLog('inventory');

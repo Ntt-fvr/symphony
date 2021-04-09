@@ -35,11 +35,15 @@ type AdminPermissionEnforcement = $ReadOnly<{|
 type InventoryEntWithPermission = $Keys<InventoryEntsPolicy>;
 export type InventoryEntName = InventoryEntWithPermission | 'service' | 'port';
 type WorkforceTemplateEntName = 'workorderTemplate' | 'projectTemplate';
+type AutomationTemplateEntName = 'automationTemplate';
 type InventoryActionName = $Keys<CUDPermissions>;
 
 export type InventoryActionPermission = $ReadOnly<{|
   ...BasePermissionEnforcement,
-  entity: InventoryEntName | WorkforceTemplateEntName,
+  entity:
+    | InventoryEntName
+    | WorkforceTemplateEntName
+    | AutomationTemplateEntName,
   action?: ?InventoryActionName,
 |}>;
 
@@ -216,6 +220,13 @@ const performCheck = (
       isAllowed:
         userPermissions.inventoryPolicy[entity][enforcement.action].isAllowed,
     };
+  } else if (permissionsEnforcement.entity === 'automationTemplate') {
+    const enforcement: InventoryPermissionEnforcement = permissionsEnforcement;
+    if (!enforcement.action) {
+      return PASSED_VALUE;
+    }
+    actionPermissionValue =
+      userPermissions.automationPolicy.templates[enforcement.action];
   }
 
   if (actionPermissionValue == null) {
