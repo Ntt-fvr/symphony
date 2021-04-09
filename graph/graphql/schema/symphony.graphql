@@ -2353,7 +2353,7 @@ enum ProjectPriority
   NONE
 }
 
-type Project implements Node & NamedNode {
+type Project implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
@@ -3275,7 +3275,7 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  type: VariableExpressionType!
+  type:  VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
   checkListItemDefinition: CheckListItemDefinition
@@ -3306,7 +3306,7 @@ type VariableExpression
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
   ) {
-  type: VariableExpressionType!
+  type:  VariableExpressionType!
   variableDefinition: VariableDefinition
   propertyTypeDefinition: PropertyType
   expression: String!
@@ -3994,11 +3994,11 @@ type Query {
     name: String
   ): FlowConnection!
   workerTypes(
-    after: Cursor
-    first: Int @numberValue(min: 0)
-    before: Cursor
-    last: Int @numberValue(min: 0)
-  ): WorkerTypeConnection!
+      after: Cursor
+      first: Int @numberValue(min: 0)
+      before: Cursor
+      last: Int @numberValue(min: 0)
+    ): WorkerTypeConnection!
 }
 
 type Mutation {

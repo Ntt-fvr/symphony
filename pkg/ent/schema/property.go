@@ -150,9 +150,6 @@ func (PropertyType) Indexes() []ent.Index {
 		index.Fields("name").
 			Edges("worker_type").
 			Unique(),
-		index.Fields("name").
-			Edges("project_type").
-			Unique(),
 	}
 }
 
@@ -249,8 +246,6 @@ func (Property) Edges() []ent.Edge {
 		edge.To("work_order_value", WorkOrder.Type).
 			Unique(),
 		edge.To("user_value", User.Type).
-			Unique(),
-		edge.To("project_value", Project.Type).
 			Unique(),
 	}
 }

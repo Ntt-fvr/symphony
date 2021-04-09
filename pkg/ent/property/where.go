@@ -1376,34 +1376,6 @@ func HasUserValueWith(preds ...predicate.User) predicate.Property {
 	})
 }
 
-// HasProjectValue applies the HasEdge predicate on the "project_value" edge.
-func HasProjectValue() predicate.Property {
-	return predicate.Property(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ProjectValueTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, ProjectValueTable, ProjectValueColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasProjectValueWith applies the HasEdge predicate on the "project_value" edge with a given conditions (other predicates).
-func HasProjectValueWith(preds ...predicate.Project) predicate.Property {
-	return predicate.Property(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ProjectValueInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, ProjectValueTable, ProjectValueColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Property) predicate.Property {
 	return predicate.Property(func(s *sql.Selector) {

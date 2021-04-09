@@ -6131,22 +6131,6 @@ func (c *PropertyClient) QueryUserValue(pr *Property) *UserQuery {
 	return query
 }
 
-// QueryProjectValue queries the project_value edge of a Property.
-func (c *PropertyClient) QueryProjectValue(pr *Property) *ProjectQuery {
-	query := &ProjectQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := pr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, id),
-			sqlgraph.To(project.Table, project.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, property.ProjectValueTable, property.ProjectValueColumn),
-		)
-		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *PropertyClient) Hooks() []Hook {
 	hooks := c.hooks.Property

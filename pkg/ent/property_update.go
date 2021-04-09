@@ -481,25 +481,6 @@ func (pu *PropertyUpdate) SetUserValue(u *User) *PropertyUpdate {
 	return pu.SetUserValueID(u.ID)
 }
 
-// SetProjectValueID sets the project_value edge to Project by id.
-func (pu *PropertyUpdate) SetProjectValueID(id int) *PropertyUpdate {
-	pu.mutation.SetProjectValueID(id)
-	return pu
-}
-
-// SetNillableProjectValueID sets the project_value edge to Project by id if the given value is not nil.
-func (pu *PropertyUpdate) SetNillableProjectValueID(id *int) *PropertyUpdate {
-	if id != nil {
-		pu = pu.SetProjectValueID(*id)
-	}
-	return pu
-}
-
-// SetProjectValue sets the project_value edge to Project.
-func (pu *PropertyUpdate) SetProjectValue(p *Project) *PropertyUpdate {
-	return pu.SetProjectValueID(p.ID)
-}
-
 // Mutation returns the PropertyMutation object of the builder.
 func (pu *PropertyUpdate) Mutation() *PropertyMutation {
 	return pu.mutation
@@ -580,12 +561,6 @@ func (pu *PropertyUpdate) ClearWorkOrderValue() *PropertyUpdate {
 // ClearUserValue clears the "user_value" edge to type User.
 func (pu *PropertyUpdate) ClearUserValue() *PropertyUpdate {
 	pu.mutation.ClearUserValue()
-	return pu
-}
-
-// ClearProjectValue clears the "project_value" edge to type Project.
-func (pu *PropertyUpdate) ClearProjectValue() *PropertyUpdate {
-	pu.mutation.ClearProjectValue()
 	return pu
 }
 
@@ -1289,41 +1264,6 @@ func (pu *PropertyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if pu.mutation.ProjectValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   property.ProjectValueTable,
-			Columns: []string{property.ProjectValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: project.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pu.mutation.ProjectValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   property.ProjectValueTable,
-			Columns: []string{property.ProjectValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: project.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{property.Label}
@@ -1783,25 +1723,6 @@ func (puo *PropertyUpdateOne) SetUserValue(u *User) *PropertyUpdateOne {
 	return puo.SetUserValueID(u.ID)
 }
 
-// SetProjectValueID sets the project_value edge to Project by id.
-func (puo *PropertyUpdateOne) SetProjectValueID(id int) *PropertyUpdateOne {
-	puo.mutation.SetProjectValueID(id)
-	return puo
-}
-
-// SetNillableProjectValueID sets the project_value edge to Project by id if the given value is not nil.
-func (puo *PropertyUpdateOne) SetNillableProjectValueID(id *int) *PropertyUpdateOne {
-	if id != nil {
-		puo = puo.SetProjectValueID(*id)
-	}
-	return puo
-}
-
-// SetProjectValue sets the project_value edge to Project.
-func (puo *PropertyUpdateOne) SetProjectValue(p *Project) *PropertyUpdateOne {
-	return puo.SetProjectValueID(p.ID)
-}
-
 // Mutation returns the PropertyMutation object of the builder.
 func (puo *PropertyUpdateOne) Mutation() *PropertyMutation {
 	return puo.mutation
@@ -1882,12 +1803,6 @@ func (puo *PropertyUpdateOne) ClearWorkOrderValue() *PropertyUpdateOne {
 // ClearUserValue clears the "user_value" edge to type User.
 func (puo *PropertyUpdateOne) ClearUserValue() *PropertyUpdateOne {
 	puo.mutation.ClearUserValue()
-	return puo
-}
-
-// ClearProjectValue clears the "project_value" edge to type Project.
-func (puo *PropertyUpdateOne) ClearProjectValue() *PropertyUpdateOne {
-	puo.mutation.ClearProjectValue()
 	return puo
 }
 
@@ -2581,41 +2496,6 @@ func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (_node *Property, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if puo.mutation.ProjectValueCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   property.ProjectValueTable,
-			Columns: []string{property.ProjectValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: project.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := puo.mutation.ProjectValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   property.ProjectValueTable,
-			Columns: []string{property.ProjectValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: project.FieldID,
 				},
 			},
 		}
