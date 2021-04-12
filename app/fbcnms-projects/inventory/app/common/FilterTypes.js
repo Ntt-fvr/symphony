@@ -92,6 +92,12 @@ export const blockedStatus = {
   label: `${fbt('Blocked', '')}`,
 };
 
+export const cancelledStatus = {
+  key: 'Cancelled',
+  value: 'CANCELLED',
+  label: `${fbt('Cancelled', '')}`,
+};
+
 const statusValues: Array<{|
   key: string,
   value: GraphQLStatusType,
@@ -102,8 +108,9 @@ const statusValues: Array<{|
   submittedStatus,
   closedStatus,
   blockedStatus,
+  cancelledStatus,
 ];
 
 export function useStatusValues() {
-  return {statusValues, closedStatus};
+  return {statusValues, closedStatus, cancelledStatus};
 }
