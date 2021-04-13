@@ -965,6 +965,38 @@ type FlowConnection {
 }
 
 """
+A flow edge in a connection.
+"""
+type FlowInstanceEdge {
+  """
+  The Flow type at the end of the edge.
+  """
+  node: FlowInstance
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Flows.
+"""
+type FlowInstanceConnection {
+  """
+  Total count of Flows in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Flow edges.
+  """
+  edges: [FlowInstanceEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -4032,6 +4064,12 @@ type Query {
     """
     name: String
   ): FlowConnection!
+  flowInstances(
+      after: Cursor
+      first: Int @numberValue(min: 0)
+      before: Cursor
+      last: Int @numberValue(min: 0)
+    ): FlowInstanceConnection!
   workerTypes(
       after: Cursor
       first: Int @numberValue(min: 0)

@@ -219,6 +219,15 @@ func (r queryResolver) Flows(
 		Paginate(ctx, after, first, before, last)
 }
 
+func (r queryResolver) FlowInstances(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+) (*ent.FlowInstanceConnection, error) {
+	return r.ClientFrom(ctx).FlowInstance.Query().
+		Paginate(ctx, after, first, before, last)
+}
+
 func (r mutationResolver) paramsHaveDependencies(params []*models.VariableExpressionInput, createdBlockCIDs map[string]struct{}) bool {
 	for _, param := range params {
 		for _, blockVariable := range param.BlockVariables {
