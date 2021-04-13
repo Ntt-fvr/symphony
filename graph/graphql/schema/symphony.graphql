@@ -3588,10 +3588,39 @@ type FlowExecutionTemplate implements Node {
   connectors: [Connector!]!
 }
 
+enum BlockInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
+  ) {
+  PENDING
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  WAITING
+}
+
+type VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
+  variableDefinitionKey: String!
+  value: String!
+}
+
+type BlockInstance implements Node {
+  id: ID!
+  status: BlockInstanceStatus!
+  inputs: [VariableValue!]!
+  outputs: [VariableValue!]!
+  failure_reason: String
+  block: Block!
+}
+
 type FlowInstance implements Node {
   id: ID!
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
+  blocks: [BlockInstance!]!
 }
 
 input AddFlowDraftInput {
@@ -3606,7 +3635,7 @@ input PublishFlowInput {
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
-input VariableValue
+input VariableValueInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
   ) {
@@ -3616,7 +3645,7 @@ input VariableValue
 
 input StartFlowInput {
   flowID: ID!
-  params: [VariableValue]!
+  params: [VariableValueInput]!
 }
 
 input TechnicianWorkOrderCheckOutInput {
