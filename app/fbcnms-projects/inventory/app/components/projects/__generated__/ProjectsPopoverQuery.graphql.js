@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
-export type WorkOrderStatus = "BLOCKED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CANCELLED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "%future added value";
 export type ProjectsPopoverQueryVariables = {|
   projectId: string
 |};

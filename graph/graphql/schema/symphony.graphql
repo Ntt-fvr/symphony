@@ -1518,6 +1518,7 @@ enum WorkOrderStatus
       reason: "Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead. Will be removed on 2020-11-01"
     )
   BLOCKED
+  CANCELLED
 }
 
 enum ServiceStatus

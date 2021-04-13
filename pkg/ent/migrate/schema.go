@@ -1955,7 +1955,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PLANNED", "IN_PROGRESS", "PENDING", "SUBMITTED", "CLOSED", "DONE", "BLOCKED"}, Default: "PLANNED"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PLANNED", "IN_PROGRESS", "PENDING", "SUBMITTED", "CLOSED", "DONE", "BLOCKED", "CANCELLED"}, Default: "PLANNED"},
 		{Name: "priority", Type: field.TypeEnum, Enums: []string{"URGENT", "HIGH", "MEDIUM", "LOW", "NONE"}, Default: "NONE"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "install_date", Type: field.TypeTime, Nullable: true},
