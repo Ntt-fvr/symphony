@@ -405,7 +405,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.NoError(t, err)
 	propertyTypeID := woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	checkListItemID := woType.QueryCheckListCategoryDefinitions().QueryCheckListItemDefinitions().Where(checklistitemdefinition.Title("Foo")).OnlyIDX(ctx)
-	wkType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{Name: "worker", Properties: propTypeInputs})
+	wkType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{Name: "worker", PropertyTypes: propTypeInputs})
 	require.NoError(t, err)
 	propertyTypeWkID := wkType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx)
 	owner := viewer.FromContext(ctx).(*viewer.UserViewer).User()

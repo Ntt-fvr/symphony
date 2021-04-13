@@ -23,8 +23,11 @@ import fbt from 'fbt';
 import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import AutomationFlowsIcon from './flows/view/icons/AutomationFlowsIcon';
 import AutomationFlowsView from './flows/view/AutomationFlowsView';
+import AutomationConfigure from './AutomationConfigure';
+import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Suspense, useContext} from 'react';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';
@@ -40,15 +43,23 @@ const useStyles = makeStyles(_theme => ({
 function NavItems() {
   const relativeUrl = useRelativeUrl();
 
-  return (
-    <>
-      <NavListItem
-        label={fbt('Automation Flows', '')}
-        path={relativeUrl('/flows')}
-        icon={<AutomationFlowsIcon />}
-      />
-    </>
-  );
+  return [
+    <NavListItem
+      key={1}
+      label={fbt('Automation Flows', '')}
+      path={relativeUrl('/flows')}
+      icon={<AutomationFlowsIcon />}
+    />,
+    <NavListItem
+      key={2}
+      label="Templates"
+      path={relativeUrl('/configure')}
+      icon={<AssignmentIcon />}
+      onClick={() => {
+        ServerLogger.info(LogEvents.AUTOMATION_CONFIGURE_NAV_CLICKED);
+      }}
+    />,
+  ];
 }
 
 const FLOW_BUILDER_PATH = '/flow/';
@@ -59,6 +70,7 @@ function NavRoutes() {
     <Switch>
       <Route path={relativeUrl('/flows')} component={AutomationFlowsView} />
       <Route path={relativeUrl(FLOW_BUILDER_PATH)} component={FlowBuilder} />
+      <Route path={relativeUrl('/configure')} component={AutomationConfigure} />
       <Redirect to={relativeUrl('/flows')} />
     </Switch>
   );

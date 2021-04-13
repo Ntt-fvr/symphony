@@ -195,6 +195,22 @@ const meQuery = graphql`
             }
           }
         }
+        automationPolicy {
+          read {
+            isAllowed
+          }
+          templates {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+        }
       }
     }
   }

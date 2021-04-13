@@ -107,10 +107,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	ActionBlock struct {
-		ActionType func(childComplexity int) int
-		EntryPoint func(childComplexity int) int
-		ExitPoint  func(childComplexity int) int
-		Params     func(childComplexity int) int
+		ActionType    func(childComplexity int) int
+		EntryPoint    func(childComplexity int) int
+		ExitPoint     func(childComplexity int) int
+		Params        func(childComplexity int) int
+		WorkOrderType func(childComplexity int) int
+		WorkerType    func(childComplexity int) int
 	}
 
 	ActionType struct {
@@ -135,6 +137,11 @@ type ComplexityRoot struct {
 
 	AdministrativePolicy struct {
 		Access func(childComplexity int) int
+	}
+
+	AutomationPolicy struct {
+		Read      func(childComplexity int) int
+		Templates func(childComplexity int) int
 	}
 
 	BasicPermissionRule struct {
@@ -793,9 +800,10 @@ type ComplexityRoot struct {
 	}
 
 	PermissionSettings struct {
-		AdminPolicy     func(childComplexity int) int
-		InventoryPolicy func(childComplexity int) int
-		WorkforcePolicy func(childComplexity int) int
+		AdminPolicy      func(childComplexity int) int
+		AutomationPolicy func(childComplexity int) int
+		InventoryPolicy  func(childComplexity int) int
+		WorkforcePolicy  func(childComplexity int) int
 	}
 
 	PermissionsPolicy struct {
@@ -937,8 +945,8 @@ type ComplexityRoot struct {
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
-		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		LatestPythonPackage      func(childComplexity int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
 		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1079,6 +1087,10 @@ type ComplexityRoot struct {
 
 	Subscription struct {
 		FlowInstanceDone       func(childComplexity int) int
+		LocationAdded          func(childComplexity int) int
+		LocationChanged        func(childComplexity int) int
+		ProjectAdded           func(childComplexity int) int
+		ProjectChanged         func(childComplexity int) int
 		WorkOrderAdded         func(childComplexity int) int
 		WorkOrderDone          func(childComplexity int) int
 		WorkOrderStatusChanged func(childComplexity int) int
@@ -1388,6 +1400,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkerType struct {
+		Description   func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Name          func(childComplexity int) int
 		PropertyTypes func(childComplexity int) int
@@ -1640,8 +1653,8 @@ type QueryResolver interface {
 	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) (*ent.ProjectConnection, error)
 	Customers(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.CustomerConnection, error)
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
-	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowDraftConnection, error)
-	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowConnection, error)
+	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowDraftConnection, error)
+	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowConnection, error)
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 }
 type ReportFilterResolver interface {
@@ -1661,6 +1674,10 @@ type SubscriptionResolver interface {
 	WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error)
 	WorkOrderStatusChanged(ctx context.Context) (<-chan *event.WorkOrderStatusChangedPayload, error)
 	FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error)
+	ProjectAdded(ctx context.Context) (<-chan *ent.Project, error)
+	ProjectChanged(ctx context.Context) (<-chan *ent.Project, error)
+	LocationAdded(ctx context.Context) (<-chan *ent.Location, error)
+	LocationChanged(ctx context.Context) (<-chan *ent.Location, error)
 }
 type SurveyResolver interface {
 	CreationTimestamp(ctx context.Context, obj *ent.Survey) (*int, error)
@@ -1754,6 +1771,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionBlock.Params(childComplexity), true
+
+	case "ActionBlock.workOrderType":
+		if e.complexity.ActionBlock.WorkOrderType == nil {
+			break
+		}
+
+		return e.complexity.ActionBlock.WorkOrderType(childComplexity), true
+
+	case "ActionBlock.workerType":
+		if e.complexity.ActionBlock.WorkerType == nil {
+			break
+		}
+
+		return e.complexity.ActionBlock.WorkerType(childComplexity), true
 
 	case "ActionType.description":
 		if e.complexity.ActionType.Description == nil {
@@ -1859,6 +1890,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AdministrativePolicy.Access(childComplexity), true
+
+	case "AutomationPolicy.read":
+		if e.complexity.AutomationPolicy.Read == nil {
+			break
+		}
+
+		return e.complexity.AutomationPolicy.Read(childComplexity), true
+
+	case "AutomationPolicy.templates":
+		if e.complexity.AutomationPolicy.Templates == nil {
+			break
+		}
+
+		return e.complexity.AutomationPolicy.Templates(childComplexity), true
 
 	case "BasicPermissionRule.isAllowed":
 		if e.complexity.BasicPermissionRule.IsAllowed == nil {
@@ -5366,6 +5411,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PermissionSettings.AdminPolicy(childComplexity), true
 
+	case "PermissionSettings.automationPolicy":
+		if e.complexity.PermissionSettings.AutomationPolicy == nil {
+			break
+		}
+
+		return e.complexity.PermissionSettings.AutomationPolicy(childComplexity), true
+
 	case "PermissionSettings.inventoryPolicy":
 		if e.complexity.PermissionSettings.InventoryPolicy == nil {
 			break
@@ -6081,7 +6133,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
 	case "Query.flows":
 		if e.complexity.Query.Flows == nil {
@@ -6093,7 +6145,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
 	case "Query.latestPythonPackage":
 		if e.complexity.Query.LatestPythonPackage == nil {
@@ -6843,6 +6895,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.FlowInstanceDone(childComplexity), true
+
+	case "Subscription.locationAdded":
+		if e.complexity.Subscription.LocationAdded == nil {
+			break
+		}
+
+		return e.complexity.Subscription.LocationAdded(childComplexity), true
+
+	case "Subscription.locationChanged":
+		if e.complexity.Subscription.LocationChanged == nil {
+			break
+		}
+
+		return e.complexity.Subscription.LocationChanged(childComplexity), true
+
+	case "Subscription.projectAdded":
+		if e.complexity.Subscription.ProjectAdded == nil {
+			break
+		}
+
+		return e.complexity.Subscription.ProjectAdded(childComplexity), true
+
+	case "Subscription.projectChanged":
+		if e.complexity.Subscription.ProjectChanged == nil {
+			break
+		}
+
+		return e.complexity.Subscription.ProjectChanged(childComplexity), true
 
 	case "Subscription.workOrderAdded":
 		if e.complexity.Subscription.WorkOrderAdded == nil {
@@ -8303,6 +8383,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrderTypeEdge.Node(childComplexity), true
 
+	case "WorkerType.description":
+		if e.complexity.WorkerType.Description == nil {
+			break
+		}
+
+		return e.complexity.WorkerType.Description(childComplexity), true
+
 	case "WorkerType.id":
 		if e.complexity.WorkerType.ID == nil {
 			break
@@ -8602,6 +8689,7 @@ type PermissionSettings
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
+  automationPolicy: AutomationPolicy!
 }
 
 enum PermissionValue
@@ -8704,6 +8792,22 @@ type AdministrativePolicy
   access: BasicPermissionRule!
 }
 
+type AutomationPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AutomationPolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -8776,6 +8880,7 @@ union SystemPolicy
   ) =
     InventoryPolicy
   | WorkforcePolicy
+  | AutomationPolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -8792,6 +8897,7 @@ input AddPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -8802,6 +8908,7 @@ input EditPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -10017,6 +10124,7 @@ enum WorkOrderStatus
       reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01"
     )
   BLOCKED
+  CANCELLED
 }
 
 enum ServiceStatus
@@ -10852,7 +10960,7 @@ enum ProjectPriority
   NONE
 }
 
-type Project implements Node {
+type Project implements Node & NamedNode {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
@@ -11774,7 +11882,7 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  type:  VariableExpressionType!
+  type: VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
   checkListItemDefinition: CheckListItemDefinition
@@ -11805,7 +11913,7 @@ type VariableExpression
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
   ) {
-  type:  VariableExpressionType!
+  type: VariableExpressionType!
   variableDefinition: VariableDefinition
   propertyTypeDefinition: PropertyType
   expression: String!
@@ -11917,6 +12025,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =
@@ -12150,19 +12260,22 @@ type WorkerTypeEdge {
 type WorkerType implements Node {
   id: ID!
   name: String!
+  description: String
   propertyTypes: [PropertyType]!
 }
 
 input AddWorkerTypeInput {
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
 input EditWorkerTypeInput {
   id: ID!
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
@@ -12472,19 +12585,27 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flowDrafts by case sensitive name.
+    """
+    name: String
   ): FlowDraftConnection!
   flows(
     after: Cursor
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
   ): FlowConnection!
   workerTypes(
-      after: Cursor
-      first: Int @numberValue(min: 0)
-      before: Cursor
-      last: Int @numberValue(min: 0)
-    ): WorkerTypeConnection!
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): WorkerTypeConnection!
 }
 
 type Mutation {
@@ -12728,6 +12849,10 @@ type Subscription {
   workOrderDone: WorkOrder
   workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
 }
 `, BuiltIn: false},
 }
@@ -15415,6 +15540,15 @@ func (ec *executionContext) field_Query_flowDrafts_args(ctx context.Context, raw
 		}
 	}
 	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -15495,6 +15629,15 @@ func (ec *executionContext) field_Query_flows_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -17152,6 +17295,70 @@ func (ec *executionContext) _ActionBlock_exitPoint(ctx context.Context, field gr
 	return ec.marshalNExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ActionBlock_workOrderType(ctx context.Context, field graphql.CollectedField, obj *models.ActionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ActionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrderType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrderType)
+	fc.Result = res
+	return ec.marshalOWorkOrderType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionBlock_workerType(ctx context.Context, field graphql.CollectedField, obj *models.ActionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ActionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkerType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkerType)
+	fc.Result = res
+	return ec.marshalOWorkerType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkerType(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ActionType_id(ctx context.Context, field graphql.CollectedField, obj actions.ActionType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17657,6 +17864,76 @@ func (ec *executionContext) _AdministrativePolicy_access(ctx context.Context, fi
 	res := resTmp.(*models2.BasicPermissionRule)
 	fc.Result = res
 	return ec.marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AutomationPolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.AutomationPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AutomationPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Read, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.BasicPermissionRule)
+	fc.Result = res
+	return ec.marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AutomationPolicy_templates(ctx context.Context, field graphql.CollectedField, obj *models2.AutomationPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AutomationPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Templates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.Cud)
+	fc.Result = res
+	return ec.marshalNCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐCud(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BasicPermissionRule_isAllowed(ctx context.Context, field graphql.CollectedField, obj *models2.BasicPermissionRule) (ret graphql.Marshaler) {
@@ -33126,6 +33403,41 @@ func (ec *executionContext) _PermissionSettings_workforcePolicy(ctx context.Cont
 	return ec.marshalNWorkforcePolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐWorkforcePolicy(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PermissionSettings_automationPolicy(ctx context.Context, field graphql.CollectedField, obj *models2.PermissionSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PermissionSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AutomationPolicy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.AutomationPolicy)
+	fc.Result = res
+	return ec.marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicy(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PermissionsPolicy_id(ctx context.Context, field graphql.CollectedField, obj *ent.PermissionsPolicy) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -37331,7 +37643,7 @@ func (ec *executionContext) _Query_flowDrafts(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37373,7 +37685,7 @@ func (ec *executionContext) _Query_flows(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Flows(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().Flows(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39952,6 +40264,174 @@ func (ec *executionContext) _Subscription_flowInstanceDone(ctx context.Context, 
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
 			ec.marshalNFlowInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_projectAdded(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().ProjectAdded(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.Project)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOProject2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_projectChanged(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().ProjectChanged(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.Project)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOProject2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProject(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_locationAdded(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().LocationAdded(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.Location)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOLocation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocation(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_locationChanged(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().LocationChanged(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.Location)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOLocation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocation(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -46947,6 +47427,38 @@ func (ec *executionContext) _WorkerType_name(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkerType_description(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkerType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkerType_propertyTypes(ctx context.Context, field graphql.CollectedField, obj *ent.WorkerType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -49600,6 +50112,14 @@ func (ec *executionContext) unmarshalInputAddPermissionsPolicyInput(ctx context.
 			if err != nil {
 				return it, err
 			}
+		case "automationInput":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("automationInput"))
+			it.AutomationInput, err = ec.unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "groups":
 			var err error
 
@@ -50084,10 +50604,18 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "description":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
@@ -50111,12 +50639,40 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.Properties = data
+				it.PropertyTypes = data
 			} else if tmp == nil {
-				it.Properties = nil
+				it.PropertyTypes = nil
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAutomationPolicyInput(ctx context.Context, obj interface{}) (models2.AutomationPolicyInput, error) {
+	var it models2.AutomationPolicyInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "read":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("read"))
+			it.Read, err = ec.unmarshalOBasicPermissionRuleInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRuleInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "templates":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templates"))
+			it.Templates, err = ec.unmarshalOBasicCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicCUDInput(ctx, v)
+			if err != nil {
+				return it, err
 			}
 		}
 	}
@@ -51234,6 +51790,14 @@ func (ec *executionContext) unmarshalInputEditPermissionsPolicyInput(ctx context
 			if err != nil {
 				return it, err
 			}
+		case "automationInput":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("automationInput"))
+			it.AutomationInput, err = ec.unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "groups":
 			var err error
 
@@ -51818,10 +52382,18 @@ func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-		case "properties":
+		case "description":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "propertyTypes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyTypes"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
@@ -51845,9 +52417,9 @@ func (ec *executionContext) unmarshalInputEditWorkerTypeInput(ctx context.Contex
 				return it, graphql.ErrorOnPath(ctx, err)
 			}
 			if data, ok := tmp.([]*models1.PropertyTypeInput); ok {
-				it.Properties = data
+				it.PropertyTypes = data
 			} else if tmp == nil {
-				it.Properties = nil
+				it.PropertyTypes = nil
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
@@ -55563,6 +56135,11 @@ func (ec *executionContext) _NamedNode(ctx context.Context, sel ast.SelectionSet
 			return graphql.Null
 		}
 		return ec._WorkOrder(ctx, sel, obj)
+	case *ent.Project:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Project(ctx, sel, obj)
 	case *ent.Service:
 		if obj == nil {
 			return graphql.Null
@@ -55835,6 +56412,13 @@ func (ec *executionContext) _SystemPolicy(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._WorkforcePolicy(ctx, sel, obj)
+	case models2.AutomationPolicy:
+		return ec._AutomationPolicy(ctx, sel, &obj)
+	case *models2.AutomationPolicy:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AutomationPolicy(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -55875,6 +56459,10 @@ func (ec *executionContext) _ActionBlock(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "workOrderType":
+			out.Values[i] = ec._ActionBlock_workOrderType(ctx, field, obj)
+		case "workerType":
+			out.Values[i] = ec._ActionBlock_workerType(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -56031,6 +56619,38 @@ func (ec *executionContext) _AdministrativePolicy(ctx context.Context, sel ast.S
 			out.Values[i] = graphql.MarshalString("AdministrativePolicy")
 		case "access":
 			out.Values[i] = ec._AdministrativePolicy_access(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var automationPolicyImplementors = []string{"AutomationPolicy", "SystemPolicy"}
+
+func (ec *executionContext) _AutomationPolicy(ctx context.Context, sel ast.SelectionSet, obj *models2.AutomationPolicy) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, automationPolicyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AutomationPolicy")
+		case "read":
+			out.Values[i] = ec._AutomationPolicy_read(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "templates":
+			out.Values[i] = ec._AutomationPolicy_templates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -60386,6 +61006,11 @@ func (ec *executionContext) _PermissionSettings(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "automationPolicy":
+			out.Values[i] = ec._PermissionSettings_automationPolicy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -60594,7 +61219,7 @@ func (ec *executionContext) _PortSearchResult(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var projectImplementors = []string{"Project", "Node"}
+var projectImplementors = []string{"Project", "Node", "NamedNode"}
 
 func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *ent.Project) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, projectImplementors)
@@ -62542,6 +63167,14 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_workOrderStatusChanged(ctx, fields[0])
 	case "flowInstanceDone":
 		return ec._Subscription_flowInstanceDone(ctx, fields[0])
+	case "projectAdded":
+		return ec._Subscription_projectAdded(ctx, fields[0])
+	case "projectChanged":
+		return ec._Subscription_projectChanged(ctx, fields[0])
+	case "locationAdded":
+		return ec._Subscription_locationAdded(ctx, fields[0])
+	case "locationChanged":
+		return ec._Subscription_locationChanged(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -64512,6 +65145,8 @@ func (ec *executionContext) _WorkerType(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "description":
+			out.Values[i] = ec._WorkerType_description(ctx, field, obj)
 		case "propertyTypes":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -65158,6 +65793,16 @@ func (ec *executionContext) marshalNAdministrativePolicy2ᚖgithubᚗcomᚋfaceb
 		return graphql.Null
 	}
 	return ec._AdministrativePolicy(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicy(ctx context.Context, sel ast.SelectionSet, v *models2.AutomationPolicy) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AutomationPolicy(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx context.Context, sel ast.SelectionSet, v *models2.BasicPermissionRule) graphql.Marshaler {
@@ -70702,6 +71347,14 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx context.Context, v interface{}) (*models2.AutomationPolicyInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAutomationPolicyInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

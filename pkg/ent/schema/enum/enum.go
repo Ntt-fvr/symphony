@@ -515,6 +515,7 @@ const (
 	NodeTypeService   NodeType = "service"
 	NodeTypeWorkOrder NodeType = "work_order"
 	NodeTypeUser      NodeType = "user"
+	NodeTypeProject   NodeType = "project"
 )
 
 // String implements Getter interface.
@@ -534,5 +535,31 @@ const (
 
 // String implements Getter interface.
 func (vt VariableExpressionType) String() string {
+	return string(vt)
+}
+
+// VariableExpressionType determines the variableExpression type of a block
+type OperationWO string
+
+const (
+	OperationWOCreate OperationWO = "Create WO"
+	OperationWOUpdate OperationWO = "Update WO"
+)
+
+// String implements Getter interface.
+func (vt OperationWO) String() string {
+	return string(vt)
+}
+
+// VariableExpressionType determines the variableExpression type of a block
+type BaseTypeWO string
+
+const (
+	BaseTypeWOProject   BaseTypeWO = "project"
+	BaseTypeWOWorkOrder BaseTypeWO = "workOrder"
+)
+
+// String implements Getter interface.
+func (vt BaseTypeWO) String() string {
 	return string(vt)
 }

@@ -83,6 +83,7 @@ type PermissionSettings
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
+  automationPolicy: AutomationPolicy!
 }
 
 enum PermissionValue
@@ -185,6 +186,22 @@ type AdministrativePolicy
   access: BasicPermissionRule!
 }
 
+type AutomationPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AutomationPolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -257,6 +274,7 @@ union SystemPolicy
   ) =
     InventoryPolicy
   | WorkforcePolicy
+  | AutomationPolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -273,6 +291,7 @@ input AddPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -283,6 +302,7 @@ input EditPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -3398,6 +3418,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =
@@ -3631,19 +3653,22 @@ type WorkerTypeEdge {
 type WorkerType implements Node {
   id: ID!
   name: String!
+  description: String
   propertyTypes: [PropertyType]!
 }
 
 input AddWorkerTypeInput {
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
 input EditWorkerTypeInput {
   id: ID!
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
@@ -4209,4 +4234,6 @@ type Subscription {
   workOrderDone: WorkOrder
   workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  locationAdded: Location
 }

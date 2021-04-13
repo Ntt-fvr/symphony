@@ -37,10 +37,12 @@ type NamedNode interface {
 }
 
 type ActionBlock struct {
-	ActionType actions.ActionType               `json:"actionType"`
-	Params     []*flowschema.VariableExpression `json:"params"`
-	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
-	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
+	ActionType    actions.ActionType               `json:"actionType"`
+	Params        []*flowschema.VariableExpression `json:"params"`
+	EntryPoint    *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint     *ent.ExitPoint                   `json:"exitPoint"`
+	WorkOrderType *ent.WorkOrderType               `json:"workOrderType"`
+	WorkerType    *ent.WorkerType                  `json:"workerType"`
 }
 
 func (ActionBlock) IsBlockDetails() {}
@@ -163,12 +165,13 @@ type AddLocationTypeInput struct {
 }
 
 type AddPermissionsPolicyInput struct {
-	Name           string                        `json:"name"`
-	Description    *string                       `json:"description"`
-	IsGlobal       *bool                         `json:"isGlobal"`
-	InventoryInput *models1.InventoryPolicyInput `json:"inventoryInput"`
-	WorkforceInput *models1.WorkforcePolicyInput `json:"workforceInput"`
-	Groups         []int                         `json:"groups"`
+	Name            string                         `json:"name"`
+	Description     *string                        `json:"description"`
+	IsGlobal        *bool                          `json:"isGlobal"`
+	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	Groups          []int                          `json:"groups"`
 }
 
 type AddProjectInput struct {
@@ -227,8 +230,9 @@ type AddWorkOrderTypeInput struct {
 }
 
 type AddWorkerTypeInput struct {
-	Name       string                      `json:"name"`
-	Properties []*models.PropertyTypeInput `json:"properties"`
+	Name          string                      `json:"name"`
+	Description   *string                     `json:"description"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type BlockVariableInput struct {
@@ -393,13 +397,14 @@ type EditLocationTypeInput struct {
 }
 
 type EditPermissionsPolicyInput struct {
-	ID             int                           `json:"id"`
-	Name           *string                       `json:"name"`
-	Description    *string                       `json:"description"`
-	IsGlobal       *bool                         `json:"isGlobal"`
-	InventoryInput *models1.InventoryPolicyInput `json:"inventoryInput"`
-	WorkforceInput *models1.WorkforcePolicyInput `json:"workforceInput"`
-	Groups         []int                         `json:"groups"`
+	ID              int                            `json:"id"`
+	Name            *string                        `json:"name"`
+	Description     *string                        `json:"description"`
+	IsGlobal        *bool                          `json:"isGlobal"`
+	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
+	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
+	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	Groups          []int                          `json:"groups"`
 }
 
 type EditProjectInput struct {
@@ -471,9 +476,10 @@ type EditWorkOrderTypeInput struct {
 }
 
 type EditWorkerTypeInput struct {
-	ID         int                         `json:"id"`
-	Name       string                      `json:"name"`
-	Properties []*models.PropertyTypeInput `json:"properties"`
+	ID            int                         `json:"id"`
+	Name          string                      `json:"name"`
+	Description   *string                     `json:"description"`
+	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
 }
 
 type EndBlock struct {

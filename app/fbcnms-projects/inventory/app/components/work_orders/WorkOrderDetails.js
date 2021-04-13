@@ -433,7 +433,7 @@ const WorkOrderDetails = ({
   const assigneeCanCompleteWorkOrder =
     propsWorkOrder.workOrderTemplate?.assigneeCanCompleteWorkOrder;
 
-  const {statusValues, closedStatus} = useStatusValues();
+  const {statusValues, closedStatus, cancelledStatus} = useStatusValues();
   const filteredStatusValues = useMemo(() => {
     if (
       userHasAdminPermissions ||
@@ -445,7 +445,9 @@ const WorkOrderDetails = ({
     ) {
       return statusValues;
     }
-    return statusValues.filter(status => status.key !== closedStatus.key);
+    return statusValues
+      .filter(status => status.key !== closedStatus.key)
+      .filter(status => status.key !== cancelledStatus.key);
   }, [
     userHasAdminPermissions,
     isOwner,
@@ -481,7 +483,7 @@ const WorkOrderDetails = ({
               fieldDisplayName: 'Status',
               value: propsWorkOrder.status,
               checkCallback: value =>
-                value === closedStatus.value
+                value === closedStatus.value || value === cancelledStatus.value
                   ? `Work order is on '${closedStatus.label}' state`
                   : '',
             });

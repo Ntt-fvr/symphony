@@ -27,6 +27,7 @@ import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {
   blockedStatus,
+  cancelledStatus,
   closedStatus,
   doneStatus,
   inProgressStatus,
@@ -190,6 +191,8 @@ const getSkinFromStatus = status => {
     case blockedStatus.value:
       return 'red';
     case closedStatus.value:
+      return 'brightGray';
+    case cancelledStatus.value:
       return 'brightGray';
     default:
       return 'regular';

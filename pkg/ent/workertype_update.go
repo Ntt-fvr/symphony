@@ -37,6 +37,26 @@ func (wtu *WorkerTypeUpdate) SetName(s string) *WorkerTypeUpdate {
 	return wtu
 }
 
+// SetDescription sets the description field.
+func (wtu *WorkerTypeUpdate) SetDescription(s string) *WorkerTypeUpdate {
+	wtu.mutation.SetDescription(s)
+	return wtu
+}
+
+// SetNillableDescription sets the description field if the given value is not nil.
+func (wtu *WorkerTypeUpdate) SetNillableDescription(s *string) *WorkerTypeUpdate {
+	if s != nil {
+		wtu.SetDescription(*s)
+	}
+	return wtu
+}
+
+// ClearDescription clears the value of description.
+func (wtu *WorkerTypeUpdate) ClearDescription() *WorkerTypeUpdate {
+	wtu.mutation.ClearDescription()
+	return wtu
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wtu *WorkerTypeUpdate) AddPropertyTypeIDs(ids ...int) *WorkerTypeUpdate {
 	wtu.mutation.AddPropertyTypeIDs(ids...)
@@ -170,6 +190,19 @@ func (wtu *WorkerTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: workertype.FieldName,
 		})
 	}
+	if value, ok := wtu.mutation.Description(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: workertype.FieldDescription,
+		})
+	}
+	if wtu.mutation.DescriptionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: workertype.FieldDescription,
+		})
+	}
 	if wtu.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -245,6 +278,26 @@ type WorkerTypeUpdateOne struct {
 // SetName sets the name field.
 func (wtuo *WorkerTypeUpdateOne) SetName(s string) *WorkerTypeUpdateOne {
 	wtuo.mutation.SetName(s)
+	return wtuo
+}
+
+// SetDescription sets the description field.
+func (wtuo *WorkerTypeUpdateOne) SetDescription(s string) *WorkerTypeUpdateOne {
+	wtuo.mutation.SetDescription(s)
+	return wtuo
+}
+
+// SetNillableDescription sets the description field if the given value is not nil.
+func (wtuo *WorkerTypeUpdateOne) SetNillableDescription(s *string) *WorkerTypeUpdateOne {
+	if s != nil {
+		wtuo.SetDescription(*s)
+	}
+	return wtuo
+}
+
+// ClearDescription clears the value of description.
+func (wtuo *WorkerTypeUpdateOne) ClearDescription() *WorkerTypeUpdateOne {
+	wtuo.mutation.ClearDescription()
 	return wtuo
 }
 
@@ -377,6 +430,19 @@ func (wtuo *WorkerTypeUpdateOne) sqlSave(ctx context.Context) (_node *WorkerType
 			Type:   field.TypeString,
 			Value:  value,
 			Column: workertype.FieldName,
+		})
+	}
+	if value, ok := wtuo.mutation.Description(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: workertype.FieldDescription,
+		})
+	}
+	if wtuo.mutation.DescriptionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: workertype.FieldDescription,
 		})
 	}
 	if wtuo.mutation.PropertyTypesCleared() {

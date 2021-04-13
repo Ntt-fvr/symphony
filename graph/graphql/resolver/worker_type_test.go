@@ -74,8 +74,8 @@ func TestAddWorkerTypeWithProperties(t *testing.T) {
 		ExternalID:  &extID,
 	}
 	workerType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{
-		Name:       "example_type_a",
-		Properties: []*pkgmodels.PropertyTypeInput{&ptype},
+		Name:          "example_type_a",
+		PropertyTypes: []*pkgmodels.PropertyTypeInput{&ptype},
 	})
 	require.NoError(t, err)
 
@@ -104,8 +104,8 @@ func TestRemoveWorkerType(t *testing.T) {
 	}
 
 	workerType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{
-		Name:       "example_type_a",
-		Properties: []*pkgmodels.PropertyTypeInput{&strPropType},
+		Name:          "example_type_a",
+		PropertyTypes: []*pkgmodels.PropertyTypeInput{&strPropType},
 	})
 	require.NoError(t, err)
 
@@ -171,8 +171,8 @@ func TestEditWorkerTypeWithProperties(t *testing.T) {
 	}
 	propTypeInput := []*pkgmodels.PropertyTypeInput{&strPropType}
 	eqType, err := mr.AddWorkerType(ctx, models.AddWorkerTypeInput{
-		Name:       "example_type_a",
-		Properties: propTypeInput,
+		Name:          "example_type_a",
+		PropertyTypes: propTypeInput,
 	})
 	require.NoError(t, err)
 
@@ -192,9 +192,9 @@ func TestEditWorkerTypeWithProperties(t *testing.T) {
 	}
 	editedPropTypeInput := []*pkgmodels.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditWorkerType(ctx, models.EditWorkerTypeInput{
-		ID:         eqType.ID,
-		Name:       "example_type_a",
-		Properties: editedPropTypeInput,
+		ID:            eqType.ID,
+		Name:          "example_type_a",
+		PropertyTypes: editedPropTypeInput,
 	})
 	require.NoError(t, err)
 	require.Equal(t, eqType.Name, newType.Name, "successfully edited worker type name")
@@ -218,9 +218,9 @@ func TestEditWorkerTypeWithProperties(t *testing.T) {
 	}
 	editedPropTypeInput = []*pkgmodels.PropertyTypeInput{&intPropType}
 	_, err = mr.EditWorkerType(ctx, models.EditWorkerTypeInput{
-		ID:         eqType.ID,
-		Name:       "example_type_a",
-		Properties: editedPropTypeInput,
+		ID:            eqType.ID,
+		Name:          "example_type_a",
+		PropertyTypes: editedPropTypeInput,
 	})
 	require.Error(t, err, "duplicate property type names")
 }

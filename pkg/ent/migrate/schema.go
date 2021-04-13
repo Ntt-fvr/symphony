@@ -1080,6 +1080,7 @@ var (
 		{Name: "is_global", Type: field.TypeBool, Nullable: true},
 		{Name: "inventory_policy", Type: field.TypeJSON, Nullable: true},
 		{Name: "workforce_policy", Type: field.TypeJSON, Nullable: true},
+		{Name: "automation_policy", Type: field.TypeJSON, Nullable: true},
 	}
 	// PermissionsPoliciesTable holds the schema information for the "permissions_policies" table.
 	PermissionsPoliciesTable = &schema.Table{
@@ -1224,6 +1225,7 @@ var (
 		{Name: "property_service_value", Type: field.TypeInt, Nullable: true},
 		{Name: "property_work_order_value", Type: field.TypeInt, Nullable: true},
 		{Name: "property_user_value", Type: field.TypeInt, Nullable: true},
+		{Name: "property_project_value", Type: field.TypeInt, Nullable: true},
 		{Name: "service_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_properties", Type: field.TypeInt, Nullable: true},
 	}
@@ -1311,15 +1313,22 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "properties_services_properties",
+				Symbol:  "properties_projects_project_value",
 				Columns: []*schema.Column{PropertiesColumns[22]},
+
+				RefColumns: []*schema.Column{ProjectsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "properties_services_properties",
+				Columns: []*schema.Column{PropertiesColumns[23]},
 
 				RefColumns: []*schema.Column{ServicesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "properties_work_orders_properties",
-				Columns: []*schema.Column{PropertiesColumns[23]},
+				Columns: []*schema.Column{PropertiesColumns[24]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1339,7 +1348,7 @@ var (
 			{
 				Name:    "property_property_type_service_properties",
 				Unique:  true,
-				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[22]},
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[23]},
 			},
 			{
 				Name:    "property_property_type_equipment_port_properties",
@@ -1354,7 +1363,7 @@ var (
 			{
 				Name:    "property_property_type_work_order_properties",
 				Unique:  true,
-				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[23]},
+				Columns: []*schema.Column{PropertiesColumns[16], PropertiesColumns[24]},
 			},
 			{
 				Name:    "property_property_type_project_properties",
@@ -1504,6 +1513,11 @@ var (
 				Name:    "propertytype_name_worker_type_property_types",
 				Unique:  true,
 				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[30]},
+			},
+			{
+				Name:    "propertytype_name_project_type_properties",
+				Unique:  true,
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[26]},
 			},
 		},
 	}
@@ -1941,7 +1955,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PLANNED", "IN_PROGRESS", "PENDING", "SUBMITTED", "CLOSED", "DONE", "BLOCKED"}, Default: "PLANNED"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PLANNED", "IN_PROGRESS", "PENDING", "SUBMITTED", "CLOSED", "DONE", "BLOCKED", "CANCELLED"}, Default: "PLANNED"},
 		{Name: "priority", Type: field.TypeEnum, Enums: []string{"URGENT", "HIGH", "MEDIUM", "LOW", "NONE"}, Default: "NONE"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "install_date", Type: field.TypeTime, Nullable: true},
@@ -2120,6 +2134,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// WorkerTypesTable holds the schema information for the "worker_types" table.
 	WorkerTypesTable = &schema.Table{
@@ -2541,8 +2556,9 @@ func init() {
 	PropertiesTable.ForeignKeys[8].RefTable = ServicesTable
 	PropertiesTable.ForeignKeys[9].RefTable = WorkOrdersTable
 	PropertiesTable.ForeignKeys[10].RefTable = UsersTable
-	PropertiesTable.ForeignKeys[11].RefTable = ServicesTable
-	PropertiesTable.ForeignKeys[12].RefTable = WorkOrdersTable
+	PropertiesTable.ForeignKeys[11].RefTable = ProjectsTable
+	PropertiesTable.ForeignKeys[12].RefTable = ServicesTable
+	PropertiesTable.ForeignKeys[13].RefTable = WorkOrdersTable
 	PropertyTypesTable.ForeignKeys[0].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[1].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[2].RefTable = EquipmentTypesTable

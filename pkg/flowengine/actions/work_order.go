@@ -11,18 +11,21 @@ import (
 )
 
 const (
-	InputVariableType        = "Work Order Template"
-	InputVariableTypeName    = "Template Name"
-	InputVariableEndStatuses = "Work Order Statuses for completing block"
-	InputVariableName        = "Name"
-	InputVariableDescription = "Description"
-	InputVariableLocation    = "Location"
-	InputVariableProject     = "Project"
-	InputVariableOwner       = "Owner"
-	InputVariableAssignee    = "Assignee"
-	InputVariableStatus      = "Status"
-	InputVariablePriority    = "Priority"
-	OutputVariableWorkOrder  = "Created Work Order"
+	InputVariableType             = "Work Order Template"
+	InputVariableTypeName         = "Template Name"
+	InputVariableOperation        = "Operation"
+	InputVariableflagNextActivity = "Flag Next Activity"
+	InputVariableBaseType         = "Base Type"
+	InputVariableEndStatuses      = "Work Order Statuses for completing block"
+	InputVariableName             = "Name"
+	InputVariableDescription      = "Description"
+	InputVariableLocation         = "Location"
+	InputVariableProject          = "Project"
+	InputVariableOwner            = "Owner"
+	InputVariableAssignee         = "Assignee"
+	InputVariableStatus           = "Status"
+	InputVariablePriority         = "Priority"
+	OutputVariableWorkOrder       = "Created Work Order"
 )
 
 type workOrderAction struct{}
@@ -44,6 +47,28 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 		},
 		{
 			Key:  InputVariableTypeName,
+			Type: enum.VariableTypeString,
+		},
+		{
+			Key:       InputVariableOperation,
+			Type:      enum.VariableTypeString,
+			Mandatory: true,
+			Choices: []string{
+				enum.OperationWOCreate.String(),
+				enum.OperationWOUpdate.String(),
+			},
+		},
+		{
+			Key:       InputVariableBaseType,
+			Type:      enum.VariableTypeString,
+			Mandatory: true,
+			Choices: []string{
+				enum.BaseTypeWOProject.String(),
+				enum.BaseTypeWOWorkOrder.String(),
+			},
+		},
+		{
+			Key:  InputVariableflagNextActivity,
 			Type: enum.VariableTypeString,
 		},
 		{
@@ -71,9 +96,8 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Type: enum.VariableTypeProject,
 		},
 		{
-			Key:       InputVariableOwner,
-			Type:      enum.VariableTypeUser,
-			Mandatory: true,
+			Key:  InputVariableOwner,
+			Type: enum.VariableTypeUser,
 		},
 		{
 			Key:  InputVariableAssignee,

@@ -3050,7 +3050,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
 		Type:   "PermissionsPolicy",
-		Fields: make([]*Field, 7),
+		Fields: make([]*Field, 8),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -3108,6 +3108,14 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[6] = &Field{
 		Type:  "*models.WorkforcePolicyInput",
 		Name:  "workforce_policy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pp.AutomationPolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "*models.AutomationPolicyInput",
+		Name:  "automation_policy",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -3395,7 +3403,7 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pr.ID,
 		Type:   "Property",
 		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 13),
+		Edges:  make([]*Edge, 14),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pr.CreateTime); err != nil {
@@ -3604,6 +3612,16 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[12].IDs, err = pr.QueryUserValue().
 		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[13] = &Edge{
+		Type: "Project",
+		Name: "project_value",
+	}
+	node.Edges[13].IDs, err = pr.QueryProjectValue().
+		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -5859,7 +5877,7 @@ func (wt *WorkerType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wt.ID,
 		Type:   "WorkerType",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 4),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -5885,6 +5903,14 @@ func (wt *WorkerType) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wt.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "description",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

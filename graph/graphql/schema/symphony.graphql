@@ -83,6 +83,7 @@ type PermissionSettings
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
+  automationPolicy: AutomationPolicy!
 }
 
 enum PermissionValue
@@ -185,6 +186,22 @@ type AdministrativePolicy
   access: BasicPermissionRule!
 }
 
+type AutomationPolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AutomationPolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AutomationPolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -257,6 +274,7 @@ union SystemPolicy
   ) =
     InventoryPolicy
   | WorkforcePolicy
+  | AutomationPolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -273,6 +291,7 @@ input AddPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -283,6 +302,7 @@ input EditPermissionsPolicyInput {
   isGlobal: Boolean
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
+  automationInput: AutomationPolicyInput
   groups: [ID!]
 }
 
@@ -1498,6 +1518,7 @@ enum WorkOrderStatus
       reason: "Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead. Will be removed on 2020-11-01"
     )
   BLOCKED
+  CANCELLED
 }
 
 enum ServiceStatus
@@ -2333,7 +2354,7 @@ enum ProjectPriority
   NONE
 }
 
-type Project implements Node {
+type Project implements Node & NamedNode {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
@@ -3255,7 +3276,7 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  type:  VariableExpressionType!
+  type: VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
   checkListItemDefinition: CheckListItemDefinition
@@ -3286,7 +3307,7 @@ type VariableExpression
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
   ) {
-  type:  VariableExpressionType!
+  type: VariableExpressionType!
   variableDefinition: VariableDefinition
   propertyTypeDefinition: PropertyType
   expression: String!
@@ -3398,6 +3419,8 @@ type ActionBlock {
   params: [VariableExpression!]!
   entryPoint: EntryPoint!
   exitPoint: ExitPoint!
+  workOrderType: WorkOrderType
+  workerType: WorkerType
 }
 
 union BlockDetails =
@@ -3631,19 +3654,22 @@ type WorkerTypeEdge {
 type WorkerType implements Node {
   id: ID!
   name: String!
+  description: String
   propertyTypes: [PropertyType]!
 }
 
 input AddWorkerTypeInput {
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
 input EditWorkerTypeInput {
   id: ID!
   name: String!
-  properties: [PropertyTypeInput!]
+  description: String
+  propertyTypes: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
 
@@ -3953,19 +3979,27 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flowDrafts by case sensitive name.
+    """
+    name: String
   ): FlowDraftConnection!
   flows(
     after: Cursor
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    """
+    Filter flows by case sensitive name.
+    """
+    name: String
   ): FlowConnection!
   workerTypes(
-      after: Cursor
-      first: Int @numberValue(min: 0)
-      before: Cursor
-      last: Int @numberValue(min: 0)
-    ): WorkerTypeConnection!
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): WorkerTypeConnection!
 }
 
 type Mutation {
@@ -4209,4 +4243,8 @@ type Subscription {
   workOrderDone: WorkOrder
   workOrderStatusChanged: WorkOrderStatusChangedPayload!
   flowInstanceDone: FlowInstance!
+  projectAdded: Project
+  projectChanged: Project
+  locationAdded: Location
+  locationChanged: Location
 }

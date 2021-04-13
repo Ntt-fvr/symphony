@@ -26,6 +26,8 @@ type WorkerType struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Description holds the value of the "description" field.
+	Description *string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkerTypeQuery when eager-loading is set.
 	Edges WorkerTypeEdges `json:"edges"`
@@ -56,6 +58,7 @@ func (*WorkerType) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullString{}, // description
 	}
 }
 
@@ -85,6 +88,12 @@ func (wt *WorkerType) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field name", values[2])
 	} else if value.Valid {
 		wt.Name = value.String
+	}
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field description", values[3])
+	} else if value.Valid {
+		wt.Description = new(string)
+		*wt.Description = value.String
 	}
 	return nil
 }
@@ -123,6 +132,10 @@ func (wt *WorkerType) String() string {
 	builder.WriteString(wt.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(wt.Name)
+	if v := wt.Description; v != nil {
+		builder.WriteString(", description=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

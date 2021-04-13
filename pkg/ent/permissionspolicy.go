@@ -36,6 +36,8 @@ type PermissionsPolicy struct {
 	InventoryPolicy *models.InventoryPolicyInput `json:"inventory_policy,omitempty"`
 	// WorkforcePolicy holds the value of the "workforce_policy" field.
 	WorkforcePolicy *models.WorkforcePolicyInput `json:"workforce_policy,omitempty"`
+	// AutomationPolicy holds the value of the "automation_policy" field.
+	AutomationPolicy *models.AutomationPolicyInput `json:"automation_policy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PermissionsPolicyQuery when eager-loading is set.
 	Edges PermissionsPolicyEdges `json:"edges"`
@@ -70,6 +72,7 @@ func (*PermissionsPolicy) scanValues() []interface{} {
 		&sql.NullBool{},   // is_global
 		&[]byte{},         // inventory_policy
 		&[]byte{},         // workforce_policy
+		&[]byte{},         // automation_policy
 	}
 }
 
@@ -126,6 +129,14 @@ func (pp *PermissionsPolicy) assignValues(values ...interface{}) error {
 			return fmt.Errorf("unmarshal field workforce_policy: %v", err)
 		}
 	}
+
+	if value, ok := values[7].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field automation_policy", values[7])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &pp.AutomationPolicy); err != nil {
+			return fmt.Errorf("unmarshal field automation_policy: %v", err)
+		}
+	}
 	return nil
 }
 
@@ -171,6 +182,8 @@ func (pp *PermissionsPolicy) String() string {
 	builder.WriteString(fmt.Sprintf("%v", pp.InventoryPolicy))
 	builder.WriteString(", workforce_policy=")
 	builder.WriteString(fmt.Sprintf("%v", pp.WorkforcePolicy))
+	builder.WriteString(", automation_policy=")
+	builder.WriteString(fmt.Sprintf("%v", pp.AutomationPolicy))
 	builder.WriteByte(')')
 	return builder.String()
 }
