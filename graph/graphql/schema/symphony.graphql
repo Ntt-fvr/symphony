@@ -3580,9 +3580,18 @@ enum FlowInstanceStatus
   CANCELLED
 }
 
+type FlowExecutionTemplate implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+  connectors: [Connector!]!
+}
+
 type FlowInstance implements Node {
   id: ID!
   status: FlowInstanceStatus!
+  template: FlowExecutionTemplate!
 }
 
 input AddFlowDraftInput {

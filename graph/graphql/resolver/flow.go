@@ -571,3 +571,16 @@ func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.Impo
 
 	return draft, nil
 }
+
+type flowExecutionTemplate struct{}
+
+func (r flowExecutionTemplate) Connectors(ctx context.Context, obj *ent.FlowExecutionTemplate) ([]*models.Connector, error) {
+	exitPoints, err := obj.QueryBlocks().
+		QueryExitPoints().
+		WithNextEntryPoints().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query exit points: %w", err)
+	}
+	return connectors(exitPoints), nil
+}
