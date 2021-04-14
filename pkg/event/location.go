@@ -31,7 +31,8 @@ func (e *Eventer) locationHook() ent.Hook {
 }
 
 func (e *Eventer) locationAddedHook() ent.Hook {
-	return func(next ent.Mutator) ent.Mutator {
+	var chain hook.Chain
+	createHook := func(next ent.Mutator) ent.Mutator {
 		return hook.LocationFunc(func(ctx context.Context, lm *ent.LocationMutation) (ent.Value, error) {
 			value, err := next.Mutate(ctx, lm)
 			if err == nil {
@@ -40,6 +41,11 @@ func (e *Eventer) locationAddedHook() ent.Hook {
 			return value, err
 		})
 	}
+	chain = chain.Append(hook.If(createHook, hook.And(
+		hook.HasOp(ent.OpCreate),
+		hook.HasFields(location.FieldCreateTime),
+	)))
+	return chain.Hook()
 }
 
 func (e *Eventer) locationChangedHook() ent.Hook {
