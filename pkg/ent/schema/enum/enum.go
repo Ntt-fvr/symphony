@@ -515,7 +515,6 @@ const (
 	NodeTypeService   NodeType = "service"
 	NodeTypeWorkOrder NodeType = "work_order"
 	NodeTypeUser      NodeType = "user"
-	NodeTypeProject   NodeType = "project"
 )
 
 // String implements Getter interface.

@@ -53,9 +53,6 @@ func (propertyResolver) NodeValue(ctx context.Context, property *ent.Property) (
 	case enum.NodeTypeUser.String():
 		s, err := property.QueryUserValue().Only(ctx)
 		return s, ent.MaskNotFound(err)
-	case enum.NodeTypeProject.String():
-		p, err := property.QueryProjectValue().Only(ctx)
-		return p, ent.MaskNotFound(err)
 	default:
 		return nil, nil
 	}

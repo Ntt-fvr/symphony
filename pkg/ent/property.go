@@ -63,7 +63,6 @@ type Property struct {
 	property_service_value    *int
 	property_work_order_value *int
 	property_user_value       *int
-	property_project_value    *int
 	service_properties        *int
 	work_order_properties     *int
 }
@@ -96,11 +95,9 @@ type PropertyEdges struct {
 	WorkOrderValue *WorkOrder
 	// UserValue holds the value of the user_value edge.
 	UserValue *User
-	// ProjectValue holds the value of the project_value edge.
-	ProjectValue *Project
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [14]bool
+	loadedTypes [13]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -285,20 +282,6 @@ func (e PropertyEdges) UserValueOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user_value"}
 }
 
-// ProjectValueOrErr returns the ProjectValue value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PropertyEdges) ProjectValueOrErr() (*Project, error) {
-	if e.loadedTypes[13] {
-		if e.ProjectValue == nil {
-			// The edge project_value was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: project.Label}
-		}
-		return e.ProjectValue, nil
-	}
-	return nil, &NotLoadedError{edge: "project_value"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Property) scanValues() []interface{} {
 	return []interface{}{
@@ -330,7 +313,6 @@ func (*Property) fkValues() []interface{} {
 		&sql.NullInt64{}, // property_service_value
 		&sql.NullInt64{}, // property_work_order_value
 		&sql.NullInt64{}, // property_user_value
-		&sql.NullInt64{}, // property_project_value
 		&sql.NullInt64{}, // service_properties
 		&sql.NullInt64{}, // work_order_properties
 	}
@@ -475,18 +457,12 @@ func (pr *Property) assignValues(values ...interface{}) error {
 			*pr.property_user_value = int(value.Int64)
 		}
 		if value, ok := values[11].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field property_project_value", value)
-		} else if value.Valid {
-			pr.property_project_value = new(int)
-			*pr.property_project_value = int(value.Int64)
-		}
-		if value, ok := values[12].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_properties", value)
 		} else if value.Valid {
 			pr.service_properties = new(int)
 			*pr.service_properties = int(value.Int64)
 		}
-		if value, ok := values[13].(*sql.NullInt64); !ok {
+		if value, ok := values[12].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_properties", value)
 		} else if value.Valid {
 			pr.work_order_properties = new(int)
@@ -559,11 +535,6 @@ func (pr *Property) QueryWorkOrderValue() *WorkOrderQuery {
 // QueryUserValue queries the user_value edge of the Property.
 func (pr *Property) QueryUserValue() *UserQuery {
 	return (&PropertyClient{config: pr.config}).QueryUserValue(pr)
-}
-
-// QueryProjectValue queries the project_value edge of the Property.
-func (pr *Property) QueryProjectValue() *ProjectQuery {
-	return (&PropertyClient{config: pr.config}).QueryProjectValue(pr)
 }
 
 // Update returns a builder for updating this Property.

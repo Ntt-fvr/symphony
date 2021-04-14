@@ -412,25 +412,6 @@ func (pc *PropertyCreate) SetUserValue(u *User) *PropertyCreate {
 	return pc.SetUserValueID(u.ID)
 }
 
-// SetProjectValueID sets the project_value edge to Project by id.
-func (pc *PropertyCreate) SetProjectValueID(id int) *PropertyCreate {
-	pc.mutation.SetProjectValueID(id)
-	return pc
-}
-
-// SetNillableProjectValueID sets the project_value edge to Project by id if the given value is not nil.
-func (pc *PropertyCreate) SetNillableProjectValueID(id *int) *PropertyCreate {
-	if id != nil {
-		pc = pc.SetProjectValueID(*id)
-	}
-	return pc
-}
-
-// SetProjectValue sets the project_value edge to Project.
-func (pc *PropertyCreate) SetProjectValue(p *Project) *PropertyCreate {
-	return pc.SetProjectValueID(p.ID)
-}
-
 // Mutation returns the PropertyMutation object of the builder.
 func (pc *PropertyCreate) Mutation() *PropertyMutation {
 	return pc.mutation
@@ -850,25 +831,6 @@ func (pc *PropertyCreate) createSpec() (*Property, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := pc.mutation.ProjectValueIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   property.ProjectValueTable,
-			Columns: []string{property.ProjectValueColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: project.FieldID,
 				},
 			},
 		}
