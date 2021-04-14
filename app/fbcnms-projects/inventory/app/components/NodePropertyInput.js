@@ -16,7 +16,6 @@ import LocationTypeahead from './typeahead/LocationTypeahead';
 import ServiceTypeahead from './typeahead/ServiceTypeahead';
 import UserTypeahead from './typeahead/UserTypeahead';
 import WorkOrderTypeahead from './typeahead/WorkOrderTypeahead';
-import ProjectTypeahead from './typeahead/ProjectTypeahead';
 
 type Props = $ReadOnly<{|
   type: string,
@@ -74,16 +73,6 @@ const NodePropertyInput = (props: Props) => {
             onChange(newUser ? {id: newUser.id, name: newUser.email} : null)
           }
           headline={label}
-        />
-      );
-    case 'project':
-      return (
-        <ProjectTypeahead
-          margin="dense"
-          selectedProject={
-            value ? {id: value.id, name: value.name ?? ''} : null
-          }
-          onProjectSelection={onChange}
         />
       );
   }

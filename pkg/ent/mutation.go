@@ -31597,8 +31597,6 @@ type PropertyMutation struct {
 	clearedwork_order_value bool
 	user_value              *int
 	cleareduser_value       bool
-	project_value           *int
-	clearedproject_value    bool
 	done                    bool
 	oldValue                func(context.Context) (*Property, error)
 	predicates              []predicate.Property
@@ -32790,45 +32788,6 @@ func (m *PropertyMutation) ResetUserValue() {
 	m.cleareduser_value = false
 }
 
-// SetProjectValueID sets the project_value edge to Project by id.
-func (m *PropertyMutation) SetProjectValueID(id int) {
-	m.project_value = &id
-}
-
-// ClearProjectValue clears the project_value edge to Project.
-func (m *PropertyMutation) ClearProjectValue() {
-	m.clearedproject_value = true
-}
-
-// ProjectValueCleared returns if the edge project_value was cleared.
-func (m *PropertyMutation) ProjectValueCleared() bool {
-	return m.clearedproject_value
-}
-
-// ProjectValueID returns the project_value id in the mutation.
-func (m *PropertyMutation) ProjectValueID() (id int, exists bool) {
-	if m.project_value != nil {
-		return *m.project_value, true
-	}
-	return
-}
-
-// ProjectValueIDs returns the project_value ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// ProjectValueID instead. It exists only for internal usage by the builders.
-func (m *PropertyMutation) ProjectValueIDs() (ids []int) {
-	if id := m.project_value; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetProjectValue reset all changes of the "project_value" edge.
-func (m *PropertyMutation) ResetProjectValue() {
-	m.project_value = nil
-	m.clearedproject_value = false
-}
-
 // Op returns the operation name.
 func (m *PropertyMutation) Op() Op {
 	return m.op
@@ -33223,7 +33182,7 @@ func (m *PropertyMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyMutation) AddedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 13)
 	if m._type != nil {
 		edges = append(edges, property.EdgeType)
 	}
@@ -33262,9 +33221,6 @@ func (m *PropertyMutation) AddedEdges() []string {
 	}
 	if m.user_value != nil {
 		edges = append(edges, property.EdgeUserValue)
-	}
-	if m.project_value != nil {
-		edges = append(edges, property.EdgeProjectValue)
 	}
 	return edges
 }
@@ -33325,10 +33281,6 @@ func (m *PropertyMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user_value; id != nil {
 			return []ent.Value{*id}
 		}
-	case property.EdgeProjectValue:
-		if id := m.project_value; id != nil {
-			return []ent.Value{*id}
-		}
 	}
 	return nil
 }
@@ -33336,7 +33288,7 @@ func (m *PropertyMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 13)
 	return edges
 }
 
@@ -33351,7 +33303,7 @@ func (m *PropertyMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 13)
 	if m.cleared_type {
 		edges = append(edges, property.EdgeType)
 	}
@@ -33391,9 +33343,6 @@ func (m *PropertyMutation) ClearedEdges() []string {
 	if m.cleareduser_value {
 		edges = append(edges, property.EdgeUserValue)
 	}
-	if m.clearedproject_value {
-		edges = append(edges, property.EdgeProjectValue)
-	}
 	return edges
 }
 
@@ -33427,8 +33376,6 @@ func (m *PropertyMutation) EdgeCleared(name string) bool {
 		return m.clearedwork_order_value
 	case property.EdgeUserValue:
 		return m.cleareduser_value
-	case property.EdgeProjectValue:
-		return m.clearedproject_value
 	}
 	return false
 }
@@ -33475,9 +33422,6 @@ func (m *PropertyMutation) ClearEdge(name string) error {
 		return nil
 	case property.EdgeUserValue:
 		m.ClearUserValue()
-		return nil
-	case property.EdgeProjectValue:
-		m.ClearProjectValue()
 		return nil
 	}
 	return fmt.Errorf("unknown Property unique edge %s", name)
@@ -33526,9 +33470,6 @@ func (m *PropertyMutation) ResetEdge(name string) error {
 		return nil
 	case property.EdgeUserValue:
 		m.ResetUserValue()
-		return nil
-	case property.EdgeProjectValue:
-		m.ResetProjectValue()
 		return nil
 	}
 	return fmt.Errorf("unknown Property edge %s", name)

@@ -1128,14 +1128,6 @@ func (pr *Property) UserValue(ctx context.Context) (*User, error) {
 	return result, MaskNotFound(err)
 }
 
-func (pr *Property) ProjectValue(ctx context.Context) (*Project, error) {
-	result, err := pr.Edges.ProjectValueOrErr()
-	if IsNotLoaded(err) {
-		result, err = pr.QueryProjectValue().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
 func (pt *PropertyType) Properties(ctx context.Context) ([]*Property, error) {
 	result, err := pt.Edges.PropertiesOrErr()
 	if IsNotLoaded(err) {
