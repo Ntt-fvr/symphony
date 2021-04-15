@@ -61,10 +61,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 const WorkOrderComparisonView = () => {
-  const {statusValues, closedStatus, cancelledStatus} = useStatusValues();
+  const {statusValues, closedStatus, canceledStatus} = useStatusValues();
   const selectedStatusValues = statusValues
     .filter(status => status.key !== closedStatus.key)
-    .filter(status => status.key !== cancelledStatus.key)
+    .filter(status => status.key !== canceledStatus.key)
     .map(status => status.value);
   // For additional default filters, just create another variable
   // and add it to the initial state array
