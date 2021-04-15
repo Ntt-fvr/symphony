@@ -359,6 +359,45 @@ func TestStartFlow(t *testing.T) {
 	require.Equal(t, blockinstance.StatusPending, startBlock.Status)
 }
 
+func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	flw := prepareBasicFlow(ctx, t, mr, "flow", nil, nil)
+	inputParams := []*flowschema.VariableValue{
+		{
+			VariableDefinitionKey: "start_param",
+			Value:                 "\"test string\"",
+		},
+	}
+	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID: flw.ID,
+		Params: inputParams,
+	})
+	require.NoError(t, err)
+	startBlock, err := flowInstance.QueryBlocks().
+		WithBlock().
+		Only(ctx)
+	require.NoError(t, err)
+	require.Equal(t, inputParams, startBlock.Inputs)
+	require.NotNil(t, startBlock.Edges.Block)
+	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
+	require.Equal(t, blockinstance.StatusPending, startBlock.Status)
+	endBlock, err := flowInstance.QueryTemplate().
+		QueryBlocks().
+		Where(block.TypeEQ(block.TypeEnd)).
+		Only(ctx)
+	blockInstance, err := mr.AddBlockInstance(ctx, flowInstance.ID, models.AddBlockInstanceInput{
+		Status:  blockinstance.StatusCompleted,
+		BlockID: endBlock.ID,
+	})
+	require.NoError(t, err)
+	require.Equal(t, blockinstance.StatusCompleted, blockInstance.Status)
+
+}
+
 func refString(s string) *string { return &s }
 func refInt(s int) *int          { return &s }
 

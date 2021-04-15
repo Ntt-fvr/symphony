@@ -629,3 +629,15 @@ func (r mutationResolver) EditBlock(ctx context.Context, input models.EditBlockI
 		SetUIRepresentation(input.UIRepresentation).
 		Save(ctx)
 }
+
+func (r mutationResolver) AddBlockInstance(ctx context.Context, flowInstanceID int, input models.AddBlockInstanceInput) (*ent.BlockInstance, error) {
+	client := ent.FromContext(ctx)
+	b := client.BlockInstance.Create().
+		SetBlockID(input.BlockID).
+		SetFlowInstanceID(flowInstanceID).
+		SetStatus(input.Status).
+		SetInputs(input.Inputs).
+		SetOutputs(input.Outputs)
+
+	return b.Save(ctx)
+}

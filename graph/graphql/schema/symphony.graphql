@@ -3648,6 +3648,14 @@ type BlockInstance implements Node {
   block: Block!
 }
 
+input AddBlockInstanceInput {
+  status: BlockInstanceStatus!
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  failure_reason: String
+  blockId: ID!
+}
+
 type FlowInstance implements Node {
   id: ID!
   status: FlowInstanceStatus!
@@ -4286,6 +4294,7 @@ type Mutation {
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
+  addBlockInstance(flowInstanceId: ID!, input: AddBlockInstanceInput!): BlockInstance!
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!

@@ -12,7 +12,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
-	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+//	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
@@ -339,6 +339,7 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 	}
 }
 
+/*
 func TestInstanceParamsVerifications(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
@@ -448,3 +449,4 @@ func TestInstanceParamsVerifications(t *testing.T) {
 		Exec(ctx)
 	require.NoError(t, err)
 }
+*/

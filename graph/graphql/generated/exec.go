@@ -720,6 +720,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
+		AddBlockInstance                         func(childComplexity int, flowInstanceID int, input models.AddBlockInstanceInput) int
 		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
 		AddComment                               func(childComplexity int, input models.CommentInput) int
@@ -1641,6 +1642,7 @@ type MutationResolver interface {
 	DeleteFlowDraft(ctx context.Context, id int) (bool, error)
 	ImportFlowDraft(ctx context.Context, input models.ImportFlowDraftInput) (*ent.FlowDraft, error)
 	StartFlow(ctx context.Context, input models.StartFlowInput) (*ent.FlowInstance, error)
+	AddBlockInstance(ctx context.Context, flowInstanceID int, input models.AddBlockInstanceInput) (*ent.BlockInstance, error)
 	AddWorkerType(ctx context.Context, input models.AddWorkerTypeInput) (*ent.WorkerType, error)
 	EditWorkerType(ctx context.Context, input models.EditWorkerTypeInput) (*ent.WorkerType, error)
 	RemoveWorkerType(ctx context.Context, id int) (int, error)
@@ -4365,6 +4367,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddActionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.ActionBlockInput)), true
+
+	case "Mutation.addBlockInstance":
+		if e.complexity.Mutation.AddBlockInstance == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addBlockInstance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddBlockInstance(childComplexity, args["flowInstanceId"].(int), args["input"].(models.AddBlockInstanceInput)), true
 
 	case "Mutation.addBulkServiceLinksAndPorts":
 		if e.complexity.Mutation.AddBulkServiceLinksAndPorts == nil {
@@ -12448,6 +12462,14 @@ type BlockInstance implements Node {
   block: Block!
 }
 
+input AddBlockInstanceInput {
+  status: BlockInstanceStatus!
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  failure_reason: String
+  blockId: ID!
+}
+
 type FlowInstance implements Node {
   id: ID!
   status: FlowInstanceStatus!
@@ -13086,6 +13108,7 @@ type Mutation {
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
+  addBlockInstance(flowInstanceId: ID!, input: AddBlockInstanceInput!): BlockInstance!
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
@@ -13475,6 +13498,30 @@ func (ec *executionContext) field_Mutation_addActionBlock_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNActionBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐActionBlockInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addBlockInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["flowInstanceId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("flowInstanceId"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["flowInstanceId"] = arg0
+	var arg1 models.AddBlockInstanceInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNAddBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBlockInstanceInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -33936,6 +33983,48 @@ func (ec *executionContext) _Mutation_startFlow(ctx context.Context, field graph
 	return ec.marshalNFlowInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addBlockInstance(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addBlockInstance_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddBlockInstance(rctx, args["flowInstanceId"].(int), args["input"].(models.AddBlockInstanceInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.BlockInstance)
+	fc.Result = res
+	return ec.marshalNBlockInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstance(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addWorkerType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -50310,6 +50399,58 @@ func (ec *executionContext) unmarshalInputActivityFilterInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddBlockInstanceInput(ctx context.Context, obj interface{}) (models.AddBlockInstanceInput, error) {
+	var it models.AddBlockInstanceInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBlockInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "inputs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inputs"))
+			it.Inputs, err = ec.unmarshalOVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "outputs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outputs"))
+			it.Outputs, err = ec.unmarshalOVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "failure_reason":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("failure_reason"))
+			it.FailureReason, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "blockId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("blockId"))
+			it.BlockID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddBulkServiceLinksAndPortsInput(ctx context.Context, obj interface{}) (models.AddBulkServiceLinksAndPortsInput, error) {
 	var it models.AddBulkServiceLinksAndPortsInput
 	var asMap = obj.(map[string]interface{})
@@ -62182,6 +62323,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addBlockInstance":
+			out.Values[i] = ec._Mutation_addBlockInstance(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addWorkerType":
 			out.Values[i] = ec._Mutation_addWorkerType(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -67027,6 +67173,11 @@ func (ec *executionContext) marshalNActivityField2githubᚗcomᚋfacebookincubat
 	return v
 }
 
+func (ec *executionContext) unmarshalNAddBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBlockInstanceInput(ctx context.Context, v interface{}) (models.AddBlockInstanceInput, error) {
+	res, err := ec.unmarshalInputAddBlockInstanceInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddCustomerInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCustomerInput(ctx context.Context, v interface{}) (models.AddCustomerInput, error) {
 	res, err := ec.unmarshalInputAddCustomerInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -67216,6 +67367,10 @@ func (ec *executionContext) marshalNBlockDetails2githubᚗcomᚋfacebookincubato
 		return graphql.Null
 	}
 	return ec._BlockDetails(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNBlockInstance2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstance(ctx context.Context, sel ast.SelectionSet, v ent.BlockInstance) graphql.Marshaler {
+	return ec._BlockInstance(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNBlockInstance2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstanceᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.BlockInstance) graphql.Marshaler {
@@ -72114,6 +72269,11 @@ func (ec *executionContext) unmarshalNVariableValueInput2ᚕᚖgithubᚗcomᚋfa
 	return res, nil
 }
 
+func (ec *executionContext) unmarshalNVariableValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) (*flowschema.VariableValue, error) {
+	res, err := ec.unmarshalInputVariableValueInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNWorkOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrder) graphql.Marshaler {
 	return ec._WorkOrder(ctx, sel, &v)
 }
@@ -75488,6 +75648,30 @@ func (ec *executionContext) marshalOVariableExpression2ᚖgithubᚗcomᚋfaceboo
 		return graphql.Null
 	}
 	return ec._VariableExpression(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx context.Context, v interface{}) ([]*flowschema.VariableValue, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*flowschema.VariableValue, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNVariableValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOVariableValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) (*flowschema.VariableValue, error) {
