@@ -99,11 +99,11 @@ func (app *application) run(ctx context.Context) error {
 		return err
 	})
 	/*
-	g.Go(func(ctx context.Context) error {
-		err := app.client.Run(ctx)
-		app.logger.Debug("cadence client terminated", zap.Error(err))
-		return err
-	})
+		g.Go(func(ctx context.Context) error {
+			err := app.client.Run(ctx)
+			app.logger.Debug("cadence client terminated", zap.Error(err))
+			return err
+		})
 	*/
 	g.Go(func(ctx context.Context) error {
 		defer cancel()
