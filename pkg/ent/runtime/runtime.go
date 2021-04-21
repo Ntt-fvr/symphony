@@ -150,6 +150,9 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	blockinstanceHooks := schema.BlockInstance{}.Hooks()
+
+	blockinstance.Hooks[1] = blockinstanceHooks[0]
 	blockinstanceMixinFields0 := blockinstanceMixin[0].Fields()
 	blockinstanceFields := schema.BlockInstance{}.Fields()
 	_ = blockinstanceFields

@@ -9,6 +9,10 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/pkg/errors"
+
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -184,6 +188,7 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 	if _, err = client.BlockInstance.Create().
 		SetBlock(startBlock).
 		SetFlowInstance(flowInstance).
+		SetStatus(blockinstance.StatusCompleted).
 		SetInputs(input.Params).
 		Save(ctx); err != nil {
 		return nil, err
@@ -216,6 +221,15 @@ func (r queryResolver) Flows(
 		predicates = append(predicates, flow.NameEQ(*name))
 	}
 	return r.ClientFrom(ctx).Flow.Query().Where(flow.Or(predicates...)).
+		Paginate(ctx, after, first, before, last)
+}
+
+func (r queryResolver) FlowInstances(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+) (*ent.FlowInstanceConnection, error) {
+	return r.ClientFrom(ctx).FlowInstance.Query().
 		Paginate(ctx, after, first, before, last)
 }
 
@@ -570,4 +584,30 @@ func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.Impo
 	}
 
 	return draft, nil
+}
+
+type flowExecutionTemplate struct{}
+
+func (r flowExecutionTemplate) Connectors(ctx context.Context, obj *ent.FlowExecutionTemplate) ([]*models.Connector, error) {
+	exitPoints, err := obj.QueryBlocks().
+		QueryExitPoints().
+		WithNextEntryPoints().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query exit points: %w", err)
+	}
+	return connectors(exitPoints), nil
+}
+
+func (r mutationResolver) EditFlowInstance(ctx context.Context, input *models.EditFlowInstanceInput) (*ent.FlowInstance, error) {
+	client := ent.FromContext(ctx)
+	fi, err := client.FlowInstance.Get(ctx, input.ID)
+	if err != nil {
+		return nil, errors.Wrap(err, "querying flow instance")
+	}
+	mutation := client.FlowInstance.
+		UpdateOne(fi).
+		SetStatus(input.Status)
+
+	return mutation.Save(ctx)
 }

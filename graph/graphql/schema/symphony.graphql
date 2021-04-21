@@ -965,6 +965,38 @@ type FlowConnection {
 }
 
 """
+A flow edge in a connection.
+"""
+type FlowInstanceEdge {
+  """
+  The Flow type at the end of the edge.
+  """
+  node: FlowInstance
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Flows.
+"""
+type FlowInstanceConnection {
+  """
+  Total count of Flows in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Flow edges.
+  """
+  edges: [FlowInstanceEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -3580,7 +3612,65 @@ enum FlowInstanceStatus
   CANCELLED
 }
 
+type FlowExecutionTemplate implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+  connectors: [Connector!]!
+}
+
+enum BlockInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
+  ) {
+  PENDING
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  WAITING
+}
+
+type VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
+  variableDefinitionKey: String!
+  value: String!
+}
+
+type BlockInstance implements Node {
+  id: ID!
+  status: BlockInstanceStatus!
+  inputs: [VariableValue!]!
+  outputs: [VariableValue!]!
+  failure_reason: String
+  block: Block!
+}
+
+input AddBlockInstanceInput {
+  status: BlockInstanceStatus
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  blockId: ID!
+}
+
+input EditBlockInstanceInput {
+  id: ID!
+  status: BlockInstanceStatus
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  failure_reason: String
+}
+
 type FlowInstance implements Node {
+  id: ID!
+  status: FlowInstanceStatus!
+  template: FlowExecutionTemplate!
+  blocks: [BlockInstance!]!
+}
+
+input EditFlowInstanceInput {
   id: ID!
   status: FlowInstanceStatus!
 }
@@ -3597,7 +3687,7 @@ input PublishFlowInput {
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
-input VariableValue
+input VariableValueInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
   ) {
@@ -3607,7 +3697,7 @@ input VariableValue
 
 input StartFlowInput {
   flowID: ID!
-  params: [VariableValue]!
+  params: [VariableValueInput]!
 }
 
 input TechnicianWorkOrderCheckOutInput {
@@ -3994,6 +4084,12 @@ type Query {
     """
     name: String
   ): FlowConnection!
+  flowInstances(
+      after: Cursor
+      first: Int @numberValue(min: 0)
+      before: Cursor
+      last: Int @numberValue(min: 0)
+    ): FlowInstanceConnection!
   workerTypes(
       after: Cursor
       first: Int @numberValue(min: 0)
@@ -4210,6 +4306,9 @@ type Mutation {
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
+  editFlowInstance(input: EditFlowInstanceInput): FlowInstance!
+  addBlockInstance(flowInstanceId: ID!, input: AddBlockInstanceInput!): BlockInstance!
+  editBlockInstance(input: EditBlockInstanceInput!): BlockInstance!
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
