@@ -11228,7 +11228,7 @@ enum ProjectPriority
   NONE
 }
 
-type Project implements Node {
+type Project implements Node & NamedNode {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
@@ -12150,7 +12150,7 @@ type BlockVariable
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable"
   ) {
   block: Block!
-  type:  VariableExpressionType!
+  type: VariableExpressionType!
   inputVariableDefinition: VariableDefinition
   inputPropertyTypeDefinition: PropertyType
   checkListItemDefinition: CheckListItemDefinition
@@ -12181,7 +12181,7 @@ type VariableExpression
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression"
   ) {
-  type:  VariableExpressionType!
+  type: VariableExpressionType!
   variableDefinition: VariableDefinition
   propertyTypeDefinition: PropertyType
   expression: String!
@@ -12927,17 +12927,17 @@ type Query {
     name: String
   ): FlowConnection!
   flowInstances(
-      after: Cursor
-      first: Int @numberValue(min: 0)
-      before: Cursor
-      last: Int @numberValue(min: 0)
-    ): FlowInstanceConnection!
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): FlowInstanceConnection!
   workerTypes(
-      after: Cursor
-      first: Int @numberValue(min: 0)
-      before: Cursor
-      last: Int @numberValue(min: 0)
-    ): WorkerTypeConnection!
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): WorkerTypeConnection!
 }
 
 type Mutation {
@@ -13149,7 +13149,10 @@ type Mutation {
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
   editFlowInstance(input: EditFlowInstanceInput): FlowInstance!
-  addBlockInstance(flowInstanceId: ID!, input: AddBlockInstanceInput!): BlockInstance!
+  addBlockInstance(
+    flowInstanceId: ID!
+    input: AddBlockInstanceInput!
+  ): BlockInstance!
   editBlockInstance(input: EditBlockInstanceInput!): BlockInstance!
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
@@ -57584,6 +57587,11 @@ func (ec *executionContext) _NamedNode(ctx context.Context, sel ast.SelectionSet
 			return graphql.Null
 		}
 		return ec._WorkOrder(ctx, sel, obj)
+	case *ent.Project:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Project(ctx, sel, obj)
 	case *ent.Service:
 		if obj == nil {
 			return graphql.Null
@@ -62899,7 +62907,7 @@ func (ec *executionContext) _PortSearchResult(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var projectImplementors = []string{"Project", "Node"}
+var projectImplementors = []string{"Project", "Node", "NamedNode"}
 
 func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *ent.Project) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, projectImplementors)
