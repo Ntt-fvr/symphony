@@ -798,6 +798,34 @@ func HasSurveyTemplateCategoriesWith(preds ...predicate.SurveyTemplateCategory) 
 	})
 }
 
+// HasFileCategory applies the HasEdge predicate on the "file_category" edge.
+func HasFileCategory() predicate.LocationType {
+	return predicate.LocationType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FileCategoryTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FileCategoryTable, FileCategoryPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFileCategoryWith applies the HasEdge predicate on the "file_category" edge with a given conditions (other predicates).
+func HasFileCategoryWith(preds ...predicate.FileCategoryType) predicate.LocationType {
+	return predicate.LocationType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FileCategoryInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FileCategoryTable, FileCategoryPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.LocationType) predicate.LocationType {
 	return predicate.LocationType(func(s *sql.Selector) {

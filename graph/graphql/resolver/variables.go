@@ -116,3 +116,13 @@ func (r blockVariableResolver) CheckListItemDefinition(ctx context.Context, obj 
 	}
 	return nil, nil
 }
+
+type fileResolver struct{}
+
+func (fileResolver) FileResolver() {
+}
+
+type fileCaregoryTypeResolver struct{}
+
+func (fileCaregoryTypeResolver) FileCaregoryTypeResolver() {
+}

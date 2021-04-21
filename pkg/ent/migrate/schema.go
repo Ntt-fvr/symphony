@@ -685,6 +685,7 @@ var (
 		{Name: "annotation", Type: field.TypeString, Nullable: true},
 		{Name: "check_list_item_files", Type: field.TypeInt, Nullable: true},
 		{Name: "equipment_files", Type: field.TypeInt, Nullable: true},
+		{Name: "file_category_type_files", Type: field.TypeInt, Nullable: true},
 		{Name: "floor_plan_image", Type: field.TypeInt, Unique: true, Nullable: true},
 		{Name: "location_files", Type: field.TypeInt, Nullable: true},
 		{Name: "survey_source_file", Type: field.TypeInt, Unique: true, Nullable: true},
@@ -714,55 +715,75 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "files_floor_plans_image",
+				Symbol:  "files_file_category_types_files",
 				Columns: []*schema.Column{FilesColumns[14]},
+
+				RefColumns: []*schema.Column{FileCategoryTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "files_floor_plans_image",
+				Columns: []*schema.Column{FilesColumns[15]},
 
 				RefColumns: []*schema.Column{FloorPlansColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_locations_files",
-				Columns: []*schema.Column{FilesColumns[15]},
+				Columns: []*schema.Column{FilesColumns[16]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_surveys_source_file",
-				Columns: []*schema.Column{FilesColumns[16]},
+				Columns: []*schema.Column{FilesColumns[17]},
 
 				RefColumns: []*schema.Column{SurveysColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_survey_questions_photo_data",
-				Columns: []*schema.Column{FilesColumns[17]},
-
-				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "files_survey_questions_images",
 				Columns: []*schema.Column{FilesColumns[18]},
 
 				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "files_users_profile_photo",
+				Symbol:  "files_survey_questions_images",
 				Columns: []*schema.Column{FilesColumns[19]},
+
+				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "files_users_profile_photo",
+				Columns: []*schema.Column{FilesColumns[20]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_work_orders_files",
-				Columns: []*schema.Column{FilesColumns[20]},
+				Columns: []*schema.Column{FilesColumns[21]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// FileCategoryTypesColumns holds the columns for the "file_category_types" table.
+	FileCategoryTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+	}
+	// FileCategoryTypesTable holds the schema information for the "file_category_types" table.
+	FileCategoryTypesTable = &schema.Table{
+		Name:        "file_category_types",
+		Columns:     FileCategoryTypesColumns,
+		PrimaryKey:  []*schema.Column{FileCategoryTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// FloorPlansColumns holds the columns for the "floor_plans" table.
 	FloorPlansColumns = []*schema.Column{
@@ -2197,6 +2218,33 @@ var (
 			},
 		},
 	}
+	// LocationTypeFileCategoryColumns holds the columns for the "location_type_file_category" table.
+	LocationTypeFileCategoryColumns = []*schema.Column{
+		{Name: "location_type_id", Type: field.TypeInt},
+		{Name: "file_category_type_id", Type: field.TypeInt},
+	}
+	// LocationTypeFileCategoryTable holds the schema information for the "location_type_file_category" table.
+	LocationTypeFileCategoryTable = &schema.Table{
+		Name:       "location_type_file_category",
+		Columns:    LocationTypeFileCategoryColumns,
+		PrimaryKey: []*schema.Column{LocationTypeFileCategoryColumns[0], LocationTypeFileCategoryColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "location_type_file_category_location_type_id",
+				Columns: []*schema.Column{LocationTypeFileCategoryColumns[0]},
+
+				RefColumns: []*schema.Column{LocationTypesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "location_type_file_category_file_category_type_id",
+				Columns: []*schema.Column{LocationTypeFileCategoryColumns[1]},
+
+				RefColumns: []*schema.Column{FileCategoryTypesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ServiceUpstreamColumns holds the columns for the "service_upstream" table.
 	ServiceUpstreamColumns = []*schema.Column{
 		{Name: "service_id", Type: field.TypeInt},
@@ -2437,6 +2485,7 @@ var (
 		ExportTasksTable,
 		FeaturesTable,
 		FilesTable,
+		FileCategoryTypesTable,
 		FloorPlansTable,
 		FloorPlanReferencePointsTable,
 		FloorPlanScalesTable,
@@ -2474,6 +2523,7 @@ var (
 		WorkerTypesTable,
 		EquipmentPortDefinitionConnectedPortsTable,
 		ExitPointNextEntryPointsTable,
+		LocationTypeFileCategoryTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
 		ServicePortsTable,
@@ -2520,13 +2570,14 @@ func init() {
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = EquipmentTable
-	FilesTable.ForeignKeys[2].RefTable = FloorPlansTable
-	FilesTable.ForeignKeys[3].RefTable = LocationsTable
-	FilesTable.ForeignKeys[4].RefTable = SurveysTable
-	FilesTable.ForeignKeys[5].RefTable = SurveyQuestionsTable
+	FilesTable.ForeignKeys[2].RefTable = FileCategoryTypesTable
+	FilesTable.ForeignKeys[3].RefTable = FloorPlansTable
+	FilesTable.ForeignKeys[4].RefTable = LocationsTable
+	FilesTable.ForeignKeys[5].RefTable = SurveysTable
 	FilesTable.ForeignKeys[6].RefTable = SurveyQuestionsTable
-	FilesTable.ForeignKeys[7].RefTable = UsersTable
-	FilesTable.ForeignKeys[8].RefTable = WorkOrdersTable
+	FilesTable.ForeignKeys[7].RefTable = SurveyQuestionsTable
+	FilesTable.ForeignKeys[8].RefTable = UsersTable
+	FilesTable.ForeignKeys[9].RefTable = WorkOrdersTable
 	FloorPlansTable.ForeignKeys[0].RefTable = LocationsTable
 	FloorPlansTable.ForeignKeys[1].RefTable = FloorPlanReferencePointsTable
 	FloorPlansTable.ForeignKeys[2].RefTable = FloorPlanScalesTable
@@ -2600,6 +2651,8 @@ func init() {
 	EquipmentPortDefinitionConnectedPortsTable.ForeignKeys[1].RefTable = EquipmentPortDefinitionsTable
 	ExitPointNextEntryPointsTable.ForeignKeys[0].RefTable = ExitPointsTable
 	ExitPointNextEntryPointsTable.ForeignKeys[1].RefTable = EntryPointsTable
+	LocationTypeFileCategoryTable.ForeignKeys[0].RefTable = LocationTypesTable
+	LocationTypeFileCategoryTable.ForeignKeys[1].RefTable = FileCategoryTypesTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable

@@ -40,6 +40,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -5163,6 +5164,225 @@ var DefaultFileOrder = &FileOrder{
 		field: file.FieldID,
 		toCursor: func(f *File) Cursor {
 			return Cursor{ID: f.ID}
+		},
+	},
+}
+
+// FileCategoryTypeEdge is the edge representation of FileCategoryType.
+type FileCategoryTypeEdge struct {
+	Node   *FileCategoryType `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// FileCategoryTypeConnection is the connection containing edges to FileCategoryType.
+type FileCategoryTypeConnection struct {
+	Edges      []*FileCategoryTypeEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+// FileCategoryTypePaginateOption enables pagination customization.
+type FileCategoryTypePaginateOption func(*fileCategoryTypePager) error
+
+// WithFileCategoryTypeOrder configures pagination ordering.
+func WithFileCategoryTypeOrder(order *FileCategoryTypeOrder) FileCategoryTypePaginateOption {
+	if order == nil {
+		order = DefaultFileCategoryTypeOrder
+	}
+	o := *order
+	return func(pager *fileCategoryTypePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFileCategoryTypeOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFileCategoryTypeFilter configures pagination filter.
+func WithFileCategoryTypeFilter(filter func(*FileCategoryTypeQuery) (*FileCategoryTypeQuery, error)) FileCategoryTypePaginateOption {
+	return func(pager *fileCategoryTypePager) error {
+		if filter == nil {
+			return errors.New("FileCategoryTypeQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type fileCategoryTypePager struct {
+	order  *FileCategoryTypeOrder
+	filter func(*FileCategoryTypeQuery) (*FileCategoryTypeQuery, error)
+}
+
+func newFileCategoryTypePager(opts []FileCategoryTypePaginateOption) (*fileCategoryTypePager, error) {
+	pager := &fileCategoryTypePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFileCategoryTypeOrder
+	}
+	return pager, nil
+}
+
+func (p *fileCategoryTypePager) applyFilter(query *FileCategoryTypeQuery) (*FileCategoryTypeQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *fileCategoryTypePager) toCursor(fct *FileCategoryType) Cursor {
+	return p.order.Field.toCursor(fct)
+}
+
+func (p *fileCategoryTypePager) applyCursors(query *FileCategoryTypeQuery, after, before *Cursor) *FileCategoryTypeQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultFileCategoryTypeOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *fileCategoryTypePager) applyOrder(query *FileCategoryTypeQuery, reverse bool) *FileCategoryTypeQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultFileCategoryTypeOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultFileCategoryTypeOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to FileCategoryType.
+func (fct *FileCategoryTypeQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FileCategoryTypePaginateOption,
+) (*FileCategoryTypeConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFileCategoryTypePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if fct, err = pager.applyFilter(fct); err != nil {
+		return nil, err
+	}
+
+	conn := &FileCategoryTypeConnection{Edges: []*FileCategoryTypeEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := fct.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := fct.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	fct = pager.applyCursors(fct, after, before)
+	fct = pager.applyOrder(fct, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		fct = fct.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		fct = fct.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := fct.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *FileCategoryType
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *FileCategoryType {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *FileCategoryType {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*FileCategoryTypeEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &FileCategoryTypeEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// FileCategoryTypeOrderField defines the ordering field of FileCategoryType.
+type FileCategoryTypeOrderField struct {
+	field    string
+	toCursor func(*FileCategoryType) Cursor
+}
+
+// FileCategoryTypeOrder defines the ordering of FileCategoryType.
+type FileCategoryTypeOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *FileCategoryTypeOrderField `json:"field"`
+}
+
+// DefaultFileCategoryTypeOrder is the default ordering of FileCategoryType.
+var DefaultFileCategoryTypeOrder = &FileCategoryTypeOrder{
+	Direction: OrderDirectionAsc,
+	Field: &FileCategoryTypeOrderField{
+		field: filecategorytype.FieldID,
+		toCursor: func(fct *FileCategoryType) Cursor {
+			return Cursor{ID: fct.ID}
 		},
 	},
 }

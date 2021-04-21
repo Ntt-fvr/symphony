@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -166,6 +167,21 @@ func (ltu *LocationTypeUpdate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 	return ltu.AddSurveyTemplateCategoryIDs(ids...)
 }
 
+// AddFileCategoryIDs adds the file_category edge to FileCategoryType by ids.
+func (ltu *LocationTypeUpdate) AddFileCategoryIDs(ids ...int) *LocationTypeUpdate {
+	ltu.mutation.AddFileCategoryIDs(ids...)
+	return ltu
+}
+
+// AddFileCategory adds the file_category edges to FileCategoryType.
+func (ltu *LocationTypeUpdate) AddFileCategory(f ...*FileCategoryType) *LocationTypeUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ltu.AddFileCategoryIDs(ids...)
+}
+
 // Mutation returns the LocationTypeMutation object of the builder.
 func (ltu *LocationTypeUpdate) Mutation() *LocationTypeMutation {
 	return ltu.mutation
@@ -232,6 +248,27 @@ func (ltu *LocationTypeUpdate) RemoveSurveyTemplateCategories(s ...*SurveyTempla
 		ids[i] = s[i].ID
 	}
 	return ltu.RemoveSurveyTemplateCategoryIDs(ids...)
+}
+
+// ClearFileCategory clears all "file_category" edges to type FileCategoryType.
+func (ltu *LocationTypeUpdate) ClearFileCategory() *LocationTypeUpdate {
+	ltu.mutation.ClearFileCategory()
+	return ltu
+}
+
+// RemoveFileCategoryIDs removes the file_category edge to FileCategoryType by ids.
+func (ltu *LocationTypeUpdate) RemoveFileCategoryIDs(ids ...int) *LocationTypeUpdate {
+	ltu.mutation.RemoveFileCategoryIDs(ids...)
+	return ltu
+}
+
+// RemoveFileCategory removes file_category edges to FileCategoryType.
+func (ltu *LocationTypeUpdate) RemoveFileCategory(f ...*FileCategoryType) *LocationTypeUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ltu.RemoveFileCategoryIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -542,6 +579,60 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ltu.mutation.FileCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltu.mutation.RemovedFileCategoryIDs(); len(nodes) > 0 && !ltu.mutation.FileCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltu.mutation.FileCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ltu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{locationtype.Label}
@@ -693,6 +784,21 @@ func (ltuo *LocationTypeUpdateOne) AddSurveyTemplateCategories(s ...*SurveyTempl
 	return ltuo.AddSurveyTemplateCategoryIDs(ids...)
 }
 
+// AddFileCategoryIDs adds the file_category edge to FileCategoryType by ids.
+func (ltuo *LocationTypeUpdateOne) AddFileCategoryIDs(ids ...int) *LocationTypeUpdateOne {
+	ltuo.mutation.AddFileCategoryIDs(ids...)
+	return ltuo
+}
+
+// AddFileCategory adds the file_category edges to FileCategoryType.
+func (ltuo *LocationTypeUpdateOne) AddFileCategory(f ...*FileCategoryType) *LocationTypeUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ltuo.AddFileCategoryIDs(ids...)
+}
+
 // Mutation returns the LocationTypeMutation object of the builder.
 func (ltuo *LocationTypeUpdateOne) Mutation() *LocationTypeMutation {
 	return ltuo.mutation
@@ -759,6 +865,27 @@ func (ltuo *LocationTypeUpdateOne) RemoveSurveyTemplateCategories(s ...*SurveyTe
 		ids[i] = s[i].ID
 	}
 	return ltuo.RemoveSurveyTemplateCategoryIDs(ids...)
+}
+
+// ClearFileCategory clears all "file_category" edges to type FileCategoryType.
+func (ltuo *LocationTypeUpdateOne) ClearFileCategory() *LocationTypeUpdateOne {
+	ltuo.mutation.ClearFileCategory()
+	return ltuo
+}
+
+// RemoveFileCategoryIDs removes the file_category edge to FileCategoryType by ids.
+func (ltuo *LocationTypeUpdateOne) RemoveFileCategoryIDs(ids ...int) *LocationTypeUpdateOne {
+	ltuo.mutation.RemoveFileCategoryIDs(ids...)
+	return ltuo
+}
+
+// RemoveFileCategory removes file_category edges to FileCategoryType.
+func (ltuo *LocationTypeUpdateOne) RemoveFileCategory(f ...*FileCategoryType) *LocationTypeUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ltuo.RemoveFileCategoryIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1059,6 +1186,60 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveytemplatecategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ltuo.mutation.FileCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltuo.mutation.RemovedFileCategoryIDs(); len(nodes) > 0 && !ltuo.mutation.FileCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltuo.mutation.FileCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
 				},
 			},
 		}

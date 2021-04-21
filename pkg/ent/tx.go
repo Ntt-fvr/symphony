@@ -60,6 +60,8 @@ type Tx struct {
 	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FileCategoryType is the client for interacting with the FileCategoryType builders.
+	FileCategoryType *FileCategoryTypeClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
 	FloorPlan *FloorPlanClient
 	// FloorPlanReferencePoint is the client for interacting with the FloorPlanReferencePoint builders.
@@ -287,6 +289,7 @@ func (tx *Tx) init() {
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
 	tx.File = NewFileClient(tx.config)
+	tx.FileCategoryType = NewFileCategoryTypeClient(tx.config)
 	tx.FloorPlan = NewFloorPlanClient(tx.config)
 	tx.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(tx.config)
 	tx.FloorPlanScale = NewFloorPlanScaleClient(tx.config)

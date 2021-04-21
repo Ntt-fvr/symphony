@@ -79,10 +79,7 @@ func main() {
 		fields := []zap.Field{zap.Error(err)}
 		if rsp != nil {
 			body, _ := ioutil.ReadAll(rsp.Body)
-			fields = append(fields,
-				zap.Int("status", rsp.StatusCode),
-				zap.ByteString("response", body),
-			)
+			fields = append(fields, zap.Int("status", rsp.StatusCode), zap.ByteString("response", body))
 		}
 		logger.Fatal("cannot connect to endpoint", fields...)
 	}

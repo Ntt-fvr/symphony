@@ -35,6 +35,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -125,6 +126,8 @@ type Client struct {
 	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FileCategoryType is the client for interacting with the FileCategoryType builders.
+	FileCategoryType *FileCategoryTypeClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
 	FloorPlan *FloorPlanClient
 	// FloorPlanReferencePoint is the client for interacting with the FloorPlanReferencePoint builders.
@@ -232,6 +235,7 @@ func (c *Client) init() {
 	c.ExportTask = NewExportTaskClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.FileCategoryType = NewFileCategoryTypeClient(c.config)
 	c.FloorPlan = NewFloorPlanClient(c.config)
 	c.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(c.config)
 	c.FloorPlanScale = NewFloorPlanScaleClient(c.config)
@@ -321,6 +325,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
+		FileCategoryType:            NewFileCategoryTypeClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
@@ -393,6 +398,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
+		FileCategoryType:            NewFileCategoryTypeClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
@@ -478,6 +484,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ExportTask.Use(hooks...)
 	c.Feature.Use(hooks...)
 	c.File.Use(hooks...)
+	c.FileCategoryType.Use(hooks...)
 	c.FloorPlan.Use(hooks...)
 	c.FloorPlanReferencePoint.Use(hooks...)
 	c.FloorPlanScale.Use(hooks...)
@@ -3715,10 +3722,147 @@ func (c *FileClient) QuerySurveyQuestion(f *File) *SurveyQuestionQuery {
 	return query
 }
 
+// QueryFileCategory queries the file_category edge of a File.
+func (c *FileClient) QueryFileCategory(f *File) *FileCategoryTypeQuery {
+	query := &FileCategoryTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, id),
+			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, file.FileCategoryTable, file.FileCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FileClient) Hooks() []Hook {
 	hooks := c.hooks.File
 	return append(hooks[:len(hooks):len(hooks)], file.Hooks[:]...)
+}
+
+// FileCategoryTypeClient is a client for the FileCategoryType schema.
+type FileCategoryTypeClient struct {
+	config
+}
+
+// NewFileCategoryTypeClient returns a client for the FileCategoryType from the given config.
+func NewFileCategoryTypeClient(c config) *FileCategoryTypeClient {
+	return &FileCategoryTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `filecategorytype.Hooks(f(g(h())))`.
+func (c *FileCategoryTypeClient) Use(hooks ...Hook) {
+	c.hooks.FileCategoryType = append(c.hooks.FileCategoryType, hooks...)
+}
+
+// Create returns a create builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Create() *FileCategoryTypeCreate {
+	mutation := newFileCategoryTypeMutation(c.config, OpCreate)
+	return &FileCategoryTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FileCategoryType entities.
+func (c *FileCategoryTypeClient) CreateBulk(builders ...*FileCategoryTypeCreate) *FileCategoryTypeCreateBulk {
+	return &FileCategoryTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Update() *FileCategoryTypeUpdate {
+	mutation := newFileCategoryTypeMutation(c.config, OpUpdate)
+	return &FileCategoryTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FileCategoryTypeClient) UpdateOne(fct *FileCategoryType) *FileCategoryTypeUpdateOne {
+	mutation := newFileCategoryTypeMutation(c.config, OpUpdateOne, withFileCategoryType(fct))
+	return &FileCategoryTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FileCategoryTypeClient) UpdateOneID(id int) *FileCategoryTypeUpdateOne {
+	mutation := newFileCategoryTypeMutation(c.config, OpUpdateOne, withFileCategoryTypeID(id))
+	return &FileCategoryTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Delete() *FileCategoryTypeDelete {
+	mutation := newFileCategoryTypeMutation(c.config, OpDelete)
+	return &FileCategoryTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FileCategoryTypeClient) DeleteOne(fct *FileCategoryType) *FileCategoryTypeDeleteOne {
+	return c.DeleteOneID(fct.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FileCategoryTypeClient) DeleteOneID(id int) *FileCategoryTypeDeleteOne {
+	builder := c.Delete().Where(filecategorytype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FileCategoryTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Query() *FileCategoryTypeQuery {
+	return &FileCategoryTypeQuery{config: c.config}
+}
+
+// Get returns a FileCategoryType entity by its id.
+func (c *FileCategoryTypeClient) Get(ctx context.Context, id int) (*FileCategoryType, error) {
+	return c.Query().Where(filecategorytype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FileCategoryTypeClient) GetX(ctx context.Context, id int) *FileCategoryType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFiles queries the files edge of a FileCategoryType.
+func (c *FileCategoryTypeClient) QueryFiles(fct *FileCategoryType) *FileQuery {
+	query := &FileQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fct.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, id),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, filecategorytype.FilesTable, filecategorytype.FilesColumn),
+		)
+		fromV = sqlgraph.Neighbors(fct.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLocationType queries the locationType edge of a FileCategoryType.
+func (c *FileCategoryTypeClient) QueryLocationType(fct *FileCategoryType) *LocationTypeQuery {
+	query := &LocationTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fct.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, id),
+			sqlgraph.To(locationtype.Table, locationtype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, filecategorytype.LocationTypeTable, filecategorytype.LocationTypePrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(fct.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FileCategoryTypeClient) Hooks() []Hook {
+	hooks := c.hooks.FileCategoryType
+	return append(hooks[:len(hooks):len(hooks)], filecategorytype.Hooks[:]...)
 }
 
 // FloorPlanClient is a client for the FloorPlan schema.
@@ -5247,6 +5391,22 @@ func (c *LocationTypeClient) QuerySurveyTemplateCategories(lt *LocationType) *Su
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.SurveyTemplateCategoriesTable, locationtype.SurveyTemplateCategoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFileCategory queries the file_category edge of a LocationType.
+func (c *LocationTypeClient) QueryFileCategory(lt *LocationType) *FileCategoryTypeQuery {
+	query := &FileCategoryTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := lt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
+			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, locationtype.FileCategoryTable, locationtype.FileCategoryPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
 		return fromV, nil

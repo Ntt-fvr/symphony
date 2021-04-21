@@ -39,6 +39,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -1903,7 +1904,7 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 		ID:     f.ID,
 		Type:   "File",
 		Fields: make([]*Field, 11),
-		Edges:  make([]*Edge, 9),
+		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -2080,6 +2081,63 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[8].IDs, err = f.QuerySurveyQuestion().
 		Select(surveyquestion.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[9] = &Edge{
+		Type: "FileCategoryType",
+		Name: "file_category",
+	}
+	node.Edges[9].IDs, err = f.QueryFileCategory().
+		Select(filecategorytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     fct.ID,
+		Type:   "FileCategoryType",
+		Fields: make([]*Field, 2),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(fct.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "File",
+		Name: "files",
+	}
+	node.Edges[0].IDs, err = fct.QueryFiles().
+		Select(file.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "LocationType",
+		Name: "locationType",
+	}
+	node.Edges[1].IDs, err = fct.QueryLocationType().
+		Select(locationtype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -2954,7 +3012,7 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     lt.ID,
 		Type:   "LocationType",
 		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(lt.CreateTime); err != nil {
@@ -3039,6 +3097,16 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = lt.QuerySurveyTemplateCategories().
 		Select(surveytemplatecategory.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "FileCategoryType",
+		Name: "file_category",
+	}
+	node.Edges[3].IDs, err = lt.QueryFileCategory().
+		Select(filecategorytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6174,6 +6242,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.File.Query().
 			Where(file.ID(id)).
 			CollectFields(ctx, "File").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case filecategorytype.Table:
+		n, err := c.FileCategoryType.Query().
+			Where(filecategorytype.ID(id)).
+			CollectFields(ctx, "FileCategoryType").
 			Only(ctx)
 		if err != nil {
 			return nil, err

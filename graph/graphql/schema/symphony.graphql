@@ -450,6 +450,7 @@ type LocationType implements Node {
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
   surveyTemplateCategories: [SurveyTemplateCategory]
+  fileCategoryType: [FileCategoryType]
 }
 
 input AddLocationTypeInput {
@@ -460,6 +461,7 @@ input AddLocationTypeInput {
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
+  fileCategoryType: [FileCategoryTypeInput]
 }
 
 input EditLocationTypeInput {
@@ -470,6 +472,25 @@ input EditLocationTypeInput {
   isSite: Boolean
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
+  fileCategoryType: [FileCategoryTypeInput]
+}
+
+# file category type: e.g. building.
+type FileCategoryType implements Node{
+  id: ID!
+  name: String!
+  description: String
+  extension: String
+  file: [File]!
+  locationType: LocationType! @goField(name: "Type")
+}
+
+input FileCategoryTypeInput {
+  id: ID!
+  name: String!
+  description: String
+  extension: String
+  type: ID!
 }
 
 type NetworkTopology {
@@ -506,6 +527,7 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
+  fileCategory: [FileCategoryType]
 }
 
 type Hyperlink implements Node {
@@ -2954,6 +2976,7 @@ input FileInput {
   mimeType: String
   storeKey: String!
   annotation: String
+  fileCategory: [FileCategoryTypeInput]!
 }
 
 input SurveyTemplateQuestionInput {

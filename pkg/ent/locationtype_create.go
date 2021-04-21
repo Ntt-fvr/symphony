@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -160,6 +161,21 @@ func (ltc *LocationTypeCreate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 		ids[i] = s[i].ID
 	}
 	return ltc.AddSurveyTemplateCategoryIDs(ids...)
+}
+
+// AddFileCategoryIDs adds the file_category edge to FileCategoryType by ids.
+func (ltc *LocationTypeCreate) AddFileCategoryIDs(ids ...int) *LocationTypeCreate {
+	ltc.mutation.AddFileCategoryIDs(ids...)
+	return ltc
+}
+
+// AddFileCategory adds the file_category edges to FileCategoryType.
+func (ltc *LocationTypeCreate) AddFileCategory(f ...*FileCategoryType) *LocationTypeCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ltc.AddFileCategoryIDs(ids...)
 }
 
 // Mutation returns the LocationTypeMutation object of the builder.
@@ -385,6 +401,25 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveytemplatecategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ltc.mutation.FileCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTable,
+			Columns: locationtype.FileCategoryPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
 				},
 			},
 		}

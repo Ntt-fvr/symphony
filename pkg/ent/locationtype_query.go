@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -35,6 +36,7 @@ type LocationTypeQuery struct {
 	withLocations                *LocationQuery
 	withPropertyTypes            *PropertyTypeQuery
 	withSurveyTemplateCategories *SurveyTemplateCategoryQuery
+	withFileCategory             *FileCategoryTypeQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -123,6 +125,28 @@ func (ltq *LocationTypeQuery) QuerySurveyTemplateCategories() *SurveyTemplateCat
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.SurveyTemplateCategoriesTable, locationtype.SurveyTemplateCategoriesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ltq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFileCategory chains the current query on the file_category edge.
+func (ltq *LocationTypeQuery) QueryFileCategory() *FileCategoryTypeQuery {
+	query := &FileCategoryTypeQuery{config: ltq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ltq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ltq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
+			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, locationtype.FileCategoryTable, locationtype.FileCategoryPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(ltq.driver.Dialect(), step)
 		return fromU, nil
@@ -309,6 +333,7 @@ func (ltq *LocationTypeQuery) Clone() *LocationTypeQuery {
 		withLocations:                ltq.withLocations.Clone(),
 		withPropertyTypes:            ltq.withPropertyTypes.Clone(),
 		withSurveyTemplateCategories: ltq.withSurveyTemplateCategories.Clone(),
+		withFileCategory:             ltq.withFileCategory.Clone(),
 		// clone intermediate query.
 		sql:  ltq.sql.Clone(),
 		path: ltq.path,
@@ -345,6 +370,17 @@ func (ltq *LocationTypeQuery) WithSurveyTemplateCategories(opts ...func(*SurveyT
 		opt(query)
 	}
 	ltq.withSurveyTemplateCategories = query
+	return ltq
+}
+
+//  WithFileCategory tells the query-builder to eager-loads the nodes that are connected to
+// the "file_category" edge. The optional arguments used to configure the query builder of the edge.
+func (ltq *LocationTypeQuery) WithFileCategory(opts ...func(*FileCategoryTypeQuery)) *LocationTypeQuery {
+	query := &FileCategoryTypeQuery{config: ltq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ltq.withFileCategory = query
 	return ltq
 }
 
@@ -417,10 +453,11 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 	var (
 		nodes       = []*LocationType{}
 		_spec       = ltq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			ltq.withLocations != nil,
 			ltq.withPropertyTypes != nil,
 			ltq.withSurveyTemplateCategories != nil,
+			ltq.withFileCategory != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -528,6 +565,70 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 				return nil, fmt.Errorf(`unexpected foreign-key "location_type_survey_template_categories" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.SurveyTemplateCategories = append(node.Edges.SurveyTemplateCategories, n)
+		}
+	}
+
+	if query := ltq.withFileCategory; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*LocationType, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.FileCategory = []*FileCategoryType{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*LocationType)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   locationtype.FileCategoryTable,
+				Columns: locationtype.FileCategoryPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(locationtype.FileCategoryPrimaryKey[0], fks...))
+			},
+
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				edgeids = append(edgeids, inValue)
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, ltq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "file_category": %v`, err)
+		}
+		query.Where(filecategorytype.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "file_category" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.FileCategory = append(nodes[i].Edges.FileCategory, n)
+			}
 		}
 	}
 

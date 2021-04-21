@@ -38,6 +38,8 @@ const (
 	EdgePropertyTypes = "property_types"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
+	// EdgeFileCategory holds the string denoting the file_category edge name in mutations.
+	EdgeFileCategory = "file_category"
 
 	// Table holds the table name of the locationtype in the database.
 	Table = "location_types"
@@ -62,6 +64,11 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
+	// FileCategoryTable is the table the holds the file_category relation/edge. The primary key declared below.
+	FileCategoryTable = "location_type_file_category"
+	// FileCategoryInverseTable is the table name for the FileCategoryType entity.
+	// It exists in this package in order to avoid circular dependency with the "filecategorytype" package.
+	FileCategoryInverseTable = "file_category_types"
 )
 
 // Columns holds all SQL columns for locationtype fields.
@@ -75,6 +82,12 @@ var Columns = []string{
 	FieldMapZoomLevel,
 	FieldIndex,
 }
+
+var (
+	// FileCategoryPrimaryKey and FileCategoryColumn2 are the table columns denoting the
+	// primary key for the file_category relation (M2M).
+	FileCategoryPrimaryKey = []string{"location_type_id", "file_category_type_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

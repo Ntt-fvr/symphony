@@ -162,6 +162,7 @@ type AddLocationTypeInput struct {
 	IsSite                   *bool                          `json:"isSite"`
 	Properties               []*models.PropertyTypeInput    `json:"properties"`
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput `json:"surveyTemplateCategories"`
+	FileCategoryType         []*FileCategoryTypeInput       `json:"fileCategoryType"`
 }
 
 type AddPermissionsPolicyInput struct {
@@ -388,12 +389,13 @@ type EditLocationInput struct {
 }
 
 type EditLocationTypeInput struct {
-	ID           int                         `json:"id"`
-	Name         string                      `json:"name"`
-	MapType      *string                     `json:"mapType"`
-	MapZoomLevel *int                        `json:"mapZoomLevel"`
-	IsSite       *bool                       `json:"isSite"`
-	Properties   []*models.PropertyTypeInput `json:"properties"`
+	ID               int                         `json:"id"`
+	Name             string                      `json:"name"`
+	MapType          *string                     `json:"mapType"`
+	MapZoomLevel     *int                        `json:"mapZoomLevel"`
+	IsSite           *bool                       `json:"isSite"`
+	Properties       []*models.PropertyTypeInput `json:"properties"`
+	FileCategoryType []*FileCategoryTypeInput    `json:"fileCategoryType"`
 }
 
 type EditPermissionsPolicyInput struct {
@@ -535,16 +537,25 @@ type ExitPointInput struct {
 	Cid  *string                   `json:"cid"`
 }
 
+type FileCategoryTypeInput struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
+	Extension   *string `json:"extension"`
+	Type        int     `json:"type"`
+}
+
 type FileInput struct {
-	ID               *int       `json:"id"`
-	FileName         string     `json:"fileName"`
-	SizeInBytes      *int       `json:"sizeInBytes"`
-	ModificationTime *int       `json:"modificationTime"`
-	UploadTime       *int       `json:"uploadTime"`
-	FileType         *file.Type `json:"fileType"`
-	MimeType         *string    `json:"mimeType"`
-	StoreKey         string     `json:"storeKey"`
-	Annotation       *string    `json:"annotation"`
+	ID               *int                     `json:"id"`
+	FileName         string                   `json:"fileName"`
+	SizeInBytes      *int                     `json:"sizeInBytes"`
+	ModificationTime *int                     `json:"modificationTime"`
+	UploadTime       *int                     `json:"uploadTime"`
+	FileType         *file.Type               `json:"fileType"`
+	MimeType         *string                  `json:"mimeType"`
+	StoreKey         string                   `json:"storeKey"`
+	Annotation       *string                  `json:"annotation"`
+	FileCategory     []*FileCategoryTypeInput `json:"fileCategory"`
 }
 
 type GeneralFilter struct {

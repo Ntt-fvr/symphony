@@ -299,6 +299,19 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return f(ctx, mv)
 }
 
+// The FileCategoryTypeFunc type is an adapter to allow the use of ordinary
+// function as FileCategoryType mutator.
+type FileCategoryTypeFunc func(context.Context, *ent.FileCategoryTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FileCategoryTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FileCategoryTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileCategoryTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The FloorPlanFunc type is an adapter to allow the use of ordinary
 // function as FloorPlan mutator.
 type FloorPlanFunc func(context.Context, *ent.FloorPlanMutation) (ent.Value, error)

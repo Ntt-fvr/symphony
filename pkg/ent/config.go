@@ -50,6 +50,7 @@ type hooks struct {
 	ExportTask                  []ent.Hook
 	Feature                     []ent.Hook
 	File                        []ent.Hook
+	FileCategoryType            []ent.Hook
 	FloorPlan                   []ent.Hook
 	FloorPlanReferencePoint     []ent.Hook
 	FloorPlanScale              []ent.Hook

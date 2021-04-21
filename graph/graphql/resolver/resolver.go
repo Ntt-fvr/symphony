@@ -197,3 +197,11 @@ func (r resolver) VariableExpression() generated.VariableExpressionResolver {
 func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
+
+func (r resolver) File() generated.FileResolver {
+	return nil
+}
+
+func (r resolver) FileCategoryType() generated.FileCaregoryTypeResolver {
+	return nil
+}

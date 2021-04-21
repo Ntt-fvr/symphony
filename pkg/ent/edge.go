@@ -632,6 +632,30 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	return result, MaskNotFound(err)
 }
 
+func (f *File) FileCategory(ctx context.Context) (*FileCategoryType, error) {
+	result, err := f.Edges.FileCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryFileCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (fct *FileCategoryType) Files(ctx context.Context) ([]*File, error) {
+	result, err := fct.Edges.FilesOrErr()
+	if IsNotLoaded(err) {
+		result, err = fct.QueryFiles().All(ctx)
+	}
+	return result, err
+}
+
+func (fct *FileCategoryType) LocationType(ctx context.Context) ([]*LocationType, error) {
+	result, err := fct.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = fct.QueryLocationType().All(ctx)
+	}
+	return result, err
+}
+
 func (fp *FloorPlan) Location(ctx context.Context) (*Location, error) {
 	result, err := fp.Edges.LocationOrErr()
 	if IsNotLoaded(err) {
@@ -908,6 +932,14 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
+	}
+	return result, err
+}
+
+func (lt *LocationType) FileCategory(ctx context.Context) ([]*FileCategoryType, error) {
+	result, err := lt.Edges.FileCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryFileCategory().All(ctx)
 	}
 	return result, err
 }

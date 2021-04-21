@@ -76,6 +76,9 @@ type Feature func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// FileCategoryType is the predicate function for filecategorytype builders.
+type FileCategoryType func(*sql.Selector)
+
 // FloorPlan is the predicate function for floorplan builders.
 type FloorPlan func(*sql.Selector)
 
