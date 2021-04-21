@@ -247,6 +247,8 @@ func (Property) Edges() []ent.Edge {
 			Unique(),
 		edge.To("user_value", User.Type).
 			Unique(),
+		edge.To("project_value", Project.Type).
+			Unique(),
 	}
 }
 
