@@ -573,6 +573,11 @@ func TestImportEmptyFlow(t *testing.T) {
 						Expression:            strconv.Itoa(owner.ID),
 					},
 					{
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableOperation),
+						Expression:            "Create WO",
+					},
+					{
 						Type:           enum.PropertyTypeDefinition,
 						PropertyTypeID: refInt(propertyTypeID),
 						Expression:     "\"Property\"",
@@ -604,7 +609,7 @@ func TestImportEmptyFlow(t *testing.T) {
 					{
 						Type:                  enum.VariableDefinition,
 						VariableDefinitionKey: refString(triggers.InputVariableType),
-						Expression:            strconv.Quote(triggers.TypeWorkOrderInitiated),
+						Expression:            triggers.TypeWorkOrderInitiated,
 					},
 				},
 			},
@@ -661,12 +666,12 @@ func TestImportEmptyFlow(t *testing.T) {
 			} else {
 				require.Equal(t, "wo", blk.Cid)
 				require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
-				require.Len(t, blk.InputParams, 3)
+				require.Len(t, blk.InputParams, 4)
 				blockType, err := br.Details(ctx, blk)
 				require.NoError(t, err)
 				action, ok := blockType.(*models.ActionBlock)
 				require.True(t, ok)
-				require.Len(t, action.Params, 4)
+				require.Len(t, action.Params, 5)
 			}
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)

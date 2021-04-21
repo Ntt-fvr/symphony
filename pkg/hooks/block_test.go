@@ -130,11 +130,6 @@ func TestEndParamsVerifications(t *testing.T) {
 			expectFail: false,
 		},
 		{
-			name:       "string_not_match",
-			inputs:     getExpressions(param1, "23"),
-			expectFail: true,
-		},
-		{
 			name:       "key_not_exists",
 			inputs:     getExpressions("not_exists", "23"),
 			expectFail: true,
@@ -184,7 +179,7 @@ func TestEndParamsVerifications(t *testing.T) {
 		},
 		{
 			name:       "choice_exists",
-			inputs:     getExpressions(param3, "\"First\""),
+			inputs:     getExpressions(param3, "First"),
 			expectFail: false,
 		},
 		{
