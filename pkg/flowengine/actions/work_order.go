@@ -5,6 +5,8 @@
 package actions
 
 import (
+	"strconv"
+
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -54,8 +56,8 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Type:      enum.VariableTypeString,
 			Mandatory: true,
 			Choices: []string{
-				enum.OperationWOCreate.String(),
-				enum.OperationWOUpdate.String(),
+				strconv.Quote(enum.OperationWOCreate.String()),
+				strconv.Quote(enum.OperationWOUpdate.String()),
 			},
 		},
 		{
@@ -63,8 +65,8 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Type:      enum.VariableTypeString,
 			Mandatory: true,
 			Choices: []string{
-				enum.BaseTypeWOProject.String(),
-				enum.BaseTypeWOWorkOrder.String(),
+				strconv.Quote(enum.BaseTypeWOProject.String()),
+				strconv.Quote(enum.BaseTypeWOWorkOrder.String()),
 			},
 		},
 		{
@@ -76,7 +78,7 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Type:           enum.VariableTypeString,
 			MultipleValues: true,
 			Choices: []string{
-				workorder.StatusDone.String(),
+				strconv.Quote(workorder.StatusDone.String()),
 			},
 		},
 		{
@@ -107,19 +109,19 @@ func (workOrderAction) Variables() []*flowschema.VariableDefinition {
 			Key:  InputVariableStatus,
 			Type: enum.VariableTypeString,
 			Choices: []string{
-				workorder.StatusPending.String(),
-				workorder.StatusPlanned.String(),
+				strconv.Quote(workorder.StatusPending.String()),
+				strconv.Quote(workorder.StatusPlanned.String()),
 			},
 		},
 		{
 			Key:  InputVariablePriority,
 			Type: enum.VariableTypeString,
 			Choices: []string{
-				workorder.PriorityNone.String(),
-				workorder.PriorityLow.String(),
-				workorder.PriorityMedium.String(),
-				workorder.PriorityHigh.String(),
-				workorder.PriorityUrgent.String(),
+				strconv.Quote(workorder.PriorityNone.String()),
+				strconv.Quote(workorder.PriorityLow.String()),
+				strconv.Quote(workorder.PriorityMedium.String()),
+				strconv.Quote(workorder.PriorityHigh.String()),
+				strconv.Quote(workorder.PriorityUrgent.String()),
 			},
 		},
 		{
