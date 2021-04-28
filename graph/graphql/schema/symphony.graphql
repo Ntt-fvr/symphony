@@ -446,11 +446,11 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
+  fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
   surveyTemplateCategories: [SurveyTemplateCategory]
-  fileCategoryType: [FileCategoryType]
 }
 
 input AddLocationTypeInput {
@@ -458,10 +458,10 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
+  fileCategoriesType: [FileCategoryTypeInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
-  fileCategoryType: [FileCategoryTypeInput]
 }
 
 input EditLocationTypeInput {
@@ -470,27 +470,9 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
+  fileCategoriesType: [FileCategoryTypeInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
-  fileCategoryType: [FileCategoryTypeInput]
-}
-
-# file category type: e.g. building.
-type FileCategoryType implements Node{
-  id: ID!
-  name: String!
-  description: String
-  extension: String
-  file: [File]!
-  locationType: LocationType! @goField(name: "Type")
-}
-
-input FileCategoryTypeInput {
-  id: ID!
-  name: String!
-  description: String
-  extension: String
-  type: ID!
 }
 
 type NetworkTopology {
@@ -527,7 +509,6 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
-  fileCategory: [FileCategoryType]
 }
 
 type Hyperlink implements Node {
@@ -1425,6 +1406,71 @@ enum PropertyKind
   gps_location
   datetime_local
   node
+}
+
+enum FileCategoryTypeKind
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/filecategorytype.Type"
+  ) {
+  string
+  int
+  bool
+  float
+  date
+  enum
+  range
+  email
+  gps_location
+  datetime_local
+  node
+}
+
+type FileCategoryType implements Node {
+  id: ID!
+  externalId: String
+  name: String!
+  type: FileCategoryTypeKind!
+  nodeType: String
+  index: Int
+  category: String
+  rawValue: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
+}
+
+input FileCategoryTypeInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
+  ) {
+  id: ID
+  externalId: String
+  name: String!
+  type: FileCategoryTypeKind!
+  nodeType: String
+  index: Int
+  category: String
+  stringValue: String
+  intValue: Int
+  booleanValue: Boolean
+  floatValue: Float
+  latitudeValue: Float
+  longitudeValue: Float
+  rangeFromValue: Float
+  rangeToValue: Float
+  isEditable: Boolean
+  isInstanceProperty: Boolean
+  isMandatory: Boolean
+  isDeleted: Boolean
 }
 
 type PropertyType implements Node {
@@ -2976,7 +3022,6 @@ input FileInput {
   mimeType: String
   storeKey: String!
   annotation: String
-  fileCategory: [FileCategoryTypeInput]!
 }
 
 input SurveyTemplateQuestionInput {

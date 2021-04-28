@@ -36,10 +36,10 @@ const (
 	EdgeLocations = "locations"
 	// EdgePropertyTypes holds the string denoting the property_types edge name in mutations.
 	EdgePropertyTypes = "property_types"
+	// EdgeFileCategoryType holds the string denoting the file_category_type edge name in mutations.
+	EdgeFileCategoryType = "file_category_type"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
-	// EdgeFileCategory holds the string denoting the file_category edge name in mutations.
-	EdgeFileCategory = "file_category"
 
 	// Table holds the table name of the locationtype in the database.
 	Table = "location_types"
@@ -57,6 +57,13 @@ const (
 	PropertyTypesInverseTable = "property_types"
 	// PropertyTypesColumn is the table column denoting the property_types relation/edge.
 	PropertyTypesColumn = "location_type_property_types"
+	// FileCategoryTypeTable is the table the holds the file_category_type relation/edge.
+	FileCategoryTypeTable = "file_category_types"
+	// FileCategoryTypeInverseTable is the table name for the FileCategoryType entity.
+	// It exists in this package in order to avoid circular dependency with the "filecategorytype" package.
+	FileCategoryTypeInverseTable = "file_category_types"
+	// FileCategoryTypeColumn is the table column denoting the file_category_type relation/edge.
+	FileCategoryTypeColumn = "location_type_file_category_type"
 	// SurveyTemplateCategoriesTable is the table the holds the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesTable = "survey_template_categories"
 	// SurveyTemplateCategoriesInverseTable is the table name for the SurveyTemplateCategory entity.
@@ -64,11 +71,6 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
-	// FileCategoryTable is the table the holds the file_category relation/edge. The primary key declared below.
-	FileCategoryTable = "location_type_file_category"
-	// FileCategoryInverseTable is the table name for the FileCategoryType entity.
-	// It exists in this package in order to avoid circular dependency with the "filecategorytype" package.
-	FileCategoryInverseTable = "file_category_types"
 )
 
 // Columns holds all SQL columns for locationtype fields.
@@ -82,12 +84,6 @@ var Columns = []string{
 	FieldMapZoomLevel,
 	FieldIndex,
 }
-
-var (
-	// FileCategoryPrimaryKey and FileCategoryColumn2 are the table columns denoting the
-	// primary key for the file_category relation (M2M).
-	FileCategoryPrimaryKey = []string{"location_type_id", "file_category_type_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

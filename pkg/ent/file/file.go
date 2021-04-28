@@ -61,8 +61,6 @@ const (
 	EdgePhotoSurveyQuestion = "photo_survey_question"
 	// EdgeSurveyQuestion holds the string denoting the survey_question edge name in mutations.
 	EdgeSurveyQuestion = "survey_question"
-	// EdgeFileCategory holds the string denoting the file_category edge name in mutations.
-	EdgeFileCategory = "file_category"
 
 	// Table holds the table name of the file in the database.
 	Table = "files"
@@ -129,13 +127,6 @@ const (
 	SurveyQuestionInverseTable = "survey_questions"
 	// SurveyQuestionColumn is the table column denoting the survey_question relation/edge.
 	SurveyQuestionColumn = "survey_question_images"
-	// FileCategoryTable is the table the holds the file_category relation/edge.
-	FileCategoryTable = "files"
-	// FileCategoryInverseTable is the table name for the FileCategoryType entity.
-	// It exists in this package in order to avoid circular dependency with the "filecategorytype" package.
-	FileCategoryInverseTable = "file_category_types"
-	// FileCategoryColumn is the table column denoting the file_category relation/edge.
-	FileCategoryColumn = "file_category_type_files"
 )
 
 // Columns holds all SQL columns for file fields.
@@ -158,7 +149,6 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"check_list_item_files",
 	"equipment_files",
-	"file_category_type_files",
 	"floor_plan_image",
 	"location_files",
 	"survey_source_file",

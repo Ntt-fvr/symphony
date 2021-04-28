@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -342,25 +341,6 @@ func (fu *FileUpdate) SetSurveyQuestion(s *SurveyQuestion) *FileUpdate {
 	return fu.SetSurveyQuestionID(s.ID)
 }
 
-// SetFileCategoryID sets the file_category edge to FileCategoryType by id.
-func (fu *FileUpdate) SetFileCategoryID(id int) *FileUpdate {
-	fu.mutation.SetFileCategoryID(id)
-	return fu
-}
-
-// SetNillableFileCategoryID sets the file_category edge to FileCategoryType by id if the given value is not nil.
-func (fu *FileUpdate) SetNillableFileCategoryID(id *int) *FileUpdate {
-	if id != nil {
-		fu = fu.SetFileCategoryID(*id)
-	}
-	return fu
-}
-
-// SetFileCategory sets the file_category edge to FileCategoryType.
-func (fu *FileUpdate) SetFileCategory(f *FileCategoryType) *FileUpdate {
-	return fu.SetFileCategoryID(f.ID)
-}
-
 // Mutation returns the FileMutation object of the builder.
 func (fu *FileUpdate) Mutation() *FileMutation {
 	return fu.mutation
@@ -417,12 +397,6 @@ func (fu *FileUpdate) ClearPhotoSurveyQuestion() *FileUpdate {
 // ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (fu *FileUpdate) ClearSurveyQuestion() *FileUpdate {
 	fu.mutation.ClearSurveyQuestion()
-	return fu
-}
-
-// ClearFileCategory clears the "file_category" edge to type FileCategoryType.
-func (fu *FileUpdate) ClearFileCategory() *FileUpdate {
-	fu.mutation.ClearFileCategory()
 	return fu
 }
 
@@ -947,41 +921,6 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if fu.mutation.FileCategoryCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   file.FileCategoryTable,
-			Columns: []string{file.FileCategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.FileCategoryIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   file.FileCategoryTable,
-			Columns: []string{file.FileCategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{file.Label}
@@ -1302,25 +1241,6 @@ func (fuo *FileUpdateOne) SetSurveyQuestion(s *SurveyQuestion) *FileUpdateOne {
 	return fuo.SetSurveyQuestionID(s.ID)
 }
 
-// SetFileCategoryID sets the file_category edge to FileCategoryType by id.
-func (fuo *FileUpdateOne) SetFileCategoryID(id int) *FileUpdateOne {
-	fuo.mutation.SetFileCategoryID(id)
-	return fuo
-}
-
-// SetNillableFileCategoryID sets the file_category edge to FileCategoryType by id if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableFileCategoryID(id *int) *FileUpdateOne {
-	if id != nil {
-		fuo = fuo.SetFileCategoryID(*id)
-	}
-	return fuo
-}
-
-// SetFileCategory sets the file_category edge to FileCategoryType.
-func (fuo *FileUpdateOne) SetFileCategory(f *FileCategoryType) *FileUpdateOne {
-	return fuo.SetFileCategoryID(f.ID)
-}
-
 // Mutation returns the FileMutation object of the builder.
 func (fuo *FileUpdateOne) Mutation() *FileMutation {
 	return fuo.mutation
@@ -1377,12 +1297,6 @@ func (fuo *FileUpdateOne) ClearPhotoSurveyQuestion() *FileUpdateOne {
 // ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (fuo *FileUpdateOne) ClearSurveyQuestion() *FileUpdateOne {
 	fuo.mutation.ClearSurveyQuestion()
-	return fuo
-}
-
-// ClearFileCategory clears the "file_category" edge to type FileCategoryType.
-func (fuo *FileUpdateOne) ClearFileCategory() *FileUpdateOne {
-	fuo.mutation.ClearFileCategory()
 	return fuo
 }
 
@@ -1897,41 +1811,6 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveyquestion.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.FileCategoryCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   file.FileCategoryTable,
-			Columns: []string{file.FileCategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.FileCategoryIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   file.FileCategoryTable,
-			Columns: []string{file.FileCategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
 				},
 			},
 		}

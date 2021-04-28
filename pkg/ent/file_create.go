@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
@@ -324,25 +323,6 @@ func (fc *FileCreate) SetNillableSurveyQuestionID(id *int) *FileCreate {
 // SetSurveyQuestion sets the survey_question edge to SurveyQuestion.
 func (fc *FileCreate) SetSurveyQuestion(s *SurveyQuestion) *FileCreate {
 	return fc.SetSurveyQuestionID(s.ID)
-}
-
-// SetFileCategoryID sets the file_category edge to FileCategoryType by id.
-func (fc *FileCreate) SetFileCategoryID(id int) *FileCreate {
-	fc.mutation.SetFileCategoryID(id)
-	return fc
-}
-
-// SetNillableFileCategoryID sets the file_category edge to FileCategoryType by id if the given value is not nil.
-func (fc *FileCreate) SetNillableFileCategoryID(id *int) *FileCreate {
-	if id != nil {
-		fc = fc.SetFileCategoryID(*id)
-	}
-	return fc
-}
-
-// SetFileCategory sets the file_category edge to FileCategoryType.
-func (fc *FileCreate) SetFileCategory(f *FileCategoryType) *FileCreate {
-	return fc.SetFileCategoryID(f.ID)
 }
 
 // Mutation returns the FileMutation object of the builder.
@@ -715,25 +695,6 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveyquestion.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := fc.mutation.FileCategoryIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   file.FileCategoryTable,
-			Columns: []string{file.FileCategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
 				},
 			},
 		}

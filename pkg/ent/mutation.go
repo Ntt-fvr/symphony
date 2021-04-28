@@ -17369,8 +17369,6 @@ type FileMutation struct {
 	clearedphoto_survey_question bool
 	survey_question              *int
 	clearedsurvey_question       bool
-	file_category                *int
-	clearedfile_category         bool
 	done                         bool
 	oldValue                     func(context.Context) (*File, error)
 	predicates                   []predicate.File
@@ -18299,45 +18297,6 @@ func (m *FileMutation) ResetSurveyQuestion() {
 	m.clearedsurvey_question = false
 }
 
-// SetFileCategoryID sets the file_category edge to FileCategoryType by id.
-func (m *FileMutation) SetFileCategoryID(id int) {
-	m.file_category = &id
-}
-
-// ClearFileCategory clears the file_category edge to FileCategoryType.
-func (m *FileMutation) ClearFileCategory() {
-	m.clearedfile_category = true
-}
-
-// FileCategoryCleared returns if the edge file_category was cleared.
-func (m *FileMutation) FileCategoryCleared() bool {
-	return m.clearedfile_category
-}
-
-// FileCategoryID returns the file_category id in the mutation.
-func (m *FileMutation) FileCategoryID() (id int, exists bool) {
-	if m.file_category != nil {
-		return *m.file_category, true
-	}
-	return
-}
-
-// FileCategoryIDs returns the file_category ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// FileCategoryID instead. It exists only for internal usage by the builders.
-func (m *FileMutation) FileCategoryIDs() (ids []int) {
-	if id := m.file_category; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetFileCategory reset all changes of the "file_category" edge.
-func (m *FileMutation) ResetFileCategory() {
-	m.file_category = nil
-	m.clearedfile_category = false
-}
-
 // Op returns the operation name.
 func (m *FileMutation) Op() Op {
 	return m.op
@@ -18671,7 +18630,7 @@ func (m *FileMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 9)
 	if m.location != nil {
 		edges = append(edges, file.EdgeLocation)
 	}
@@ -18698,9 +18657,6 @@ func (m *FileMutation) AddedEdges() []string {
 	}
 	if m.survey_question != nil {
 		edges = append(edges, file.EdgeSurveyQuestion)
-	}
-	if m.file_category != nil {
-		edges = append(edges, file.EdgeFileCategory)
 	}
 	return edges
 }
@@ -18745,10 +18701,6 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 		if id := m.survey_question; id != nil {
 			return []ent.Value{*id}
 		}
-	case file.EdgeFileCategory:
-		if id := m.file_category; id != nil {
-			return []ent.Value{*id}
-		}
 	}
 	return nil
 }
@@ -18756,7 +18708,7 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 9)
 	return edges
 }
 
@@ -18771,7 +18723,7 @@ func (m *FileMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 9)
 	if m.clearedlocation {
 		edges = append(edges, file.EdgeLocation)
 	}
@@ -18799,9 +18751,6 @@ func (m *FileMutation) ClearedEdges() []string {
 	if m.clearedsurvey_question {
 		edges = append(edges, file.EdgeSurveyQuestion)
 	}
-	if m.clearedfile_category {
-		edges = append(edges, file.EdgeFileCategory)
-	}
 	return edges
 }
 
@@ -18827,8 +18776,6 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 		return m.clearedphoto_survey_question
 	case file.EdgeSurveyQuestion:
 		return m.clearedsurvey_question
-	case file.EdgeFileCategory:
-		return m.clearedfile_category
 	}
 	return false
 }
@@ -18863,9 +18810,6 @@ func (m *FileMutation) ClearEdge(name string) error {
 		return nil
 	case file.EdgeSurveyQuestion:
 		m.ClearSurveyQuestion()
-		return nil
-	case file.EdgeFileCategory:
-		m.ClearFileCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown File unique edge %s", name)
@@ -18903,9 +18847,6 @@ func (m *FileMutation) ResetEdge(name string) error {
 	case file.EdgeSurveyQuestion:
 		m.ResetSurveyQuestion()
 		return nil
-	case file.EdgeFileCategory:
-		m.ResetFileCategory()
-		return nil
 	}
 	return fmt.Errorf("unknown File edge %s", name)
 }
@@ -18914,21 +18855,42 @@ func (m *FileMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type FileCategoryTypeMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	create_time         *time.Time
-	update_time         *time.Time
-	clearedFields       map[string]struct{}
-	files               map[int]struct{}
-	removedfiles        map[int]struct{}
-	clearedfiles        bool
-	locationType        map[int]struct{}
-	removedlocationType map[int]struct{}
-	clearedlocationType bool
-	done                bool
-	oldValue            func(context.Context) (*FileCategoryType, error)
-	predicates          []predicate.FileCategoryType
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	_type                *filecategorytype.Type
+	name                 *string
+	external_id          *string
+	index                *int
+	addindex             *int
+	category             *string
+	int_val              *int
+	addint_val           *int
+	bool_val             *bool
+	float_val            *float64
+	addfloat_val         *float64
+	latitude_val         *float64
+	addlatitude_val      *float64
+	longitude_val        *float64
+	addlongitude_val     *float64
+	string_val           *string
+	range_from_val       *float64
+	addrange_from_val    *float64
+	range_to_val         *float64
+	addrange_to_val      *float64
+	is_instance_property *bool
+	editable             *bool
+	mandatory            *bool
+	deleted              *bool
+	nodeType             *string
+	clearedFields        map[string]struct{}
+	location_type        *int
+	clearedlocation_type bool
+	done                 bool
+	oldValue             func(context.Context) (*FileCategoryType, error)
+	predicates           []predicate.FileCategoryType
 }
 
 var _ ent.Mutation = (*FileCategoryTypeMutation)(nil)
@@ -19084,110 +19046,1012 @@ func (m *FileCategoryTypeMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
-// AddFileIDs adds the files edge to File by ids.
-func (m *FileCategoryTypeMutation) AddFileIDs(ids ...int) {
-	if m.files == nil {
-		m.files = make(map[int]struct{})
+// SetType sets the type field.
+func (m *FileCategoryTypeMutation) SetType(f filecategorytype.Type) {
+	m._type = &f
+}
+
+// GetType returns the type value in the mutation.
+func (m *FileCategoryTypeMutation) GetType() (r filecategorytype.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
 	}
-	for i := range ids {
-		m.files[ids[i]] = struct{}{}
+	return *v, true
+}
+
+// OldType returns the old type value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldType(ctx context.Context) (v filecategorytype.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType reset all changes of the "type" field.
+func (m *FileCategoryTypeMutation) ResetType() {
+	m._type = nil
+}
+
+// SetName sets the name field.
+func (m *FileCategoryTypeMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *FileCategoryTypeMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *FileCategoryTypeMutation) ResetName() {
+	m.name = nil
+}
+
+// SetExternalID sets the external_id field.
+func (m *FileCategoryTypeMutation) SetExternalID(s string) {
+	m.external_id = &s
+}
+
+// ExternalID returns the external_id value in the mutation.
+func (m *FileCategoryTypeMutation) ExternalID() (r string, exists bool) {
+	v := m.external_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalID returns the old external_id value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldExternalID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldExternalID is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldExternalID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalID: %w", err)
+	}
+	return oldValue.ExternalID, nil
+}
+
+// ClearExternalID clears the value of external_id.
+func (m *FileCategoryTypeMutation) ClearExternalID() {
+	m.external_id = nil
+	m.clearedFields[filecategorytype.FieldExternalID] = struct{}{}
+}
+
+// ExternalIDCleared returns if the field external_id was cleared in this mutation.
+func (m *FileCategoryTypeMutation) ExternalIDCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldExternalID]
+	return ok
+}
+
+// ResetExternalID reset all changes of the "external_id" field.
+func (m *FileCategoryTypeMutation) ResetExternalID() {
+	m.external_id = nil
+	delete(m.clearedFields, filecategorytype.FieldExternalID)
+}
+
+// SetIndex sets the index field.
+func (m *FileCategoryTypeMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *FileCategoryTypeMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *FileCategoryTypeMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
 	}
 }
 
-// ClearFiles clears the files edge to File.
-func (m *FileCategoryTypeMutation) ClearFiles() {
-	m.clearedfiles = true
-}
-
-// FilesCleared returns if the edge files was cleared.
-func (m *FileCategoryTypeMutation) FilesCleared() bool {
-	return m.clearedfiles
-}
-
-// RemoveFileIDs removes the files edge to File by ids.
-func (m *FileCategoryTypeMutation) RemoveFileIDs(ids ...int) {
-	if m.removedfiles == nil {
-		m.removedfiles = make(map[int]struct{})
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *FileCategoryTypeMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
 	}
-	for i := range ids {
-		m.removedfiles[ids[i]] = struct{}{}
+	return *v, true
+}
+
+// ClearIndex clears the value of index.
+func (m *FileCategoryTypeMutation) ClearIndex() {
+	m.index = nil
+	m.addindex = nil
+	m.clearedFields[filecategorytype.FieldIndex] = struct{}{}
+}
+
+// IndexCleared returns if the field index was cleared in this mutation.
+func (m *FileCategoryTypeMutation) IndexCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldIndex]
+	return ok
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *FileCategoryTypeMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+	delete(m.clearedFields, filecategorytype.FieldIndex)
+}
+
+// SetCategory sets the category field.
+func (m *FileCategoryTypeMutation) SetCategory(s string) {
+	m.category = &s
+}
+
+// Category returns the category value in the mutation.
+func (m *FileCategoryTypeMutation) Category() (r string, exists bool) {
+	v := m.category
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCategory returns the old category value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldCategory(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCategory is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCategory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCategory: %w", err)
+	}
+	return oldValue.Category, nil
+}
+
+// ClearCategory clears the value of category.
+func (m *FileCategoryTypeMutation) ClearCategory() {
+	m.category = nil
+	m.clearedFields[filecategorytype.FieldCategory] = struct{}{}
+}
+
+// CategoryCleared returns if the field category was cleared in this mutation.
+func (m *FileCategoryTypeMutation) CategoryCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldCategory]
+	return ok
+}
+
+// ResetCategory reset all changes of the "category" field.
+func (m *FileCategoryTypeMutation) ResetCategory() {
+	m.category = nil
+	delete(m.clearedFields, filecategorytype.FieldCategory)
+}
+
+// SetIntVal sets the int_val field.
+func (m *FileCategoryTypeMutation) SetIntVal(i int) {
+	m.int_val = &i
+	m.addint_val = nil
+}
+
+// IntVal returns the int_val value in the mutation.
+func (m *FileCategoryTypeMutation) IntVal() (r int, exists bool) {
+	v := m.int_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntVal returns the old int_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldIntVal(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIntVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIntVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntVal: %w", err)
+	}
+	return oldValue.IntVal, nil
+}
+
+// AddIntVal adds i to int_val.
+func (m *FileCategoryTypeMutation) AddIntVal(i int) {
+	if m.addint_val != nil {
+		*m.addint_val += i
+	} else {
+		m.addint_val = &i
 	}
 }
 
-// RemovedFiles returns the removed ids of files.
-func (m *FileCategoryTypeMutation) RemovedFilesIDs() (ids []int) {
-	for id := range m.removedfiles {
-		ids = append(ids, id)
+// AddedIntVal returns the value that was added to the int_val field in this mutation.
+func (m *FileCategoryTypeMutation) AddedIntVal() (r int, exists bool) {
+	v := m.addint_val
+	if v == nil {
+		return
 	}
-	return
+	return *v, true
 }
 
-// FilesIDs returns the files ids in the mutation.
-func (m *FileCategoryTypeMutation) FilesIDs() (ids []int) {
-	for id := range m.files {
-		ids = append(ids, id)
-	}
-	return
+// ClearIntVal clears the value of int_val.
+func (m *FileCategoryTypeMutation) ClearIntVal() {
+	m.int_val = nil
+	m.addint_val = nil
+	m.clearedFields[filecategorytype.FieldIntVal] = struct{}{}
 }
 
-// ResetFiles reset all changes of the "files" edge.
-func (m *FileCategoryTypeMutation) ResetFiles() {
-	m.files = nil
-	m.clearedfiles = false
-	m.removedfiles = nil
+// IntValCleared returns if the field int_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) IntValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldIntVal]
+	return ok
 }
 
-// AddLocationTypeIDs adds the locationType edge to LocationType by ids.
-func (m *FileCategoryTypeMutation) AddLocationTypeIDs(ids ...int) {
-	if m.locationType == nil {
-		m.locationType = make(map[int]struct{})
+// ResetIntVal reset all changes of the "int_val" field.
+func (m *FileCategoryTypeMutation) ResetIntVal() {
+	m.int_val = nil
+	m.addint_val = nil
+	delete(m.clearedFields, filecategorytype.FieldIntVal)
+}
+
+// SetBoolVal sets the bool_val field.
+func (m *FileCategoryTypeMutation) SetBoolVal(b bool) {
+	m.bool_val = &b
+}
+
+// BoolVal returns the bool_val value in the mutation.
+func (m *FileCategoryTypeMutation) BoolVal() (r bool, exists bool) {
+	v := m.bool_val
+	if v == nil {
+		return
 	}
-	for i := range ids {
-		m.locationType[ids[i]] = struct{}{}
+	return *v, true
+}
+
+// OldBoolVal returns the old bool_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldBoolVal(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBoolVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBoolVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBoolVal: %w", err)
+	}
+	return oldValue.BoolVal, nil
+}
+
+// ClearBoolVal clears the value of bool_val.
+func (m *FileCategoryTypeMutation) ClearBoolVal() {
+	m.bool_val = nil
+	m.clearedFields[filecategorytype.FieldBoolVal] = struct{}{}
+}
+
+// BoolValCleared returns if the field bool_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) BoolValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldBoolVal]
+	return ok
+}
+
+// ResetBoolVal reset all changes of the "bool_val" field.
+func (m *FileCategoryTypeMutation) ResetBoolVal() {
+	m.bool_val = nil
+	delete(m.clearedFields, filecategorytype.FieldBoolVal)
+}
+
+// SetFloatVal sets the float_val field.
+func (m *FileCategoryTypeMutation) SetFloatVal(f float64) {
+	m.float_val = &f
+	m.addfloat_val = nil
+}
+
+// FloatVal returns the float_val value in the mutation.
+func (m *FileCategoryTypeMutation) FloatVal() (r float64, exists bool) {
+	v := m.float_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFloatVal returns the old float_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldFloatVal(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFloatVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFloatVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFloatVal: %w", err)
+	}
+	return oldValue.FloatVal, nil
+}
+
+// AddFloatVal adds f to float_val.
+func (m *FileCategoryTypeMutation) AddFloatVal(f float64) {
+	if m.addfloat_val != nil {
+		*m.addfloat_val += f
+	} else {
+		m.addfloat_val = &f
 	}
 }
 
-// ClearLocationType clears the locationType edge to LocationType.
+// AddedFloatVal returns the value that was added to the float_val field in this mutation.
+func (m *FileCategoryTypeMutation) AddedFloatVal() (r float64, exists bool) {
+	v := m.addfloat_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearFloatVal clears the value of float_val.
+func (m *FileCategoryTypeMutation) ClearFloatVal() {
+	m.float_val = nil
+	m.addfloat_val = nil
+	m.clearedFields[filecategorytype.FieldFloatVal] = struct{}{}
+}
+
+// FloatValCleared returns if the field float_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) FloatValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldFloatVal]
+	return ok
+}
+
+// ResetFloatVal reset all changes of the "float_val" field.
+func (m *FileCategoryTypeMutation) ResetFloatVal() {
+	m.float_val = nil
+	m.addfloat_val = nil
+	delete(m.clearedFields, filecategorytype.FieldFloatVal)
+}
+
+// SetLatitudeVal sets the latitude_val field.
+func (m *FileCategoryTypeMutation) SetLatitudeVal(f float64) {
+	m.latitude_val = &f
+	m.addlatitude_val = nil
+}
+
+// LatitudeVal returns the latitude_val value in the mutation.
+func (m *FileCategoryTypeMutation) LatitudeVal() (r float64, exists bool) {
+	v := m.latitude_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLatitudeVal returns the old latitude_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldLatitudeVal(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLatitudeVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLatitudeVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLatitudeVal: %w", err)
+	}
+	return oldValue.LatitudeVal, nil
+}
+
+// AddLatitudeVal adds f to latitude_val.
+func (m *FileCategoryTypeMutation) AddLatitudeVal(f float64) {
+	if m.addlatitude_val != nil {
+		*m.addlatitude_val += f
+	} else {
+		m.addlatitude_val = &f
+	}
+}
+
+// AddedLatitudeVal returns the value that was added to the latitude_val field in this mutation.
+func (m *FileCategoryTypeMutation) AddedLatitudeVal() (r float64, exists bool) {
+	v := m.addlatitude_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLatitudeVal clears the value of latitude_val.
+func (m *FileCategoryTypeMutation) ClearLatitudeVal() {
+	m.latitude_val = nil
+	m.addlatitude_val = nil
+	m.clearedFields[filecategorytype.FieldLatitudeVal] = struct{}{}
+}
+
+// LatitudeValCleared returns if the field latitude_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) LatitudeValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldLatitudeVal]
+	return ok
+}
+
+// ResetLatitudeVal reset all changes of the "latitude_val" field.
+func (m *FileCategoryTypeMutation) ResetLatitudeVal() {
+	m.latitude_val = nil
+	m.addlatitude_val = nil
+	delete(m.clearedFields, filecategorytype.FieldLatitudeVal)
+}
+
+// SetLongitudeVal sets the longitude_val field.
+func (m *FileCategoryTypeMutation) SetLongitudeVal(f float64) {
+	m.longitude_val = &f
+	m.addlongitude_val = nil
+}
+
+// LongitudeVal returns the longitude_val value in the mutation.
+func (m *FileCategoryTypeMutation) LongitudeVal() (r float64, exists bool) {
+	v := m.longitude_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLongitudeVal returns the old longitude_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldLongitudeVal(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLongitudeVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLongitudeVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLongitudeVal: %w", err)
+	}
+	return oldValue.LongitudeVal, nil
+}
+
+// AddLongitudeVal adds f to longitude_val.
+func (m *FileCategoryTypeMutation) AddLongitudeVal(f float64) {
+	if m.addlongitude_val != nil {
+		*m.addlongitude_val += f
+	} else {
+		m.addlongitude_val = &f
+	}
+}
+
+// AddedLongitudeVal returns the value that was added to the longitude_val field in this mutation.
+func (m *FileCategoryTypeMutation) AddedLongitudeVal() (r float64, exists bool) {
+	v := m.addlongitude_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLongitudeVal clears the value of longitude_val.
+func (m *FileCategoryTypeMutation) ClearLongitudeVal() {
+	m.longitude_val = nil
+	m.addlongitude_val = nil
+	m.clearedFields[filecategorytype.FieldLongitudeVal] = struct{}{}
+}
+
+// LongitudeValCleared returns if the field longitude_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) LongitudeValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldLongitudeVal]
+	return ok
+}
+
+// ResetLongitudeVal reset all changes of the "longitude_val" field.
+func (m *FileCategoryTypeMutation) ResetLongitudeVal() {
+	m.longitude_val = nil
+	m.addlongitude_val = nil
+	delete(m.clearedFields, filecategorytype.FieldLongitudeVal)
+}
+
+// SetStringVal sets the string_val field.
+func (m *FileCategoryTypeMutation) SetStringVal(s string) {
+	m.string_val = &s
+}
+
+// StringVal returns the string_val value in the mutation.
+func (m *FileCategoryTypeMutation) StringVal() (r string, exists bool) {
+	v := m.string_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStringVal returns the old string_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldStringVal(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStringVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStringVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStringVal: %w", err)
+	}
+	return oldValue.StringVal, nil
+}
+
+// ClearStringVal clears the value of string_val.
+func (m *FileCategoryTypeMutation) ClearStringVal() {
+	m.string_val = nil
+	m.clearedFields[filecategorytype.FieldStringVal] = struct{}{}
+}
+
+// StringValCleared returns if the field string_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) StringValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldStringVal]
+	return ok
+}
+
+// ResetStringVal reset all changes of the "string_val" field.
+func (m *FileCategoryTypeMutation) ResetStringVal() {
+	m.string_val = nil
+	delete(m.clearedFields, filecategorytype.FieldStringVal)
+}
+
+// SetRangeFromVal sets the range_from_val field.
+func (m *FileCategoryTypeMutation) SetRangeFromVal(f float64) {
+	m.range_from_val = &f
+	m.addrange_from_val = nil
+}
+
+// RangeFromVal returns the range_from_val value in the mutation.
+func (m *FileCategoryTypeMutation) RangeFromVal() (r float64, exists bool) {
+	v := m.range_from_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRangeFromVal returns the old range_from_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldRangeFromVal(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRangeFromVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRangeFromVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRangeFromVal: %w", err)
+	}
+	return oldValue.RangeFromVal, nil
+}
+
+// AddRangeFromVal adds f to range_from_val.
+func (m *FileCategoryTypeMutation) AddRangeFromVal(f float64) {
+	if m.addrange_from_val != nil {
+		*m.addrange_from_val += f
+	} else {
+		m.addrange_from_val = &f
+	}
+}
+
+// AddedRangeFromVal returns the value that was added to the range_from_val field in this mutation.
+func (m *FileCategoryTypeMutation) AddedRangeFromVal() (r float64, exists bool) {
+	v := m.addrange_from_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRangeFromVal clears the value of range_from_val.
+func (m *FileCategoryTypeMutation) ClearRangeFromVal() {
+	m.range_from_val = nil
+	m.addrange_from_val = nil
+	m.clearedFields[filecategorytype.FieldRangeFromVal] = struct{}{}
+}
+
+// RangeFromValCleared returns if the field range_from_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) RangeFromValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldRangeFromVal]
+	return ok
+}
+
+// ResetRangeFromVal reset all changes of the "range_from_val" field.
+func (m *FileCategoryTypeMutation) ResetRangeFromVal() {
+	m.range_from_val = nil
+	m.addrange_from_val = nil
+	delete(m.clearedFields, filecategorytype.FieldRangeFromVal)
+}
+
+// SetRangeToVal sets the range_to_val field.
+func (m *FileCategoryTypeMutation) SetRangeToVal(f float64) {
+	m.range_to_val = &f
+	m.addrange_to_val = nil
+}
+
+// RangeToVal returns the range_to_val value in the mutation.
+func (m *FileCategoryTypeMutation) RangeToVal() (r float64, exists bool) {
+	v := m.range_to_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRangeToVal returns the old range_to_val value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldRangeToVal(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRangeToVal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRangeToVal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRangeToVal: %w", err)
+	}
+	return oldValue.RangeToVal, nil
+}
+
+// AddRangeToVal adds f to range_to_val.
+func (m *FileCategoryTypeMutation) AddRangeToVal(f float64) {
+	if m.addrange_to_val != nil {
+		*m.addrange_to_val += f
+	} else {
+		m.addrange_to_val = &f
+	}
+}
+
+// AddedRangeToVal returns the value that was added to the range_to_val field in this mutation.
+func (m *FileCategoryTypeMutation) AddedRangeToVal() (r float64, exists bool) {
+	v := m.addrange_to_val
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRangeToVal clears the value of range_to_val.
+func (m *FileCategoryTypeMutation) ClearRangeToVal() {
+	m.range_to_val = nil
+	m.addrange_to_val = nil
+	m.clearedFields[filecategorytype.FieldRangeToVal] = struct{}{}
+}
+
+// RangeToValCleared returns if the field range_to_val was cleared in this mutation.
+func (m *FileCategoryTypeMutation) RangeToValCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldRangeToVal]
+	return ok
+}
+
+// ResetRangeToVal reset all changes of the "range_to_val" field.
+func (m *FileCategoryTypeMutation) ResetRangeToVal() {
+	m.range_to_val = nil
+	m.addrange_to_val = nil
+	delete(m.clearedFields, filecategorytype.FieldRangeToVal)
+}
+
+// SetIsInstanceProperty sets the is_instance_property field.
+func (m *FileCategoryTypeMutation) SetIsInstanceProperty(b bool) {
+	m.is_instance_property = &b
+}
+
+// IsInstanceProperty returns the is_instance_property value in the mutation.
+func (m *FileCategoryTypeMutation) IsInstanceProperty() (r bool, exists bool) {
+	v := m.is_instance_property
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsInstanceProperty returns the old is_instance_property value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldIsInstanceProperty(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIsInstanceProperty is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIsInstanceProperty requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsInstanceProperty: %w", err)
+	}
+	return oldValue.IsInstanceProperty, nil
+}
+
+// ResetIsInstanceProperty reset all changes of the "is_instance_property" field.
+func (m *FileCategoryTypeMutation) ResetIsInstanceProperty() {
+	m.is_instance_property = nil
+}
+
+// SetEditable sets the editable field.
+func (m *FileCategoryTypeMutation) SetEditable(b bool) {
+	m.editable = &b
+}
+
+// Editable returns the editable value in the mutation.
+func (m *FileCategoryTypeMutation) Editable() (r bool, exists bool) {
+	v := m.editable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEditable returns the old editable value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldEditable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEditable is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEditable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEditable: %w", err)
+	}
+	return oldValue.Editable, nil
+}
+
+// ResetEditable reset all changes of the "editable" field.
+func (m *FileCategoryTypeMutation) ResetEditable() {
+	m.editable = nil
+}
+
+// SetMandatory sets the mandatory field.
+func (m *FileCategoryTypeMutation) SetMandatory(b bool) {
+	m.mandatory = &b
+}
+
+// Mandatory returns the mandatory value in the mutation.
+func (m *FileCategoryTypeMutation) Mandatory() (r bool, exists bool) {
+	v := m.mandatory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMandatory returns the old mandatory value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldMandatory(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldMandatory is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldMandatory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMandatory: %w", err)
+	}
+	return oldValue.Mandatory, nil
+}
+
+// ResetMandatory reset all changes of the "mandatory" field.
+func (m *FileCategoryTypeMutation) ResetMandatory() {
+	m.mandatory = nil
+}
+
+// SetDeleted sets the deleted field.
+func (m *FileCategoryTypeMutation) SetDeleted(b bool) {
+	m.deleted = &b
+}
+
+// Deleted returns the deleted value in the mutation.
+func (m *FileCategoryTypeMutation) Deleted() (r bool, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old deleted value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldDeleted(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDeleted is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// ResetDeleted reset all changes of the "deleted" field.
+func (m *FileCategoryTypeMutation) ResetDeleted() {
+	m.deleted = nil
+}
+
+// SetNodeType sets the nodeType field.
+func (m *FileCategoryTypeMutation) SetNodeType(s string) {
+	m.nodeType = &s
+}
+
+// NodeType returns the nodeType value in the mutation.
+func (m *FileCategoryTypeMutation) NodeType() (r string, exists bool) {
+	v := m.nodeType
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNodeType returns the old nodeType value of the FileCategoryType.
+// If the FileCategoryType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FileCategoryTypeMutation) OldNodeType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldNodeType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldNodeType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNodeType: %w", err)
+	}
+	return oldValue.NodeType, nil
+}
+
+// ClearNodeType clears the value of nodeType.
+func (m *FileCategoryTypeMutation) ClearNodeType() {
+	m.nodeType = nil
+	m.clearedFields[filecategorytype.FieldNodeType] = struct{}{}
+}
+
+// NodeTypeCleared returns if the field nodeType was cleared in this mutation.
+func (m *FileCategoryTypeMutation) NodeTypeCleared() bool {
+	_, ok := m.clearedFields[filecategorytype.FieldNodeType]
+	return ok
+}
+
+// ResetNodeType reset all changes of the "nodeType" field.
+func (m *FileCategoryTypeMutation) ResetNodeType() {
+	m.nodeType = nil
+	delete(m.clearedFields, filecategorytype.FieldNodeType)
+}
+
+// SetLocationTypeID sets the location_type edge to LocationType by id.
+func (m *FileCategoryTypeMutation) SetLocationTypeID(id int) {
+	m.location_type = &id
+}
+
+// ClearLocationType clears the location_type edge to LocationType.
 func (m *FileCategoryTypeMutation) ClearLocationType() {
-	m.clearedlocationType = true
+	m.clearedlocation_type = true
 }
 
-// LocationTypeCleared returns if the edge locationType was cleared.
+// LocationTypeCleared returns if the edge location_type was cleared.
 func (m *FileCategoryTypeMutation) LocationTypeCleared() bool {
-	return m.clearedlocationType
+	return m.clearedlocation_type
 }
 
-// RemoveLocationTypeIDs removes the locationType edge to LocationType by ids.
-func (m *FileCategoryTypeMutation) RemoveLocationTypeIDs(ids ...int) {
-	if m.removedlocationType == nil {
-		m.removedlocationType = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedlocationType[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedLocationType returns the removed ids of locationType.
-func (m *FileCategoryTypeMutation) RemovedLocationTypeIDs() (ids []int) {
-	for id := range m.removedlocationType {
-		ids = append(ids, id)
+// LocationTypeID returns the location_type id in the mutation.
+func (m *FileCategoryTypeMutation) LocationTypeID() (id int, exists bool) {
+	if m.location_type != nil {
+		return *m.location_type, true
 	}
 	return
 }
 
-// LocationTypeIDs returns the locationType ids in the mutation.
+// LocationTypeIDs returns the location_type ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// LocationTypeID instead. It exists only for internal usage by the builders.
 func (m *FileCategoryTypeMutation) LocationTypeIDs() (ids []int) {
-	for id := range m.locationType {
-		ids = append(ids, id)
+	if id := m.location_type; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetLocationType reset all changes of the "locationType" edge.
+// ResetLocationType reset all changes of the "location_type" edge.
 func (m *FileCategoryTypeMutation) ResetLocationType() {
-	m.locationType = nil
-	m.clearedlocationType = false
-	m.removedlocationType = nil
+	m.location_type = nil
+	m.clearedlocation_type = false
 }
 
 // Op returns the operation name.
@@ -19204,12 +20068,66 @@ func (m *FileCategoryTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FileCategoryTypeMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 20)
 	if m.create_time != nil {
 		fields = append(fields, filecategorytype.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, filecategorytype.FieldUpdateTime)
+	}
+	if m._type != nil {
+		fields = append(fields, filecategorytype.FieldType)
+	}
+	if m.name != nil {
+		fields = append(fields, filecategorytype.FieldName)
+	}
+	if m.external_id != nil {
+		fields = append(fields, filecategorytype.FieldExternalID)
+	}
+	if m.index != nil {
+		fields = append(fields, filecategorytype.FieldIndex)
+	}
+	if m.category != nil {
+		fields = append(fields, filecategorytype.FieldCategory)
+	}
+	if m.int_val != nil {
+		fields = append(fields, filecategorytype.FieldIntVal)
+	}
+	if m.bool_val != nil {
+		fields = append(fields, filecategorytype.FieldBoolVal)
+	}
+	if m.float_val != nil {
+		fields = append(fields, filecategorytype.FieldFloatVal)
+	}
+	if m.latitude_val != nil {
+		fields = append(fields, filecategorytype.FieldLatitudeVal)
+	}
+	if m.longitude_val != nil {
+		fields = append(fields, filecategorytype.FieldLongitudeVal)
+	}
+	if m.string_val != nil {
+		fields = append(fields, filecategorytype.FieldStringVal)
+	}
+	if m.range_from_val != nil {
+		fields = append(fields, filecategorytype.FieldRangeFromVal)
+	}
+	if m.range_to_val != nil {
+		fields = append(fields, filecategorytype.FieldRangeToVal)
+	}
+	if m.is_instance_property != nil {
+		fields = append(fields, filecategorytype.FieldIsInstanceProperty)
+	}
+	if m.editable != nil {
+		fields = append(fields, filecategorytype.FieldEditable)
+	}
+	if m.mandatory != nil {
+		fields = append(fields, filecategorytype.FieldMandatory)
+	}
+	if m.deleted != nil {
+		fields = append(fields, filecategorytype.FieldDeleted)
+	}
+	if m.nodeType != nil {
+		fields = append(fields, filecategorytype.FieldNodeType)
 	}
 	return fields
 }
@@ -19223,6 +20141,42 @@ func (m *FileCategoryTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case filecategorytype.FieldUpdateTime:
 		return m.UpdateTime()
+	case filecategorytype.FieldType:
+		return m.GetType()
+	case filecategorytype.FieldName:
+		return m.Name()
+	case filecategorytype.FieldExternalID:
+		return m.ExternalID()
+	case filecategorytype.FieldIndex:
+		return m.Index()
+	case filecategorytype.FieldCategory:
+		return m.Category()
+	case filecategorytype.FieldIntVal:
+		return m.IntVal()
+	case filecategorytype.FieldBoolVal:
+		return m.BoolVal()
+	case filecategorytype.FieldFloatVal:
+		return m.FloatVal()
+	case filecategorytype.FieldLatitudeVal:
+		return m.LatitudeVal()
+	case filecategorytype.FieldLongitudeVal:
+		return m.LongitudeVal()
+	case filecategorytype.FieldStringVal:
+		return m.StringVal()
+	case filecategorytype.FieldRangeFromVal:
+		return m.RangeFromVal()
+	case filecategorytype.FieldRangeToVal:
+		return m.RangeToVal()
+	case filecategorytype.FieldIsInstanceProperty:
+		return m.IsInstanceProperty()
+	case filecategorytype.FieldEditable:
+		return m.Editable()
+	case filecategorytype.FieldMandatory:
+		return m.Mandatory()
+	case filecategorytype.FieldDeleted:
+		return m.Deleted()
+	case filecategorytype.FieldNodeType:
+		return m.NodeType()
 	}
 	return nil, false
 }
@@ -19236,6 +20190,42 @@ func (m *FileCategoryTypeMutation) OldField(ctx context.Context, name string) (e
 		return m.OldCreateTime(ctx)
 	case filecategorytype.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
+	case filecategorytype.FieldType:
+		return m.OldType(ctx)
+	case filecategorytype.FieldName:
+		return m.OldName(ctx)
+	case filecategorytype.FieldExternalID:
+		return m.OldExternalID(ctx)
+	case filecategorytype.FieldIndex:
+		return m.OldIndex(ctx)
+	case filecategorytype.FieldCategory:
+		return m.OldCategory(ctx)
+	case filecategorytype.FieldIntVal:
+		return m.OldIntVal(ctx)
+	case filecategorytype.FieldBoolVal:
+		return m.OldBoolVal(ctx)
+	case filecategorytype.FieldFloatVal:
+		return m.OldFloatVal(ctx)
+	case filecategorytype.FieldLatitudeVal:
+		return m.OldLatitudeVal(ctx)
+	case filecategorytype.FieldLongitudeVal:
+		return m.OldLongitudeVal(ctx)
+	case filecategorytype.FieldStringVal:
+		return m.OldStringVal(ctx)
+	case filecategorytype.FieldRangeFromVal:
+		return m.OldRangeFromVal(ctx)
+	case filecategorytype.FieldRangeToVal:
+		return m.OldRangeToVal(ctx)
+	case filecategorytype.FieldIsInstanceProperty:
+		return m.OldIsInstanceProperty(ctx)
+	case filecategorytype.FieldEditable:
+		return m.OldEditable(ctx)
+	case filecategorytype.FieldMandatory:
+		return m.OldMandatory(ctx)
+	case filecategorytype.FieldDeleted:
+		return m.OldDeleted(ctx)
+	case filecategorytype.FieldNodeType:
+		return m.OldNodeType(ctx)
 	}
 	return nil, fmt.Errorf("unknown FileCategoryType field %s", name)
 }
@@ -19259,6 +20249,132 @@ func (m *FileCategoryTypeMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetUpdateTime(v)
 		return nil
+	case filecategorytype.FieldType:
+		v, ok := value.(filecategorytype.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case filecategorytype.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case filecategorytype.FieldExternalID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalID(v)
+		return nil
+	case filecategorytype.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	case filecategorytype.FieldCategory:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCategory(v)
+		return nil
+	case filecategorytype.FieldIntVal:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntVal(v)
+		return nil
+	case filecategorytype.FieldBoolVal:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBoolVal(v)
+		return nil
+	case filecategorytype.FieldFloatVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFloatVal(v)
+		return nil
+	case filecategorytype.FieldLatitudeVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLatitudeVal(v)
+		return nil
+	case filecategorytype.FieldLongitudeVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLongitudeVal(v)
+		return nil
+	case filecategorytype.FieldStringVal:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStringVal(v)
+		return nil
+	case filecategorytype.FieldRangeFromVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRangeFromVal(v)
+		return nil
+	case filecategorytype.FieldRangeToVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRangeToVal(v)
+		return nil
+	case filecategorytype.FieldIsInstanceProperty:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsInstanceProperty(v)
+		return nil
+	case filecategorytype.FieldEditable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEditable(v)
+		return nil
+	case filecategorytype.FieldMandatory:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMandatory(v)
+		return nil
+	case filecategorytype.FieldDeleted:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
+	case filecategorytype.FieldNodeType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNodeType(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FileCategoryType field %s", name)
 }
@@ -19266,13 +20382,51 @@ func (m *FileCategoryTypeMutation) SetField(name string, value ent.Value) error 
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *FileCategoryTypeMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, filecategorytype.FieldIndex)
+	}
+	if m.addint_val != nil {
+		fields = append(fields, filecategorytype.FieldIntVal)
+	}
+	if m.addfloat_val != nil {
+		fields = append(fields, filecategorytype.FieldFloatVal)
+	}
+	if m.addlatitude_val != nil {
+		fields = append(fields, filecategorytype.FieldLatitudeVal)
+	}
+	if m.addlongitude_val != nil {
+		fields = append(fields, filecategorytype.FieldLongitudeVal)
+	}
+	if m.addrange_from_val != nil {
+		fields = append(fields, filecategorytype.FieldRangeFromVal)
+	}
+	if m.addrange_to_val != nil {
+		fields = append(fields, filecategorytype.FieldRangeToVal)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *FileCategoryTypeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case filecategorytype.FieldIndex:
+		return m.AddedIndex()
+	case filecategorytype.FieldIntVal:
+		return m.AddedIntVal()
+	case filecategorytype.FieldFloatVal:
+		return m.AddedFloatVal()
+	case filecategorytype.FieldLatitudeVal:
+		return m.AddedLatitudeVal()
+	case filecategorytype.FieldLongitudeVal:
+		return m.AddedLongitudeVal()
+	case filecategorytype.FieldRangeFromVal:
+		return m.AddedRangeFromVal()
+	case filecategorytype.FieldRangeToVal:
+		return m.AddedRangeToVal()
+	}
 	return nil, false
 }
 
@@ -19281,6 +20435,55 @@ func (m *FileCategoryTypeMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *FileCategoryTypeMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case filecategorytype.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	case filecategorytype.FieldIntVal:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIntVal(v)
+		return nil
+	case filecategorytype.FieldFloatVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFloatVal(v)
+		return nil
+	case filecategorytype.FieldLatitudeVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLatitudeVal(v)
+		return nil
+	case filecategorytype.FieldLongitudeVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLongitudeVal(v)
+		return nil
+	case filecategorytype.FieldRangeFromVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRangeFromVal(v)
+		return nil
+	case filecategorytype.FieldRangeToVal:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRangeToVal(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FileCategoryType numeric field %s", name)
 }
@@ -19288,7 +20491,44 @@ func (m *FileCategoryTypeMutation) AddField(name string, value ent.Value) error 
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *FileCategoryTypeMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(filecategorytype.FieldExternalID) {
+		fields = append(fields, filecategorytype.FieldExternalID)
+	}
+	if m.FieldCleared(filecategorytype.FieldIndex) {
+		fields = append(fields, filecategorytype.FieldIndex)
+	}
+	if m.FieldCleared(filecategorytype.FieldCategory) {
+		fields = append(fields, filecategorytype.FieldCategory)
+	}
+	if m.FieldCleared(filecategorytype.FieldIntVal) {
+		fields = append(fields, filecategorytype.FieldIntVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldBoolVal) {
+		fields = append(fields, filecategorytype.FieldBoolVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldFloatVal) {
+		fields = append(fields, filecategorytype.FieldFloatVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldLatitudeVal) {
+		fields = append(fields, filecategorytype.FieldLatitudeVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldLongitudeVal) {
+		fields = append(fields, filecategorytype.FieldLongitudeVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldStringVal) {
+		fields = append(fields, filecategorytype.FieldStringVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldRangeFromVal) {
+		fields = append(fields, filecategorytype.FieldRangeFromVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldRangeToVal) {
+		fields = append(fields, filecategorytype.FieldRangeToVal)
+	}
+	if m.FieldCleared(filecategorytype.FieldNodeType) {
+		fields = append(fields, filecategorytype.FieldNodeType)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -19301,6 +20541,44 @@ func (m *FileCategoryTypeMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *FileCategoryTypeMutation) ClearField(name string) error {
+	switch name {
+	case filecategorytype.FieldExternalID:
+		m.ClearExternalID()
+		return nil
+	case filecategorytype.FieldIndex:
+		m.ClearIndex()
+		return nil
+	case filecategorytype.FieldCategory:
+		m.ClearCategory()
+		return nil
+	case filecategorytype.FieldIntVal:
+		m.ClearIntVal()
+		return nil
+	case filecategorytype.FieldBoolVal:
+		m.ClearBoolVal()
+		return nil
+	case filecategorytype.FieldFloatVal:
+		m.ClearFloatVal()
+		return nil
+	case filecategorytype.FieldLatitudeVal:
+		m.ClearLatitudeVal()
+		return nil
+	case filecategorytype.FieldLongitudeVal:
+		m.ClearLongitudeVal()
+		return nil
+	case filecategorytype.FieldStringVal:
+		m.ClearStringVal()
+		return nil
+	case filecategorytype.FieldRangeFromVal:
+		m.ClearRangeFromVal()
+		return nil
+	case filecategorytype.FieldRangeToVal:
+		m.ClearRangeToVal()
+		return nil
+	case filecategorytype.FieldNodeType:
+		m.ClearNodeType()
+		return nil
+	}
 	return fmt.Errorf("unknown FileCategoryType nullable field %s", name)
 }
 
@@ -19315,6 +20593,60 @@ func (m *FileCategoryTypeMutation) ResetField(name string) error {
 	case filecategorytype.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
+	case filecategorytype.FieldType:
+		m.ResetType()
+		return nil
+	case filecategorytype.FieldName:
+		m.ResetName()
+		return nil
+	case filecategorytype.FieldExternalID:
+		m.ResetExternalID()
+		return nil
+	case filecategorytype.FieldIndex:
+		m.ResetIndex()
+		return nil
+	case filecategorytype.FieldCategory:
+		m.ResetCategory()
+		return nil
+	case filecategorytype.FieldIntVal:
+		m.ResetIntVal()
+		return nil
+	case filecategorytype.FieldBoolVal:
+		m.ResetBoolVal()
+		return nil
+	case filecategorytype.FieldFloatVal:
+		m.ResetFloatVal()
+		return nil
+	case filecategorytype.FieldLatitudeVal:
+		m.ResetLatitudeVal()
+		return nil
+	case filecategorytype.FieldLongitudeVal:
+		m.ResetLongitudeVal()
+		return nil
+	case filecategorytype.FieldStringVal:
+		m.ResetStringVal()
+		return nil
+	case filecategorytype.FieldRangeFromVal:
+		m.ResetRangeFromVal()
+		return nil
+	case filecategorytype.FieldRangeToVal:
+		m.ResetRangeToVal()
+		return nil
+	case filecategorytype.FieldIsInstanceProperty:
+		m.ResetIsInstanceProperty()
+		return nil
+	case filecategorytype.FieldEditable:
+		m.ResetEditable()
+		return nil
+	case filecategorytype.FieldMandatory:
+		m.ResetMandatory()
+		return nil
+	case filecategorytype.FieldDeleted:
+		m.ResetDeleted()
+		return nil
+	case filecategorytype.FieldNodeType:
+		m.ResetNodeType()
+		return nil
 	}
 	return fmt.Errorf("unknown FileCategoryType field %s", name)
 }
@@ -19322,11 +20654,8 @@ func (m *FileCategoryTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FileCategoryTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.files != nil {
-		edges = append(edges, filecategorytype.EdgeFiles)
-	}
-	if m.locationType != nil {
+	edges := make([]string, 0, 1)
+	if m.location_type != nil {
 		edges = append(edges, filecategorytype.EdgeLocationType)
 	}
 	return edges
@@ -19336,18 +20665,10 @@ func (m *FileCategoryTypeMutation) AddedEdges() []string {
 // the given edge name.
 func (m *FileCategoryTypeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case filecategorytype.EdgeFiles:
-		ids := make([]ent.Value, 0, len(m.files))
-		for id := range m.files {
-			ids = append(ids, id)
-		}
-		return ids
 	case filecategorytype.EdgeLocationType:
-		ids := make([]ent.Value, 0, len(m.locationType))
-		for id := range m.locationType {
-			ids = append(ids, id)
+		if id := m.location_type; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -19355,13 +20676,7 @@ func (m *FileCategoryTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FileCategoryTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedfiles != nil {
-		edges = append(edges, filecategorytype.EdgeFiles)
-	}
-	if m.removedlocationType != nil {
-		edges = append(edges, filecategorytype.EdgeLocationType)
-	}
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -19369,18 +20684,6 @@ func (m *FileCategoryTypeMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *FileCategoryTypeMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case filecategorytype.EdgeFiles:
-		ids := make([]ent.Value, 0, len(m.removedfiles))
-		for id := range m.removedfiles {
-			ids = append(ids, id)
-		}
-		return ids
-	case filecategorytype.EdgeLocationType:
-		ids := make([]ent.Value, 0, len(m.removedlocationType))
-		for id := range m.removedlocationType {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
@@ -19388,11 +20691,8 @@ func (m *FileCategoryTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FileCategoryTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedfiles {
-		edges = append(edges, filecategorytype.EdgeFiles)
-	}
-	if m.clearedlocationType {
+	edges := make([]string, 0, 1)
+	if m.clearedlocation_type {
 		edges = append(edges, filecategorytype.EdgeLocationType)
 	}
 	return edges
@@ -19402,10 +20702,8 @@ func (m *FileCategoryTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *FileCategoryTypeMutation) EdgeCleared(name string) bool {
 	switch name {
-	case filecategorytype.EdgeFiles:
-		return m.clearedfiles
 	case filecategorytype.EdgeLocationType:
-		return m.clearedlocationType
+		return m.clearedlocation_type
 	}
 	return false
 }
@@ -19414,6 +20712,9 @@ func (m *FileCategoryTypeMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *FileCategoryTypeMutation) ClearEdge(name string) error {
 	switch name {
+	case filecategorytype.EdgeLocationType:
+		m.ClearLocationType()
+		return nil
 	}
 	return fmt.Errorf("unknown FileCategoryType unique edge %s", name)
 }
@@ -19423,9 +20724,6 @@ func (m *FileCategoryTypeMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *FileCategoryTypeMutation) ResetEdge(name string) error {
 	switch name {
-	case filecategorytype.EdgeFiles:
-		m.ResetFiles()
-		return nil
 	case filecategorytype.EdgeLocationType:
 		m.ResetLocationType()
 		return nil
@@ -27815,12 +29113,12 @@ type LocationTypeMutation struct {
 	property_types                    map[int]struct{}
 	removedproperty_types             map[int]struct{}
 	clearedproperty_types             bool
+	file_category_type                map[int]struct{}
+	removedfile_category_type         map[int]struct{}
+	clearedfile_category_type         bool
 	survey_template_categories        map[int]struct{}
 	removedsurvey_template_categories map[int]struct{}
 	clearedsurvey_template_categories bool
-	file_category                     map[int]struct{}
-	removedfile_category              map[int]struct{}
-	clearedfile_category              bool
 	done                              bool
 	oldValue                          func(context.Context) (*LocationType, error)
 	predicates                        []predicate.LocationType
@@ -28337,6 +29635,59 @@ func (m *LocationTypeMutation) ResetPropertyTypes() {
 	m.removedproperty_types = nil
 }
 
+// AddFileCategoryTypeIDs adds the file_category_type edge to FileCategoryType by ids.
+func (m *LocationTypeMutation) AddFileCategoryTypeIDs(ids ...int) {
+	if m.file_category_type == nil {
+		m.file_category_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.file_category_type[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFileCategoryType clears the file_category_type edge to FileCategoryType.
+func (m *LocationTypeMutation) ClearFileCategoryType() {
+	m.clearedfile_category_type = true
+}
+
+// FileCategoryTypeCleared returns if the edge file_category_type was cleared.
+func (m *LocationTypeMutation) FileCategoryTypeCleared() bool {
+	return m.clearedfile_category_type
+}
+
+// RemoveFileCategoryTypeIDs removes the file_category_type edge to FileCategoryType by ids.
+func (m *LocationTypeMutation) RemoveFileCategoryTypeIDs(ids ...int) {
+	if m.removedfile_category_type == nil {
+		m.removedfile_category_type = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedfile_category_type[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFileCategoryType returns the removed ids of file_category_type.
+func (m *LocationTypeMutation) RemovedFileCategoryTypeIDs() (ids []int) {
+	for id := range m.removedfile_category_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FileCategoryTypeIDs returns the file_category_type ids in the mutation.
+func (m *LocationTypeMutation) FileCategoryTypeIDs() (ids []int) {
+	for id := range m.file_category_type {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFileCategoryType reset all changes of the "file_category_type" edge.
+func (m *LocationTypeMutation) ResetFileCategoryType() {
+	m.file_category_type = nil
+	m.clearedfile_category_type = false
+	m.removedfile_category_type = nil
+}
+
 // AddSurveyTemplateCategoryIDs adds the survey_template_categories edge to SurveyTemplateCategory by ids.
 func (m *LocationTypeMutation) AddSurveyTemplateCategoryIDs(ids ...int) {
 	if m.survey_template_categories == nil {
@@ -28388,59 +29739,6 @@ func (m *LocationTypeMutation) ResetSurveyTemplateCategories() {
 	m.survey_template_categories = nil
 	m.clearedsurvey_template_categories = false
 	m.removedsurvey_template_categories = nil
-}
-
-// AddFileCategoryIDs adds the file_category edge to FileCategoryType by ids.
-func (m *LocationTypeMutation) AddFileCategoryIDs(ids ...int) {
-	if m.file_category == nil {
-		m.file_category = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.file_category[ids[i]] = struct{}{}
-	}
-}
-
-// ClearFileCategory clears the file_category edge to FileCategoryType.
-func (m *LocationTypeMutation) ClearFileCategory() {
-	m.clearedfile_category = true
-}
-
-// FileCategoryCleared returns if the edge file_category was cleared.
-func (m *LocationTypeMutation) FileCategoryCleared() bool {
-	return m.clearedfile_category
-}
-
-// RemoveFileCategoryIDs removes the file_category edge to FileCategoryType by ids.
-func (m *LocationTypeMutation) RemoveFileCategoryIDs(ids ...int) {
-	if m.removedfile_category == nil {
-		m.removedfile_category = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedfile_category[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedFileCategory returns the removed ids of file_category.
-func (m *LocationTypeMutation) RemovedFileCategoryIDs() (ids []int) {
-	for id := range m.removedfile_category {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// FileCategoryIDs returns the file_category ids in the mutation.
-func (m *LocationTypeMutation) FileCategoryIDs() (ids []int) {
-	for id := range m.file_category {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetFileCategory reset all changes of the "file_category" edge.
-func (m *LocationTypeMutation) ResetFileCategory() {
-	m.file_category = nil
-	m.clearedfile_category = false
-	m.removedfile_category = nil
 }
 
 // Op returns the operation name.
@@ -28709,11 +30007,11 @@ func (m *LocationTypeMutation) AddedEdges() []string {
 	if m.property_types != nil {
 		edges = append(edges, locationtype.EdgePropertyTypes)
 	}
+	if m.file_category_type != nil {
+		edges = append(edges, locationtype.EdgeFileCategoryType)
+	}
 	if m.survey_template_categories != nil {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
-	}
-	if m.file_category != nil {
-		edges = append(edges, locationtype.EdgeFileCategory)
 	}
 	return edges
 }
@@ -28734,15 +30032,15 @@ func (m *LocationTypeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case locationtype.EdgeSurveyTemplateCategories:
-		ids := make([]ent.Value, 0, len(m.survey_template_categories))
-		for id := range m.survey_template_categories {
+	case locationtype.EdgeFileCategoryType:
+		ids := make([]ent.Value, 0, len(m.file_category_type))
+		for id := range m.file_category_type {
 			ids = append(ids, id)
 		}
 		return ids
-	case locationtype.EdgeFileCategory:
-		ids := make([]ent.Value, 0, len(m.file_category))
-		for id := range m.file_category {
+	case locationtype.EdgeSurveyTemplateCategories:
+		ids := make([]ent.Value, 0, len(m.survey_template_categories))
+		for id := range m.survey_template_categories {
 			ids = append(ids, id)
 		}
 		return ids
@@ -28760,11 +30058,11 @@ func (m *LocationTypeMutation) RemovedEdges() []string {
 	if m.removedproperty_types != nil {
 		edges = append(edges, locationtype.EdgePropertyTypes)
 	}
+	if m.removedfile_category_type != nil {
+		edges = append(edges, locationtype.EdgeFileCategoryType)
+	}
 	if m.removedsurvey_template_categories != nil {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
-	}
-	if m.removedfile_category != nil {
-		edges = append(edges, locationtype.EdgeFileCategory)
 	}
 	return edges
 }
@@ -28785,15 +30083,15 @@ func (m *LocationTypeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case locationtype.EdgeSurveyTemplateCategories:
-		ids := make([]ent.Value, 0, len(m.removedsurvey_template_categories))
-		for id := range m.removedsurvey_template_categories {
+	case locationtype.EdgeFileCategoryType:
+		ids := make([]ent.Value, 0, len(m.removedfile_category_type))
+		for id := range m.removedfile_category_type {
 			ids = append(ids, id)
 		}
 		return ids
-	case locationtype.EdgeFileCategory:
-		ids := make([]ent.Value, 0, len(m.removedfile_category))
-		for id := range m.removedfile_category {
+	case locationtype.EdgeSurveyTemplateCategories:
+		ids := make([]ent.Value, 0, len(m.removedsurvey_template_categories))
+		for id := range m.removedsurvey_template_categories {
 			ids = append(ids, id)
 		}
 		return ids
@@ -28811,11 +30109,11 @@ func (m *LocationTypeMutation) ClearedEdges() []string {
 	if m.clearedproperty_types {
 		edges = append(edges, locationtype.EdgePropertyTypes)
 	}
+	if m.clearedfile_category_type {
+		edges = append(edges, locationtype.EdgeFileCategoryType)
+	}
 	if m.clearedsurvey_template_categories {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
-	}
-	if m.clearedfile_category {
-		edges = append(edges, locationtype.EdgeFileCategory)
 	}
 	return edges
 }
@@ -28828,10 +30126,10 @@ func (m *LocationTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedlocations
 	case locationtype.EdgePropertyTypes:
 		return m.clearedproperty_types
+	case locationtype.EdgeFileCategoryType:
+		return m.clearedfile_category_type
 	case locationtype.EdgeSurveyTemplateCategories:
 		return m.clearedsurvey_template_categories
-	case locationtype.EdgeFileCategory:
-		return m.clearedfile_category
 	}
 	return false
 }
@@ -28855,11 +30153,11 @@ func (m *LocationTypeMutation) ResetEdge(name string) error {
 	case locationtype.EdgePropertyTypes:
 		m.ResetPropertyTypes()
 		return nil
+	case locationtype.EdgeFileCategoryType:
+		m.ResetFileCategoryType()
+		return nil
 	case locationtype.EdgeSurveyTemplateCategories:
 		m.ResetSurveyTemplateCategories()
-		return nil
-	case locationtype.EdgeFileCategory:
-		m.ResetFileCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown LocationType edge %s", name)

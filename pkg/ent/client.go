@@ -3722,22 +3722,6 @@ func (c *FileClient) QuerySurveyQuestion(f *File) *SurveyQuestionQuery {
 	return query
 }
 
-// QueryFileCategory queries the file_category edge of a File.
-func (c *FileClient) QueryFileCategory(f *File) *FileCategoryTypeQuery {
-	query := &FileCategoryTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := f.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, id),
-			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, file.FileCategoryTable, file.FileCategoryColumn),
-		)
-		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *FileClient) Hooks() []Hook {
 	hooks := c.hooks.File
@@ -3827,23 +3811,7 @@ func (c *FileCategoryTypeClient) GetX(ctx context.Context, id int) *FileCategory
 	return obj
 }
 
-// QueryFiles queries the files edge of a FileCategoryType.
-func (c *FileCategoryTypeClient) QueryFiles(fct *FileCategoryType) *FileQuery {
-	query := &FileQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := fct.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, id),
-			sqlgraph.To(file.Table, file.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, filecategorytype.FilesTable, filecategorytype.FilesColumn),
-		)
-		fromV = sqlgraph.Neighbors(fct.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryLocationType queries the locationType edge of a FileCategoryType.
+// QueryLocationType queries the location_type edge of a FileCategoryType.
 func (c *FileCategoryTypeClient) QueryLocationType(fct *FileCategoryType) *LocationTypeQuery {
 	query := &LocationTypeQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
@@ -3851,7 +3819,7 @@ func (c *FileCategoryTypeClient) QueryLocationType(fct *FileCategoryType) *Locat
 		step := sqlgraph.NewStep(
 			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, id),
 			sqlgraph.To(locationtype.Table, locationtype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, filecategorytype.LocationTypeTable, filecategorytype.LocationTypePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, filecategorytype.LocationTypeTable, filecategorytype.LocationTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(fct.driver.Dialect(), step)
 		return fromV, nil
@@ -5382,6 +5350,22 @@ func (c *LocationTypeClient) QueryPropertyTypes(lt *LocationType) *PropertyTypeQ
 	return query
 }
 
+// QueryFileCategoryType queries the file_category_type edge of a LocationType.
+func (c *LocationTypeClient) QueryFileCategoryType(lt *LocationType) *FileCategoryTypeQuery {
+	query := &FileCategoryTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := lt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
+			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.FileCategoryTypeTable, locationtype.FileCategoryTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QuerySurveyTemplateCategories queries the survey_template_categories edge of a LocationType.
 func (c *LocationTypeClient) QuerySurveyTemplateCategories(lt *LocationType) *SurveyTemplateCategoryQuery {
 	query := &SurveyTemplateCategoryQuery{config: c.config}
@@ -5391,22 +5375,6 @@ func (c *LocationTypeClient) QuerySurveyTemplateCategories(lt *LocationType) *Su
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.SurveyTemplateCategoriesTable, locationtype.SurveyTemplateCategoriesColumn),
-		)
-		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryFileCategory queries the file_category edge of a LocationType.
-func (c *LocationTypeClient) QueryFileCategory(lt *LocationType) *FileCategoryTypeQuery {
-	query := &FileCategoryTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := lt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
-			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, locationtype.FileCategoryTable, locationtype.FileCategoryPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
 		return fromV, nil

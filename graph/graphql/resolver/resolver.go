@@ -7,12 +7,11 @@ package resolver
 import (
 	"context"
 
+	"github.com/facebookincubator/symphony/graph/graphql/generated"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
-
-	"github.com/facebookincubator/symphony/graph/graphql/generated"
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
 
@@ -138,6 +137,10 @@ func (r resolver) Property() generated.PropertyResolver {
 	return propertyResolver{}
 }
 
+func (r resolver) FileCategoryType() generated.FileCategoryTypeResolver {
+	return fileCategoryTypeResolver{}
+}
+
 func (resolver) Service() generated.ServiceResolver {
 	return serviceResolver{}
 }
@@ -196,12 +199,4 @@ func (r resolver) VariableExpression() generated.VariableExpressionResolver {
 
 func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
-}
-
-func (r resolver) File() generated.FileResolver {
-	return nil
-}
-
-func (r resolver) FileCategoryType() generated.FileCaregoryTypeResolver {
-	return nil
 }

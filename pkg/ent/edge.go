@@ -632,28 +632,12 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	return result, MaskNotFound(err)
 }
 
-func (f *File) FileCategory(ctx context.Context) (*FileCategoryType, error) {
-	result, err := f.Edges.FileCategoryOrErr()
-	if IsNotLoaded(err) {
-		result, err = f.QueryFileCategory().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (fct *FileCategoryType) Files(ctx context.Context) ([]*File, error) {
-	result, err := fct.Edges.FilesOrErr()
-	if IsNotLoaded(err) {
-		result, err = fct.QueryFiles().All(ctx)
-	}
-	return result, err
-}
-
-func (fct *FileCategoryType) LocationType(ctx context.Context) ([]*LocationType, error) {
+func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
 	result, err := fct.Edges.LocationTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = fct.QueryLocationType().All(ctx)
+		result, err = fct.QueryLocationType().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (fp *FloorPlan) Location(ctx context.Context) (*Location, error) {
@@ -928,18 +912,18 @@ func (lt *LocationType) PropertyTypes(ctx context.Context) ([]*PropertyType, err
 	return result, err
 }
 
-func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*SurveyTemplateCategory, error) {
-	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
+func (lt *LocationType) FileCategoryType(ctx context.Context) ([]*FileCategoryType, error) {
+	result, err := lt.Edges.FileCategoryTypeOrErr()
 	if IsNotLoaded(err) {
-		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
+		result, err = lt.QueryFileCategoryType().All(ctx)
 	}
 	return result, err
 }
 
-func (lt *LocationType) FileCategory(ctx context.Context) ([]*FileCategoryType, error) {
-	result, err := lt.Edges.FileCategoryOrErr()
+func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*SurveyTemplateCategory, error) {
+	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
-		result, err = lt.QueryFileCategory().All(ctx)
+		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
 	}
 	return result, err
 }

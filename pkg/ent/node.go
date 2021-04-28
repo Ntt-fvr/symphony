@@ -1904,7 +1904,7 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 		ID:     f.ID,
 		Type:   "File",
 		Fields: make([]*Field, 11),
-		Edges:  make([]*Edge, 10),
+		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -2085,16 +2085,6 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[9] = &Edge{
-		Type: "FileCategoryType",
-		Name: "file_category",
-	}
-	node.Edges[9].IDs, err = f.QueryFileCategory().
-		Select(filecategorytype.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
 	return node, nil
 }
 
@@ -2102,8 +2092,8 @@ func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fct.ID,
 		Type:   "FileCategoryType",
-		Fields: make([]*Field, 2),
-		Edges:  make([]*Edge, 2),
+		Fields: make([]*Field, 20),
+		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(fct.CreateTime); err != nil {
@@ -2122,21 +2112,155 @@ func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	node.Edges[0] = &Edge{
-		Type: "File",
-		Name: "files",
-	}
-	node.Edges[0].IDs, err = fct.QueryFiles().
-		Select(file.FieldID).
-		Ints(ctx)
-	if err != nil {
+	if buf, err = json.Marshal(fct.Type); err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
-		Type: "LocationType",
-		Name: "locationType",
+	node.Fields[2] = &Field{
+		Type:  "filecategorytype.Type",
+		Name:  "type",
+		Value: string(buf),
 	}
-	node.Edges[1].IDs, err = fct.QueryLocationType().
+	if buf, err = json.Marshal(fct.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.ExternalID); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "external_id",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.Category); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "category",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.IntVal); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "int",
+		Name:  "int_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.BoolVal); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "bool",
+		Name:  "bool_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.FloatVal); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "float64",
+		Name:  "float_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.LatitudeVal); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "float64",
+		Name:  "latitude_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.LongitudeVal); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "float64",
+		Name:  "longitude_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.StringVal); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "string",
+		Name:  "string_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.RangeFromVal); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "float64",
+		Name:  "range_from_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.RangeToVal); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "float64",
+		Name:  "range_to_val",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.IsInstanceProperty); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "bool",
+		Name:  "is_instance_property",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.Editable); err != nil {
+		return nil, err
+	}
+	node.Fields[16] = &Field{
+		Type:  "bool",
+		Name:  "editable",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.Mandatory); err != nil {
+		return nil, err
+	}
+	node.Fields[17] = &Field{
+		Type:  "bool",
+		Name:  "mandatory",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.Deleted); err != nil {
+		return nil, err
+	}
+	node.Fields[18] = &Field{
+		Type:  "bool",
+		Name:  "deleted",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.NodeType); err != nil {
+		return nil, err
+	}
+	node.Fields[19] = &Field{
+		Type:  "string",
+		Name:  "nodeType",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "LocationType",
+		Name: "location_type",
+	}
+	node.Edges[0].IDs, err = fct.QueryLocationType().
 		Select(locationtype.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -3092,21 +3216,21 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "SurveyTemplateCategory",
-		Name: "survey_template_categories",
+		Type: "FileCategoryType",
+		Name: "file_category_type",
 	}
-	node.Edges[2].IDs, err = lt.QuerySurveyTemplateCategories().
-		Select(surveytemplatecategory.FieldID).
+	node.Edges[2].IDs, err = lt.QueryFileCategoryType().
+		Select(filecategorytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		Type: "FileCategoryType",
-		Name: "file_category",
+		Type: "SurveyTemplateCategory",
+		Name: "survey_template_categories",
 	}
-	node.Edges[3].IDs, err = lt.QueryFileCategory().
-		Select(filecategorytype.FieldID).
+	node.Edges[3].IDs, err = lt.QuerySurveyTemplateCategories().
+		Select(surveytemplatecategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

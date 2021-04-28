@@ -8,7 +8,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -16,7 +15,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -31,8 +29,8 @@ type FileCategoryTypeQuery struct {
 	unique     []string
 	predicates []predicate.FileCategoryType
 	// eager-loading edges.
-	withFiles        *FileQuery
 	withLocationType *LocationTypeQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -62,29 +60,7 @@ func (fctq *FileCategoryTypeQuery) Order(o ...OrderFunc) *FileCategoryTypeQuery 
 	return fctq
 }
 
-// QueryFiles chains the current query on the files edge.
-func (fctq *FileCategoryTypeQuery) QueryFiles() *FileQuery {
-	query := &FileQuery{config: fctq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := fctq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := fctq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, selector),
-			sqlgraph.To(file.Table, file.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, filecategorytype.FilesTable, filecategorytype.FilesColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(fctq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryLocationType chains the current query on the locationType edge.
+// QueryLocationType chains the current query on the location_type edge.
 func (fctq *FileCategoryTypeQuery) QueryLocationType() *LocationTypeQuery {
 	query := &LocationTypeQuery{config: fctq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
@@ -98,7 +74,7 @@ func (fctq *FileCategoryTypeQuery) QueryLocationType() *LocationTypeQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, selector),
 			sqlgraph.To(locationtype.Table, locationtype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, filecategorytype.LocationTypeTable, filecategorytype.LocationTypePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, filecategorytype.LocationTypeTable, filecategorytype.LocationTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fctq.driver.Dialect(), step)
 		return fromU, nil
@@ -282,7 +258,6 @@ func (fctq *FileCategoryTypeQuery) Clone() *FileCategoryTypeQuery {
 		order:            append([]OrderFunc{}, fctq.order...),
 		unique:           append([]string{}, fctq.unique...),
 		predicates:       append([]predicate.FileCategoryType{}, fctq.predicates...),
-		withFiles:        fctq.withFiles.Clone(),
 		withLocationType: fctq.withLocationType.Clone(),
 		// clone intermediate query.
 		sql:  fctq.sql.Clone(),
@@ -290,19 +265,8 @@ func (fctq *FileCategoryTypeQuery) Clone() *FileCategoryTypeQuery {
 	}
 }
 
-//  WithFiles tells the query-builder to eager-loads the nodes that are connected to
-// the "files" edge. The optional arguments used to configure the query builder of the edge.
-func (fctq *FileCategoryTypeQuery) WithFiles(opts ...func(*FileQuery)) *FileCategoryTypeQuery {
-	query := &FileQuery{config: fctq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	fctq.withFiles = query
-	return fctq
-}
-
 //  WithLocationType tells the query-builder to eager-loads the nodes that are connected to
-// the "locationType" edge. The optional arguments used to configure the query builder of the edge.
+// the "location_type" edge. The optional arguments used to configure the query builder of the edge.
 func (fctq *FileCategoryTypeQuery) WithLocationType(opts ...func(*LocationTypeQuery)) *FileCategoryTypeQuery {
 	query := &LocationTypeQuery{config: fctq.config}
 	for _, opt := range opts {
@@ -380,16 +344,25 @@ func (fctq *FileCategoryTypeQuery) prepareQuery(ctx context.Context) error {
 func (fctq *FileCategoryTypeQuery) sqlAll(ctx context.Context) ([]*FileCategoryType, error) {
 	var (
 		nodes       = []*FileCategoryType{}
+		withFKs     = fctq.withFKs
 		_spec       = fctq.querySpec()
-		loadedTypes = [2]bool{
-			fctq.withFiles != nil,
+		loadedTypes = [1]bool{
 			fctq.withLocationType != nil,
 		}
 	)
+	if fctq.withLocationType != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, filecategorytype.ForeignKeys...)
+	}
 	_spec.ScanValues = func() []interface{} {
 		node := &FileCategoryType{config: fctq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
+		if withFKs {
+			values = append(values, node.fkValues()...)
+		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -407,95 +380,27 @@ func (fctq *FileCategoryTypeQuery) sqlAll(ctx context.Context) ([]*FileCategoryT
 		return nodes, nil
 	}
 
-	if query := fctq.withFiles; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*FileCategoryType)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Files = []*File{}
-		}
-		query.withFKs = true
-		query.Where(predicate.File(func(s *sql.Selector) {
-			s.Where(sql.InValues(filecategorytype.FilesColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.file_category_type_files
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "file_category_type_files" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "file_category_type_files" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.Files = append(node.Edges.Files, n)
-		}
-	}
-
 	if query := fctq.withLocationType; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		ids := make(map[int]*FileCategoryType, len(nodes))
-		for _, node := range nodes {
-			ids[node.ID] = node
-			fks = append(fks, node.ID)
-			node.Edges.LocationType = []*LocationType{}
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*FileCategoryType)
+		for i := range nodes {
+			if fk := nodes[i].location_type_file_category_type; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
 		}
-		var (
-			edgeids []int
-			edges   = make(map[int][]*FileCategoryType)
-		)
-		_spec := &sqlgraph.EdgeQuerySpec{
-			Edge: &sqlgraph.EdgeSpec{
-				Inverse: true,
-				Table:   filecategorytype.LocationTypeTable,
-				Columns: filecategorytype.LocationTypePrimaryKey,
-			},
-			Predicate: func(s *sql.Selector) {
-				s.Where(sql.InValues(filecategorytype.LocationTypePrimaryKey[1], fks...))
-			},
-
-			ScanValues: func() [2]interface{} {
-				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
-			},
-			Assign: func(out, in interface{}) error {
-				eout, ok := out.(*sql.NullInt64)
-				if !ok || eout == nil {
-					return fmt.Errorf("unexpected id value for edge-out")
-				}
-				ein, ok := in.(*sql.NullInt64)
-				if !ok || ein == nil {
-					return fmt.Errorf("unexpected id value for edge-in")
-				}
-				outValue := int(eout.Int64)
-				inValue := int(ein.Int64)
-				node, ok := ids[outValue]
-				if !ok {
-					return fmt.Errorf("unexpected node id in edges: %v", outValue)
-				}
-				edgeids = append(edgeids, inValue)
-				edges[inValue] = append(edges[inValue], node)
-				return nil
-			},
-		}
-		if err := sqlgraph.QueryEdges(ctx, fctq.driver, _spec); err != nil {
-			return nil, fmt.Errorf(`query edges "locationType": %v`, err)
-		}
-		query.Where(locationtype.IDIn(edgeids...))
+		query.Where(locationtype.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			nodes, ok := edges[n.ID]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected "locationType" node returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "location_type_file_category_type" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.LocationType = append(nodes[i].Edges.LocationType, n)
+				nodes[i].Edges.LocationType = n
 			}
 		}
 	}

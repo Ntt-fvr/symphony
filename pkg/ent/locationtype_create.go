@@ -148,6 +148,21 @@ func (ltc *LocationTypeCreate) AddPropertyTypes(p ...*PropertyType) *LocationTyp
 	return ltc.AddPropertyTypeIDs(ids...)
 }
 
+// AddFileCategoryTypeIDs adds the file_category_type edge to FileCategoryType by ids.
+func (ltc *LocationTypeCreate) AddFileCategoryTypeIDs(ids ...int) *LocationTypeCreate {
+	ltc.mutation.AddFileCategoryTypeIDs(ids...)
+	return ltc
+}
+
+// AddFileCategoryType adds the file_category_type edges to FileCategoryType.
+func (ltc *LocationTypeCreate) AddFileCategoryType(f ...*FileCategoryType) *LocationTypeCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ltc.AddFileCategoryTypeIDs(ids...)
+}
+
 // AddSurveyTemplateCategoryIDs adds the survey_template_categories edge to SurveyTemplateCategory by ids.
 func (ltc *LocationTypeCreate) AddSurveyTemplateCategoryIDs(ids ...int) *LocationTypeCreate {
 	ltc.mutation.AddSurveyTemplateCategoryIDs(ids...)
@@ -161,21 +176,6 @@ func (ltc *LocationTypeCreate) AddSurveyTemplateCategories(s ...*SurveyTemplateC
 		ids[i] = s[i].ID
 	}
 	return ltc.AddSurveyTemplateCategoryIDs(ids...)
-}
-
-// AddFileCategoryIDs adds the file_category edge to FileCategoryType by ids.
-func (ltc *LocationTypeCreate) AddFileCategoryIDs(ids ...int) *LocationTypeCreate {
-	ltc.mutation.AddFileCategoryIDs(ids...)
-	return ltc
-}
-
-// AddFileCategory adds the file_category edges to FileCategoryType.
-func (ltc *LocationTypeCreate) AddFileCategory(f ...*FileCategoryType) *LocationTypeCreate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return ltc.AddFileCategoryIDs(ids...)
 }
 
 // Mutation returns the LocationTypeMutation object of the builder.
@@ -390,6 +390,25 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := ltc.mutation.FileCategoryTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   locationtype.FileCategoryTypeTable,
+			Columns: []string{locationtype.FileCategoryTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: filecategorytype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := ltc.mutation.SurveyTemplateCategoriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -401,25 +420,6 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveytemplatecategory.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ltc.mutation.FileCategoryIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   locationtype.FileCategoryTable,
-			Columns: locationtype.FileCategoryPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: filecategorytype.FieldID,
 				},
 			},
 		}

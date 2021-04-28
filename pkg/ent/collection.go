@@ -652,7 +652,7 @@ func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field g
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "fileCategoryType":
-			lt = lt.WithFileCategory(func(query *FileCategoryTypeQuery) {
+			lt = lt.WithFileCategoryType(func(query *FileCategoryTypeQuery) {
 				query.collectField(ctx, field)
 			})
 		case "locations":

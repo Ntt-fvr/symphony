@@ -111,6 +111,125 @@ func UpdateTime(v time.Time) predicate.FileCategoryType {
 	})
 }
 
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldName), v))
+	})
+}
+
+// ExternalID applies equality check predicate on the "external_id" field. It's identical to ExternalIDEQ.
+func ExternalID(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExternalID), v))
+	})
+}
+
+// Index applies equality check predicate on the "index" field. It's identical to IndexEQ.
+func Index(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIndex), v))
+	})
+}
+
+// Category applies equality check predicate on the "category" field. It's identical to CategoryEQ.
+func Category(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCategory), v))
+	})
+}
+
+// IntVal applies equality check predicate on the "int_val" field. It's identical to IntValEQ.
+func IntVal(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIntVal), v))
+	})
+}
+
+// BoolVal applies equality check predicate on the "bool_val" field. It's identical to BoolValEQ.
+func BoolVal(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBoolVal), v))
+	})
+}
+
+// FloatVal applies equality check predicate on the "float_val" field. It's identical to FloatValEQ.
+func FloatVal(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFloatVal), v))
+	})
+}
+
+// LatitudeVal applies equality check predicate on the "latitude_val" field. It's identical to LatitudeValEQ.
+func LatitudeVal(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LongitudeVal applies equality check predicate on the "longitude_val" field. It's identical to LongitudeValEQ.
+func LongitudeVal(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// StringVal applies equality check predicate on the "string_val" field. It's identical to StringValEQ.
+func StringVal(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStringVal), v))
+	})
+}
+
+// RangeFromVal applies equality check predicate on the "range_from_val" field. It's identical to RangeFromValEQ.
+func RangeFromVal(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeToVal applies equality check predicate on the "range_to_val" field. It's identical to RangeToValEQ.
+func RangeToVal(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRangeToVal), v))
+	})
+}
+
+// IsInstanceProperty applies equality check predicate on the "is_instance_property" field. It's identical to IsInstancePropertyEQ.
+func IsInstanceProperty(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsInstanceProperty), v))
+	})
+}
+
+// Editable applies equality check predicate on the "editable" field. It's identical to EditableEQ.
+func Editable(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEditable), v))
+	})
+}
+
+// Mandatory applies equality check predicate on the "mandatory" field. It's identical to MandatoryEQ.
+func Mandatory(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMandatory), v))
+	})
+}
+
+// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
+func Deleted(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDeleted), v))
+	})
+}
+
+// NodeType applies equality check predicate on the "nodeType" field. It's identical to NodeTypeEQ.
+func NodeType(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNodeType), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.FileCategoryType {
 	return predicate.FileCategoryType(func(s *sql.Selector) {
@@ -263,53 +382,1398 @@ func UpdateTimeLTE(v time.Time) predicate.FileCategoryType {
 	})
 }
 
-// HasFiles applies the HasEdge predicate on the "files" edge.
-func HasFiles() predicate.FileCategoryType {
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v Type) predicate.FileCategoryType {
 	return predicate.FileCategoryType(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FilesTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
+		s.Where(sql.EQ(s.C(FieldType), v))
 	})
 }
 
-// HasFilesWith applies the HasEdge predicate on the "files" edge with a given conditions (other predicates).
-func HasFilesWith(preds ...predicate.File) predicate.FileCategoryType {
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v Type) predicate.FileCategoryType {
 	return predicate.FileCategoryType(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FilesInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
+		s.Where(sql.NEQ(s.C(FieldType), v))
 	})
 }
 
-// HasLocationType applies the HasEdge predicate on the "locationType" edge.
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...Type) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldType), v...))
+	})
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...Type) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldType), v...))
+	})
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldName), v))
+	})
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldName), v))
+	})
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldName), v...))
+	})
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldName), v...))
+	})
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldName), v))
+	})
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldName), v))
+	})
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldName), v))
+	})
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldName), v))
+	})
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldName), v))
+	})
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldName), v))
+	})
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldName), v))
+	})
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldName), v))
+	})
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// ExternalIDEQ applies the EQ predicate on the "external_id" field.
+func ExternalIDEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDNEQ applies the NEQ predicate on the "external_id" field.
+func ExternalIDNEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDIn applies the In predicate on the "external_id" field.
+func ExternalIDIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldExternalID), v...))
+	})
+}
+
+// ExternalIDNotIn applies the NotIn predicate on the "external_id" field.
+func ExternalIDNotIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldExternalID), v...))
+	})
+}
+
+// ExternalIDGT applies the GT predicate on the "external_id" field.
+func ExternalIDGT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDGTE applies the GTE predicate on the "external_id" field.
+func ExternalIDGTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDLT applies the LT predicate on the "external_id" field.
+func ExternalIDLT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDLTE applies the LTE predicate on the "external_id" field.
+func ExternalIDLTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDContains applies the Contains predicate on the "external_id" field.
+func ExternalIDContains(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDHasPrefix applies the HasPrefix predicate on the "external_id" field.
+func ExternalIDHasPrefix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDHasSuffix applies the HasSuffix predicate on the "external_id" field.
+func ExternalIDHasSuffix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDIsNil applies the IsNil predicate on the "external_id" field.
+func ExternalIDIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldExternalID)))
+	})
+}
+
+// ExternalIDNotNil applies the NotNil predicate on the "external_id" field.
+func ExternalIDNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldExternalID)))
+	})
+}
+
+// ExternalIDEqualFold applies the EqualFold predicate on the "external_id" field.
+func ExternalIDEqualFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldExternalID), v))
+	})
+}
+
+// ExternalIDContainsFold applies the ContainsFold predicate on the "external_id" field.
+func ExternalIDContainsFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldExternalID), v))
+	})
+}
+
+// IndexEQ applies the EQ predicate on the "index" field.
+func IndexEQ(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIndex), v))
+	})
+}
+
+// IndexNEQ applies the NEQ predicate on the "index" field.
+func IndexNEQ(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIndex), v))
+	})
+}
+
+// IndexIn applies the In predicate on the "index" field.
+func IndexIn(vs ...int) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldIndex), v...))
+	})
+}
+
+// IndexNotIn applies the NotIn predicate on the "index" field.
+func IndexNotIn(vs ...int) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldIndex), v...))
+	})
+}
+
+// IndexGT applies the GT predicate on the "index" field.
+func IndexGT(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIndex), v))
+	})
+}
+
+// IndexGTE applies the GTE predicate on the "index" field.
+func IndexGTE(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIndex), v))
+	})
+}
+
+// IndexLT applies the LT predicate on the "index" field.
+func IndexLT(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIndex), v))
+	})
+}
+
+// IndexLTE applies the LTE predicate on the "index" field.
+func IndexLTE(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIndex), v))
+	})
+}
+
+// IndexIsNil applies the IsNil predicate on the "index" field.
+func IndexIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIndex)))
+	})
+}
+
+// IndexNotNil applies the NotNil predicate on the "index" field.
+func IndexNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIndex)))
+	})
+}
+
+// CategoryEQ applies the EQ predicate on the "category" field.
+func CategoryEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryNEQ applies the NEQ predicate on the "category" field.
+func CategoryNEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryIn applies the In predicate on the "category" field.
+func CategoryIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCategory), v...))
+	})
+}
+
+// CategoryNotIn applies the NotIn predicate on the "category" field.
+func CategoryNotIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCategory), v...))
+	})
+}
+
+// CategoryGT applies the GT predicate on the "category" field.
+func CategoryGT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryGTE applies the GTE predicate on the "category" field.
+func CategoryGTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryLT applies the LT predicate on the "category" field.
+func CategoryLT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryLTE applies the LTE predicate on the "category" field.
+func CategoryLTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryContains applies the Contains predicate on the "category" field.
+func CategoryContains(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryHasPrefix applies the HasPrefix predicate on the "category" field.
+func CategoryHasPrefix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryHasSuffix applies the HasSuffix predicate on the "category" field.
+func CategoryHasSuffix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryIsNil applies the IsNil predicate on the "category" field.
+func CategoryIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCategory)))
+	})
+}
+
+// CategoryNotNil applies the NotNil predicate on the "category" field.
+func CategoryNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCategory)))
+	})
+}
+
+// CategoryEqualFold applies the EqualFold predicate on the "category" field.
+func CategoryEqualFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCategory), v))
+	})
+}
+
+// CategoryContainsFold applies the ContainsFold predicate on the "category" field.
+func CategoryContainsFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCategory), v))
+	})
+}
+
+// IntValEQ applies the EQ predicate on the "int_val" field.
+func IntValEQ(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIntVal), v))
+	})
+}
+
+// IntValNEQ applies the NEQ predicate on the "int_val" field.
+func IntValNEQ(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIntVal), v))
+	})
+}
+
+// IntValIn applies the In predicate on the "int_val" field.
+func IntValIn(vs ...int) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldIntVal), v...))
+	})
+}
+
+// IntValNotIn applies the NotIn predicate on the "int_val" field.
+func IntValNotIn(vs ...int) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldIntVal), v...))
+	})
+}
+
+// IntValGT applies the GT predicate on the "int_val" field.
+func IntValGT(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIntVal), v))
+	})
+}
+
+// IntValGTE applies the GTE predicate on the "int_val" field.
+func IntValGTE(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIntVal), v))
+	})
+}
+
+// IntValLT applies the LT predicate on the "int_val" field.
+func IntValLT(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIntVal), v))
+	})
+}
+
+// IntValLTE applies the LTE predicate on the "int_val" field.
+func IntValLTE(v int) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIntVal), v))
+	})
+}
+
+// IntValIsNil applies the IsNil predicate on the "int_val" field.
+func IntValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIntVal)))
+	})
+}
+
+// IntValNotNil applies the NotNil predicate on the "int_val" field.
+func IntValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIntVal)))
+	})
+}
+
+// BoolValEQ applies the EQ predicate on the "bool_val" field.
+func BoolValEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBoolVal), v))
+	})
+}
+
+// BoolValNEQ applies the NEQ predicate on the "bool_val" field.
+func BoolValNEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBoolVal), v))
+	})
+}
+
+// BoolValIsNil applies the IsNil predicate on the "bool_val" field.
+func BoolValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldBoolVal)))
+	})
+}
+
+// BoolValNotNil applies the NotNil predicate on the "bool_val" field.
+func BoolValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldBoolVal)))
+	})
+}
+
+// FloatValEQ applies the EQ predicate on the "float_val" field.
+func FloatValEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFloatVal), v))
+	})
+}
+
+// FloatValNEQ applies the NEQ predicate on the "float_val" field.
+func FloatValNEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFloatVal), v))
+	})
+}
+
+// FloatValIn applies the In predicate on the "float_val" field.
+func FloatValIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldFloatVal), v...))
+	})
+}
+
+// FloatValNotIn applies the NotIn predicate on the "float_val" field.
+func FloatValNotIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldFloatVal), v...))
+	})
+}
+
+// FloatValGT applies the GT predicate on the "float_val" field.
+func FloatValGT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldFloatVal), v))
+	})
+}
+
+// FloatValGTE applies the GTE predicate on the "float_val" field.
+func FloatValGTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldFloatVal), v))
+	})
+}
+
+// FloatValLT applies the LT predicate on the "float_val" field.
+func FloatValLT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldFloatVal), v))
+	})
+}
+
+// FloatValLTE applies the LTE predicate on the "float_val" field.
+func FloatValLTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldFloatVal), v))
+	})
+}
+
+// FloatValIsNil applies the IsNil predicate on the "float_val" field.
+func FloatValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldFloatVal)))
+	})
+}
+
+// FloatValNotNil applies the NotNil predicate on the "float_val" field.
+func FloatValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldFloatVal)))
+	})
+}
+
+// LatitudeValEQ applies the EQ predicate on the "latitude_val" field.
+func LatitudeValEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LatitudeValNEQ applies the NEQ predicate on the "latitude_val" field.
+func LatitudeValNEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LatitudeValIn applies the In predicate on the "latitude_val" field.
+func LatitudeValIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldLatitudeVal), v...))
+	})
+}
+
+// LatitudeValNotIn applies the NotIn predicate on the "latitude_val" field.
+func LatitudeValNotIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldLatitudeVal), v...))
+	})
+}
+
+// LatitudeValGT applies the GT predicate on the "latitude_val" field.
+func LatitudeValGT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LatitudeValGTE applies the GTE predicate on the "latitude_val" field.
+func LatitudeValGTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LatitudeValLT applies the LT predicate on the "latitude_val" field.
+func LatitudeValLT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LatitudeValLTE applies the LTE predicate on the "latitude_val" field.
+func LatitudeValLTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLatitudeVal), v))
+	})
+}
+
+// LatitudeValIsNil applies the IsNil predicate on the "latitude_val" field.
+func LatitudeValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLatitudeVal)))
+	})
+}
+
+// LatitudeValNotNil applies the NotNil predicate on the "latitude_val" field.
+func LatitudeValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLatitudeVal)))
+	})
+}
+
+// LongitudeValEQ applies the EQ predicate on the "longitude_val" field.
+func LongitudeValEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// LongitudeValNEQ applies the NEQ predicate on the "longitude_val" field.
+func LongitudeValNEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// LongitudeValIn applies the In predicate on the "longitude_val" field.
+func LongitudeValIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldLongitudeVal), v...))
+	})
+}
+
+// LongitudeValNotIn applies the NotIn predicate on the "longitude_val" field.
+func LongitudeValNotIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldLongitudeVal), v...))
+	})
+}
+
+// LongitudeValGT applies the GT predicate on the "longitude_val" field.
+func LongitudeValGT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// LongitudeValGTE applies the GTE predicate on the "longitude_val" field.
+func LongitudeValGTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// LongitudeValLT applies the LT predicate on the "longitude_val" field.
+func LongitudeValLT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// LongitudeValLTE applies the LTE predicate on the "longitude_val" field.
+func LongitudeValLTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLongitudeVal), v))
+	})
+}
+
+// LongitudeValIsNil applies the IsNil predicate on the "longitude_val" field.
+func LongitudeValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLongitudeVal)))
+	})
+}
+
+// LongitudeValNotNil applies the NotNil predicate on the "longitude_val" field.
+func LongitudeValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLongitudeVal)))
+	})
+}
+
+// StringValEQ applies the EQ predicate on the "string_val" field.
+func StringValEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValNEQ applies the NEQ predicate on the "string_val" field.
+func StringValNEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValIn applies the In predicate on the "string_val" field.
+func StringValIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldStringVal), v...))
+	})
+}
+
+// StringValNotIn applies the NotIn predicate on the "string_val" field.
+func StringValNotIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldStringVal), v...))
+	})
+}
+
+// StringValGT applies the GT predicate on the "string_val" field.
+func StringValGT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValGTE applies the GTE predicate on the "string_val" field.
+func StringValGTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValLT applies the LT predicate on the "string_val" field.
+func StringValLT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValLTE applies the LTE predicate on the "string_val" field.
+func StringValLTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValContains applies the Contains predicate on the "string_val" field.
+func StringValContains(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValHasPrefix applies the HasPrefix predicate on the "string_val" field.
+func StringValHasPrefix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValHasSuffix applies the HasSuffix predicate on the "string_val" field.
+func StringValHasSuffix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValIsNil applies the IsNil predicate on the "string_val" field.
+func StringValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStringVal)))
+	})
+}
+
+// StringValNotNil applies the NotNil predicate on the "string_val" field.
+func StringValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStringVal)))
+	})
+}
+
+// StringValEqualFold applies the EqualFold predicate on the "string_val" field.
+func StringValEqualFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldStringVal), v))
+	})
+}
+
+// StringValContainsFold applies the ContainsFold predicate on the "string_val" field.
+func StringValContainsFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldStringVal), v))
+	})
+}
+
+// RangeFromValEQ applies the EQ predicate on the "range_from_val" field.
+func RangeFromValEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeFromValNEQ applies the NEQ predicate on the "range_from_val" field.
+func RangeFromValNEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeFromValIn applies the In predicate on the "range_from_val" field.
+func RangeFromValIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldRangeFromVal), v...))
+	})
+}
+
+// RangeFromValNotIn applies the NotIn predicate on the "range_from_val" field.
+func RangeFromValNotIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldRangeFromVal), v...))
+	})
+}
+
+// RangeFromValGT applies the GT predicate on the "range_from_val" field.
+func RangeFromValGT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeFromValGTE applies the GTE predicate on the "range_from_val" field.
+func RangeFromValGTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeFromValLT applies the LT predicate on the "range_from_val" field.
+func RangeFromValLT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeFromValLTE applies the LTE predicate on the "range_from_val" field.
+func RangeFromValLTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRangeFromVal), v))
+	})
+}
+
+// RangeFromValIsNil applies the IsNil predicate on the "range_from_val" field.
+func RangeFromValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRangeFromVal)))
+	})
+}
+
+// RangeFromValNotNil applies the NotNil predicate on the "range_from_val" field.
+func RangeFromValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRangeFromVal)))
+	})
+}
+
+// RangeToValEQ applies the EQ predicate on the "range_to_val" field.
+func RangeToValEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRangeToVal), v))
+	})
+}
+
+// RangeToValNEQ applies the NEQ predicate on the "range_to_val" field.
+func RangeToValNEQ(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRangeToVal), v))
+	})
+}
+
+// RangeToValIn applies the In predicate on the "range_to_val" field.
+func RangeToValIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldRangeToVal), v...))
+	})
+}
+
+// RangeToValNotIn applies the NotIn predicate on the "range_to_val" field.
+func RangeToValNotIn(vs ...float64) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldRangeToVal), v...))
+	})
+}
+
+// RangeToValGT applies the GT predicate on the "range_to_val" field.
+func RangeToValGT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRangeToVal), v))
+	})
+}
+
+// RangeToValGTE applies the GTE predicate on the "range_to_val" field.
+func RangeToValGTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRangeToVal), v))
+	})
+}
+
+// RangeToValLT applies the LT predicate on the "range_to_val" field.
+func RangeToValLT(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRangeToVal), v))
+	})
+}
+
+// RangeToValLTE applies the LTE predicate on the "range_to_val" field.
+func RangeToValLTE(v float64) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRangeToVal), v))
+	})
+}
+
+// RangeToValIsNil applies the IsNil predicate on the "range_to_val" field.
+func RangeToValIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRangeToVal)))
+	})
+}
+
+// RangeToValNotNil applies the NotNil predicate on the "range_to_val" field.
+func RangeToValNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRangeToVal)))
+	})
+}
+
+// IsInstancePropertyEQ applies the EQ predicate on the "is_instance_property" field.
+func IsInstancePropertyEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsInstanceProperty), v))
+	})
+}
+
+// IsInstancePropertyNEQ applies the NEQ predicate on the "is_instance_property" field.
+func IsInstancePropertyNEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIsInstanceProperty), v))
+	})
+}
+
+// EditableEQ applies the EQ predicate on the "editable" field.
+func EditableEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEditable), v))
+	})
+}
+
+// EditableNEQ applies the NEQ predicate on the "editable" field.
+func EditableNEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEditable), v))
+	})
+}
+
+// MandatoryEQ applies the EQ predicate on the "mandatory" field.
+func MandatoryEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMandatory), v))
+	})
+}
+
+// MandatoryNEQ applies the NEQ predicate on the "mandatory" field.
+func MandatoryNEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMandatory), v))
+	})
+}
+
+// DeletedEQ applies the EQ predicate on the "deleted" field.
+func DeletedEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDeleted), v))
+	})
+}
+
+// DeletedNEQ applies the NEQ predicate on the "deleted" field.
+func DeletedNEQ(v bool) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDeleted), v))
+	})
+}
+
+// NodeTypeEQ applies the EQ predicate on the "nodeType" field.
+func NodeTypeEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeNEQ applies the NEQ predicate on the "nodeType" field.
+func NodeTypeNEQ(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeIn applies the In predicate on the "nodeType" field.
+func NodeTypeIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldNodeType), v...))
+	})
+}
+
+// NodeTypeNotIn applies the NotIn predicate on the "nodeType" field.
+func NodeTypeNotIn(vs ...string) predicate.FileCategoryType {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldNodeType), v...))
+	})
+}
+
+// NodeTypeGT applies the GT predicate on the "nodeType" field.
+func NodeTypeGT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeGTE applies the GTE predicate on the "nodeType" field.
+func NodeTypeGTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeLT applies the LT predicate on the "nodeType" field.
+func NodeTypeLT(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeLTE applies the LTE predicate on the "nodeType" field.
+func NodeTypeLTE(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeContains applies the Contains predicate on the "nodeType" field.
+func NodeTypeContains(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeHasPrefix applies the HasPrefix predicate on the "nodeType" field.
+func NodeTypeHasPrefix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeHasSuffix applies the HasSuffix predicate on the "nodeType" field.
+func NodeTypeHasSuffix(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeIsNil applies the IsNil predicate on the "nodeType" field.
+func NodeTypeIsNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldNodeType)))
+	})
+}
+
+// NodeTypeNotNil applies the NotNil predicate on the "nodeType" field.
+func NodeTypeNotNil() predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldNodeType)))
+	})
+}
+
+// NodeTypeEqualFold applies the EqualFold predicate on the "nodeType" field.
+func NodeTypeEqualFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldNodeType), v))
+	})
+}
+
+// NodeTypeContainsFold applies the ContainsFold predicate on the "nodeType" field.
+func NodeTypeContainsFold(v string) predicate.FileCategoryType {
+	return predicate.FileCategoryType(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldNodeType), v))
+	})
+}
+
+// HasLocationType applies the HasEdge predicate on the "location_type" edge.
 func HasLocationType() predicate.FileCategoryType {
 	return predicate.FileCategoryType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(LocationTypeTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, LocationTypeTable, LocationTypePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, LocationTypeTable, LocationTypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasLocationTypeWith applies the HasEdge predicate on the "locationType" edge with a given conditions (other predicates).
+// HasLocationTypeWith applies the HasEdge predicate on the "location_type" edge with a given conditions (other predicates).
 func HasLocationTypeWith(preds ...predicate.LocationType) predicate.FileCategoryType {
 	return predicate.FileCategoryType(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(LocationTypeInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, LocationTypeTable, LocationTypePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, LocationTypeTable, LocationTypeColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

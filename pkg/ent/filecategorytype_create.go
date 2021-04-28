@@ -14,7 +14,6 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 )
@@ -54,34 +53,259 @@ func (fctc *FileCategoryTypeCreate) SetNillableUpdateTime(t *time.Time) *FileCat
 	return fctc
 }
 
-// AddFileIDs adds the files edge to File by ids.
-func (fctc *FileCategoryTypeCreate) AddFileIDs(ids ...int) *FileCategoryTypeCreate {
-	fctc.mutation.AddFileIDs(ids...)
+// SetType sets the type field.
+func (fctc *FileCategoryTypeCreate) SetType(f filecategorytype.Type) *FileCategoryTypeCreate {
+	fctc.mutation.SetType(f)
 	return fctc
 }
 
-// AddFiles adds the files edges to File.
-func (fctc *FileCategoryTypeCreate) AddFiles(f ...*File) *FileCategoryTypeCreate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fctc.AddFileIDs(ids...)
-}
-
-// AddLocationTypeIDs adds the locationType edge to LocationType by ids.
-func (fctc *FileCategoryTypeCreate) AddLocationTypeIDs(ids ...int) *FileCategoryTypeCreate {
-	fctc.mutation.AddLocationTypeIDs(ids...)
+// SetName sets the name field.
+func (fctc *FileCategoryTypeCreate) SetName(s string) *FileCategoryTypeCreate {
+	fctc.mutation.SetName(s)
 	return fctc
 }
 
-// AddLocationType adds the locationType edges to LocationType.
-func (fctc *FileCategoryTypeCreate) AddLocationType(l ...*LocationType) *FileCategoryTypeCreate {
-	ids := make([]int, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+// SetExternalID sets the external_id field.
+func (fctc *FileCategoryTypeCreate) SetExternalID(s string) *FileCategoryTypeCreate {
+	fctc.mutation.SetExternalID(s)
+	return fctc
+}
+
+// SetNillableExternalID sets the external_id field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableExternalID(s *string) *FileCategoryTypeCreate {
+	if s != nil {
+		fctc.SetExternalID(*s)
 	}
-	return fctc.AddLocationTypeIDs(ids...)
+	return fctc
+}
+
+// SetIndex sets the index field.
+func (fctc *FileCategoryTypeCreate) SetIndex(i int) *FileCategoryTypeCreate {
+	fctc.mutation.SetIndex(i)
+	return fctc
+}
+
+// SetNillableIndex sets the index field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableIndex(i *int) *FileCategoryTypeCreate {
+	if i != nil {
+		fctc.SetIndex(*i)
+	}
+	return fctc
+}
+
+// SetCategory sets the category field.
+func (fctc *FileCategoryTypeCreate) SetCategory(s string) *FileCategoryTypeCreate {
+	fctc.mutation.SetCategory(s)
+	return fctc
+}
+
+// SetNillableCategory sets the category field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableCategory(s *string) *FileCategoryTypeCreate {
+	if s != nil {
+		fctc.SetCategory(*s)
+	}
+	return fctc
+}
+
+// SetIntVal sets the int_val field.
+func (fctc *FileCategoryTypeCreate) SetIntVal(i int) *FileCategoryTypeCreate {
+	fctc.mutation.SetIntVal(i)
+	return fctc
+}
+
+// SetNillableIntVal sets the int_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableIntVal(i *int) *FileCategoryTypeCreate {
+	if i != nil {
+		fctc.SetIntVal(*i)
+	}
+	return fctc
+}
+
+// SetBoolVal sets the bool_val field.
+func (fctc *FileCategoryTypeCreate) SetBoolVal(b bool) *FileCategoryTypeCreate {
+	fctc.mutation.SetBoolVal(b)
+	return fctc
+}
+
+// SetNillableBoolVal sets the bool_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableBoolVal(b *bool) *FileCategoryTypeCreate {
+	if b != nil {
+		fctc.SetBoolVal(*b)
+	}
+	return fctc
+}
+
+// SetFloatVal sets the float_val field.
+func (fctc *FileCategoryTypeCreate) SetFloatVal(f float64) *FileCategoryTypeCreate {
+	fctc.mutation.SetFloatVal(f)
+	return fctc
+}
+
+// SetNillableFloatVal sets the float_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableFloatVal(f *float64) *FileCategoryTypeCreate {
+	if f != nil {
+		fctc.SetFloatVal(*f)
+	}
+	return fctc
+}
+
+// SetLatitudeVal sets the latitude_val field.
+func (fctc *FileCategoryTypeCreate) SetLatitudeVal(f float64) *FileCategoryTypeCreate {
+	fctc.mutation.SetLatitudeVal(f)
+	return fctc
+}
+
+// SetNillableLatitudeVal sets the latitude_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableLatitudeVal(f *float64) *FileCategoryTypeCreate {
+	if f != nil {
+		fctc.SetLatitudeVal(*f)
+	}
+	return fctc
+}
+
+// SetLongitudeVal sets the longitude_val field.
+func (fctc *FileCategoryTypeCreate) SetLongitudeVal(f float64) *FileCategoryTypeCreate {
+	fctc.mutation.SetLongitudeVal(f)
+	return fctc
+}
+
+// SetNillableLongitudeVal sets the longitude_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableLongitudeVal(f *float64) *FileCategoryTypeCreate {
+	if f != nil {
+		fctc.SetLongitudeVal(*f)
+	}
+	return fctc
+}
+
+// SetStringVal sets the string_val field.
+func (fctc *FileCategoryTypeCreate) SetStringVal(s string) *FileCategoryTypeCreate {
+	fctc.mutation.SetStringVal(s)
+	return fctc
+}
+
+// SetNillableStringVal sets the string_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableStringVal(s *string) *FileCategoryTypeCreate {
+	if s != nil {
+		fctc.SetStringVal(*s)
+	}
+	return fctc
+}
+
+// SetRangeFromVal sets the range_from_val field.
+func (fctc *FileCategoryTypeCreate) SetRangeFromVal(f float64) *FileCategoryTypeCreate {
+	fctc.mutation.SetRangeFromVal(f)
+	return fctc
+}
+
+// SetNillableRangeFromVal sets the range_from_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableRangeFromVal(f *float64) *FileCategoryTypeCreate {
+	if f != nil {
+		fctc.SetRangeFromVal(*f)
+	}
+	return fctc
+}
+
+// SetRangeToVal sets the range_to_val field.
+func (fctc *FileCategoryTypeCreate) SetRangeToVal(f float64) *FileCategoryTypeCreate {
+	fctc.mutation.SetRangeToVal(f)
+	return fctc
+}
+
+// SetNillableRangeToVal sets the range_to_val field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableRangeToVal(f *float64) *FileCategoryTypeCreate {
+	if f != nil {
+		fctc.SetRangeToVal(*f)
+	}
+	return fctc
+}
+
+// SetIsInstanceProperty sets the is_instance_property field.
+func (fctc *FileCategoryTypeCreate) SetIsInstanceProperty(b bool) *FileCategoryTypeCreate {
+	fctc.mutation.SetIsInstanceProperty(b)
+	return fctc
+}
+
+// SetNillableIsInstanceProperty sets the is_instance_property field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableIsInstanceProperty(b *bool) *FileCategoryTypeCreate {
+	if b != nil {
+		fctc.SetIsInstanceProperty(*b)
+	}
+	return fctc
+}
+
+// SetEditable sets the editable field.
+func (fctc *FileCategoryTypeCreate) SetEditable(b bool) *FileCategoryTypeCreate {
+	fctc.mutation.SetEditable(b)
+	return fctc
+}
+
+// SetNillableEditable sets the editable field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableEditable(b *bool) *FileCategoryTypeCreate {
+	if b != nil {
+		fctc.SetEditable(*b)
+	}
+	return fctc
+}
+
+// SetMandatory sets the mandatory field.
+func (fctc *FileCategoryTypeCreate) SetMandatory(b bool) *FileCategoryTypeCreate {
+	fctc.mutation.SetMandatory(b)
+	return fctc
+}
+
+// SetNillableMandatory sets the mandatory field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableMandatory(b *bool) *FileCategoryTypeCreate {
+	if b != nil {
+		fctc.SetMandatory(*b)
+	}
+	return fctc
+}
+
+// SetDeleted sets the deleted field.
+func (fctc *FileCategoryTypeCreate) SetDeleted(b bool) *FileCategoryTypeCreate {
+	fctc.mutation.SetDeleted(b)
+	return fctc
+}
+
+// SetNillableDeleted sets the deleted field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableDeleted(b *bool) *FileCategoryTypeCreate {
+	if b != nil {
+		fctc.SetDeleted(*b)
+	}
+	return fctc
+}
+
+// SetNodeType sets the nodeType field.
+func (fctc *FileCategoryTypeCreate) SetNodeType(s string) *FileCategoryTypeCreate {
+	fctc.mutation.SetNodeType(s)
+	return fctc
+}
+
+// SetNillableNodeType sets the nodeType field if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableNodeType(s *string) *FileCategoryTypeCreate {
+	if s != nil {
+		fctc.SetNodeType(*s)
+	}
+	return fctc
+}
+
+// SetLocationTypeID sets the location_type edge to LocationType by id.
+func (fctc *FileCategoryTypeCreate) SetLocationTypeID(id int) *FileCategoryTypeCreate {
+	fctc.mutation.SetLocationTypeID(id)
+	return fctc
+}
+
+// SetNillableLocationTypeID sets the location_type edge to LocationType by id if the given value is not nil.
+func (fctc *FileCategoryTypeCreate) SetNillableLocationTypeID(id *int) *FileCategoryTypeCreate {
+	if id != nil {
+		fctc = fctc.SetLocationTypeID(*id)
+	}
+	return fctc
+}
+
+// SetLocationType sets the location_type edge to LocationType.
+func (fctc *FileCategoryTypeCreate) SetLocationType(l *LocationType) *FileCategoryTypeCreate {
+	return fctc.SetLocationTypeID(l.ID)
 }
 
 // Mutation returns the FileCategoryTypeMutation object of the builder.
@@ -144,6 +368,22 @@ func (fctc *FileCategoryTypeCreate) defaults() {
 		v := filecategorytype.DefaultUpdateTime()
 		fctc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := fctc.mutation.IsInstanceProperty(); !ok {
+		v := filecategorytype.DefaultIsInstanceProperty
+		fctc.mutation.SetIsInstanceProperty(v)
+	}
+	if _, ok := fctc.mutation.Editable(); !ok {
+		v := filecategorytype.DefaultEditable
+		fctc.mutation.SetEditable(v)
+	}
+	if _, ok := fctc.mutation.Mandatory(); !ok {
+		v := filecategorytype.DefaultMandatory
+		fctc.mutation.SetMandatory(v)
+	}
+	if _, ok := fctc.mutation.Deleted(); !ok {
+		v := filecategorytype.DefaultDeleted
+		fctc.mutation.SetDeleted(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -153,6 +393,29 @@ func (fctc *FileCategoryTypeCreate) check() error {
 	}
 	if _, ok := fctc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
+	}
+	if _, ok := fctc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
+	}
+	if v, ok := fctc.mutation.GetType(); ok {
+		if err := filecategorytype.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if _, ok := fctc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := fctc.mutation.IsInstanceProperty(); !ok {
+		return &ValidationError{Name: "is_instance_property", err: errors.New("ent: missing required field \"is_instance_property\"")}
+	}
+	if _, ok := fctc.mutation.Editable(); !ok {
+		return &ValidationError{Name: "editable", err: errors.New("ent: missing required field \"editable\"")}
+	}
+	if _, ok := fctc.mutation.Mandatory(); !ok {
+		return &ValidationError{Name: "mandatory", err: errors.New("ent: missing required field \"mandatory\"")}
+	}
+	if _, ok := fctc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New("ent: missing required field \"deleted\"")}
 	}
 	return nil
 }
@@ -197,31 +460,156 @@ func (fctc *FileCategoryTypeCreate) createSpec() (*FileCategoryType, *sqlgraph.C
 		})
 		_node.UpdateTime = value
 	}
-	if nodes := fctc.mutation.FilesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   filecategorytype.FilesTable,
-			Columns: []string{filecategorytype.FilesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: file.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := fctc.mutation.GetType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: filecategorytype.FieldType,
+		})
+		_node.Type = value
+	}
+	if value, ok := fctc.mutation.Name(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: filecategorytype.FieldName,
+		})
+		_node.Name = value
+	}
+	if value, ok := fctc.mutation.ExternalID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: filecategorytype.FieldExternalID,
+		})
+		_node.ExternalID = value
+	}
+	if value, ok := fctc.mutation.Index(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: filecategorytype.FieldIndex,
+		})
+		_node.Index = value
+	}
+	if value, ok := fctc.mutation.Category(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: filecategorytype.FieldCategory,
+		})
+		_node.Category = value
+	}
+	if value, ok := fctc.mutation.IntVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: filecategorytype.FieldIntVal,
+		})
+		_node.IntVal = &value
+	}
+	if value, ok := fctc.mutation.BoolVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: filecategorytype.FieldBoolVal,
+		})
+		_node.BoolVal = &value
+	}
+	if value, ok := fctc.mutation.FloatVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: filecategorytype.FieldFloatVal,
+		})
+		_node.FloatVal = &value
+	}
+	if value, ok := fctc.mutation.LatitudeVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: filecategorytype.FieldLatitudeVal,
+		})
+		_node.LatitudeVal = &value
+	}
+	if value, ok := fctc.mutation.LongitudeVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: filecategorytype.FieldLongitudeVal,
+		})
+		_node.LongitudeVal = &value
+	}
+	if value, ok := fctc.mutation.StringVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: filecategorytype.FieldStringVal,
+		})
+		_node.StringVal = &value
+	}
+	if value, ok := fctc.mutation.RangeFromVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: filecategorytype.FieldRangeFromVal,
+		})
+		_node.RangeFromVal = &value
+	}
+	if value, ok := fctc.mutation.RangeToVal(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: filecategorytype.FieldRangeToVal,
+		})
+		_node.RangeToVal = &value
+	}
+	if value, ok := fctc.mutation.IsInstanceProperty(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: filecategorytype.FieldIsInstanceProperty,
+		})
+		_node.IsInstanceProperty = value
+	}
+	if value, ok := fctc.mutation.Editable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: filecategorytype.FieldEditable,
+		})
+		_node.Editable = value
+	}
+	if value, ok := fctc.mutation.Mandatory(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: filecategorytype.FieldMandatory,
+		})
+		_node.Mandatory = value
+	}
+	if value, ok := fctc.mutation.Deleted(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: filecategorytype.FieldDeleted,
+		})
+		_node.Deleted = value
+	}
+	if value, ok := fctc.mutation.NodeType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: filecategorytype.FieldNodeType,
+		})
+		_node.NodeType = value
 	}
 	if nodes := fctc.mutation.LocationTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   filecategorytype.LocationTypeTable,
-			Columns: filecategorytype.LocationTypePrimaryKey,
+			Columns: []string{filecategorytype.LocationTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

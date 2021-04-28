@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/pkg/errors"
@@ -113,6 +114,60 @@ func PropertyValue(ctx context.Context, typ propertytype.Type, nodeType string, 
 			return "", nil
 		}
 		return NodePropertyValue(ctx, p, nodeType), nil
+	default:
+		return "", errors.Errorf("type not supported %s", typ)
+	}
+}
+
+func FileCategoryTypeValue(ctx context.Context, typ filecategorytype.Type, nodeType string, v interface{}) (string, error) {
+	switch v.(type) {
+	case *ent.FileCategoryType:
+	default:
+		return "", errors.Errorf("invalid type: %T", v)
+	}
+	vo := reflect.ValueOf(v).Elem()
+	switch typ {
+	case filecategorytype.TypeEmail, filecategorytype.TypeString, filecategorytype.TypeDate,
+		filecategorytype.TypeEnum, filecategorytype.TypeDatetimeLocal:
+		strValue := vo.FieldByName("StringVal")
+		if strValue.IsNil() {
+			return "", nil
+		}
+		return reflect.Indirect(strValue).String(), nil
+	case filecategorytype.TypeInt:
+		intValue := vo.FieldByName("IntVal")
+		if intValue.IsNil() {
+			return "", nil
+		}
+		return strconv.Itoa(int(reflect.Indirect(intValue).Int())), nil
+	case filecategorytype.TypeFloat:
+		floatValue := vo.FieldByName("FloatVal")
+		if floatValue.IsNil() {
+			return "", nil
+		}
+		return fmt.Sprintf("%.3f", reflect.Indirect(floatValue).Float()), nil
+	case filecategorytype.TypeGpsLocation:
+		latitudeValue := vo.FieldByName("LatitudeVal")
+		longitudeValue := vo.FieldByName("LongitudeVal")
+		if latitudeValue.IsNil() || longitudeValue.IsNil() {
+			return "", nil
+		}
+		la, lo := reflect.Indirect(latitudeValue).Float(), reflect.Indirect(longitudeValue).Float()
+		return fmt.Sprintf("%f", la) + ", " + fmt.Sprintf("%f", lo), nil
+	case filecategorytype.TypeRange:
+		rangeFromValue := vo.FieldByName("RangeFromVal")
+		rangeToValue := vo.FieldByName("RangeToVal")
+		if rangeFromValue.IsNil() || rangeToValue.IsNil() {
+			return "", nil
+		}
+		rf, rt := reflect.Indirect(rangeFromValue).Float(), reflect.Indirect(rangeToValue).Float()
+		return fmt.Sprintf("%.3f", rf) + " - " + fmt.Sprintf("%.3f", rt), nil
+	case filecategorytype.TypeBool:
+		boolValue := vo.FieldByName("BoolVal")
+		if boolValue.IsNil() {
+			return "", nil
+		}
+		return strconv.FormatBool(reflect.Indirect(boolValue).Bool()), nil
 	default:
 		return "", errors.Errorf("type not supported %s", typ)
 	}

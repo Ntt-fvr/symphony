@@ -15,7 +15,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
@@ -56,7 +55,6 @@ type File struct {
 	Edges                      FileEdges `json:"edges"`
 	check_list_item_files      *int
 	equipment_files            *int
-	file_category_type_files   *int
 	floor_plan_image           *int
 	location_files             *int
 	survey_source_file         *int
@@ -86,11 +84,9 @@ type FileEdges struct {
 	PhotoSurveyQuestion *SurveyQuestion
 	// SurveyQuestion holds the value of the survey_question edge.
 	SurveyQuestion *SurveyQuestion
-	// FileCategory holds the value of the file_category edge.
-	FileCategory *FileCategoryType
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [9]bool
 }
 
 // LocationOrErr returns the Location value or an error if the edge
@@ -219,20 +215,6 @@ func (e FileEdges) SurveyQuestionOrErr() (*SurveyQuestion, error) {
 	return nil, &NotLoadedError{edge: "survey_question"}
 }
 
-// FileCategoryOrErr returns the FileCategory value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e FileEdges) FileCategoryOrErr() (*FileCategoryType, error) {
-	if e.loadedTypes[9] {
-		if e.FileCategory == nil {
-			// The edge file_category was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: filecategorytype.Label}
-		}
-		return e.FileCategory, nil
-	}
-	return nil, &NotLoadedError{edge: "file_category"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*File) scanValues() []interface{} {
 	return []interface{}{
@@ -256,7 +238,6 @@ func (*File) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // check_list_item_files
 		&sql.NullInt64{}, // equipment_files
-		&sql.NullInt64{}, // file_category_type_files
 		&sql.NullInt64{}, // floor_plan_image
 		&sql.NullInt64{}, // location_files
 		&sql.NullInt64{}, // survey_source_file
@@ -349,48 +330,42 @@ func (f *File) assignValues(values ...interface{}) error {
 			*f.equipment_files = int(value.Int64)
 		}
 		if value, ok := values[2].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field file_category_type_files", value)
-		} else if value.Valid {
-			f.file_category_type_files = new(int)
-			*f.file_category_type_files = int(value.Int64)
-		}
-		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field floor_plan_image", value)
 		} else if value.Valid {
 			f.floor_plan_image = new(int)
 			*f.floor_plan_image = int(value.Int64)
 		}
-		if value, ok := values[4].(*sql.NullInt64); !ok {
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field location_files", value)
 		} else if value.Valid {
 			f.location_files = new(int)
 			*f.location_files = int(value.Int64)
 		}
-		if value, ok := values[5].(*sql.NullInt64); !ok {
+		if value, ok := values[4].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field survey_source_file", value)
 		} else if value.Valid {
 			f.survey_source_file = new(int)
 			*f.survey_source_file = int(value.Int64)
 		}
-		if value, ok := values[6].(*sql.NullInt64); !ok {
+		if value, ok := values[5].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field survey_question_photo_data", value)
 		} else if value.Valid {
 			f.survey_question_photo_data = new(int)
 			*f.survey_question_photo_data = int(value.Int64)
 		}
-		if value, ok := values[7].(*sql.NullInt64); !ok {
+		if value, ok := values[6].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field survey_question_images", value)
 		} else if value.Valid {
 			f.survey_question_images = new(int)
 			*f.survey_question_images = int(value.Int64)
 		}
-		if value, ok := values[8].(*sql.NullInt64); !ok {
+		if value, ok := values[7].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field user_profile_photo", value)
 		} else if value.Valid {
 			f.user_profile_photo = new(int)
 			*f.user_profile_photo = int(value.Int64)
 		}
-		if value, ok := values[9].(*sql.NullInt64); !ok {
+		if value, ok := values[8].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_files", value)
 		} else if value.Valid {
 			f.work_order_files = new(int)
@@ -443,11 +418,6 @@ func (f *File) QueryPhotoSurveyQuestion() *SurveyQuestionQuery {
 // QuerySurveyQuestion queries the survey_question edge of the File.
 func (f *File) QuerySurveyQuestion() *SurveyQuestionQuery {
 	return (&FileClient{config: f.config}).QuerySurveyQuestion(f)
-}
-
-// QueryFileCategory queries the file_category edge of the File.
-func (f *File) QueryFileCategory() *FileCategoryTypeQuery {
-	return (&FileClient{config: f.config}).QueryFileCategory(f)
 }
 
 // Update returns a builder for updating this File.
