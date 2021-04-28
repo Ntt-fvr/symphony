@@ -228,12 +228,28 @@ const ProjectsTableView = (props: Props) => {
             const indexOfProperty = row.properties.findIndex(
               property => property.propertyType.name === name,
             );
+            const renderRowValues =
+              indexOfProperty >= 0 ? (
+                row.properties[indexOfProperty]?.propertyType?.nodeType ===
+                'project' ? (
+                  <Button
+                    variant="text"
+                    onClick={() =>
+                      onProjectSelected(
+                        row.properties[indexOfProperty].nodeValue.id,
+                      )
+                    }
+                    tooltip={
+                      row.properties[indexOfProperty].nodeValue.name ?? ''
+                    }>
+                    {row.properties[indexOfProperty].nodeValue.name}
+                  </Button>
+                ) : (
+                  getPropertyValue(row.properties[indexOfProperty])
+                )
+              ) : null;
 
-            return (
-              (indexOfProperty >= 0 &&
-                getPropertyValue(row.properties[indexOfProperty])) ||
-              null
-            );
+            return renderRowValues;
           },
           tooltip: row => {
             const indexOfProperty = row.properties.findIndex(
