@@ -88,6 +88,8 @@ class DocumentTable extends React.Component<Props> {
                   key={doc.id}
                   hyperlink={doc}
                   entityId={entityId}
+                  onChecked={this.props.onChecked}
+                  linkToLocationOptions={this.props.linkToLocationOptions}
                 />
               )),
           )}
