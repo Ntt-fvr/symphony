@@ -654,22 +654,6 @@ func init() {
 	filecategorytype.DefaultUpdateTime = filecategorytypeDescUpdateTime.Default.(func() time.Time)
 	// filecategorytype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	filecategorytype.UpdateDefaultUpdateTime = filecategorytypeDescUpdateTime.UpdateDefault.(func() time.Time)
-	// filecategorytypeDescIsInstanceProperty is the schema descriptor for is_instance_property field.
-	filecategorytypeDescIsInstanceProperty := filecategorytypeFields[13].Descriptor()
-	// filecategorytype.DefaultIsInstanceProperty holds the default value on creation for the is_instance_property field.
-	filecategorytype.DefaultIsInstanceProperty = filecategorytypeDescIsInstanceProperty.Default.(bool)
-	// filecategorytypeDescEditable is the schema descriptor for editable field.
-	filecategorytypeDescEditable := filecategorytypeFields[14].Descriptor()
-	// filecategorytype.DefaultEditable holds the default value on creation for the editable field.
-	filecategorytype.DefaultEditable = filecategorytypeDescEditable.Default.(bool)
-	// filecategorytypeDescMandatory is the schema descriptor for mandatory field.
-	filecategorytypeDescMandatory := filecategorytypeFields[15].Descriptor()
-	// filecategorytype.DefaultMandatory holds the default value on creation for the mandatory field.
-	filecategorytype.DefaultMandatory = filecategorytypeDescMandatory.Default.(bool)
-	// filecategorytypeDescDeleted is the schema descriptor for deleted field.
-	filecategorytypeDescDeleted := filecategorytypeFields[16].Descriptor()
-	// filecategorytype.DefaultDeleted holds the default value on creation for the deleted field.
-	filecategorytype.DefaultDeleted = filecategorytypeDescDeleted.Default.(bool)
 	floorplanMixin := schema.FloorPlan{}.Mixin()
 	floorplan.Policy = privacy.NewPolicies(schema.FloorPlan{})
 	floorplan.Hooks[0] = func(next ent.Mutator) ent.Mutator {

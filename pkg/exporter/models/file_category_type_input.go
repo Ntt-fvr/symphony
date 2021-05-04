@@ -4,28 +4,7 @@
 
 package models
 
-import (
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
-)
-
 type FileCategoryTypeInput struct {
-	ID                 *int                  `json:"id"`
-	ExternalID         *string               `json:"externalId"`
-	Name               string                `json:"name"`
-	Type               filecategorytype.Type `json:"type"`
-	NodeType           *string               `json:"nodeType"`
-	Index              *int                  `json:"index"`
-	Category           *string               `json:"category"`
-	StringValue        *string               `json:"stringValue"`
-	IntValue           *int                  `json:"intValue"`
-	BooleanValue       *bool                 `json:"booleanValue"`
-	FloatValue         *float64              `json:"floatValue"`
-	LatitudeValue      *float64              `json:"latitudeValue"`
-	LongitudeValue     *float64              `json:"longitudeValue"`
-	RangeFromValue     *float64              `json:"rangeFromValue"`
-	RangeToValue       *float64              `json:"rangeToValue"`
-	IsEditable         *bool                 `json:"isEditable"`
-	IsInstanceProperty *bool                 `json:"isInstanceProperty"`
-	IsMandatory        *bool                 `json:"isMandatory"`
-	IsDeleted          *bool                 `json:"isDeleted"`
+	ID   *int   `json:"id"`
+	Name string `json:"name"`
 }

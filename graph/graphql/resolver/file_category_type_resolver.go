@@ -14,6 +14,6 @@ import (
 type fileCategoryTypeResolver struct{}
 
 func (fileCategoryTypeResolver) RawValue(ctx context.Context, fileCategoryType *ent.FileCategoryType) (*string, error) {
-	raw, err := resolverutil.FileCategoryTypeValue(ctx, fileCategoryType.Type, fileCategoryType.NodeType, fileCategoryType)
+	raw, err := resolverutil.FileCategoryTypeValue(ctx, fileCategoryType)
 	return &raw, err
 }

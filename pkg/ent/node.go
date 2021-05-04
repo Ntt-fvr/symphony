@@ -2092,7 +2092,7 @@ func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fct.ID,
 		Type:   "FileCategoryType",
-		Fields: make([]*Field, 20),
+		Fields: make([]*Field, 3),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -2112,148 +2112,12 @@ func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(fct.Type); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "filecategorytype.Type",
-		Name:  "type",
-		Value: string(buf),
-	}
 	if buf, err = json.Marshal(fct.Name); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.ExternalID); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "string",
-		Name:  "external_id",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.Index); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "int",
-		Name:  "index",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.Category); err != nil {
-		return nil, err
-	}
-	node.Fields[6] = &Field{
-		Type:  "string",
-		Name:  "category",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.IntVal); err != nil {
-		return nil, err
-	}
-	node.Fields[7] = &Field{
-		Type:  "int",
-		Name:  "int_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.BoolVal); err != nil {
-		return nil, err
-	}
-	node.Fields[8] = &Field{
-		Type:  "bool",
-		Name:  "bool_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.FloatVal); err != nil {
-		return nil, err
-	}
-	node.Fields[9] = &Field{
-		Type:  "float64",
-		Name:  "float_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.LatitudeVal); err != nil {
-		return nil, err
-	}
-	node.Fields[10] = &Field{
-		Type:  "float64",
-		Name:  "latitude_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.LongitudeVal); err != nil {
-		return nil, err
-	}
-	node.Fields[11] = &Field{
-		Type:  "float64",
-		Name:  "longitude_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.StringVal); err != nil {
-		return nil, err
-	}
-	node.Fields[12] = &Field{
-		Type:  "string",
-		Name:  "string_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.RangeFromVal); err != nil {
-		return nil, err
-	}
-	node.Fields[13] = &Field{
-		Type:  "float64",
-		Name:  "range_from_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.RangeToVal); err != nil {
-		return nil, err
-	}
-	node.Fields[14] = &Field{
-		Type:  "float64",
-		Name:  "range_to_val",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.IsInstanceProperty); err != nil {
-		return nil, err
-	}
-	node.Fields[15] = &Field{
-		Type:  "bool",
-		Name:  "is_instance_property",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.Editable); err != nil {
-		return nil, err
-	}
-	node.Fields[16] = &Field{
-		Type:  "bool",
-		Name:  "editable",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.Mandatory); err != nil {
-		return nil, err
-	}
-	node.Fields[17] = &Field{
-		Type:  "bool",
-		Name:  "mandatory",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.Deleted); err != nil {
-		return nil, err
-	}
-	node.Fields[18] = &Field{
-		Type:  "bool",
-		Name:  "deleted",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(fct.NodeType); err != nil {
-		return nil, err
-	}
-	node.Fields[19] = &Field{
-		Type:  "string",
-		Name:  "nodeType",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

@@ -11,7 +11,6 @@ import (
 	"strconv"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/pkg/errors"
@@ -119,8 +118,8 @@ func PropertyValue(ctx context.Context, typ propertytype.Type, nodeType string, 
 	}
 }
 
-func FileCategoryTypeValue(ctx context.Context, typ filecategorytype.Type, nodeType string, v interface{}) (string, error) {
-	switch v.(type) {
+func FileCategoryTypeValue(ctx context.Context, v interface{}) (string, error) {
+	/*switch v.(type) {
 	case *ent.FileCategoryType:
 	default:
 		return "", errors.Errorf("invalid type: %T", v)
@@ -170,5 +169,6 @@ func FileCategoryTypeValue(ctx context.Context, typ filecategorytype.Type, nodeT
 		return strconv.FormatBool(reflect.Indirect(boolValue).Bool()), nil
 	default:
 		return "", errors.Errorf("type not supported %s", typ)
-	}
+	}*/
+	return "", nil
 }

@@ -769,24 +769,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"string", "int", "bool", "float", "date", "enum", "range", "email", "gps_location", "datetime_local", "node"}},
 		{Name: "name", Type: field.TypeString},
-		{Name: "external_id", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "index", Type: field.TypeInt, Nullable: true},
-		{Name: "category", Type: field.TypeString, Nullable: true},
-		{Name: "int_val", Type: field.TypeInt, Nullable: true},
-		{Name: "bool_val", Type: field.TypeBool, Nullable: true},
-		{Name: "float_val", Type: field.TypeFloat64, Nullable: true},
-		{Name: "latitude_val", Type: field.TypeFloat64, Nullable: true},
-		{Name: "longitude_val", Type: field.TypeFloat64, Nullable: true},
-		{Name: "string_val", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "range_from_val", Type: field.TypeFloat64, Nullable: true},
-		{Name: "range_to_val", Type: field.TypeFloat64, Nullable: true},
-		{Name: "is_instance_property", Type: field.TypeBool, Default: true},
-		{Name: "editable", Type: field.TypeBool, Default: true},
-		{Name: "mandatory", Type: field.TypeBool},
-		{Name: "deleted", Type: field.TypeBool},
-		{Name: "node_type", Type: field.TypeString, Nullable: true},
 		{Name: "location_type_file_category_type", Type: field.TypeInt, Nullable: true},
 	}
 	// FileCategoryTypesTable holds the schema information for the "file_category_types" table.
@@ -797,7 +780,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "file_category_types_location_types_file_category_type",
-				Columns: []*schema.Column{FileCategoryTypesColumns[21]},
+				Columns: []*schema.Column{FileCategoryTypesColumns[4]},
 
 				RefColumns: []*schema.Column{LocationTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -807,7 +790,7 @@ var (
 			{
 				Name:    "filecategorytype_name_location_type_file_category_type",
 				Unique:  true,
-				Columns: []*schema.Column{FileCategoryTypesColumns[4], FileCategoryTypesColumns[21]},
+				Columns: []*schema.Column{FileCategoryTypesColumns[3], FileCategoryTypesColumns[4]},
 			},
 		},
 	}

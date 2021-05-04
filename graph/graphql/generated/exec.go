@@ -22,7 +22,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -475,26 +474,9 @@ type ComplexityRoot struct {
 	}
 
 	FileCategoryType struct {
-		BoolVal            func(childComplexity int) int
-		Category           func(childComplexity int) int
-		Deleted            func(childComplexity int) int
-		Editable           func(childComplexity int) int
-		ExternalID         func(childComplexity int) int
-		FloatVal           func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Index              func(childComplexity int) int
-		IntVal             func(childComplexity int) int
-		IsInstanceProperty func(childComplexity int) int
-		LatitudeVal        func(childComplexity int) int
-		LongitudeVal       func(childComplexity int) int
-		Mandatory          func(childComplexity int) int
-		Name               func(childComplexity int) int
-		NodeType           func(childComplexity int) int
-		RangeFromVal       func(childComplexity int) int
-		RangeToVal         func(childComplexity int) int
-		RawValue           func(childComplexity int) int
-		StringVal          func(childComplexity int) int
-		Type               func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Name     func(childComplexity int) int
+		RawValue func(childComplexity int) int
 	}
 
 	FloorPlan struct {
@@ -3290,96 +3272,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.File.UploadedAt(childComplexity), true
 
-	case "FileCategoryType.booleanValue":
-		if e.complexity.FileCategoryType.BoolVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.BoolVal(childComplexity), true
-
-	case "FileCategoryType.category":
-		if e.complexity.FileCategoryType.Category == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Category(childComplexity), true
-
-	case "FileCategoryType.isDeleted":
-		if e.complexity.FileCategoryType.Deleted == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Deleted(childComplexity), true
-
-	case "FileCategoryType.isEditable":
-		if e.complexity.FileCategoryType.Editable == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Editable(childComplexity), true
-
-	case "FileCategoryType.externalId":
-		if e.complexity.FileCategoryType.ExternalID == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.ExternalID(childComplexity), true
-
-	case "FileCategoryType.floatValue":
-		if e.complexity.FileCategoryType.FloatVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.FloatVal(childComplexity), true
-
 	case "FileCategoryType.id":
 		if e.complexity.FileCategoryType.ID == nil {
 			break
 		}
 
 		return e.complexity.FileCategoryType.ID(childComplexity), true
-
-	case "FileCategoryType.index":
-		if e.complexity.FileCategoryType.Index == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Index(childComplexity), true
-
-	case "FileCategoryType.intValue":
-		if e.complexity.FileCategoryType.IntVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.IntVal(childComplexity), true
-
-	case "FileCategoryType.isInstanceProperty":
-		if e.complexity.FileCategoryType.IsInstanceProperty == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.IsInstanceProperty(childComplexity), true
-
-	case "FileCategoryType.latitudeValue":
-		if e.complexity.FileCategoryType.LatitudeVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.LatitudeVal(childComplexity), true
-
-	case "FileCategoryType.longitudeValue":
-		if e.complexity.FileCategoryType.LongitudeVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.LongitudeVal(childComplexity), true
-
-	case "FileCategoryType.isMandatory":
-		if e.complexity.FileCategoryType.Mandatory == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Mandatory(childComplexity), true
 
 	case "FileCategoryType.name":
 		if e.complexity.FileCategoryType.Name == nil {
@@ -3388,47 +3286,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FileCategoryType.Name(childComplexity), true
 
-	case "FileCategoryType.nodeType":
-		if e.complexity.FileCategoryType.NodeType == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.NodeType(childComplexity), true
-
-	case "FileCategoryType.rangeFromValue":
-		if e.complexity.FileCategoryType.RangeFromVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.RangeFromVal(childComplexity), true
-
-	case "FileCategoryType.rangeToValue":
-		if e.complexity.FileCategoryType.RangeToVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.RangeToVal(childComplexity), true
-
 	case "FileCategoryType.rawValue":
 		if e.complexity.FileCategoryType.RawValue == nil {
 			break
 		}
 
 		return e.complexity.FileCategoryType.RawValue(childComplexity), true
-
-	case "FileCategoryType.stringValue":
-		if e.complexity.FileCategoryType.StringVal == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.StringVal(childComplexity), true
-
-	case "FileCategoryType.type":
-		if e.complexity.FileCategoryType.Type == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Type(childComplexity), true
 
 	case "FloorPlan.id":
 		if e.complexity.FloorPlan.ID == nil {
@@ -10190,44 +10053,12 @@ enum PropertyKind
   node
 }
 
-enum FileCategoryTypeKind
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/filecategorytype.Type"
-  ) {
-  string
-  int
-  bool
-  float
-  date
-  enum
-  range
-  email
-  gps_location
-  datetime_local
-  node
-}
+
 
 type FileCategoryType implements Node {
   id: ID!
-  externalId: String
   name: String!
-  type: FileCategoryTypeKind!
-  nodeType: String
-  index: Int
-  category: String
   rawValue: String
-  stringValue: String
-  intValue: Int
-  booleanValue: Boolean
-  floatValue: Float
-  latitudeValue: Float
-  longitudeValue: Float
-  rangeFromValue: Float
-  rangeToValue: Float
-  isEditable: Boolean
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
-  isDeleted: Boolean
 }
 
 input FileCategoryTypeInput
@@ -10235,24 +10066,7 @@ input FileCategoryTypeInput
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
   ) {
   id: ID
-  externalId: String
   name: String!
-  type: FileCategoryTypeKind!
-  nodeType: String
-  index: Int
-  category: String
-  stringValue: String
-  intValue: Int
-  booleanValue: Boolean
-  floatValue: Float
-  latitudeValue: Float
-  longitudeValue: Float
-  rangeFromValue: Float
-  rangeToValue: Float
-  isEditable: Boolean
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
-  isDeleted: Boolean
 }
 
 type PropertyType implements Node {
@@ -24791,38 +24605,6 @@ func (ec *executionContext) _FileCategoryType_id(ctx context.Context, field grap
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FileCategoryType_externalId(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ExternalID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _FileCategoryType_name(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -24858,137 +24640,6 @@ func (ec *executionContext) _FileCategoryType_name(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FileCategoryType_type(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Type, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(filecategorytype.Type)
-	fc.Result = res
-	return ec.marshalNFileCategoryTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋfilecategorytypeᚐType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_nodeType(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NodeType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_index(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Index, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalOInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_category(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Category, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _FileCategoryType_rawValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -25019,390 +24670,6 @@ func (ec *executionContext) _FileCategoryType_rawValue(ctx context.Context, fiel
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_stringValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StringVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_intValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IntVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_booleanValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.BoolVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_floatValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.FloatVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_latitudeValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LatitudeVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_longitudeValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LongitudeVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_rangeFromValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RangeFromVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_rangeToValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RangeToVal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_isEditable(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Editable, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_isInstanceProperty(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsInstanceProperty, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_isMandatory(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Mandatory, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_isDeleted(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Deleted, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FloorPlan_id(ctx context.Context, field graphql.CollectedField, obj *ent.FloorPlan) (ret graphql.Marshaler) {
@@ -53720,147 +52987,11 @@ func (ec *executionContext) unmarshalInputFileCategoryTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "externalId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalId"))
-			it.ExternalID, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "name":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "type":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalNFileCategoryTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋfilecategorytypeᚐType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "nodeType":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nodeType"))
-			it.NodeType, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "index":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
-			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "category":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
-			it.Category, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "stringValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
-			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "intValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intValue"))
-			it.IntValue, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "booleanValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("booleanValue"))
-			it.BooleanValue, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "floatValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("floatValue"))
-			it.FloatValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "latitudeValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latitudeValue"))
-			it.LatitudeValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "longitudeValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longitudeValue"))
-			it.LongitudeValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rangeFromValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rangeFromValue"))
-			it.RangeFromValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rangeToValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rangeToValue"))
-			it.RangeToValue, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isEditable":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEditable"))
-			it.IsEditable, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isInstanceProperty":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isInstanceProperty"))
-			it.IsInstanceProperty, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isMandatory":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMandatory"))
-			it.IsMandatory, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isDeleted":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDeleted"))
-			it.IsDeleted, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60058,24 +59189,11 @@ func (ec *executionContext) _FileCategoryType(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "externalId":
-			out.Values[i] = ec._FileCategoryType_externalId(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._FileCategoryType_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "type":
-			out.Values[i] = ec._FileCategoryType_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "nodeType":
-			out.Values[i] = ec._FileCategoryType_nodeType(ctx, field, obj)
-		case "index":
-			out.Values[i] = ec._FileCategoryType_index(ctx, field, obj)
-		case "category":
-			out.Values[i] = ec._FileCategoryType_category(ctx, field, obj)
 		case "rawValue":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -60087,30 +59205,6 @@ func (ec *executionContext) _FileCategoryType(ctx context.Context, sel ast.Selec
 				res = ec._FileCategoryType_rawValue(ctx, field, obj)
 				return res
 			})
-		case "stringValue":
-			out.Values[i] = ec._FileCategoryType_stringValue(ctx, field, obj)
-		case "intValue":
-			out.Values[i] = ec._FileCategoryType_intValue(ctx, field, obj)
-		case "booleanValue":
-			out.Values[i] = ec._FileCategoryType_booleanValue(ctx, field, obj)
-		case "floatValue":
-			out.Values[i] = ec._FileCategoryType_floatValue(ctx, field, obj)
-		case "latitudeValue":
-			out.Values[i] = ec._FileCategoryType_latitudeValue(ctx, field, obj)
-		case "longitudeValue":
-			out.Values[i] = ec._FileCategoryType_longitudeValue(ctx, field, obj)
-		case "rangeFromValue":
-			out.Values[i] = ec._FileCategoryType_rangeFromValue(ctx, field, obj)
-		case "rangeToValue":
-			out.Values[i] = ec._FileCategoryType_rangeToValue(ctx, field, obj)
-		case "isEditable":
-			out.Values[i] = ec._FileCategoryType_isEditable(ctx, field, obj)
-		case "isInstanceProperty":
-			out.Values[i] = ec._FileCategoryType_isInstanceProperty(ctx, field, obj)
-		case "isMandatory":
-			out.Values[i] = ec._FileCategoryType_isMandatory(ctx, field, obj)
-		case "isDeleted":
-			out.Values[i] = ec._FileCategoryType_isDeleted(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -68752,16 +67846,6 @@ func (ec *executionContext) marshalNFileCategoryType2ᚕᚖgithubᚗcomᚋfacebo
 func (ec *executionContext) unmarshalNFileCategoryTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInput(ctx context.Context, v interface{}) (*models1.FileCategoryTypeInput, error) {
 	res, err := ec.unmarshalInputFileCategoryTypeInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNFileCategoryTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋfilecategorytypeᚐType(ctx context.Context, v interface{}) (filecategorytype.Type, error) {
-	var res filecategorytype.Type
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNFileCategoryTypeKind2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋfilecategorytypeᚐType(ctx context.Context, sel ast.SelectionSet, v filecategorytype.Type) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNFileInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFileInput(ctx context.Context, v interface{}) (*models.FileInput, error) {

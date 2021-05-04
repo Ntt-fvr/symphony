@@ -1408,44 +1408,12 @@ enum PropertyKind
   node
 }
 
-enum FileCategoryTypeKind
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/filecategorytype.Type"
-  ) {
-  string
-  int
-  bool
-  float
-  date
-  enum
-  range
-  email
-  gps_location
-  datetime_local
-  node
-}
+
 
 type FileCategoryType implements Node {
   id: ID!
-  externalId: String
   name: String!
-  type: FileCategoryTypeKind!
-  nodeType: String
-  index: Int
-  category: String
   rawValue: String
-  stringValue: String
-  intValue: Int
-  booleanValue: Boolean
-  floatValue: Float
-  latitudeValue: Float
-  longitudeValue: Float
-  rangeFromValue: Float
-  rangeToValue: Float
-  isEditable: Boolean
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
-  isDeleted: Boolean
 }
 
 input FileCategoryTypeInput
@@ -1453,24 +1421,7 @@ input FileCategoryTypeInput
     model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
   ) {
   id: ID
-  externalId: String
   name: String!
-  type: FileCategoryTypeKind!
-  nodeType: String
-  index: Int
-  category: String
-  stringValue: String
-  intValue: Int
-  booleanValue: Boolean
-  floatValue: Float
-  latitudeValue: Float
-  longitudeValue: Float
-  rangeFromValue: Float
-  rangeToValue: Float
-  isEditable: Boolean
-  isInstanceProperty: Boolean
-  isMandatory: Boolean
-  isDeleted: Boolean
 }
 
 type PropertyType implements Node {
