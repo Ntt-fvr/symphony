@@ -10,6 +10,11 @@
 
 import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
 import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
+import type {
+  AddHyperlinkInput,
+  AddHyperlinkMutationResponse,
+  AddHyperlinkMutationVariables,
+} from '../../mutations/__generated__/AddHyperlinkMutation.graphql';
 import type {ChecklistCategoriesMutateStateActionType} from '../checklist/ChecklistCategoriesMutateAction';
 import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategoriesMutateState';
 import type {ContextRouter} from 'react-router-dom';
@@ -20,6 +25,7 @@ import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
 import AddImageMutation from '../../mutations/AddImageMutation';
+import AddHyperlinkMutation from '../../mutations/AddHyperlinkMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
@@ -179,11 +185,18 @@ const WorkOrderDetails = ({
         item.category,
       );
     });
+    state.links.map(item => {
+      addNewHyperlinkToLocation(
+        propsWorkOrder.location?.id,
+        item.link,
+        item.category,
+      );
+    });
   };
 
   function reducerCounter(
     state,
-    action: {file: Object, type: string, value: string},
+    action: {file: Object, link: Object, type: string, value: string},
   ) {
     switch (action.type) {
       case 'checkIncrement':
@@ -191,6 +204,7 @@ const WorkOrderDetails = ({
           valueCount: state.valueCount,
           checkCount: state.checkCount + 1,
           files: state.files,
+          links: state.links,
           isApplyButtonEnabled: true,
         };
       case 'checkDecrement':
@@ -199,6 +213,7 @@ const WorkOrderDetails = ({
             valueCount: state.valueCount,
             checkCount: state.checkCount - 1,
             files: state.files,
+            links: state.links,
             isApplyButtonEnabled: true,
           };
         } else {
@@ -206,16 +221,32 @@ const WorkOrderDetails = ({
             valueCount: state.valueCount,
             checkCount: 0,
             files: state.files,
+            links: state.links,
             isApplyButtonEnabled: true,
           };
         }
       case 'valueIncrement':
-        const newFile = {file: action.file, category: action.value};
-        const newFiles = state.files.concat(newFile);
+        const newFile = action.file
+          ? {file: action.file, category: action.value}
+          : false;
+        const newFiles = newFile
+          ? state.files.concat(newFile)
+          : state.files
+          ? state.files
+          : [];
+        const newLink = action.link
+          ? {link: action.link, category: action.value}
+          : false;
+        const newLinks = newLink
+          ? state.links.concat(newLink)
+          : state.links
+          ? state.links
+          : [];
         return {
           valueCount: state.valueCount + 1,
           checkCount: state.checkCount,
           files: newFiles,
+          links: newLinks,
           isApplyButtonEnabled: true,
         };
       case 'valueDecrement':
@@ -223,7 +254,12 @@ const WorkOrderDetails = ({
           return {
             valueCount: state.valueCount - 1,
             checkCount: state.checkCount,
-            files: state.files.filter(item => item.file.id !== action.file.id),
+            files: state.files?.filter(
+              item => item.file?.id !== action.file?.id,
+            ),
+            links: state.links?.filter(
+              item => item.link?.id !== action.link?.id,
+            ),
             isApplyButtonEnabled: true,
           };
         } else {
@@ -231,6 +267,7 @@ const WorkOrderDetails = ({
             valueCount: 0,
             checkCount: state.checkCount,
             files: state.files,
+            links: state.links,
             isApplyButtonEnabled: true,
           };
         }
@@ -239,6 +276,7 @@ const WorkOrderDetails = ({
           valueCount: state.valueCount,
           checkCount: state.checkCount,
           files: state.files,
+          links: state.links,
           isApplyButtonEnabled: false,
         };
       default:
@@ -250,6 +288,7 @@ const WorkOrderDetails = ({
     checkCount: 0,
     valueCount: 0,
     files: [],
+    links: [],
     isApplyButtonEnabled: true,
   });
 
@@ -366,6 +405,54 @@ const WorkOrderDetails = ({
     AddImageMutation(variables, callbacks, updater);
   };
 
+  const addNewHyperlinkToLocation = (locationId, link, category) => {
+    const locId = locationId;
+
+    if (!locId) {
+      return;
+    }
+
+    const variables: AddHyperlinkMutationVariables = {
+      input: {
+        entityId: locId,
+        entityType: 'LOCATION',
+        url: link.url,
+        displayName: link?.displayName,
+        category: category,
+      },
+    };
+
+    const updater = store => {
+      const newNode = store.getRootField('addHyperlink');
+      const workOrderProxy = store.get(locId);
+      if (newNode == null || workOrderProxy == null) {
+        return;
+      }
+
+      const hyperlinkNodes =
+        workOrderProxy.getLinkedRecords('hyperlinks') || [];
+      workOrderProxy.setLinkedRecords(
+        [...hyperlinkNodes, newNode],
+        'hyperlinks',
+      );
+    };
+
+    const callbacks: MutationCallbacks<AddHyperlinkMutationResponse> = {
+      onCompleted: () => {
+        enqueueSnackbar(
+          `${link?.displayName} linked to location with category ${category}`,
+        );
+      },
+      onError: () => {
+        enqueueSnackbar(
+          `There was an error linking ${file.fileName} to location with category ${category}`,
+        );
+      },
+    };
+
+    AddHyperlinkMutation(variables, callbacks, updater);
+  };
+
   const setWorkOrderStatus = value => {
     if (!value || value === workOrder.status) {
       return;
@@ -433,7 +520,7 @@ const WorkOrderDetails = ({
   const assigneeCanCompleteWorkOrder =
     propsWorkOrder.workOrderTemplate?.assigneeCanCompleteWorkOrder;
 
-  const {statusValues, closedStatus, cancelledStatus} = useStatusValues();
+  const {statusValues, closedStatus, canceledStatus} = useStatusValues();
   const filteredStatusValues = useMemo(() => {
     if (
       userHasAdminPermissions ||
@@ -447,7 +534,7 @@ const WorkOrderDetails = ({
     }
     return statusValues
       .filter(status => status.key !== closedStatus.key)
-      .filter(status => status.key !== cancelledStatus.key);
+      .filter(status => status.key !== canceledStatus.key);
   }, [
     userHasAdminPermissions,
     isOwner,
@@ -483,7 +570,7 @@ const WorkOrderDetails = ({
               fieldDisplayName: 'Status',
               value: propsWorkOrder.status,
               checkCallback: value =>
-                value === closedStatus.value || value === cancelledStatus.value
+                value === closedStatus.value || value === canceledStatus.value
                   ? `Work order is on '${closedStatus.label}' state`
                   : '',
             });

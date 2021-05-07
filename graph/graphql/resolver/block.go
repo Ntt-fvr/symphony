@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/pkg/errors"
+
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -628,4 +630,31 @@ func (r mutationResolver) EditBlock(ctx context.Context, input models.EditBlockI
 	return client.Block.UpdateOneID(input.ID).
 		SetUIRepresentation(input.UIRepresentation).
 		Save(ctx)
+}
+
+func (r mutationResolver) AddBlockInstance(ctx context.Context, flowInstanceID int, input models.AddBlockInstanceInput) (*ent.BlockInstance, error) {
+	client := ent.FromContext(ctx)
+	b := client.BlockInstance.Create().
+		SetBlockID(input.BlockID).
+		SetFlowInstanceID(flowInstanceID).
+		SetNillableStatus(input.Status).
+		SetInputs(input.Inputs).
+		SetOutputs(input.Outputs)
+
+	return b.Save(ctx)
+}
+
+func (r mutationResolver) EditBlockInstance(ctx context.Context, input models.EditBlockInstanceInput) (*ent.BlockInstance, error) {
+	client := ent.FromContext(ctx)
+	bi, err := client.BlockInstance.Get(ctx, input.ID)
+	if err != nil {
+		return nil, errors.Wrap(err, "querying block instance")
+	}
+	mutation := client.BlockInstance.
+		UpdateOne(bi).
+		SetNillableStatus(input.Status).
+		SetInputs(input.Inputs).
+		SetOutputs(input.Outputs)
+
+	return mutation.Save(ctx)
 }

@@ -111,19 +111,6 @@ func TestNestedVariableDefinitions(t *testing.T) {
 			},
 		},
 		{
-			name: "bad_input",
-			inputs: []*flowschema.VariableExpression{
-				{
-					VariableDefinitionKey: "param1",
-					Expression:            "valueC",
-				},
-			},
-			usages: []enum.VariableUsage{enum.VariableUsageInput, enum.VariableUsageInputAndOutput},
-			expect: func(definitions []*flowschema.VariableDefinition, err error) {
-				require.Error(t, err)
-			},
-		},
-		{
 			name: "input_not_exist",
 			inputs: []*flowschema.VariableExpression{
 				{
@@ -163,7 +150,7 @@ func TestNestedVariableDefinitions(t *testing.T) {
 			inputs: []*flowschema.VariableExpression{
 				{
 					VariableDefinitionKey: "param1",
-					Expression:            "\"valueA\"",
+					Expression:            "valueA",
 				},
 			},
 			usages: []enum.VariableUsage{enum.VariableUsageInput, enum.VariableUsageInputAndOutput},
@@ -184,7 +171,7 @@ func TestNestedVariableDefinitions(t *testing.T) {
 			inputs: []*flowschema.VariableExpression{
 				{
 					VariableDefinitionKey: "param1",
-					Expression:            "\"valueB\"",
+					Expression:            "valueB",
 				},
 			},
 			usages: []enum.VariableUsage{enum.VariableUsageInput, enum.VariableUsageInputAndOutput},
@@ -205,7 +192,7 @@ func TestNestedVariableDefinitions(t *testing.T) {
 			inputs: []*flowschema.VariableExpression{
 				{
 					VariableDefinitionKey: "param1",
-					Expression:            "\"valueB\"",
+					Expression:            "valueB",
 				},
 			},
 			usages: []enum.VariableUsage{enum.VariableUsageOutput},

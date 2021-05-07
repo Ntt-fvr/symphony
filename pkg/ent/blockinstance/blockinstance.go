@@ -107,7 +107,7 @@ func ValidColumn(column string) bool {
 //	import _ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 //
 var (
-	Hooks  [1]ent.Hook
+	Hooks  [2]ent.Hook
 	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the create_time field.
 	DefaultCreateTime func() time.Time

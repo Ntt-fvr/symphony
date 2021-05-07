@@ -162,3 +162,9 @@ func (BlockInstance) Policy() ent.Policy {
 		),
 	)
 }
+
+func (BlockInstance) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.UpdateFlowInstanceStatus(),
+	}
+}

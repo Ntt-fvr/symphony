@@ -92,10 +92,10 @@ export const blockedStatus = {
   label: `${fbt('Blocked', '')}`,
 };
 
-export const cancelledStatus = {
-  key: 'Cancelled',
-  value: 'CANCELLED',
-  label: `${fbt('Cancelled', '')}`,
+export const canceledStatus = {
+  key: 'Canceled',
+  value: 'CANCELED',
+  label: `${fbt('Canceled', '')}`,
 };
 
 const statusValues: Array<{|
@@ -108,9 +108,9 @@ const statusValues: Array<{|
   submittedStatus,
   closedStatus,
   blockedStatus,
-  cancelledStatus,
+  canceledStatus,
 ];
 
 export function useStatusValues() {
-  return {statusValues, closedStatus, cancelledStatus};
+  return {statusValues, closedStatus, canceledStatus};
 }

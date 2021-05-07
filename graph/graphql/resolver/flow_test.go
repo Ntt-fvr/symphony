@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
+
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -356,7 +358,57 @@ func TestStartFlow(t *testing.T) {
 	require.Equal(t, inputParams, startBlock.Inputs)
 	require.NotNil(t, startBlock.Edges.Block)
 	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
-	require.Equal(t, blockinstance.StatusPending, startBlock.Status)
+	require.Equal(t, blockinstance.StatusCompleted, startBlock.Status)
+}
+
+func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	flw := prepareBasicFlow(ctx, t, mr, "flow", nil, nil)
+	inputParams := []*flowschema.VariableValue{
+		{
+			VariableDefinitionKey: "start_param",
+			Value:                 "\"test string\"",
+		},
+	}
+	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID: flw.ID,
+		Params: inputParams,
+	})
+	require.NoError(t, err)
+	startBlock, err := flowInstance.QueryBlocks().
+		WithBlock().
+		Only(ctx)
+	require.NoError(t, err)
+	require.Equal(t, inputParams, startBlock.Inputs)
+	require.NotNil(t, startBlock.Edges.Block)
+	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
+	require.Equal(t, blockinstance.StatusCompleted, startBlock.Status)
+	endBlock, err := flowInstance.QueryTemplate().
+		QueryBlocks().
+		Where(block.TypeEQ(block.TypeEnd)).
+		Only(ctx)
+	require.NoError(t, err)
+	bi, err := mr.AddBlockInstance(ctx, flowInstance.ID, models.AddBlockInstanceInput{
+		BlockID: endBlock.ID,
+	})
+	require.NoError(t, err)
+	require.Equal(t, blockinstance.StatusPending, bi.Status)
+	bi, err = mr.EditBlockInstance(ctx, models.EditBlockInstanceInput{
+		ID:     bi.ID,
+		Status: blockInstanceStatusRef(blockinstance.StatusCompleted),
+	})
+	require.NoError(t, err)
+	require.Equal(t, blockinstance.StatusCompleted, bi.Status)
+	flowInstance = bi.QueryFlowInstance().OnlyX(ctx)
+	require.Equal(t, flowinstance.StatusCompleted, flowInstance.Status)
+}
+
+func blockInstanceStatusRef(status blockinstance.Status) *blockinstance.Status {
+	return &status
 }
 
 func refString(s string) *string { return &s }
@@ -521,6 +573,11 @@ func TestImportEmptyFlow(t *testing.T) {
 						Expression:            strconv.Itoa(owner.ID),
 					},
 					{
+						Type:                  enum.VariableDefinition,
+						VariableDefinitionKey: refString(actions.InputVariableOperation),
+						Expression:            "Create WO",
+					},
+					{
 						Type:           enum.PropertyTypeDefinition,
 						PropertyTypeID: refInt(propertyTypeID),
 						Expression:     "\"Property\"",
@@ -552,7 +609,7 @@ func TestImportEmptyFlow(t *testing.T) {
 					{
 						Type:                  enum.VariableDefinition,
 						VariableDefinitionKey: refString(triggers.InputVariableType),
-						Expression:            strconv.Quote(triggers.TypeWorkOrderInitiated),
+						Expression:            triggers.TypeWorkOrderInitiated,
 					},
 				},
 			},
@@ -609,12 +666,12 @@ func TestImportEmptyFlow(t *testing.T) {
 			} else {
 				require.Equal(t, "wo", blk.Cid)
 				require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
-				require.Len(t, blk.InputParams, 3)
+				require.Len(t, blk.InputParams, 4)
 				blockType, err := br.Details(ctx, blk)
 				require.NoError(t, err)
 				action, ok := blockType.(*models.ActionBlock)
 				require.True(t, ok)
-				require.Len(t, action.Params, 4)
+				require.Len(t, action.Params, 5)
 			}
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)
