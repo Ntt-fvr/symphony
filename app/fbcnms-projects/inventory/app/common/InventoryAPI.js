@@ -29,5 +29,9 @@ export const InventoryAPIUrls = {
   flows: () => '/automation/flows',
   flow: (flowId: ?string) =>
     `/automation/flow/?flowId=${!!flowId ? flowId : NEW_FLOW_PARAM}`,
+  flowinstance: (flowinstanceId: ?string) =>
+    `/automation/search${
+      !!flowinstanceId ? `?flowinstance=${flowinstanceId}` : ''
+    }`,
   search: POWER_SEARCH,
 };

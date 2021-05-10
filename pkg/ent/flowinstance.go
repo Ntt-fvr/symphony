@@ -35,6 +35,14 @@ type FlowInstance struct {
 	OutputParams []*flowschema.VariableValue `json:"output_params,omitempty"`
 	// IncompletionReason holds the value of the "incompletion_reason" field.
 	IncompletionReason string `json:"incompletion_reason,omitempty"`
+	// BssCode holds the value of the "bss_code" field.
+	BssCode string `json:"bss_code,omitempty"`
+	// ServiceInstanceCode holds the value of the "service_instance_code" field.
+	ServiceInstanceCode string `json:"service_instance_code,omitempty"`
+	// StartDate holds the value of the "start_date" field.
+	StartDate time.Time `json:"start_date,omitempty"`
+	// EndDate holds the value of the "end_date" field.
+	EndDate *time.Time `json:"end_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FlowInstanceQuery when eager-loading is set.
 	Edges                           FlowInstanceEdges `json:"edges"`
@@ -118,6 +126,10 @@ func (*FlowInstance) scanValues() []interface{} {
 		&sql.NullString{}, // status
 		&[]byte{},         // output_params
 		&sql.NullString{}, // incompletion_reason
+		&sql.NullString{}, // bss_code
+		&sql.NullString{}, // service_instance_code
+		&sql.NullTime{},   // start_date
+		&sql.NullTime{},   // end_date
 	}
 }
 
@@ -170,7 +182,28 @@ func (fi *FlowInstance) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		fi.IncompletionReason = value.String
 	}
-	values = values[5:]
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field bss_code", values[5])
+	} else if value.Valid {
+		fi.BssCode = value.String
+	}
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field service_instance_code", values[6])
+	} else if value.Valid {
+		fi.ServiceInstanceCode = value.String
+	}
+	if value, ok := values[7].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field start_date", values[7])
+	} else if value.Valid {
+		fi.StartDate = value.Time
+	}
+	if value, ok := values[8].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field end_date", values[8])
+	} else if value.Valid {
+		fi.EndDate = new(time.Time)
+		*fi.EndDate = value.Time
+	}
+	values = values[9:]
 	if len(values) == len(flowinstance.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_instance_subflow_instance", value)
@@ -247,6 +280,16 @@ func (fi *FlowInstance) String() string {
 	builder.WriteString(fmt.Sprintf("%v", fi.OutputParams))
 	builder.WriteString(", incompletion_reason=")
 	builder.WriteString(fi.IncompletionReason)
+	builder.WriteString(", bss_code=")
+	builder.WriteString(fi.BssCode)
+	builder.WriteString(", service_instance_code=")
+	builder.WriteString(fi.ServiceInstanceCode)
+	builder.WriteString(", start_date=")
+	builder.WriteString(fi.StartDate.Format(time.ANSIC))
+	if v := fi.EndDate; v != nil {
+		builder.WriteString(", end_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

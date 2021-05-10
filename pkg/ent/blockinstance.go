@@ -38,6 +38,10 @@ type BlockInstance struct {
 	FailureReason string `json:"failure_reason,omitempty"`
 	// BlockInstanceCounter holds the value of the "block_instance_counter" field.
 	BlockInstanceCounter int `json:"block_instance_counter,omitempty"`
+	// StartDate holds the value of the "start_date" field.
+	StartDate time.Time `json:"start_date,omitempty"`
+	// EndDate holds the value of the "end_date" field.
+	EndDate *time.Time `json:"end_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockInstanceQuery when eager-loading is set.
 	Edges                BlockInstanceEdges `json:"edges"`
@@ -111,6 +115,8 @@ func (*BlockInstance) scanValues() []interface{} {
 		&[]byte{},         // outputs
 		&sql.NullString{}, // failure_reason
 		&sql.NullInt64{},  // block_instance_counter
+		&sql.NullTime{},   // start_date
+		&sql.NullTime{},   // end_date
 	}
 }
 
@@ -175,7 +181,18 @@ func (bi *BlockInstance) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		bi.BlockInstanceCounter = int(value.Int64)
 	}
-	values = values[7:]
+	if value, ok := values[7].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field start_date", values[7])
+	} else if value.Valid {
+		bi.StartDate = value.Time
+	}
+	if value, ok := values[8].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field end_date", values[8])
+	} else if value.Valid {
+		bi.EndDate = new(time.Time)
+		*bi.EndDate = value.Time
+	}
+	values = values[9:]
 	if len(values) == len(blockinstance.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_instance_block", value)
@@ -245,6 +262,12 @@ func (bi *BlockInstance) String() string {
 	builder.WriteString(bi.FailureReason)
 	builder.WriteString(", block_instance_counter=")
 	builder.WriteString(fmt.Sprintf("%v", bi.BlockInstanceCounter))
+	builder.WriteString(", start_date=")
+	builder.WriteString(bi.StartDate.Format(time.ANSIC))
+	if v := bi.EndDate; v != nil {
+		builder.WriteString(", end_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

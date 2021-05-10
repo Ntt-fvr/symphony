@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/facebookincubator/symphony/graph/resolverutil"
+
 	"github.com/pkg/errors"
 
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -174,6 +176,8 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 	client := r.ClientFrom(ctx)
 	flowInstance, err := client.FlowInstance.Create().
 		SetFlowID(input.FlowID).
+		SetBssCode(input.BssCode).
+		SetStartDate(input.StartDate).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -189,6 +193,7 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 		SetBlock(startBlock).
 		SetFlowInstance(flowInstance).
 		SetStatus(blockinstance.StatusCompleted).
+		SetStartDate(input.StartDate).
 		SetInputs(input.Params).
 		Save(ctx); err != nil {
 		return nil, err
@@ -228,9 +233,17 @@ func (r queryResolver) FlowInstances(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
+	orderBy *ent.FlowInstanceOrder,
+	filterBy []*models.FlowInstanceFilterInput,
 ) (*ent.FlowInstanceConnection, error) {
 	return r.ClientFrom(ctx).FlowInstance.Query().
-		Paginate(ctx, after, first, before, last)
+		Paginate(ctx, after, first, before, last,
+			ent.WithFlowInstanceOrder(orderBy),
+			ent.WithFlowInstanceFilter(
+				func(query *ent.FlowInstanceQuery) (*ent.FlowInstanceQuery, error) {
+					return resolverutil.FlowInstanceFilter(query, filterBy)
+				},
+			))
 }
 
 func (r mutationResolver) paramsHaveDependencies(params []*models.VariableExpressionInput, createdBlockCIDs map[string]struct{}) bool {
@@ -607,7 +620,9 @@ func (r mutationResolver) EditFlowInstance(ctx context.Context, input *models.Ed
 	}
 	mutation := client.FlowInstance.
 		UpdateOne(fi).
-		SetStatus(input.Status)
+		SetNillableServiceInstanceCode(input.ServiceInstanceCode).
+		SetNillableStatus(input.Status).
+		SetNillableEndDate(input.EndDate)
 
 	return mutation.Save(ctx)
 }

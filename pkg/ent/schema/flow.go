@@ -178,12 +178,36 @@ func (FlowInstance) Fields() []ent.Field {
 				"InProgress", "IN_PROGRESS",
 				"Failed", "FAILED",
 				"Completed", "COMPLETED",
-				"Cancelled", "CANCELLED",
+				"Cancelled", "CANCELED",
 			).Default("IN_PROGRESS"),
 		field.JSON("output_params", []*flowschema.VariableValue{}).
 			Optional(),
 		field.String("incompletion_reason").
 			Optional(),
+		field.String("bss_code"),
+		field.String("service_instance_code").
+			Optional(),
+		field.Time("start_date").
+			Annotations(
+				entgql.OrderField("START_AT"),
+			),
+		field.Time("end_date").
+			Optional().
+			Nillable().
+			Annotations(
+				entgql.OrderField("END_AT"),
+			),
+	}
+}
+
+// Mixin returns flow instance mixins.
+func (FlowInstance) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.CreateTime{},
+		mixin.AnnotateFields(
+			mixin.UpdateTime{},
+			entgql.OrderField("UPDATED_AT"),
+		),
 	}
 }
 

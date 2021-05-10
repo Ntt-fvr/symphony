@@ -638,6 +638,7 @@ func (r mutationResolver) AddBlockInstance(ctx context.Context, flowInstanceID i
 		SetBlockID(input.BlockID).
 		SetFlowInstanceID(flowInstanceID).
 		SetNillableStatus(input.Status).
+		SetStartDate(input.StartDate).
 		SetInputs(input.Inputs).
 		SetOutputs(input.Outputs)
 
@@ -653,6 +654,7 @@ func (r mutationResolver) EditBlockInstance(ctx context.Context, input models.Ed
 	mutation := client.BlockInstance.
 		UpdateOne(bi).
 		SetNillableStatus(input.Status).
+		SetNillableEndDate(input.EndDate).
 		SetInputs(input.Inputs).
 		SetOutputs(input.Outputs)
 

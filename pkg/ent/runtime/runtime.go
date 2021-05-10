@@ -154,6 +154,7 @@ func init() {
 
 	blockinstance.Hooks[1] = blockinstanceHooks[0]
 	blockinstanceMixinFields0 := blockinstanceMixin[0].Fields()
+	blockinstanceMixinFields1 := blockinstanceMixin[1].Fields()
 	blockinstanceFields := schema.BlockInstance{}.Fields()
 	_ = blockinstanceFields
 	// blockinstanceDescCreateTime is the schema descriptor for create_time field.
@@ -161,7 +162,7 @@ func init() {
 	// blockinstance.DefaultCreateTime holds the default value on creation for the create_time field.
 	blockinstance.DefaultCreateTime = blockinstanceDescCreateTime.Default.(func() time.Time)
 	// blockinstanceDescUpdateTime is the schema descriptor for update_time field.
-	blockinstanceDescUpdateTime := blockinstanceMixinFields0[1].Descriptor()
+	blockinstanceDescUpdateTime := blockinstanceMixinFields1[0].Descriptor()
 	// blockinstance.DefaultUpdateTime holds the default value on creation for the update_time field.
 	blockinstance.DefaultUpdateTime = blockinstanceDescUpdateTime.Default.(func() time.Time)
 	// blockinstance.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
@@ -818,6 +819,7 @@ func init() {
 
 	flowinstance.Hooks[2] = flowinstanceHooks[1]
 	flowinstanceMixinFields0 := flowinstanceMixin[0].Fields()
+	flowinstanceMixinFields1 := flowinstanceMixin[1].Fields()
 	flowinstanceFields := schema.FlowInstance{}.Fields()
 	_ = flowinstanceFields
 	// flowinstanceDescCreateTime is the schema descriptor for create_time field.
@@ -825,7 +827,7 @@ func init() {
 	// flowinstance.DefaultCreateTime holds the default value on creation for the create_time field.
 	flowinstance.DefaultCreateTime = flowinstanceDescCreateTime.Default.(func() time.Time)
 	// flowinstanceDescUpdateTime is the schema descriptor for update_time field.
-	flowinstanceDescUpdateTime := flowinstanceMixinFields0[1].Descriptor()
+	flowinstanceDescUpdateTime := flowinstanceMixinFields1[0].Descriptor()
 	// flowinstance.DefaultUpdateTime holds the default value on creation for the update_time field.
 	flowinstance.DefaultUpdateTime = flowinstanceDescUpdateTime.Default.(func() time.Time)
 	// flowinstance.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
