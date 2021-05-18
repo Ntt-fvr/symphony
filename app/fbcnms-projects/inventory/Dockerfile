@@ -7,10 +7,11 @@ RUN apk add --no-cache curl python g++ make libx11 glew-dev libxi-dev
 COPY package.json babel.config.js /app/
 COPY fbcnms-packages /app/fbcnms-packages
 COPY fbcnms-projects/inventory /app/fbcnms-projects/inventory
+COPY @fbcnms /app/@fbcnms
 
 # Build static files
 WORKDIR /app/fbcnms-projects/inventory
-RUN yarn install --frozen-lockfile --network-timeout 600000 && yarn cache clean
+RUN yarn install --network-timeout 600000 && yarn cache clean
 RUN yarn build
 
 FROM nginx:alpine
