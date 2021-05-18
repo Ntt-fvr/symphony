@@ -15,6 +15,7 @@ import MapIcon from '@material-ui/icons/Map';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import React, {useContext} from 'react';
 import SearchIcon from '@material-ui/icons/Search';
+import StarsIcon from '@material-ui/icons/Stars';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
@@ -67,6 +68,13 @@ export default function MainNavListItems() {
       onClick={() => {
         ServerLogger.info(LogEvents.SERVICES_NAV_CLICKED);
       }}
+      hidden={!servicesEnabled}
+    />,
+    <NavListItem
+      key={6}
+      label="Performance Catalog"
+      path={relativeUrl('/performance')}
+      icon={<StarsIcon />}
       hidden={!servicesEnabled}
     />,
   ];
