@@ -46,6 +46,7 @@ export const LogEvents = {
   WORK_ORDERS_NAV_CLICKED: 'work_orders_nav_clicked',
   CONFIGURE_TAB_NAVIGATION_CLICKED: 'configure_tab_navigation_clicked',
   PERFORMANCE_TAB_NAVIGATION_CLICKED: 'performance_tab_navigation_clicked',
+  KPI_TAB_NAVIGATION_CLICKED: 'kpi_tab_navigation_clicked',
   EQUIPMENT_CARD_LOCATION_BREADCRUMB_CLICKED:
     'equipment_card_location_breadcrumb_clicked',
   EQUIPMENT_CARD_EQUIPMENT_BREADCRUMB_CLICKED:

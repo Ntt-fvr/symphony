@@ -9,15 +9,15 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
-import CountersTypes from '../components/performance/CountersTypes';
-import InventoryErrorBoundary from '../common/InventoryErrorBoundary';
-import InventorySuspense from '../common/InventorySuspense';
-import KpiTypes from '../components/performance/KpiTypes';
+import CountersTypes from './CountersTypes';
+import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
+import InventorySuspense from '../../common/InventorySuspense';
+import KpiTypes from './KpiTypes';
 import React, {useEffect, useMemo, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
-import ThresholdTypes from '../components/performance/ThresholdTypes';
+import ThresholdTypes from './ThresholdTypes';
 import fbt from 'fbt';
-import {LogEvents, ServerLogger} from '../common/LoggingUtils';
+import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
@@ -90,10 +90,10 @@ export default function Configure() {
   );
 
   useEffect(() => {
-    ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED, {
+    ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-    history.push(`/inventory/performance/${tabBars[activeTabBar].path}`);
+    history.push(`/assurance/performance/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 
   return (
