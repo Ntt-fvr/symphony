@@ -3,7 +3,7 @@
 
 
 import React from 'react';
-import CounterTypeItem from '../configure/CounterTypeItem'
+import EquipmentTypes from '../configure/ContadorTypes'
 
 
 
@@ -11,7 +11,7 @@ import CounterTypeItem from '../configure/CounterTypeItem'
 const CountersTypes = () => {
   return (
       <div >
-       <CounterTypeItem/>
+       <EquipmentTypes/>
       </div>  
   );
 };
