@@ -19,9 +19,12 @@ import Paper from '@material-ui/core/Paper';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    boxSizing: 'inherit',
   },
   cont: {
     padding: '20px',
+    width: '1200px',
+    height:'18px'    
   },
  
 }));
@@ -33,7 +36,7 @@ const EquipmentTypes = () => {
 
   return (
     <div className={classes.root}>
-      <Grid item xs={8} className={classes.cont}>
+      <Grid className={classes.cont}>
         <CounterTypeItem />
       </Grid>
     </div>

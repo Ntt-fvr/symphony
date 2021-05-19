@@ -40,11 +40,19 @@ const styles = {
     display: 'block',
   },
   detailsContainer: {
+    display: 'flex',
+    justifyContent:'space-evenly',
     width: '100%',
   },
-  section: {
+  sectionId: {
     marginBottom: '24px',
   },
+  sectionFm: {
+    marginBottom: '24px',
+  },
+  configure: {
+    padding:'5px'
+  }
 };
 
 class CounterTypeItem extends React.Component<Props> {
@@ -55,24 +63,26 @@ class CounterTypeItem extends React.Component<Props> {
       <h1>Counter catalog</h1>
         <Accordion >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-             <ConfigureAccordion
+              <ConfigureAccordion
+              className={classes.configure}            
               entityName="prueba"
-              name='hard-name'
+              name='L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1'
               instanceCount={1}
-              instanceNameSingular="Sergio"
+              instanceNameSingular="Gestor_manager"
               icon={<EditOutlinedIcon />}
               instanceNamePlural="Hortua"
-              onDelete={this.onDelete}
-              onEdit={onEdit}
-            /> 
+              // onDelete={this.onDelete}
+              // onEdit={onEdit}
+            />  
           </AccordionSummary>
           <AccordionDetails className={classes.detailsRoot}>
             <div className={classes.detailsContainer}>
-              <div className={classes.section}>
-            
-                <h6>Details....</h6>
+              <div className={classes.sectionId}>
+                <p>Counter ID:<span>40</span> </p>
               </div>
-             
+             <div className={classes.sectionFm}>
+             <p>Family Name:<span>Throughput and Data Volume Measurement</span></p>
+              </div>
             </div>
           </AccordionDetails>
         </Accordion> 

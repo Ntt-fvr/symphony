@@ -65,6 +65,13 @@ const useStyles = makeStyles(() => ({
   },
   text: {
     color: '#4d4d4e',
+    padding: '5px'
+  },
+  network: {
+    color: '#3984FF',
+  },
+  vendor: {
+    color: '#4d4d4e',
   },
   counter: {
     marginRight: 'auto',
@@ -106,7 +113,7 @@ function ConfigureAccordion(props: Props) {
       direction="row"
       justify="space-between"
       alignItems="center">
-      <Grid item xs>
+      <Grid item xs="6">
         <div className={classes.inline}>
           <div className={classes.iconContainer}>{icon}</div>
           <Text
@@ -116,36 +123,13 @@ function ConfigureAccordion(props: Props) {
           </Text>
         </div>
       </Grid>
-      <Grid item xs>
-        <Text
-          className={classNames(classes.text, classes.counter)}
-          variant="body2">
-          {`${instanceCount.toLocaleString()}
-                ${
-                  instanceCount == 1 ? instanceNameSingular : instanceNamePlural
-                } of this type`}
-        </Text>
+      <Grid  className={classes.network}>
+        <h3>Gestor_manager</h3>  
       </Grid>
-      <Grid item xs>
-        <div className={classes.actionButtons}>
-          <DeleteButton
-            entityName={entityName}
-            instanceCount={instanceCount}
-            onDelete={onDelete}
-            allowDelete={allowDelete}
-          />
-          {onEdit && (
-            <FormActionWithPermissions permissions={editButtonPermissions}>
-              <IconButton
-                skin="primary"
-                className={classes.iconButton}
-                onClick={onEdit}
-                icon={EditIcon}
-              />
-            </FormActionWithPermissions>
-          )}
-        </div>
+      <Grid  className={classes.vendor}>
+        <h3>Vendor_name </h3>
       </Grid>
+     
     </Grid>
   );
 }
