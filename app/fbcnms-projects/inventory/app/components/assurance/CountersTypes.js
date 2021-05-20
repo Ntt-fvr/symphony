@@ -1,13 +1,19 @@
 /*[object Object]*/
 // eslint-disable-next-line header/header
+
+
 import React from 'react';
+import EquipmentTypes from '../configure/ContadorTypes'
+
+
+
 
 const CountersTypes = () => {
   return (
-    <div>
-      <h1>Hello, counter!</h1>,
-    </div>
+      <div >
+       <EquipmentTypes/>
+      </div>  
   );
 };
 
-export default CountersTypes;
+export default  CountersTypes;
