@@ -13,7 +13,7 @@ import type {WithStyles} from '@material-ui/core';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ConfigureAccordion from '../configure/ConfigureAccordionPanelCounter';
+import ConfigureAccordion from './ConfigureAccordionPanelCounter';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React from 'react';
@@ -27,17 +27,27 @@ import {withStyles} from '@material-ui/core/styles';
 const styles = () => ({
   detailsRoot: {
     display: 'block',
+    
+  },
+  container: {
+    width:'916px',
+    marginBottom: '7px',
+    marginTop:'7px',
+    align:'center',
   },
   detailsContainer: {
     display: 'flex',
-    justifyContent: 'space-evenly',
     width: '100%',
+    height: 'auto',
   },
   sectionId: {
-    marginBottom: '24px',
+    width:'42%',
+    marginLeft:'3px',
+    
   },
   sectionFm: {
-    marginBottom: '24px',
+    width:'50%',
+    marginLeft:'35px',
   },
   configure: {
     padding: '5px',
@@ -51,15 +61,15 @@ class CounterTypeItem extends React.Component<Props> {
     const {classes} = this.props;
     return (
       <div>
-        <Accordion>
+        <Accordion className={classes.container}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <ConfigureAccordion
               className={classes.configure}
               entityName="prueba"
               name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
               instanceCount={1}
-              instanceNameSingular="Gestor_manager"
               icon={<EditOutlinedIcon />}
+              instanceNameSingular="Gestor_manager"
               instanceNamePlural="Hortua"
             />
           </AccordionSummary>
@@ -67,7 +77,7 @@ class CounterTypeItem extends React.Component<Props> {
             <div className={classes.detailsContainer}>
               <div className={classes.sectionId}>
                 <p>
-                  Counter ID:<span>40</span>{' '}
+                  Counter ID:<span>40</span>
                 </p>
               </div>
               <div className={classes.sectionFm}>
