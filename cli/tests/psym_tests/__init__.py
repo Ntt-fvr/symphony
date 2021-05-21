@@ -44,7 +44,7 @@ def load_tests(
         TestWorkOrder,
         TestWorkOrderType,
         TestSiteSurvey,
-        TestWorkOrderSubscription,
+        # TestWorkOrderSubscription,
         TestProjectType,
         TestProject,
         TestFlow,
