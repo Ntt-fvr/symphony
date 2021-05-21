@@ -630,6 +630,10 @@ class MapView<T> extends React.Component<Props<T>, State> {
       };
     } else {
       paint['circle-stroke-color'] = 'white';
+      paint['circle-opacity'] = {
+        type: 'interval',
+        stops: [[1, 1]],
+      };
     }
     return paint;
   };
