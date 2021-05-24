@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
+
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"

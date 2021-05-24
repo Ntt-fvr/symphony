@@ -1016,7 +1016,7 @@ func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err erro
 	node = &Node{
 		ID:     cvf.ID,
 		Type:   "CounterVendorFormula",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 2),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -1034,14 +1034,6 @@ func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err erro
 	node.Fields[1] = &Field{
 		Type:  "time.Time",
 		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(cvf.Mandatory); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "bool",
-		Name:  "mandatory",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

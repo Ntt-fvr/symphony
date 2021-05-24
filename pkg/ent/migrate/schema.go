@@ -358,7 +358,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "mandatory", Type: field.TypeBool},
 		{Name: "counter_counter_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "formula_formula_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "vendor_vendor_fk", Type: field.TypeInt, Nullable: true},
@@ -371,21 +370,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "counter_vendor_formulas_counters_counter_fk",
-				Columns: []*schema.Column{CounterVendorFormulasColumns[4]},
+				Columns: []*schema.Column{CounterVendorFormulasColumns[3]},
 
 				RefColumns: []*schema.Column{CountersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "counter_vendor_formulas_formulas_formula_fk",
-				Columns: []*schema.Column{CounterVendorFormulasColumns[5]},
+				Columns: []*schema.Column{CounterVendorFormulasColumns[4]},
 
 				RefColumns: []*schema.Column{FormulasColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "counter_vendor_formulas_vendors_vendor_fk",
-				Columns: []*schema.Column{CounterVendorFormulasColumns[6]},
+				Columns: []*schema.Column{CounterVendorFormulasColumns[5]},
 
 				RefColumns: []*schema.Column{VendorsColumns[0]},
 				OnDelete:   schema.SetNull,
