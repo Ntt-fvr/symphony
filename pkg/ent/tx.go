@@ -32,8 +32,16 @@ type Tx struct {
 	CheckListItemDefinition *CheckListItemDefinitionClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Counter is the client for interacting with the Counter builders.
+	Counter *CounterClient
+	// CounterFamily is the client for interacting with the CounterFamily builders.
+	CounterFamily *CounterFamilyClient
+	// CounterVendorFormula is the client for interacting with the CounterVendorFormula builders.
+	CounterVendorFormula *CounterVendorFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// Domain is the client for interacting with the Domain builders.
+	Domain *DomainClient
 	// EntryPoint is the client for interacting with the EntryPoint builders.
 	EntryPoint *EntryPointClient
 	// Equipment is the client for interacting with the Equipment builders.
@@ -76,8 +84,12 @@ type Tx struct {
 	FlowExecutionTemplate *FlowExecutionTemplateClient
 	// FlowInstance is the client for interacting with the FlowInstance builders.
 	FlowInstance *FlowInstanceClient
+	// Formula is the client for interacting with the Formula builders.
+	Formula *FormulaClient
 	// Hyperlink is the client for interacting with the Hyperlink builders.
 	Hyperlink *HyperlinkClient
+	// Kpi is the client for interacting with the Kpi builders.
+	Kpi *KpiClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
@@ -118,10 +130,14 @@ type Tx struct {
 	SurveyTemplateQuestion *SurveyTemplateQuestionClient
 	// SurveyWiFiScan is the client for interacting with the SurveyWiFiScan builders.
 	SurveyWiFiScan *SurveyWiFiScanClient
+	// Tech is the client for interacting with the Tech builders.
+	Tech *TechClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
 	UsersGroup *UsersGroupClient
+	// Vendor is the client for interacting with the Vendor builders.
+	Vendor *VendorClient
 	// WorkOrder is the client for interacting with the WorkOrder builders.
 	WorkOrder *WorkOrderClient
 	// WorkOrderDefinition is the client for interacting with the WorkOrderDefinition builders.
@@ -275,7 +291,11 @@ func (tx *Tx) init() {
 	tx.CheckListItem = NewCheckListItemClient(tx.config)
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.Counter = NewCounterClient(tx.config)
+	tx.CounterFamily = NewCounterFamilyClient(tx.config)
+	tx.CounterVendorFormula = NewCounterVendorFormulaClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
+	tx.Domain = NewDomainClient(tx.config)
 	tx.EntryPoint = NewEntryPointClient(tx.config)
 	tx.Equipment = NewEquipmentClient(tx.config)
 	tx.EquipmentCategory = NewEquipmentCategoryClient(tx.config)
@@ -297,7 +317,9 @@ func (tx *Tx) init() {
 	tx.FlowDraft = NewFlowDraftClient(tx.config)
 	tx.FlowExecutionTemplate = NewFlowExecutionTemplateClient(tx.config)
 	tx.FlowInstance = NewFlowInstanceClient(tx.config)
+	tx.Formula = NewFormulaClient(tx.config)
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
+	tx.Kpi = NewKpiClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.LocationType = NewLocationTypeClient(tx.config)
@@ -318,8 +340,10 @@ func (tx *Tx) init() {
 	tx.SurveyTemplateCategory = NewSurveyTemplateCategoryClient(tx.config)
 	tx.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(tx.config)
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
+	tx.Tech = NewTechClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
+	tx.Vendor = NewVendorClient(tx.config)
 	tx.WorkOrder = NewWorkOrderClient(tx.config)
 	tx.WorkOrderDefinition = NewWorkOrderDefinitionClient(tx.config)
 	tx.WorkOrderTemplate = NewWorkOrderTemplateClient(tx.config)

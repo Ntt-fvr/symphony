@@ -1408,8 +1408,6 @@ enum PropertyKind
   node
 }
 
-
-
 type FileCategoryType implements Node {
   id: ID!
   name: String!
@@ -4266,4 +4264,104 @@ type Subscription {
   projectChanged: Project
   locationAdded: Location
   locationChanged: Location
+}
+
+type Counter implements Node {
+  id: ID!
+  name: String!
+  externalID: String!
+  countervendorformula: [CounterVendorFormula]!
+}
+
+input CounterInput {
+  id: ID
+  name: String!
+  externalID: String!
+  countervendorformula: [CounterVendorFormulaInput!]
+}
+
+type CounterFamily implements Node {
+  id: ID!
+  name: String!
+  counter: [Counter]!
+}
+
+input CounterFamilyInput {
+  id: ID
+  name: String!
+  counter: [CounterInput!]
+}
+
+type Vendor implements Node {
+  id: ID!
+  name: String!
+  countervendorformula: [CounterVendorFormula]!
+}
+
+input VendorInput {
+  id: ID
+  name: String!
+  countervendorformula: [CounterVendorFormulaInput!]
+}
+
+type Domain implements Node {
+  id: ID!
+  name: String!
+  tech: [Tech]!
+  kpi: [Kpi]!
+}
+
+input DomainInput {
+  id: ID
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+type Kpi implements Node {
+  id: ID!
+  name: String!
+  formula: [Formula]!
+}
+
+input KpiInput {
+  id: ID
+  name: String!
+  formula: [FormulaInput!]
+}
+
+type Tech implements Node {
+  id: ID!
+  name: String!
+  formula: [Formula]!
+}
+
+input TechInput {
+  id: ID
+  name: String!
+  formula: [FormulaInput!]
+}
+
+type Formula implements Node {
+  id: ID!
+  name: String!
+  active: Boolean!
+  countervendorformula: [CounterVendorFormula]!
+}
+
+input FormulaInput {
+  id: ID
+  name: String!
+  active: Boolean!
+  countervendorformula: [CounterVendorFormulaInput!]
+}
+
+type CounterVendorFormula implements Node {
+  id: ID!
+  mandatory: Boolean!
+}
+
+input CounterVendorFormulaInput {
+  id: ID
+  mandatory: Boolean
 }

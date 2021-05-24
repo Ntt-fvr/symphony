@@ -36,7 +36,11 @@ type hooks struct {
 	CheckListItem               []ent.Hook
 	CheckListItemDefinition     []ent.Hook
 	Comment                     []ent.Hook
+	Counter                     []ent.Hook
+	CounterFamily               []ent.Hook
+	CounterVendorFormula        []ent.Hook
 	Customer                    []ent.Hook
+	Domain                      []ent.Hook
 	EntryPoint                  []ent.Hook
 	Equipment                   []ent.Hook
 	EquipmentCategory           []ent.Hook
@@ -58,7 +62,9 @@ type hooks struct {
 	FlowDraft                   []ent.Hook
 	FlowExecutionTemplate       []ent.Hook
 	FlowInstance                []ent.Hook
+	Formula                     []ent.Hook
 	Hyperlink                   []ent.Hook
+	Kpi                         []ent.Hook
 	Link                        []ent.Hook
 	Location                    []ent.Hook
 	LocationType                []ent.Hook
@@ -79,8 +85,10 @@ type hooks struct {
 	SurveyTemplateCategory      []ent.Hook
 	SurveyTemplateQuestion      []ent.Hook
 	SurveyWiFiScan              []ent.Hook
+	Tech                        []ent.Hook
 	User                        []ent.Hook
 	UsersGroup                  []ent.Hook
+	Vendor                      []ent.Hook
 	WorkOrder                   []ent.Hook
 	WorkOrderDefinition         []ent.Hook
 	WorkOrderTemplate           []ent.Hook

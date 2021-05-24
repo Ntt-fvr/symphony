@@ -315,6 +315,83 @@ var (
 			},
 		},
 	}
+	// CountersColumns holds the columns for the "counters" table.
+	CountersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "external_id", Type: field.TypeString},
+		{Name: "counter_family_counterfamily", Type: field.TypeInt, Nullable: true},
+	}
+	// CountersTable holds the schema information for the "counters" table.
+	CountersTable = &schema.Table{
+		Name:       "counters",
+		Columns:    CountersColumns,
+		PrimaryKey: []*schema.Column{CountersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "counters_counter_families_counterfamily",
+				Columns: []*schema.Column{CountersColumns[5]},
+
+				RefColumns: []*schema.Column{CounterFamiliesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// CounterFamiliesColumns holds the columns for the "counter_families" table.
+	CounterFamiliesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+	}
+	// CounterFamiliesTable holds the schema information for the "counter_families" table.
+	CounterFamiliesTable = &schema.Table{
+		Name:        "counter_families",
+		Columns:     CounterFamiliesColumns,
+		PrimaryKey:  []*schema.Column{CounterFamiliesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// CounterVendorFormulasColumns holds the columns for the "counter_vendor_formulas" table.
+	CounterVendorFormulasColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "mandatory", Type: field.TypeBool},
+		{Name: "counter_counter_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "formula_formula_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "vendor_vendor_fk", Type: field.TypeInt, Nullable: true},
+	}
+	// CounterVendorFormulasTable holds the schema information for the "counter_vendor_formulas" table.
+	CounterVendorFormulasTable = &schema.Table{
+		Name:       "counter_vendor_formulas",
+		Columns:    CounterVendorFormulasColumns,
+		PrimaryKey: []*schema.Column{CounterVendorFormulasColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "counter_vendor_formulas_counters_counter_fk",
+				Columns: []*schema.Column{CounterVendorFormulasColumns[4]},
+
+				RefColumns: []*schema.Column{CountersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "counter_vendor_formulas_formulas_formula_fk",
+				Columns: []*schema.Column{CounterVendorFormulasColumns[5]},
+
+				RefColumns: []*schema.Column{FormulasColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "counter_vendor_formulas_vendors_vendor_fk",
+				Columns: []*schema.Column{CounterVendorFormulasColumns[6]},
+
+				RefColumns: []*schema.Column{VendorsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// CustomersColumns holds the columns for the "customers" table.
 	CustomersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -328,6 +405,20 @@ var (
 		Name:        "customers",
 		Columns:     CustomersColumns,
 		PrimaryKey:  []*schema.Column{CustomersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// DomainsColumns holds the columns for the "domains" table.
+	DomainsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+	}
+	// DomainsTable holds the schema information for the "domains" table.
+	DomainsTable = &schema.Table{
+		Name:        "domains",
+		Columns:     DomainsColumns,
+		PrimaryKey:  []*schema.Column{DomainsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// EntryPointsColumns holds the columns for the "entry_points" table.
@@ -976,6 +1067,38 @@ var (
 			},
 		},
 	}
+	// FormulasColumns holds the columns for the "formulas" table.
+	FormulasColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "active", Type: field.TypeBool},
+		{Name: "kpi_formulakpi", Type: field.TypeInt, Nullable: true},
+		{Name: "tech_formulatech", Type: field.TypeInt, Nullable: true},
+	}
+	// FormulasTable holds the schema information for the "formulas" table.
+	FormulasTable = &schema.Table{
+		Name:       "formulas",
+		Columns:    FormulasColumns,
+		PrimaryKey: []*schema.Column{FormulasColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "formulas_kpis_formulakpi",
+				Columns: []*schema.Column{FormulasColumns[5]},
+
+				RefColumns: []*schema.Column{KpisColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "formulas_teches_formulatech",
+				Columns: []*schema.Column{FormulasColumns[6]},
+
+				RefColumns: []*schema.Column{TechesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// HyperlinksColumns holds the columns for the "hyperlinks" table.
 	HyperlinksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1013,6 +1136,29 @@ var (
 				Columns: []*schema.Column{HyperlinksColumns[8]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// KpisColumns holds the columns for the "kpis" table.
+	KpisColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "domain_kpidomain", Type: field.TypeInt, Nullable: true},
+	}
+	// KpisTable holds the schema information for the "kpis" table.
+	KpisTable = &schema.Table{
+		Name:       "kpis",
+		Columns:    KpisColumns,
+		PrimaryKey: []*schema.Column{KpisColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "kpis_domains_kpidomain",
+				Columns: []*schema.Column{KpisColumns[4]},
+
+				RefColumns: []*schema.Column{DomainsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -1943,6 +2089,29 @@ var (
 			},
 		},
 	}
+	// TechesColumns holds the columns for the "teches" table.
+	TechesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "domain_techdomain", Type: field.TypeInt, Nullable: true},
+	}
+	// TechesTable holds the schema information for the "teches" table.
+	TechesTable = &schema.Table{
+		Name:       "teches",
+		Columns:    TechesColumns,
+		PrimaryKey: []*schema.Column{TechesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "teches_domains_techdomain",
+				Columns: []*schema.Column{TechesColumns[4]},
+
+				RefColumns: []*schema.Column{DomainsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1977,6 +2146,20 @@ var (
 		Name:        "users_groups",
 		Columns:     UsersGroupsColumns,
 		PrimaryKey:  []*schema.Column{UsersGroupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// VendorsColumns holds the columns for the "vendors" table.
+	VendorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+	}
+	// VendorsTable holds the schema information for the "vendors" table.
+	VendorsTable = &schema.Table{
+		Name:        "vendors",
+		Columns:     VendorsColumns,
+		PrimaryKey:  []*schema.Column{VendorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// WorkOrdersColumns holds the columns for the "work_orders" table.
@@ -2453,7 +2636,11 @@ var (
 		CheckListItemsTable,
 		CheckListItemDefinitionsTable,
 		CommentsTable,
+		CountersTable,
+		CounterFamiliesTable,
+		CounterVendorFormulasTable,
 		CustomersTable,
+		DomainsTable,
 		EntryPointsTable,
 		EquipmentTable,
 		EquipmentCategoriesTable,
@@ -2475,7 +2662,9 @@ var (
 		FlowDraftsTable,
 		FlowExecutionTemplatesTable,
 		FlowInstancesTable,
+		FormulasTable,
 		HyperlinksTable,
+		KpisTable,
 		LinksTable,
 		LocationsTable,
 		LocationTypesTable,
@@ -2496,8 +2685,10 @@ var (
 		SurveyTemplateCategoriesTable,
 		SurveyTemplateQuestionsTable,
 		SurveyWiFiScansTable,
+		TechesTable,
 		UsersTable,
 		UsersGroupsTable,
+		VendorsTable,
 		WorkOrdersTable,
 		WorkOrderDefinitionsTable,
 		WorkOrderTemplatesTable,
@@ -2534,6 +2725,10 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
+	CounterVendorFormulasTable.ForeignKeys[0].RefTable = CountersTable
+	CounterVendorFormulasTable.ForeignKeys[1].RefTable = FormulasTable
+	CounterVendorFormulasTable.ForeignKeys[2].RefTable = VendorsTable
 	EntryPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	EquipmentTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTable.ForeignKeys[1].RefTable = WorkOrdersTable
@@ -2566,9 +2761,12 @@ func init() {
 	FlowInstancesTable.ForeignKeys[0].RefTable = BlockInstancesTable
 	FlowInstancesTable.ForeignKeys[1].RefTable = FlowsTable
 	FlowInstancesTable.ForeignKeys[2].RefTable = FlowExecutionTemplatesTable
+	FormulasTable.ForeignKeys[0].RefTable = KpisTable
+	FormulasTable.ForeignKeys[1].RefTable = TechesTable
 	HyperlinksTable.ForeignKeys[0].RefTable = EquipmentTable
 	HyperlinksTable.ForeignKeys[1].RefTable = LocationsTable
 	HyperlinksTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	KpisTable.ForeignKeys[0].RefTable = DomainsTable
 	LinksTable.ForeignKeys[0].RefTable = WorkOrdersTable
 	LocationsTable.ForeignKeys[0].RefTable = LocationTypesTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
@@ -2618,6 +2816,7 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	SurveyWiFiScansTable.ForeignKeys[1].RefTable = SurveyQuestionsTable
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
+	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	WorkOrdersTable.ForeignKeys[0].RefTable = ProjectsTable
 	WorkOrdersTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
 	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTemplatesTable

@@ -55,9 +55,33 @@ func (c *CommentClient) Instantiate(co *Comment) *Comment {
 }
 
 // Instantiate entity configuration.
+func (c *CounterClient) Instantiate(co *Counter) *Counter {
+	co.config = c.config
+	return co
+}
+
+// Instantiate entity configuration.
+func (c *CounterFamilyClient) Instantiate(cf *CounterFamily) *CounterFamily {
+	cf.config = c.config
+	return cf
+}
+
+// Instantiate entity configuration.
+func (c *CounterVendorFormulaClient) Instantiate(cvf *CounterVendorFormula) *CounterVendorFormula {
+	cvf.config = c.config
+	return cvf
+}
+
+// Instantiate entity configuration.
 func (c *CustomerClient) Instantiate(cu *Customer) *Customer {
 	cu.config = c.config
 	return cu
+}
+
+// Instantiate entity configuration.
+func (c *DomainClient) Instantiate(d *Domain) *Domain {
+	d.config = c.config
+	return d
 }
 
 // Instantiate entity configuration.
@@ -187,9 +211,21 @@ func (c *FlowInstanceClient) Instantiate(fi *FlowInstance) *FlowInstance {
 }
 
 // Instantiate entity configuration.
+func (c *FormulaClient) Instantiate(f *Formula) *Formula {
+	f.config = c.config
+	return f
+}
+
+// Instantiate entity configuration.
 func (c *HyperlinkClient) Instantiate(h *Hyperlink) *Hyperlink {
 	h.config = c.config
 	return h
+}
+
+// Instantiate entity configuration.
+func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
+	k.config = c.config
+	return k
 }
 
 // Instantiate entity configuration.
@@ -313,6 +349,12 @@ func (c *SurveyWiFiScanClient) Instantiate(swfs *SurveyWiFiScan) *SurveyWiFiScan
 }
 
 // Instantiate entity configuration.
+func (c *TechClient) Instantiate(t *Tech) *Tech {
+	t.config = c.config
+	return t
+}
+
+// Instantiate entity configuration.
 func (c *UserClient) Instantiate(u *User) *User {
 	u.config = c.config
 	return u
@@ -322,6 +364,12 @@ func (c *UserClient) Instantiate(u *User) *User {
 func (c *UsersGroupClient) Instantiate(ug *UsersGroup) *UsersGroup {
 	ug.config = c.config
 	return ug
+}
+
+// Instantiate entity configuration.
+func (c *VendorClient) Instantiate(v *Vendor) *Vendor {
+	v.config = c.config
+	return v
 }
 
 // Instantiate entity configuration.
