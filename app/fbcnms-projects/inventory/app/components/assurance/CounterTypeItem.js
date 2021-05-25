@@ -7,8 +7,6 @@
  * @flow
  * @format
  */
-import type {ContextRouter} from 'react-router-dom';
-import type {WithStyles} from '@material-ui/core';
 
 import ConfigureAccordion from './ConfigureAccordionPanelCounter';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -21,19 +19,19 @@ import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
   root: {
-    width: '100%',
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
+    marginBottom: '7px',
   },
   detailsRoot: {
     display: 'block',
   },
   container: {
-    width: '916px',
-    marginBottom: '7px',
-    marginTop: '7px',
     align: 'center',
+    '&.MuiPaper-elevation1': {
+      boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
+    },
   },
   detailsContainer: {
     display: 'flex',
@@ -48,14 +46,9 @@ const useStyles = makeStyles({
     width: '50%',
     marginLeft: '35px',
   },
-  configure: {
-    padding: '5px',
-  },
 });
 
-type Props = ContextRouter & WithStyles<typeof styles>;
-
-export default function SimpleExpansionPanel() {
+export default function CounterTypeItem() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   return (
@@ -66,7 +59,6 @@ export default function SimpleExpansionPanel() {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <ConfigureAccordion
-            className={classes.configure}
             entityName="prueba"
             name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
             instanceCount={1}

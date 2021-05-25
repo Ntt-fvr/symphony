@@ -7,46 +7,41 @@
  * @flow
  * @format
  */
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { AccordionDetails,AccordionSummary,Accordion } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import AddButton from './AddButton';
 import Button from '@symphony/design-system/components/Button';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
-import {AddIcon} from '@symphony/design-system/icons';
+import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import AddButton from './AddButton'
+import {makeStyles} from '@material-ui/core/styles';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwitchLabels from './Switch';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "79%",
-    "& .MuiExpansionPanelSummary-root:hover": {
-      cursor: "default"
-    }
+    '& .MuiExpansionPanelSummary-root:hover': {
+      cursor: 'default',
+    },
+    marginBottom: '7px',
   },
   panel: {
-    cursor: "default",
+    cursor: 'default',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
   container: {
-    borderRadius: '10px',
-    marginBottom:'7px',
-    marginTop:'7px',
+    align: 'center',
+    '&.MuiPaper-elevation1': {
+      boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
+    },
   },
-  details:{
-
-  },
+  details: {},
   rootGrid: {
     flexGrow: '1',
     alignSelf: 'center',
@@ -58,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     color: '#3984FF',
     fontWeight: 'bold',
   },
-  typeRed:{
+  typeRed: {
     marginLeft: '140px',
     color: '#3984FF',
     fontWeight: 'bold',
@@ -76,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SimpleExpansionPanel() {
+export default function KpiTypeItem() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   return (
@@ -85,12 +80,11 @@ export default function SimpleExpansionPanel() {
         <AccordionSummary
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           classes={{
-            root: classes.panel 
+            root: classes.panel,
           }}
           aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-        <FormControlLabel
+          id="panel1a-header">
+          <FormControlLabel
             aria-label="Acknowledge"
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
@@ -107,22 +101,18 @@ export default function SimpleExpansionPanel() {
           </Grid>
 
           <Grid className={classes.rootGrid}>
-            {/* <Button className={classes.button} leftIcon={AddIcon}>
-              Add formula
-            </Button> */}
-            <AddButton/>
+            <AddButton />
           </Grid>
 
           <Grid>
             <a href="https://www.w3schools.com">
-            <IconButton className={classes.edit} icon={EditIcon} />
+              <IconButton className={classes.edit} icon={EditIcon} />
             </a>
           </Grid>
 
           <Grid>
             <IconButton className={classes.delete} icon={DeleteIcon} />
           </Grid>
-        
         </AccordionSummary>
 
         <AccordionDetails>
@@ -130,7 +120,7 @@ export default function SimpleExpansionPanel() {
             <Grid item xs={6}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  Associated threshold: 
+                  Associated threshold:
                   <Button variant="text">
                     <Text className={classes.thr}>DROP_THR</Text>
                   </Button>
@@ -151,16 +141,16 @@ export default function SimpleExpansionPanel() {
                   Last modification:: Text
                 </Grid>
                 <Grid item xs={12}>
-                  Description: : Chips allow users to enter information, make selections, filter content, or trigger actions. While buttons are expected.
+                  Description: : Chips allow users to enter information, make
+                  selections, filter content, or trigger actions. While buttons
+                  are expected.
                 </Grid>
-                
               </Grid>
             </Grid>
             <Grid item xs={6}>
               CONTAINS 15 FORMULAS
             </Grid>
           </Grid>
-
         </AccordionDetails>
       </Accordion>
     </div>

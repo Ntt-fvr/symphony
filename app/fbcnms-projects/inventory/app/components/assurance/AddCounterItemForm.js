@@ -13,7 +13,7 @@ import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import FormContext, {FormContextProvider} from '../../common/FormContext';
+//import FormContext, {FormContextProvider} from '../../common/FormContext';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 export default function AddCounterItemForm() {
   const classes = useStyles();
 
+  /*
   const handleClick = e => {
     console.log('Button was clicked');
   };
@@ -47,60 +48,57 @@ export default function AddCounterItemForm() {
     e.preventDefault();
     console.log('Button was clicked');
   };
+   */
 
   return (
-    <FormContextProvider permissions={}>
-        <Card className={classes.root}>
-            <CardHeader>Add Counter</CardHeader>
-            <FormField className={classes.formField} label="Counter name" required>
-                <TextInput
-                    className={classes.textInput}
-                    name="name"
-                    variant="outlined"
-                    type="string"
-                />
-            </FormField>
-            <FormField className={classes.formField} label="Counter ID" required>
-                <TextInput
-                    className={classes.textInput}
-                    name="id"
-                    variant="outlined"
-                    type="string"
-                />
-            </FormField>
-            <FormField className={classes.formField} label="Family name" required>
-                <TextInput
-                    className={classes.textInput}
-                    name="family"
-                    variant="outlined"
-                    type="string"
-                />
-            </FormField>
-            <FormField className={classes.formField} label="Vendor name" required>
-                <TextInput
-                    className={classes.textInput}
-                    name="vendor"
-                    variant="outlined"
-                    type="string"
-                />
-            </FormField>
-            <FormField
-                className={classes.formField}
-                label="Network Manager System"
-                required>
-                <TextInput
-                    className={classes.textInput}
-                    variant="outlined"
-                    name="nms"
-                    type="string"
-                />
-            </FormField>
-            <FormField onSubmit={handleSubmit}>
-                <Button onClick={handleClick} className={classes.addCounter}>
-                    Add Counter
-                </Button>
-            </FormField>
-        </Card>
-    </FormContextProvider>
+    <Card className={classes.root}>
+      <CardHeader>Add Counter</CardHeader>
+      <FormField className={classes.formField} label="Counter name" required>
+        <TextInput
+          className={classes.textInput}
+          name="name"
+          variant="outlined"
+          type="string"
+        />
+      </FormField>
+      <FormField className={classes.formField} label="Counter ID" required>
+        <TextInput
+          className={classes.textInput}
+          name="id"
+          variant="outlined"
+          type="string"
+        />
+      </FormField>
+      <FormField className={classes.formField} label="Family name" required>
+        <TextInput
+          className={classes.textInput}
+          name="family"
+          variant="outlined"
+          type="string"
+        />
+      </FormField>
+      <FormField className={classes.formField} label="Vendor name" required>
+        <TextInput
+          className={classes.textInput}
+          name="vendor"
+          variant="outlined"
+          type="string"
+        />
+      </FormField>
+      <FormField
+        className={classes.formField}
+        label="Network Manager System"
+        required>
+        <TextInput
+          className={classes.textInput}
+          variant="outlined"
+          name="nms"
+          type="string"
+        />
+      </FormField>
+      <FormField>
+        <Button className={classes.addCounter}>Add Counter</Button>
+      </FormField>
+    </Card>
   );
 }
