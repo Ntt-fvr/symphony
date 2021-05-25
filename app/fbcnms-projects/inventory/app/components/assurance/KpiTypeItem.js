@@ -14,42 +14,55 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Grid from '@material-ui/core/Grid';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
+import Text from '@symphony/design-system/components/Text';
+import classNames from 'classnames';
+import Button from '@symphony/design-system/components/Button';
+import IconButton from '@symphony/design-system/components/IconButton';
+import {AddIcon} from '@symphony/design-system/icons';
 
 
 import SwitchLabels from './Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import AddButton from './AddButton';
 
-import Typography from '@material-ui/core/Typography';
+
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+
+
+
 const useStyles = makeStyles({
+  
   root: {
-    width: '916px',
-    heigth: '58px',
-    margin: '0',
-    padding: '0',
-    boxSizing: 'inherit',
-    background:'black',
+    width: '79%',
+  },
+  container:{
+    borderRadius:'10px'
+  },
+  rootGrid:{
+    flexGrow:'1',
+    alignSelf:'center',
+  },
+  nameKpi:{
+    fontWeight:'bold' ,
 
   },
-  container: {
-    background:'#7cfc00',
-    heigth: '30px'
+  typeRed:{
+    color:'#3984FF',
+    fontWeight:'bold' ,
+    marginLeft:'100px'
   },
-  left:{
-    background: 'red',
-   
+  edit:{
+    flexGrow:'1',
+    margin:'10px'
   },
-  right: {
-    background: 'blue',
-    marginLeft:'20px'
+  delete:{
+    flexGrow:'1',
+    margin:'10px'
   },
-  typeRed: {
-    margin: 'auto 0',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-  }
+  button:{
+    marginLeft:'25%',
+  },
 });
 
  function KpiTypeItem() {
@@ -58,34 +71,47 @@ const useStyles = makeStyles({
   return (
     <div className={classes.root}>
       <Accordion className={classes.container}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+       <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          control={<ExpandMoreIcon />}
+          aria-label="Expand"
+          >
           <FormControlLabel
+            aria-label="Acknowledge"
             onClick={(event) => event.stopPropagation()}
             onFocus={(event) => event.stopPropagation()}
-            control={<SwitchLabels />}/>
-           <p>Nombre de KPI/Indicador</p>
-           <a href="#" className={classes.typeRed}>Tipo de red</a>
-           <Grid xs='6' className={''}>        
-              <AddButton/>
-           </Grid>
-           <Grid>
-              <div className={''}>
-                <EditIcon/>
-              </div>
-           </Grid>
-           <Grid>
-              <div className={''}>
-                <DeleteIcon/>
-              </div>
-            </Grid>
+            control={<SwitchLabels />}
+          />
+          <Grid  className={classes.rootGrid}>          
+            <Text className={classes.nameKpi}>
+              Nombre de KPI/Indicador
+            </Text>            
+          </Grid>
+
+          <Grid className={classes.rootGrid} >
+            <Button variant="text"> 
+              <Text className={classes.typeRed} >
+                Tipo de red
+              </Text>  
+            </Button>          
+          </Grid>
+
+          <Grid className={classes.rootGrid}>
+            <Button className={classes.button} leftIcon={AddIcon}>
+              Add formula
+            </Button>          
+          </Grid>
+
+          <Grid >
+            <IconButton className={classes.edit} icon={EditIcon }/>          
+          </Grid>
+
+          <Grid >
+            <IconButton className={classes.delete} icon={DeleteIcon }/>          
+          </Grid>     
+          
         </AccordionSummary>
         <AccordionDetails>
-          <Grid xs='4' className={classes.left}>        
-            <p>Tipo de red</p>  
-          </Grid>
-          <Grid xs='6' className={classes.right}>        
-            <p>Tipo de red</p>
-          </Grid>
           
         </AccordionDetails>
       </Accordion>

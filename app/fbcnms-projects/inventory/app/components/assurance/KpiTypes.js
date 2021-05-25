@@ -15,7 +15,7 @@ import Grid from '@material-ui/core/Grid';
 
 import KpiTypeItem from './KpiTypeItem'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles({
   root: {
     flexGrow: 1,
     boxSizing: 'inherit',
@@ -25,8 +25,8 @@ const useStyles = makeStyles(() => ({
     width: '1200px',
     height: '18px',
   },
-}));
 
+})
 const KpiTypes = () => {
   const classes = useStyles();
   return (
