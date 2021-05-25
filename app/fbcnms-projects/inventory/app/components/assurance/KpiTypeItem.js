@@ -9,9 +9,7 @@
  */
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import { AccordionDetails,AccordionSummary,Accordion } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Button from '@symphony/design-system/components/Button';
@@ -83,8 +81,8 @@ export default function SimpleExpansionPanel() {
   const [open, setOpen] = React.useState(false);
   return (
     <div className={classes.root}>
-      <ExpansionPanel className={classes.container} expanded={open}>
-        <ExpansionPanelSummary
+      <Accordion className={classes.container} expanded={open}>
+        <AccordionSummary
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           classes={{
             root: classes.panel 
@@ -116,16 +114,18 @@ export default function SimpleExpansionPanel() {
           </Grid>
 
           <Grid>
+            <a href="https://www.w3schools.com">
             <IconButton className={classes.edit} icon={EditIcon} />
+            </a>
           </Grid>
 
           <Grid>
             <IconButton className={classes.delete} icon={DeleteIcon} />
           </Grid>
         
-        </ExpansionPanelSummary>
+        </AccordionSummary>
 
-        <ExpansionPanelDetails>
+        <AccordionDetails>
           <Grid container spacing={1}>
             <Grid item xs={6}>
               <Grid container spacing={1}>
@@ -161,8 +161,8 @@ export default function SimpleExpansionPanel() {
             </Grid>
           </Grid>
 
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 }
