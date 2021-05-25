@@ -25,12 +25,15 @@ import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = () => ({
-  detailsRoot: {
-    display: 'block',
+  main: {
+    marginBottom: '7px',
+  },
+  accordion: {
+    '&.MuiPaper-elevation1': {
+      boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
+    },
   },
   detailsContainer: {
-    display: 'flex',
-    justifyContent: 'space-evenly',
     width: '100%',
   },
   sectionId: {
@@ -50,11 +53,10 @@ class CounterTypeItem extends React.Component<Props> {
   render() {
     const {classes} = this.props;
     return (
-      <div>
-        <Accordion>
+      <div className={classes.main}>
+        <Accordion className={classes.accordion}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <ConfigureAccordion
-              className={classes.configure}
               entityName="prueba"
               name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
               instanceCount={1}
@@ -63,7 +65,7 @@ class CounterTypeItem extends React.Component<Props> {
               instanceNamePlural="Hortua"
             />
           </AccordionSummary>
-          <AccordionDetails className={classes.detailsRoot}>
+          <AccordionDetails>
             <div className={classes.detailsContainer}>
               <div className={classes.sectionId}>
                 <p>
