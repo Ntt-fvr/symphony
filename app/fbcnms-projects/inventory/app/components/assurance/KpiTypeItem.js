@@ -19,6 +19,7 @@ import classNames from 'classnames';
 import {AddIcon} from '@symphony/design-system/icons';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
+import AddButton from './AddButton'
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwitchLabels from './Switch';
@@ -88,9 +89,10 @@ function KpiTypeItem() {
           </Grid>
 
           <Grid className={classes.rootGrid}>
-            <Button className={classes.button} leftIcon={AddIcon}>
+            {/* <Button className={classes.button} leftIcon={AddIcon}>
               Add formula
-            </Button>
+            </Button> */}
+            <AddButton/>
           </Grid>
 
           <Grid>
