@@ -47,43 +47,28 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
   },
   iconContainer: {
-    marginRight: '16px',
     color: symphony.palette.B600,
-    width: '48px',
-    height: '48px',
     display: 'flex',
     flexShrink: 0,
+    width:'6px',
     justifyContent: 'center',
     alignItems: 'center',
-    ...symphony.typography.h5,
+    ...symphony.typography,
   },
-  iconButton: {
-    marginLeft: '16px',
-  },
+  
   boldText: {
     fontWeight: 'bold',
   },
   text: {
     color: '#4d4d4e',
-    padding: '5px'
   },
-  network: {
-    color: '#3984FF',
-  },
-  vendor: {
-    color: '#4d4d4e',
-  },
-  counter: {
-    marginRight: 'auto',
-  },
+
   actionButtons: {
     display: 'flex',
     flexDirection: 'row-reverse',
     alignItems: 'center',
     flexGrow: 1,
-  },
-  checkbox: {
-    margin: '12px',
+    marginRight: '30px',
   },
 }));
 
@@ -110,12 +95,9 @@ function ConfigureAccordion(props: Props) {
     <Grid
       container
       className={classes.root}
-      direction="row"
-      justify="space-between"
-      alignItems="center">
-      <Grid item xs="6">
+>
+      <Grid >
         <div className={classes.inline}>
-          <div className={classes.iconContainer}>{icon}</div>
           <Text
             className={classNames(classes.text, classes.boldText)}
             variant="subtitle1">
@@ -123,11 +105,10 @@ function ConfigureAccordion(props: Props) {
           </Text>
         </div>
       </Grid>
-      <Grid  className={classes.network}>
-        <h3>Gestor_manager</h3>  
-      </Grid>
-      <Grid  className={classes.vendor}>
-        <h3>Vendor_name </h3>
+      <Grid>
+        <div className={classes.actionButtons}>
+          <DeleteButton/>
+        </div>
       </Grid>
      
     </Grid>

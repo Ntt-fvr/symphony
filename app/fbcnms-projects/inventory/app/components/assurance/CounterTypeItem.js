@@ -7,40 +7,46 @@
  * @flow
  * @format
  */
-
+import type {ContextRouter} from 'react-router-dom';
 import type {WithStyles} from '@material-ui/core';
 
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ConfigureAccordion from '../configure/ConfigureAccordionPanelCounter';
+import ConfigureAccordion from './ConfigureAccordionPanelCounter';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import React from 'react';
+import {AccordionDetails} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 
-import type {ContextRouter} from 'react-router-dom';
-
-import withInventoryErrorBoundary from '../../common/withInventoryErrorBoundary';
-import {withRouter} from 'react-router-dom';
-import {withStyles} from '@material-ui/core/styles';
-
-const styles = () => ({
-  main: {
-    marginBottom: '7px',
-  },
-  accordion: {
-    '&.MuiPaper-elevation1': {
-      boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
+const useStyles = makeStyles({
+  root: {
+    width: '100%',
+    '& .MuiExpansionPanelSummary-root:hover': {
+      cursor: 'default',
     },
   },
+  detailsRoot: {
+    display: 'block',
+  },
+  container: {
+    width: '916px',
+    marginBottom: '7px',
+    marginTop: '7px',
+    align: 'center',
+  },
   detailsContainer: {
+    display: 'flex',
     width: '100%',
+    height: 'auto',
   },
   sectionId: {
-    marginBottom: '24px',
+    width: '42%',
+    marginLeft: '3px',
   },
   sectionFm: {
-    marginBottom: '24px',
+    width: '50%',
+    marginLeft: '35px',
   },
   configure: {
     padding: '5px',
@@ -49,43 +55,43 @@ const styles = () => ({
 
 type Props = ContextRouter & WithStyles<typeof styles>;
 
-class CounterTypeItem extends React.Component<Props> {
-  render() {
-    const {classes} = this.props;
-    return (
-      <div className={classes.main}>
-        <Accordion className={classes.accordion}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <ConfigureAccordion
-              entityName="prueba"
-              name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
-              instanceCount={1}
-              instanceNameSingular="Gestor_manager"
-              icon={<EditOutlinedIcon />}
-              instanceNamePlural="Hortua"
-            />
-          </AccordionSummary>
-          <AccordionDetails>
-            <div className={classes.detailsContainer}>
-              <div className={classes.sectionId}>
-                <p>
-                  Counter ID:<span>40</span>{' '}
-                </p>
-              </div>
-              <div className={classes.sectionFm}>
-                <p>
-                  Family Name:
-                  <span>Throughput and Data Volume Measurement</span>
-                </p>
-              </div>
-            </div>
-          </AccordionDetails>
-        </Accordion>
-      </div>
-    );
-  }
-}
+export default function SimpleExpansionPanel() {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className={classes.root}>
+      <ExpansionPanel className={classes.container} expanded={open}>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          aria-controls="panel1a-content"
+          id="panel1a-header">
+          <ConfigureAccordion
+            className={classes.configure}
+            entityName="prueba"
+            name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
+            instanceCount={1}
+            icon={<EditOutlinedIcon />}
+            instanceNameSingular="Gestor_manager"
+            instanceNamePlural="Hortua"
+          />
+        </ExpansionPanelSummary>
 
-export default withStyles(styles)(
-  withRouter(withInventoryErrorBoundary(CounterTypeItem)),
-);
+        <AccordionDetails className={classes.detailsRoot}>
+          <div className={classes.detailsContainer}>
+            <div className={classes.sectionId}>
+              <p>
+                Counter ID:<span>40</span>
+              </p>
+            </div>
+            <div className={classes.sectionFm}>
+              <p>
+                Family Name:
+                <span>Throughput and Data Volume Measurement</span>
+              </p>
+            </div>
+          </div>
+        </AccordionDetails>
+      </ExpansionPanel>
+    </div>
+  );
+}
