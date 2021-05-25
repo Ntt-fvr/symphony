@@ -32,6 +32,11 @@ const useStyles = makeStyles({
   },
   container: {
     borderRadius: '10px',
+    marginBottom:'7px',
+    marginTop:'7px',
+  },
+  details:{
+
   },
   rootGrid: {
     flexGrow: '1',
@@ -104,7 +109,7 @@ function KpiTypeItem() {
           </Grid>
         </AccordionSummary>
 
-        <AccordionDetails>
+        <AccordionDetails className={classes.details}>
           <Grid container spacing={1}>
             <Grid item xs={6}>
               <Grid container spacing={1}>
