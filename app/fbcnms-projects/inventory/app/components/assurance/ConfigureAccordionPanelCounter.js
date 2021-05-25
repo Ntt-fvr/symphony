@@ -23,6 +23,7 @@ import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
+import {Link, Route, BrowserRouter as Router, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|
@@ -50,12 +51,12 @@ const useStyles = makeStyles(() => ({
     color: symphony.palette.B600,
     display: 'flex',
     flexShrink: 0,
-    width:'6px',
+    width: '6px',
     justifyContent: 'center',
     alignItems: 'center',
     ...symphony.typography,
   },
-  
+
   boldText: {
     fontWeight: 'bold',
   },
@@ -103,7 +104,7 @@ function ConfigureAccordion(props: Props) {
       direction="row"
       justify="space-between"
       alignItems="center">
-      <Grid >
+      <Grid>
         <div className={classes.inline}>
           <Text
             className={classNames(classes.text, classes.boldText)}
@@ -112,21 +113,22 @@ function ConfigureAccordion(props: Props) {
           </Text>
         </div>
       </Grid>
-      <Grid  className={classes.network}>
-        <h3>Gestor_manager</h3>  
+      <Grid className={classes.network}>
+        <h3>Gestor_manager</h3>
       </Grid>
-      <Grid  className={classes.vendor}>
+      <Grid className={classes.vendor}>
         <h3>Vendor_name</h3>
       </Grid>
       <Grid>
-        <div className={classes.iconContainer}>{icon}</div>
+        <a href="https://www.youtube.com" className={classes.iconContainer}>
+          {icon}
+        </a>
       </Grid>
       <Grid>
         <div className={classes.actionButtons}>
-          <DeleteButton/>
+          <DeleteButton />
         </div>
       </Grid>
-     
     </Grid>
   );
 }

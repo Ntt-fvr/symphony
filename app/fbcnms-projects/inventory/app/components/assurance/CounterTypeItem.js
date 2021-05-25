@@ -7,24 +7,27 @@
  * @flow
  * @format
  */
-
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import { AccordionDetails } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import type {WithStyles} from '@material-ui/core';
-
 import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ConfigureAccordion from './ConfigureAccordionPanelCounter';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import React from 'react';
-
 import type {ContextRouter} from 'react-router-dom';
 
-import withInventoryErrorBoundary from '../../common/withInventoryErrorBoundary';
-import {withRouter} from 'react-router-dom';
-import {withStyles} from '@material-ui/core/styles';
 
-const styles = () => ({
+
+const useStyles = makeStyles({
+  root: {
+    width: "100%",
+    "& .MuiExpansionPanelSummary-root:hover": {
+      cursor: "default"
+    }
+  },
   detailsRoot: {
     display: 'block',
     
@@ -56,14 +59,19 @@ const styles = () => ({
 
 type Props = ContextRouter & WithStyles<typeof styles>;
 
-class CounterTypeItem extends React.Component<Props> {
-  render() {
-    const {classes} = this.props;
-    return (
-      <div>
-        <Accordion className={classes.container}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <ConfigureAccordion
+export default function SimpleExpansionPanel() {
+  //const {classes} = this.props;
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className={classes.root}>
+      <ExpansionPanel className={classes.container} expanded={open}>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <ConfigureAccordion
               className={classes.configure}
               entityName="prueba"
               name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
@@ -72,9 +80,10 @@ class CounterTypeItem extends React.Component<Props> {
               instanceNameSingular="Gestor_manager"
               instanceNamePlural="Hortua"
             />
-          </AccordionSummary>
-          <AccordionDetails className={classes.detailsRoot}>
-            <div className={classes.detailsContainer}>
+        </ExpansionPanelSummary>
+
+        <AccordionDetails className={classes.detailsRoot} >
+         <div className={classes.detailsContainer}>
               <div className={classes.sectionId}>
                 <p>
                   Counter ID:<span>40</span>
@@ -87,13 +96,8 @@ class CounterTypeItem extends React.Component<Props> {
                 </p>
               </div>
             </div>
-          </AccordionDetails>
-        </Accordion>
-      </div>
-    );
-  }
+        </AccordionDetails>
+      </ExpansionPanel>
+    </div>
+  );
 }
-
-export default withStyles(styles)(
-  withRouter(withInventoryErrorBoundary(CounterTypeItem)),
-);
