@@ -330,8 +330,8 @@ type CounterInput struct {
 }
 
 type CounterVendorFormulaInput struct {
-	ID        *int  `json:"id"`
-	Mandatory *bool `json:"mandatory"`
+	ID        *int `json:"id"`
+	Mandatory bool `json:"mandatory"`
 }
 
 type DecisionBlock struct {

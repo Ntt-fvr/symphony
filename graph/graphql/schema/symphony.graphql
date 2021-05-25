@@ -4363,5 +4363,5 @@ type CounterVendorFormula implements Node {
 
 input CounterVendorFormulaInput {
   id: ID
-  mandatory: Boolean
+  mandatory: Boolean!
 }

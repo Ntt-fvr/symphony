@@ -8681,6 +8681,7 @@ type CounterVendorFormulaMutation struct {
 	id             *int
 	create_time    *time.Time
 	update_time    *time.Time
+	mandatory      *bool
 	clearedFields  map[string]struct{}
 	formula        *int
 	clearedformula bool
@@ -8846,6 +8847,43 @@ func (m *CounterVendorFormulaMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
+// SetMandatory sets the mandatory field.
+func (m *CounterVendorFormulaMutation) SetMandatory(b bool) {
+	m.mandatory = &b
+}
+
+// Mandatory returns the mandatory value in the mutation.
+func (m *CounterVendorFormulaMutation) Mandatory() (r bool, exists bool) {
+	v := m.mandatory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMandatory returns the old mandatory value of the CounterVendorFormula.
+// If the CounterVendorFormula object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CounterVendorFormulaMutation) OldMandatory(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldMandatory is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldMandatory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMandatory: %w", err)
+	}
+	return oldValue.Mandatory, nil
+}
+
+// ResetMandatory reset all changes of the "mandatory" field.
+func (m *CounterVendorFormulaMutation) ResetMandatory() {
+	m.mandatory = nil
+}
+
 // SetFormulaID sets the formula edge to Formula by id.
 func (m *CounterVendorFormulaMutation) SetFormulaID(id int) {
 	m.formula = &id
@@ -8977,12 +9015,15 @@ func (m *CounterVendorFormulaMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CounterVendorFormulaMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.create_time != nil {
 		fields = append(fields, countervendorformula.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, countervendorformula.FieldUpdateTime)
+	}
+	if m.mandatory != nil {
+		fields = append(fields, countervendorformula.FieldMandatory)
 	}
 	return fields
 }
@@ -8996,6 +9037,8 @@ func (m *CounterVendorFormulaMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case countervendorformula.FieldUpdateTime:
 		return m.UpdateTime()
+	case countervendorformula.FieldMandatory:
+		return m.Mandatory()
 	}
 	return nil, false
 }
@@ -9009,6 +9052,8 @@ func (m *CounterVendorFormulaMutation) OldField(ctx context.Context, name string
 		return m.OldCreateTime(ctx)
 	case countervendorformula.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
+	case countervendorformula.FieldMandatory:
+		return m.OldMandatory(ctx)
 	}
 	return nil, fmt.Errorf("unknown CounterVendorFormula field %s", name)
 }
@@ -9031,6 +9076,13 @@ func (m *CounterVendorFormulaMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
+		return nil
+	case countervendorformula.FieldMandatory:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMandatory(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CounterVendorFormula field %s", name)
@@ -9087,6 +9139,9 @@ func (m *CounterVendorFormulaMutation) ResetField(name string) error {
 		return nil
 	case countervendorformula.FieldUpdateTime:
 		m.ResetUpdateTime()
+		return nil
+	case countervendorformula.FieldMandatory:
+		m.ResetMandatory()
 		return nil
 	}
 	return fmt.Errorf("unknown CounterVendorFormula field %s", name)

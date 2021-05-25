@@ -33,6 +33,12 @@ func (cvfu *CounterVendorFormulaUpdate) Where(ps ...predicate.CounterVendorFormu
 	return cvfu
 }
 
+// SetMandatory sets the mandatory field.
+func (cvfu *CounterVendorFormulaUpdate) SetMandatory(b bool) *CounterVendorFormulaUpdate {
+	cvfu.mutation.SetMandatory(b)
+	return cvfu
+}
+
 // SetFormulaID sets the formula edge to Formula by id.
 func (cvfu *CounterVendorFormulaUpdate) SetFormulaID(id int) *CounterVendorFormulaUpdate {
 	cvfu.mutation.SetFormulaID(id)
@@ -198,6 +204,13 @@ func (cvfu *CounterVendorFormulaUpdate) sqlSave(ctx context.Context) (n int, err
 			Column: countervendorformula.FieldUpdateTime,
 		})
 	}
+	if value, ok := cvfu.mutation.Mandatory(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: countervendorformula.FieldMandatory,
+		})
+	}
 	if cvfu.mutation.FormulaCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -319,6 +332,12 @@ type CounterVendorFormulaUpdateOne struct {
 	config
 	hooks    []Hook
 	mutation *CounterVendorFormulaMutation
+}
+
+// SetMandatory sets the mandatory field.
+func (cvfuo *CounterVendorFormulaUpdateOne) SetMandatory(b bool) *CounterVendorFormulaUpdateOne {
+	cvfuo.mutation.SetMandatory(b)
+	return cvfuo
 }
 
 // SetFormulaID sets the formula edge to Formula by id.
@@ -482,6 +501,13 @@ func (cvfuo *CounterVendorFormulaUpdateOne) sqlSave(ctx context.Context) (_node 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: countervendorformula.FieldUpdateTime,
+		})
+	}
+	if value, ok := cvfuo.mutation.Mandatory(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: countervendorformula.FieldMandatory,
 		})
 	}
 	if cvfuo.mutation.FormulaCleared() {

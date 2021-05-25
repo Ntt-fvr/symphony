@@ -111,6 +111,13 @@ func UpdateTime(v time.Time) predicate.CounterVendorFormula {
 	})
 }
 
+// Mandatory applies equality check predicate on the "mandatory" field. It's identical to MandatoryEQ.
+func Mandatory(v bool) predicate.CounterVendorFormula {
+	return predicate.CounterVendorFormula(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMandatory), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.CounterVendorFormula {
 	return predicate.CounterVendorFormula(func(s *sql.Selector) {
@@ -260,6 +267,20 @@ func UpdateTimeLT(v time.Time) predicate.CounterVendorFormula {
 func UpdateTimeLTE(v time.Time) predicate.CounterVendorFormula {
 	return predicate.CounterVendorFormula(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpdateTime), v))
+	})
+}
+
+// MandatoryEQ applies the EQ predicate on the "mandatory" field.
+func MandatoryEQ(v bool) predicate.CounterVendorFormula {
+	return predicate.CounterVendorFormula(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMandatory), v))
+	})
+}
+
+// MandatoryNEQ applies the NEQ predicate on the "mandatory" field.
+func MandatoryNEQ(v bool) predicate.CounterVendorFormula {
+	return predicate.CounterVendorFormula(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMandatory), v))
 	})
 }
 

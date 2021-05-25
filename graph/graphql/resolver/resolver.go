@@ -222,9 +222,9 @@ func (r resolver) Kpi() generated.KpiResolver {
 	return kpiResolver{}
 }
 
-func (r resolver) CounterVendorFormula() generated.CounterVendorFormulaResolver {
+/*func (r resolver) counterVendorFormula() generated.CounterVendorFormulaResolver {
 	return counterVendorFormulaResolver{}
-}
+}*/
 
 func (r resolver) Counter() generated.CounterResolver {
 	return counterResolver{}

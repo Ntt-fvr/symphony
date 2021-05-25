@@ -66,7 +66,6 @@ type ResolverRoot interface {
 	BlockVariable() BlockVariableResolver
 	Counter() CounterResolver
 	CounterFamily() CounterFamilyResolver
-	CounterVendorFormula() CounterVendorFormulaResolver
 	Domain() DomainResolver
 	Equipment() EquipmentResolver
 	EquipmentPortType() EquipmentPortTypeResolver
@@ -1527,9 +1526,6 @@ type CounterResolver interface {
 }
 type CounterFamilyResolver interface {
 	Counter(ctx context.Context, obj *ent.CounterFamily) ([]*ent.Counter, error)
-}
-type CounterVendorFormulaResolver interface {
-	Mandatory(ctx context.Context, obj *ent.CounterVendorFormula) (bool, error)
 }
 type DomainResolver interface {
 	Tech(ctx context.Context, obj *ent.Domain) ([]*ent.Tech, error)
@@ -13273,7 +13269,7 @@ type CounterVendorFormula implements Node {
 
 input CounterVendorFormulaInput {
   id: ID
-  mandatory: Boolean
+  mandatory: Boolean!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -20844,14 +20840,14 @@ func (ec *executionContext) _CounterVendorFormula_mandatory(ctx context.Context,
 		Object:     "CounterVendorFormula",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CounterVendorFormula().Mandatory(rctx, obj)
+		return obj.Mandatory, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -52773,7 +52769,7 @@ func (ec *executionContext) unmarshalInputCounterVendorFormulaInput(ctx context.
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
-			it.Mandatory, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			it.Mandatory, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -59326,22 +59322,13 @@ func (ec *executionContext) _CounterVendorFormula(ctx context.Context, sel ast.S
 		case "id":
 			out.Values[i] = ec._CounterVendorFormula_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "mandatory":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CounterVendorFormula_mandatory(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._CounterVendorFormula_mandatory(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
