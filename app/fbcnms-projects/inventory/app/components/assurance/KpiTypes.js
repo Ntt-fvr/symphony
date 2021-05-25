@@ -34,6 +34,11 @@ const KpiTypes = () => {
       <Grid className={classes.cont}>
         <h1>Kpi catalog</h1>
         <KpiTypeItem />
+                <KpiTypeItem />
+        <KpiTypeItem />
+        <KpiTypeItem />
+        <KpiTypeItem />
+
       </Grid>
     </div>
   );

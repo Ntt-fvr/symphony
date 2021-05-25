@@ -7,28 +7,39 @@
  * @flow
  * @format
  */
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Button from '@symphony/design-system/components/Button';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {AddIcon} from '@symphony/design-system/icons';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {makeStyles} from '@material-ui/core/styles';
 import AddButton from './AddButton'
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwitchLabels from './Switch';
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
-    width: '79%',
+    width: "79%",
+    "& .MuiExpansionPanelSummary-root:hover": {
+      cursor: "default"
+    }
+  },
+  panel: {
+    cursor: "default",
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
   },
   container: {
     borderRadius: '10px',
@@ -65,19 +76,23 @@ const useStyles = makeStyles({
   button: {
     marginLeft: '20%',
   },
-});
+}));
 
-function KpiTypeItem() {
+export default function SimpleExpansionPanel() {
   const classes = useStyles();
-
+  const [open, setOpen] = React.useState(false);
   return (
     <div className={classes.root}>
-      <Accordion className={classes.container}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          control={<ExpandMoreIcon />}
-          aria-label="Expand">
-          <FormControlLabel
+      <ExpansionPanel className={classes.container} expanded={open}>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
+          classes={{
+            root: classes.panel 
+          }}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+        <FormControlLabel
             aria-label="Acknowledge"
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
@@ -107,9 +122,10 @@ function KpiTypeItem() {
           <Grid>
             <IconButton className={classes.delete} icon={DeleteIcon} />
           </Grid>
-        </AccordionSummary>
+        
+        </ExpansionPanelSummary>
 
-        <AccordionDetails className={classes.details}>
+        <ExpansionPanelDetails>
           <Grid container spacing={1}>
             <Grid item xs={6}>
               <Grid container spacing={1}>
@@ -144,9 +160,9 @@ function KpiTypeItem() {
               CONTAINS 15 FORMULAS
             </Grid>
           </Grid>
-        </AccordionDetails>
-      </Accordion>
+
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     </div>
   );
 }
-export default KpiTypeItem;
