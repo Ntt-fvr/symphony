@@ -29,6 +29,7 @@ export const LogEvents = {
   NAVIGATE_TO_EQUIPMENT: 'navigate_to_equipment',
   SAVE_EQUIPMENT_BUTTON_CLICKED: 'save_equipment_button_clicked',
   EDIT_EQUIPMENT_BUTTON_CLICKED: 'edit_equipment_button_clicked',
+  EDIT_COUNTER_ITEM_CLICKED: 'edit_counter_item_clicked',
   EDIT_EQUIPMENT_PORT_BUTTON_CLICKED: 'edit_equipment_port_button_clicked',
   SAVE_EQUIPMENT_PORT_BUTTON_CLICKED: 'save_equipment_port_button_clicked',
   LOCATION_CARD_CANCEL_BUTTON_CLICKED: 'location_card_cancel_button_clicked',

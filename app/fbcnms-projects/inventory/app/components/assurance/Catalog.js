@@ -22,6 +22,7 @@ import {Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
+import {EditCounterItemForm} from "./EditCounterItemForm";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -116,6 +117,10 @@ export default function Configure() {
             <Route
               path={relativeUrl('/threshold_types')}
               component={ThresholdTypes}
+            />
+            <Route
+              path={relativeUrl('/edit_counter_types')}
+              component={EditCounterItemForm}
             />
           </Switch>
         </InventorySuspense>

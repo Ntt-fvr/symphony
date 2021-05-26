@@ -12,18 +12,14 @@ import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React, {useEffect, useMemo, useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {Link, Route} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwitchLabels from './Switch';
-import {EditCounterItemForm} from './EditCounterItemForm';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
-import {useHistory} from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: '1',
     alignSelf: 'center',
   },
-  nameKpi: {
+  nameThreshold: {
     fontWeight: 'bold',
   },
   thr: {
@@ -75,10 +71,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function KpiTypeItem() {
+export default function ThresholdTypeItem() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
   return (
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
@@ -96,23 +91,29 @@ export default function KpiTypeItem() {
             control={<SwitchLabels />}
           />
           <Grid className={classes.rootGrid}>
-            <Text className={classes.nameKpi}>Nombre de KPI/Indicador</Text>
+            <Text className={classes.nameThreshold}>DROP_THR</Text>
           </Grid>
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>Tipo de red</Text>
+              <Text>1968392781902</Text>
             </Button>
           </Grid>
 
           <Grid className={classes.rootGrid}>
-            <AddButton textButton={'Add formula'} />
+            <Button variant="text">
+              <Text className={classes.typeRed}>THROUGHPUT_USER_DL_3G</Text>
+            </Button>
+          </Grid>
+
+          <Grid className={classes.rootGrid}>
+            <AddButton textButton={'Add rule'} />
           </Grid>
 
           <Grid>
-            <Link>
+            <a href="https://www.w3schools.com">
               <IconButton className={classes.edit} icon={EditIcon} />
-            </Link>
+            </a>
           </Grid>
 
           <Grid>
@@ -123,37 +124,11 @@ export default function KpiTypeItem() {
         <AccordionDetails>
           <Grid container spacing={1}>
             <Grid item xs={6}>
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  Associated threshold:
-                  <Button variant="text">
-                    <Text className={classes.thr}>DROP_THR</Text>
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
-                  Category: Text
-                </Grid>
-                <Grid item xs={12}>
-                  Maturity: : Text
-                </Grid>
-                <Grid item xs={12}>
-                  Unit: : Text
-                </Grid>
-                <Grid item xs={12}>
-                  ID: Text
-                </Grid>
-                <Grid item xs={12}>
-                  Last modification:: Text
-                </Grid>
-                <Grid item xs={12}>
-                  Description: : Chips allow users to enter information, make
-                  selections, filter content, or trigger actions. While buttons
-                  are expected.
-                </Grid>
+              <Grid item xs={12}>
+                Description: : Chips allow users to enter information, make
+                selections, filter content, or trigger actions. While buttons
+                are expected.
               </Grid>
-            </Grid>
-            <Grid item xs={6}>
-              CONTAINS 15 FORMULAS
             </Grid>
           </Grid>
         </AccordionDetails>

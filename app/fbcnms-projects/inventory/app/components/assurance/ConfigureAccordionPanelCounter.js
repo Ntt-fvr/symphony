@@ -22,8 +22,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
-import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {Link, Route, BrowserRouter as Router, Switch} from 'react-router-dom';
+import {DeleteIcon} from '@symphony/design-system/icons';
+import {Link} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|
@@ -79,17 +79,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 function ConfigureAccordion(props: Props) {
-  const {
-    icon,
-    entityName,
-    instanceCount,
-    instanceNamePlural,
-    instanceNameSingular,
-    name,
-    onEdit,
-    allowDelete,
-    onDelete,
-  } = props;
+  const {icon, entityName, name} = props;
   const classes = useStyles();
 
   const editButtonPermissions: InventoryActionPermission = {
@@ -120,9 +110,7 @@ function ConfigureAccordion(props: Props) {
         <h3>Vendor_name</h3>
       </Grid>
       <Grid>
-        <a href="https://www.youtube.com" className={classes.iconContainer}>
-          {icon}
-        </a>
+        <Link className={classes.iconContainer}>{icon}</Link>
       </Grid>
       <Grid>
         <div className={classes.actionButtons}>

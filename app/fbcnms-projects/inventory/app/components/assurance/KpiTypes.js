@@ -12,7 +12,8 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 
-import AddCounterItemForm from './AddCounterItemForm';
+import AddFormulaItemForm from './AddFormulaItemForm';
+import AddKpiItemForm from './AddKpiItemForm';
 import KpiTypeItem from './KpiTypeItem';
 import Text from '@symphony/design-system/components/Text';
 
@@ -41,9 +42,15 @@ const KpiTypes = () => {
           <KpiTypeItem />
           <KpiTypeItem />
           <KpiTypeItem />
+          <KpiTypeItem />
+          <KpiTypeItem />
+          <KpiTypeItem />
+          <KpiTypeItem />
+          <KpiTypeItem />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm />
+          <AddKpiItemForm />
+          <AddFormulaItemForm />
         </Grid>
       </Grid>
     </div>

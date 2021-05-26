@@ -35,13 +35,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddCounterItemForm() {
+export default function AddKpiItemForm() {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
-      <CardHeader>Add Counter</CardHeader>
-      <FormField className={classes.formField} label="Counter name" required>
+      <CardHeader>Add KPI</CardHeader>
+      <FormField className={classes.formField} label="Kpi name" required>
         <TextInput
           className={classes.textInput}
           name="name"
@@ -49,7 +49,7 @@ export default function AddCounterItemForm() {
           type="string"
         />
       </FormField>
-      <FormField className={classes.formField} label="Counter ID" required>
+      <FormField className={classes.formField} label="Category" required>
         <TextInput
           className={classes.textInput}
           name="id"
@@ -57,7 +57,7 @@ export default function AddCounterItemForm() {
           type="string"
         />
       </FormField>
-      <FormField className={classes.formField} label="Family name" required>
+      <FormField className={classes.formField} label="Status" required>
         <TextInput
           className={classes.textInput}
           name="family"
@@ -65,7 +65,7 @@ export default function AddCounterItemForm() {
           type="string"
         />
       </FormField>
-      <FormField className={classes.formField} label="Vendor name" required>
+      <FormField className={classes.formField} label="Domine" required>
         <TextInput
           className={classes.textInput}
           name="vendor"
@@ -73,19 +73,8 @@ export default function AddCounterItemForm() {
           type="string"
         />
       </FormField>
-      <FormField
-        className={classes.formField}
-        label="Network Manager System"
-        required>
-        <TextInput
-          className={classes.textInput}
-          variant="outlined"
-          name="nms"
-          type="string"
-        />
-      </FormField>
       <FormField>
-        <Button className={classes.addCounter}>Add Counter</Button>
+        <Button className={classes.addCounter}>Add KPI</Button>
       </FormField>
     </Card>
   );

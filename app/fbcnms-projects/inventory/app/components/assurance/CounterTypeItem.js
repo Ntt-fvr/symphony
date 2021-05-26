@@ -13,8 +13,10 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import React from 'react';
+import React, {useState} from 'react';
 import {AccordionDetails} from '@material-ui/core';
+import {EditCounterItemForm} from './EditCounterItemForm';
+import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
@@ -51,6 +53,18 @@ const useStyles = makeStyles({
 export default function CounterTypeItem() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+
+  const [showAddEditCard, setShowAddEditCard] = useState(false);
+
+  const showEditCounterItemForm = () => {
+    ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
+    setShowAddEditCard(true);
+  };
+
+  if (showAddEditCard) {
+    return <EditCounterItemForm />;
+  }
+
   return (
     <div className={classes.root}>
       <ExpansionPanel className={classes.container} expanded={open}>
@@ -62,7 +76,9 @@ export default function CounterTypeItem() {
             entityName="prueba"
             name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
             instanceCount={1}
-            icon={<EditOutlinedIcon />}
+            icon={
+              <EditOutlinedIcon onClick={() => showEditCounterItemForm()} />
+            }
             instanceNameSingular="Gestor_manager"
             instanceNamePlural="Hortua"
           />
