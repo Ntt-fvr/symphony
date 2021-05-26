@@ -8,26 +8,31 @@
  * @format
  */
 
-import ConfigureAccordion from './ConfigureAccordionPanelCounter';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useState} from 'react';
-import {AccordionDetails} from '@material-ui/core';
+import SwitchLabels from './Switch';
+import Text from '@symphony/design-system/components/Text';
+import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
+import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {EditCounterItemForm} from './EditCounterItemForm';
+import {Link} from 'react-router-dom';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/core/styles';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
     marginBottom: '7px',
   },
-  detailsRoot: {
-    display: 'block',
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
   },
   container: {
     align: 'center',
@@ -35,20 +40,34 @@ const useStyles = makeStyles({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  detailsContainer: {
-    display: 'flex',
-    width: '100%',
-    height: 'auto',
+  rootGrid: {
+    flexGrow: '1',
+    alignSelf: 'center',
   },
-  sectionId: {
-    width: '42%',
-    marginLeft: '3px',
+  nameKpi: {
+    fontWeight: 'bold',
   },
-  sectionFm: {
-    width: '50%',
-    marginLeft: '35px',
+  threshold: {
+    color: '#3984FF',
+    fontWeight: 'bold',
   },
-});
+  typeRed: {
+    marginLeft: '140px',
+    color: '#3984FF',
+    fontWeight: 'bold',
+  },
+  edit: {
+    flexGrow: '1',
+    margin: '10px',
+  },
+  delete: {
+    flexGrow: '1',
+    margin: '10px',
+  },
+  button: {
+    marginLeft: '20%',
+  },
+}));
 
 export default function CounterTypeItem() {
   const classes = useStyles();
@@ -67,39 +86,62 @@ export default function CounterTypeItem() {
 
   return (
     <div className={classes.root}>
-      <ExpansionPanel className={classes.container} expanded={open}>
-        <ExpansionPanelSummary
+      <Accordion className={classes.container} expanded={open}>
+        <AccordionSummary
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <ConfigureAccordion
-            entityName="prueba"
-            name="L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1"
-            instanceCount={1}
-            icon={
-              <EditOutlinedIcon onClick={() => showEditCounterItemForm()} />
-            }
-            instanceNameSingular="Gestor_manager"
-            instanceNamePlural="Hortua"
+          <FormControlLabel
+            aria-label="Acknowledge"
+            onClick={event => event.stopPropagation()}
+            onFocus={event => event.stopPropagation()}
+            control={<SwitchLabels />}
           />
-        </ExpansionPanelSummary>
+          <Grid className={classes.rootGrid}>
+            <Text className={classes.nameKpi}>
+              L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1
+            </Text>
+          </Grid>
+
+          <Grid className={classes.rootGrid}>
+            <Button variant="text">
+              <Text className={classes.typeRed}>Gestor_manager</Text>
+            </Button>
+          </Grid>
+
+          <Grid className={classes.rootGrid}>
+            <Button variant="text">
+              <Text>Vendor name</Text>
+            </Button>
+          </Grid>
+
+          <Grid>
+            <Link onClick={showEditCounterItemForm}>
+              <IconButton className={classes.edit} icon={EditIcon} />
+            </Link>
+          </Grid>
+
+          <Grid>
+            <IconButton className={classes.delete} icon={DeleteIcon} />
+          </Grid>
+        </AccordionSummary>
 
         <AccordionDetails className={classes.detailsRoot}>
-          <div className={classes.detailsContainer}>
-            <div className={classes.sectionId}>
+          <Grid container spacing={3}>
+            <Grid xs="6" className={classes.sectionId}>
               <p>
                 Counter ID:<span>40</span>
               </p>
-            </div>
-            <div className={classes.sectionFm}>
+            </Grid>
+            <Grid xs="6" className={classes.sectionFamily}>
               <p>
                 Family Name:
                 <span>Throughput and Data Volume Measurement</span>
               </p>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
         </AccordionDetails>
-      </ExpansionPanel>
+      </Accordion>
     </div>
   );
 }

@@ -12,18 +12,15 @@ import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React, {useEffect, useMemo, useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {Link, Route} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwitchLabels from './Switch';
-import {EditCounterItemForm} from './EditCounterItemForm';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
-import {useHistory} from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,9 +28,6 @@ const useStyles = makeStyles(theme => ({
       cursor: 'default',
     },
     marginBottom: '7px',
-  },
-  panel: {
-    cursor: 'default',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -45,7 +39,6 @@ const useStyles = makeStyles(theme => ({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  details: {},
   rootGrid: {
     flexGrow: '1',
     alignSelf: 'center',
@@ -53,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   nameKpi: {
     fontWeight: 'bold',
   },
-  thr: {
+  threshold: {
     color: '#3984FF',
     fontWeight: 'bold',
   },
@@ -84,9 +77,6 @@ export default function KpiTypeItem() {
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
-          classes={{
-            root: classes.panel,
-          }}
           aria-controls="panel1a-content"
           id="panel1a-header">
           <FormControlLabel
@@ -127,7 +117,7 @@ export default function KpiTypeItem() {
                 <Grid item xs={12}>
                   Associated threshold:
                   <Button variant="text">
-                    <Text className={classes.thr}>DROP_THR</Text>
+                    <Text className={classes.threshold}>DROP_THR</Text>
                   </Button>
                 </Grid>
                 <Grid item xs={12}>

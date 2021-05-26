@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
   addCounter: {
     margin: '20px',
-    width: '111px',
+    width: '120px',
     alignSelf: 'flex-end',
   },
 }));
@@ -40,7 +40,7 @@ export default function AddThresholdItemForm() {
 
   return (
     <Card className={classes.root}>
-      <CardHeader>Add Counter</CardHeader>
+      <CardHeader>Add Threshold</CardHeader>
       <FormField className={classes.formField} label="Threshold Name" required>
         <TextInput
           className={classes.textInput}
