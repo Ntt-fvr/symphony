@@ -39,22 +39,11 @@ type Props = $ReadOnly<{|
 |}>;
 
 const useStyles = makeStyles(() => ({
-  inline: {
-    display: 'flex',
-    alignItems: 'center',
-    flexGrow: 1,
-  },
   root: {
     flexGrow: 1,
   },
-  iconContainer: {
-    color: symphony.palette.B600,
-    display: 'flex',
-    flexShrink: 0,
-    width: '6px',
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...symphony.typography,
+  container: {
+    margin:'5px',
   },
 
   boldText: {
@@ -63,19 +52,26 @@ const useStyles = makeStyles(() => ({
   text: {
     color: '#4d4d4e',
   },
-  network: {
-    color: '#3984FF',
+  manager: {
+    display: 'flex',
+    justifyContent:'center',
+    marginRigth:'50px',
   },
   vendor: {
-    color: '#4d4d4e',
-  },
-  actionButtons: {
     display: 'flex',
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    flexGrow: 1,
-    marginRight: '30px',
+    justifyContent:'flex-end',
   },
+  edit: {
+    marginLeft:'50%',
+    color: symphony.palette.B600,
+    display: 'flex',
+    justifyContent:'flex-end',
+    flexShrink: 0,
+  },
+  delete:{
+    display: 'flex',
+    marginLeft:'30%',
+  },  
 }));
 
 function ConfigureAccordion(props: Props) {
@@ -98,38 +94,47 @@ function ConfigureAccordion(props: Props) {
   };
 
   return (
+    <div className={classes.root}>
     <Grid
-      container
-      className={classes.root}
-      direction="row"
-      justify="space-between"
+      className={classes.container}
+      container spacing={3}
       alignItems="center">
-      <Grid>
-        <div className={classes.inline}>
+      <Grid xs='5'>        
           <Text
             className={classNames(classes.text, classes.boldText)}
             variant="subtitle1">
             {name}
-          </Text>
-        </div>
+          </Text>        
       </Grid>
-      <Grid className={classes.network}>
-        <h3>Gestor_manager</h3>
+      <Grid xs='3'>
+        <Text
+          color='primary'
+          weight='bold'
+          className={classes.manager}
+          variant="body1">
+          {'Gestor_manager'}
+        </Text> 
       </Grid>
-      <Grid className={classes.vendor}>
-        <h3>Vendor_name</h3>
+      <Grid xs='2'>
+        <Text
+          weight='bold'
+          className={classes.vendor}
+          variant="body1">
+          {'Vendor_name'}
+        </Text>
       </Grid>
-      <Grid>
-        <a href="https://www.youtube.com" className={classes.iconContainer}>
+      <Grid xs='1' >
+        <a href="https://www.youtube.com" className={classes.edit}>
           {icon}
         </a>
       </Grid>
-      <Grid>
-        <div className={classes.actionButtons}>
+      <Grid xs='1'>
+        <div className={classes.delete}>
           <DeleteButton />
-        </div>
+        </div>      
       </Grid>
     </Grid>
+    </div>
   );
 }
 

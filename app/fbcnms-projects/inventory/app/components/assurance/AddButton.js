@@ -2,23 +2,22 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import Text from '@symphony/design-system/components/Text';
 
 const useStyles = makeStyles({
   button: {
-      margin:'10px',
-      padding:'5px',
-      marginRight:'50px',
-      marginLeft:'40px',
-     with:'114px',
-     height:'28px',
+    padding:'0 9px',
+    with:'121px',
+    height:'32px',
   },
   label:{
-      margin:'0px',
-      padding: '0px',
-      fontSize:'14px',
+    marginLeft:'10px',
+    padding: '0px',
+    fontSize:'14px',
   },
   icon:{
-      paddingLeft:'5px',
+    paddingLeft:'0px',
+    margin:'0px'
   },
 
 });
@@ -32,10 +31,17 @@ function AddButton() {
       <Button
         variant="outlined"
         color="primary"
+        weight='bold'
         className={classes.button}
         startIcon={<AddCircleOutlineIcon className={classes.icon} />}
       >
-        <h3 className={classes.label}>Add formula</h3>
+      <Text
+          className={''}
+          color='primary'
+          variant='subtitle2'>
+          {'Add formula'}
+        </Text>
+        
       </Button>
     </div>
   );

@@ -30,6 +30,9 @@ const useStyles = makeStyles(theme => ({
   },
   panel: {
     cursor: 'default',
+    '& .MuiAccordionSummary-content': {
+      margin:'7px 0',
+    },
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -37,6 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     align: 'center',
+    margin:'4px',
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
@@ -47,9 +51,10 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'center',
   },
   nameKpi: {
+    
     fontWeight: 'bold',
   },
-  thr: {
+  threshold: {
     color: '#3984FF',
     fontWeight: 'bold',
   },
@@ -122,7 +127,7 @@ export default function KpiTypeItem() {
                 <Grid item xs={12}>
                   Associated threshold:
                   <Button variant="text">
-                    <Text className={classes.thr}>DROP_THR</Text>
+                    <Text className={classes.threshold}>DROP_THR</Text>
                   </Button>
                 </Grid>
                 <Grid item xs={12}>

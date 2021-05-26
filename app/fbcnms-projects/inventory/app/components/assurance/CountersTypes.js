@@ -31,12 +31,6 @@ const CountersTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <CounterTypeItem />
-          <CounterTypeItem />
-          <CounterTypeItem />
-          <CounterTypeItem />
-          <CounterTypeItem />
-          <CounterTypeItem />
-          <CounterTypeItem />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddCounterItemForm />
