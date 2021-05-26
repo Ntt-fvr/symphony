@@ -10,11 +10,9 @@
 
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useState} from 'react';
-import SwitchLabels from './Switch';
 import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
@@ -91,12 +89,6 @@ export default function CounterTypeItem() {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <FormControlLabel
-            aria-label="Acknowledge"
-            onClick={event => event.stopPropagation()}
-            onFocus={event => event.stopPropagation()}
-            control={<SwitchLabels />}
-          />
           <Grid className={classes.rootGrid}>
             <Text className={classes.nameKpi}>
               L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1
