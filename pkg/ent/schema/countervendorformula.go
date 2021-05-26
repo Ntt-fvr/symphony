@@ -16,7 +16,7 @@ type CounterVendorFormula struct {
 }
 
 // Counter returns property type counter.
-func (CounterVendorFormula) CounterVendorFormula() []ent.Field {
+func (CounterVendorFormula) Fields() []ent.Field {
 	return []ent.Field{
 		field.Bool("mandatory"),
 	}

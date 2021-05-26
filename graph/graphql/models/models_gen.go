@@ -66,6 +66,21 @@ type AddBulkServiceLinksAndPortsInput struct {
 	LinkIds []int `json:"linkIds"`
 }
 
+type AddCounterFamilyInput struct {
+	Name    string              `json:"name"`
+	Counter []*EditCounterInput `json:"counter"`
+}
+
+type AddCounterInput struct {
+	Name                 string                           `json:"name"`
+	ExternalID           string                           `json:"externalID"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
+type AddCounterVendorFormulaInput struct {
+	Mandatory *bool `json:"mandatory"`
+}
+
 type AddCustomerInput struct {
 	Name       string  `json:"name"`
 	ExternalID *string `json:"externalId"`
@@ -206,6 +221,11 @@ type AddUsersGroupInput struct {
 	Policies    []int   `json:"policies"`
 }
 
+type AddVendorInput struct {
+	Name                 string                           `json:"name"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type AddWorkOrderInput struct {
 	Name                string                    `json:"name"`
 	Description         *string                   `json:"description"`
@@ -316,24 +336,6 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
-type CounterFamilyInput struct {
-	ID      *int            `json:"id"`
-	Name    string          `json:"name"`
-	Counter []*CounterInput `json:"counter"`
-}
-
-type CounterInput struct {
-	ID                   *int                         `json:"id"`
-	Name                 string                       `json:"name"`
-	ExternalID           string                       `json:"externalID"`
-	Countervendorformula []*CounterVendorFormulaInput `json:"countervendorformula"`
-}
-
-type CounterVendorFormulaInput struct {
-	ID        *int  `json:"id"`
-	Mandatory *bool `json:"mandatory"`
-}
-
 type DecisionBlock struct {
 	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
 	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
@@ -367,6 +369,24 @@ type DomainInput struct {
 type EditBlockInput struct {
 	ID               int                               `json:"id"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type EditCounterFamilyInput struct {
+	ID      int                 `json:"id"`
+	Name    string              `json:"name"`
+	Counter []*EditCounterInput `json:"counter"`
+}
+
+type EditCounterInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	ExternalID           string                           `json:"externalID"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
+type EditCounterVendorFormulaInput struct {
+	ID        int   `json:"id"`
+	Mandatory *bool `json:"mandatory"`
 }
 
 type EditEquipmentInput struct {
@@ -476,6 +496,12 @@ type EditUsersGroupInput struct {
 	Policies    []int              `json:"policies"`
 }
 
+type EditVendorInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type EditWorkOrderInput struct {
 	ID                  int                       `json:"id"`
 	Name                string                    `json:"name"`
@@ -575,10 +601,10 @@ type FileInput struct {
 }
 
 type FormulaInput struct {
-	ID                   *int                         `json:"id"`
-	Name                 string                       `json:"name"`
-	Active               bool                         `json:"active"`
-	Countervendorformula []*CounterVendorFormulaInput `json:"countervendorformula"`
+	ID                   *int                             `json:"id"`
+	Name                 string                           `json:"name"`
+	Active               bool                             `json:"active"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
 }
 
 type GeneralFilter struct {
@@ -1020,12 +1046,6 @@ type VariableExpressionInput struct {
 	PropertyTypeID        *int                        `json:"propertyTypeId"`
 	Expression            string                      `json:"expression"`
 	BlockVariables        []*BlockVariableInput       `json:"blockVariables"`
-}
-
-type VendorInput struct {
-	ID                   *int                         `json:"id"`
-	Name                 string                       `json:"name"`
-	Countervendorformula []*CounterVendorFormulaInput `json:"countervendorformula"`
 }
 
 type WorkOrderDefinitionInput struct {

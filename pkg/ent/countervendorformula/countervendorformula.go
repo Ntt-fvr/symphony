@@ -21,6 +21,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldMandatory holds the string denoting the mandatory field in the database.
+	FieldMandatory = "mandatory"
 
 	// EdgeFormula holds the string denoting the formula edge name in mutations.
 	EdgeFormula = "formula"
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldMandatory,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the CounterVendorFormula type.

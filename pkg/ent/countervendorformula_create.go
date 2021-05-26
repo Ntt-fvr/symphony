@@ -55,6 +55,12 @@ func (cvfc *CounterVendorFormulaCreate) SetNillableUpdateTime(t *time.Time) *Cou
 	return cvfc
 }
 
+// SetMandatory sets the mandatory field.
+func (cvfc *CounterVendorFormulaCreate) SetMandatory(b bool) *CounterVendorFormulaCreate {
+	cvfc.mutation.SetMandatory(b)
+	return cvfc
+}
+
 // SetFormulaID sets the formula edge to Formula by id.
 func (cvfc *CounterVendorFormulaCreate) SetFormulaID(id int) *CounterVendorFormulaCreate {
 	cvfc.mutation.SetFormulaID(id)
@@ -182,6 +188,9 @@ func (cvfc *CounterVendorFormulaCreate) check() error {
 	if _, ok := cvfc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
+	if _, ok := cvfc.mutation.Mandatory(); !ok {
+		return &ValidationError{Name: "mandatory", err: errors.New("ent: missing required field \"mandatory\"")}
+	}
 	return nil
 }
 
@@ -224,6 +233,14 @@ func (cvfc *CounterVendorFormulaCreate) createSpec() (*CounterVendorFormula, *sq
 			Column: countervendorformula.FieldUpdateTime,
 		})
 		_node.UpdateTime = value
+	}
+	if value, ok := cvfc.mutation.Mandatory(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: countervendorformula.FieldMandatory,
+		})
+		_node.Mandatory = value
 	}
 	if nodes := cvfc.mutation.FormulaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

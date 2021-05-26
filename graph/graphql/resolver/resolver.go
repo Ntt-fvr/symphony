@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
@@ -222,10 +221,11 @@ func (r resolver) Kpi() generated.KpiResolver {
 	return kpiResolver{}
 }
 
+/*
 func (r resolver) CounterVendorFormula() generated.CounterVendorFormulaResolver {
 	return counterVendorFormulaResolver{}
 }
-
+*/
 func (r resolver) Counter() generated.CounterResolver {
 	return counterResolver{}
 }
