@@ -11,6 +11,10 @@ import AddButton from './AddButton';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
+import Table from './Table'
+
+//import Checkbox  from '@symphony/design-system/components/Checkbox/Checkbox';
+
 import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
@@ -143,7 +147,8 @@ export default function KpiTypeItem() {
               </Grid>
             </Grid>
             <Grid item xs={6}>
-              CONTAINS 15 FORMULAS
+              
+              <Table item xs={12} />
             </Grid>
           </Grid>
         </AccordionDetails>
