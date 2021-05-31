@@ -17,7 +17,7 @@ import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
-
+import Table from './Table';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwitchLabels from './Switch';
 
@@ -68,6 +68,9 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     marginLeft: '20%',
+  },
+  rulesContained: {
+    margin: '10px 0',
   },
 }));
 
@@ -122,15 +125,27 @@ export default function ThresholdTypeItem() {
         </AccordionSummary>
 
         <AccordionDetails>
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
-              <Grid item xs={12}>
+            <Grid container
+            spacing={3}
+            item xs={12}
+            justify="center"
+            alignItems="center" 
+            >
+              <Grid xs={10}>
                 Description: : Chips allow users to enter information, make
                 selections, filter content, or trigger actions. While buttons
                 are expected.
               </Grid>
+              <Grid xs={10}>
+                <Text 
+                className={classes.rulesContained}
+                weight='bold'
+                variant='subtitle1'>
+                  {'Rules contained'}
+                </Text>             
+                <Table/>              
+              </Grid>
             </Grid>
-          </Grid>
         </AccordionDetails>
       </Accordion>
     </div>

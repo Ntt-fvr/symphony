@@ -146,8 +146,7 @@ export default function KpiTypeItem() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={6}>
-              
+            <Grid item xs={6}>              
               <Table item xs={12} />
             </Grid>
           </Grid>

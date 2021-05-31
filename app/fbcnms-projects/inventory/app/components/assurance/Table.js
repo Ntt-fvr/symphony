@@ -16,6 +16,9 @@ import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 
 
 const useStyles = makeStyles({
+  root: {
+    margin: '10px 0'
+  },
   table: {
     minWidth: '100%',
   },
@@ -38,7 +41,7 @@ export default function DenseTable() {
   const classes = useStyles();
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer className={classes.root} component={Paper}>
       <Table className={classes.table} size="small" aria-label="sticky table">
         <TableHead>
           <TableRow>
