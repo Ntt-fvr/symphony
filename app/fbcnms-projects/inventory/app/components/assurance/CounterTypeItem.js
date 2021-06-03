@@ -72,7 +72,11 @@ export default function CounterTypeItem(props) {
     ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
   };
-
+  
+  if (showAddEditCard) {
+    return <EditCounterItemForm />;
+  }
+  
   return (
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
