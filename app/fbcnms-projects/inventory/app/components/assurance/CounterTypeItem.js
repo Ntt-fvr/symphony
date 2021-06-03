@@ -38,10 +38,6 @@ const useStyles = makeStyles(theme => ({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  rootGrid: {
-    flexGrow: '1',
-    alignSelf: 'center',
-  },
   nameKpi: {
     fontWeight: 'bold',
   },
@@ -50,7 +46,6 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
   },
   typeRed: {
-    marginLeft: '140px',
     color: '#3984FF',
     fontWeight: 'bold',
   },
@@ -67,7 +62,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CounterTypeItem() {
+export default function CounterTypeItem(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -78,43 +73,52 @@ export default function CounterTypeItem() {
     setShowAddEditCard(true);
   };
 
-  if (showAddEditCard) {
-    return <EditCounterItemForm />;
-  }
-
   return (
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
+          container
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid className={classes.rootGrid}>
+          <Grid xs='4' 
+            container 
+            justify="flex-start"
+            alignItems="center">
             <Text className={classes.nameKpi}>
-              L_E_RAB_SESSIONTIME_HIGHPRECISION_QCI1
+              {props.CounterName}
             </Text>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
+          <Grid xs='3' 
+            container 
+            justify="center"
+            alignItems="center">
             <Button variant="text">
-              <Text className={classes.typeRed}>Gestor_manager</Text>
+              <Text className={classes.typeRed}>{props.NetworkManagerSystem}</Text>
             </Button>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
+          <Grid xs='4'
+            container 
+            justify="center"
+            alignItems="center">
             <Button variant="text">
-              <Text>Vendor name</Text>
+              <Text>{props.VendorName}</Text>
             </Button>
           </Grid>
 
-          <Grid>
+          <Grid xs='1' 
+          container 
+          justify="center"
+          alignItems="center">
             <Link onClick={showEditCounterItemForm}>
               <IconButton className={classes.edit} icon={EditIcon} />
             </Link>
           </Grid>
 
-          <Grid>
-            <IconButton className={classes.delete} icon={DeleteIcon} />
+          <Grid xs='1'>
+            <IconButton onClick={props.onChange} className={classes.delete} icon={DeleteIcon} />
           </Grid>
         </AccordionSummary>
 
