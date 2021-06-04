@@ -167,6 +167,11 @@ func (kc *KpiCreate) check() error {
 	if _, ok := kc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
+	if v, ok := kc.mutation.Name(); ok {
+		if err := kpi.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
 	return nil
 }
 

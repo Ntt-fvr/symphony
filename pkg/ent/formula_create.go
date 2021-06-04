@@ -193,6 +193,11 @@ func (fc *FormulaCreate) check() error {
 	if _, ok := fc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
+	if v, ok := fc.mutation.Name(); ok {
+		if err := formula.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
 	if _, ok := fc.mutation.Active(); !ok {
 		return &ValidationError{Name: "active", err: errors.New("ent: missing required field \"active\"")}
 	}

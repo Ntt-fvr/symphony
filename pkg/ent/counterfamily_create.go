@@ -147,6 +147,11 @@ func (cfc *CounterFamilyCreate) check() error {
 	if _, ok := cfc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
+	if v, ok := cfc.mutation.Name(); ok {
+		if err := counterfamily.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
 	return nil
 }
 

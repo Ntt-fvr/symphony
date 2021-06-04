@@ -749,15 +749,18 @@ type ComplexityRoot struct {
 		AddCounterFamily                         func(childComplexity int, input models.AddCounterFamilyInput) int
 		AddCustomer                              func(childComplexity int, input models.AddCustomerInput) int
 		AddDecisionBlock                         func(childComplexity int, flowDraftID int, input models.DecisionBlockInput) int
+		AddDomain                                func(childComplexity int, input models.AddDomainInput) int
 		AddEndBlock                              func(childComplexity int, flowDraftID int, input models.EndBlockInput) int
 		AddEquipment                             func(childComplexity int, input models.AddEquipmentInput) int
 		AddEquipmentPortType                     func(childComplexity int, input models.AddEquipmentPortTypeInput) int
 		AddEquipmentType                         func(childComplexity int, input models.AddEquipmentTypeInput) int
 		AddFloorPlan                             func(childComplexity int, input models.AddFloorPlanInput) int
 		AddFlowDraft                             func(childComplexity int, input models.AddFlowDraftInput) int
+		AddFormula                               func(childComplexity int, input models.AddFormulaInput) int
 		AddGotoBlock                             func(childComplexity int, flowDraftID int, input models.GotoBlockInput) int
 		AddHyperlink                             func(childComplexity int, input models.AddHyperlinkInput) int
 		AddImage                                 func(childComplexity int, input models.AddImageInput) int
+		AddKpi                                   func(childComplexity int, input models.AddKpiInput) int
 		AddLink                                  func(childComplexity int, input models.AddLinkInput) int
 		AddLocation                              func(childComplexity int, input models.AddLocationInput) int
 		AddLocationType                          func(childComplexity int, input models.AddLocationTypeInput) int
@@ -770,6 +773,7 @@ type ComplexityRoot struct {
 		AddServiceType                           func(childComplexity int, data models.ServiceTypeCreateData) int
 		AddStartBlock                            func(childComplexity int, flowDraftID int, input models.StartBlockInput) int
 		AddSubflowBlock                          func(childComplexity int, flowDraftID int, input models.SubflowBlockInput) int
+		AddTech                                  func(childComplexity int, input models.AddTechInput) int
 		AddTriggerBlock                          func(childComplexity int, flowDraftID int, input models.TriggerBlockInput) int
 		AddTrueFalseBlock                        func(childComplexity int, flowDraftID int, input models.TrueFalseBlockInput) int
 		AddUsersGroup                            func(childComplexity int, input models.AddUsersGroupInput) int
@@ -795,10 +799,13 @@ type ComplexityRoot struct {
 		EditBlock                                func(childComplexity int, input models.EditBlockInput) int
 		EditCounter                              func(childComplexity int, input models.EditCounterInput) int
 		EditCounterFamily                        func(childComplexity int, input models.EditCounterFamilyInput) int
+		EditDomain                               func(childComplexity int, input models.EditDomainInput) int
 		EditEquipment                            func(childComplexity int, input models.EditEquipmentInput) int
 		EditEquipmentPort                        func(childComplexity int, input models.EditEquipmentPortInput) int
 		EditEquipmentPortType                    func(childComplexity int, input models.EditEquipmentPortTypeInput) int
 		EditEquipmentType                        func(childComplexity int, input models.EditEquipmentTypeInput) int
+		EditFormula                              func(childComplexity int, input models.EditFormulaInput) int
+		EditKpi                                  func(childComplexity int, input models.EditKpiInput) int
 		EditLink                                 func(childComplexity int, input models.EditLinkInput) int
 		EditLocation                             func(childComplexity int, input models.EditLocationInput) int
 		EditLocationType                         func(childComplexity int, input models.EditLocationTypeInput) int
@@ -810,6 +817,7 @@ type ComplexityRoot struct {
 		EditReportFilter                         func(childComplexity int, input models.EditReportFilterInput) int
 		EditService                              func(childComplexity int, data models.ServiceEditData) int
 		EditServiceType                          func(childComplexity int, data models.ServiceTypeEditData) int
+		EditTech                                 func(childComplexity int, input models.EditTechInput) int
 		EditUser                                 func(childComplexity int, input models.EditUserInput) int
 		EditUsersGroup                           func(childComplexity int, input models.EditUsersGroupInput) int
 		EditVendor                               func(childComplexity int, input models.EditVendorInput) int
@@ -825,10 +833,13 @@ type ComplexityRoot struct {
 		RemoveCounter                            func(childComplexity int, id int) int
 		RemoveCounterFamily                      func(childComplexity int, id int) int
 		RemoveCustomer                           func(childComplexity int, id int) int
+		RemoveDomain                             func(childComplexity int, id int) int
 		RemoveEquipment                          func(childComplexity int, id int, workOrderID *int) int
 		RemoveEquipmentFromPosition              func(childComplexity int, positionID int, workOrderID *int) int
 		RemoveEquipmentPortType                  func(childComplexity int, id int) int
 		RemoveEquipmentType                      func(childComplexity int, id int) int
+		RemoveFormula                            func(childComplexity int, id int) int
+		RemoveKpi                                func(childComplexity int, id int) int
 		RemoveLink                               func(childComplexity int, id int, workOrderID *int) int
 		RemoveLocation                           func(childComplexity int, id int) int
 		RemoveLocationType                       func(childComplexity int, id int) int
@@ -838,6 +849,7 @@ type ComplexityRoot struct {
 		RemoveServicePort                        func(childComplexity int, id int, portID int) int
 		RemoveServiceType                        func(childComplexity int, id int) int
 		RemoveSiteSurvey                         func(childComplexity int, id int) int
+		RemoveTech                               func(childComplexity int, id int) int
 		RemoveVendor                             func(childComplexity int, id int) int
 		RemoveWorkOrder                          func(childComplexity int, id int) int
 		RemoveWorkOrderType                      func(childComplexity int, id int) int
@@ -1705,6 +1717,18 @@ type MutationResolver interface {
 	AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error)
 	EditVendor(ctx context.Context, input models.EditVendorInput) (*ent.Vendor, error)
 	RemoveVendor(ctx context.Context, id int) (int, error)
+	AddFormula(ctx context.Context, input models.AddFormulaInput) (*ent.Formula, error)
+	EditFormula(ctx context.Context, input models.EditFormulaInput) (*ent.Formula, error)
+	RemoveFormula(ctx context.Context, id int) (int, error)
+	AddKpi(ctx context.Context, input models.AddKpiInput) (*ent.Kpi, error)
+	EditKpi(ctx context.Context, input models.EditKpiInput) (*ent.Kpi, error)
+	RemoveKpi(ctx context.Context, id int) (int, error)
+	AddDomain(ctx context.Context, input models.AddDomainInput) (*ent.Domain, error)
+	EditDomain(ctx context.Context, input models.EditDomainInput) (*ent.Domain, error)
+	RemoveDomain(ctx context.Context, id int) (int, error)
+	AddTech(ctx context.Context, input models.AddTechInput) (*ent.Tech, error)
+	EditTech(ctx context.Context, input models.EditTechInput) (*ent.Tech, error)
+	RemoveTech(ctx context.Context, id int) (int, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -4570,6 +4594,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddDecisionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.DecisionBlockInput)), true
 
+	case "Mutation.addDomain":
+		if e.complexity.Mutation.AddDomain == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addDomain_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddDomain(childComplexity, args["input"].(models.AddDomainInput)), true
+
 	case "Mutation.addEndBlock":
 		if e.complexity.Mutation.AddEndBlock == nil {
 			break
@@ -4642,6 +4678,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddFlowDraft(childComplexity, args["input"].(models.AddFlowDraftInput)), true
 
+	case "Mutation.addFormula":
+		if e.complexity.Mutation.AddFormula == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addFormula_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddFormula(childComplexity, args["input"].(models.AddFormulaInput)), true
+
 	case "Mutation.addGotoBlock":
 		if e.complexity.Mutation.AddGotoBlock == nil {
 			break
@@ -4677,6 +4725,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddImage(childComplexity, args["input"].(models.AddImageInput)), true
+
+	case "Mutation.addKpi":
+		if e.complexity.Mutation.AddKpi == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addKpi_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddKpi(childComplexity, args["input"].(models.AddKpiInput)), true
 
 	case "Mutation.addLink":
 		if e.complexity.Mutation.AddLink == nil {
@@ -4821,6 +4881,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddSubflowBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.SubflowBlockInput)), true
+
+	case "Mutation.addTech":
+		if e.complexity.Mutation.AddTech == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addTech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddTech(childComplexity, args["input"].(models.AddTechInput)), true
 
 	case "Mutation.addTriggerBlock":
 		if e.complexity.Mutation.AddTriggerBlock == nil {
@@ -5122,6 +5194,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditCounterFamily(childComplexity, args["input"].(models.EditCounterFamilyInput)), true
 
+	case "Mutation.editDomain":
+		if e.complexity.Mutation.EditDomain == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editDomain_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditDomain(childComplexity, args["input"].(models.EditDomainInput)), true
+
 	case "Mutation.editEquipment":
 		if e.complexity.Mutation.EditEquipment == nil {
 			break
@@ -5169,6 +5253,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditEquipmentType(childComplexity, args["input"].(models.EditEquipmentTypeInput)), true
+
+	case "Mutation.editFormula":
+		if e.complexity.Mutation.EditFormula == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editFormula_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditFormula(childComplexity, args["input"].(models.EditFormulaInput)), true
+
+	case "Mutation.editKpi":
+		if e.complexity.Mutation.EditKpi == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editKpi_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditKpi(childComplexity, args["input"].(models.EditKpiInput)), true
 
 	case "Mutation.editLink":
 		if e.complexity.Mutation.EditLink == nil {
@@ -5301,6 +5409,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditServiceType(childComplexity, args["data"].(models.ServiceTypeEditData)), true
+
+	case "Mutation.editTech":
+		if e.complexity.Mutation.EditTech == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editTech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditTech(childComplexity, args["input"].(models.EditTechInput)), true
 
 	case "Mutation.editUser":
 		if e.complexity.Mutation.EditUser == nil {
@@ -5482,6 +5602,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RemoveCustomer(childComplexity, args["id"].(int)), true
 
+	case "Mutation.removeDomain":
+		if e.complexity.Mutation.RemoveDomain == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeDomain_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveDomain(childComplexity, args["id"].(int)), true
+
 	case "Mutation.removeEquipment":
 		if e.complexity.Mutation.RemoveEquipment == nil {
 			break
@@ -5529,6 +5661,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveEquipmentType(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeFormula":
+		if e.complexity.Mutation.RemoveFormula == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeFormula_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveFormula(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeKpi":
+		if e.complexity.Mutation.RemoveKpi == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeKpi_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveKpi(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeLink":
 		if e.complexity.Mutation.RemoveLink == nil {
@@ -5637,6 +5793,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveSiteSurvey(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeTech":
+		if e.complexity.Mutation.RemoveTech == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeTech_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveTech(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeVendor":
 		if e.complexity.Mutation.RemoveVendor == nil {
@@ -13271,6 +13439,18 @@ type Mutation {
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
+  addFormula(input: AddFormulaInput!):Formula!
+  editFormula(input: EditFormulaInput!): Formula!
+  removeFormula(id: ID!): ID!
+  addKpi(input: AddKpiInput!):Kpi!
+  editKpi(input: EditKpiInput!): Kpi!
+  removeKpi(id: ID!): ID!
+  addDomain(input: AddDomainInput!):Domain!
+  editDomain(input: EditDomainInput!): Domain!
+  removeDomain(id: ID!): ID!
+  addTech(input: AddTechInput!):Tech!
+  editTech(input: EditTechInput!): Tech!
+  removeTech(id: ID!): ID!
 }
 
 """
@@ -13314,6 +13494,12 @@ type Counter implements Node {
   countervendorformula: [CounterVendorFormula]!
 }
 
+input CounterInput {
+  name: String!
+  externalID: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
 input AddCounterInput {
   name: String!
   externalID: String!
@@ -13335,7 +13521,7 @@ type CounterFamily implements Node {
 
 input AddCounterFamilyInput {
   name: String!
-  counter: [EditCounterInput!]
+  counter: [AddCounterInput!]
 }
 
 input EditCounterFamilyInput {
@@ -13369,7 +13555,20 @@ type Domain implements Node {
 }
 
 input DomainInput {
-  id: ID
+  id: ID!
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+input AddDomainInput {
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+input EditDomainInput {
+  id: ID!
   name: String!
   tech: [TechInput!]
   kpi: [KpiInput!]
@@ -13382,7 +13581,18 @@ type Kpi implements Node {
 }
 
 input KpiInput {
-  id: ID
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input AddKpiInput {
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input EditKpiInput {
+  id: ID!
   name: String!
   formula: [FormulaInput!]
 }
@@ -13394,7 +13604,18 @@ type Tech implements Node {
 }
 
 input TechInput {
-  id: ID
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input AddTechInput {
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input EditTechInput {
+  id: ID!
   name: String!
   formula: [FormulaInput!]
 }
@@ -13407,7 +13628,20 @@ type Formula implements Node {
 }
 
 input FormulaInput {
-  id: ID
+  id: ID!
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input AddFormulaInput {
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input EditFormulaInput {
+  id: ID!
   name: String!
   active: Boolean!
   countervendorformula: [EditCounterVendorFormulaInput!]
@@ -13931,6 +14165,21 @@ func (ec *executionContext) field_Mutation_addDecisionBlock_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addDomain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddDomainInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddDomainInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddDomainInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addEndBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14030,6 +14279,21 @@ func (ec *executionContext) field_Mutation_addFlowDraft_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddFormulaInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFormulaInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addGotoBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14076,6 +14340,21 @@ func (ec *executionContext) field_Mutation_addImage_args(ctx context.Context, ra
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddImageInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddImageInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addKpi_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddKpiInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddKpiInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKpiInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -14297,6 +14576,21 @@ func (ec *executionContext) field_Mutation_addSubflowBlock_args(ctx context.Cont
 		}
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addTech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddTechInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddTechInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddTechInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -14729,6 +15023,21 @@ func (ec *executionContext) field_Mutation_editCounter_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editDomain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditDomainInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditDomainInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditDomainInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editEquipmentPortType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -14781,6 +15090,36 @@ func (ec *executionContext) field_Mutation_editEquipment_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNEditEquipmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditEquipmentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditFormulaInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditFormulaInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editKpi_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditKpiInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditKpiInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditKpiInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -14960,6 +15299,21 @@ func (ec *executionContext) field_Mutation_editService_args(ctx context.Context,
 		}
 	}
 	args["data"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editTech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditTechInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditTechInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditTechInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -15224,6 +15578,21 @@ func (ec *executionContext) field_Mutation_removeCustomer_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_removeDomain_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_removeEquipmentFromPosition_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -15299,6 +15668,36 @@ func (ec *executionContext) field_Mutation_removeEquipment_args(ctx context.Cont
 		}
 	}
 	args["workOrderId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeKpi_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -15450,6 +15849,21 @@ func (ec *executionContext) field_Mutation_removeService_args(ctx context.Contex
 }
 
 func (ec *executionContext) field_Mutation_removeSiteSurvey_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeTech_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -35012,6 +35426,510 @@ func (ec *executionContext) _Mutation_removeVendor(ctx context.Context, field gr
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addFormula_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddFormula(rctx, args["input"].(models.AddFormulaInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Formula)
+	fc.Result = res
+	return ec.marshalNFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editFormula_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditFormula(rctx, args["input"].(models.EditFormulaInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Formula)
+	fc.Result = res
+	return ec.marshalNFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeFormula_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveFormula(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addKpi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addKpi_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddKpi(rctx, args["input"].(models.AddKpiInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Kpi)
+	fc.Result = res
+	return ec.marshalNKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editKpi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editKpi_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditKpi(rctx, args["input"].(models.EditKpiInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Kpi)
+	fc.Result = res
+	return ec.marshalNKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeKpi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeKpi_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveKpi(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addDomain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addDomain_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddDomain(rctx, args["input"].(models.AddDomainInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Domain)
+	fc.Result = res
+	return ec.marshalNDomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editDomain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editDomain_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditDomain(rctx, args["input"].(models.EditDomainInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Domain)
+	fc.Result = res
+	return ec.marshalNDomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeDomain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeDomain_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveDomain(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addTech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddTech(rctx, args["input"].(models.AddTechInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Tech)
+	fc.Result = res
+	return ec.marshalNTech2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editTech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditTech(rctx, args["input"].(models.EditTechInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Tech)
+	fc.Result = res
+	return ec.marshalNTech2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeTech_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveTech(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -51409,7 +52327,7 @@ func (ec *executionContext) unmarshalInputAddCounterFamilyInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counter"))
-			it.Counter, err = ec.unmarshalOEditCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterInputᚄ(ctx, v)
+			it.Counter, err = ec.unmarshalOAddCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51512,6 +52430,42 @@ func (ec *executionContext) unmarshalInputAddCustomerInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalId"))
 			it.ExternalID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddDomainInput(ctx context.Context, obj interface{}) (models.AddDomainInput, error) {
+	var it models.AddDomainInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tech":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tech"))
+			it.Tech, err = ec.unmarshalOTechInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kpi":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpi"))
+			it.Kpi, err = ec.unmarshalOKpiInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51915,6 +52869,42 @@ func (ec *executionContext) unmarshalInputAddFlowDraftInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddFormulaInput(ctx context.Context, obj interface{}) (models.AddFormulaInput, error) {
+	var it models.AddFormulaInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "active":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			it.Active, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countervendorformula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
+			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddHyperlinkInput(ctx context.Context, obj interface{}) (models.AddHyperlinkInput, error) {
 	var it models.AddHyperlinkInput
 	var asMap = obj.(map[string]interface{})
@@ -52042,6 +53032,34 @@ func (ec *executionContext) unmarshalInputAddImageInput(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("annotation"))
 			it.Annotation, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddKpiInput(ctx context.Context, obj interface{}) (models.AddKpiInput, error) {
+	var it models.AddKpiInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "formula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formula"))
+			it.Formula, err = ec.unmarshalOFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -52560,6 +53578,34 @@ func (ec *executionContext) unmarshalInputAddServiceEndpointInput(ctx context.Co
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("definition"))
 			it.Definition, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddTechInput(ctx context.Context, obj interface{}) (models.AddTechInput, error) {
+	var it models.AddTechInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "formula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formula"))
+			it.Formula, err = ec.unmarshalOFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53445,6 +54491,42 @@ func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCounterInput(ctx context.Context, obj interface{}) (models.CounterInput, error) {
+	var it models.CounterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "externalID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalID"))
+			it.ExternalID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countervendorformula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
+			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDecisionBlockInput(ctx context.Context, obj interface{}) (models.DecisionBlockInput, error) {
 	var it models.DecisionBlockInput
 	var asMap = obj.(map[string]interface{})
@@ -53519,7 +54601,7 @@ func (ec *executionContext) unmarshalInputDomainInput(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53680,6 +54762,50 @@ func (ec *executionContext) unmarshalInputEditCounterVendorFormulaInput(ctx cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
 			it.Mandatory, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditDomainInput(ctx context.Context, obj interface{}) (models.EditDomainInput, error) {
+	var it models.EditDomainInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tech":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tech"))
+			it.Tech, err = ec.unmarshalOTechInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kpi":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpi"))
+			it.Kpi, err = ec.unmarshalOKpiInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53944,6 +55070,86 @@ func (ec *executionContext) unmarshalInputEditEquipmentTypeInput(ctx context.Con
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditFormulaInput(ctx context.Context, obj interface{}) (models.EditFormulaInput, error) {
+	var it models.EditFormulaInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "active":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			it.Active, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "countervendorformula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
+			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditKpiInput(ctx context.Context, obj interface{}) (models.EditKpiInput, error) {
+	var it models.EditKpiInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "formula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formula"))
+			it.Formula, err = ec.unmarshalOFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
 			}
 		}
 	}
@@ -54426,6 +55632,42 @@ func (ec *executionContext) unmarshalInputEditReportFilterInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditTechInput(ctx context.Context, obj interface{}) (models.EditTechInput, error) {
+	var it models.EditTechInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "formula":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formula"))
+			it.Formula, err = ec.unmarshalOFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55325,7 +56567,7 @@ func (ec *executionContext) unmarshalInputFormulaInput(ctx context.Context, obj 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55665,7 +56907,7 @@ func (ec *executionContext) unmarshalInputKpiInput(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -57765,7 +59007,7 @@ func (ec *executionContext) unmarshalInputTechInput(ctx context.Context, obj int
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -63916,6 +65158,66 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addFormula":
+			out.Values[i] = ec._Mutation_addFormula(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editFormula":
+			out.Values[i] = ec._Mutation_editFormula(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeFormula":
+			out.Values[i] = ec._Mutation_removeFormula(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addKpi":
+			out.Values[i] = ec._Mutation_addKpi(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editKpi":
+			out.Values[i] = ec._Mutation_editKpi(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeKpi":
+			out.Values[i] = ec._Mutation_removeKpi(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addDomain":
+			out.Values[i] = ec._Mutation_addDomain(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editDomain":
+			out.Values[i] = ec._Mutation_editDomain(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeDomain":
+			out.Values[i] = ec._Mutation_removeDomain(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addTech":
+			out.Values[i] = ec._Mutation_addTech(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editTech":
+			out.Values[i] = ec._Mutation_editTech(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeTech":
+			out.Values[i] = ec._Mutation_removeTech(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -68799,8 +70101,18 @@ func (ec *executionContext) unmarshalNAddCounterInput2githubᚗcomᚋfacebookinc
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddCounterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx context.Context, v interface{}) (*models.AddCounterInput, error) {
+	res, err := ec.unmarshalInputAddCounterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddCustomerInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCustomerInput(ctx context.Context, v interface{}) (models.AddCustomerInput, error) {
 	res, err := ec.unmarshalInputAddCustomerInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddDomainInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddDomainInput(ctx context.Context, v interface{}) (models.AddDomainInput, error) {
+	res, err := ec.unmarshalInputAddDomainInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -68829,6 +70141,11 @@ func (ec *executionContext) unmarshalNAddFlowDraftInput2githubᚗcomᚋfacebooki
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFormulaInput(ctx context.Context, v interface{}) (models.AddFormulaInput, error) {
+	res, err := ec.unmarshalInputAddFormulaInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddHyperlinkInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddHyperlinkInput(ctx context.Context, v interface{}) (models.AddHyperlinkInput, error) {
 	res, err := ec.unmarshalInputAddHyperlinkInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -68842,6 +70159,11 @@ func (ec *executionContext) unmarshalNAddImageInput2githubᚗcomᚋfacebookincub
 func (ec *executionContext) unmarshalNAddImageInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddImageInput(ctx context.Context, v interface{}) (*models.AddImageInput, error) {
 	res, err := ec.unmarshalInputAddImageInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddKpiInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKpiInput(ctx context.Context, v interface{}) (models.AddKpiInput, error) {
+	res, err := ec.unmarshalInputAddKpiInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNAddLinkInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddLinkInput(ctx context.Context, v interface{}) (models.AddLinkInput, error) {
@@ -68876,6 +70198,11 @@ func (ec *executionContext) unmarshalNAddProjectTypeInput2githubᚗcomᚋfaceboo
 
 func (ec *executionContext) unmarshalNAddServiceEndpointInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddServiceEndpointInput(ctx context.Context, v interface{}) (models.AddServiceEndpointInput, error) {
 	res, err := ec.unmarshalInputAddServiceEndpointInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddTechInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddTechInput(ctx context.Context, v interface{}) (models.AddTechInput, error) {
+	res, err := ec.unmarshalInputAddTechInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -69692,6 +71019,20 @@ func (ec *executionContext) marshalNDiscoveryMethod2githubᚗcomᚋfacebookincub
 	return v
 }
 
+func (ec *executionContext) marshalNDomain2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx context.Context, sel ast.SelectionSet, v ent.Domain) graphql.Marshaler {
+	return ec._Domain(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx context.Context, sel ast.SelectionSet, v *ent.Domain) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Domain(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Edge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -69764,6 +71105,11 @@ func (ec *executionContext) unmarshalNEditCounterVendorFormulaInput2ᚖgithubᚗ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNEditDomainInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditDomainInput(ctx context.Context, v interface{}) (models.EditDomainInput, error) {
+	res, err := ec.unmarshalInputEditDomainInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNEditEquipmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditEquipmentInput(ctx context.Context, v interface{}) (models.EditEquipmentInput, error) {
 	res, err := ec.unmarshalInputEditEquipmentInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -69781,6 +71127,16 @@ func (ec *executionContext) unmarshalNEditEquipmentPortTypeInput2githubᚗcomᚋ
 
 func (ec *executionContext) unmarshalNEditEquipmentTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditEquipmentTypeInput(ctx context.Context, v interface{}) (models.EditEquipmentTypeInput, error) {
 	res, err := ec.unmarshalInputEditEquipmentTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditFormulaInput(ctx context.Context, v interface{}) (models.EditFormulaInput, error) {
+	res, err := ec.unmarshalInputEditFormulaInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditKpiInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditKpiInput(ctx context.Context, v interface{}) (models.EditKpiInput, error) {
+	res, err := ec.unmarshalInputEditKpiInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -69816,6 +71172,11 @@ func (ec *executionContext) unmarshalNEditProjectTypeInput2githubᚗcomᚋfacebo
 
 func (ec *executionContext) unmarshalNEditReportFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditReportFilterInput(ctx context.Context, v interface{}) (models.EditReportFilterInput, error) {
 	res, err := ec.unmarshalInputEditReportFilterInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditTechInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditTechInput(ctx context.Context, v interface{}) (models.EditTechInput, error) {
+	res, err := ec.unmarshalInputEditTechInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -71040,6 +72401,10 @@ func (ec *executionContext) marshalNFlowStatus2githubᚗcomᚋfacebookincubator�
 	return v
 }
 
+func (ec *executionContext) marshalNFormula2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx context.Context, sel ast.SelectionSet, v ent.Formula) graphql.Marshaler {
+	return ec._Formula(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx context.Context, sel ast.SelectionSet, v []*ent.Formula) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -71075,6 +72440,16 @@ func (ec *executionContext) marshalNFormula2ᚕᚖgithubᚗcomᚋfacebookincubat
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalNFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx context.Context, sel ast.SelectionSet, v *ent.Formula) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Formula(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNFormulaInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaInput(ctx context.Context, v interface{}) (*models.FormulaInput, error) {
@@ -71275,6 +72650,10 @@ func (ec *executionContext) marshalNInventoryPolicy2ᚖgithubᚗcomᚋfacebookin
 	return ec._InventoryPolicy(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNKpi2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx context.Context, sel ast.SelectionSet, v ent.Kpi) graphql.Marshaler {
+	return ec._Kpi(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNKpi2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx context.Context, sel ast.SelectionSet, v []*ent.Kpi) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -71310,6 +72689,16 @@ func (ec *executionContext) marshalNKpi2ᚕᚖgithubᚗcomᚋfacebookincubator�
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalNKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx context.Context, sel ast.SelectionSet, v *ent.Kpi) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Kpi(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNKpiInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiInput(ctx context.Context, v interface{}) (*models.KpiInput, error) {
@@ -73356,6 +74745,10 @@ func (ec *executionContext) marshalNSystemPolicy2githubᚗcomᚋfacebookincubato
 	return ec._SystemPolicy(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTech2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx context.Context, sel ast.SelectionSet, v ent.Tech) graphql.Marshaler {
+	return ec._Tech(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNTech2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx context.Context, sel ast.SelectionSet, v []*ent.Tech) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -73391,6 +74784,16 @@ func (ec *executionContext) marshalNTech2ᚕᚖgithubᚗcomᚋfacebookincubator�
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) marshalNTech2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx context.Context, sel ast.SelectionSet, v *ent.Tech) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Tech(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNTechInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechInput(ctx context.Context, v interface{}) (*models.TechInput, error) {
@@ -74786,6 +76189,30 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 	}
 	res, err := ec.unmarshalInputAddBulkServiceLinksAndPortsInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAddCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInputᚄ(ctx context.Context, v interface{}) ([]*models.AddCounterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AddCounterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAddCounterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx context.Context, v interface{}) (*models2.AutomationPolicyInput, error) {

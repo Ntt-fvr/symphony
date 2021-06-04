@@ -4239,6 +4239,18 @@ type Mutation {
   addVendor(input: AddVendorInput!):Vendor!
   editVendor(input: EditVendorInput!): Vendor!
   removeVendor(id: ID!): ID!
+  addFormula(input: AddFormulaInput!):Formula!
+  editFormula(input: EditFormulaInput!): Formula!
+  removeFormula(id: ID!): ID!
+  addKpi(input: AddKpiInput!):Kpi!
+  editKpi(input: EditKpiInput!): Kpi!
+  removeKpi(id: ID!): ID!
+  addDomain(input: AddDomainInput!):Domain!
+  editDomain(input: EditDomainInput!): Domain!
+  removeDomain(id: ID!): ID!
+  addTech(input: AddTechInput!):Tech!
+  editTech(input: EditTechInput!): Tech!
+  removeTech(id: ID!): ID!
 }
 
 """
@@ -4282,6 +4294,12 @@ type Counter implements Node {
   countervendorformula: [CounterVendorFormula]!
 }
 
+input CounterInput {
+  name: String!
+  externalID: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
 input AddCounterInput {
   name: String!
   externalID: String!
@@ -4303,7 +4321,7 @@ type CounterFamily implements Node {
 
 input AddCounterFamilyInput {
   name: String!
-  counter: [EditCounterInput!]
+  counter: [AddCounterInput!]
 }
 
 input EditCounterFamilyInput {
@@ -4337,7 +4355,20 @@ type Domain implements Node {
 }
 
 input DomainInput {
-  id: ID
+  id: ID!
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+input AddDomainInput {
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+input EditDomainInput {
+  id: ID!
   name: String!
   tech: [TechInput!]
   kpi: [KpiInput!]
@@ -4350,7 +4381,18 @@ type Kpi implements Node {
 }
 
 input KpiInput {
-  id: ID
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input AddKpiInput {
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input EditKpiInput {
+  id: ID!
   name: String!
   formula: [FormulaInput!]
 }
@@ -4362,7 +4404,18 @@ type Tech implements Node {
 }
 
 input TechInput {
-  id: ID
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input AddTechInput {
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input EditTechInput {
+  id: ID!
   name: String!
   formula: [FormulaInput!]
 }
@@ -4375,7 +4428,20 @@ type Formula implements Node {
 }
 
 input FormulaInput {
-  id: ID
+  id: ID!
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input AddFormulaInput {
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input EditFormulaInput {
+  id: ID!
   name: String!
   active: Boolean!
   countervendorformula: [EditCounterVendorFormulaInput!]

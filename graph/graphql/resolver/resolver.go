@@ -224,8 +224,8 @@ func (r resolver) Kpi() generated.KpiResolver {
 /*
 func (r resolver) CounterVendorFormula() generated.CounterVendorFormulaResolver {
 	return counterVendorFormulaResolver{}
-}
-*/
+}*/
+
 func (r resolver) Counter() generated.CounterResolver {
 	return counterResolver{}
 }

@@ -300,6 +300,10 @@ func init() {
 	counter.DefaultUpdateTime = counterDescUpdateTime.Default.(func() time.Time)
 	// counter.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	counter.UpdateDefaultUpdateTime = counterDescUpdateTime.UpdateDefault.(func() time.Time)
+	// counterDescName is the schema descriptor for name field.
+	counterDescName := counterFields[0].Descriptor()
+	// counter.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	counter.NameValidator = counterDescName.Validators[0].(func(string) error)
 	counterfamilyMixin := schema.CounterFamily{}.Mixin()
 	counterfamily.Policy = privacy.NewPolicies(schema.CounterFamily{})
 	counterfamily.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -323,6 +327,10 @@ func init() {
 	counterfamily.DefaultUpdateTime = counterfamilyDescUpdateTime.Default.(func() time.Time)
 	// counterfamily.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	counterfamily.UpdateDefaultUpdateTime = counterfamilyDescUpdateTime.UpdateDefault.(func() time.Time)
+	// counterfamilyDescName is the schema descriptor for name field.
+	counterfamilyDescName := counterfamilyFields[0].Descriptor()
+	// counterfamily.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	counterfamily.NameValidator = counterfamilyDescName.Validators[0].(func(string) error)
 	countervendorformulaMixin := schema.CounterVendorFormula{}.Mixin()
 	countervendorformula.Policy = privacy.NewPolicies(schema.CounterVendorFormula{})
 	countervendorformula.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -400,6 +408,10 @@ func init() {
 	domain.DefaultUpdateTime = domainDescUpdateTime.Default.(func() time.Time)
 	// domain.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	domain.UpdateDefaultUpdateTime = domainDescUpdateTime.UpdateDefault.(func() time.Time)
+	// domainDescName is the schema descriptor for name field.
+	domainDescName := domainFields[0].Descriptor()
+	// domain.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	domain.NameValidator = domainDescName.Validators[0].(func(string) error)
 	entrypointMixin := schema.EntryPoint{}.Mixin()
 	entrypoint.Policy = privacy.NewPolicies(schema.EntryPoint{})
 	entrypoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -974,6 +986,10 @@ func init() {
 	formula.DefaultUpdateTime = formulaDescUpdateTime.Default.(func() time.Time)
 	// formula.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	formula.UpdateDefaultUpdateTime = formulaDescUpdateTime.UpdateDefault.(func() time.Time)
+	// formulaDescName is the schema descriptor for name field.
+	formulaDescName := formulaFields[0].Descriptor()
+	// formula.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	formula.NameValidator = formulaDescName.Validators[0].(func(string) error)
 	hyperlinkMixin := schema.Hyperlink{}.Mixin()
 	hyperlink.Policy = privacy.NewPolicies(schema.Hyperlink{})
 	hyperlink.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1020,6 +1036,10 @@ func init() {
 	kpi.DefaultUpdateTime = kpiDescUpdateTime.Default.(func() time.Time)
 	// kpi.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	kpi.UpdateDefaultUpdateTime = kpiDescUpdateTime.UpdateDefault.(func() time.Time)
+	// kpiDescName is the schema descriptor for name field.
+	kpiDescName := kpiFields[0].Descriptor()
+	// kpi.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	kpi.NameValidator = kpiDescName.Validators[0].(func(string) error)
 	linkMixin := schema.Link{}.Mixin()
 	link.Policy = privacy.NewPolicies(schema.Link{})
 	link.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1605,6 +1625,10 @@ func init() {
 	tech.DefaultUpdateTime = techDescUpdateTime.Default.(func() time.Time)
 	// tech.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	tech.UpdateDefaultUpdateTime = techDescUpdateTime.UpdateDefault.(func() time.Time)
+	// techDescName is the schema descriptor for name field.
+	techDescName := techFields[0].Descriptor()
+	// tech.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	tech.NameValidator = techDescName.Validators[0].(func(string) error)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1699,6 +1723,10 @@ func init() {
 	vendor.DefaultUpdateTime = vendorDescUpdateTime.Default.(func() time.Time)
 	// vendor.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	vendor.UpdateDefaultUpdateTime = vendorDescUpdateTime.UpdateDefault.(func() time.Time)
+	// vendorDescName is the schema descriptor for name field.
+	vendorDescName := vendorFields[0].Descriptor()
+	// vendor.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	vendor.NameValidator = vendorDescName.Validators[0].(func(string) error)
 	workorderMixin := schema.WorkOrder{}.Mixin()
 	workorder.Policy = privacy.NewPolicies(schema.WorkOrder{})
 	workorder.Hooks[0] = func(next ent.Mutator) ent.Mutator {

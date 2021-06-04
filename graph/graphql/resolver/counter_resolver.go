@@ -17,14 +17,6 @@ import (
 
 type counterResolver struct{}
 
-/*func (counterResolver) Name(_ context.Context, counter *ent.Counter) (string, error) {
-	return "", nil
-}
-
-func (counterResolver) ExternalID(_ context.Context, counter *ent.Counter) (string, error) {
-	return "", nil
-}*/
-
 func (counterResolver) Countervendorformula(ctx context.Context, counter *ent.Counter) ([]*ent.CounterVendorFormula, error) {
 	var counterVendorFormula []*ent.CounterVendorFormula
 	return counterVendorFormula, nil
@@ -44,6 +36,28 @@ func (r mutationResolver) AddCounter(ctx context.Context, input models.AddCounte
 		return nil, fmt.Errorf("creating counter: %w", err)
 	}
 	return typ, nil
+}
+
+func (r mutationResolver) AddCounterList(ctx context.Context, inputs []*models.AddCounterInput, counterFamilyId int) ([]*ent.Counter, error) {
+	var counters []*ent.Counter
+	for _, input := range inputs {
+		client := r.ClientFrom(ctx)
+		typ, err := client.
+			Counter.Create().
+			SetName(input.Name).
+			SetCounterfamilyID(counterFamilyId).
+			SetExternalId(input.ExternalID).
+			Save(ctx)
+		if err != nil {
+			if ent.IsConstraintError(err) {
+				return nil, gqlerror.Errorf("A counter with the name %v already exists", input.Name)
+			}
+			return nil, fmt.Errorf("creating counter: %w", err)
+		}
+		counters = append(counters, typ)
+	}
+
+	return counters, nil
 }
 
 func (r mutationResolver) RemoveCounter(ctx context.Context, id int) (int, error) {
@@ -80,7 +94,7 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 			SetExternalId(input.ExternalID).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A Counter with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("A counter with the name %v already exists", input.Name)
 			}
 			return nil, errors.Wrap(err, "updating counter name")
 		}

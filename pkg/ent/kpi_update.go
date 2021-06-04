@@ -112,12 +112,18 @@ func (ku *KpiUpdate) Save(ctx context.Context) (int, error) {
 	)
 	ku.defaults()
 	if len(ku.hooks) == 0 {
+		if err = ku.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ku.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*KpiMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ku.check(); err != nil {
+				return 0, err
 			}
 			ku.mutation = mutation
 			affected, err = ku.sqlSave(ctx)
@@ -162,6 +168,16 @@ func (ku *KpiUpdate) defaults() {
 		v := kpi.UpdateDefaultUpdateTime()
 		ku.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ku *KpiUpdate) check() error {
+	if v, ok := ku.mutation.Name(); ok {
+		if err := kpi.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ku *KpiUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -383,12 +399,18 @@ func (kuo *KpiUpdateOne) Save(ctx context.Context) (*Kpi, error) {
 	)
 	kuo.defaults()
 	if len(kuo.hooks) == 0 {
+		if err = kuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = kuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*KpiMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = kuo.check(); err != nil {
+				return nil, err
 			}
 			kuo.mutation = mutation
 			node, err = kuo.sqlSave(ctx)
@@ -433,6 +455,16 @@ func (kuo *KpiUpdateOne) defaults() {
 		v := kpi.UpdateDefaultUpdateTime()
 		kuo.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (kuo *KpiUpdateOne) check() error {
+	if v, ok := kuo.mutation.Name(); ok {
+		if err := kpi.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (kuo *KpiUpdateOne) sqlSave(ctx context.Context) (_node *Kpi, err error) {

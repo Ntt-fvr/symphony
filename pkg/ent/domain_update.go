@@ -123,12 +123,18 @@ func (du *DomainUpdate) Save(ctx context.Context) (int, error) {
 	)
 	du.defaults()
 	if len(du.hooks) == 0 {
+		if err = du.check(); err != nil {
+			return 0, err
+		}
 		affected, err = du.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*DomainMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = du.check(); err != nil {
+				return 0, err
 			}
 			du.mutation = mutation
 			affected, err = du.sqlSave(ctx)
@@ -173,6 +179,16 @@ func (du *DomainUpdate) defaults() {
 		v := domain.UpdateDefaultUpdateTime()
 		du.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (du *DomainUpdate) check() error {
+	if v, ok := du.mutation.Name(); ok {
+		if err := domain.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -424,12 +440,18 @@ func (duo *DomainUpdateOne) Save(ctx context.Context) (*Domain, error) {
 	)
 	duo.defaults()
 	if len(duo.hooks) == 0 {
+		if err = duo.check(); err != nil {
+			return nil, err
+		}
 		node, err = duo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*DomainMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = duo.check(); err != nil {
+				return nil, err
 			}
 			duo.mutation = mutation
 			node, err = duo.sqlSave(ctx)
@@ -474,6 +496,16 @@ func (duo *DomainUpdateOne) defaults() {
 		v := domain.UpdateDefaultUpdateTime()
 		duo.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (duo *DomainUpdateOne) check() error {
+	if v, ok := duo.mutation.Name(); ok {
+		if err := domain.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err error) {

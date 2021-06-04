@@ -19,7 +19,7 @@ type Counter struct {
 // Counter returns property type counter.
 func (Counter) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name"),
+		field.String("name").NotEmpty().Unique(),
 		field.String("externalId"),
 	}
 }

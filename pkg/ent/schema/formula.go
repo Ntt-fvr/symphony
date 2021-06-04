@@ -19,7 +19,7 @@ type Formula struct {
 // Counter returns formula.
 func (Formula) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name"),
+		field.String("name").NotEmpty().Unique(),
 		field.Bool("active"),
 	}
 }

@@ -67,8 +67,8 @@ type AddBulkServiceLinksAndPortsInput struct {
 }
 
 type AddCounterFamilyInput struct {
-	Name    string              `json:"name"`
-	Counter []*EditCounterInput `json:"counter"`
+	Name    string             `json:"name"`
+	Counter []*AddCounterInput `json:"counter"`
 }
 
 type AddCounterInput struct {
@@ -84,6 +84,12 @@ type AddCounterVendorFormulaInput struct {
 type AddCustomerInput struct {
 	Name       string  `json:"name"`
 	ExternalID *string `json:"externalId"`
+}
+
+type AddDomainInput struct {
+	Name string       `json:"name"`
+	Tech []*TechInput `json:"tech"`
+	Kpi  []*KpiInput  `json:"kpi"`
 }
 
 type AddEquipmentInput struct {
@@ -133,6 +139,12 @@ type AddFlowDraftInput struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 }
 
+type AddFormulaInput struct {
+	Name                 string                           `json:"name"`
+	Active               bool                             `json:"active"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type AddHyperlinkInput struct {
 	EntityType  ImageEntity `json:"entityType"`
 	EntityID    int         `json:"entityId"`
@@ -151,6 +163,11 @@ type AddImageInput struct {
 	ContentType string      `json:"contentType"`
 	Category    *string     `json:"category"`
 	Annotation  *string     `json:"annotation"`
+}
+
+type AddKpiInput struct {
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
 }
 
 type AddLinkInput struct {
@@ -212,6 +229,11 @@ type AddServiceEndpointInput struct {
 	PortID      *int `json:"portId"`
 	EquipmentID int  `json:"equipmentID"`
 	Definition  int  `json:"definition"`
+}
+
+type AddTechInput struct {
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
 }
 
 type AddUsersGroupInput struct {
@@ -336,6 +358,12 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
+type CounterInput struct {
+	Name                 string                           `json:"name"`
+	ExternalID           string                           `json:"externalID"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type DecisionBlock struct {
 	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
 	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
@@ -360,7 +388,7 @@ type DecisionRouteInput struct {
 }
 
 type DomainInput struct {
-	ID   *int         `json:"id"`
+	ID   int          `json:"id"`
 	Name string       `json:"name"`
 	Tech []*TechInput `json:"tech"`
 	Kpi  []*KpiInput  `json:"kpi"`
@@ -387,6 +415,13 @@ type EditCounterInput struct {
 type EditCounterVendorFormulaInput struct {
 	ID        int   `json:"id"`
 	Mandatory *bool `json:"mandatory"`
+}
+
+type EditDomainInput struct {
+	ID   int          `json:"id"`
+	Name string       `json:"name"`
+	Tech []*TechInput `json:"tech"`
+	Kpi  []*KpiInput  `json:"kpi"`
 }
 
 type EditEquipmentInput struct {
@@ -416,6 +451,19 @@ type EditEquipmentTypeInput struct {
 	Positions  []*EquipmentPositionInput   `json:"positions"`
 	Ports      []*EquipmentPortInput       `json:"ports"`
 	Properties []*models.PropertyTypeInput `json:"properties"`
+}
+
+type EditFormulaInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	Active               bool                             `json:"active"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
+type EditKpiInput struct {
+	ID      int             `json:"id"`
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
 }
 
 type EditLinkInput struct {
@@ -476,6 +524,12 @@ type EditProjectTypeInput struct {
 type EditReportFilterInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EditTechInput struct {
+	ID      int             `json:"id"`
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
 }
 
 type EditUserInput struct {
@@ -601,7 +655,7 @@ type FileInput struct {
 }
 
 type FormulaInput struct {
-	ID                   *int                             `json:"id"`
+	ID                   int                              `json:"id"`
 	Name                 string                           `json:"name"`
 	Active               bool                             `json:"active"`
 	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
@@ -659,7 +713,7 @@ type ImportFlowDraftInput struct {
 }
 
 type KpiInput struct {
-	ID      *int            `json:"id"`
+	ID      int             `json:"id"`
 	Name    string          `json:"name"`
 	Formula []*FormulaInput `json:"formula"`
 }
@@ -937,7 +991,7 @@ type SurveyWiFiScanData struct {
 }
 
 type TechInput struct {
-	ID      *int            `json:"id"`
+	ID      int             `json:"id"`
 	Name    string          `json:"name"`
 	Formula []*FormulaInput `json:"formula"`
 }

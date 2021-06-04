@@ -86,12 +86,18 @@ func (cfu *CounterFamilyUpdate) Save(ctx context.Context) (int, error) {
 	)
 	cfu.defaults()
 	if len(cfu.hooks) == 0 {
+		if err = cfu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = cfu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CounterFamilyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cfu.check(); err != nil {
+				return 0, err
 			}
 			cfu.mutation = mutation
 			affected, err = cfu.sqlSave(ctx)
@@ -136,6 +142,16 @@ func (cfu *CounterFamilyUpdate) defaults() {
 		v := counterfamily.UpdateDefaultUpdateTime()
 		cfu.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cfu *CounterFamilyUpdate) check() error {
+	if v, ok := cfu.mutation.Name(); ok {
+		if err := counterfamily.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (cfu *CounterFamilyUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -297,12 +313,18 @@ func (cfuo *CounterFamilyUpdateOne) Save(ctx context.Context) (*CounterFamily, e
 	)
 	cfuo.defaults()
 	if len(cfuo.hooks) == 0 {
+		if err = cfuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cfuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CounterFamilyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cfuo.check(); err != nil {
+				return nil, err
 			}
 			cfuo.mutation = mutation
 			node, err = cfuo.sqlSave(ctx)
@@ -347,6 +369,16 @@ func (cfuo *CounterFamilyUpdateOne) defaults() {
 		v := counterfamily.UpdateDefaultUpdateTime()
 		cfuo.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cfuo *CounterFamilyUpdateOne) check() error {
+	if v, ok := cfuo.mutation.Name(); ok {
+		if err := counterfamily.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (cfuo *CounterFamilyUpdateOne) sqlSave(ctx context.Context) (_node *CounterFamily, err error) {

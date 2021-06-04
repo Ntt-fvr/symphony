@@ -17,10 +17,6 @@ import (
 
 type counterFamilyResolver struct{}
 
-/*func (counterFamilyResolver) Name(_ context.Context, counterFamily *ent.CounterFamily) (string, error) {
-	return "", nil
-}*/
-
 func (counterFamilyResolver) Counter(ctx context.Context, counterFamily *ent.CounterFamily) ([]*ent.Counter, error) {
 	var counter []*ent.Counter
 	return counter, nil
@@ -29,6 +25,7 @@ func (counterFamilyResolver) Counter(ctx context.Context, counterFamily *ent.Cou
 //*
 func (r mutationResolver) AddCounterFamily(ctx context.Context, input models.AddCounterFamilyInput) (*ent.CounterFamily, error) {
 	client := r.ClientFrom(ctx)
+	var counters []*ent.Counter
 	fam, err := client.
 		CounterFamily.Create().
 		SetName(input.Name).
@@ -38,10 +35,15 @@ func (r mutationResolver) AddCounterFamily(ctx context.Context, input models.Add
 			return nil, gqlerror.Errorf("A counter family with the name %v already exists", input.Name)
 		}
 		return nil, fmt.Errorf("creating counter family: %w", err)
+	} else {
+		// TODO: agregar counters
+		counters, err = r.AddCounterList(ctx, input.Counter, fam.ID)
+		if err != nil {
+			return nil, fmt.Errorf("creating counter: %w", err)
+		} else {
+			fam.Edges.Counterfamily = counters
+		}
 	}
-
-	// TODO: agregar counters
-
 	return fam, nil
 }
 
@@ -80,7 +82,7 @@ func (r mutationResolver) EditCounterFamily(ctx context.Context, input models.Ed
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A Counter Family with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("A counter family with the name %v already exists", input.Name)
 			}
 			return nil, errors.Wrap(err, "updating counter name")
 		}
@@ -88,5 +90,3 @@ func (r mutationResolver) EditCounterFamily(ctx context.Context, input models.Ed
 
 	return et, nil
 }
-
-//*/

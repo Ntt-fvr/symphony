@@ -6,17 +6,74 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/tech"
+	"github.com/pkg/errors"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 type techResolver struct{}
 
-/*func (techResolver) Name(_ context.Context, counter *ent.Tech) (string, error) {
-	return "", nil
-}*/
-
 func (techResolver) Formula(ctx context.Context, formula *ent.Tech) ([]*ent.Formula, error) {
 	var formulaVariable []*ent.Formula
 	return formulaVariable, nil
+}
+
+func (r mutationResolver) AddTech(ctx context.Context, input models.AddTechInput) (*ent.Tech, error) {
+	client := r.ClientFrom(ctx)
+	typ, err := client.
+		Tech.Create().
+		SetName(input.Name).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, gqlerror.Errorf("A tech with the name %v already exists", input.Name)
+		}
+		return nil, fmt.Errorf("creating tech: %w", err)
+	}
+	return typ, nil
+}
+
+func (r mutationResolver) RemoveTech(ctx context.Context, id int) (int, error) {
+	client := r.ClientFrom(ctx)
+	t, err := client.Tech.Query().
+		Where(
+			tech.ID(id),
+		).
+		Only(ctx)
+	if err != nil {
+		return id, errors.Wrapf(err, "querying tech: id=%q", id)
+	}
+	//TODO: borrar o editar los edges relacionados
+
+	if err := client.Tech.DeleteOne(t).Exec(ctx); err != nil {
+		return id, errors.Wrap(err, "deleting tech")
+	}
+	return id, nil
+}
+
+func (r mutationResolver) EditTech(ctx context.Context, input models.EditTechInput) (*ent.Tech, error) {
+	client := r.ClientFrom(ctx)
+	et, err := client.Tech.Get(ctx, input.ID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, gqlerror.Errorf("A tech with id=%q does not exist", input.ID)
+		}
+		return nil, errors.Wrapf(err, "updating tech: id=%q", input.ID)
+	}
+	if input.Name != et.Name {
+		if et, err = client.Tech.
+			UpdateOne(et).
+			SetName(input.Name).
+			Save(ctx); err != nil {
+			if ent.IsConstraintError(err) {
+				return nil, gqlerror.Errorf("A tech with the name %v already exists", input.Name)
+			}
+			return nil, errors.Wrap(err, "updating tech name")
+		}
+	}
+	return et, nil
 }

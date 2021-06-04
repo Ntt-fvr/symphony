@@ -86,12 +86,18 @@ func (vu *VendorUpdate) Save(ctx context.Context) (int, error) {
 	)
 	vu.defaults()
 	if len(vu.hooks) == 0 {
+		if err = vu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = vu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*VendorMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = vu.check(); err != nil {
+				return 0, err
 			}
 			vu.mutation = mutation
 			affected, err = vu.sqlSave(ctx)
@@ -136,6 +142,16 @@ func (vu *VendorUpdate) defaults() {
 		v := vendor.UpdateDefaultUpdateTime()
 		vu.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (vu *VendorUpdate) check() error {
+	if v, ok := vu.mutation.Name(); ok {
+		if err := vendor.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (vu *VendorUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -297,12 +313,18 @@ func (vuo *VendorUpdateOne) Save(ctx context.Context) (*Vendor, error) {
 	)
 	vuo.defaults()
 	if len(vuo.hooks) == 0 {
+		if err = vuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = vuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*VendorMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = vuo.check(); err != nil {
+				return nil, err
 			}
 			vuo.mutation = mutation
 			node, err = vuo.sqlSave(ctx)
@@ -347,6 +369,16 @@ func (vuo *VendorUpdateOne) defaults() {
 		v := vendor.UpdateDefaultUpdateTime()
 		vuo.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (vuo *VendorUpdateOne) check() error {
+	if v, ok := vuo.mutation.Name(); ok {
+		if err := vendor.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (vuo *VendorUpdateOne) sqlSave(ctx context.Context) (_node *Vendor, err error) {

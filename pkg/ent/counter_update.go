@@ -118,12 +118,18 @@ func (cu *CounterUpdate) Save(ctx context.Context) (int, error) {
 	)
 	cu.defaults()
 	if len(cu.hooks) == 0 {
+		if err = cu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = cu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CounterMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cu.check(); err != nil {
+				return 0, err
 			}
 			cu.mutation = mutation
 			affected, err = cu.sqlSave(ctx)
@@ -168,6 +174,16 @@ func (cu *CounterUpdate) defaults() {
 		v := counter.UpdateDefaultUpdateTime()
 		cu.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cu *CounterUpdate) check() error {
+	if v, ok := cu.mutation.Name(); ok {
+		if err := counter.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (cu *CounterUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -402,12 +418,18 @@ func (cuo *CounterUpdateOne) Save(ctx context.Context) (*Counter, error) {
 	)
 	cuo.defaults()
 	if len(cuo.hooks) == 0 {
+		if err = cuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CounterMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cuo.check(); err != nil {
+				return nil, err
 			}
 			cuo.mutation = mutation
 			node, err = cuo.sqlSave(ctx)
@@ -452,6 +474,16 @@ func (cuo *CounterUpdateOne) defaults() {
 		v := counter.UpdateDefaultUpdateTime()
 		cuo.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cuo *CounterUpdateOne) check() error {
+	if v, ok := cuo.mutation.Name(); ok {
+		if err := counter.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (cuo *CounterUpdateOne) sqlSave(ctx context.Context) (_node *Counter, err error) {

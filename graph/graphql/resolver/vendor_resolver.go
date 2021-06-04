@@ -8,29 +8,20 @@ import (
 	"context"
 	"fmt"
 
-	//"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
-	//"github.com/facebookincubator/symphony/pkg/ent/vendor"
-	//"github.com/pkg/errors"
-	//"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 type vendorResolver struct{}
-
-/*func (vendorResolver) Name(_ context.Context, vendor *ent.Vendor) (string, error) {
-	return "", nil
-}*/
 
 func (vendorResolver) Countervendorformula(ctx context.Context, vendor *ent.Vendor) ([]*ent.CounterVendorFormula, error) {
 	var counterVendorFormula []*ent.CounterVendorFormula
 	return counterVendorFormula, nil
 }
 
-///*
 func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.
@@ -54,7 +45,7 @@ func (r mutationResolver) RemoveVendor(ctx context.Context, id int) (int, error)
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counter: id=%q", id)
+		return id, errors.Wrapf(err, "querying vendor: id=%q", id)
 	}
 	// TODO: borrar o editar los edges relacionados
 	if err := client.Vendor.DeleteOne(t).Exec(ctx); err != nil {
@@ -78,7 +69,7 @@ func (r mutationResolver) EditVendor(ctx context.Context, input models.EditVendo
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A Vendor with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("A vendor with the name %v already exists", input.Name)
 			}
 			return nil, errors.Wrap(err, "updating vendor name")
 		}
@@ -88,5 +79,3 @@ func (r mutationResolver) EditVendor(ctx context.Context, input models.EditVendo
 
 	return et, nil
 }
-
-//*/

@@ -112,12 +112,18 @@ func (tu *TechUpdate) Save(ctx context.Context) (int, error) {
 	)
 	tu.defaults()
 	if len(tu.hooks) == 0 {
+		if err = tu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = tu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TechMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tu.check(); err != nil {
+				return 0, err
 			}
 			tu.mutation = mutation
 			affected, err = tu.sqlSave(ctx)
@@ -162,6 +168,16 @@ func (tu *TechUpdate) defaults() {
 		v := tech.UpdateDefaultUpdateTime()
 		tu.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tu *TechUpdate) check() error {
+	if v, ok := tu.mutation.Name(); ok {
+		if err := tech.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (tu *TechUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -383,12 +399,18 @@ func (tuo *TechUpdateOne) Save(ctx context.Context) (*Tech, error) {
 	)
 	tuo.defaults()
 	if len(tuo.hooks) == 0 {
+		if err = tuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = tuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TechMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tuo.check(); err != nil {
+				return nil, err
 			}
 			tuo.mutation = mutation
 			node, err = tuo.sqlSave(ctx)
@@ -433,6 +455,16 @@ func (tuo *TechUpdateOne) defaults() {
 		v := tech.UpdateDefaultUpdateTime()
 		tuo.mutation.SetUpdateTime(v)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TechUpdateOne) check() error {
+	if v, ok := tuo.mutation.Name(); ok {
+		if err := tech.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (tuo *TechUpdateOne) sqlSave(ctx context.Context) (_node *Tech, err error) {
