@@ -97,8 +97,16 @@ const CountersTypes = props => {
     ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
   };
+
+  const hideEditCounterItemForm = () => {
+    setShowAddEditCard(false);
+  };
+    
+
   if (showAddEditCard) {
-    return <EditCounterItemForm />;
+    return (
+    <EditCounterItemForm onClose={hideEditCounterItemForm} />
+    )
   }
 
   return (
