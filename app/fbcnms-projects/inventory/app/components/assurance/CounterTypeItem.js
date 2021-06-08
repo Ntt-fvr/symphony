@@ -16,9 +16,6 @@ import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {EditCounterItemForm} from './EditCounterItemForm';
-import {Link} from 'react-router-dom';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -66,17 +63,6 @@ export default function CounterTypeItem(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
-
-  const showEditCounterItemForm = () => {
-    ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
-    setShowAddEditCard(true);
-  };
-  
-  if (showAddEditCard) {
-    return <EditCounterItemForm />;
-  }
-  
   return (
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
@@ -85,44 +71,38 @@ export default function CounterTypeItem(props) {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs='4' 
-            container 
-            justify="flex-start"
-            alignItems="center">
-            <Text className={classes.nameKpi}>
-              {props.CounterName}
-            </Text>
+          <Grid xs="4" container justify="flex-start" alignItems="center">
+            <Text className={classes.nameKpi}>{props.CounterName}</Text>
           </Grid>
 
-          <Grid xs='3' 
-            container 
-            justify="center"
-            alignItems="center">
+          <Grid xs="3" container justify="center" alignItems="center">
             <Button variant="text">
-              <Text className={classes.typeRed}>{props.NetworkManagerSystem}</Text>
+              <Text className={classes.typeRed}>
+                {props.NetworkManagerSystem}
+              </Text>
             </Button>
           </Grid>
 
-          <Grid xs='4'
-            container 
-            justify="center"
-            alignItems="center">
+          <Grid xs="4" container justify="center" alignItems="center">
             <Button variant="text">
               <Text>{props.VendorName}</Text>
             </Button>
           </Grid>
 
-          <Grid xs='1' 
-          container 
-          justify="center"
-          alignItems="center">
-            <Link onClick={showEditCounterItemForm}>
-              <IconButton className={classes.edit} icon={EditIcon} />
-            </Link>
+          <Grid xs="1" container justify="center" alignItems="center">
+            <IconButton
+              onClick={props.edit}
+              className={classes.edit}
+              icon={EditIcon}
+            />
           </Grid>
 
-          <Grid xs='1'>
-            <IconButton onClick={props.onChange} className={classes.delete} icon={DeleteIcon} />
+          <Grid xs="1">
+            <IconButton
+              onClick={props.onChange}
+              className={classes.delete}
+              icon={DeleteIcon}
+            />
           </Grid>
         </AccordionSummary>
 
