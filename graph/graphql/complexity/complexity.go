@@ -70,7 +70,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Flows = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *string) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.FlowInstances = PaginationComplexity
+	complexity.Query.FlowInstances = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.FlowInstanceOrder, _ []*models.FlowInstanceFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {
 		var limit *int
 		if filter != nil {

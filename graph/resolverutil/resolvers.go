@@ -157,3 +157,15 @@ func ProjectFilter(query *ent.ProjectQuery, filters []*models.ProjectFilterInput
 	}
 	return query, nil
 }
+
+func FlowInstanceFilter(query *ent.FlowInstanceQuery, filters []*models.FlowInstanceFilterInput) (*ent.FlowInstanceQuery, error) {
+	var err error
+	for _, f := range filters {
+		if strings.HasPrefix(f.FilterType.String(), "FLOW_INSTANCE_") {
+			if query, err = handleFlowInstanceFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}

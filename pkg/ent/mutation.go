@@ -2414,6 +2414,8 @@ type BlockInstanceMutation struct {
 	failure_reason            *string
 	block_instance_counter    *int
 	addblock_instance_counter *int
+	start_date                *time.Time
+	end_date                  *time.Time
 	clearedFields             map[string]struct{}
 	flow_instance             *int
 	clearedflow_instance      bool
@@ -2837,6 +2839,93 @@ func (m *BlockInstanceMutation) ResetBlockInstanceCounter() {
 	delete(m.clearedFields, blockinstance.FieldBlockInstanceCounter)
 }
 
+// SetStartDate sets the start_date field.
+func (m *BlockInstanceMutation) SetStartDate(t time.Time) {
+	m.start_date = &t
+}
+
+// StartDate returns the start_date value in the mutation.
+func (m *BlockInstanceMutation) StartDate() (r time.Time, exists bool) {
+	v := m.start_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartDate returns the old start_date value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldStartDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStartDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStartDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartDate: %w", err)
+	}
+	return oldValue.StartDate, nil
+}
+
+// ResetStartDate reset all changes of the "start_date" field.
+func (m *BlockInstanceMutation) ResetStartDate() {
+	m.start_date = nil
+}
+
+// SetEndDate sets the end_date field.
+func (m *BlockInstanceMutation) SetEndDate(t time.Time) {
+	m.end_date = &t
+}
+
+// EndDate returns the end_date value in the mutation.
+func (m *BlockInstanceMutation) EndDate() (r time.Time, exists bool) {
+	v := m.end_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndDate returns the old end_date value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldEndDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEndDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEndDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndDate: %w", err)
+	}
+	return oldValue.EndDate, nil
+}
+
+// ClearEndDate clears the value of end_date.
+func (m *BlockInstanceMutation) ClearEndDate() {
+	m.end_date = nil
+	m.clearedFields[blockinstance.FieldEndDate] = struct{}{}
+}
+
+// EndDateCleared returns if the field end_date was cleared in this mutation.
+func (m *BlockInstanceMutation) EndDateCleared() bool {
+	_, ok := m.clearedFields[blockinstance.FieldEndDate]
+	return ok
+}
+
+// ResetEndDate reset all changes of the "end_date" field.
+func (m *BlockInstanceMutation) ResetEndDate() {
+	m.end_date = nil
+	delete(m.clearedFields, blockinstance.FieldEndDate)
+}
+
 // SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
 func (m *BlockInstanceMutation) SetFlowInstanceID(id int) {
 	m.flow_instance = &id
@@ -2968,7 +3057,7 @@ func (m *BlockInstanceMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockInstanceMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, blockinstance.FieldCreateTime)
 	}
@@ -2989,6 +3078,12 @@ func (m *BlockInstanceMutation) Fields() []string {
 	}
 	if m.block_instance_counter != nil {
 		fields = append(fields, blockinstance.FieldBlockInstanceCounter)
+	}
+	if m.start_date != nil {
+		fields = append(fields, blockinstance.FieldStartDate)
+	}
+	if m.end_date != nil {
+		fields = append(fields, blockinstance.FieldEndDate)
 	}
 	return fields
 }
@@ -3012,6 +3107,10 @@ func (m *BlockInstanceMutation) Field(name string) (ent.Value, bool) {
 		return m.FailureReason()
 	case blockinstance.FieldBlockInstanceCounter:
 		return m.BlockInstanceCounter()
+	case blockinstance.FieldStartDate:
+		return m.StartDate()
+	case blockinstance.FieldEndDate:
+		return m.EndDate()
 	}
 	return nil, false
 }
@@ -3035,6 +3134,10 @@ func (m *BlockInstanceMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldFailureReason(ctx)
 	case blockinstance.FieldBlockInstanceCounter:
 		return m.OldBlockInstanceCounter(ctx)
+	case blockinstance.FieldStartDate:
+		return m.OldStartDate(ctx)
+	case blockinstance.FieldEndDate:
+		return m.OldEndDate(ctx)
 	}
 	return nil, fmt.Errorf("unknown BlockInstance field %s", name)
 }
@@ -3093,6 +3196,20 @@ func (m *BlockInstanceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBlockInstanceCounter(v)
 		return nil
+	case blockinstance.FieldStartDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartDate(v)
+		return nil
+	case blockinstance.FieldEndDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndDate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown BlockInstance field %s", name)
 }
@@ -3150,6 +3267,9 @@ func (m *BlockInstanceMutation) ClearedFields() []string {
 	if m.FieldCleared(blockinstance.FieldBlockInstanceCounter) {
 		fields = append(fields, blockinstance.FieldBlockInstanceCounter)
 	}
+	if m.FieldCleared(blockinstance.FieldEndDate) {
+		fields = append(fields, blockinstance.FieldEndDate)
+	}
 	return fields
 }
 
@@ -3175,6 +3295,9 @@ func (m *BlockInstanceMutation) ClearField(name string) error {
 		return nil
 	case blockinstance.FieldBlockInstanceCounter:
 		m.ClearBlockInstanceCounter()
+		return nil
+	case blockinstance.FieldEndDate:
+		m.ClearEndDate()
 		return nil
 	}
 	return fmt.Errorf("unknown BlockInstance nullable field %s", name)
@@ -3205,6 +3328,12 @@ func (m *BlockInstanceMutation) ResetField(name string) error {
 		return nil
 	case blockinstance.FieldBlockInstanceCounter:
 		m.ResetBlockInstanceCounter()
+		return nil
+	case blockinstance.FieldStartDate:
+		m.ResetStartDate()
+		return nil
+	case blockinstance.FieldEndDate:
+		m.ResetEndDate()
 		return nil
 	}
 	return fmt.Errorf("unknown BlockInstance field %s", name)
@@ -23231,6 +23360,10 @@ type FlowInstanceMutation struct {
 	status                      *flowinstance.Status
 	output_params               *[]*flowschema.VariableValue
 	incompletion_reason         *string
+	bss_code                    *string
+	service_instance_code       *string
+	start_date                  *time.Time
+	end_date                    *time.Time
 	clearedFields               map[string]struct{}
 	flow                        *int
 	clearedflow                 bool
@@ -23536,6 +23669,180 @@ func (m *FlowInstanceMutation) ResetIncompletionReason() {
 	delete(m.clearedFields, flowinstance.FieldIncompletionReason)
 }
 
+// SetBssCode sets the bss_code field.
+func (m *FlowInstanceMutation) SetBssCode(s string) {
+	m.bss_code = &s
+}
+
+// BssCode returns the bss_code value in the mutation.
+func (m *FlowInstanceMutation) BssCode() (r string, exists bool) {
+	v := m.bss_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBssCode returns the old bss_code value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldBssCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBssCode is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBssCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBssCode: %w", err)
+	}
+	return oldValue.BssCode, nil
+}
+
+// ResetBssCode reset all changes of the "bss_code" field.
+func (m *FlowInstanceMutation) ResetBssCode() {
+	m.bss_code = nil
+}
+
+// SetServiceInstanceCode sets the service_instance_code field.
+func (m *FlowInstanceMutation) SetServiceInstanceCode(s string) {
+	m.service_instance_code = &s
+}
+
+// ServiceInstanceCode returns the service_instance_code value in the mutation.
+func (m *FlowInstanceMutation) ServiceInstanceCode() (r string, exists bool) {
+	v := m.service_instance_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServiceInstanceCode returns the old service_instance_code value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldServiceInstanceCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldServiceInstanceCode is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldServiceInstanceCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServiceInstanceCode: %w", err)
+	}
+	return oldValue.ServiceInstanceCode, nil
+}
+
+// ClearServiceInstanceCode clears the value of service_instance_code.
+func (m *FlowInstanceMutation) ClearServiceInstanceCode() {
+	m.service_instance_code = nil
+	m.clearedFields[flowinstance.FieldServiceInstanceCode] = struct{}{}
+}
+
+// ServiceInstanceCodeCleared returns if the field service_instance_code was cleared in this mutation.
+func (m *FlowInstanceMutation) ServiceInstanceCodeCleared() bool {
+	_, ok := m.clearedFields[flowinstance.FieldServiceInstanceCode]
+	return ok
+}
+
+// ResetServiceInstanceCode reset all changes of the "service_instance_code" field.
+func (m *FlowInstanceMutation) ResetServiceInstanceCode() {
+	m.service_instance_code = nil
+	delete(m.clearedFields, flowinstance.FieldServiceInstanceCode)
+}
+
+// SetStartDate sets the start_date field.
+func (m *FlowInstanceMutation) SetStartDate(t time.Time) {
+	m.start_date = &t
+}
+
+// StartDate returns the start_date value in the mutation.
+func (m *FlowInstanceMutation) StartDate() (r time.Time, exists bool) {
+	v := m.start_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartDate returns the old start_date value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldStartDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStartDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStartDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartDate: %w", err)
+	}
+	return oldValue.StartDate, nil
+}
+
+// ResetStartDate reset all changes of the "start_date" field.
+func (m *FlowInstanceMutation) ResetStartDate() {
+	m.start_date = nil
+}
+
+// SetEndDate sets the end_date field.
+func (m *FlowInstanceMutation) SetEndDate(t time.Time) {
+	m.end_date = &t
+}
+
+// EndDate returns the end_date value in the mutation.
+func (m *FlowInstanceMutation) EndDate() (r time.Time, exists bool) {
+	v := m.end_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndDate returns the old end_date value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldEndDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEndDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEndDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndDate: %w", err)
+	}
+	return oldValue.EndDate, nil
+}
+
+// ClearEndDate clears the value of end_date.
+func (m *FlowInstanceMutation) ClearEndDate() {
+	m.end_date = nil
+	m.clearedFields[flowinstance.FieldEndDate] = struct{}{}
+}
+
+// EndDateCleared returns if the field end_date was cleared in this mutation.
+func (m *FlowInstanceMutation) EndDateCleared() bool {
+	_, ok := m.clearedFields[flowinstance.FieldEndDate]
+	return ok
+}
+
+// ResetEndDate reset all changes of the "end_date" field.
+func (m *FlowInstanceMutation) ResetEndDate() {
+	m.end_date = nil
+	delete(m.clearedFields, flowinstance.FieldEndDate)
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (m *FlowInstanceMutation) SetFlowID(id int) {
 	m.flow = &id
@@ -23720,7 +24027,7 @@ func (m *FlowInstanceMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowInstanceMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, flowinstance.FieldCreateTime)
 	}
@@ -23735,6 +24042,18 @@ func (m *FlowInstanceMutation) Fields() []string {
 	}
 	if m.incompletion_reason != nil {
 		fields = append(fields, flowinstance.FieldIncompletionReason)
+	}
+	if m.bss_code != nil {
+		fields = append(fields, flowinstance.FieldBssCode)
+	}
+	if m.service_instance_code != nil {
+		fields = append(fields, flowinstance.FieldServiceInstanceCode)
+	}
+	if m.start_date != nil {
+		fields = append(fields, flowinstance.FieldStartDate)
+	}
+	if m.end_date != nil {
+		fields = append(fields, flowinstance.FieldEndDate)
 	}
 	return fields
 }
@@ -23754,6 +24073,14 @@ func (m *FlowInstanceMutation) Field(name string) (ent.Value, bool) {
 		return m.OutputParams()
 	case flowinstance.FieldIncompletionReason:
 		return m.IncompletionReason()
+	case flowinstance.FieldBssCode:
+		return m.BssCode()
+	case flowinstance.FieldServiceInstanceCode:
+		return m.ServiceInstanceCode()
+	case flowinstance.FieldStartDate:
+		return m.StartDate()
+	case flowinstance.FieldEndDate:
+		return m.EndDate()
 	}
 	return nil, false
 }
@@ -23773,6 +24100,14 @@ func (m *FlowInstanceMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldOutputParams(ctx)
 	case flowinstance.FieldIncompletionReason:
 		return m.OldIncompletionReason(ctx)
+	case flowinstance.FieldBssCode:
+		return m.OldBssCode(ctx)
+	case flowinstance.FieldServiceInstanceCode:
+		return m.OldServiceInstanceCode(ctx)
+	case flowinstance.FieldStartDate:
+		return m.OldStartDate(ctx)
+	case flowinstance.FieldEndDate:
+		return m.OldEndDate(ctx)
 	}
 	return nil, fmt.Errorf("unknown FlowInstance field %s", name)
 }
@@ -23817,6 +24152,34 @@ func (m *FlowInstanceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIncompletionReason(v)
 		return nil
+	case flowinstance.FieldBssCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBssCode(v)
+		return nil
+	case flowinstance.FieldServiceInstanceCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetServiceInstanceCode(v)
+		return nil
+	case flowinstance.FieldStartDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartDate(v)
+		return nil
+	case flowinstance.FieldEndDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndDate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FlowInstance field %s", name)
 }
@@ -23853,6 +24216,12 @@ func (m *FlowInstanceMutation) ClearedFields() []string {
 	if m.FieldCleared(flowinstance.FieldIncompletionReason) {
 		fields = append(fields, flowinstance.FieldIncompletionReason)
 	}
+	if m.FieldCleared(flowinstance.FieldServiceInstanceCode) {
+		fields = append(fields, flowinstance.FieldServiceInstanceCode)
+	}
+	if m.FieldCleared(flowinstance.FieldEndDate) {
+		fields = append(fields, flowinstance.FieldEndDate)
+	}
 	return fields
 }
 
@@ -23872,6 +24241,12 @@ func (m *FlowInstanceMutation) ClearField(name string) error {
 		return nil
 	case flowinstance.FieldIncompletionReason:
 		m.ClearIncompletionReason()
+		return nil
+	case flowinstance.FieldServiceInstanceCode:
+		m.ClearServiceInstanceCode()
+		return nil
+	case flowinstance.FieldEndDate:
+		m.ClearEndDate()
 		return nil
 	}
 	return fmt.Errorf("unknown FlowInstance nullable field %s", name)
@@ -23896,6 +24271,18 @@ func (m *FlowInstanceMutation) ResetField(name string) error {
 		return nil
 	case flowinstance.FieldIncompletionReason:
 		m.ResetIncompletionReason()
+		return nil
+	case flowinstance.FieldBssCode:
+		m.ResetBssCode()
+		return nil
+	case flowinstance.FieldServiceInstanceCode:
+		m.ResetServiceInstanceCode()
+		return nil
+	case flowinstance.FieldStartDate:
+		m.ResetStartDate()
+		return nil
+	case flowinstance.FieldEndDate:
+		m.ResetEndDate()
 		return nil
 	}
 	return fmt.Errorf("unknown FlowInstance field %s", name)
