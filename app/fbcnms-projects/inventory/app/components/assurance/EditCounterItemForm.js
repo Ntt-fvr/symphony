@@ -8,7 +8,7 @@
  * @format
  */
 
-import * as React from 'react';
+import React, {useStatus} from 'react';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -38,7 +38,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const EditCounterItemForm = () => {
+export const EditCounterItemForm = props => {
   const classes = useStyles();
 
   return (
@@ -122,7 +122,10 @@ export const EditCounterItemForm = () => {
               </Grid>
               <Grid item s={2} sm={2} lg={1} xl={1}>
                 <FormField>
-                  <Button className={classes.addCounter} skin="brightGray">
+                  <Button
+                    onClick={props.onClose}
+                    className={classes.addCounter}
+                    skin="brightGray">
                     Cancel
                   </Button>
                 </FormField>

@@ -99,8 +99,12 @@ const CountersTypes = () => {
     setShowAddEditCard(true);
   };
 
+  const hideEditCounterItemForm = () => {
+    setShowAddEditCard(false);
+  };
+
   if (showAddEditCard) {
-    return <EditCounterItemForm />;
+    return <EditCounterItemForm onClose={hideEditCounterItemForm} />;
   }
 
   return (
