@@ -28,6 +28,9 @@ const useStyles = makeStyles(theme => ({
   textInput: {
     minHeight: '36px',
   },
+  header: {
+    margin: '20px 0 24px 43px',
+  },
   addCounter: {
     margin: '20px',
     width: '111px',
@@ -40,7 +43,7 @@ export default function AddCounterItemForm() {
 
   return (
     <Card className={classes.root}>
-      <CardHeader>Add Counter</CardHeader>
+      <CardHeader className={classes.header}>Add Counter</CardHeader>
       <FormField className={classes.formField} label="Counter name" required>
         <TextInput
           className={classes.textInput}

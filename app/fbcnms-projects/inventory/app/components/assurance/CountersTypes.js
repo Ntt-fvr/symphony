@@ -1,14 +1,14 @@
 /*[object Object]*/
 
 // eslint-disable-next-line header/header
-import React, {useState} from 'react';
-import {makeStyles} from '@material-ui/styles';
-import Grid from '@material-ui/core/Grid';
-import Text from '@symphony/design-system/components/Text';
 import AddCounterItemForm from './AddCounterItemForm';
 import CounterTypeItem from './CounterTypeItem';
+import React, {useState} from 'react';
+import Text from '@symphony/design-system/components/Text';
 import {EditCounterItemForm} from './EditCounterItemForm';
+import {Grid, List} from '@material-ui/core/';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     listStyle: 'none',
   },
 }));
+
 const stateInitial = [
   {
     id: '2de30c42-9deb-40fc-a41f-05e62b5939a7',
@@ -81,7 +82,7 @@ const stateInitial = [
   },
 ];
 
-const CountersTypes = props => {
+const CountersTypes = () => {
   const classes = useStyles();
 
   const [state, setState] = useState(stateInitial);
@@ -97,6 +98,7 @@ const CountersTypes = props => {
     ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
   };
+
   if (showAddEditCard) {
     return <EditCounterItemForm />;
   }
@@ -108,7 +110,7 @@ const CountersTypes = props => {
           <Text variant="h5">Cards Container</Text>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
-          <ul>
+          <List disablePadding="true">
             {state.map(item => (
               <li className={classes.listCarCounter} key={item.id}>
                 <CounterTypeItem
@@ -118,11 +120,11 @@ const CountersTypes = props => {
                   CounterId={item.Counter_ID}
                   FamilyName={item.Family_Name}
                   onChange={() => handleRemove(item.id)}
-                  edit={() => showEditCounterItemForm()}
+                  edit={showEditCounterItemForm}
                 />
               </li>
             ))}
-          </ul>
+          </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddCounterItemForm />
