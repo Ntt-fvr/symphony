@@ -23,13 +23,13 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 20px 22px 20px',
   },
   textInput: {
     minHeight: '36px',
   },
   header: {
-    margin: '20px 0 24px 43px',
+    margin: '20px 0 24px 20px',
   },
   addCounter: {
     margin: '20px',
