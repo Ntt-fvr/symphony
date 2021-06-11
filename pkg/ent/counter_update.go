@@ -44,6 +44,12 @@ func (cu *CounterUpdate) SetExternalId(s string) *CounterUpdate {
 	return cu
 }
 
+// SetNetworkManagerSystem sets the networkManagerSystem field.
+func (cu *CounterUpdate) SetNetworkManagerSystem(s string) *CounterUpdate {
+	cu.mutation.SetNetworkManagerSystem(s)
+	return cu
+}
+
 // SetCounterfamilyID sets the counterfamily edge to CounterFamily by id.
 func (cu *CounterUpdate) SetCounterfamilyID(id int) *CounterUpdate {
 	cu.mutation.SetCounterfamilyID(id)
@@ -225,6 +231,13 @@ func (cu *CounterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: counter.FieldExternalId,
 		})
 	}
+	if value, ok := cu.mutation.NetworkManagerSystem(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: counter.FieldNetworkManagerSystem,
+		})
+	}
 	if cu.mutation.CounterfamilyCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -341,6 +354,12 @@ func (cuo *CounterUpdateOne) SetName(s string) *CounterUpdateOne {
 // SetExternalId sets the externalId field.
 func (cuo *CounterUpdateOne) SetExternalId(s string) *CounterUpdateOne {
 	cuo.mutation.SetExternalId(s)
+	return cuo
+}
+
+// SetNetworkManagerSystem sets the networkManagerSystem field.
+func (cuo *CounterUpdateOne) SetNetworkManagerSystem(s string) *CounterUpdateOne {
+	cuo.mutation.SetNetworkManagerSystem(s)
 	return cuo
 }
 
@@ -521,6 +540,13 @@ func (cuo *CounterUpdateOne) sqlSave(ctx context.Context) (_node *Counter, err e
 			Type:   field.TypeString,
 			Value:  value,
 			Column: counter.FieldExternalId,
+		})
+	}
+	if value, ok := cuo.mutation.NetworkManagerSystem(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: counter.FieldNetworkManagerSystem,
 		})
 	}
 	if cuo.mutation.CounterfamilyCleared() {

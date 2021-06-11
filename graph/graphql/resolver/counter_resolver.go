@@ -28,6 +28,7 @@ func (r mutationResolver) AddCounter(ctx context.Context, input models.AddCounte
 		Counter.Create().
 		SetName(input.Name).
 		SetExternalId(input.ExternalID).
+		SetNetworkManagerSystem(input.NetworkManagerSystem).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -47,6 +48,7 @@ func (r mutationResolver) AddCounterList(ctx context.Context, inputs []*models.A
 			SetName(input.Name).
 			SetCounterfamilyID(counterFamilyId).
 			SetExternalId(input.ExternalID).
+			SetNetworkManagerSystem(input.NetworkManagerSystem).
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {
@@ -92,6 +94,7 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 			UpdateOne(et).
 			SetName(input.Name).
 			SetExternalId(input.ExternalID).
+			SetNetworkManagerSystem(input.NetworkManagerSystem).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("A counter with the name %v already exists", input.Name)

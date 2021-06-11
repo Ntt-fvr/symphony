@@ -66,6 +66,12 @@ func (cc *CounterCreate) SetExternalId(s string) *CounterCreate {
 	return cc
 }
 
+// SetNetworkManagerSystem sets the networkManagerSystem field.
+func (cc *CounterCreate) SetNetworkManagerSystem(s string) *CounterCreate {
+	cc.mutation.SetNetworkManagerSystem(s)
+	return cc
+}
+
 // SetCounterfamilyID sets the counterfamily edge to CounterFamily by id.
 func (cc *CounterCreate) SetCounterfamilyID(id int) *CounterCreate {
 	cc.mutation.SetCounterfamilyID(id)
@@ -181,6 +187,9 @@ func (cc *CounterCreate) check() error {
 	if _, ok := cc.mutation.ExternalId(); !ok {
 		return &ValidationError{Name: "externalId", err: errors.New("ent: missing required field \"externalId\"")}
 	}
+	if _, ok := cc.mutation.NetworkManagerSystem(); !ok {
+		return &ValidationError{Name: "networkManagerSystem", err: errors.New("ent: missing required field \"networkManagerSystem\"")}
+	}
 	return nil
 }
 
@@ -239,6 +248,14 @@ func (cc *CounterCreate) createSpec() (*Counter, *sqlgraph.CreateSpec) {
 			Column: counter.FieldExternalId,
 		})
 		_node.ExternalId = value
+	}
+	if value, ok := cc.mutation.NetworkManagerSystem(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: counter.FieldNetworkManagerSystem,
+		})
+		_node.NetworkManagerSystem = value
 	}
 	if nodes := cc.mutation.CounterfamilyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

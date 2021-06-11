@@ -908,7 +908,7 @@ func (c *Counter) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
 		Type:   "Counter",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -942,6 +942,14 @@ func (c *Counter) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "externalId",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.NetworkManagerSystem); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "networkManagerSystem",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

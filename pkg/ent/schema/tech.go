@@ -19,7 +19,8 @@ type Tech struct {
 // Counter returns property type counter.
 func (Tech) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
 	}
 }
 

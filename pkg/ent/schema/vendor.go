@@ -19,7 +19,8 @@ type Vendor struct {
 // Counter returns property type counter.
 func (Vendor) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
 	}
 }
 

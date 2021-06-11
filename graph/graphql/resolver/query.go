@@ -244,6 +244,26 @@ func (r queryResolver) Projects(
 		)
 }
 
+func (r queryResolver) Counters(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.CounterOrder,
+	filterBy []*models.CounterFilterInput,
+) (*ent.CounterConnection, error) {
+	return r.ClientFrom(ctx).
+		Counter.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithCounterOrder(orderBy),
+			ent.WithCounterFilter(
+				func(query *ent.CounterQuery) (*ent.CounterQuery, error) {
+					return resolverutil.CounterFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

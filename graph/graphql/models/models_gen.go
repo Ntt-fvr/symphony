@@ -74,6 +74,7 @@ type AddCounterFamilyInput struct {
 type AddCounterInput struct {
 	Name                 string                           `json:"name"`
 	ExternalID           string                           `json:"externalID"`
+	NetworkManagerSystem string                           `json:"networkManagerSystem"`
 	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
 }
 
@@ -358,9 +359,25 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
+type CounterFamilyInput struct {
+	Name    string             `json:"name"`
+	Counter []*AddCounterInput `json:"counter"`
+}
+
+type CounterFilterInput struct {
+	FilterType    CounterFilterType   `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	IDSet         []int               `json:"idSet"`
+	MaxDepth      *int                `json:"maxDepth"`
+	StringSet     []string            `json:"stringSet"`
+	PropertyValue *CounterFamilyInput `json:"propertyValue"`
+}
+
 type CounterInput struct {
 	Name                 string                           `json:"name"`
 	ExternalID           string                           `json:"externalID"`
+	NetworkManagerSystem string                           `json:"networkManagerSystem"`
 	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
 }
 
@@ -409,6 +426,7 @@ type EditCounterInput struct {
 	ID                   int                              `json:"id"`
 	Name                 string                           `json:"name"`
 	ExternalID           string                           `json:"externalID"`
+	NetworkManagerSystem string                           `json:"networkManagerSystem"`
 	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
 }
 
@@ -1155,6 +1173,45 @@ func (e *CommentEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CommentEntity) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CounterFilterType string
+
+const (
+	CounterFilterTypeName CounterFilterType = "NAME"
+)
+
+var AllCounterFilterType = []CounterFilterType{
+	CounterFilterTypeName,
+}
+
+func (e CounterFilterType) IsValid() bool {
+	switch e {
+	case CounterFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e CounterFilterType) String() string {
+	return string(e)
+}
+
+func (e *CounterFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CounterFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CounterFilterType", str)
+	}
+	return nil
+}
+
+func (e CounterFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

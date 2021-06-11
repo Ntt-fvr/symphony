@@ -125,6 +125,13 @@ func ExternalId(v string) predicate.Counter {
 	})
 }
 
+// NetworkManagerSystem applies equality check predicate on the "networkManagerSystem" field. It's identical to NetworkManagerSystemEQ.
+func NetworkManagerSystem(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Counter {
 	return predicate.Counter(func(s *sql.Selector) {
@@ -496,6 +503,117 @@ func ExternalIdEqualFold(v string) predicate.Counter {
 func ExternalIdContainsFold(v string) predicate.Counter {
 	return predicate.Counter(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldExternalId), v))
+	})
+}
+
+// NetworkManagerSystemEQ applies the EQ predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemEQ(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemNEQ applies the NEQ predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemNEQ(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemIn applies the In predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemIn(vs ...string) predicate.Counter {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Counter(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldNetworkManagerSystem), v...))
+	})
+}
+
+// NetworkManagerSystemNotIn applies the NotIn predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemNotIn(vs ...string) predicate.Counter {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Counter(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldNetworkManagerSystem), v...))
+	})
+}
+
+// NetworkManagerSystemGT applies the GT predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemGT(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemGTE applies the GTE predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemGTE(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemLT applies the LT predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemLT(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemLTE applies the LTE predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemLTE(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemContains applies the Contains predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemContains(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemHasPrefix applies the HasPrefix predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemHasPrefix(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemHasSuffix applies the HasSuffix predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemHasSuffix(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemEqualFold applies the EqualFold predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemEqualFold(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldNetworkManagerSystem), v))
+	})
+}
+
+// NetworkManagerSystemContainsFold applies the ContainsFold predicate on the "networkManagerSystem" field.
+func NetworkManagerSystemContainsFold(v string) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldNetworkManagerSystem), v))
 	})
 }
 

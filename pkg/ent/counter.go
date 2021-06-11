@@ -29,6 +29,8 @@ type Counter struct {
 	Name string `json:"name,omitempty"`
 	// ExternalId holds the value of the "externalId" field.
 	ExternalId string `json:"externalId,omitempty"`
+	// NetworkManagerSystem holds the value of the "networkManagerSystem" field.
+	NetworkManagerSystem string `json:"networkManagerSystem,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CounterQuery when eager-loading is set.
 	Edges                        CounterEdges `json:"edges"`
@@ -77,6 +79,7 @@ func (*Counter) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // externalId
+		&sql.NullString{}, // networkManagerSystem
 	}
 }
 
@@ -119,7 +122,12 @@ func (c *Counter) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		c.ExternalId = value.String
 	}
-	values = values[4:]
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field networkManagerSystem", values[4])
+	} else if value.Valid {
+		c.NetworkManagerSystem = value.String
+	}
+	values = values[5:]
 	if len(values) == len(counter.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field counter_family_counterfamily", value)
@@ -172,6 +180,8 @@ func (c *Counter) String() string {
 	builder.WriteString(c.Name)
 	builder.WriteString(", externalId=")
 	builder.WriteString(c.ExternalId)
+	builder.WriteString(", networkManagerSystem=")
+	builder.WriteString(c.NetworkManagerSystem)
 	builder.WriteByte(')')
 	return builder.String()
 }

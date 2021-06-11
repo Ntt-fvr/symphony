@@ -7577,6 +7577,7 @@ type CounterMutation struct {
 	update_time          *time.Time
 	name                 *string
 	externalId           *string
+	networkManagerSystem *string
 	clearedFields        map[string]struct{}
 	counterfamily        *int
 	clearedcounterfamily bool
@@ -7815,6 +7816,43 @@ func (m *CounterMutation) ResetExternalId() {
 	m.externalId = nil
 }
 
+// SetNetworkManagerSystem sets the networkManagerSystem field.
+func (m *CounterMutation) SetNetworkManagerSystem(s string) {
+	m.networkManagerSystem = &s
+}
+
+// NetworkManagerSystem returns the networkManagerSystem value in the mutation.
+func (m *CounterMutation) NetworkManagerSystem() (r string, exists bool) {
+	v := m.networkManagerSystem
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNetworkManagerSystem returns the old networkManagerSystem value of the Counter.
+// If the Counter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CounterMutation) OldNetworkManagerSystem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldNetworkManagerSystem is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldNetworkManagerSystem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNetworkManagerSystem: %w", err)
+	}
+	return oldValue.NetworkManagerSystem, nil
+}
+
+// ResetNetworkManagerSystem reset all changes of the "networkManagerSystem" field.
+func (m *CounterMutation) ResetNetworkManagerSystem() {
+	m.networkManagerSystem = nil
+}
+
 // SetCounterfamilyID sets the counterfamily edge to CounterFamily by id.
 func (m *CounterMutation) SetCounterfamilyID(id int) {
 	m.counterfamily = &id
@@ -7921,7 +7959,7 @@ func (m *CounterMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CounterMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, counter.FieldCreateTime)
 	}
@@ -7933,6 +7971,9 @@ func (m *CounterMutation) Fields() []string {
 	}
 	if m.externalId != nil {
 		fields = append(fields, counter.FieldExternalId)
+	}
+	if m.networkManagerSystem != nil {
+		fields = append(fields, counter.FieldNetworkManagerSystem)
 	}
 	return fields
 }
@@ -7950,6 +7991,8 @@ func (m *CounterMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case counter.FieldExternalId:
 		return m.ExternalId()
+	case counter.FieldNetworkManagerSystem:
+		return m.NetworkManagerSystem()
 	}
 	return nil, false
 }
@@ -7967,6 +8010,8 @@ func (m *CounterMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case counter.FieldExternalId:
 		return m.OldExternalId(ctx)
+	case counter.FieldNetworkManagerSystem:
+		return m.OldNetworkManagerSystem(ctx)
 	}
 	return nil, fmt.Errorf("unknown Counter field %s", name)
 }
@@ -8003,6 +8048,13 @@ func (m *CounterMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExternalId(v)
+		return nil
+	case counter.FieldNetworkManagerSystem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNetworkManagerSystem(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Counter field %s", name)
@@ -8065,6 +8117,9 @@ func (m *CounterMutation) ResetField(name string) error {
 		return nil
 	case counter.FieldExternalId:
 		m.ResetExternalId()
+		return nil
+	case counter.FieldNetworkManagerSystem:
+		m.ResetNetworkManagerSystem()
 		return nil
 	}
 	return fmt.Errorf("unknown Counter field %s", name)

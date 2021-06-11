@@ -2249,6 +2249,49 @@ func (c *CounterQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// CounterOrderFieldName orders Counter by name.
+	CounterOrderFieldName = &CounterOrderField{
+		field: counter.FieldName,
+		toCursor: func(c *Counter) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f CounterOrderField) String() string {
+	var str string
+	switch f.field {
+	case counter.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f CounterOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *CounterOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("CounterOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *CounterOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid CounterOrderField", str)
+	}
+	return nil
+}
+
 // CounterOrderField defines the ordering field of Counter.
 type CounterOrderField struct {
 	field    string
@@ -2466,6 +2509,49 @@ func (cf *CounterFamilyQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// CounterFamilyOrderFieldName orders CounterFamily by name.
+	CounterFamilyOrderFieldName = &CounterFamilyOrderField{
+		field: counterfamily.FieldName,
+		toCursor: func(cf *CounterFamily) Cursor {
+			return Cursor{
+				ID:    cf.ID,
+				Value: cf.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f CounterFamilyOrderField) String() string {
+	var str string
+	switch f.field {
+	case counterfamily.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f CounterFamilyOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *CounterFamilyOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("CounterFamilyOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *CounterFamilyOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid CounterFamilyOrderField", str)
+	}
+	return nil
 }
 
 // CounterFamilyOrderField defines the ordering field of CounterFamily.
@@ -3123,6 +3209,49 @@ func (d *DomainQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// DomainOrderFieldName orders Domain by name.
+	DomainOrderFieldName = &DomainOrderField{
+		field: domain.FieldName,
+		toCursor: func(d *Domain) Cursor {
+			return Cursor{
+				ID:    d.ID,
+				Value: d.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f DomainOrderField) String() string {
+	var str string
+	switch f.field {
+	case domain.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f DomainOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *DomainOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("DomainOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *DomainOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid DomainOrderField", str)
+	}
+	return nil
 }
 
 // DomainOrderField defines the ordering field of Domain.
@@ -8000,6 +8129,49 @@ func (f *FormulaQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// FormulaOrderFieldName orders Formula by name.
+	FormulaOrderFieldName = &FormulaOrderField{
+		field: formula.FieldName,
+		toCursor: func(f *Formula) Cursor {
+			return Cursor{
+				ID:    f.ID,
+				Value: f.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f FormulaOrderField) String() string {
+	var str string
+	switch f.field {
+	case formula.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f FormulaOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *FormulaOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("FormulaOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *FormulaOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid FormulaOrderField", str)
+	}
+	return nil
+}
+
 // FormulaOrderField defines the ordering field of Formula.
 type FormulaOrderField struct {
 	field    string
@@ -8436,6 +8608,49 @@ func (k *KpiQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// KpiOrderFieldName orders Kpi by name.
+	KpiOrderFieldName = &KpiOrderField{
+		field: kpi.FieldName,
+		toCursor: func(k *Kpi) Cursor {
+			return Cursor{
+				ID:    k.ID,
+				Value: k.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KpiOrderField) String() string {
+	var str string
+	switch f.field {
+	case kpi.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KpiOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KpiOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KpiOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KpiOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KpiOrderField", str)
+	}
+	return nil
 }
 
 // KpiOrderField defines the ordering field of Kpi.
@@ -13165,6 +13380,49 @@ func (t *TechQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// TechOrderFieldName orders Tech by name.
+	TechOrderFieldName = &TechOrderField{
+		field: tech.FieldName,
+		toCursor: func(t *Tech) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TechOrderField) String() string {
+	var str string
+	switch f.field {
+	case tech.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TechOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TechOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TechOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *TechOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid TechOrderField", str)
+	}
+	return nil
+}
+
 // TechOrderField defines the ordering field of Tech.
 type TechOrderField struct {
 	field    string
@@ -13820,6 +14078,49 @@ func (v *VendorQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// VendorOrderFieldName orders Vendor by name.
+	VendorOrderFieldName = &VendorOrderField{
+		field: vendor.FieldName,
+		toCursor: func(v *Vendor) Cursor {
+			return Cursor{
+				ID:    v.ID,
+				Value: v.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f VendorOrderField) String() string {
+	var str string
+	switch f.field {
+	case vendor.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f VendorOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *VendorOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("VendorOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *VendorOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid VendorOrderField", str)
+	}
+	return nil
 }
 
 // VendorOrderField defines the ordering field of Vendor.

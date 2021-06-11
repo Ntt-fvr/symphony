@@ -322,6 +322,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "external_id", Type: field.TypeString},
+		{Name: "network_manager_system", Type: field.TypeString},
 		{Name: "counter_family_counterfamily", Type: field.TypeInt, Nullable: true},
 	}
 	// CountersTable holds the schema information for the "counters" table.
@@ -332,7 +333,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "counters_counter_families_counterfamily",
-				Columns: []*schema.Column{CountersColumns[5]},
+				Columns: []*schema.Column{CountersColumns[6]},
 
 				RefColumns: []*schema.Column{CounterFamiliesColumns[0]},
 				OnDelete:   schema.SetNull,

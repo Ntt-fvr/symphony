@@ -2360,6 +2360,73 @@ input ProjectOrder {
   field: ProjectOrderField
 }
 
+"""
+Properties by which counters connections can be ordered.
+"""
+enum CounterOrderField {
+  """
+  Order counters by name.
+  """
+  NAME
+
+  """
+  Order counters by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order counters by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for counters connections.
+"""
+input CounterOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order counters by.
+  """
+  field: CounterOrderField
+}
+
+"""
+A connection to a list of counters.
+"""
+type CounterConnection {
+  """
+  Total counters of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of counters edges.
+  """
+  edges: [CounterEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A counters edge in a connection.
+"""
+type CounterEdge {
+  """
+  The counters at the end of the edge.
+  """
+  node: Counter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -2726,6 +2793,20 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+}
+
+enum CounterFilterType {
+  NAME
+}
+
+input CounterFilterInput {
+  filterType: CounterFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  propertyValue: CounterFamilyInput
 }
 
 """
@@ -4017,6 +4098,41 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): WorkerTypeConnection!
+  
+  """
+  A list of counters.
+  """
+  counters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: CounterOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [CounterFilterInput!]
+  ): CounterConnection!
 }
 
 type Mutation {
@@ -4291,18 +4407,21 @@ type Counter implements Node {
   id: ID!
   name: String!
   externalID: String!
+  networkManagerSystem: String!
   countervendorformula: [CounterVendorFormula]!
 }
 
 input CounterInput {
   name: String!
   externalID: String!
+  networkManagerSystem: String!
   countervendorformula: [EditCounterVendorFormulaInput!]
 }
 
 input AddCounterInput {
   name: String!
   externalID: String!
+  networkManagerSystem: String!
   countervendorformula: [EditCounterVendorFormulaInput!]
 }
 
@@ -4310,6 +4429,7 @@ input EditCounterInput {
   id: ID!
   name: String!
   externalID: String!
+  networkManagerSystem: String!
   countervendorformula: [EditCounterVendorFormulaInput!]
 }
 
@@ -4317,6 +4437,11 @@ type CounterFamily implements Node {
   id: ID!
   name: String!
   counter: [Counter]!
+}
+
+input CounterFamilyInput {
+  name: String!
+  counter: [AddCounterInput!]
 }
 
 input AddCounterFamilyInput {

@@ -25,6 +25,8 @@ const (
 	FieldName = "name"
 	// FieldExternalId holds the string denoting the externalid field in the database.
 	FieldExternalId = "external_id"
+	// FieldNetworkManagerSystem holds the string denoting the networkmanagersystem field in the database.
+	FieldNetworkManagerSystem = "network_manager_system"
 
 	// EdgeCounterfamily holds the string denoting the counterfamily edge name in mutations.
 	EdgeCounterfamily = "counterfamily"
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldExternalId,
+	FieldNetworkManagerSystem,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Counter type.
