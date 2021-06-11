@@ -87,7 +87,9 @@ func copyInputParams(ctx context.Context, blk *ent.Block, oldToNewBlock map[int]
 	for _, param := range blk.InputParams {
 		newParam := &flowschema.VariableExpression{
 			BlockID:               newBlock.ID,
+			Type:                  param.Type,
 			VariableDefinitionKey: param.VariableDefinitionKey,
+			PropertyTypeID:        param.PropertyTypeID,
 			Expression:            param.Expression,
 		}
 		for _, blockVariable := range param.BlockVariables {
@@ -96,8 +98,11 @@ func copyInputParams(ctx context.Context, blk *ent.Block, oldToNewBlock map[int]
 				return fmt.Errorf("failed to create find block ref: %v", blockVariable.BlockID)
 			}
 			newBlockVariable := &flowschema.BlockVariable{
-				BlockID:               newBlockRef.ID,
-				VariableDefinitionKey: blockVariable.VariableDefinitionKey,
+				BlockID:                   newBlockRef.ID,
+				Type:                      blockVariable.Type,
+				VariableDefinitionKey:     blockVariable.VariableDefinitionKey,
+				PropertyTypeID:            blockVariable.PropertyTypeID,
+				CheckListItemDefinitionID: blockVariable.CheckListItemDefinitionID,
 			}
 			newParam.BlockVariables = append(newParam.BlockVariables, newBlockVariable)
 		}
