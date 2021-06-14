@@ -35,10 +35,10 @@ func (h *Flower) HookTo(client *ent.Client) {
 		h.TriggerBlockHook(),
 		h.ActionBlockHook(),
 	)
-	client.BlockInstance.Use(
+	/* client.BlockInstance.Use(
 		h.VerifyBlockInstanceInputsHook(),
 		h.VerifyBlockInstanceOutputsHook(),
-	)
+	)*/
 }
 
 func (h Flower) mandatoryVariablesOnBlocks(ctx context.Context, client *ent.Client, flowID int) error {

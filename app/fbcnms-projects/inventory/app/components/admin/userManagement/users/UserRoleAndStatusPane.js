@@ -53,7 +53,6 @@ const ROLES_OPTIONS: Array<RadioOption> = [
   },
   {
     value: USER_ROLES.ADMIN.key,
-    label: USER_ROLES.ADMIN.value,
     label: fbt('Admin', ''),
     details: fbt(
       'Full access over everything, including inventory and workforce data',

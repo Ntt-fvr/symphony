@@ -185,6 +185,10 @@ func (r resolver) FlowDraft() generated.FlowDraftResolver {
 	return flowDraftResolver{}
 }
 
+func (r resolver) FlowExecutionTemplate() generated.FlowExecutionTemplateResolver {
+	return flowExecutionTemplate{}
+}
+
 func (r resolver) Block() generated.BlockResolver {
 	return blockResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }

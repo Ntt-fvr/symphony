@@ -19,6 +19,7 @@ import (
 	models2 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -165,6 +166,15 @@ type ComplexityRoot struct {
 		OutputParamDefinitions func(childComplexity int) int
 		PrevBlocks             func(childComplexity int) int
 		UIRepresentation       func(childComplexity int) int
+	}
+
+	BlockInstance struct {
+		Block         func(childComplexity int) int
+		FailureReason func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Inputs        func(childComplexity int) int
+		Outputs       func(childComplexity int) int
+		Status        func(childComplexity int) int
 	}
 
 	BlockUIRepresentation struct {
@@ -591,9 +601,30 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	FlowExecutionTemplate struct {
+		Blocks      func(childComplexity int) int
+		Connectors  func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
+
 	FlowInstance struct {
-		ID     func(childComplexity int) int
-		Status func(childComplexity int) int
+		Blocks   func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Status   func(childComplexity int) int
+		Template func(childComplexity int) int
+	}
+
+	FlowInstanceConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	FlowInstanceEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	Formula struct {
@@ -753,6 +784,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
+		AddBlockInstance                         func(childComplexity int, flowInstanceID int, input models.AddBlockInstanceInput) int
 		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
 		AddComment                               func(childComplexity int, input models.CommentInput) int
@@ -1033,6 +1065,7 @@ type ComplexityRoot struct {
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
 		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		FlowInstances            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		LatestPythonPackage      func(childComplexity int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
@@ -1599,6 +1632,7 @@ type FlowResolver interface {
 type FlowDraftResolver interface {
 	Connectors(ctx context.Context, obj *ent.FlowDraft) ([]*models.Connector, error)
 }
+
 type FormulaResolver interface {
 	Countervendorformula(ctx context.Context, obj *ent.Formula) ([]*ent.CounterVendorFormula, error)
 }
@@ -1718,6 +1752,9 @@ type MutationResolver interface {
 	DeleteFlowDraft(ctx context.Context, id int) (bool, error)
 	ImportFlowDraft(ctx context.Context, input models.ImportFlowDraftInput) (*ent.FlowDraft, error)
 	StartFlow(ctx context.Context, input models.StartFlowInput) (*ent.FlowInstance, error)
+	EditFlowInstance(ctx context.Context, input *models.EditFlowInstanceInput) (*ent.FlowInstance, error)
+	AddBlockInstance(ctx context.Context, flowInstanceID int, input models.AddBlockInstanceInput) (*ent.BlockInstance, error)
+	EditBlockInstance(ctx context.Context, input models.EditBlockInstanceInput) (*ent.BlockInstance, error)
 	AddWorkerType(ctx context.Context, input models.AddWorkerTypeInput) (*ent.WorkerType, error)
 	EditWorkerType(ctx context.Context, input models.EditWorkerTypeInput) (*ent.WorkerType, error)
 	RemoveWorkerType(ctx context.Context, id int) (int, error)
@@ -1794,6 +1831,7 @@ type QueryResolver interface {
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
 	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowDraftConnection, error)
 	Flows(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowConnection, error)
+	FlowInstances(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowInstanceConnection, error)
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 	Counters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) (*ent.CounterConnection, error)
 }
@@ -2113,6 +2151,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Block.UIRepresentation(childComplexity), true
+
+	case "BlockInstance.block":
+		if e.complexity.BlockInstance.Block == nil {
+			break
+		}
+
+		return e.complexity.BlockInstance.Block(childComplexity), true
+
+	case "BlockInstance.failure_reason":
+		if e.complexity.BlockInstance.FailureReason == nil {
+			break
+		}
+
+		return e.complexity.BlockInstance.FailureReason(childComplexity), true
+
+	case "BlockInstance.id":
+		if e.complexity.BlockInstance.ID == nil {
+			break
+		}
+
+		return e.complexity.BlockInstance.ID(childComplexity), true
+
+	case "BlockInstance.inputs":
+		if e.complexity.BlockInstance.Inputs == nil {
+			break
+		}
+
+		return e.complexity.BlockInstance.Inputs(childComplexity), true
+
+	case "BlockInstance.outputs":
+		if e.complexity.BlockInstance.Outputs == nil {
+			break
+		}
+
+		return e.complexity.BlockInstance.Outputs(childComplexity), true
+
+	case "BlockInstance.status":
+		if e.complexity.BlockInstance.Status == nil {
+			break
+		}
+
+		return e.complexity.BlockInstance.Status(childComplexity), true
 
 	case "BlockUIRepresentation.name":
 		if e.complexity.BlockUIRepresentation.Name == nil {
@@ -3848,6 +3928,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FlowEdge.Node(childComplexity), true
 
+	case "FlowExecutionTemplate.blocks":
+		if e.complexity.FlowExecutionTemplate.Blocks == nil {
+			break
+		}
+
+		return e.complexity.FlowExecutionTemplate.Blocks(childComplexity), true
+
+	case "FlowExecutionTemplate.connectors":
+		if e.complexity.FlowExecutionTemplate.Connectors == nil {
+			break
+		}
+
+		return e.complexity.FlowExecutionTemplate.Connectors(childComplexity), true
+
+	case "FlowExecutionTemplate.description":
+		if e.complexity.FlowExecutionTemplate.Description == nil {
+			break
+		}
+
+		return e.complexity.FlowExecutionTemplate.Description(childComplexity), true
+
+	case "FlowExecutionTemplate.id":
+		if e.complexity.FlowExecutionTemplate.ID == nil {
+			break
+		}
+
+		return e.complexity.FlowExecutionTemplate.ID(childComplexity), true
+
+	case "FlowExecutionTemplate.name":
+		if e.complexity.FlowExecutionTemplate.Name == nil {
+			break
+		}
+
+		return e.complexity.FlowExecutionTemplate.Name(childComplexity), true
+
+	case "FlowInstance.blocks":
+		if e.complexity.FlowInstance.Blocks == nil {
+			break
+		}
+
+		return e.complexity.FlowInstance.Blocks(childComplexity), true
+
 	case "FlowInstance.id":
 		if e.complexity.FlowInstance.ID == nil {
 			break
@@ -4554,6 +4676,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddActionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.ActionBlockInput)), true
 
+	case "Mutation.addBlockInstance":
+		if e.complexity.Mutation.AddBlockInstance == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addBlockInstance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddBlockInstance(childComplexity, args["flowInstanceId"].(int), args["input"].(models.AddBlockInstanceInput)), true
+
 	case "Mutation.addBulkServiceLinksAndPorts":
 		if e.complexity.Mutation.AddBulkServiceLinksAndPorts == nil {
 			break
@@ -5232,6 +5366,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		args, err := ec.field_Mutation_editCounter_args(context.TODO(), rawArgs)
+
 		if err != nil {
 			return 0, false
 		}
@@ -5316,6 +5451,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		args, err := ec.field_Mutation_editFormula_args(context.TODO(), rawArgs)
+
 		if err != nil {
 			return 0, false
 		}
@@ -6754,6 +6890,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
+
+	case "Query.flowInstances":
+		if e.complexity.Query.FlowInstances == nil {
+			break
+		}
+
+		args, err := ec.field_Query_flowInstances_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FlowInstances(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
 	case "Query.flows":
 		if e.complexity.Query.Flows == nil {
@@ -10236,6 +10384,38 @@ type FlowConnection {
 }
 
 """
+A flow edge in a connection.
+"""
+type FlowInstanceEdge {
+  """
+  The Flow type at the end of the edge.
+  """
+  node: FlowInstance
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Flows.
+"""
+type FlowInstanceConnection {
+  """
+  Total count of Flows in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Flow edges.
+  """
+  edges: [FlowInstanceEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -10803,7 +10983,7 @@ enum WorkOrderStatus
       reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01"
     )
   BLOCKED
-  CANCELLED
+  CANCELED
 }
 
 enum ServiceStatus
@@ -12946,7 +13126,65 @@ enum FlowInstanceStatus
   CANCELLED
 }
 
+type FlowExecutionTemplate implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+  connectors: [Connector!]!
+}
+
+enum BlockInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
+  ) {
+  PENDING
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  WAITING
+}
+
+type VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
+  variableDefinitionKey: String!
+  value: String!
+}
+
+type BlockInstance implements Node {
+  id: ID!
+  status: BlockInstanceStatus!
+  inputs: [VariableValue!]!
+  outputs: [VariableValue!]!
+  failure_reason: String
+  block: Block!
+}
+
+input AddBlockInstanceInput {
+  status: BlockInstanceStatus
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  blockId: ID!
+}
+
+input EditBlockInstanceInput {
+  id: ID!
+  status: BlockInstanceStatus
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  failure_reason: String
+}
+
 type FlowInstance implements Node {
+  id: ID!
+  status: FlowInstanceStatus!
+  template: FlowExecutionTemplate!
+  blocks: [BlockInstance!]!
+}
+
+input EditFlowInstanceInput {
   id: ID!
   status: FlowInstanceStatus!
 }
@@ -12963,7 +13201,7 @@ input PublishFlowInput {
   flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
-input VariableValue
+input VariableValueInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
   ) {
@@ -12973,7 +13211,7 @@ input VariableValue
 
 input StartFlowInput {
   flowID: ID!
-  params: [VariableValue]!
+  params: [VariableValueInput]!
 }
 
 input TechnicianWorkOrderCheckOutInput {
@@ -13360,6 +13598,12 @@ type Query {
     """
     name: String
   ): FlowConnection!
+  flowInstances(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): FlowInstanceConnection!
   workerTypes(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -13611,6 +13855,12 @@ type Mutation {
   deleteFlowDraft(id: ID!): Boolean!
   importFlowDraft(input: ImportFlowDraftInput!): FlowDraft!
   startFlow(input: StartFlowInput!): FlowInstance!
+  editFlowInstance(input: EditFlowInstanceInput): FlowInstance!
+  addBlockInstance(
+    flowInstanceId: ID!
+    input: AddBlockInstanceInput!
+  ): BlockInstance!
+  editBlockInstance(input: EditBlockInstanceInput!): BlockInstance!
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
@@ -14203,6 +14453,30 @@ func (ec *executionContext) field_Mutation_addActionBlock_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNActionBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐActionBlockInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addBlockInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["flowInstanceId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("flowInstanceId"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["flowInstanceId"] = arg0
+	var arg1 models.AddBlockInstanceInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNAddBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBlockInstanceInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -15171,6 +15445,21 @@ func (ec *executionContext) field_Mutation_deleteUsersGroup_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editBlockInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditBlockInstanceInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditBlockInstanceInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -15313,6 +15602,7 @@ func (ec *executionContext) field_Mutation_editKpi_args(ctx context.Context, raw
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNEditKpiInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditKpiInput(ctx, tmp)
+
 		if err != nil {
 			return nil, err
 		}
@@ -16875,6 +17165,7 @@ func (ec *executionContext) field_Query_equipments_args(ctx context.Context, raw
 }
 
 func (ec *executionContext) field_Query_flowDrafts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *ent.Cursor
@@ -16951,15 +17242,6 @@ func (ec *executionContext) field_Query_flowDrafts_args(ctx context.Context, raw
 		}
 	}
 	args["last"] = arg3
-	var arg4 *string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg4
 	return args, nil
 }
 
@@ -19657,6 +19939,213 @@ func (ec *executionContext) _Block_uiRepresentation(ctx context.Context, field g
 	res := resTmp.(*flowschema.BlockUIRepresentation)
 	fc.Result = res
 	return ec.marshalOBlockUIRepresentation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockInstance_id(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockInstance_status(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(blockinstance.Status)
+	fc.Result = res
+	return ec.marshalNBlockInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockInstance_inputs(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Inputs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*flowschema.VariableValue)
+	fc.Result = res
+	return ec.marshalNVariableValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockInstance_outputs(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Outputs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*flowschema.VariableValue)
+	fc.Result = res
+	return ec.marshalNVariableValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockInstance_failure_reason(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FailureReason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockInstance_block(ctx context.Context, field graphql.CollectedField, obj *ent.BlockInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Block(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BlockUIRepresentation_name(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockUIRepresentation) (ret graphql.Marshaler) {
@@ -27248,6 +27737,7 @@ func (ec *executionContext) _Flow_id(ctx context.Context, field graphql.Collecte
 }
 
 func (ec *executionContext) _Flow_name(ctx context.Context, field graphql.CollectedField, obj *ent.Flow) (ret graphql.Marshaler) {
+
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -36303,6 +36793,7 @@ func (ec *executionContext) _Mutation_removeDomain(ctx context.Context, field gr
 }
 
 func (ec *executionContext) _Mutation_addTech(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -41034,6 +41525,48 @@ func (ec *executionContext) _Query_flows(ctx context.Context, field graphql.Coll
 	res := resTmp.(*ent.FlowConnection)
 	fc.Result = res
 	return ec.marshalNFlowConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_flowInstances(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_flowInstances_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FlowInstances(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.FlowInstanceConnection)
+	fc.Result = res
+	return ec.marshalNFlowInstanceConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_workerTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -48464,7 +48997,9 @@ func (ec *executionContext) _VariableExpression_blockVariables(ctx context.Conte
 	return ec.marshalOBlockVariable2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockVariableᚄ(ctx, field.Selections, res)
 }
 
+
 func (ec *executionContext) _Vendor_id(ctx context.Context, field graphql.CollectedField, obj *ent.Vendor) (ret graphql.Marshaler) {
+
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -48500,6 +49035,7 @@ func (ec *executionContext) _Vendor_id(ctx context.Context, field graphql.Collec
 }
 
 func (ec *executionContext) _Vendor_name(ctx context.Context, field graphql.CollectedField, obj *ent.Vendor) (ret graphql.Marshaler) {
+
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -52813,6 +53349,50 @@ func (ec *executionContext) unmarshalInputActivityFilterInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddBlockInstanceInput(ctx context.Context, obj interface{}) (models.AddBlockInstanceInput, error) {
+	var it models.AddBlockInstanceInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalOBlockInstanceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "inputs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inputs"))
+			it.Inputs, err = ec.unmarshalOVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "outputs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outputs"))
+			it.Outputs, err = ec.unmarshalOVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "blockId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("blockId"))
+			it.BlockID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddBulkServiceLinksAndPortsInput(ctx context.Context, obj interface{}) (models.AddBulkServiceLinksAndPortsInput, error) {
 	var it models.AddBulkServiceLinksAndPortsInput
 	var asMap = obj.(map[string]interface{})
@@ -55840,6 +56420,34 @@ func (ec *executionContext) unmarshalInputEditKpiInput(ctx context.Context, obj 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formula"))
 			it.Formula, err = ec.unmarshalOFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditFlowInstanceInput(ctx context.Context, obj interface{}) (models.EditFlowInstanceInput, error) {
+	var it models.EditFlowInstanceInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNFlowInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowinstanceᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -58971,7 +59579,7 @@ func (ec *executionContext) unmarshalInputStartFlowInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("params"))
-			it.Params, err = ec.unmarshalNVariableValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, v)
+			it.Params, err = ec.unmarshalNVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60265,7 +60873,7 @@ func (ec *executionContext) unmarshalInputVariableExpressionInput(ctx context.Co
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputVariableValue(ctx context.Context, obj interface{}) (flowschema.VariableValue, error) {
+func (ec *executionContext) unmarshalInputVariableValueInput(ctx context.Context, obj interface{}) (flowschema.VariableValue, error) {
 	var it flowschema.VariableValue
 	var asMap = obj.(map[string]interface{})
 
@@ -60903,6 +61511,16 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._FlowDraft(ctx, sel, obj)
+	case *ent.FlowExecutionTemplate:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FlowExecutionTemplate(ctx, sel, obj)
+	case *ent.BlockInstance:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._BlockInstance(ctx, sel, obj)
 	case *ent.FlowInstance:
 		if obj == nil {
 			return graphql.Null
@@ -61349,6 +61967,64 @@ func (ec *executionContext) _Block(ctx context.Context, sel ast.SelectionSet, ob
 			})
 		case "uiRepresentation":
 			out.Values[i] = ec._Block_uiRepresentation(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var blockInstanceImplementors = []string{"BlockInstance", "Node"}
+
+func (ec *executionContext) _BlockInstance(ctx context.Context, sel ast.SelectionSet, obj *ent.BlockInstance) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, blockInstanceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("BlockInstance")
+		case "id":
+			out.Values[i] = ec._BlockInstance_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "status":
+			out.Values[i] = ec._BlockInstance_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "inputs":
+			out.Values[i] = ec._BlockInstance_inputs(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "outputs":
+			out.Values[i] = ec._BlockInstance_outputs(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "failure_reason":
+			out.Values[i] = ec._BlockInstance_failure_reason(ctx, field, obj)
+		case "block":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._BlockInstance_block(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -64259,6 +64935,68 @@ func (ec *executionContext) _FlowEdge(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var flowExecutionTemplateImplementors = []string{"FlowExecutionTemplate", "Node"}
+
+func (ec *executionContext) _FlowExecutionTemplate(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowExecutionTemplate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, flowExecutionTemplateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FlowExecutionTemplate")
+		case "id":
+			out.Values[i] = ec._FlowExecutionTemplate_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._FlowExecutionTemplate_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "description":
+			out.Values[i] = ec._FlowExecutionTemplate_description(ctx, field, obj)
+		case "blocks":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FlowExecutionTemplate_blocks(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "connectors":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FlowExecutionTemplate_connectors(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var flowInstanceImplementors = []string{"FlowInstance", "Node"}
 
 func (ec *executionContext) _FlowInstance(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowInstance) graphql.Marshaler {
@@ -64273,10 +65011,101 @@ func (ec *executionContext) _FlowInstance(ctx context.Context, sel ast.Selection
 		case "id":
 			out.Values[i] = ec._FlowInstance_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "status":
 			out.Values[i] = ec._FlowInstance_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "template":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FlowInstance_template(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "blocks":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FlowInstance_blocks(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var flowInstanceConnectionImplementors = []string{"FlowInstanceConnection"}
+
+func (ec *executionContext) _FlowInstanceConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowInstanceConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, flowInstanceConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FlowInstanceConnection")
+		case "totalCount":
+			out.Values[i] = ec._FlowInstanceConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._FlowInstanceConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._FlowInstanceConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var flowInstanceEdgeImplementors = []string{"FlowInstanceEdge"}
+
+func (ec *executionContext) _FlowInstanceEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowInstanceEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, flowInstanceEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FlowInstanceEdge")
+		case "node":
+			out.Values[i] = ec._FlowInstanceEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._FlowInstanceEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -65861,6 +66690,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "editFlowInstance":
+			out.Values[i] = ec._Mutation_editFlowInstance(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addBlockInstance":
+			out.Values[i] = ec._Mutation_addBlockInstance(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editBlockInstance":
+			out.Values[i] = ec._Mutation_editBlockInstance(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addWorkerType":
 			out.Values[i] = ec._Mutation_addWorkerType(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -67364,6 +68208,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_flows(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "flowInstances":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_flowInstances(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -69460,7 +70318,6 @@ var vendorImplementors = []string{"Vendor", "Node"}
 
 func (ec *executionContext) _Vendor(ctx context.Context, sel ast.SelectionSet, obj *ent.Vendor) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, vendorImplementors)
-
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
@@ -71097,6 +71954,67 @@ func (ec *executionContext) marshalNBlockDetails2githubᚗcomᚋfacebookincubato
 		return graphql.Null
 	}
 	return ec._BlockDetails(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNBlockInstance2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstance(ctx context.Context, sel ast.SelectionSet, v ent.BlockInstance) graphql.Marshaler {
+	return ec._BlockInstance(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBlockInstance2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstanceᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.BlockInstance) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNBlockInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstance(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNBlockInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockInstance(ctx context.Context, sel ast.SelectionSet, v *ent.BlockInstance) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._BlockInstance(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNBlockInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx context.Context, v interface{}) (blockinstance.Status, error) {
+	var res blockinstance.Status
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNBlockInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx context.Context, sel ast.SelectionSet, v blockinstance.Status) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNBlockVariable2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockVariable(ctx context.Context, sel ast.SelectionSet, v *flowschema.BlockVariable) graphql.Marshaler {
@@ -73210,6 +74128,16 @@ func (ec *executionContext) marshalNFlowEdge2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._FlowEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNFlowExecutionTemplate2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowExecutionTemplate(ctx context.Context, sel ast.SelectionSet, v *ent.FlowExecutionTemplate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FlowExecutionTemplate(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNFlowInstance2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx context.Context, sel ast.SelectionSet, v ent.FlowInstance) graphql.Marshaler {
 	return ec._FlowInstance(ctx, sel, &v)
 }
@@ -73222,6 +74150,30 @@ func (ec *executionContext) marshalNFlowInstance2ᚖgithubᚗcomᚋfacebookincub
 		return graphql.Null
 	}
 	return ec._FlowInstance(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFlowInstanceConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceConnection(ctx context.Context, sel ast.SelectionSet, v ent.FlowInstanceConnection) graphql.Marshaler {
+	return ec._FlowInstanceConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFlowInstanceConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceConnection(ctx context.Context, sel ast.SelectionSet, v *ent.FlowInstanceConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FlowInstanceConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFlowInstanceEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceEdge(ctx context.Context, sel ast.SelectionSet, v *ent.FlowInstanceEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FlowInstanceEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNFlowInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowinstanceᚐStatus(ctx context.Context, v interface{}) (flowinstance.Status, error) {
@@ -76293,7 +77245,54 @@ func (ec *executionContext) marshalNVariableUsage2githubᚗcomᚋfacebookincubat
 	return v
 }
 
-func (ec *executionContext) unmarshalNVariableValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) ([]*flowschema.VariableValue, error) {
+func (ec *executionContext) marshalNVariableValue2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx context.Context, sel ast.SelectionSet, v []*flowschema.VariableValue) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNVariableValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNVariableValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, sel ast.SelectionSet, v *flowschema.VariableValue) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._VariableValue(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) ([]*flowschema.VariableValue, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -76306,7 +77305,7 @@ func (ec *executionContext) unmarshalNVariableValue2ᚕᚖgithubᚗcomᚋfaceboo
 	res := make([]*flowschema.VariableValue, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOVariableValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, vSlice[i])
+		res[i], err = ec.unmarshalOVariableValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -77097,6 +78096,22 @@ func (ec *executionContext) marshalOBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋ
 		return graphql.Null
 	}
 	return ec._Block(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOBlockInstanceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx context.Context, v interface{}) (*blockinstance.Status, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(blockinstance.Status)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOBlockInstanceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋblockinstanceᚐStatus(ctx context.Context, sel ast.SelectionSet, v *blockinstance.Status) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOBlockUIRepresentation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx context.Context, sel ast.SelectionSet, v *flowschema.BlockUIRepresentation) graphql.Marshaler {
@@ -79963,11 +80978,35 @@ func (ec *executionContext) marshalOVariableExpression2ᚖgithubᚗcomᚋfaceboo
 	return ec._VariableExpression(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOVariableValue2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) (*flowschema.VariableValue, error) {
+func (ec *executionContext) unmarshalOVariableValueInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValueᚄ(ctx context.Context, v interface{}) ([]*flowschema.VariableValue, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputVariableValue(ctx, v)
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*flowschema.VariableValue, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNVariableValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOVariableValueInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐVariableValue(ctx context.Context, v interface{}) (*flowschema.VariableValue, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputVariableValueInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

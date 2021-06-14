@@ -88,7 +88,8 @@ func (e *Eventer) workOrderDoneHook() ent.Hook {
 }
 
 func (e *Eventer) workOrderAddedHook() ent.Hook {
-	return func(next ent.Mutator) ent.Mutator {
+	var chain hook.Chain
+	createHook := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
 			value, err := next.Mutate(ctx, m)
 			if err == nil {
@@ -97,6 +98,11 @@ func (e *Eventer) workOrderAddedHook() ent.Hook {
 			return value, err
 		})
 	}
+	chain = chain.Append(hook.If(createHook, hook.And(
+		hook.HasOp(ent.OpCreate),
+		hook.HasFields(workorder.FieldCreationDate),
+	)))
+	return chain.Hook()
 }
 
 func (e *Eventer) workOrderStatusChangedHook() ent.Hook {

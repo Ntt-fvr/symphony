@@ -31,7 +31,8 @@ func (e *Eventer) projectHook() ent.Hook {
 }
 
 func (e *Eventer) projectAddedHook() ent.Hook {
-	return func(next ent.Mutator) ent.Mutator {
+	var chain hook.Chain
+	createHook := func(next ent.Mutator) ent.Mutator {
 		return hook.ProjectFunc(func(ctx context.Context, pm *ent.ProjectMutation) (ent.Value, error) {
 			value, err := next.Mutate(ctx, pm)
 			if err == nil {
@@ -40,6 +41,12 @@ func (e *Eventer) projectAddedHook() ent.Hook {
 			return value, err
 		})
 	}
+	chain = chain.Append(hook.If(createHook, hook.And(
+		hook.HasOp(ent.OpCreate),
+		hook.HasFields(project.FieldCreateTime),
+	)))
+
+	return chain.Hook()
 }
 
 func (e *Eventer) projectChangedHook() ent.Hook {

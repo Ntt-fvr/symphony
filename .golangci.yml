@@ -12,7 +12,7 @@ linters-settings:
   errcheck:
     ignore: fmt:.*,Read|Write|Close|Stop|Shutdown,io:Copy
   dupl:
-    threshold: 350
+    threshold: 400
   funlen:
     lines: 100
     statements: 50

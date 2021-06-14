@@ -11,9 +11,11 @@ import (
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -58,6 +60,13 @@ type ActivityFilterInput struct {
 	Limit          int                   `json:"limit"`
 	OrderDirection ent.OrderDirection    `json:"orderDirection"`
 	ActivityType   activity.ActivityType `json:"activityType"`
+}
+
+type AddBlockInstanceInput struct {
+	Status  *blockinstance.Status       `json:"status"`
+	Inputs  []*flowschema.VariableValue `json:"inputs"`
+	Outputs []*flowschema.VariableValue `json:"outputs"`
+	BlockID int                         `json:"blockId"`
 }
 
 type AddBulkServiceLinksAndPortsInput struct {

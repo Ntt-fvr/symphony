@@ -44,7 +44,7 @@ const useStyles = makeStyles(() => ({
     border: `1px solid ${symphony.palette.D100}`,
     borderRadius: '4px',
     display: 'flex',
-    minHeight: '32px',
+    minHeight: '36px',
     boxSizing: 'border-box',
     backgroundColor: symphony.palette.white,
     '&$hasFocus': {

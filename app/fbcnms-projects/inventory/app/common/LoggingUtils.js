@@ -29,6 +29,7 @@ export const LogEvents = {
   NAVIGATE_TO_EQUIPMENT: 'navigate_to_equipment',
   SAVE_EQUIPMENT_BUTTON_CLICKED: 'save_equipment_button_clicked',
   EDIT_EQUIPMENT_BUTTON_CLICKED: 'edit_equipment_button_clicked',
+  EDIT_COUNTER_ITEM_CLICKED: 'edit_counter_item_clicked',
   EDIT_EQUIPMENT_PORT_BUTTON_CLICKED: 'edit_equipment_port_button_clicked',
   SAVE_EQUIPMENT_PORT_BUTTON_CLICKED: 'save_equipment_port_button_clicked',
   LOCATION_CARD_CANCEL_BUTTON_CLICKED: 'location_card_cancel_button_clicked',
@@ -45,6 +46,8 @@ export const LogEvents = {
   SEARCH_NAV_CLICKED: 'search_nav_clicked',
   WORK_ORDERS_NAV_CLICKED: 'work_orders_nav_clicked',
   CONFIGURE_TAB_NAVIGATION_CLICKED: 'configure_tab_navigation_clicked',
+  PERFORMANCE_TAB_NAVIGATION_CLICKED: 'performance_tab_navigation_clicked',
+  KPI_TAB_NAVIGATION_CLICKED: 'kpi_tab_navigation_clicked',
   EQUIPMENT_CARD_LOCATION_BREADCRUMB_CLICKED:
     'equipment_card_location_breadcrumb_clicked',
   EQUIPMENT_CARD_EQUIPMENT_BREADCRUMB_CLICKED:
