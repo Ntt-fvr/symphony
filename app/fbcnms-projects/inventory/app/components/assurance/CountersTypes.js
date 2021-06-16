@@ -85,27 +85,34 @@ const CountersTypes = props => {
   const classes = useStyles();
 
   const [state, setState] = useState(stateInitial);
-
+  const [showAddEditCard, setShowAddEditCard] = useState(false);
+  const [provider,setProvider]= useState({})
+  
   const handleRemove = id => {
     const newList = state.filter(item => item.id !== id);
     setState(newList);
   };
 
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
-
-  const showEditCounterItemForm = () => {
+  const showEditCounterItemForm = (id,name,vendor,network,counterId,familyName) => {
     ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
-  };
+    setProvider({
+      Id:id,
+      Name:name,
+      VendorName:vendor,
+      NetworkManagerSystem:network,
+      CounterID:counterId,
+      FamilyName:familyName
+    })
+  };  
 
   const hideEditCounterItemForm = () => {
     setShowAddEditCard(false);
   };
-    
 
   if (showAddEditCard) {
     return (
-    <EditCounterItemForm onClose={hideEditCounterItemForm} />
+    <EditCounterItemForm formValues={provider} onClose={hideEditCounterItemForm} />
     )
   }
 
@@ -126,7 +133,7 @@ const CountersTypes = props => {
                   CounterId={item.Counter_ID}
                   FamilyName={item.Family_Name}
                   onChange={() => handleRemove(item.id)}
-                  edit={() => showEditCounterItemForm()}
+                  edit={() => showEditCounterItemForm(item.id,item.Counter_name,item.Vendor_name,item.Network_Manager_System,item.Counter_ID,item.Family_Name)}
                 />
               </li>
             ))}
@@ -141,3 +148,7 @@ const CountersTypes = props => {
 };
 
 export default CountersTypes;
+
+/**
+,item.Network_Manager_System,item.Counter_ID,item.Family_Name
+ */
