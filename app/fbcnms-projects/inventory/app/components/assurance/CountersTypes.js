@@ -22,74 +22,58 @@ const useStyles = makeStyles(theme => ({
     listStyle: 'none',
   },
 }));
-const stateInitial = [
-  {
-    id: '2de30c42-9deb-40fc-a41f-05e62b5939a7',
-    Counter_name: 'Freda',
-    Network_Manager_System: 'Grady',
-    Vendor_name: 'Ericsson',
-    Counter_ID: '10',
-    Family_Name: 'FredaGrady22221-7573',
+const stateInitial = {
+  data: {
+    counters: {
+      edges: [
+        {
+          node: {
+            id: '244813135872',
+            name: 'contador_family_7',
+            networkManagerSystem: 'hola bebe',
+            externalID: '123456789',
+          },
+        },
+        {
+          node: {
+            id: '244813135873',
+            name: 'contador_family_8',
+            networkManagerSystem: 'hola sergio',
+            externalID: '987654321',
+          },
+        },
+        {
+          node: {
+            id: '244813135874',
+            name: 'contador_family_9',
+            networkManagerSystem: 'hola sebastian',
+            externalID: '987654322131',
+          },
+        },
+        {
+          node: {
+            id: '244813135875',
+            name: 'contador_family_10',
+            networkManagerSystem: 'hola gabriel',
+            externalID: '9876543213123',
+          },
+        },
+      ],
+    },
   },
-  {
-    id: 'd00d3614-101a-44ca-b6c2-0be075aeed3d',
-    Counter_name: 'Major',
-    Network_Manager_System: 'Rodriguez',
-    Vendor_name: 'Ericsson',
-    Counter_ID: '20',
-    Family_Name: 'MajorRodriguez61545',
-  },
-  {
-    id: '63c03386-33a2-4512-9ac1-354ad7bec5e9',
-    Counter_name: 'Daphney',
-    Network_Manager_System: 'Torphy',
-    Vendor_name: 'Ericsson',
-    Counter_ID: '30',
-    Family_Name: 'DaphneyTorphy96105',
-  },
-  {
-    id: '63c03386-33a2-4512-9ac1-354ad7bec5x9',
-    Counter_name: 'Leonore',
-    Network_Manager_System: 'Morphy',
-    Vendor_name: 'Ericsson',
-    Counter_ID: '40',
-    Family_Name: 'LeonoreMorphy12345',
-  },
-  {
-    id: 'a9748581-dfdc-4a78-930d-5205a2ccef48',
-    Counter_name: 'Tatyana',
-    Network_Manager_System: 'Von',
-    Vendor_name: 'Huawei',
-    Counter_ID: '50',
-    Family_Name: 'TatyanaVon35871-3686',
-  },
-  {
-    id: '1921a734-cc05-4f71-a677-ffe38dda6958',
-    Counter_name: 'Maude',
-    Network_Manager_System: 'Effertz',
-    Vendor_name: 'Huawei',
-    Counter_ID: '60',
-    Family_Name: 'MaudeEffertz73114',
-  },
-  {
-    id: '3629db36-14f9-4f24-b139-200f3a1b9af7',
-    Counter_name: 'Breanna',
-    Network_Manager_System: 'Runolfsdottir',
-    Vendor_name: 'Parallel Wireless',
-    Counter_ID: '70',
-    Family_Name: 'BreannaRunolfsdottir70705-1477',
-  },
-];
+};
 
 const CountersTypes = props => {
   const classes = useStyles();
 
   const [state, setState] = useState(stateInitial);
+  
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
+  const point = state.data.counters.edges;
 
   const handleRemove = id => {
-    const newList = state.filter(item => item.id !== id);
+    const newList = point.filter(item => item.node.id !== id);
     setState(newList);
   };
 
@@ -125,7 +109,9 @@ const CountersTypes = props => {
       />
     );
   }
-
+  // const res = state.data.counters.edges.map(item =>
+  //   console.log(item.node.name),
+  // );
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -134,23 +120,23 @@ const CountersTypes = props => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <ul>
-            {state.map(item => (
-              <li className={classes.listCarCounter} key={item.id}>
+            {point.map(item => (
+              <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
-                  CounterName={item.Counter_name}
-                  NetworkManagerSystem={item.Network_Manager_System}
-                  VendorName={item.Vendor_name}
-                  CounterId={item.Counter_ID}
-                  FamilyName={item.Family_Name}
-                  onChange={() => handleRemove(item.id)}
+                  CounterName={item.node.name}
+                  NetworkManagerSystem={item.node.networkManagerSystem}
+                  VendorName={item.node.name}
+                  CounterId={item.node.externalID}
+                  FamilyName={item.node.networkManagerSystem}
+                  onChange={() => handleRemove(item.node.id)}
                   edit={() =>
                     showEditCounterItemForm(
-                      item.id,
-                      item.Counter_name,
-                      item.Vendor_name,
-                      item.Network_Manager_System,
-                      item.Counter_ID,
-                      item.Family_Name,
+                      item.node.id,
+                      item.node.name,
+                      item.node.name,
+                      item.node.networkManagerSystem,
+                      item.node.externalID,
+                      item.node.networkManagerSystem,
                     )
                   }
                 />
