@@ -7,7 +7,6 @@
  * @flow
  * @format
  */
-import type {AutomationFlowsViewQuery} from '../automation/flows/view/__generated__/AutomationFlowsViewQuery.graphql';
 
 import AddCounterItemForm from './AddCounterItemForm';
 import CounterTypeItem from './CounterTypeItem';
@@ -48,16 +47,46 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const stateInitial = [
-  {
-    id: '2de30c42-9deb-40fc-a41f-05e62b5939a7',
-    Counter_name: 'Freda',
-    Network_Manager_System: 'Grady',
-    Vendor_name: 'Ericsson',
-    Counter_ID: '10',
-    Family_Name: 'FredaGrady22221-7573',
+const stateInitial = {
+  data: {
+    counters: {
+      edges: [
+        {
+          node: {
+            id: '244813135872',
+            name: 'contador_family_7',
+            networkManagerSystem: 'hola bebe',
+            externalID: '123456789',
+          },
+        },
+        {
+          node: {
+            id: '244813135873',
+            name: 'contador_family_8',
+            networkManagerSystem: 'hola sergio',
+            externalID: '987654321',
+          },
+        },
+        {
+          node: {
+            id: '244813135874',
+            name: 'contador_family_9',
+            networkManagerSystem: 'hola sebastian',
+            externalID: '987654322131',
+          },
+        },
+        {
+          node: {
+            id: '244813135875',
+            name: 'contador_family_10',
+            networkManagerSystem: 'hola gabriel',
+            externalID: '9876543213123',
+          },
+        },
+      ],
+    },
   },
-];
+};
 
 const CountersTypes = () => {
   const classes = useStyles();
@@ -67,15 +96,32 @@ const CountersTypes = () => {
 
   const [state, setState] = useState(stateInitial);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
+  const point = state.data.counters.edges;
 
   const handleRemove = id => {
-    const newList = state.filter(item => item.id !== id);
+    const newList = point.filter(item => item.node.id !== id);
     setState(newList);
   };
 
-  const showEditCounterItemForm = () => {
+  const showEditCounterItemForm = (
+    id,
+    name,
+    vendor,
+    network,
+    counterId,
+    familyName,
+  ) => {
     ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
+    setDataEdit({
+      Id: id,
+      Name: name,
+      VendorName: vendor,
+      NetworkManagerSystem: network,
+      CounterID: counterId,
+      FamilyName: familyName,
+    });
   };
 
   const hideEditCounterItemForm = () => {
@@ -83,7 +129,12 @@ const CountersTypes = () => {
   };
 
   if (showAddEditCard) {
-    return <EditCounterItemForm onClose={hideEditCounterItemForm} />;
+    return (
+      <EditCounterItemForm
+        formValues={dataEdit}
+        onClose={hideEditCounterItemForm}
+      />
+    );
   }
 
   return (
@@ -94,16 +145,25 @@ const CountersTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <List disablePadding="true">
-            {state.map(item => (
-              <li className={classes.listCarCounter} key={item.id}>
+            {point.map(item => (
+              <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
-                  CounterName={item.Counter_name}
-                  NetworkManagerSystem={item.Network_Manager_System}
-                  VendorName={item.Vendor_name}
-                  CounterId={item.Counter_ID}
-                  FamilyName={item.Family_Name}
-                  onChange={() => handleRemove(item.id)}
-                  edit={showEditCounterItemForm}
+                  CounterName={item.node.name}
+                  NetworkManagerSystem={item.node.networkManagerSystem}
+                  VendorName={item.node.name}
+                  CounterId={item.node.externalID}
+                  FamilyName={item.node.networkManagerSystem}
+                  onChange={() => handleRemove(item.node.id)}
+                  edit={() =>
+                    showEditCounterItemForm(
+                      item.node.id,
+                      item.node.name,
+                      item.node.name,
+                      item.node.networkManagerSystem,
+                      item.node.externalID,
+                      item.node.networkManagerSystem,
+                    )
+                  }
                 />
               </li>
             ))}
