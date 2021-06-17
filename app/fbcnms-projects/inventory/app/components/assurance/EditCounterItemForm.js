@@ -8,14 +8,14 @@
  * @format
  */
 
-import React, {useStatus} from 'react';
+import React, {useState} from 'react';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-
+import {useFormInput} from './common/useFormInput';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
@@ -40,7 +40,13 @@ const useStyles = makeStyles(() => ({
 
 export const EditCounterItemForm = props => {
   const classes = useStyles();
-
+  const name = useFormInput(props.formValues.Name);
+  const vendor = useFormInput(props.formValues.VendorName);
+  const NetworkManagerSystem = useFormInput(
+    props.formValues.NetworkManagerSystem,
+  );
+  const CounterID = useFormInput(props.formValues.CounterID);
+  const FamilyName = useFormInput(props.formValues.FamilyName);
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -54,6 +60,7 @@ export const EditCounterItemForm = props => {
               <Grid item s={12} sm={12} lg={12} xl={12}>
                 <FormField className={classes.formField} label="Name" required>
                   <TextInput
+                    {...name}
                     className={classes.textInput}
                     name="name"
                     variant="outlined"
@@ -67,8 +74,9 @@ export const EditCounterItemForm = props => {
                   label="Vendor name"
                   required>
                   <TextInput
+                    {...vendor}
                     className={classes.textInput}
-                    name="name"
+                    name="vendorName"
                     variant="outlined"
                     type="string"
                   />
@@ -80,8 +88,9 @@ export const EditCounterItemForm = props => {
                   label="Network Manager System"
                   required>
                   <TextInput
+                    {...NetworkManagerSystem}
                     className={classes.textInput}
-                    name="name"
+                    name="NetworkManagerSystem"
                     variant="outlined"
                     type="string"
                   />
@@ -93,8 +102,9 @@ export const EditCounterItemForm = props => {
                   label="Counter ID"
                   required>
                   <TextInput
+                    {...CounterID}
                     className={classes.textInput}
-                    name="name"
+                    name="CounterID"
                     variant="outlined"
                     type="string"
                   />
@@ -107,8 +117,9 @@ export const EditCounterItemForm = props => {
                 label="Family name"
                 required>
                 <TextInput
+                  {...FamilyName}
                   className={classes.textInput}
-                  name="name"
+                  name="FamilyName"
                   variant="outlined"
                   type="string"
                 />
