@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useStatus} from 'react';
+import React from 'react';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -67,6 +67,7 @@ export const EditCounterItemForm = props => {
                   label="Vendor name"
                   required>
                   <TextInput
+                    {...fullName}
                     className={classes.textInput}
                     name="name"
                     variant="outlined"

@@ -425,6 +425,14 @@ type EditBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+type EditBlockInstanceInput struct {
+	ID            int                         `json:"id"`
+	Status        *blockinstance.Status       `json:"status"`
+	Inputs        []*flowschema.VariableValue `json:"inputs"`
+	Outputs       []*flowschema.VariableValue `json:"outputs"`
+	FailureReason *string                     `json:"failure_reason"`
+}
+
 type EditCounterFamilyInput struct {
 	ID      int                 `json:"id"`
 	Name    string              `json:"name"`
@@ -478,6 +486,11 @@ type EditEquipmentTypeInput struct {
 	Positions  []*EquipmentPositionInput   `json:"positions"`
 	Ports      []*EquipmentPortInput       `json:"ports"`
 	Properties []*models.PropertyTypeInput `json:"properties"`
+}
+
+type EditFlowInstanceInput struct {
+	ID     int                 `json:"id"`
+	Status flowinstance.Status `json:"status"`
 }
 
 type EditFormulaInput struct {
