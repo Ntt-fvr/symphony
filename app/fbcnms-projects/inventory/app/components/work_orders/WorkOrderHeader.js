@@ -35,6 +35,7 @@ import {
   plannedStatus,
   priorityValues,
   submittedStatus,
+  suspendedStatus,
   useStatusValues,
 } from '../../common/FilterTypes.js';
 import {makeStyles} from '@material-ui/styles';
@@ -193,6 +194,8 @@ const getSkinFromStatus = status => {
     case closedStatus.value:
       return 'brightGray';
     case canceledStatus.value:
+      return 'brightGray';
+    case suspendedStatus.value:
       return 'brightGray';
     default:
       return 'regular';

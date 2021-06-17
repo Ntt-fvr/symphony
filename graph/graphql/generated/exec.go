@@ -10476,6 +10476,7 @@ enum WorkOrderStatus
     )
   BLOCKED
   CANCELED
+  SUSPENDED
 }
 
 enum ServiceStatus
