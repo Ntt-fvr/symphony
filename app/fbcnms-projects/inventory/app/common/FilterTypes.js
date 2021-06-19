@@ -98,6 +98,12 @@ export const canceledStatus = {
   label: `${fbt('Canceled', '')}`,
 };
 
+export const suspendedStatus = {
+  key: 'Suspended',
+  value: 'SUSPENDED',
+  label: `${fbt('Suspended', '')}`,
+};
+
 const statusValues: Array<{|
   key: string,
   value: GraphQLStatusType,
@@ -109,6 +115,7 @@ const statusValues: Array<{|
   closedStatus,
   blockedStatus,
   canceledStatus,
+  suspendedStatus,
 ];
 
 export function useStatusValues() {
