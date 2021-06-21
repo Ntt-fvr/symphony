@@ -67,16 +67,19 @@ const CountersTypes = props => {
   const classes = useStyles();
 
   const [state, setState] = useState(stateInitial);
-  
+  //console.log(Object.entries(stateInitial));
+  //debugger
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const point = state.data.counters.edges;
 
   const handleRemove = id => {
-    const newList = point.filter(item => item.node.id !== id);
-    setState(newList);
+    const newList = point.filter(item => item.id !== id);
+     
+    //console.log(Object.entries(newList));
+    //debugger
+    //setState(newList);
   };
-
   const showEditCounterItemForm = (
     id,
     name,
