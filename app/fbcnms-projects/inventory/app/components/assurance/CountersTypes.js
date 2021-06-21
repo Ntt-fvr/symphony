@@ -47,57 +47,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const stateInitial = {
-  data: {
-    counters: {
-      edges: [
-        {
-          node: {
-            id: '244813135872',
-            name: 'contador_family_7',
-            networkManagerSystem: 'hola bebe',
-            externalID: '123456789',
-          },
-        },
-        {
-          node: {
-            id: '244813135873',
-            name: 'contador_family_8',
-            networkManagerSystem: 'hola sergio',
-            externalID: '987654321',
-          },
-        },
-        {
-          node: {
-            id: '244813135874',
-            name: 'contador_family_9',
-            networkManagerSystem: 'hola sebastian',
-            externalID: '987654322131',
-          },
-        },
-        {
-          node: {
-            id: '244813135875',
-            name: 'contador_family_10',
-            networkManagerSystem: 'hola gabriel',
-            externalID: '9876543213123',
-          },
-        },
-      ],
-    },
-  },
-};
-
 const CountersTypes = () => {
   const classes = useStyles();
 
   const data = useLazyLoadQuery<CountersTypesQuery>(CountersQuery, {});
-  console.log(data);
-
-  const [state, setState] = useState(stateInitial);
+  const [state, setState] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  const point = state.data.counters.edges;
+  const point = state.counters.edges;
 
   const handleRemove = id => {
     const newList = point.filter(item => item.node.id !== id);
