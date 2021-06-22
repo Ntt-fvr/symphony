@@ -65,6 +65,12 @@ const ProjectComparisonView = () => {
     field: 'UPDATED_AT',
   });
 
+  //orderPropertyType
+  const [orderPropertyType, setOrderPropertyType] = useState('');
+  const [orderPropertyTypeDirection, setOrderPropertyTypeDirection] = useState(
+    '',
+  );
+
   const [visibleColumns, setVisibleColumns] = useState(
     Object.values(defaultVisibleColumnsKeys).map(columnKey =>
       String(columnKey),
@@ -150,6 +156,10 @@ const ProjectComparisonView = () => {
           filters={filters}
           orderBy={orderBy}
           onOrderChanged={setOrderBy}
+          orderPropertyType={orderPropertyType}
+          orderPropertyDirection={orderPropertyTypeDirection}
+          onOrderPropertyChanged={setOrderPropertyType}
+          onOrderDirectionChanged={setOrderPropertyTypeDirection}
           onProjectSelected={selectedProjectCardId =>
             navigateToProject(selectedProjectCardId)
           }

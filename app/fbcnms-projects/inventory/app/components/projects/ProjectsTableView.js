@@ -56,6 +56,8 @@ type Props = $ReadOnly<{|
   onProjectSelected: string => void,
   orderBy: ProjectOrder,
   onOrderChanged: (newOrderSettings: ProjectOrder) => void,
+  onOrderPropertyChanged: (newPropertyTypeValue: string) => void, //set string values
+  onOrderDirectionChanged: (newPropertyTypeDirection: string) => void,
   visibleColumns: string[],
   setVisibleColumns: (string[]) => void,
 |}>;
@@ -67,6 +69,8 @@ const ProjectsTableView = (props: Props) => {
     onOrderChanged,
     visibleColumns,
     setVisibleColumns,
+    onOrderPropertyChanged,
+    onOrderDirectionChanged,
   } = props;
   const classes = useStyles();
 
@@ -81,6 +85,8 @@ const ProjectsTableView = (props: Props) => {
         first: {type: "Int"}
         orderBy: {type: "ProjectOrder"}
         filterBy: {type: "[ProjectFilterInput!]"}
+        propertyValue: {type: "String"}
+        propertyOrder: {type: "String"}
         cursor: {type: "Cursor"}
       )
       @refetchable(queryName: "ProjectsTableViewPaginationQuery") {
@@ -88,6 +94,8 @@ const ProjectsTableView = (props: Props) => {
           after: $cursor
           first: $first
           orderBy: $orderBy
+          propertyValue: $propertyValue
+          propertyOrder: $propertyOrder
           filterBy: $filterBy
         ) @connection(key: "ProjectsTableView_projects") {
           totalCount
@@ -294,6 +302,7 @@ const ProjectsTableView = (props: Props) => {
     createTime: 'CREATED_AT',
     updateTime: 'UPDATED_AT',
     priority: 'PRIORITY',
+    property: 'PROPERTY',
   };
 
   const getSortSettings = orderBy => {
@@ -302,6 +311,7 @@ const ProjectsTableView = (props: Props) => {
       CREATED_AT: 'createTime',
       UPDATED_AT: 'updateTime',
       PRIORITY: 'priority',
+      PROPERTY: 'property',
     };
 
     if (!orderBy.field || !orderByColumnObj[orderBy.field]) {
@@ -360,6 +370,16 @@ const ProjectsTableView = (props: Props) => {
           ({isSelected: _isSelected, value: _value, ...rest}) => rest,
         )}
         onSortChanged={newSortSettings => {
+          onOrderPropertyChanged(
+            orderByObj[newSortSettings.columnKey]
+              ? ''
+              : newSortSettings.columnKey,
+          );
+          onOrderDirectionChanged(
+            newSortSettings.order === TABLE_SORT_ORDER.ascending
+              ? 'ASC'
+              : 'DESC',
+          );
           return onOrderChanged({
             direction:
               newSortSettings.order === TABLE_SORT_ORDER.ascending

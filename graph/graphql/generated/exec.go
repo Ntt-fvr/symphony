@@ -999,7 +999,7 @@ type ComplexityRoot struct {
 		PermissionsPolicies      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
 		PossibleProperties       func(childComplexity int, entityType enum.PropertyEntity) int
 		ProjectTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) int
+		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
 		PythonPackages           func(childComplexity int) int
 		ReportFilters            func(childComplexity int, entity models.FilterEntity) int
 		SearchForNode            func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1703,7 +1703,7 @@ type QueryResolver interface {
 	NearestSites(ctx context.Context, latitude float64, longitude float64, first int) ([]*ent.Location, error)
 	Vertex(ctx context.Context, id int) (*ent.Node, error)
 	ProjectTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ProjectTypeConnection, error)
-	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) (*ent.ProjectConnection, error)
+	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) (*ent.ProjectConnection, error)
 	Customers(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.CustomerConnection, error)
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
 	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) (*ent.FlowDraftConnection, error)
@@ -6537,7 +6537,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ProjectOrder), args["filterBy"].([]*models.ProjectFilterInput)), true
+		return e.complexity.Query.Projects(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ProjectOrder), args["filterBy"].([]*models.ProjectFilterInput), args["propertyValue"].(*string), args["propertyOrder"].(*string)), true
 
 	case "Query.pythonPackages":
 		if e.complexity.Query.PythonPackages == nil {
@@ -11284,6 +11284,11 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
+
+  """
+  Order projects by property type.
+  """
+  PROPERTY
 }
 
 
@@ -13016,6 +13021,16 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
+
+    """
+    Property value for ordering projects.
+    """
+    propertyValue: String,
+
+    """
+    Property direction for ordering projects.
+    """
+    propertyOrder: String
   ): ProjectConnection!
   customers(
     after: Cursor
@@ -16940,6 +16955,24 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 		}
 	}
 	args["filterBy"] = arg5
+	var arg6 *string
+	if tmp, ok := rawArgs["propertyValue"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyValue"))
+		arg6, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["propertyValue"] = arg6
+	var arg7 *string
+	if tmp, ok := rawArgs["propertyOrder"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("propertyOrder"))
+		arg7, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["propertyOrder"] = arg7
 	return args, nil
 }
 
@@ -39075,7 +39108,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ProjectOrder), args["filterBy"].([]*models.ProjectFilterInput))
+		return ec.resolvers.Query().Projects(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ProjectOrder), args["filterBy"].([]*models.ProjectFilterInput), args["propertyValue"].(*string), args["propertyOrder"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

@@ -44,7 +44,7 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.ProjectTypes = PaginationComplexity
-	complexity.Query.Projects = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ProjectOrder, _ []*models.ProjectFilterInput) int {
+	complexity.Query.Projects = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ProjectOrder, _ []*models.ProjectFilterInput, _ *string, _ *string) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.SearchForNode = func(childComplexity int, _ string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {

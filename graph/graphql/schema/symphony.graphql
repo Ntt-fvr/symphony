@@ -2394,6 +2394,11 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
+
+  """
+  Order projects by property type.
+  """
+  PROPERTY
 }
 
 
@@ -4126,6 +4131,16 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
+
+    """
+    Property value for ordering projects.
+    """
+    propertyValue: String,
+
+    """
+    Property direction for ordering projects.
+    """
+    propertyOrder: String
   ): ProjectConnection!
   customers(
     after: Cursor
