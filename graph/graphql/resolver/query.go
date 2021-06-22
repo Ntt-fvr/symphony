@@ -230,7 +230,26 @@ func (r queryResolver) Projects(
 	before *ent.Cursor, last *int,
 	orderBy *ent.ProjectOrder,
 	filterBy []*models.ProjectFilterInput,
+	propertyValue *string,
+	propertyOrder *string,
 ) (*ent.ProjectConnection, error) {
+	if propertyValue != nil && len(*propertyValue) > 0 {
+		var direction string
+		if propertyOrder != nil {
+			direction = *propertyOrder
+		} else {
+			direction = ent.OrderDirectionAsc.String()
+		}
+
+		var limit int
+		if first != nil {
+			limit = *first
+		} else {
+			limit = 1
+		}
+
+		return CustomPaginateProjects(ctx, r.ClientFrom(ctx), after, limit, direction, filterBy, *propertyValue)
+	}
 	return r.ClientFrom(ctx).
 		Project.
 		Query().

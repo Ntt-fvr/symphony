@@ -68,6 +68,10 @@ type Props = $ReadOnly<{|
   filters: Array<any>,
   orderBy: ProjectOrder,
   onOrderChanged: (newOrderSettings: ProjectOrder) => void,
+  orderPropertyType?: string, //propertyValue
+  orderPropertyDirection?: string,
+  onOrderPropertyChanged: (newPropertyTypeValue: string) => void, //set string values
+  onOrderDirectionChanged: (newPropertyTypeDirection: string) => void,
   displayMode?: DisplayOptionTypes,
   onProjectSelected: (projectID: string) => void,
   createProjectButton: React.Node,
@@ -80,10 +84,24 @@ const projectSearchQuery = graphql`
     $limit: Int
     $filters: [ProjectFilterInput!]!
     $orderBy: ProjectOrder
+    $propertyValue: String
+    $propertyOrder: String
   ) {
     ...ProjectsTableView_query
-      @arguments(first: $limit, orderBy: $orderBy, filterBy: $filters)
-    projectsMap: projects(first: 100, orderBy: $orderBy, filterBy: $filters) {
+    @arguments(
+        first: $limit
+        orderBy: $orderBy
+        filterBy: $filters
+        propertyValue: $propertyValue
+        propertyOrder: $propertyOrder
+      )
+    projectsMap: projects(
+      first: 100
+      orderBy: $orderBy
+      filterBy: $filters
+      propertyValue: $propertyValue
+      propertyOrder: $propertyOrder
+    ) {
       totalCount
       edges {
         node {
@@ -106,6 +124,10 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
     onOrderChanged,
     visibleColumns,
     setVisibleColumns,
+    orderPropertyType,
+    orderPropertyDirection,
+    onOrderPropertyChanged,
+    onOrderDirectionChanged,
     // createProjectButton,
   } = props;
 
@@ -129,6 +151,8 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
       limit: PROJECTS_PAGE_SIZE,
       filters: filtersVariable,
       orderBy,
+      propertyValue: orderPropertyType,
+      propertyOrder: orderPropertyDirection,
     },
   );
 
@@ -158,6 +182,8 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
           projects={response}
           onProjectSelected={onProjectSelected}
           onOrderChanged={onOrderChanged}
+          onOrderPropertyChanged={onOrderPropertyChanged}
+          onOrderDirectionChanged={onOrderDirectionChanged}
           visibleColumns={visibleColumns}
           setVisibleColumns={setVisibleColumns}
         />

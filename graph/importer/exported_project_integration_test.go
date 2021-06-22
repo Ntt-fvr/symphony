@@ -161,7 +161,7 @@ func TestProjectImportData(t *testing.T) {
 	require.Equal(t, 200, code)
 	q := r.importer.r.Query()
 
-	projs, err := q.Projects(ctx, nil, nil, nil, nil, nil, nil)
+	projs, err := q.Projects(ctx, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Equal(t, 3, len(projs.Edges))
 	client := r.client
