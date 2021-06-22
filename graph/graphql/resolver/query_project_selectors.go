@@ -1,3 +1,7 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package resolver
 
 import (
@@ -13,17 +17,18 @@ import (
 )
 
 const (
-	PROJECTS_ALIAS             string = "pj"
-	PROPERTY_TYPE_ALIAS        string = "pt"
-	PROPERTY_TYPE_FILTER_ALIAS string = "ptf"
-	PROPERTIES_ALIAS           string = "pp"
-	PROPERTIES_FILTER_ALIAS    string = "ppf"
-	PROPERTIES_QUERY_ALIAS     string = "pq"
+	projectAlias            string = "pj"
+	propertyTypeAlias       string = "pt"
+	propertyTypeFilterAlias string = "ptf"
+	propertyAlias           string = "pp"
+	propertyFilterAlias     string = "ppf"
+	propertyQueryAlias      string = "pq"
+	columnName              string = "_val_"
 )
 
 func propertiesFilterQuery(propertyFilters []*models.ProjectFilterInput) *sql.Selector {
-	ppw := sql.Table(property.Table).As(PROPERTIES_FILTER_ALIAS)
-	ptw := sql.Table(propertytype.Table).As(PROPERTY_TYPE_FILTER_ALIAS)
+	ppw := sql.Table(property.Table).As(propertyFilterAlias)
+	ptw := sql.Table(propertytype.Table).As(propertyTypeFilterAlias)
 
 	return sql.Select(ppw.C(property.ProjectColumn)).
 		From(ppw).
@@ -75,8 +80,8 @@ func propertiesFilterQuery(propertyFilters []*models.ProjectFilterInput) *sql.Se
 }
 
 func propertiesQuery(columnName, propertyColumn, propertyType string) *sql.Selector {
-	pp := sql.Table(property.Table).As(PROPERTIES_ALIAS)
-	pt := sql.Table(propertytype.Table).As(PROPERTY_TYPE_ALIAS)
+	pp := sql.Table(property.Table).As(propertyAlias)
+	pt := sql.Table(propertytype.Table).As(propertyTypeAlias)
 
 	var propertyColumValue string
 
@@ -104,7 +109,7 @@ func propertiesQuery(columnName, propertyColumn, propertyType string) *sql.Selec
 		sql.As(propertyColumValue, columnName)).
 		From(pp).
 		Join(pt).On(pp.C(property.TypeColumn), pt.C(propertytype.FieldID)).
-		Where(sql.EQ(pt.C(propertytype.FieldName), propertyColumn)).As(PROPERTIES_QUERY_ALIAS)
+		Where(sql.EQ(pt.C(propertytype.FieldName), propertyColumn)).As(propertyQueryAlias)
 }
 
 func priorityFilter(selector *sql.Selector, filter *models.ProjectFilterInput, pj *sql.SelectTable) *sql.Selector {
@@ -163,12 +168,10 @@ func ProjectPropertyFieldQuery(propertyColumn string) *sql.Selector {
 		Limit(1)
 }
 
-func ProjectQuery(columnName, propertyColumn, propertyType, direction string,
-	limit int, first bool, id int, value interface{},
-	projectFilters, propertyFilters []*models.ProjectFilterInput) *sql.Selector {
-
-	pj := sql.Table(project.Table).As(PROJECTS_ALIAS)
-
+func ProjectQuery(propertyColumn, propertyType, direction string,
+	limit int, first bool, id int, value interface{}, projectFilters,
+	propertyFilters []*models.ProjectFilterInput) *sql.Selector {
+	pj := sql.Table(project.Table).As(projectAlias)
 	pq := propertiesQuery(columnName, propertyColumn, propertyType)
 
 	selector := sql.Select(
@@ -178,14 +181,14 @@ func ProjectQuery(columnName, propertyColumn, propertyType, direction string,
 		From(pj).
 		LeftJoin(pq).On(pj.C(project.FieldID), pq.C(property.ProjectColumn))
 
-	if propertyFilters != nil && len(propertyFilters) > 0 {
+	if len(propertyFilters) > 0 {
 		pf := propertiesFilterQuery(propertyFilters)
 
 		selector = selector.
 			Join(pf).On(pj.C(project.FieldID), pf.C(property.ProjectColumn))
 	}
 
-	if projectFilters != nil && len(projectFilters) > 0 {
+	if len(projectFilters) > 0 {
 		selector = projectFilter(selector, projectFilters, pj)
 	}
 
@@ -211,9 +214,8 @@ func ProjectQuery(columnName, propertyColumn, propertyType, direction string,
 	return selector.Limit(limit)
 }
 
-func CountQuery(columnName, propertyColumn, propertyType string, id int, value interface{},
-	projectFilters, propertyFilters []*models.ProjectFilterInput) *sql.Selector {
-	pj := sql.Table(project.Table).As(PROJECTS_ALIAS)
+func CountQuery(propertyColumn, propertyType string, id int, value interface{}, projectFilters, propertyFilters []*models.ProjectFilterInput) *sql.Selector {
+	pj := sql.Table(project.Table).As(projectAlias)
 
 	pq := propertiesQuery(columnName, propertyColumn, propertyType)
 
@@ -222,14 +224,14 @@ func CountQuery(columnName, propertyColumn, propertyType string, id int, value i
 		From(pj).
 		LeftJoin(pq).On(pj.C(project.FieldID), pq.C(property.ProjectColumn))
 
-	if propertyFilters != nil && len(propertyFilters) > 0 {
+	if len(propertyFilters) > 0 {
 		pf := propertiesFilterQuery(propertyFilters)
 
 		selector = selector.
 			Join(pf).On(pj.C(project.FieldID), pf.C(property.ProjectColumn))
 	}
 
-	if projectFilters != nil && len(projectFilters) > 0 {
+	if len(projectFilters) > 0 {
 		selector = projectFilter(selector, projectFilters, pj)
 	}
 

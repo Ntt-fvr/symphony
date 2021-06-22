@@ -1,3 +1,7 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package resolver
 
 import (
@@ -13,78 +17,43 @@ import (
 )
 
 func CustomPaginateProjects(
-	client *ent.Client,
-	ctx context.Context,
-	projectCursor *ent.Cursor, rowCount *int,
-	direction string,
-	filterBy []*models.ProjectFilterInput,
-	propertyColumn string,
-) (*ent.ProjectConnection, error) {
-
-	columnName := "_val_"
-
-	var limit int
-	if rowCount != nil {
-		limit = *rowCount
-	} else {
-		limit = 1
-	}
-
-	first := projectCursor == nil
-	var index int
-	if first {
-		index = 1
-	} else {
-		index = 2
-	}
+	ctx context.Context, client *ent.Client, projectCursor *ent.Cursor,
+	limit int, direction string, filterBy []*models.ProjectFilterInput,
+	propertyColumn string) (*ent.ProjectConnection, error) {
+	first, id, index, value := initValues(projectCursor)
 
 	projectFilters := projectFilters(filterBy)
 	propertyFilters := propertyFilters(filterBy)
 
-	var id int
-	var value interface{}
-
-	if projectCursor != nil {
-		id = projectCursor.ID
-		value = projectCursor.Value
-	} else {
-		id = 0
-		value = ""
+	drv, err := Driver(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	drv, connErr := Driver(ctx)
-	if connErr != nil {
-		return nil, connErr
-	}
+	propertyTypeQuery, args := ProjectPropertyFieldQuery(propertyColumn).Query()
 
-	propertyTypeQuery, propertyArgs := ProjectPropertyFieldQuery(propertyColumn).Query()
+	propertyTypeRows, err := drv.QueryContext(ctx, propertyTypeQuery, args...)
 
-	propertyTypeRows, propertyTypeErr := drv.QueryContext(ctx, propertyTypeQuery, propertyArgs...)
-
-	if propertyTypeErr != nil {
+	if err != nil {
 		drv.Close()
-		return nil, propertyTypeErr
+		return nil, err
 	}
 	defer propertyTypeRows.Close()
 
-	var propertyType string
-	if propertyTypeRows.Next() {
-		if err := propertyTypeRows.Scan(&propertyType); err != nil {
-			drv.Close()
-			return nil, err
-		}
-	} else {
-		propertyType = string(propertytype.TypeString)
+	propertyType, err := propertyTypeColumn(propertyTypeRows)
+	if err != nil {
+		drv.Close()
+		return nil, err
 	}
 
-	projectQuery, args := ProjectQuery(columnName, propertyColumn, propertyType,
+	projectQuery, args := ProjectQuery(propertyColumn, *propertyType,
 		direction, limit+index, first, id, value, projectFilters, propertyFilters).Query()
 
-	projectRows, projectErr := drv.QueryContext(ctx, projectQuery, args...)
+	projectRows, err := drv.QueryContext(ctx, projectQuery, args...)
 
-	if projectErr != nil {
+	if err != nil {
 		drv.Close()
-		return nil, projectErr
+		return nil, err
 	}
 	defer projectRows.Close()
 
@@ -101,38 +70,104 @@ func CustomPaginateProjects(
 
 		project := client.Project.GetX(ctx, projectID)
 
-		cursor := ent.Cursor{
-			ID:    projectID,
-			Value: val,
-		}
-
-		edge := &ent.ProjectEdge{
-			Node:   project,
-			Cursor: cursor,
-		}
+		edge := populateEdge(project, projectID, val)
 
 		edges = append(edges, edge)
 	}
 
-	countQuery, countArgs := CountQuery(columnName, propertyColumn, propertyType,
+	countQuery, args := CountQuery(propertyColumn, *propertyType,
 		id, value, projectFilters, propertyFilters).Query()
 
-	countRows, countErr := drv.QueryContext(ctx, countQuery, countArgs...)
+	countRows, err := drv.QueryContext(ctx, countQuery, args...)
 
-	if countErr != nil {
+	if err != nil {
 		drv.Close()
-		return nil, countErr
+		return nil, err
 	}
 	defer countRows.Close()
 
+	totalCount, err := totalCountValue(countRows)
+	if err != nil {
+		drv.Close()
+		return nil, err
+	}
+
+	projectConnection := populateProjectConnection(first, id, limit, totalCount, edges)
+
+	if err := projectRows.Err(); err != nil {
+		drv.Close()
+		return nil, err
+	}
+
+	drv.Close()
+
+	return projectConnection, nil
+}
+
+func initValues(projectCursor *ent.Cursor) (bool, int, int, interface{}) {
+	first := projectCursor == nil
+
+	var id, index int
+	var value interface{}
+	if first {
+		id = 0
+		value = ""
+		index = 1
+	} else {
+		id = projectCursor.ID
+		value = projectCursor.Value
+		index = 2
+	}
+	return first, id, index, value
+}
+
+func totalCountValue(countRows *sql.Rows) (int, error) {
 	var totalCount int
 	if countRows.Next() {
 		if err := countRows.Scan(&totalCount); err != nil {
-			drv.Close()
-			return nil, countErr
+			return 0, err
 		}
 	}
 
+	if err := countRows.Err(); err != nil {
+		return 0, err
+	}
+
+	return totalCount, nil
+}
+
+func propertyTypeColumn(propertyTypeRows *sql.Rows) (*string, error) {
+	var propertyType string
+	if propertyTypeRows.Next() {
+		if err := propertyTypeRows.Scan(&propertyType); err != nil {
+			return nil, err
+		}
+	} else {
+		propertyType = string(propertytype.TypeString)
+	}
+
+	if err := propertyTypeRows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &propertyType, nil
+}
+
+func populateEdge(project *ent.Project, projectID int, val interface{}) *ent.ProjectEdge {
+	cursor := ent.Cursor{
+		ID:    projectID,
+		Value: val,
+	}
+
+	return &ent.ProjectEdge{
+		Node:   project,
+		Cursor: cursor,
+	}
+}
+
+func populateProjectConnection(
+	first bool, id, limit, totalCount int,
+	edges []*ent.ProjectEdge) *ent.ProjectConnection {
 	size := len(edges)
 
 	var hasPreviousPage bool
@@ -174,41 +209,20 @@ func CustomPaginateProjects(
 		EndCursor:       endCursor,
 	}
 
-	projectConnection := &ent.ProjectConnection{
+	return &ent.ProjectConnection{
 		Edges:      edges,
 		PageInfo:   pageInfo,
 		TotalCount: totalCount,
 	}
-
-	if err := propertyTypeRows.Err(); err != nil {
-		drv.Close()
-		return nil, err
-	}
-
-	if err := projectRows.Err(); err != nil {
-		drv.Close()
-		return nil, err
-	}
-
-	if err := countRows.Err(); err != nil {
-		drv.Close()
-		return nil, err
-	}
-
-	drv.Close()
-
-	return projectConnection, nil
 }
 
 func propertyFilters(filters []*models.ProjectFilterInput) []*models.ProjectFilterInput {
 	pf := make([]*models.ProjectFilterInput, 0)
 
 	for _, filter := range filters {
-		switch filter.FilterType {
-		case models.ProjectFilterTypeProperty:
-			if filter.Operator == enum.FilterOperatorIs {
-				pf = append(pf, filter)
-			}
+		if filter.FilterType == models.ProjectFilterTypeProperty &&
+			filter.Operator == enum.FilterOperatorIs {
+			pf = append(pf, filter)
 		}
 	}
 	return pf

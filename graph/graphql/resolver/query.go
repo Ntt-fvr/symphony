@@ -241,7 +241,14 @@ func (r queryResolver) Projects(
 			direction = ent.OrderDirectionAsc.String()
 		}
 
-		return CustomPaginateProjects(r.ClientFrom(ctx), ctx, after, first, direction, filterBy, *propertyValue)
+		var limit int
+		if first != nil {
+			limit = *first
+		} else {
+			limit = 1
+		}
+
+		return CustomPaginateProjects(ctx, r.ClientFrom(ctx), after, limit, direction, filterBy, *propertyValue)
 	}
 	return r.ClientFrom(ctx).
 		Project.
