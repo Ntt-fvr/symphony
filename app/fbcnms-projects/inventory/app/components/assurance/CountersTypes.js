@@ -18,7 +18,7 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitle from './common/ConfigureTitle';
 import fbt from 'fbt';
 
 const CountersQuery = graphql`
@@ -48,8 +48,9 @@ const useStyles = makeStyles(theme => ({
     listStyle: 'none',
   },
   title: {
-    marginLeft: '10px',
+    padding: '0px',
   },
+  
 }));
 
 const CountersTypes = () => {
@@ -103,7 +104,7 @@ const CountersTypes = () => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item s={12} sm={12} lg={12} xl={12}>
-          <ConfigueTitle
+          <ConfigureTitle
             className={classes.title}
             title={fbt('Counters catalog',' ')}
             subtitle={fbt(
