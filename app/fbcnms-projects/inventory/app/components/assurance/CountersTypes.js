@@ -5,6 +5,8 @@ import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
+import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import fbt from 'fbt';
 import AddCounterItemForm from './AddCounterItemForm';
 import CounterTypeItem from './CounterTypeItem';
 import {EditCounterItemForm} from './EditCounterItemForm';
@@ -20,6 +22,9 @@ const useStyles = makeStyles(theme => ({
   },
   listCarCounter: {
     listStyle: 'none',
+  },
+  title: {
+    marginLeft: '10px',
   },
 }));
 const stateInitial = {
@@ -67,7 +72,7 @@ const CountersTypes = props => {
   const classes = useStyles();
 
   const [state, setState] = useState(stateInitial);
-  
+
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const point = state.data.counters.edges;
@@ -109,14 +114,18 @@ const CountersTypes = props => {
       />
     );
   }
-  // const res = state.data.counters.edges.map(item =>
-  //   console.log(item.node.name),
-  // );
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item s={12} sm={12} lg={12} xl={12}>
-          <Text variant="h5">Cards Container</Text>
+          <ConfigueTitle
+            className={classes.title}
+            title={fbt('Counters catalog',' ')}
+            subtitle={fbt(
+              'Add and manage the types of ports that are used in your Cards Container. Once configured, these can be added to Cards Container in your Network Assurance.',' '
+            )}
+          />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <ul>

@@ -19,6 +19,8 @@ import {useFormInput} from './common/useFormInput';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
+import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import fbt from 'fbt';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,6 +38,9 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     alignSelf: 'flex-end',
   },
+  title: {
+    marginLeft: '10px',
+  },
 }));
 
 export const EditCounterItemForm = props => {
@@ -51,7 +56,11 @@ export const EditCounterItemForm = props => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item s={12} sm={12} lg={12} xl={12}>
-          <Text variant="h5">Counters catalog</Text>
+          <ConfigueTitle
+            className={classes.title}
+            title={fbt('Counters catalog',' ')}
+            subtitle={''}
+          />
         </Grid>
         <Grid item s={12} sm={12} lg={12} xl={12}>
           <Card>
