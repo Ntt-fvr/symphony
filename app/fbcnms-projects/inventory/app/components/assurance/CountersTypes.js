@@ -9,17 +9,16 @@
  */
 
 import AddCounterItemForm from './AddCounterItemForm';
+import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
 import React, {useState} from 'react';
-import Text from '@symphony/design-system/components/Text';
+import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
 import {Grid, List} from '@material-ui/core/';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import ConfigureTitle from './common/ConfigureTitle';
-import fbt from 'fbt';
 
 const CountersQuery = graphql`
   query CountersTypesQuery {
@@ -47,10 +46,6 @@ const useStyles = makeStyles(theme => ({
   listCarCounter: {
     listStyle: 'none',
   },
-  title: {
-    padding: '0px',
-  },
-  
 }));
 
 const CountersTypes = () => {
@@ -103,12 +98,13 @@ const CountersTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item s={12} sm={12} lg={12} xl={12}>
+        <Grid item s={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
-            className={classes.title}
-            title={fbt('Counters catalog',' ')}
+            title={fbt('Counters catalog', 'Counters Title')}
             subtitle={fbt(
-              'Add and manage the types of ports that are used in your Cards Container. Once configured, these can be added to Cards Container in your Network Assurance.',' '
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
+                'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
+              'Counters description',
             )}
           />
         </Grid>
