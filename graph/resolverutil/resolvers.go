@@ -157,3 +157,13 @@ func ProjectFilter(query *ent.ProjectQuery, filters []*models.ProjectFilterInput
 	}
 	return query, nil
 }
+
+func CounterFilter(query *ent.CounterQuery, filters []*models.CounterFilterInput) (*ent.CounterQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleCounterFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

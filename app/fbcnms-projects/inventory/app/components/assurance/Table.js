@@ -1,23 +1,22 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
+/*[object Object]*/
+// eslint-disable-next-line header/header
+import Paper from '@material-ui/core/Paper';
+import React from 'react';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import {makeStyles} from '@material-ui/core/styles';
 
-import Switch from '@symphony/design-system/components/switch/Switch';
 import IconButton from '@symphony/design-system/components/IconButton';
-import Grid from '@material-ui/core/Grid';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-
-
 
 const useStyles = makeStyles({
   root: {
-    margin: '10px 0'
+    margin: '10px 0',
   },
   table: {
     minWidth: '100%',
@@ -25,16 +24,45 @@ const useStyles = makeStyles({
 });
 
 function createData(enable, vendor, technology, edit, delet) {
-  return { enable, vendor, technology, edit, delet };
+  return {enable, vendor, technology, edit, delet};
 }
 
 const rows = [
-  createData(<Switch/>, "Vendor", "Technology", <IconButton  icon={EditIcon} />, <IconButton icon={DeleteIcon} /> ),
-  createData(<Switch/>, "Vendor", "Technology", <IconButton  icon={EditIcon} />, <IconButton icon={DeleteIcon} /> ),
-  createData(<Switch/>, "Vendor", "Technology", <IconButton  icon={EditIcon} />, <IconButton icon={DeleteIcon} /> ),
-  createData(<Switch/>, "Vendor", "Technology", <IconButton  icon={EditIcon} />, <IconButton icon={DeleteIcon} /> ),
-  createData(<Switch/>, "Vendor", "Technology", <IconButton  icon={EditIcon} />, <IconButton icon={DeleteIcon} /> ),
-
+  createData(
+    <Switch />,
+    'Vendor',
+    'Technology',
+    <IconButton icon={EditIcon} />,
+    <IconButton icon={DeleteIcon} />,
+  ),
+  createData(
+    <Switch />,
+    'Vendor',
+    'Technology',
+    <IconButton icon={EditIcon} />,
+    <IconButton icon={DeleteIcon} />,
+  ),
+  createData(
+    <Switch />,
+    'Vendor',
+    'Technology',
+    <IconButton icon={EditIcon} />,
+    <IconButton icon={DeleteIcon} />,
+  ),
+  createData(
+    <Switch />,
+    'Vendor',
+    'Technology',
+    <IconButton icon={EditIcon} />,
+    <IconButton icon={DeleteIcon} />,
+  ),
+  createData(
+    <Switch />,
+    'Vendor',
+    'Technology',
+    <IconButton icon={EditIcon} />,
+    <IconButton icon={DeleteIcon} />,
+  ),
 ];
 
 export default function DenseTable() {
@@ -53,7 +81,7 @@ export default function DenseTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map(row => (
             <TableRow key={row.enable}>
               <TableCell component="th" scope="row">
                 {row.enable}

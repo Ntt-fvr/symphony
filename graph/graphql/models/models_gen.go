@@ -75,9 +75,31 @@ type AddBulkServiceLinksAndPortsInput struct {
 	LinkIds []int `json:"linkIds"`
 }
 
+type AddCounterFamilyInput struct {
+	Name    string             `json:"name"`
+	Counter []*AddCounterInput `json:"counter"`
+}
+
+type AddCounterInput struct {
+	Name                 string                           `json:"name"`
+	ExternalID           string                           `json:"externalID"`
+	NetworkManagerSystem string                           `json:"networkManagerSystem"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
+type AddCounterVendorFormulaInput struct {
+	Mandatory *bool `json:"mandatory"`
+}
+
 type AddCustomerInput struct {
 	Name       string  `json:"name"`
 	ExternalID *string `json:"externalId"`
+}
+
+type AddDomainInput struct {
+	Name string       `json:"name"`
+	Tech []*TechInput `json:"tech"`
+	Kpi  []*KpiInput  `json:"kpi"`
 }
 
 type AddEquipmentInput struct {
@@ -127,6 +149,12 @@ type AddFlowDraftInput struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 }
 
+type AddFormulaInput struct {
+	Name                 string                           `json:"name"`
+	Active               bool                             `json:"active"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type AddHyperlinkInput struct {
 	EntityType  ImageEntity `json:"entityType"`
 	EntityID    int         `json:"entityId"`
@@ -147,6 +175,11 @@ type AddImageInput struct {
 	Annotation  *string     `json:"annotation"`
 }
 
+type AddKpiInput struct {
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
+}
+
 type AddLinkInput struct {
 	Sides      []*LinkSide      `json:"sides"`
 	WorkOrder  *int             `json:"workOrder"`
@@ -165,12 +198,13 @@ type AddLocationInput struct {
 }
 
 type AddLocationTypeInput struct {
-	Name                     string                         `json:"name"`
-	MapType                  *string                        `json:"mapType"`
-	MapZoomLevel             *int                           `json:"mapZoomLevel"`
-	IsSite                   *bool                          `json:"isSite"`
-	Properties               []*models.PropertyTypeInput    `json:"properties"`
-	SurveyTemplateCategories []*SurveyTemplateCategoryInput `json:"surveyTemplateCategories"`
+	Name                     string                          `json:"name"`
+	MapType                  *string                         `json:"mapType"`
+	MapZoomLevel             *int                            `json:"mapZoomLevel"`
+	IsSite                   *bool                           `json:"isSite"`
+	FileCategoriesType       []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
+	Properties               []*models.PropertyTypeInput     `json:"properties"`
+	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
 }
 
 type AddPermissionsPolicyInput struct {
@@ -207,11 +241,21 @@ type AddServiceEndpointInput struct {
 	Definition  int  `json:"definition"`
 }
 
+type AddTechInput struct {
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
+}
+
 type AddUsersGroupInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
 	Members     []int   `json:"members"`
 	Policies    []int   `json:"policies"`
+}
+
+type AddVendorInput struct {
+	Name                 string                           `json:"name"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
 }
 
 type AddWorkOrderInput struct {
@@ -324,6 +368,28 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
+type CounterFamilyInput struct {
+	Name    string             `json:"name"`
+	Counter []*AddCounterInput `json:"counter"`
+}
+
+type CounterFilterInput struct {
+	FilterType    CounterFilterType   `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	IDSet         []int               `json:"idSet"`
+	MaxDepth      *int                `json:"maxDepth"`
+	StringSet     []string            `json:"stringSet"`
+	PropertyValue *CounterFamilyInput `json:"propertyValue"`
+}
+
+type CounterInput struct {
+	Name                 string                           `json:"name"`
+	ExternalID           string                           `json:"externalID"`
+	NetworkManagerSystem string                           `json:"networkManagerSystem"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type DecisionBlock struct {
 	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
 	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
@@ -347,6 +413,13 @@ type DecisionRouteInput struct {
 	Condition *VariableExpressionInput `json:"condition"`
 }
 
+type DomainInput struct {
+	ID   int          `json:"id"`
+	Name string       `json:"name"`
+	Tech []*TechInput `json:"tech"`
+	Kpi  []*KpiInput  `json:"kpi"`
+}
+
 type EditBlockInput struct {
 	ID               int                               `json:"id"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -358,6 +431,32 @@ type EditBlockInstanceInput struct {
 	Inputs        []*flowschema.VariableValue `json:"inputs"`
 	Outputs       []*flowschema.VariableValue `json:"outputs"`
 	FailureReason *string                     `json:"failure_reason"`
+}
+
+type EditCounterFamilyInput struct {
+	ID      int                 `json:"id"`
+	Name    string              `json:"name"`
+	Counter []*EditCounterInput `json:"counter"`
+}
+
+type EditCounterInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	ExternalID           string                           `json:"externalID"`
+	NetworkManagerSystem string                           `json:"networkManagerSystem"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
+type EditCounterVendorFormulaInput struct {
+	ID        int   `json:"id"`
+	Mandatory *bool `json:"mandatory"`
+}
+
+type EditDomainInput struct {
+	ID   int          `json:"id"`
+	Name string       `json:"name"`
+	Tech []*TechInput `json:"tech"`
+	Kpi  []*KpiInput  `json:"kpi"`
 }
 
 type EditEquipmentInput struct {
@@ -394,6 +493,19 @@ type EditFlowInstanceInput struct {
 	Status flowinstance.Status `json:"status"`
 }
 
+type EditFormulaInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	Active               bool                             `json:"active"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
+type EditKpiInput struct {
+	ID      int             `json:"id"`
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
+}
+
 type EditLinkInput struct {
 	ID         int              `json:"id"`
 	Properties []*PropertyInput `json:"properties"`
@@ -410,12 +522,13 @@ type EditLocationInput struct {
 }
 
 type EditLocationTypeInput struct {
-	ID           int                         `json:"id"`
-	Name         string                      `json:"name"`
-	MapType      *string                     `json:"mapType"`
-	MapZoomLevel *int                        `json:"mapZoomLevel"`
-	IsSite       *bool                       `json:"isSite"`
-	Properties   []*models.PropertyTypeInput `json:"properties"`
+	ID                 int                             `json:"id"`
+	Name               string                          `json:"name"`
+	MapType            *string                         `json:"mapType"`
+	MapZoomLevel       *int                            `json:"mapZoomLevel"`
+	IsSite             *bool                           `json:"isSite"`
+	FileCategoriesType []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
+	Properties         []*models.PropertyTypeInput     `json:"properties"`
 }
 
 type EditPermissionsPolicyInput struct {
@@ -453,6 +566,12 @@ type EditReportFilterInput struct {
 	Name string `json:"name"`
 }
 
+type EditTechInput struct {
+	ID      int             `json:"id"`
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
+}
+
 type EditUserInput struct {
 	ID           int                `json:"id"`
 	FirstName    *string            `json:"firstName"`
@@ -469,6 +588,12 @@ type EditUsersGroupInput struct {
 	Status      *usersgroup.Status `json:"status"`
 	Members     []int              `json:"members"`
 	Policies    []int              `json:"policies"`
+}
+
+type EditVendorInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
 }
 
 type EditWorkOrderInput struct {
@@ -569,6 +694,13 @@ type FileInput struct {
 	Annotation       *string    `json:"annotation"`
 }
 
+type FormulaInput struct {
+	ID                   int                              `json:"id"`
+	Name                 string                           `json:"name"`
+	Active               bool                             `json:"active"`
+	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+}
+
 type GeneralFilter struct {
 	FilterType    string              `json:"filterType"`
 	Key           string              `json:"key"`
@@ -618,6 +750,12 @@ type ImportFlowDraftInput struct {
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
 	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
+}
+
+type KpiInput struct {
+	ID      int             `json:"id"`
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
 }
 
 type LatestPythonPackageResult struct {
@@ -892,6 +1030,12 @@ type SurveyWiFiScanData struct {
 	Rssi         *float64 `json:"rssi"`
 }
 
+type TechInput struct {
+	ID      int             `json:"id"`
+	Name    string          `json:"name"`
+	Formula []*FormulaInput `json:"formula"`
+}
+
 type TechnicianCheckListItemInput struct {
 	ID                 int                     `json:"id"`
 	SelectedEnumValues *string                 `json:"selectedEnumValues"`
@@ -1051,6 +1195,45 @@ func (e *CommentEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CommentEntity) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CounterFilterType string
+
+const (
+	CounterFilterTypeName CounterFilterType = "NAME"
+)
+
+var AllCounterFilterType = []CounterFilterType{
+	CounterFilterTypeName,
+}
+
+func (e CounterFilterType) IsValid() bool {
+	switch e {
+	case CounterFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e CounterFilterType) String() string {
+	return string(e)
+}
+
+func (e *CounterFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CounterFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CounterFilterType", str)
+	}
+	return nil
+}
+
+func (e CounterFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

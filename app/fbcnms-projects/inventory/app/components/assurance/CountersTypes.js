@@ -1,16 +1,40 @@
-/*[object Object]*/
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ * @format
+ */
 
-// eslint-disable-next-line header/header
-import React, {useState} from 'react';
-import {makeStyles} from '@material-ui/styles';
-import Grid from '@material-ui/core/Grid';
-import Text from '@symphony/design-system/components/Text';
-import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
-import fbt from 'fbt';
 import AddCounterItemForm from './AddCounterItemForm';
 import CounterTypeItem from './CounterTypeItem';
+import React, {useState} from 'react';
+import Text from '@symphony/design-system/components/Text';
 import {EditCounterItemForm} from './EditCounterItemForm';
+import {Grid, List} from '@material-ui/core/';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+import {graphql} from 'react-relay';
+import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import fbt from 'fbt';
+
+const CountersQuery = graphql`
+  query CountersTypesQuery {
+    counters {
+      edges {
+        node {
+          id
+          name
+          networkManagerSystem
+          externalID
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,55 +51,15 @@ const useStyles = makeStyles(theme => ({
     marginLeft: '10px',
   },
 }));
-const stateInitial = {
-  data: {
-    counters: {
-      edges: [
-        {
-          node: {
-            id: '244813135872',
-            name: 'contador_family_7',
-            networkManagerSystem: 'hola bebe',
-            externalID: '123456789',
-          },
-        },
-        {
-          node: {
-            id: '244813135873',
-            name: 'contador_family_8',
-            networkManagerSystem: 'hola sergio',
-            externalID: '987654321',
-          },
-        },
-        {
-          node: {
-            id: '244813135874',
-            name: 'contador_family_9',
-            networkManagerSystem: 'hola sebastian',
-            externalID: '987654322131',
-          },
-        },
-        {
-          node: {
-            id: '244813135875',
-            name: 'contador_family_10',
-            networkManagerSystem: 'hola gabriel',
-            externalID: '9876543213123',
-          },
-        },
-      ],
-    },
-  },
-};
 
-const CountersTypes = props => {
+const CountersTypes = () => {
   const classes = useStyles();
 
-  const [state, setState] = useState(stateInitial);
-
+  const data = useLazyLoadQuery<CountersTypesQuery>(CountersQuery, {});
+  const [state, setState] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  const point = state.data.counters.edges;
+  const point = state.counters.edges;
 
   const handleRemove = id => {
     const newList = point.filter(item => item.node.id !== id);
@@ -128,7 +112,7 @@ const CountersTypes = props => {
           />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
-          <ul>
+          <List disablePadding="true">
             {point.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
@@ -151,7 +135,7 @@ const CountersTypes = props => {
                 />
               </li>
             ))}
-          </ul>
+          </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddCounterItemForm />
@@ -162,7 +146,3 @@ const CountersTypes = props => {
 };
 
 export default CountersTypes;
-
-/**
-,item.Network_Manager_System,item.Counter_ID,item.Family_Name
- */

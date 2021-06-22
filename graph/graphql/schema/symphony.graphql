@@ -446,6 +446,7 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
+  fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
@@ -457,6 +458,7 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
+  fileCategoriesType: [FileCategoryTypeInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
@@ -468,6 +470,7 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
+  fileCategoriesType: [FileCategoryTypeInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
@@ -1437,6 +1440,20 @@ enum PropertyKind
   node
 }
 
+type FileCategoryType implements Node {
+  id: ID!
+  name: String!
+  rawValue: String
+}
+
+input FileCategoryTypeInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
+  ) {
+  id: ID
+  name: String!
+}
+
 type PropertyType implements Node {
   id: ID!
   externalId: String
@@ -2375,6 +2392,73 @@ input ProjectOrder {
   field: ProjectOrderField
 }
 
+"""
+Properties by which counters connections can be ordered.
+"""
+enum CounterOrderField {
+  """
+  Order counters by name.
+  """
+  NAME
+
+  """
+  Order counters by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order counters by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for counters connections.
+"""
+input CounterOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order counters by.
+  """
+  field: CounterOrderField
+}
+
+"""
+A connection to a list of counters.
+"""
+type CounterConnection {
+  """
+  Total counters of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of counters edges.
+  """
+  edges: [CounterEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A counters edge in a connection.
+"""
+type CounterEdge {
+  """
+  The counters at the end of the edge.
+  """
+  node: Counter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -2741,6 +2825,20 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+}
+
+enum CounterFilterType {
+  NAME
+}
+
+input CounterFilterInput {
+  filterType: CounterFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  propertyValue: CounterFamilyInput
 }
 
 """
@@ -4096,6 +4194,41 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): WorkerTypeConnection!
+  
+  """
+  A list of counters.
+  """
+  counters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: CounterOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [CounterFilterInput!]
+  ): CounterConnection!
 }
 
 type Mutation {
@@ -4315,6 +4448,27 @@ type Mutation {
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
+  addCounter(input: AddCounterInput!):Counter!
+  editCounter(input: EditCounterInput!): Counter!
+  removeCounter(id: ID!): ID!
+  addCounterFamily(input: AddCounterFamilyInput!):CounterFamily!
+  editCounterFamily(input: EditCounterFamilyInput!): CounterFamily!
+  removeCounterFamily(id: ID!): ID!
+  addVendor(input: AddVendorInput!):Vendor!
+  editVendor(input: EditVendorInput!): Vendor!
+  removeVendor(id: ID!): ID!
+  addFormula(input: AddFormulaInput!):Formula!
+  editFormula(input: EditFormulaInput!): Formula!
+  removeFormula(id: ID!): ID!
+  addKpi(input: AddKpiInput!):Kpi!
+  editKpi(input: EditKpiInput!): Kpi!
+  removeKpi(id: ID!): ID!
+  addDomain(input: AddDomainInput!):Domain!
+  editDomain(input: EditDomainInput!): Domain!
+  removeDomain(id: ID!): ID!
+  addTech(input: AddTechInput!):Tech!
+  editTech(input: EditTechInput!): Tech!
+  removeTech(id: ID!): ID!
 }
 
 """
@@ -4349,4 +4503,187 @@ type Subscription {
   projectChanged: Project
   locationAdded: Location
   locationChanged: Location
+}
+
+type Counter implements Node {
+  id: ID!
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  countervendorformula: [CounterVendorFormula]!
+}
+
+input CounterInput {
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input AddCounterInput {
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input EditCounterInput {
+  id: ID!
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+type CounterFamily implements Node {
+  id: ID!
+  name: String!
+  counter: [Counter]!
+}
+
+input CounterFamilyInput {
+  name: String!
+  counter: [AddCounterInput!]
+}
+
+input AddCounterFamilyInput {
+  name: String!
+  counter: [AddCounterInput!]
+}
+
+input EditCounterFamilyInput {
+  id: ID!
+  name: String!
+  counter: [EditCounterInput!]
+}
+
+type Vendor implements Node {
+  id: ID!
+  name: String!
+  countervendorformula: [CounterVendorFormula!]
+}
+
+input AddVendorInput {
+  name: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input EditVendorInput {
+  id: ID!
+  name: String!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+type Domain implements Node {
+  id: ID!
+  name: String!
+  tech: [Tech]!
+  kpi: [Kpi]!
+}
+
+input DomainInput {
+  id: ID!
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+input AddDomainInput {
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+input EditDomainInput {
+  id: ID!
+  name: String!
+  tech: [TechInput!]
+  kpi: [KpiInput!]
+}
+
+type Kpi implements Node {
+  id: ID!
+  name: String!
+  formula: [Formula]!
+}
+
+input KpiInput {
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input AddKpiInput {
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input EditKpiInput {
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+type Tech implements Node {
+  id: ID!
+  name: String!
+  formula: [Formula]!
+}
+
+input TechInput {
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input AddTechInput {
+  name: String!
+  formula: [FormulaInput!]
+}
+
+input EditTechInput {
+  id: ID!
+  name: String!
+  formula: [FormulaInput!]
+}
+
+type Formula implements Node {
+  id: ID!
+  name: String!
+  active: Boolean!
+  countervendorformula: [CounterVendorFormula!]
+}
+
+input FormulaInput {
+  id: ID!
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input AddFormulaInput {
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+input EditFormulaInput {
+  id: ID!
+  name: String!
+  active: Boolean!
+  countervendorformula: [EditCounterVendorFormulaInput!]
+}
+
+type CounterVendorFormula implements Node {
+  id: ID!
+  mandatory: Boolean!
+}
+
+input AddCounterVendorFormulaInput {
+  mandatory: Boolean
+}
+
+input EditCounterVendorFormulaInput {
+  id: ID!
+  mandatory: Boolean
 }
