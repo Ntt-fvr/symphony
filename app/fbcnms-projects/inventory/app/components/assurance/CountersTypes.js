@@ -46,12 +46,6 @@ const useStyles = makeStyles(theme => ({
   listCarCounter: {
     listStyle: 'none',
   },
-<<<<<<< HEAD
-  title: {
-    padding: '0px',
-  },
-=======
->>>>>>> frontend_staging
 }));
 
 const CountersTypes = () => {
