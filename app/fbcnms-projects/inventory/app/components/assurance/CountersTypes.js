@@ -50,7 +50,6 @@ const useStyles = makeStyles(theme => ({
   title: {
     padding: '0px',
   },
-  
 }));
 
 const CountersTypes = () => {
@@ -63,11 +62,10 @@ const CountersTypes = () => {
   const point = state.counters.edges;
 
   const handleRemove = id => {
-    const newList = point.filter(item => item.id !== id);
-     
-    console.log(id);
-    //debugger
-    //setState(newList);
+    const newList = point.filter(item => item.node.id !== id);
+    const edges = newList;
+    const set = {counters: {edges}};
+    setState(set);
   };
   const showEditCounterItemForm = (
     id,
@@ -108,9 +106,10 @@ const CountersTypes = () => {
         <Grid item s={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('Counters catalog',' ')}
+            title={fbt('Counters catalog', ' ')}
             subtitle={fbt(
-              'Add and manage the types of ports that are used in your Cards Container. Once configured, these can be added to Cards Container in your Network Assurance.',' '
+              'Add and manage the types of ports that are used in your Cards Container. Once configured, these can be added to Cards Container in your Network Assurance.',
+              ' ',
             )}
           />
         </Grid>
