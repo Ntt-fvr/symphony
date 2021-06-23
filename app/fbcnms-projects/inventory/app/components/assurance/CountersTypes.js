@@ -29,6 +29,10 @@ const CountersQuery = graphql`
           name
           networkManagerSystem
           externalID
+          countervendorformula {
+            id
+            mandatory
+          }
         }
       }
     }
@@ -46,6 +50,11 @@ const useStyles = makeStyles(theme => ({
   listCarCounter: {
     listStyle: 'none',
   },
+  powerSearchContainer: {
+    margin: '10px',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  },
 }));
 
 const CountersTypes = () => {
@@ -62,24 +71,10 @@ const CountersTypes = () => {
     setState(newList);
   };
 
-  const showEditCounterItemForm = (
-    id,
-    name,
-    vendor,
-    network,
-    counterId,
-    familyName,
-  ) => {
+  const showEditCounterItemForm = (counters: {}) => {
     ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
-    setDataEdit({
-      Id: id,
-      Name: name,
-      VendorName: vendor,
-      NetworkManagerSystem: network,
-      CounterID: counterId,
-      FamilyName: familyName,
-    });
+    setDataEdit(counters);
   };
 
   const hideEditCounterItemForm = () => {
@@ -108,26 +103,22 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+        <Grid className={classes.paper} item xs="12" lg="9">
           <List disablePadding="true">
             {point.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
-                  CounterName={item.node.name}
-                  NetworkManagerSystem={item.node.networkManagerSystem}
-                  VendorName={item.node.name}
-                  CounterId={item.node.externalID}
-                  FamilyName={item.node.networkManagerSystem}
+                  counter={item.node}
                   onChange={() => handleRemove(item.node.id)}
                   edit={() =>
-                    showEditCounterItemForm(
-                      item.node.id,
-                      item.node.name,
-                      item.node.name,
-                      item.node.networkManagerSystem,
-                      item.node.externalID,
-                      item.node.networkManagerSystem,
-                    )
+                    showEditCounterItemForm({
+                      Id: item.node.id,
+                      Name: item.node.name,
+                      VendorName: item.node.name,
+                      NetworkManagerSystem: item.node.networkManagerSystem,
+                      CounterID: item.node.externalID,
+                      FamilyName: item.node.networkManagerSystem,
+                    })
                   }
                 />
               </li>

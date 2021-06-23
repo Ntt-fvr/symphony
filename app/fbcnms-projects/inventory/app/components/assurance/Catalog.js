@@ -18,11 +18,10 @@ import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import ThresholdTypes from './ThresholdTypes';
 import fbt from 'fbt';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
-import {Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
-import {EditCounterItemForm} from "./EditCounterItemForm";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,7 +53,7 @@ type RouteTab = {
   path: string,
 };
 
-export default function Configure() {
+export default function Catalog() {
   const relativeUrl = useRelativeUrl();
   const history = useHistory();
   const location = useLocation();
@@ -110,18 +109,21 @@ export default function Configure() {
         <InventorySuspense>
           <Switch>
             <Route
+              exact
               path={relativeUrl('/counters_types')}
               component={CountersTypes}
             />
-            <Route path={relativeUrl('/kpi_types')} component={KpiTypes} />
             <Route
+              exact
+              path={relativeUrl('/kpi_types')}
+              component={KpiTypes}
+            />
+            <Route
+              exact
               path={relativeUrl('/threshold_types')}
               component={ThresholdTypes}
             />
-            <Route
-              path={relativeUrl('/edit_counter_types')}
-              component={EditCounterItemForm}
-            />
+            <Redirect to={relativeUrl('/counters_types')} />
           </Switch>
         </InventorySuspense>
       </InventoryErrorBoundary>

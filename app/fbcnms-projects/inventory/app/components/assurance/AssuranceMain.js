@@ -55,7 +55,7 @@ function AssuranceMain() {
             <RelayEnvironmentProvider environment={RelayEnvironment}>
               <Switch>
                 <Route path={relativeUrl('/performance')} component={Catalog} />
-                <Redirect to={relativeUrl('/performance')} />
+                <Redirect to={relativeUrl('/performance/counters_types')} />
               </Switch>
             </RelayEnvironmentProvider>
           </AppContent>
