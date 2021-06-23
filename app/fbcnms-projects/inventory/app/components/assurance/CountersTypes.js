@@ -46,12 +46,6 @@ const useStyles = makeStyles(theme => ({
   listCarCounter: {
     listStyle: 'none',
   },
-<<<<<<< HEAD
-  title: {
-    padding: '0px',
-  },
-=======
->>>>>>> frontend_staging
 }));
 
 const CountersTypes = () => {
@@ -107,19 +101,11 @@ const CountersTypes = () => {
       <Grid container spacing={3}>
         <Grid item s={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
-<<<<<<< HEAD
-            className={classes.title}
-            title={fbt('Counters catalog', ' ')}
-            subtitle={fbt(
-              'Add and manage the types of ports that are used in your Cards Container. Once configured, these can be added to Cards Container in your Network Assurance.',
-              ' ',
-=======
             title={fbt('Counters catalog', 'Counters Title')}
             subtitle={fbt(
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
                 'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
               'Counters description',
->>>>>>> frontend_staging
             )}
           />
         </Grid>
