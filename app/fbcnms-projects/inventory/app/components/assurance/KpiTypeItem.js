@@ -11,7 +11,7 @@ import AddButton from './AddButton';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
-import Table from './Table'
+import Table from './Table';
 
 //import Checkbox  from '@symphony/design-system/components/Checkbox/Checkbox';
 

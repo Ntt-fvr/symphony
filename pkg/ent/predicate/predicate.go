@@ -34,8 +34,20 @@ type CheckListItemDefinition func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// Counter is the predicate function for counter builders.
+type Counter func(*sql.Selector)
+
+// CounterFamily is the predicate function for counterfamily builders.
+type CounterFamily func(*sql.Selector)
+
+// CounterVendorFormula is the predicate function for countervendorformula builders.
+type CounterVendorFormula func(*sql.Selector)
+
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)
+
+// Domain is the predicate function for domain builders.
+type Domain func(*sql.Selector)
 
 // EntryPoint is the predicate function for entrypoint builders.
 type EntryPoint func(*sql.Selector)
@@ -76,6 +88,9 @@ type Feature func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// FileCategoryType is the predicate function for filecategorytype builders.
+type FileCategoryType func(*sql.Selector)
+
 // FloorPlan is the predicate function for floorplan builders.
 type FloorPlan func(*sql.Selector)
 
@@ -97,8 +112,14 @@ type FlowExecutionTemplate func(*sql.Selector)
 // FlowInstance is the predicate function for flowinstance builders.
 type FlowInstance func(*sql.Selector)
 
+// Formula is the predicate function for formula builders.
+type Formula func(*sql.Selector)
+
 // Hyperlink is the predicate function for hyperlink builders.
 type Hyperlink func(*sql.Selector)
+
+// Kpi is the predicate function for kpi builders.
+type Kpi func(*sql.Selector)
 
 // Link is the predicate function for link builders.
 type Link func(*sql.Selector)
@@ -160,11 +181,17 @@ type SurveyTemplateQuestion func(*sql.Selector)
 // SurveyWiFiScan is the predicate function for surveywifiscan builders.
 type SurveyWiFiScan func(*sql.Selector)
 
+// Tech is the predicate function for tech builders.
+type Tech func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
 // UsersGroup is the predicate function for usersgroup builders.
 type UsersGroup func(*sql.Selector)
+
+// Vendor is the predicate function for vendor builders.
+type Vendor func(*sql.Selector)
 
 // WorkOrder is the predicate function for workorder builders.
 type WorkOrder func(*sql.Selector)

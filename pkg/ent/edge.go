@@ -224,10 +224,74 @@ func (c *Comment) Project(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
+func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
+	result, err := c.Edges.CounterfamilyOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryCounterfamily().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Counter) CounterFk(ctx context.Context) ([]*CounterVendorFormula, error) {
+	result, err := c.Edges.CounterFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryCounterFk().All(ctx)
+	}
+	return result, err
+}
+
+func (cf *CounterFamily) Counterfamily(ctx context.Context) ([]*Counter, error) {
+	result, err := cf.Edges.CounterfamilyOrErr()
+	if IsNotLoaded(err) {
+		result, err = cf.QueryCounterfamily().All(ctx)
+	}
+	return result, err
+}
+
+func (cvf *CounterVendorFormula) Formula(ctx context.Context) (*Formula, error) {
+	result, err := cvf.Edges.FormulaOrErr()
+	if IsNotLoaded(err) {
+		result, err = cvf.QueryFormula().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (cvf *CounterVendorFormula) Vendor(ctx context.Context) (*Vendor, error) {
+	result, err := cvf.Edges.VendorOrErr()
+	if IsNotLoaded(err) {
+		result, err = cvf.QueryVendor().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (cvf *CounterVendorFormula) Counter(ctx context.Context) (*Counter, error) {
+	result, err := cvf.Edges.CounterOrErr()
+	if IsNotLoaded(err) {
+		result, err = cvf.QueryCounter().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (c *Customer) Services(ctx context.Context) ([]*Service, error) {
 	result, err := c.Edges.ServicesOrErr()
 	if IsNotLoaded(err) {
 		result, err = c.QueryServices().All(ctx)
+	}
+	return result, err
+}
+
+func (d *Domain) Techdomain(ctx context.Context) ([]*Tech, error) {
+	result, err := d.Edges.TechdomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = d.QueryTechdomain().All(ctx)
+	}
+	return result, err
+}
+
+func (d *Domain) Kpidomain(ctx context.Context) ([]*Kpi, error) {
+	result, err := d.Edges.KpidomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = d.QueryKpidomain().All(ctx)
 	}
 	return result, err
 }
@@ -632,6 +696,14 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	return result, MaskNotFound(err)
 }
 
+func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := fct.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = fct.QueryLocationType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (fp *FloorPlan) Location(ctx context.Context) (*Location, error) {
 	result, err := fp.Edges.LocationOrErr()
 	if IsNotLoaded(err) {
@@ -736,6 +808,30 @@ func (fi *FlowInstance) ParentSubflowBlock(ctx context.Context) (*BlockInstance,
 	return result, MaskNotFound(err)
 }
 
+func (f *Formula) Tech(ctx context.Context) (*Tech, error) {
+	result, err := f.Edges.TechOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryTech().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (f *Formula) Kpi(ctx context.Context) (*Kpi, error) {
+	result, err := f.Edges.KpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryKpi().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (f *Formula) FormulaFk(ctx context.Context) ([]*CounterVendorFormula, error) {
+	result, err := f.Edges.FormulaFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryFormulaFk().All(ctx)
+	}
+	return result, err
+}
+
 func (h *Hyperlink) Equipment(ctx context.Context) (*Equipment, error) {
 	result, err := h.Edges.EquipmentOrErr()
 	if IsNotLoaded(err) {
@@ -758,6 +854,22 @@ func (h *Hyperlink) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 		result, err = h.QueryWorkOrder().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (k *Kpi) Domain(ctx context.Context) (*Domain, error) {
+	result, err := k.Edges.DomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryDomain().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kpi) Formulakpi(ctx context.Context) ([]*Formula, error) {
+	result, err := k.Edges.FormulakpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryFormulakpi().All(ctx)
+	}
+	return result, err
 }
 
 func (l *Link) Ports(ctx context.Context) ([]*EquipmentPort, error) {
@@ -900,6 +1012,14 @@ func (lt *LocationType) PropertyTypes(ctx context.Context) ([]*PropertyType, err
 	result, err := lt.Edges.PropertyTypesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QueryPropertyTypes().All(ctx)
+	}
+	return result, err
+}
+
+func (lt *LocationType) FileCategoryType(ctx context.Context) ([]*FileCategoryType, error) {
+	result, err := lt.Edges.FileCategoryTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryFileCategoryType().All(ctx)
 	}
 	return result, err
 }
@@ -1504,6 +1624,22 @@ func (swfs *SurveyWiFiScan) Location(ctx context.Context) (*Location, error) {
 	return result, MaskNotFound(err)
 }
 
+func (t *Tech) Domain(ctx context.Context) (*Domain, error) {
+	result, err := t.Edges.DomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryDomain().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (t *Tech) Formulatech(ctx context.Context) ([]*Formula, error) {
+	result, err := t.Edges.FormulatechOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryFormulatech().All(ctx)
+	}
+	return result, err
+}
+
 func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	result, err := u.Edges.ProfilePhotoOrErr()
 	if IsNotLoaded(err) {
@@ -1572,6 +1708,14 @@ func (ug *UsersGroup) Features(ctx context.Context) ([]*Feature, error) {
 	result, err := ug.Edges.FeaturesOrErr()
 	if IsNotLoaded(err) {
 		result, err = ug.QueryFeatures().All(ctx)
+	}
+	return result, err
+}
+
+func (v *Vendor) VendorFk(ctx context.Context) ([]*CounterVendorFormula, error) {
+	result, err := v.Edges.VendorFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = v.QueryVendorFk().All(ctx)
 	}
 	return result, err
 }

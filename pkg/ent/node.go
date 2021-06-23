@@ -25,7 +25,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/counter"
+	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
+	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
@@ -39,6 +43,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -46,7 +51,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
+	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -67,8 +74,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatequestion"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
+	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
@@ -895,6 +904,187 @@ func (c *Comment) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (c *Counter) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     c.ID,
+		Type:   "Counter",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(c.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.ExternalId); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "externalId",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.NetworkManagerSystem); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "networkManagerSystem",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "CounterFamily",
+		Name: "counterfamily",
+	}
+	node.Edges[0].IDs, err = c.QueryCounterfamily().
+		Select(counterfamily.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "CounterVendorFormula",
+		Name: "counter_fk",
+	}
+	node.Edges[1].IDs, err = c.QueryCounterFk().
+		Select(countervendorformula.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (cf *CounterFamily) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     cf.ID,
+		Type:   "CounterFamily",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(cf.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(cf.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(cf.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Counter",
+		Name: "counterfamily",
+	}
+	node.Edges[0].IDs, err = cf.QueryCounterfamily().
+		Select(counter.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     cvf.ID,
+		Type:   "CounterVendorFormula",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(cvf.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(cvf.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(cvf.Mandatory); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "bool",
+		Name:  "mandatory",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Formula",
+		Name: "formula",
+	}
+	node.Edges[0].IDs, err = cvf.QueryFormula().
+		Select(formula.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Vendor",
+		Name: "vendor",
+	}
+	node.Edges[1].IDs, err = cvf.QueryVendor().
+		Select(vendor.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Counter",
+		Name: "counter",
+	}
+	node.Edges[2].IDs, err = cvf.QueryCounter().
+		Select(counter.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
@@ -941,6 +1131,61 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = c.QueryServices().
 		Select(service.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (d *Domain) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     d.ID,
+		Type:   "Domain",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(d.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(d.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(d.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Tech",
+		Name: "techdomain",
+	}
+	node.Edges[0].IDs, err = d.QueryTechdomain().
+		Select(tech.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Kpi",
+		Name: "kpidomain",
+	}
+	node.Edges[1].IDs, err = d.QueryKpidomain().
+		Select(kpi.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -2087,6 +2332,51 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (fct *FileCategoryType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     fct.ID,
+		Type:   "FileCategoryType",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(fct.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fct.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "LocationType",
+		Name: "location_type",
+	}
+	node.Edges[0].IDs, err = fct.QueryLocationType().
+		Select(locationtype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (fp *FloorPlan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fp.ID,
@@ -2606,6 +2896,79 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (f *Formula) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     f.ID,
+		Type:   "Formula",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(f.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Active); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "bool",
+		Name:  "active",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Tech",
+		Name: "tech",
+	}
+	node.Edges[0].IDs, err = f.QueryTech().
+		Select(tech.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Kpi",
+		Name: "kpi",
+	}
+	node.Edges[1].IDs, err = f.QueryKpi().
+		Select(kpi.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "CounterVendorFormula",
+		Name: "formula_fk",
+	}
+	node.Edges[2].IDs, err = f.QueryFormulaFk().
+		Select(countervendorformula.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     h.ID,
@@ -2680,6 +3043,61 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = h.QueryWorkOrder().
 		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (k *Kpi) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     k.ID,
+		Type:   "Kpi",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(k.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Domain",
+		Name: "domain",
+	}
+	node.Edges[0].IDs, err = k.QueryDomain().
+		Select(domain.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Formula",
+		Name: "formulakpi",
+	}
+	node.Edges[1].IDs, err = k.QueryFormulakpi().
+		Select(formula.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -2954,7 +3372,7 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     lt.ID,
 		Type:   "LocationType",
 		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(lt.CreateTime); err != nil {
@@ -3034,10 +3452,20 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
+		Type: "FileCategoryType",
+		Name: "file_category_type",
+	}
+	node.Edges[2].IDs, err = lt.QueryFileCategoryType().
+		Select(filecategorytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
 		Type: "SurveyTemplateCategory",
 		Name: "survey_template_categories",
 	}
-	node.Edges[2].IDs, err = lt.QuerySurveyTemplateCategories().
+	node.Edges[3].IDs, err = lt.QuerySurveyTemplateCategories().
 		Select(surveytemplatecategory.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -5181,6 +5609,61 @@ func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (t *Tech) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     t.ID,
+		Type:   "Tech",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(t.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(t.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Domain",
+		Name: "domain",
+	}
+	node.Edges[0].IDs, err = t.QueryDomain().
+		Select(domain.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Formula",
+		Name: "formulatech",
+	}
+	node.Edges[1].IDs, err = t.QueryFormulatech().
+		Select(formula.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
@@ -5398,6 +5881,51 @@ func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = ug.QueryFeatures().
 		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (v *Vendor) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     v.ID,
+		Type:   "Vendor",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(v.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(v.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(v.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "CounterVendorFormula",
+		Name: "vendor_fk",
+	}
+	node.Edges[0].IDs, err = v.QueryVendorFk().
+		Select(countervendorformula.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6053,10 +6581,46 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case counter.Table:
+		n, err := c.Counter.Query().
+			Where(counter.ID(id)).
+			CollectFields(ctx, "Counter").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case counterfamily.Table:
+		n, err := c.CounterFamily.Query().
+			Where(counterfamily.ID(id)).
+			CollectFields(ctx, "CounterFamily").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case countervendorformula.Table:
+		n, err := c.CounterVendorFormula.Query().
+			Where(countervendorformula.ID(id)).
+			CollectFields(ctx, "CounterVendorFormula").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case customer.Table:
 		n, err := c.Customer.Query().
 			Where(customer.ID(id)).
 			CollectFields(ctx, "Customer").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case domain.Table:
+		n, err := c.Domain.Query().
+			Where(domain.ID(id)).
+			CollectFields(ctx, "Domain").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -6179,6 +6743,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case filecategorytype.Table:
+		n, err := c.FileCategoryType.Query().
+			Where(filecategorytype.ID(id)).
+			CollectFields(ctx, "FileCategoryType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case floorplan.Table:
 		n, err := c.FloorPlan.Query().
 			Where(floorplan.ID(id)).
@@ -6242,10 +6815,28 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case formula.Table:
+		n, err := c.Formula.Query().
+			Where(formula.ID(id)).
+			CollectFields(ctx, "Formula").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case hyperlink.Table:
 		n, err := c.Hyperlink.Query().
 			Where(hyperlink.ID(id)).
 			CollectFields(ctx, "Hyperlink").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case kpi.Table:
+		n, err := c.Kpi.Query().
+			Where(kpi.ID(id)).
+			CollectFields(ctx, "Kpi").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -6431,6 +7022,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case tech.Table:
+		n, err := c.Tech.Query().
+			Where(tech.ID(id)).
+			CollectFields(ctx, "Tech").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case user.Table:
 		n, err := c.User.Query().
 			Where(user.ID(id)).
@@ -6444,6 +7044,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.UsersGroup.Query().
 			Where(usersgroup.ID(id)).
 			CollectFields(ctx, "UsersGroup").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case vendor.Table:
+		n, err := c.Vendor.Query().
+			Where(vendor.ID(id)).
+			CollectFields(ctx, "Vendor").
 			Only(ctx)
 		if err != nil {
 			return nil, err

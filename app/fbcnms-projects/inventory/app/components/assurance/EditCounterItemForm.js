@@ -8,17 +8,18 @@
  * @format
  */
 
-import React, {useState} from 'react';
-
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {useFormInput} from './common/useFormInput';
 import Grid from '@material-ui/core/Grid';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
+import {useFormInput} from './common/useFormInput';
+import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import fbt from 'fbt';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,10 +37,14 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     alignSelf: 'flex-end',
   },
+  title: {
+    marginLeft: '10px',
+  },
 }));
 
 export const EditCounterItemForm = props => {
   const classes = useStyles();
+
   const name = useFormInput(props.formValues.Name);
   const vendor = useFormInput(props.formValues.VendorName);
   const NetworkManagerSystem = useFormInput(
@@ -47,11 +52,16 @@ export const EditCounterItemForm = props => {
   );
   const CounterID = useFormInput(props.formValues.CounterID);
   const FamilyName = useFormInput(props.formValues.FamilyName);
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item s={12} sm={12} lg={12} xl={12}>
-          <Text variant="h5">Counters catalog</Text>
+          <ConfigueTitle
+            className={classes.title}
+            title={fbt('Counters catalog',' ')}
+            subtitle={''}
+          />
         </Grid>
         <Grid item s={12} sm={12} lg={12} xl={12}>
           <Card>

@@ -12,9 +12,9 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 
+import AddThresholdItemForm from './AddThresholdItemForm';
 import Text from '@symphony/design-system/components/Text';
 import ThresholdTypeItem from './ThresholdTypeItem';
-import AddThresholdItemForm from "./AddThresholdItemForm";
 
 const useStyles = makeStyles(theme => ({
   root: {

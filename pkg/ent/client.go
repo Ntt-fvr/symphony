@@ -21,7 +21,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/counter"
+	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
+	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
@@ -35,6 +39,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -42,7 +47,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
+	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -63,8 +70,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatequestion"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
+	"github.com/facebookincubator/symphony/pkg/ent/tech"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 	"github.com/facebookincubator/symphony/pkg/ent/workertype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
@@ -97,8 +106,16 @@ type Client struct {
 	CheckListItemDefinition *CheckListItemDefinitionClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Counter is the client for interacting with the Counter builders.
+	Counter *CounterClient
+	// CounterFamily is the client for interacting with the CounterFamily builders.
+	CounterFamily *CounterFamilyClient
+	// CounterVendorFormula is the client for interacting with the CounterVendorFormula builders.
+	CounterVendorFormula *CounterVendorFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// Domain is the client for interacting with the Domain builders.
+	Domain *DomainClient
 	// EntryPoint is the client for interacting with the EntryPoint builders.
 	EntryPoint *EntryPointClient
 	// Equipment is the client for interacting with the Equipment builders.
@@ -125,6 +142,8 @@ type Client struct {
 	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FileCategoryType is the client for interacting with the FileCategoryType builders.
+	FileCategoryType *FileCategoryTypeClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
 	FloorPlan *FloorPlanClient
 	// FloorPlanReferencePoint is the client for interacting with the FloorPlanReferencePoint builders.
@@ -139,8 +158,12 @@ type Client struct {
 	FlowExecutionTemplate *FlowExecutionTemplateClient
 	// FlowInstance is the client for interacting with the FlowInstance builders.
 	FlowInstance *FlowInstanceClient
+	// Formula is the client for interacting with the Formula builders.
+	Formula *FormulaClient
 	// Hyperlink is the client for interacting with the Hyperlink builders.
 	Hyperlink *HyperlinkClient
+	// Kpi is the client for interacting with the Kpi builders.
+	Kpi *KpiClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
@@ -181,10 +204,14 @@ type Client struct {
 	SurveyTemplateQuestion *SurveyTemplateQuestionClient
 	// SurveyWiFiScan is the client for interacting with the SurveyWiFiScan builders.
 	SurveyWiFiScan *SurveyWiFiScanClient
+	// Tech is the client for interacting with the Tech builders.
+	Tech *TechClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
 	UsersGroup *UsersGroupClient
+	// Vendor is the client for interacting with the Vendor builders.
+	Vendor *VendorClient
 	// WorkOrder is the client for interacting with the WorkOrder builders.
 	WorkOrder *WorkOrderClient
 	// WorkOrderDefinition is the client for interacting with the WorkOrderDefinition builders.
@@ -218,7 +245,11 @@ func (c *Client) init() {
 	c.CheckListItem = NewCheckListItemClient(c.config)
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.Counter = NewCounterClient(c.config)
+	c.CounterFamily = NewCounterFamilyClient(c.config)
+	c.CounterVendorFormula = NewCounterVendorFormulaClient(c.config)
 	c.Customer = NewCustomerClient(c.config)
+	c.Domain = NewDomainClient(c.config)
 	c.EntryPoint = NewEntryPointClient(c.config)
 	c.Equipment = NewEquipmentClient(c.config)
 	c.EquipmentCategory = NewEquipmentCategoryClient(c.config)
@@ -232,6 +263,7 @@ func (c *Client) init() {
 	c.ExportTask = NewExportTaskClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.FileCategoryType = NewFileCategoryTypeClient(c.config)
 	c.FloorPlan = NewFloorPlanClient(c.config)
 	c.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(c.config)
 	c.FloorPlanScale = NewFloorPlanScaleClient(c.config)
@@ -239,7 +271,9 @@ func (c *Client) init() {
 	c.FlowDraft = NewFlowDraftClient(c.config)
 	c.FlowExecutionTemplate = NewFlowExecutionTemplateClient(c.config)
 	c.FlowInstance = NewFlowInstanceClient(c.config)
+	c.Formula = NewFormulaClient(c.config)
 	c.Hyperlink = NewHyperlinkClient(c.config)
+	c.Kpi = NewKpiClient(c.config)
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.LocationType = NewLocationTypeClient(c.config)
@@ -260,8 +294,10 @@ func (c *Client) init() {
 	c.SurveyTemplateCategory = NewSurveyTemplateCategoryClient(c.config)
 	c.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(c.config)
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
+	c.Tech = NewTechClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
+	c.Vendor = NewVendorClient(c.config)
 	c.WorkOrder = NewWorkOrderClient(c.config)
 	c.WorkOrderDefinition = NewWorkOrderDefinitionClient(c.config)
 	c.WorkOrderTemplate = NewWorkOrderTemplateClient(c.config)
@@ -307,7 +343,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItem:               NewCheckListItemClient(cfg),
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
+		Counter:                     NewCounterClient(cfg),
+		CounterFamily:               NewCounterFamilyClient(cfg),
+		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
+		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
 		Equipment:                   NewEquipmentClient(cfg),
 		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
@@ -321,6 +361,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
+		FileCategoryType:            NewFileCategoryTypeClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
@@ -328,7 +369,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FlowDraft:                   NewFlowDraftClient(cfg),
 		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
 		FlowInstance:                NewFlowInstanceClient(cfg),
+		Formula:                     NewFormulaClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
+		Kpi:                         NewKpiClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
@@ -349,8 +392,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyTemplateCategory:      NewSurveyTemplateCategoryClient(cfg),
 		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
+		Tech:                        NewTechClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
+		Vendor:                      NewVendorClient(cfg),
 		WorkOrder:                   NewWorkOrderClient(cfg),
 		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
 		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
@@ -379,7 +424,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItem:               NewCheckListItemClient(cfg),
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
+		Counter:                     NewCounterClient(cfg),
+		CounterFamily:               NewCounterFamilyClient(cfg),
+		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
+		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
 		Equipment:                   NewEquipmentClient(cfg),
 		EquipmentCategory:           NewEquipmentCategoryClient(cfg),
@@ -393,6 +442,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
+		FileCategoryType:            NewFileCategoryTypeClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
@@ -400,7 +450,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FlowDraft:                   NewFlowDraftClient(cfg),
 		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
 		FlowInstance:                NewFlowInstanceClient(cfg),
+		Formula:                     NewFormulaClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
+		Kpi:                         NewKpiClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
@@ -421,8 +473,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyTemplateCategory:      NewSurveyTemplateCategoryClient(cfg),
 		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
+		Tech:                        NewTechClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
+		Vendor:                      NewVendorClient(cfg),
 		WorkOrder:                   NewWorkOrderClient(cfg),
 		WorkOrderDefinition:         NewWorkOrderDefinitionClient(cfg),
 		WorkOrderTemplate:           NewWorkOrderTemplateClient(cfg),
@@ -464,7 +518,11 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItem.Use(hooks...)
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
+	c.Counter.Use(hooks...)
+	c.CounterFamily.Use(hooks...)
+	c.CounterVendorFormula.Use(hooks...)
 	c.Customer.Use(hooks...)
+	c.Domain.Use(hooks...)
 	c.EntryPoint.Use(hooks...)
 	c.Equipment.Use(hooks...)
 	c.EquipmentCategory.Use(hooks...)
@@ -478,6 +536,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ExportTask.Use(hooks...)
 	c.Feature.Use(hooks...)
 	c.File.Use(hooks...)
+	c.FileCategoryType.Use(hooks...)
 	c.FloorPlan.Use(hooks...)
 	c.FloorPlanReferencePoint.Use(hooks...)
 	c.FloorPlanScale.Use(hooks...)
@@ -485,7 +544,9 @@ func (c *Client) Use(hooks ...Hook) {
 	c.FlowDraft.Use(hooks...)
 	c.FlowExecutionTemplate.Use(hooks...)
 	c.FlowInstance.Use(hooks...)
+	c.Formula.Use(hooks...)
 	c.Hyperlink.Use(hooks...)
+	c.Kpi.Use(hooks...)
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
 	c.LocationType.Use(hooks...)
@@ -506,8 +567,10 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyTemplateCategory.Use(hooks...)
 	c.SurveyTemplateQuestion.Use(hooks...)
 	c.SurveyWiFiScan.Use(hooks...)
+	c.Tech.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
+	c.Vendor.Use(hooks...)
 	c.WorkOrder.Use(hooks...)
 	c.WorkOrderDefinition.Use(hooks...)
 	c.WorkOrderTemplate.Use(hooks...)
@@ -1659,6 +1722,369 @@ func (c *CommentClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], comment.Hooks[:]...)
 }
 
+// CounterClient is a client for the Counter schema.
+type CounterClient struct {
+	config
+}
+
+// NewCounterClient returns a client for the Counter from the given config.
+func NewCounterClient(c config) *CounterClient {
+	return &CounterClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `counter.Hooks(f(g(h())))`.
+func (c *CounterClient) Use(hooks ...Hook) {
+	c.hooks.Counter = append(c.hooks.Counter, hooks...)
+}
+
+// Create returns a create builder for Counter.
+func (c *CounterClient) Create() *CounterCreate {
+	mutation := newCounterMutation(c.config, OpCreate)
+	return &CounterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Counter entities.
+func (c *CounterClient) CreateBulk(builders ...*CounterCreate) *CounterCreateBulk {
+	return &CounterCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Counter.
+func (c *CounterClient) Update() *CounterUpdate {
+	mutation := newCounterMutation(c.config, OpUpdate)
+	return &CounterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CounterClient) UpdateOne(co *Counter) *CounterUpdateOne {
+	mutation := newCounterMutation(c.config, OpUpdateOne, withCounter(co))
+	return &CounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CounterClient) UpdateOneID(id int) *CounterUpdateOne {
+	mutation := newCounterMutation(c.config, OpUpdateOne, withCounterID(id))
+	return &CounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Counter.
+func (c *CounterClient) Delete() *CounterDelete {
+	mutation := newCounterMutation(c.config, OpDelete)
+	return &CounterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *CounterClient) DeleteOne(co *Counter) *CounterDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *CounterClient) DeleteOneID(id int) *CounterDeleteOne {
+	builder := c.Delete().Where(counter.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CounterDeleteOne{builder}
+}
+
+// Query returns a query builder for Counter.
+func (c *CounterClient) Query() *CounterQuery {
+	return &CounterQuery{config: c.config}
+}
+
+// Get returns a Counter entity by its id.
+func (c *CounterClient) Get(ctx context.Context, id int) (*Counter, error) {
+	return c.Query().Where(counter.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CounterClient) GetX(ctx context.Context, id int) *Counter {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryCounterfamily queries the counterfamily edge of a Counter.
+func (c *CounterClient) QueryCounterfamily(co *Counter) *CounterFamilyQuery {
+	query := &CounterFamilyQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counter.Table, counter.FieldID, id),
+			sqlgraph.To(counterfamily.Table, counterfamily.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, counter.CounterfamilyTable, counter.CounterfamilyColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCounterFk queries the counter_fk edge of a Counter.
+func (c *CounterClient) QueryCounterFk(co *Counter) *CounterVendorFormulaQuery {
+	query := &CounterVendorFormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counter.Table, counter.FieldID, id),
+			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, counter.CounterFkTable, counter.CounterFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CounterClient) Hooks() []Hook {
+	hooks := c.hooks.Counter
+	return append(hooks[:len(hooks):len(hooks)], counter.Hooks[:]...)
+}
+
+// CounterFamilyClient is a client for the CounterFamily schema.
+type CounterFamilyClient struct {
+	config
+}
+
+// NewCounterFamilyClient returns a client for the CounterFamily from the given config.
+func NewCounterFamilyClient(c config) *CounterFamilyClient {
+	return &CounterFamilyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `counterfamily.Hooks(f(g(h())))`.
+func (c *CounterFamilyClient) Use(hooks ...Hook) {
+	c.hooks.CounterFamily = append(c.hooks.CounterFamily, hooks...)
+}
+
+// Create returns a create builder for CounterFamily.
+func (c *CounterFamilyClient) Create() *CounterFamilyCreate {
+	mutation := newCounterFamilyMutation(c.config, OpCreate)
+	return &CounterFamilyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CounterFamily entities.
+func (c *CounterFamilyClient) CreateBulk(builders ...*CounterFamilyCreate) *CounterFamilyCreateBulk {
+	return &CounterFamilyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CounterFamily.
+func (c *CounterFamilyClient) Update() *CounterFamilyUpdate {
+	mutation := newCounterFamilyMutation(c.config, OpUpdate)
+	return &CounterFamilyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CounterFamilyClient) UpdateOne(cf *CounterFamily) *CounterFamilyUpdateOne {
+	mutation := newCounterFamilyMutation(c.config, OpUpdateOne, withCounterFamily(cf))
+	return &CounterFamilyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CounterFamilyClient) UpdateOneID(id int) *CounterFamilyUpdateOne {
+	mutation := newCounterFamilyMutation(c.config, OpUpdateOne, withCounterFamilyID(id))
+	return &CounterFamilyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CounterFamily.
+func (c *CounterFamilyClient) Delete() *CounterFamilyDelete {
+	mutation := newCounterFamilyMutation(c.config, OpDelete)
+	return &CounterFamilyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *CounterFamilyClient) DeleteOne(cf *CounterFamily) *CounterFamilyDeleteOne {
+	return c.DeleteOneID(cf.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *CounterFamilyClient) DeleteOneID(id int) *CounterFamilyDeleteOne {
+	builder := c.Delete().Where(counterfamily.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CounterFamilyDeleteOne{builder}
+}
+
+// Query returns a query builder for CounterFamily.
+func (c *CounterFamilyClient) Query() *CounterFamilyQuery {
+	return &CounterFamilyQuery{config: c.config}
+}
+
+// Get returns a CounterFamily entity by its id.
+func (c *CounterFamilyClient) Get(ctx context.Context, id int) (*CounterFamily, error) {
+	return c.Query().Where(counterfamily.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CounterFamilyClient) GetX(ctx context.Context, id int) *CounterFamily {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryCounterfamily queries the counterfamily edge of a CounterFamily.
+func (c *CounterFamilyClient) QueryCounterfamily(cf *CounterFamily) *CounterQuery {
+	query := &CounterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := cf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counterfamily.Table, counterfamily.FieldID, id),
+			sqlgraph.To(counter.Table, counter.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, counterfamily.CounterfamilyTable, counterfamily.CounterfamilyColumn),
+		)
+		fromV = sqlgraph.Neighbors(cf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CounterFamilyClient) Hooks() []Hook {
+	hooks := c.hooks.CounterFamily
+	return append(hooks[:len(hooks):len(hooks)], counterfamily.Hooks[:]...)
+}
+
+// CounterVendorFormulaClient is a client for the CounterVendorFormula schema.
+type CounterVendorFormulaClient struct {
+	config
+}
+
+// NewCounterVendorFormulaClient returns a client for the CounterVendorFormula from the given config.
+func NewCounterVendorFormulaClient(c config) *CounterVendorFormulaClient {
+	return &CounterVendorFormulaClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `countervendorformula.Hooks(f(g(h())))`.
+func (c *CounterVendorFormulaClient) Use(hooks ...Hook) {
+	c.hooks.CounterVendorFormula = append(c.hooks.CounterVendorFormula, hooks...)
+}
+
+// Create returns a create builder for CounterVendorFormula.
+func (c *CounterVendorFormulaClient) Create() *CounterVendorFormulaCreate {
+	mutation := newCounterVendorFormulaMutation(c.config, OpCreate)
+	return &CounterVendorFormulaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CounterVendorFormula entities.
+func (c *CounterVendorFormulaClient) CreateBulk(builders ...*CounterVendorFormulaCreate) *CounterVendorFormulaCreateBulk {
+	return &CounterVendorFormulaCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CounterVendorFormula.
+func (c *CounterVendorFormulaClient) Update() *CounterVendorFormulaUpdate {
+	mutation := newCounterVendorFormulaMutation(c.config, OpUpdate)
+	return &CounterVendorFormulaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CounterVendorFormulaClient) UpdateOne(cvf *CounterVendorFormula) *CounterVendorFormulaUpdateOne {
+	mutation := newCounterVendorFormulaMutation(c.config, OpUpdateOne, withCounterVendorFormula(cvf))
+	return &CounterVendorFormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CounterVendorFormulaClient) UpdateOneID(id int) *CounterVendorFormulaUpdateOne {
+	mutation := newCounterVendorFormulaMutation(c.config, OpUpdateOne, withCounterVendorFormulaID(id))
+	return &CounterVendorFormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CounterVendorFormula.
+func (c *CounterVendorFormulaClient) Delete() *CounterVendorFormulaDelete {
+	mutation := newCounterVendorFormulaMutation(c.config, OpDelete)
+	return &CounterVendorFormulaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *CounterVendorFormulaClient) DeleteOne(cvf *CounterVendorFormula) *CounterVendorFormulaDeleteOne {
+	return c.DeleteOneID(cvf.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *CounterVendorFormulaClient) DeleteOneID(id int) *CounterVendorFormulaDeleteOne {
+	builder := c.Delete().Where(countervendorformula.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CounterVendorFormulaDeleteOne{builder}
+}
+
+// Query returns a query builder for CounterVendorFormula.
+func (c *CounterVendorFormulaClient) Query() *CounterVendorFormulaQuery {
+	return &CounterVendorFormulaQuery{config: c.config}
+}
+
+// Get returns a CounterVendorFormula entity by its id.
+func (c *CounterVendorFormulaClient) Get(ctx context.Context, id int) (*CounterVendorFormula, error) {
+	return c.Query().Where(countervendorformula.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CounterVendorFormulaClient) GetX(ctx context.Context, id int) *CounterVendorFormula {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFormula queries the formula edge of a CounterVendorFormula.
+func (c *CounterVendorFormulaClient) QueryFormula(cvf *CounterVendorFormula) *FormulaQuery {
+	query := &FormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := cvf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(countervendorformula.Table, countervendorformula.FieldID, id),
+			sqlgraph.To(formula.Table, formula.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, countervendorformula.FormulaTable, countervendorformula.FormulaColumn),
+		)
+		fromV = sqlgraph.Neighbors(cvf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVendor queries the vendor edge of a CounterVendorFormula.
+func (c *CounterVendorFormulaClient) QueryVendor(cvf *CounterVendorFormula) *VendorQuery {
+	query := &VendorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := cvf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(countervendorformula.Table, countervendorformula.FieldID, id),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, countervendorformula.VendorTable, countervendorformula.VendorColumn),
+		)
+		fromV = sqlgraph.Neighbors(cvf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCounter queries the counter edge of a CounterVendorFormula.
+func (c *CounterVendorFormulaClient) QueryCounter(cvf *CounterVendorFormula) *CounterQuery {
+	query := &CounterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := cvf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(countervendorformula.Table, countervendorformula.FieldID, id),
+			sqlgraph.To(counter.Table, counter.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, countervendorformula.CounterTable, countervendorformula.CounterColumn),
+		)
+		fromV = sqlgraph.Neighbors(cvf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CounterVendorFormulaClient) Hooks() []Hook {
+	hooks := c.hooks.CounterVendorFormula
+	return append(hooks[:len(hooks):len(hooks)], countervendorformula.Hooks[:]...)
+}
+
 // CustomerClient is a client for the Customer schema.
 type CustomerClient struct {
 	config
@@ -1762,6 +2188,127 @@ func (c *CustomerClient) QueryServices(cu *Customer) *ServiceQuery {
 func (c *CustomerClient) Hooks() []Hook {
 	hooks := c.hooks.Customer
 	return append(hooks[:len(hooks):len(hooks)], customer.Hooks[:]...)
+}
+
+// DomainClient is a client for the Domain schema.
+type DomainClient struct {
+	config
+}
+
+// NewDomainClient returns a client for the Domain from the given config.
+func NewDomainClient(c config) *DomainClient {
+	return &DomainClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `domain.Hooks(f(g(h())))`.
+func (c *DomainClient) Use(hooks ...Hook) {
+	c.hooks.Domain = append(c.hooks.Domain, hooks...)
+}
+
+// Create returns a create builder for Domain.
+func (c *DomainClient) Create() *DomainCreate {
+	mutation := newDomainMutation(c.config, OpCreate)
+	return &DomainCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Domain entities.
+func (c *DomainClient) CreateBulk(builders ...*DomainCreate) *DomainCreateBulk {
+	return &DomainCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Domain.
+func (c *DomainClient) Update() *DomainUpdate {
+	mutation := newDomainMutation(c.config, OpUpdate)
+	return &DomainUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DomainClient) UpdateOne(d *Domain) *DomainUpdateOne {
+	mutation := newDomainMutation(c.config, OpUpdateOne, withDomain(d))
+	return &DomainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DomainClient) UpdateOneID(id int) *DomainUpdateOne {
+	mutation := newDomainMutation(c.config, OpUpdateOne, withDomainID(id))
+	return &DomainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Domain.
+func (c *DomainClient) Delete() *DomainDelete {
+	mutation := newDomainMutation(c.config, OpDelete)
+	return &DomainDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *DomainClient) DeleteOne(d *Domain) *DomainDeleteOne {
+	return c.DeleteOneID(d.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *DomainClient) DeleteOneID(id int) *DomainDeleteOne {
+	builder := c.Delete().Where(domain.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DomainDeleteOne{builder}
+}
+
+// Query returns a query builder for Domain.
+func (c *DomainClient) Query() *DomainQuery {
+	return &DomainQuery{config: c.config}
+}
+
+// Get returns a Domain entity by its id.
+func (c *DomainClient) Get(ctx context.Context, id int) (*Domain, error) {
+	return c.Query().Where(domain.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DomainClient) GetX(ctx context.Context, id int) *Domain {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTechdomain queries the techdomain edge of a Domain.
+func (c *DomainClient) QueryTechdomain(d *Domain) *TechQuery {
+	query := &TechQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(domain.Table, domain.FieldID, id),
+			sqlgraph.To(tech.Table, tech.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, domain.TechdomainTable, domain.TechdomainColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryKpidomain queries the kpidomain edge of a Domain.
+func (c *DomainClient) QueryKpidomain(d *Domain) *KpiQuery {
+	query := &KpiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(domain.Table, domain.FieldID, id),
+			sqlgraph.To(kpi.Table, kpi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, domain.KpidomainTable, domain.KpidomainColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DomainClient) Hooks() []Hook {
+	hooks := c.hooks.Domain
+	return append(hooks[:len(hooks):len(hooks)], domain.Hooks[:]...)
 }
 
 // EntryPointClient is a client for the EntryPoint schema.
@@ -3721,6 +4268,111 @@ func (c *FileClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], file.Hooks[:]...)
 }
 
+// FileCategoryTypeClient is a client for the FileCategoryType schema.
+type FileCategoryTypeClient struct {
+	config
+}
+
+// NewFileCategoryTypeClient returns a client for the FileCategoryType from the given config.
+func NewFileCategoryTypeClient(c config) *FileCategoryTypeClient {
+	return &FileCategoryTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `filecategorytype.Hooks(f(g(h())))`.
+func (c *FileCategoryTypeClient) Use(hooks ...Hook) {
+	c.hooks.FileCategoryType = append(c.hooks.FileCategoryType, hooks...)
+}
+
+// Create returns a create builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Create() *FileCategoryTypeCreate {
+	mutation := newFileCategoryTypeMutation(c.config, OpCreate)
+	return &FileCategoryTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FileCategoryType entities.
+func (c *FileCategoryTypeClient) CreateBulk(builders ...*FileCategoryTypeCreate) *FileCategoryTypeCreateBulk {
+	return &FileCategoryTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Update() *FileCategoryTypeUpdate {
+	mutation := newFileCategoryTypeMutation(c.config, OpUpdate)
+	return &FileCategoryTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FileCategoryTypeClient) UpdateOne(fct *FileCategoryType) *FileCategoryTypeUpdateOne {
+	mutation := newFileCategoryTypeMutation(c.config, OpUpdateOne, withFileCategoryType(fct))
+	return &FileCategoryTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FileCategoryTypeClient) UpdateOneID(id int) *FileCategoryTypeUpdateOne {
+	mutation := newFileCategoryTypeMutation(c.config, OpUpdateOne, withFileCategoryTypeID(id))
+	return &FileCategoryTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Delete() *FileCategoryTypeDelete {
+	mutation := newFileCategoryTypeMutation(c.config, OpDelete)
+	return &FileCategoryTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FileCategoryTypeClient) DeleteOne(fct *FileCategoryType) *FileCategoryTypeDeleteOne {
+	return c.DeleteOneID(fct.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FileCategoryTypeClient) DeleteOneID(id int) *FileCategoryTypeDeleteOne {
+	builder := c.Delete().Where(filecategorytype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FileCategoryTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for FileCategoryType.
+func (c *FileCategoryTypeClient) Query() *FileCategoryTypeQuery {
+	return &FileCategoryTypeQuery{config: c.config}
+}
+
+// Get returns a FileCategoryType entity by its id.
+func (c *FileCategoryTypeClient) Get(ctx context.Context, id int) (*FileCategoryType, error) {
+	return c.Query().Where(filecategorytype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FileCategoryTypeClient) GetX(ctx context.Context, id int) *FileCategoryType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLocationType queries the location_type edge of a FileCategoryType.
+func (c *FileCategoryTypeClient) QueryLocationType(fct *FileCategoryType) *LocationTypeQuery {
+	query := &LocationTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fct.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(filecategorytype.Table, filecategorytype.FieldID, id),
+			sqlgraph.To(locationtype.Table, locationtype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, filecategorytype.LocationTypeTable, filecategorytype.LocationTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(fct.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FileCategoryTypeClient) Hooks() []Hook {
+	hooks := c.hooks.FileCategoryType
+	return append(hooks[:len(hooks):len(hooks)], filecategorytype.Hooks[:]...)
+}
+
 // FloorPlanClient is a client for the FloorPlan schema.
 type FloorPlanClient struct {
 	config
@@ -4552,6 +5204,143 @@ func (c *FlowInstanceClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], flowinstance.Hooks[:]...)
 }
 
+// FormulaClient is a client for the Formula schema.
+type FormulaClient struct {
+	config
+}
+
+// NewFormulaClient returns a client for the Formula from the given config.
+func NewFormulaClient(c config) *FormulaClient {
+	return &FormulaClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `formula.Hooks(f(g(h())))`.
+func (c *FormulaClient) Use(hooks ...Hook) {
+	c.hooks.Formula = append(c.hooks.Formula, hooks...)
+}
+
+// Create returns a create builder for Formula.
+func (c *FormulaClient) Create() *FormulaCreate {
+	mutation := newFormulaMutation(c.config, OpCreate)
+	return &FormulaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Formula entities.
+func (c *FormulaClient) CreateBulk(builders ...*FormulaCreate) *FormulaCreateBulk {
+	return &FormulaCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Formula.
+func (c *FormulaClient) Update() *FormulaUpdate {
+	mutation := newFormulaMutation(c.config, OpUpdate)
+	return &FormulaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FormulaClient) UpdateOne(f *Formula) *FormulaUpdateOne {
+	mutation := newFormulaMutation(c.config, OpUpdateOne, withFormula(f))
+	return &FormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FormulaClient) UpdateOneID(id int) *FormulaUpdateOne {
+	mutation := newFormulaMutation(c.config, OpUpdateOne, withFormulaID(id))
+	return &FormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Formula.
+func (c *FormulaClient) Delete() *FormulaDelete {
+	mutation := newFormulaMutation(c.config, OpDelete)
+	return &FormulaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FormulaClient) DeleteOne(f *Formula) *FormulaDeleteOne {
+	return c.DeleteOneID(f.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FormulaClient) DeleteOneID(id int) *FormulaDeleteOne {
+	builder := c.Delete().Where(formula.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FormulaDeleteOne{builder}
+}
+
+// Query returns a query builder for Formula.
+func (c *FormulaClient) Query() *FormulaQuery {
+	return &FormulaQuery{config: c.config}
+}
+
+// Get returns a Formula entity by its id.
+func (c *FormulaClient) Get(ctx context.Context, id int) (*Formula, error) {
+	return c.Query().Where(formula.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FormulaClient) GetX(ctx context.Context, id int) *Formula {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTech queries the tech edge of a Formula.
+func (c *FormulaClient) QueryTech(f *Formula) *TechQuery {
+	query := &TechQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(formula.Table, formula.FieldID, id),
+			sqlgraph.To(tech.Table, tech.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, formula.TechTable, formula.TechColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryKpi queries the kpi edge of a Formula.
+func (c *FormulaClient) QueryKpi(f *Formula) *KpiQuery {
+	query := &KpiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(formula.Table, formula.FieldID, id),
+			sqlgraph.To(kpi.Table, kpi.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, formula.KpiTable, formula.KpiColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFormulaFk queries the formula_fk edge of a Formula.
+func (c *FormulaClient) QueryFormulaFk(f *Formula) *CounterVendorFormulaQuery {
+	query := &CounterVendorFormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(formula.Table, formula.FieldID, id),
+			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, formula.FormulaFkTable, formula.FormulaFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FormulaClient) Hooks() []Hook {
+	hooks := c.hooks.Formula
+	return append(hooks[:len(hooks):len(hooks)], formula.Hooks[:]...)
+}
+
 // HyperlinkClient is a client for the Hyperlink schema.
 type HyperlinkClient struct {
 	config
@@ -4687,6 +5476,127 @@ func (c *HyperlinkClient) QueryWorkOrder(h *Hyperlink) *WorkOrderQuery {
 func (c *HyperlinkClient) Hooks() []Hook {
 	hooks := c.hooks.Hyperlink
 	return append(hooks[:len(hooks):len(hooks)], hyperlink.Hooks[:]...)
+}
+
+// KpiClient is a client for the Kpi schema.
+type KpiClient struct {
+	config
+}
+
+// NewKpiClient returns a client for the Kpi from the given config.
+func NewKpiClient(c config) *KpiClient {
+	return &KpiClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kpi.Hooks(f(g(h())))`.
+func (c *KpiClient) Use(hooks ...Hook) {
+	c.hooks.Kpi = append(c.hooks.Kpi, hooks...)
+}
+
+// Create returns a create builder for Kpi.
+func (c *KpiClient) Create() *KpiCreate {
+	mutation := newKpiMutation(c.config, OpCreate)
+	return &KpiCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Kpi entities.
+func (c *KpiClient) CreateBulk(builders ...*KpiCreate) *KpiCreateBulk {
+	return &KpiCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Kpi.
+func (c *KpiClient) Update() *KpiUpdate {
+	mutation := newKpiMutation(c.config, OpUpdate)
+	return &KpiUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KpiClient) UpdateOne(k *Kpi) *KpiUpdateOne {
+	mutation := newKpiMutation(c.config, OpUpdateOne, withKpi(k))
+	return &KpiUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KpiClient) UpdateOneID(id int) *KpiUpdateOne {
+	mutation := newKpiMutation(c.config, OpUpdateOne, withKpiID(id))
+	return &KpiUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Kpi.
+func (c *KpiClient) Delete() *KpiDelete {
+	mutation := newKpiMutation(c.config, OpDelete)
+	return &KpiDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KpiClient) DeleteOne(k *Kpi) *KpiDeleteOne {
+	return c.DeleteOneID(k.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KpiClient) DeleteOneID(id int) *KpiDeleteOne {
+	builder := c.Delete().Where(kpi.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KpiDeleteOne{builder}
+}
+
+// Query returns a query builder for Kpi.
+func (c *KpiClient) Query() *KpiQuery {
+	return &KpiQuery{config: c.config}
+}
+
+// Get returns a Kpi entity by its id.
+func (c *KpiClient) Get(ctx context.Context, id int) (*Kpi, error) {
+	return c.Query().Where(kpi.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KpiClient) GetX(ctx context.Context, id int) *Kpi {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDomain queries the domain edge of a Kpi.
+func (c *KpiClient) QueryDomain(k *Kpi) *DomainQuery {
+	query := &DomainQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := k.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpi.Table, kpi.FieldID, id),
+			sqlgraph.To(domain.Table, domain.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kpi.DomainTable, kpi.DomainColumn),
+		)
+		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFormulakpi queries the formulakpi edge of a Kpi.
+func (c *KpiClient) QueryFormulakpi(k *Kpi) *FormulaQuery {
+	query := &FormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := k.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpi.Table, kpi.FieldID, id),
+			sqlgraph.To(formula.Table, formula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kpi.FormulakpiTable, kpi.FormulakpiColumn),
+		)
+		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KpiClient) Hooks() []Hook {
+	hooks := c.hooks.Kpi
+	return append(hooks[:len(hooks):len(hooks)], kpi.Hooks[:]...)
 }
 
 // LinkClient is a client for the Link schema.
@@ -5231,6 +6141,22 @@ func (c *LocationTypeClient) QueryPropertyTypes(lt *LocationType) *PropertyTypeQ
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.PropertyTypesTable, locationtype.PropertyTypesColumn),
+		)
+		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFileCategoryType queries the file_category_type edge of a LocationType.
+func (c *LocationTypeClient) QueryFileCategoryType(lt *LocationType) *FileCategoryTypeQuery {
+	query := &FileCategoryTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := lt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
+			sqlgraph.To(filecategorytype.Table, filecategorytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.FileCategoryTypeTable, locationtype.FileCategoryTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
 		return fromV, nil
@@ -7957,6 +8883,127 @@ func (c *SurveyWiFiScanClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], surveywifiscan.Hooks[:]...)
 }
 
+// TechClient is a client for the Tech schema.
+type TechClient struct {
+	config
+}
+
+// NewTechClient returns a client for the Tech from the given config.
+func NewTechClient(c config) *TechClient {
+	return &TechClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tech.Hooks(f(g(h())))`.
+func (c *TechClient) Use(hooks ...Hook) {
+	c.hooks.Tech = append(c.hooks.Tech, hooks...)
+}
+
+// Create returns a create builder for Tech.
+func (c *TechClient) Create() *TechCreate {
+	mutation := newTechMutation(c.config, OpCreate)
+	return &TechCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Tech entities.
+func (c *TechClient) CreateBulk(builders ...*TechCreate) *TechCreateBulk {
+	return &TechCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Tech.
+func (c *TechClient) Update() *TechUpdate {
+	mutation := newTechMutation(c.config, OpUpdate)
+	return &TechUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TechClient) UpdateOne(t *Tech) *TechUpdateOne {
+	mutation := newTechMutation(c.config, OpUpdateOne, withTech(t))
+	return &TechUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TechClient) UpdateOneID(id int) *TechUpdateOne {
+	mutation := newTechMutation(c.config, OpUpdateOne, withTechID(id))
+	return &TechUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Tech.
+func (c *TechClient) Delete() *TechDelete {
+	mutation := newTechMutation(c.config, OpDelete)
+	return &TechDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *TechClient) DeleteOne(t *Tech) *TechDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *TechClient) DeleteOneID(id int) *TechDeleteOne {
+	builder := c.Delete().Where(tech.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TechDeleteOne{builder}
+}
+
+// Query returns a query builder for Tech.
+func (c *TechClient) Query() *TechQuery {
+	return &TechQuery{config: c.config}
+}
+
+// Get returns a Tech entity by its id.
+func (c *TechClient) Get(ctx context.Context, id int) (*Tech, error) {
+	return c.Query().Where(tech.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TechClient) GetX(ctx context.Context, id int) *Tech {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDomain queries the domain edge of a Tech.
+func (c *TechClient) QueryDomain(t *Tech) *DomainQuery {
+	query := &DomainQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tech.Table, tech.FieldID, id),
+			sqlgraph.To(domain.Table, domain.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tech.DomainTable, tech.DomainColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFormulatech queries the formulatech edge of a Tech.
+func (c *TechClient) QueryFormulatech(t *Tech) *FormulaQuery {
+	query := &FormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tech.Table, tech.FieldID, id),
+			sqlgraph.To(formula.Table, formula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tech.FormulatechTable, tech.FormulatechColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TechClient) Hooks() []Hook {
+	hooks := c.hooks.Tech
+	return append(hooks[:len(hooks):len(hooks)], tech.Hooks[:]...)
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -8277,6 +9324,111 @@ func (c *UsersGroupClient) QueryFeatures(ug *UsersGroup) *FeatureQuery {
 func (c *UsersGroupClient) Hooks() []Hook {
 	hooks := c.hooks.UsersGroup
 	return append(hooks[:len(hooks):len(hooks)], usersgroup.Hooks[:]...)
+}
+
+// VendorClient is a client for the Vendor schema.
+type VendorClient struct {
+	config
+}
+
+// NewVendorClient returns a client for the Vendor from the given config.
+func NewVendorClient(c config) *VendorClient {
+	return &VendorClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `vendor.Hooks(f(g(h())))`.
+func (c *VendorClient) Use(hooks ...Hook) {
+	c.hooks.Vendor = append(c.hooks.Vendor, hooks...)
+}
+
+// Create returns a create builder for Vendor.
+func (c *VendorClient) Create() *VendorCreate {
+	mutation := newVendorMutation(c.config, OpCreate)
+	return &VendorCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Vendor entities.
+func (c *VendorClient) CreateBulk(builders ...*VendorCreate) *VendorCreateBulk {
+	return &VendorCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Vendor.
+func (c *VendorClient) Update() *VendorUpdate {
+	mutation := newVendorMutation(c.config, OpUpdate)
+	return &VendorUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VendorClient) UpdateOne(v *Vendor) *VendorUpdateOne {
+	mutation := newVendorMutation(c.config, OpUpdateOne, withVendor(v))
+	return &VendorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VendorClient) UpdateOneID(id int) *VendorUpdateOne {
+	mutation := newVendorMutation(c.config, OpUpdateOne, withVendorID(id))
+	return &VendorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Vendor.
+func (c *VendorClient) Delete() *VendorDelete {
+	mutation := newVendorMutation(c.config, OpDelete)
+	return &VendorDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *VendorClient) DeleteOne(v *Vendor) *VendorDeleteOne {
+	return c.DeleteOneID(v.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *VendorClient) DeleteOneID(id int) *VendorDeleteOne {
+	builder := c.Delete().Where(vendor.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VendorDeleteOne{builder}
+}
+
+// Query returns a query builder for Vendor.
+func (c *VendorClient) Query() *VendorQuery {
+	return &VendorQuery{config: c.config}
+}
+
+// Get returns a Vendor entity by its id.
+func (c *VendorClient) Get(ctx context.Context, id int) (*Vendor, error) {
+	return c.Query().Where(vendor.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VendorClient) GetX(ctx context.Context, id int) *Vendor {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryVendorFk queries the vendor_fk edge of a Vendor.
+func (c *VendorClient) QueryVendorFk(v *Vendor) *CounterVendorFormulaQuery {
+	query := &CounterVendorFormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vendor.Table, vendor.FieldID, id),
+			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorFkTable, vendor.VendorFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VendorClient) Hooks() []Hook {
+	hooks := c.hooks.Vendor
+	return append(hooks[:len(hooks):len(hooks)], vendor.Hooks[:]...)
 }
 
 // WorkOrderClient is a client for the WorkOrder schema.

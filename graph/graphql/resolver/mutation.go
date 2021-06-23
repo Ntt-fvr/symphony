@@ -260,6 +260,28 @@ func (r mutationResolver) AddPropertyTypes(
 	return nil
 }
 
+func (r mutationResolver) AddFileCategoryType(
+	ctx context.Context, parentSetter func(ptc *ent.FileCategoryTypeCreate), inputs ...*pkgmodels.FileCategoryTypeInput,
+) error {
+	var (
+		client   = r.ClientFrom(ctx).FileCategoryType
+		builders = make([]*ent.FileCategoryTypeCreate, len(inputs))
+	)
+	for i, input := range inputs {
+		builders[i] = client.Create().
+			SetName(input.Name)
+		parentSetter(builders[i])
+	}
+	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
+		r.logger.For(ctx).
+			Error("cannot create file category types",
+				zap.Error(err),
+			)
+		return err
+	}
+	return nil
+}
+
 func (r mutationResolver) AddSurveyTemplateCategories(
 	ctx context.Context, locationTypeID int, inputs ...*models.SurveyTemplateCategoryInput,
 ) ([]*ent.SurveyTemplateCategory, error) {
@@ -655,6 +677,11 @@ func (r mutationResolver) AddLocationType(
 	if err := r.AddPropertyTypes(ctx, func(ptc *ent.PropertyTypeCreate) {
 		ptc.SetLocationTypeID(typ.ID)
 	}, input.Properties...); err != nil {
+		return nil, err
+	}
+	if err := r.AddFileCategoryType(ctx, func(fctc *ent.FileCategoryTypeCreate) {
+		fctc.SetLocationTypeID(typ.ID)
+	}, input.FileCategoriesType...); err != nil {
 		return nil, err
 	}
 	if _, err := r.AddSurveyTemplateCategories(ctx, typ.ID, input.SurveyTemplateCategories...); err != nil {
@@ -1962,6 +1989,18 @@ func (r mutationResolver) RemoveLocationType(ctx context.Context, id int) (int, 
 			return id, errors.Wrapf(err, "deleting property type: id=%q", propType.ID)
 		}
 	}
+
+	fileCatTypes, err := lt.QueryFileCategoryType().All(ctx)
+	if err != nil {
+		return id, errors.Wrapf(err, "querying file category types: id=%q", id)
+	}
+	for _, fileCatType := range fileCatTypes {
+		if err := client.FileCategoryType.DeleteOne(fileCatType).
+			Exec(ctx); err != nil {
+			return id, errors.Wrapf(err, "deleting property type: id=%q", fileCatType.ID)
+		}
+	}
+
 	if err := client.LocationType.DeleteOne(lt).Exec(ctx); err != nil {
 		return id, errors.Wrapf(err, "deleting location type: id=%q", id)
 	}
@@ -2562,6 +2601,17 @@ func (r mutationResolver) EditLocationType(
 			return nil, err
 		}
 	}
+	for _, input := range input.FileCategoriesType {
+		if input.ID == nil {
+			if err := r.AddFileCategoryType(ctx, func(b *ent.FileCategoryTypeCreate) {
+				b.SetLocationType(typ)
+			}, input); err != nil {
+				return nil, err
+			}
+		} else if err := r.updateFileCatType(ctx, input); err != nil {
+			return nil, err
+		}
+	}
 	return typ, nil
 }
 
@@ -2993,6 +3043,16 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	}
 	if err := query.Exec(ctx); err != nil {
 		return errors.Wrap(err, "updating property type")
+	}
+	return nil
+}
+
+func (r mutationResolver) updateFileCatType(ctx context.Context, input *pkgmodels.FileCategoryTypeInput) error {
+	query := r.ClientFrom(ctx).FileCategoryType.
+		UpdateOneID(*input.ID).
+		SetName(input.Name)
+	if err := query.Exec(ctx); err != nil {
+		return errors.Wrap(err, "updating file category type")
 	}
 	return nil
 }
