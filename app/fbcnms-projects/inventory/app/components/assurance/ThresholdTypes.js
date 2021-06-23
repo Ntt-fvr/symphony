@@ -13,8 +13,10 @@ import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 
 import AddThresholdItemForm from './AddThresholdItemForm';
+import ConfigureTitle from './common/ConfigureTitle';
 import Text from '@symphony/design-system/components/Text';
 import ThresholdTypeItem from './ThresholdTypeItem';
+import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,8 +34,15 @@ const ThresholdTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item s={12} sm={12} lg={12} xl={12}>
-          <Text variant="h5">Kpi Container</Text>
+        <Grid item s={12} sm={12} lg={9} xl={9}>
+          <ConfigureTitle
+            title={fbt('Thresholds', 'Threshold Title')}
+            subtitle={fbt(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
+                'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
+              'Threshold description',
+            )}
+          />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <ThresholdTypeItem />

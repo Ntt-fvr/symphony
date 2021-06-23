@@ -1,20 +1,21 @@
+/*[object Object]*/
+// eslint-disable-next-line header/header
 import type {WithStyles} from '@material-ui/core';
+
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import {D500} from '@symphony/design-system/theme/symphony';
 import {withStyles} from '@material-ui/core/styles';
-type Props = {
+type Props = {|
   title: string,
   subtitle: ?string,
   className?: string,
-} & WithStyles<typeof styles>;
+|} & WithStyles<typeof styles>;
 const styles = _theme => ({
   title: {
     display: 'block',
-    marginBottom:'9px',
   },
   subtitle: {
-    color: D500,
+    color: '#73839e',
   },
 });
 const ConfigureTitle = (props: Props) => {
