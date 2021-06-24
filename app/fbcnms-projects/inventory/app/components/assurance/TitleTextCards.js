@@ -9,20 +9,33 @@
  */
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {Grid} from '@material-ui/core/';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles({
   root: {
-    border: 'solid 1px black',
-    padding: '9px 16px',
-  },
-  rooti: {
-    border: 'solid 1px red',
+    padding: '0 9px 16px',
   },
   title: {
     color: DARK.D300,
+  },
+  globalCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  network: {
+    paddingRight: '4rem',
+  },
+  vendor: {
+    paddingRight: '3rem',
+  },
+  edit: {
+    justifyContent: 'flex-end',
+  },
+  delete: {
+    paddingLeft: '1rem',
   },
 });
 
@@ -30,25 +43,50 @@ function TitleTextCards() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid item xs="3" className={classes.rooti}>
-        <Text className={classes.title}>Counter name</Text>
+      <Grid item xs="3">
+        <Text className={classes.title} variant="subtitle2">
+          Counter name
+        </Text>
       </Grid>
-      <Grid item xs="4" className={classes.rooti}>
-        <Text className={classes.title}>Network Manager System</Text>
+      <Grid item xs="4">
+        <Text
+          className={classNames(
+            classes.title,
+            classes.globalCenter,
+            classes.network,
+          )}
+          variant="subtitle2">
+          Network Manager System
+        </Text>
       </Grid>
-      <Grid
-        item
-        xs="3"
-        justify="center"
-        alignItems="center"
-        className={classes.rooti}>
-        <Text className={classes.title}>Vendor name</Text>
+      <Grid item xs="3">
+        <Text
+          className={classNames(
+            classes.title,
+            classes.globalCenter,
+            classes.vendor,
+          )}
+          variant="subtitle2">
+          Vendor name
+        </Text>
       </Grid>
-      <Grid item xs="1" className={classes.rooti}>
-        <Text className={classes.title}>Edit</Text>
+      <Grid item xs="1">
+        <Text
+          className={classNames(
+            classes.title,
+            classes.globalCenter,
+            classes.edit,
+          )}
+          variant="subtitle2">
+          Edit
+        </Text>
       </Grid>
-      <Grid item xs="1" className={classes.rooti}>
-        <Text className={classes.title}>Delete</Text>
+      <Grid item xs="1">
+        <Text
+          className={classNames(classes.title, classes.delete)}
+          variant="subtitle2">
+          Delete
+        </Text>
       </Grid>
     </Grid>
   );

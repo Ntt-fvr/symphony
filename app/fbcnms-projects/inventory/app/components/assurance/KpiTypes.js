@@ -16,7 +16,7 @@ import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import KpiTypeItem from './KpiTypeItem';
-import Text from '@symphony/design-system/components/Text';
+
 import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({

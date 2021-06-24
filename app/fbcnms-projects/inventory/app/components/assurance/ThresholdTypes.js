@@ -14,7 +14,6 @@ import {makeStyles} from '@material-ui/styles';
 
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-import Text from '@symphony/design-system/components/Text';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import fbt from 'fbt';
 
