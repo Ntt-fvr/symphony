@@ -22,6 +22,11 @@ func (kpiResolver) Formula(ctx context.Context, formula *ent.Kpi) ([]*ent.Formul
 	return formulaVariable, nil
 }
 
+func (kpiResolver) Treshold(ctx context.Context, counter *ent.Kpi) ([]*ent.Treshold, error) {
+	var response []*ent.Treshold
+	return response, nil
+}
+
 func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) (*ent.Kpi, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

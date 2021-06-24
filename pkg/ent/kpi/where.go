@@ -437,6 +437,34 @@ func HasFormulakpiWith(preds ...predicate.Formula) predicate.Kpi {
 	})
 }
 
+// HasTresholdkpi applies the HasEdge predicate on the "tresholdkpi" edge.
+func HasTresholdkpi() predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TresholdkpiTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, TresholdkpiTable, TresholdkpiColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTresholdkpiWith applies the HasEdge predicate on the "tresholdkpi" edge with a given conditions (other predicates).
+func HasTresholdkpiWith(preds ...predicate.Treshold) predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TresholdkpiInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, TresholdkpiTable, TresholdkpiColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Kpi) predicate.Kpi {
 	return predicate.Kpi(func(s *sql.Selector) {

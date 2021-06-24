@@ -117,6 +117,19 @@ func (f CommentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return f(ctx, mv)
 }
 
+// The ComparatorFunc type is an adapter to allow the use of ordinary
+// function as Comparator mutator.
+type ComparatorFunc func(context.Context, *ent.ComparatorMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ComparatorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ComparatorMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ComparatorMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CounterFunc type is an adapter to allow the use of ordinary
 // function as Counter mutator.
 type CounterFunc func(context.Context, *ent.CounterMutation) (ent.Value, error)
@@ -295,6 +308,32 @@ func (f EquipmentTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	mv, ok := m.(*ent.EquipmentTypeMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EquipmentTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The EventFunc type is an adapter to allow the use of ordinary
+// function as Event mutator.
+type EventFunc func(context.Context, *ent.EventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EventMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The EventSeverityFunc type is an adapter to allow the use of ordinary
+// function as EventSeverity mutator.
+type EventSeverityFunc func(context.Context, *ent.EventSeverityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventSeverityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EventSeverityMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventSeverityMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -624,6 +663,45 @@ func (f ReportFilterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The RuleFunc type is an adapter to allow the use of ordinary
+// function as Rule mutator.
+type RuleFunc func(context.Context, *ent.RuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RuleLimitFunc type is an adapter to allow the use of ordinary
+// function as RuleLimit mutator.
+type RuleLimitFunc func(context.Context, *ent.RuleLimitMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleLimitFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleLimitMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleLimitMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RuleTypeFunc type is an adapter to allow the use of ordinary
+// function as RuleType mutator.
+type RuleTypeFunc func(context.Context, *ent.RuleTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RuleTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RuleTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RuleTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ServiceFunc type is an adapter to allow the use of ordinary
 // function as Service mutator.
 type ServiceFunc func(context.Context, *ent.ServiceMutation) (ent.Value, error)
@@ -763,6 +841,19 @@ func (f TechFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	mv, ok := m.(*ent.TechMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TechMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TresholdFunc type is an adapter to allow the use of ordinary
+// function as Treshold mutator.
+type TresholdFunc func(context.Context, *ent.TresholdMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TresholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TresholdMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TresholdMutation", m)
 	}
 	return f(ctx, mv)
 }

@@ -315,6 +315,20 @@ var (
 			},
 		},
 	}
+	// ComparatorsColumns holds the columns for the "comparators" table.
+	ComparatorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// ComparatorsTable holds the schema information for the "comparators" table.
+	ComparatorsTable = &schema.Table{
+		Name:        "comparators",
+		Columns:     ComparatorsColumns,
+		PrimaryKey:  []*schema.Column{ComparatorsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// CountersColumns holds the columns for the "counters" table.
 	CountersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -694,6 +708,46 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// EventsColumns holds the columns for the "events" table.
+	EventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "event_type_name", Type: field.TypeString},
+		{Name: "specific_problem", Type: field.TypeString},
+		{Name: "additional_info", Type: field.TypeString},
+		{Name: "event_severity_eventseverityevent", Type: field.TypeInt, Nullable: true},
+	}
+	// EventsTable holds the schema information for the "events" table.
+	EventsTable = &schema.Table{
+		Name:       "events",
+		Columns:    EventsColumns,
+		PrimaryKey: []*schema.Column{EventsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "events_event_severities_eventseverityevent",
+				Columns: []*schema.Column{EventsColumns[7]},
+
+				RefColumns: []*schema.Column{EventSeveritiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// EventSeveritiesColumns holds the columns for the "event_severities" table.
+	EventSeveritiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// EventSeveritiesTable holds the schema information for the "event_severities" table.
+	EventSeveritiesTable = &schema.Table{
+		Name:        "event_severities",
+		Columns:     EventSeveritiesColumns,
+		PrimaryKey:  []*schema.Column{EventSeveritiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// ExitPointsColumns holds the columns for the "exit_points" table.
 	ExitPointsColumns = []*schema.Column{
@@ -1721,6 +1775,94 @@ var (
 			},
 		},
 	}
+	// RulesColumns holds the columns for the "rules" table.
+	RulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "grace_period", Type: field.TypeInt},
+		{Name: "start_date_time", Type: field.TypeTime},
+		{Name: "end_date_time", Type: field.TypeTime},
+		{Name: "event_rule_event", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_type_ruletyperule", Type: field.TypeInt, Nullable: true},
+		{Name: "treshold_ruletreshold", Type: field.TypeInt, Nullable: true},
+	}
+	// RulesTable holds the schema information for the "rules" table.
+	RulesTable = &schema.Table{
+		Name:       "rules",
+		Columns:    RulesColumns,
+		PrimaryKey: []*schema.Column{RulesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "rules_events_ruleEvent",
+				Columns: []*schema.Column{RulesColumns[7]},
+
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "rules_rule_types_ruletyperule",
+				Columns: []*schema.Column{RulesColumns[8]},
+
+				RefColumns: []*schema.Column{RuleTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "rules_tresholds_ruletreshold",
+				Columns: []*schema.Column{RulesColumns[9]},
+
+				RefColumns: []*schema.Column{TresholdsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// RuleLimitsColumns holds the columns for the "rule_limits" table.
+	RuleLimitsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "limit_type", Type: field.TypeString},
+		{Name: "comparator_comparatorrulelimit", Type: field.TypeInt, Nullable: true},
+		{Name: "rule_rulelimitrule", Type: field.TypeInt, Nullable: true},
+	}
+	// RuleLimitsTable holds the schema information for the "rule_limits" table.
+	RuleLimitsTable = &schema.Table{
+		Name:       "rule_limits",
+		Columns:    RuleLimitsColumns,
+		PrimaryKey: []*schema.Column{RuleLimitsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "rule_limits_comparators_comparatorrulelimit",
+				Columns: []*schema.Column{RuleLimitsColumns[5]},
+
+				RefColumns: []*schema.Column{ComparatorsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "rule_limits_rules_rulelimitrule",
+				Columns: []*schema.Column{RuleLimitsColumns[6]},
+
+				RefColumns: []*schema.Column{RulesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// RuleTypesColumns holds the columns for the "rule_types" table.
+	RuleTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// RuleTypesTable holds the schema information for the "rule_types" table.
+	RuleTypesTable = &schema.Table{
+		Name:        "rule_types",
+		Columns:     RuleTypesColumns,
+		PrimaryKey:  []*schema.Column{RuleTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// ServicesColumns holds the columns for the "services" table.
 	ServicesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2109,6 +2251,30 @@ var (
 				Columns: []*schema.Column{TechesColumns[4]},
 
 				RefColumns: []*schema.Column{DomainsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TresholdsColumns holds the columns for the "tresholds" table.
+	TresholdsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+		{Name: "kpi_tresholdkpi", Type: field.TypeInt, Unique: true, Nullable: true},
+	}
+	// TresholdsTable holds the schema information for the "tresholds" table.
+	TresholdsTable = &schema.Table{
+		Name:       "tresholds",
+		Columns:    TresholdsColumns,
+		PrimaryKey: []*schema.Column{TresholdsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "tresholds_kpis_tresholdkpi",
+				Columns: []*schema.Column{TresholdsColumns[5]},
+
+				RefColumns: []*schema.Column{KpisColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -2637,6 +2803,7 @@ var (
 		CheckListItemsTable,
 		CheckListItemDefinitionsTable,
 		CommentsTable,
+		ComparatorsTable,
 		CountersTable,
 		CounterFamiliesTable,
 		CounterVendorFormulasTable,
@@ -2651,6 +2818,8 @@ var (
 		EquipmentPositionsTable,
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
+		EventsTable,
+		EventSeveritiesTable,
 		ExitPointsTable,
 		ExportTasksTable,
 		FeaturesTable,
@@ -2676,6 +2845,9 @@ var (
 		PropertiesTable,
 		PropertyTypesTable,
 		ReportFiltersTable,
+		RulesTable,
+		RuleLimitsTable,
+		RuleTypesTable,
 		ServicesTable,
 		ServiceEndpointsTable,
 		ServiceEndpointDefinitionsTable,
@@ -2687,6 +2859,7 @@ var (
 		SurveyTemplateQuestionsTable,
 		SurveyWiFiScansTable,
 		TechesTable,
+		TresholdsTable,
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -2744,6 +2917,7 @@ func init() {
 	EquipmentPositionsTable.ForeignKeys[1].RefTable = EquipmentPositionDefinitionsTable
 	EquipmentPositionDefinitionsTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
+	EventsTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = EquipmentTable
@@ -2800,6 +2974,11 @@ func init() {
 	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
 	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
 	PropertyTypesTable.ForeignKeys[9].RefTable = WorkerTypesTable
+	RulesTable.ForeignKeys[0].RefTable = EventsTable
+	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
+	RulesTable.ForeignKeys[2].RefTable = TresholdsTable
+	RuleLimitsTable.ForeignKeys[0].RefTable = ComparatorsTable
+	RuleLimitsTable.ForeignKeys[1].RefTable = RulesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable
 	ServiceEndpointsTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceEndpointsTable.ForeignKeys[1].RefTable = EquipmentPortsTable
@@ -2818,6 +2997,7 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[1].RefTable = SurveyQuestionsTable
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
+	TresholdsTable.ForeignKeys[0].RefTable = KpisTable
 	WorkOrdersTable.ForeignKeys[0].RefTable = ProjectsTable
 	WorkOrdersTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
 	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTemplatesTable

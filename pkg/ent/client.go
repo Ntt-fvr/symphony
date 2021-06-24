@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
+	"github.com/facebookincubator/symphony/pkg/ent/comparator"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
@@ -35,6 +36,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/event"
+	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
@@ -60,6 +63,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/rule"
+	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
+	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
@@ -71,6 +77,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatequestion"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
+	"github.com/facebookincubator/symphony/pkg/ent/treshold"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -106,6 +113,8 @@ type Client struct {
 	CheckListItemDefinition *CheckListItemDefinitionClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Comparator is the client for interacting with the Comparator builders.
+	Comparator *ComparatorClient
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -134,6 +143,10 @@ type Client struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
+	// EventSeverity is the client for interacting with the EventSeverity builders.
+	EventSeverity *EventSeverityClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -184,6 +197,12 @@ type Client struct {
 	PropertyType *PropertyTypeClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
+	// Rule is the client for interacting with the Rule builders.
+	Rule *RuleClient
+	// RuleLimit is the client for interacting with the RuleLimit builders.
+	RuleLimit *RuleLimitClient
+	// RuleType is the client for interacting with the RuleType builders.
+	RuleType *RuleTypeClient
 	// Service is the client for interacting with the Service builders.
 	Service *ServiceClient
 	// ServiceEndpoint is the client for interacting with the ServiceEndpoint builders.
@@ -206,6 +225,8 @@ type Client struct {
 	SurveyWiFiScan *SurveyWiFiScanClient
 	// Tech is the client for interacting with the Tech builders.
 	Tech *TechClient
+	// Treshold is the client for interacting with the Treshold builders.
+	Treshold *TresholdClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -245,6 +266,7 @@ func (c *Client) init() {
 	c.CheckListItem = NewCheckListItemClient(c.config)
 	c.CheckListItemDefinition = NewCheckListItemDefinitionClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.Comparator = NewComparatorClient(c.config)
 	c.Counter = NewCounterClient(c.config)
 	c.CounterFamily = NewCounterFamilyClient(c.config)
 	c.CounterVendorFormula = NewCounterVendorFormulaClient(c.config)
@@ -259,6 +281,8 @@ func (c *Client) init() {
 	c.EquipmentPosition = NewEquipmentPositionClient(c.config)
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
+	c.Event = NewEventClient(c.config)
+	c.EventSeverity = NewEventSeverityClient(c.config)
 	c.ExitPoint = NewExitPointClient(c.config)
 	c.ExportTask = NewExportTaskClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
@@ -284,6 +308,9 @@ func (c *Client) init() {
 	c.Property = NewPropertyClient(c.config)
 	c.PropertyType = NewPropertyTypeClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
+	c.Rule = NewRuleClient(c.config)
+	c.RuleLimit = NewRuleLimitClient(c.config)
+	c.RuleType = NewRuleTypeClient(c.config)
 	c.Service = NewServiceClient(c.config)
 	c.ServiceEndpoint = NewServiceEndpointClient(c.config)
 	c.ServiceEndpointDefinition = NewServiceEndpointDefinitionClient(c.config)
@@ -295,6 +322,7 @@ func (c *Client) init() {
 	c.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(c.config)
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
 	c.Tech = NewTechClient(c.config)
+	c.Treshold = NewTresholdClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
 	c.Vendor = NewVendorClient(c.config)
@@ -343,6 +371,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CheckListItem:               NewCheckListItemClient(cfg),
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
+		Comparator:                  NewComparatorClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
 		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
@@ -357,6 +386,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		Event:                       NewEventClient(cfg),
+		EventSeverity:               NewEventSeverityClient(cfg),
 		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
@@ -382,6 +413,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Property:                    NewPropertyClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		ReportFilter:                NewReportFilterClient(cfg),
+		Rule:                        NewRuleClient(cfg),
+		RuleLimit:                   NewRuleLimitClient(cfg),
+		RuleType:                    NewRuleTypeClient(cfg),
 		Service:                     NewServiceClient(cfg),
 		ServiceEndpoint:             NewServiceEndpointClient(cfg),
 		ServiceEndpointDefinition:   NewServiceEndpointDefinitionClient(cfg),
@@ -393,6 +427,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
 		Tech:                        NewTechClient(cfg),
+		Treshold:                    NewTresholdClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
 		Vendor:                      NewVendorClient(cfg),
@@ -424,6 +459,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CheckListItem:               NewCheckListItemClient(cfg),
 		CheckListItemDefinition:     NewCheckListItemDefinitionClient(cfg),
 		Comment:                     NewCommentClient(cfg),
+		Comparator:                  NewComparatorClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
 		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
@@ -438,6 +474,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		Event:                       NewEventClient(cfg),
+		EventSeverity:               NewEventSeverityClient(cfg),
 		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
@@ -463,6 +501,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Property:                    NewPropertyClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
 		ReportFilter:                NewReportFilterClient(cfg),
+		Rule:                        NewRuleClient(cfg),
+		RuleLimit:                   NewRuleLimitClient(cfg),
+		RuleType:                    NewRuleTypeClient(cfg),
 		Service:                     NewServiceClient(cfg),
 		ServiceEndpoint:             NewServiceEndpointClient(cfg),
 		ServiceEndpointDefinition:   NewServiceEndpointDefinitionClient(cfg),
@@ -474,6 +515,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
 		Tech:                        NewTechClient(cfg),
+		Treshold:                    NewTresholdClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
 		Vendor:                      NewVendorClient(cfg),
@@ -518,6 +560,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CheckListItem.Use(hooks...)
 	c.CheckListItemDefinition.Use(hooks...)
 	c.Comment.Use(hooks...)
+	c.Comparator.Use(hooks...)
 	c.Counter.Use(hooks...)
 	c.CounterFamily.Use(hooks...)
 	c.CounterVendorFormula.Use(hooks...)
@@ -532,6 +575,8 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPosition.Use(hooks...)
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
+	c.Event.Use(hooks...)
+	c.EventSeverity.Use(hooks...)
 	c.ExitPoint.Use(hooks...)
 	c.ExportTask.Use(hooks...)
 	c.Feature.Use(hooks...)
@@ -557,6 +602,9 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Property.Use(hooks...)
 	c.PropertyType.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
+	c.Rule.Use(hooks...)
+	c.RuleLimit.Use(hooks...)
+	c.RuleType.Use(hooks...)
 	c.Service.Use(hooks...)
 	c.ServiceEndpoint.Use(hooks...)
 	c.ServiceEndpointDefinition.Use(hooks...)
@@ -568,6 +616,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyTemplateQuestion.Use(hooks...)
 	c.SurveyWiFiScan.Use(hooks...)
 	c.Tech.Use(hooks...)
+	c.Treshold.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
 	c.Vendor.Use(hooks...)
@@ -1720,6 +1769,111 @@ func (c *CommentClient) QueryProject(co *Comment) *ProjectQuery {
 func (c *CommentClient) Hooks() []Hook {
 	hooks := c.hooks.Comment
 	return append(hooks[:len(hooks):len(hooks)], comment.Hooks[:]...)
+}
+
+// ComparatorClient is a client for the Comparator schema.
+type ComparatorClient struct {
+	config
+}
+
+// NewComparatorClient returns a client for the Comparator from the given config.
+func NewComparatorClient(c config) *ComparatorClient {
+	return &ComparatorClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `comparator.Hooks(f(g(h())))`.
+func (c *ComparatorClient) Use(hooks ...Hook) {
+	c.hooks.Comparator = append(c.hooks.Comparator, hooks...)
+}
+
+// Create returns a create builder for Comparator.
+func (c *ComparatorClient) Create() *ComparatorCreate {
+	mutation := newComparatorMutation(c.config, OpCreate)
+	return &ComparatorCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Comparator entities.
+func (c *ComparatorClient) CreateBulk(builders ...*ComparatorCreate) *ComparatorCreateBulk {
+	return &ComparatorCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Comparator.
+func (c *ComparatorClient) Update() *ComparatorUpdate {
+	mutation := newComparatorMutation(c.config, OpUpdate)
+	return &ComparatorUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ComparatorClient) UpdateOne(co *Comparator) *ComparatorUpdateOne {
+	mutation := newComparatorMutation(c.config, OpUpdateOne, withComparator(co))
+	return &ComparatorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ComparatorClient) UpdateOneID(id int) *ComparatorUpdateOne {
+	mutation := newComparatorMutation(c.config, OpUpdateOne, withComparatorID(id))
+	return &ComparatorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Comparator.
+func (c *ComparatorClient) Delete() *ComparatorDelete {
+	mutation := newComparatorMutation(c.config, OpDelete)
+	return &ComparatorDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ComparatorClient) DeleteOne(co *Comparator) *ComparatorDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ComparatorClient) DeleteOneID(id int) *ComparatorDeleteOne {
+	builder := c.Delete().Where(comparator.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ComparatorDeleteOne{builder}
+}
+
+// Query returns a query builder for Comparator.
+func (c *ComparatorClient) Query() *ComparatorQuery {
+	return &ComparatorQuery{config: c.config}
+}
+
+// Get returns a Comparator entity by its id.
+func (c *ComparatorClient) Get(ctx context.Context, id int) (*Comparator, error) {
+	return c.Query().Where(comparator.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ComparatorClient) GetX(ctx context.Context, id int) *Comparator {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryComparatorrulelimit queries the comparatorrulelimit edge of a Comparator.
+func (c *ComparatorClient) QueryComparatorrulelimit(co *Comparator) *RuleLimitQuery {
+	query := &RuleLimitQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(comparator.Table, comparator.FieldID, id),
+			sqlgraph.To(rulelimit.Table, rulelimit.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, comparator.ComparatorrulelimitTable, comparator.ComparatorrulelimitColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ComparatorClient) Hooks() []Hook {
+	hooks := c.hooks.Comparator
+	return append(hooks[:len(hooks):len(hooks)], comparator.Hooks[:]...)
 }
 
 // CounterClient is a client for the Counter schema.
@@ -3704,6 +3858,232 @@ func (c *EquipmentTypeClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], equipmenttype.Hooks[:]...)
 }
 
+// EventClient is a client for the Event schema.
+type EventClient struct {
+	config
+}
+
+// NewEventClient returns a client for the Event from the given config.
+func NewEventClient(c config) *EventClient {
+	return &EventClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `event.Hooks(f(g(h())))`.
+func (c *EventClient) Use(hooks ...Hook) {
+	c.hooks.Event = append(c.hooks.Event, hooks...)
+}
+
+// Create returns a create builder for Event.
+func (c *EventClient) Create() *EventCreate {
+	mutation := newEventMutation(c.config, OpCreate)
+	return &EventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Event entities.
+func (c *EventClient) CreateBulk(builders ...*EventCreate) *EventCreateBulk {
+	return &EventCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Event.
+func (c *EventClient) Update() *EventUpdate {
+	mutation := newEventMutation(c.config, OpUpdate)
+	return &EventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EventClient) UpdateOne(e *Event) *EventUpdateOne {
+	mutation := newEventMutation(c.config, OpUpdateOne, withEvent(e))
+	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EventClient) UpdateOneID(id int) *EventUpdateOne {
+	mutation := newEventMutation(c.config, OpUpdateOne, withEventID(id))
+	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Event.
+func (c *EventClient) Delete() *EventDelete {
+	mutation := newEventMutation(c.config, OpDelete)
+	return &EventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *EventClient) DeleteOne(e *Event) *EventDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *EventClient) DeleteOneID(id int) *EventDeleteOne {
+	builder := c.Delete().Where(event.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EventDeleteOne{builder}
+}
+
+// Query returns a query builder for Event.
+func (c *EventClient) Query() *EventQuery {
+	return &EventQuery{config: c.config}
+}
+
+// Get returns a Event entity by its id.
+func (c *EventClient) Get(ctx context.Context, id int) (*Event, error) {
+	return c.Query().Where(event.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EventClient) GetX(ctx context.Context, id int) *Event {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEventseverity queries the eventseverity edge of a Event.
+func (c *EventClient) QueryEventseverity(e *Event) *EventSeverityQuery {
+	query := &EventSeverityQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(eventseverity.Table, eventseverity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, event.EventseverityTable, event.EventseverityColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRuleEvent queries the ruleEvent edge of a Event.
+func (c *EventClient) QueryRuleEvent(e *Event) *RuleQuery {
+	query := &RuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(rule.Table, rule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.RuleEventTable, event.RuleEventColumn),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EventClient) Hooks() []Hook {
+	hooks := c.hooks.Event
+	return append(hooks[:len(hooks):len(hooks)], event.Hooks[:]...)
+}
+
+// EventSeverityClient is a client for the EventSeverity schema.
+type EventSeverityClient struct {
+	config
+}
+
+// NewEventSeverityClient returns a client for the EventSeverity from the given config.
+func NewEventSeverityClient(c config) *EventSeverityClient {
+	return &EventSeverityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `eventseverity.Hooks(f(g(h())))`.
+func (c *EventSeverityClient) Use(hooks ...Hook) {
+	c.hooks.EventSeverity = append(c.hooks.EventSeverity, hooks...)
+}
+
+// Create returns a create builder for EventSeverity.
+func (c *EventSeverityClient) Create() *EventSeverityCreate {
+	mutation := newEventSeverityMutation(c.config, OpCreate)
+	return &EventSeverityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EventSeverity entities.
+func (c *EventSeverityClient) CreateBulk(builders ...*EventSeverityCreate) *EventSeverityCreateBulk {
+	return &EventSeverityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EventSeverity.
+func (c *EventSeverityClient) Update() *EventSeverityUpdate {
+	mutation := newEventSeverityMutation(c.config, OpUpdate)
+	return &EventSeverityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EventSeverityClient) UpdateOne(es *EventSeverity) *EventSeverityUpdateOne {
+	mutation := newEventSeverityMutation(c.config, OpUpdateOne, withEventSeverity(es))
+	return &EventSeverityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EventSeverityClient) UpdateOneID(id int) *EventSeverityUpdateOne {
+	mutation := newEventSeverityMutation(c.config, OpUpdateOne, withEventSeverityID(id))
+	return &EventSeverityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EventSeverity.
+func (c *EventSeverityClient) Delete() *EventSeverityDelete {
+	mutation := newEventSeverityMutation(c.config, OpDelete)
+	return &EventSeverityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *EventSeverityClient) DeleteOne(es *EventSeverity) *EventSeverityDeleteOne {
+	return c.DeleteOneID(es.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *EventSeverityClient) DeleteOneID(id int) *EventSeverityDeleteOne {
+	builder := c.Delete().Where(eventseverity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EventSeverityDeleteOne{builder}
+}
+
+// Query returns a query builder for EventSeverity.
+func (c *EventSeverityClient) Query() *EventSeverityQuery {
+	return &EventSeverityQuery{config: c.config}
+}
+
+// Get returns a EventSeverity entity by its id.
+func (c *EventSeverityClient) Get(ctx context.Context, id int) (*EventSeverity, error) {
+	return c.Query().Where(eventseverity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EventSeverityClient) GetX(ctx context.Context, id int) *EventSeverity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEventseverityevent queries the eventseverityevent edge of a EventSeverity.
+func (c *EventSeverityClient) QueryEventseverityevent(es *EventSeverity) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := es.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(eventseverity.Table, eventseverity.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, eventseverity.EventseverityeventTable, eventseverity.EventseverityeventColumn),
+		)
+		fromV = sqlgraph.Neighbors(es.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EventSeverityClient) Hooks() []Hook {
+	hooks := c.hooks.EventSeverity
+	return append(hooks[:len(hooks):len(hooks)], eventseverity.Hooks[:]...)
+}
+
 // ExitPointClient is a client for the ExitPoint schema.
 type ExitPointClient struct {
 	config
@@ -5593,6 +5973,22 @@ func (c *KpiClient) QueryFormulakpi(k *Kpi) *FormulaQuery {
 	return query
 }
 
+// QueryTresholdkpi queries the tresholdkpi edge of a Kpi.
+func (c *KpiClient) QueryTresholdkpi(k *Kpi) *TresholdQuery {
+	query := &TresholdQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := k.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpi.Table, kpi.FieldID, id),
+			sqlgraph.To(treshold.Table, treshold.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, kpi.TresholdkpiTable, kpi.TresholdkpiColumn),
+		)
+		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *KpiClient) Hooks() []Hook {
 	hooks := c.hooks.Kpi
@@ -7433,6 +7829,385 @@ func (c *ReportFilterClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], reportfilter.Hooks[:]...)
 }
 
+// RuleClient is a client for the Rule schema.
+type RuleClient struct {
+	config
+}
+
+// NewRuleClient returns a client for the Rule from the given config.
+func NewRuleClient(c config) *RuleClient {
+	return &RuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `rule.Hooks(f(g(h())))`.
+func (c *RuleClient) Use(hooks ...Hook) {
+	c.hooks.Rule = append(c.hooks.Rule, hooks...)
+}
+
+// Create returns a create builder for Rule.
+func (c *RuleClient) Create() *RuleCreate {
+	mutation := newRuleMutation(c.config, OpCreate)
+	return &RuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Rule entities.
+func (c *RuleClient) CreateBulk(builders ...*RuleCreate) *RuleCreateBulk {
+	return &RuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Rule.
+func (c *RuleClient) Update() *RuleUpdate {
+	mutation := newRuleMutation(c.config, OpUpdate)
+	return &RuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RuleClient) UpdateOne(r *Rule) *RuleUpdateOne {
+	mutation := newRuleMutation(c.config, OpUpdateOne, withRule(r))
+	return &RuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RuleClient) UpdateOneID(id int) *RuleUpdateOne {
+	mutation := newRuleMutation(c.config, OpUpdateOne, withRuleID(id))
+	return &RuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Rule.
+func (c *RuleClient) Delete() *RuleDelete {
+	mutation := newRuleMutation(c.config, OpDelete)
+	return &RuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RuleClient) DeleteOne(r *Rule) *RuleDeleteOne {
+	return c.DeleteOneID(r.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RuleClient) DeleteOneID(id int) *RuleDeleteOne {
+	builder := c.Delete().Where(rule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RuleDeleteOne{builder}
+}
+
+// Query returns a query builder for Rule.
+func (c *RuleClient) Query() *RuleQuery {
+	return &RuleQuery{config: c.config}
+}
+
+// Get returns a Rule entity by its id.
+func (c *RuleClient) Get(ctx context.Context, id int) (*Rule, error) {
+	return c.Query().Where(rule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RuleClient) GetX(ctx context.Context, id int) *Rule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRuletype queries the ruletype edge of a Rule.
+func (c *RuleClient) QueryRuletype(r *Rule) *RuleTypeQuery {
+	query := &RuleTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rule.Table, rule.FieldID, id),
+			sqlgraph.To(ruletype.Table, ruletype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.RuletypeTable, rule.RuletypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvent queries the event edge of a Rule.
+func (c *RuleClient) QueryEvent(r *Rule) *EventQuery {
+	query := &EventQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rule.Table, rule.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.EventTable, rule.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTreshold queries the treshold edge of a Rule.
+func (c *RuleClient) QueryTreshold(r *Rule) *TresholdQuery {
+	query := &TresholdQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rule.Table, rule.FieldID, id),
+			sqlgraph.To(treshold.Table, treshold.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.TresholdTable, rule.TresholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRulelimitrule queries the rulelimitrule edge of a Rule.
+func (c *RuleClient) QueryRulelimitrule(r *Rule) *RuleLimitQuery {
+	query := &RuleLimitQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rule.Table, rule.FieldID, id),
+			sqlgraph.To(rulelimit.Table, rulelimit.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, rule.RulelimitruleTable, rule.RulelimitruleColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RuleClient) Hooks() []Hook {
+	hooks := c.hooks.Rule
+	return append(hooks[:len(hooks):len(hooks)], rule.Hooks[:]...)
+}
+
+// RuleLimitClient is a client for the RuleLimit schema.
+type RuleLimitClient struct {
+	config
+}
+
+// NewRuleLimitClient returns a client for the RuleLimit from the given config.
+func NewRuleLimitClient(c config) *RuleLimitClient {
+	return &RuleLimitClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `rulelimit.Hooks(f(g(h())))`.
+func (c *RuleLimitClient) Use(hooks ...Hook) {
+	c.hooks.RuleLimit = append(c.hooks.RuleLimit, hooks...)
+}
+
+// Create returns a create builder for RuleLimit.
+func (c *RuleLimitClient) Create() *RuleLimitCreate {
+	mutation := newRuleLimitMutation(c.config, OpCreate)
+	return &RuleLimitCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RuleLimit entities.
+func (c *RuleLimitClient) CreateBulk(builders ...*RuleLimitCreate) *RuleLimitCreateBulk {
+	return &RuleLimitCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RuleLimit.
+func (c *RuleLimitClient) Update() *RuleLimitUpdate {
+	mutation := newRuleLimitMutation(c.config, OpUpdate)
+	return &RuleLimitUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RuleLimitClient) UpdateOne(rl *RuleLimit) *RuleLimitUpdateOne {
+	mutation := newRuleLimitMutation(c.config, OpUpdateOne, withRuleLimit(rl))
+	return &RuleLimitUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RuleLimitClient) UpdateOneID(id int) *RuleLimitUpdateOne {
+	mutation := newRuleLimitMutation(c.config, OpUpdateOne, withRuleLimitID(id))
+	return &RuleLimitUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RuleLimit.
+func (c *RuleLimitClient) Delete() *RuleLimitDelete {
+	mutation := newRuleLimitMutation(c.config, OpDelete)
+	return &RuleLimitDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RuleLimitClient) DeleteOne(rl *RuleLimit) *RuleLimitDeleteOne {
+	return c.DeleteOneID(rl.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RuleLimitClient) DeleteOneID(id int) *RuleLimitDeleteOne {
+	builder := c.Delete().Where(rulelimit.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RuleLimitDeleteOne{builder}
+}
+
+// Query returns a query builder for RuleLimit.
+func (c *RuleLimitClient) Query() *RuleLimitQuery {
+	return &RuleLimitQuery{config: c.config}
+}
+
+// Get returns a RuleLimit entity by its id.
+func (c *RuleLimitClient) Get(ctx context.Context, id int) (*RuleLimit, error) {
+	return c.Query().Where(rulelimit.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RuleLimitClient) GetX(ctx context.Context, id int) *RuleLimit {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryComparator queries the comparator edge of a RuleLimit.
+func (c *RuleLimitClient) QueryComparator(rl *RuleLimit) *ComparatorQuery {
+	query := &ComparatorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rulelimit.Table, rulelimit.FieldID, id),
+			sqlgraph.To(comparator.Table, comparator.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rulelimit.ComparatorTable, rulelimit.ComparatorColumn),
+		)
+		fromV = sqlgraph.Neighbors(rl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRule queries the rule edge of a RuleLimit.
+func (c *RuleLimitClient) QueryRule(rl *RuleLimit) *RuleQuery {
+	query := &RuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rulelimit.Table, rulelimit.FieldID, id),
+			sqlgraph.To(rule.Table, rule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rulelimit.RuleTable, rulelimit.RuleColumn),
+		)
+		fromV = sqlgraph.Neighbors(rl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RuleLimitClient) Hooks() []Hook {
+	hooks := c.hooks.RuleLimit
+	return append(hooks[:len(hooks):len(hooks)], rulelimit.Hooks[:]...)
+}
+
+// RuleTypeClient is a client for the RuleType schema.
+type RuleTypeClient struct {
+	config
+}
+
+// NewRuleTypeClient returns a client for the RuleType from the given config.
+func NewRuleTypeClient(c config) *RuleTypeClient {
+	return &RuleTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ruletype.Hooks(f(g(h())))`.
+func (c *RuleTypeClient) Use(hooks ...Hook) {
+	c.hooks.RuleType = append(c.hooks.RuleType, hooks...)
+}
+
+// Create returns a create builder for RuleType.
+func (c *RuleTypeClient) Create() *RuleTypeCreate {
+	mutation := newRuleTypeMutation(c.config, OpCreate)
+	return &RuleTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RuleType entities.
+func (c *RuleTypeClient) CreateBulk(builders ...*RuleTypeCreate) *RuleTypeCreateBulk {
+	return &RuleTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RuleType.
+func (c *RuleTypeClient) Update() *RuleTypeUpdate {
+	mutation := newRuleTypeMutation(c.config, OpUpdate)
+	return &RuleTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RuleTypeClient) UpdateOne(rt *RuleType) *RuleTypeUpdateOne {
+	mutation := newRuleTypeMutation(c.config, OpUpdateOne, withRuleType(rt))
+	return &RuleTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RuleTypeClient) UpdateOneID(id int) *RuleTypeUpdateOne {
+	mutation := newRuleTypeMutation(c.config, OpUpdateOne, withRuleTypeID(id))
+	return &RuleTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RuleType.
+func (c *RuleTypeClient) Delete() *RuleTypeDelete {
+	mutation := newRuleTypeMutation(c.config, OpDelete)
+	return &RuleTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RuleTypeClient) DeleteOne(rt *RuleType) *RuleTypeDeleteOne {
+	return c.DeleteOneID(rt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RuleTypeClient) DeleteOneID(id int) *RuleTypeDeleteOne {
+	builder := c.Delete().Where(ruletype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RuleTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for RuleType.
+func (c *RuleTypeClient) Query() *RuleTypeQuery {
+	return &RuleTypeQuery{config: c.config}
+}
+
+// Get returns a RuleType entity by its id.
+func (c *RuleTypeClient) Get(ctx context.Context, id int) (*RuleType, error) {
+	return c.Query().Where(ruletype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RuleTypeClient) GetX(ctx context.Context, id int) *RuleType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRuletyperule queries the ruletyperule edge of a RuleType.
+func (c *RuleTypeClient) QueryRuletyperule(rt *RuleType) *RuleQuery {
+	query := &RuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ruletype.Table, ruletype.FieldID, id),
+			sqlgraph.To(rule.Table, rule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ruletype.RuletyperuleTable, ruletype.RuletyperuleColumn),
+		)
+		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RuleTypeClient) Hooks() []Hook {
+	hooks := c.hooks.RuleType
+	return append(hooks[:len(hooks):len(hooks)], ruletype.Hooks[:]...)
+}
+
 // ServiceClient is a client for the Service schema.
 type ServiceClient struct {
 	config
@@ -9002,6 +9777,127 @@ func (c *TechClient) QueryFormulatech(t *Tech) *FormulaQuery {
 func (c *TechClient) Hooks() []Hook {
 	hooks := c.hooks.Tech
 	return append(hooks[:len(hooks):len(hooks)], tech.Hooks[:]...)
+}
+
+// TresholdClient is a client for the Treshold schema.
+type TresholdClient struct {
+	config
+}
+
+// NewTresholdClient returns a client for the Treshold from the given config.
+func NewTresholdClient(c config) *TresholdClient {
+	return &TresholdClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `treshold.Hooks(f(g(h())))`.
+func (c *TresholdClient) Use(hooks ...Hook) {
+	c.hooks.Treshold = append(c.hooks.Treshold, hooks...)
+}
+
+// Create returns a create builder for Treshold.
+func (c *TresholdClient) Create() *TresholdCreate {
+	mutation := newTresholdMutation(c.config, OpCreate)
+	return &TresholdCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Treshold entities.
+func (c *TresholdClient) CreateBulk(builders ...*TresholdCreate) *TresholdCreateBulk {
+	return &TresholdCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Treshold.
+func (c *TresholdClient) Update() *TresholdUpdate {
+	mutation := newTresholdMutation(c.config, OpUpdate)
+	return &TresholdUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TresholdClient) UpdateOne(t *Treshold) *TresholdUpdateOne {
+	mutation := newTresholdMutation(c.config, OpUpdateOne, withTreshold(t))
+	return &TresholdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TresholdClient) UpdateOneID(id int) *TresholdUpdateOne {
+	mutation := newTresholdMutation(c.config, OpUpdateOne, withTresholdID(id))
+	return &TresholdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Treshold.
+func (c *TresholdClient) Delete() *TresholdDelete {
+	mutation := newTresholdMutation(c.config, OpDelete)
+	return &TresholdDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *TresholdClient) DeleteOne(t *Treshold) *TresholdDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *TresholdClient) DeleteOneID(id int) *TresholdDeleteOne {
+	builder := c.Delete().Where(treshold.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TresholdDeleteOne{builder}
+}
+
+// Query returns a query builder for Treshold.
+func (c *TresholdClient) Query() *TresholdQuery {
+	return &TresholdQuery{config: c.config}
+}
+
+// Get returns a Treshold entity by its id.
+func (c *TresholdClient) Get(ctx context.Context, id int) (*Treshold, error) {
+	return c.Query().Where(treshold.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TresholdClient) GetX(ctx context.Context, id int) *Treshold {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryKpi queries the kpi edge of a Treshold.
+func (c *TresholdClient) QueryKpi(t *Treshold) *KpiQuery {
+	query := &KpiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(treshold.Table, treshold.FieldID, id),
+			sqlgraph.To(kpi.Table, kpi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, treshold.KpiTable, treshold.KpiColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRuletreshold queries the ruletreshold edge of a Treshold.
+func (c *TresholdClient) QueryRuletreshold(t *Treshold) *RuleQuery {
+	query := &RuleQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(treshold.Table, treshold.FieldID, id),
+			sqlgraph.To(rule.Table, rule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, treshold.RuletresholdTable, treshold.RuletresholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TresholdClient) Hooks() []Hook {
+	hooks := c.hooks.Treshold
+	return append(hooks[:len(hooks):len(hooks)], treshold.Hooks[:]...)
 }
 
 // UserClient is a client for the User schema.

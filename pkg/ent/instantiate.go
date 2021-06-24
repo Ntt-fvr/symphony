@@ -55,6 +55,12 @@ func (c *CommentClient) Instantiate(co *Comment) *Comment {
 }
 
 // Instantiate entity configuration.
+func (c *ComparatorClient) Instantiate(co *Comparator) *Comparator {
+	co.config = c.config
+	return co
+}
+
+// Instantiate entity configuration.
 func (c *CounterClient) Instantiate(co *Counter) *Counter {
 	co.config = c.config
 	return co
@@ -136,6 +142,18 @@ func (c *EquipmentPositionDefinitionClient) Instantiate(epd *EquipmentPositionDe
 func (c *EquipmentTypeClient) Instantiate(et *EquipmentType) *EquipmentType {
 	et.config = c.config
 	return et
+}
+
+// Instantiate entity configuration.
+func (c *EventClient) Instantiate(e *Event) *Event {
+	e.config = c.config
+	return e
+}
+
+// Instantiate entity configuration.
+func (c *EventSeverityClient) Instantiate(es *EventSeverity) *EventSeverity {
+	es.config = c.config
+	return es
 }
 
 // Instantiate entity configuration.
@@ -289,6 +307,24 @@ func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 }
 
 // Instantiate entity configuration.
+func (c *RuleClient) Instantiate(r *Rule) *Rule {
+	r.config = c.config
+	return r
+}
+
+// Instantiate entity configuration.
+func (c *RuleLimitClient) Instantiate(rl *RuleLimit) *RuleLimit {
+	rl.config = c.config
+	return rl
+}
+
+// Instantiate entity configuration.
+func (c *RuleTypeClient) Instantiate(rt *RuleType) *RuleType {
+	rt.config = c.config
+	return rt
+}
+
+// Instantiate entity configuration.
 func (c *ServiceClient) Instantiate(s *Service) *Service {
 	s.config = c.config
 	return s
@@ -350,6 +386,12 @@ func (c *SurveyWiFiScanClient) Instantiate(swfs *SurveyWiFiScan) *SurveyWiFiScan
 
 // Instantiate entity configuration.
 func (c *TechClient) Instantiate(t *Tech) *Tech {
+	t.config = c.config
+	return t
+}
+
+// Instantiate entity configuration.
+func (c *TresholdClient) Instantiate(t *Treshold) *Treshold {
 	t.config = c.config
 	return t
 }

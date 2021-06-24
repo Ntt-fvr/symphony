@@ -34,6 +34,9 @@ type CheckListItemDefinition func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// Comparator is the predicate function for comparator builders.
+type Comparator func(*sql.Selector)
+
 // Counter is the predicate function for counter builders.
 type Counter func(*sql.Selector)
 
@@ -75,6 +78,12 @@ type EquipmentPositionDefinition func(*sql.Selector)
 
 // EquipmentType is the predicate function for equipmenttype builders.
 type EquipmentType func(*sql.Selector)
+
+// Event is the predicate function for event builders.
+type Event func(*sql.Selector)
+
+// EventSeverity is the predicate function for eventseverity builders.
+type EventSeverity func(*sql.Selector)
 
 // ExitPoint is the predicate function for exitpoint builders.
 type ExitPoint func(*sql.Selector)
@@ -151,6 +160,15 @@ type PropertyType func(*sql.Selector)
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
 
+// Rule is the predicate function for rule builders.
+type Rule func(*sql.Selector)
+
+// RuleLimit is the predicate function for rulelimit builders.
+type RuleLimit func(*sql.Selector)
+
+// RuleType is the predicate function for ruletype builders.
+type RuleType func(*sql.Selector)
+
 // Service is the predicate function for service builders.
 type Service func(*sql.Selector)
 
@@ -183,6 +201,9 @@ type SurveyWiFiScan func(*sql.Selector)
 
 // Tech is the predicate function for tech builders.
 type Tech func(*sql.Selector)
+
+// Treshold is the predicate function for treshold builders.
+type Treshold func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

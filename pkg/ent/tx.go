@@ -32,6 +32,8 @@ type Tx struct {
 	CheckListItemDefinition *CheckListItemDefinitionClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Comparator is the client for interacting with the Comparator builders.
+	Comparator *ComparatorClient
 	// Counter is the client for interacting with the Counter builders.
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
@@ -60,6 +62,10 @@ type Tx struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
+	// EventSeverity is the client for interacting with the EventSeverity builders.
+	EventSeverity *EventSeverityClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -110,6 +116,12 @@ type Tx struct {
 	PropertyType *PropertyTypeClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
+	// Rule is the client for interacting with the Rule builders.
+	Rule *RuleClient
+	// RuleLimit is the client for interacting with the RuleLimit builders.
+	RuleLimit *RuleLimitClient
+	// RuleType is the client for interacting with the RuleType builders.
+	RuleType *RuleTypeClient
 	// Service is the client for interacting with the Service builders.
 	Service *ServiceClient
 	// ServiceEndpoint is the client for interacting with the ServiceEndpoint builders.
@@ -132,6 +144,8 @@ type Tx struct {
 	SurveyWiFiScan *SurveyWiFiScanClient
 	// Tech is the client for interacting with the Tech builders.
 	Tech *TechClient
+	// Treshold is the client for interacting with the Treshold builders.
+	Treshold *TresholdClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -291,6 +305,7 @@ func (tx *Tx) init() {
 	tx.CheckListItem = NewCheckListItemClient(tx.config)
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.Comparator = NewComparatorClient(tx.config)
 	tx.Counter = NewCounterClient(tx.config)
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
 	tx.CounterVendorFormula = NewCounterVendorFormulaClient(tx.config)
@@ -305,6 +320,8 @@ func (tx *Tx) init() {
 	tx.EquipmentPosition = NewEquipmentPositionClient(tx.config)
 	tx.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(tx.config)
 	tx.EquipmentType = NewEquipmentTypeClient(tx.config)
+	tx.Event = NewEventClient(tx.config)
+	tx.EventSeverity = NewEventSeverityClient(tx.config)
 	tx.ExitPoint = NewExitPointClient(tx.config)
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
@@ -330,6 +347,9 @@ func (tx *Tx) init() {
 	tx.Property = NewPropertyClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
+	tx.Rule = NewRuleClient(tx.config)
+	tx.RuleLimit = NewRuleLimitClient(tx.config)
+	tx.RuleType = NewRuleTypeClient(tx.config)
 	tx.Service = NewServiceClient(tx.config)
 	tx.ServiceEndpoint = NewServiceEndpointClient(tx.config)
 	tx.ServiceEndpointDefinition = NewServiceEndpointDefinitionClient(tx.config)
@@ -341,6 +361,7 @@ func (tx *Tx) init() {
 	tx.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(tx.config)
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
 	tx.Tech = NewTechClient(tx.config)
+	tx.Treshold = NewTresholdClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
 	tx.Vendor = NewVendorClient(tx.config)

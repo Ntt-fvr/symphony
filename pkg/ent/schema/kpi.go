@@ -32,5 +32,7 @@ func (Kpi) Edges() []ent.Edge {
 			Unique(),
 		edge.To("formulakpi", Formula.Type).
 			Annotations(entgql.MapsTo("formula")),
+		edge.To("tresholdkpi", Treshold.Type).
+			Annotations(entgql.MapsTo("treshold")).Unique(),
 	}
 }

@@ -4367,6 +4367,27 @@ type Mutation {
   addTech(input: AddTechInput!):Tech!
   editTech(input: EditTechInput!): Tech!
   removeTech(id: ID!): ID!
+  addTreshold(input: AddTresholdInput!):Treshold!
+  editTreshold(input: EditTresholdInput!): Treshold!
+  removeTreshold(id: ID!): ID!
+  addEvent(input: AddEventInput!):Event!
+  editEvent(input: EditEventInput!): Event!
+  removeEvent(id: ID!): ID!
+  addComparator(input: AddComparatorInput!):Comparator!
+  editComparator(input: EditComparatorInput!): Comparator!
+  removeComparator(id: ID!): ID!
+  addEventSeverity(input: AddEventSeverityInput!):EventSeverity!
+  editEventSeverity(input: EditEventSeverityInput!): EventSeverity!
+  removeEventSeverity(id: ID!): ID!
+  addRule(input: AddRuleInput!):Rule!
+  editRule(input: EditRuleInput!): Rule!
+  removeRule(id: ID!): ID!
+  addRuleLimit(input: AddRuleLimitInput!):RuleLimit!
+  editRuleLimit(input: EditRuleLimitInput!): RuleLimit!
+  removeRuleLimit(id: ID!): ID!
+  addRuleType(input: AddRuleTypeInput!):RuleType!
+  editRuleType(input: EditRuleTypeInput!): RuleType!
+  removeRuleType(id: ID!): ID!
 }
 
 """
@@ -4503,23 +4524,27 @@ type Kpi implements Node {
   id: ID!
   name: String!
   formula: [Formula]!
+  treshold: [Treshold!]
 }
 
 input KpiInput {
   id: ID!
   name: String!
   formula: [FormulaInput!]
+  treshold: [TresholdInput!]  
 }
 
 input AddKpiInput {
   name: String!
   formula: [FormulaInput!]
+  treshold: [TresholdInput!]  
 }
 
 input EditKpiInput {
   id: ID!
   name: String!
   formula: [FormulaInput!]
+  treshold: [TresholdInput!]  
 }
 
 type Tech implements Node {
@@ -4584,4 +4609,195 @@ input AddCounterVendorFormulaInput {
 input EditCounterVendorFormulaInput {
   id: ID!
   mandatory: Boolean
+}
+############################ mis tablas aqui ##################################
+type Treshold implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  rule: [Rule!]
+  kpi: Kpi
+  
+}
+
+input AddTresholdInput {
+  name: String!
+  description: String!
+  rule: [RuleInput!]
+  kpi: Int
+  
+}
+
+input TresholdInput {
+  name: String!
+  description: String!
+  rule: [RuleInput!]
+  kpi: Int
+  
+}
+
+input EditTresholdInput {
+  id: ID!
+  name: String!
+  description: String!
+  rule: [RuleInput!]  
+}
+type Comparator implements Node {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimit!]
+}
+
+input AddComparatorInput {
+  name: String!
+  ruleLimit: [RuleLimitInput!]
+}
+
+input EditComparatorInput {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimitInput!]
+}
+
+type Event implements Node {
+  id: ID!
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [Rule!]
+  eventSeverity: EventSeverity
+}
+
+input EventInput {
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [RuleInput!]
+  eventSeverity: ID
+}
+
+input AddEventInput {
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [RuleInput!]
+  eventSeverity: ID!
+}
+
+input EditEventInput {
+  id: ID!
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [RuleInput!]
+  eventSeverity: ID!
+}
+
+type RuleType implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddRuleTypeInput {
+  name: String!
+}
+
+input EditRuleTypeInput {
+  id: ID!
+  name: String!
+}
+
+type RuleLimit implements Node {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: Comparator!
+  rule: Rule
+}
+
+input RuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input AddRuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input EditRuleLimitInput {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+type Rule implements Node {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimit!]
+  ruleType: RuleType!
+  event: Event!
+  treshold: Treshold!
+}
+
+input RuleInput {
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimitInput!]
+}
+
+input AddRuleInput {
+  name: String!
+  gracePeriod: Int!
+  startDateTime: Time!
+  endDateTime: Time!
+  ruleLimit: [RuleLimitInput!]
+  ruleType: ID!
+  event: ID!
+  treshold: ID!
+}
+
+input EditRuleInput {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimitInput!]
+  ruleType: ID!
+  event: ID!
+  treshold: ID!
+}
+
+type EventSeverity implements Node {
+  id: ID!
+  name: String!
+  event: [Event!]
+}
+
+input AddEventSeverityInput {
+  name: String!
+  event: [EventInput!]
+}
+
+input EditEventSeverityInput {
+  id: ID!
+  name: String!
+  event: [EventInput!]
 }

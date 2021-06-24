@@ -66,6 +66,11 @@ type AddBulkServiceLinksAndPortsInput struct {
 	LinkIds []int `json:"linkIds"`
 }
 
+type AddComparatorInput struct {
+	Name      string            `json:"name"`
+	RuleLimit []*RuleLimitInput `json:"ruleLimit"`
+}
+
 type AddCounterFamilyInput struct {
 	Name    string             `json:"name"`
 	Counter []*AddCounterInput `json:"counter"`
@@ -118,6 +123,20 @@ type AddEquipmentTypeInput struct {
 	Properties []*models.PropertyTypeInput `json:"properties"`
 }
 
+type AddEventInput struct {
+	Name            string       `json:"name"`
+	EventTypeName   string       `json:"eventTypeName"`
+	SpecificProblem string       `json:"specificProblem"`
+	AdditionalInfo  string       `json:"additionalInfo"`
+	Rule            []*RuleInput `json:"rule"`
+	EventSeverity   int          `json:"eventSeverity"`
+}
+
+type AddEventSeverityInput struct {
+	Name  string        `json:"name"`
+	Event []*EventInput `json:"event"`
+}
+
 type AddFloorPlanInput struct {
 	Name             string         `json:"name"`
 	LocationID       int            `json:"locationID"`
@@ -167,8 +186,9 @@ type AddImageInput struct {
 }
 
 type AddKpiInput struct {
-	Name    string          `json:"name"`
-	Formula []*FormulaInput `json:"formula"`
+	Name     string           `json:"name"`
+	Formula  []*FormulaInput  `json:"formula"`
+	Treshold []*TresholdInput `json:"treshold"`
 }
 
 type AddLinkInput struct {
@@ -225,6 +245,28 @@ type AddProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type AddRuleInput struct {
+	Name          string            `json:"name"`
+	GracePeriod   int               `json:"gracePeriod"`
+	StartDateTime time.Time         `json:"startDateTime"`
+	EndDateTime   time.Time         `json:"endDateTime"`
+	RuleLimit     []*RuleLimitInput `json:"ruleLimit"`
+	RuleType      int               `json:"ruleType"`
+	Event         int               `json:"event"`
+	Treshold      int               `json:"treshold"`
+}
+
+type AddRuleLimitInput struct {
+	Name       string `json:"name"`
+	LimitType  string `json:"limitType"`
+	Comparator int    `json:"comparator"`
+	Rule       int    `json:"rule"`
+}
+
+type AddRuleTypeInput struct {
+	Name string `json:"name"`
+}
+
 type AddServiceEndpointInput struct {
 	ID          int  `json:"id"`
 	PortID      *int `json:"portId"`
@@ -235,6 +277,13 @@ type AddServiceEndpointInput struct {
 type AddTechInput struct {
 	Name    string          `json:"name"`
 	Formula []*FormulaInput `json:"formula"`
+}
+
+type AddTresholdInput struct {
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	Rule        []*RuleInput `json:"rule"`
+	Kpi         *int         `json:"kpi"`
 }
 
 type AddUsersGroupInput struct {
@@ -416,6 +465,12 @@ type EditBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+type EditComparatorInput struct {
+	ID        int               `json:"id"`
+	Name      string            `json:"name"`
+	RuleLimit []*RuleLimitInput `json:"ruleLimit"`
+}
+
 type EditCounterFamilyInput struct {
 	ID      int                 `json:"id"`
 	Name    string              `json:"name"`
@@ -471,6 +526,22 @@ type EditEquipmentTypeInput struct {
 	Properties []*models.PropertyTypeInput `json:"properties"`
 }
 
+type EditEventInput struct {
+	ID              int          `json:"id"`
+	Name            string       `json:"name"`
+	EventTypeName   string       `json:"eventTypeName"`
+	SpecificProblem string       `json:"specificProblem"`
+	AdditionalInfo  string       `json:"additionalInfo"`
+	Rule            []*RuleInput `json:"rule"`
+	EventSeverity   int          `json:"eventSeverity"`
+}
+
+type EditEventSeverityInput struct {
+	ID    int           `json:"id"`
+	Name  string        `json:"name"`
+	Event []*EventInput `json:"event"`
+}
+
 type EditFormulaInput struct {
 	ID                   int                              `json:"id"`
 	Name                 string                           `json:"name"`
@@ -479,9 +550,10 @@ type EditFormulaInput struct {
 }
 
 type EditKpiInput struct {
-	ID      int             `json:"id"`
-	Name    string          `json:"name"`
-	Formula []*FormulaInput `json:"formula"`
+	ID       int              `json:"id"`
+	Name     string           `json:"name"`
+	Formula  []*FormulaInput  `json:"formula"`
+	Treshold []*TresholdInput `json:"treshold"`
 }
 
 type EditLinkInput struct {
@@ -544,10 +616,42 @@ type EditReportFilterInput struct {
 	Name string `json:"name"`
 }
 
+type EditRuleInput struct {
+	ID            int               `json:"id"`
+	Name          string            `json:"name"`
+	GracePeriod   *int              `json:"gracePeriod"`
+	StartDateTime *time.Time        `json:"startDateTime"`
+	EndDateTime   *time.Time        `json:"endDateTime"`
+	RuleLimit     []*RuleLimitInput `json:"ruleLimit"`
+	RuleType      int               `json:"ruleType"`
+	Event         int               `json:"event"`
+	Treshold      int               `json:"treshold"`
+}
+
+type EditRuleLimitInput struct {
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	LimitType  string `json:"limitType"`
+	Comparator int    `json:"comparator"`
+	Rule       int    `json:"rule"`
+}
+
+type EditRuleTypeInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditTechInput struct {
 	ID      int             `json:"id"`
 	Name    string          `json:"name"`
 	Formula []*FormulaInput `json:"formula"`
+}
+
+type EditTresholdInput struct {
+	ID          int          `json:"id"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	Rule        []*RuleInput `json:"rule"`
 }
 
 type EditUserInput struct {
@@ -655,6 +759,15 @@ type EquipmentPositionInput struct {
 	VisibleLabel *string `json:"visibleLabel"`
 }
 
+type EventInput struct {
+	Name            string       `json:"name"`
+	EventTypeName   string       `json:"eventTypeName"`
+	SpecificProblem string       `json:"specificProblem"`
+	AdditionalInfo  string       `json:"additionalInfo"`
+	Rule            []*RuleInput `json:"rule"`
+	EventSeverity   *int         `json:"eventSeverity"`
+}
+
 type ExitPointInput struct {
 	Role *flowschema.ExitPointRole `json:"role"`
 	Cid  *string                   `json:"cid"`
@@ -731,9 +844,10 @@ type ImportFlowDraftInput struct {
 }
 
 type KpiInput struct {
-	ID      int             `json:"id"`
-	Name    string          `json:"name"`
-	Formula []*FormulaInput `json:"formula"`
+	ID       int              `json:"id"`
+	Name     string           `json:"name"`
+	Formula  []*FormulaInput  `json:"formula"`
+	Treshold []*TresholdInput `json:"treshold"`
 }
 
 type LatestPythonPackageResult struct {
@@ -810,6 +924,21 @@ type ReportFilterInput struct {
 	Name    string                `json:"name"`
 	Entity  FilterEntity          `json:"entity"`
 	Filters []*GeneralFilterInput `json:"filters"`
+}
+
+type RuleInput struct {
+	Name          string            `json:"name"`
+	GracePeriod   *int              `json:"gracePeriod"`
+	StartDateTime *time.Time        `json:"startDateTime"`
+	EndDateTime   *time.Time        `json:"endDateTime"`
+	RuleLimit     []*RuleLimitInput `json:"ruleLimit"`
+}
+
+type RuleLimitInput struct {
+	Name       string `json:"name"`
+	LimitType  string `json:"limitType"`
+	Comparator int    `json:"comparator"`
+	Rule       int    `json:"rule"`
 }
 
 type SearchEntry struct {
@@ -1048,6 +1177,13 @@ type TopologyLink struct {
 	Type   TopologyLinkType `json:"type"`
 	Source ent.Noder        `json:"source"`
 	Target ent.Noder        `json:"target"`
+}
+
+type TresholdInput struct {
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	Rule        []*RuleInput `json:"rule"`
+	Kpi         *int         `json:"kpi"`
 }
 
 type TriggerBlock struct {

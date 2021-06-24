@@ -224,6 +224,14 @@ func (c *Comment) Project(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
+func (c *Comparator) Comparatorrulelimit(ctx context.Context) ([]*RuleLimit, error) {
+	result, err := c.Edges.ComparatorrulelimitOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryComparatorrulelimit().All(ctx)
+	}
+	return result, err
+}
+
 func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
 	result, err := c.Edges.CounterfamilyOrErr()
 	if IsNotLoaded(err) {
@@ -592,6 +600,30 @@ func (et *EquipmentType) ServiceEndpointDefinitions(ctx context.Context) ([]*Ser
 	return result, err
 }
 
+func (e *Event) Eventseverity(ctx context.Context) (*EventSeverity, error) {
+	result, err := e.Edges.EventseverityOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryEventseverity().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (e *Event) RuleEvent(ctx context.Context) ([]*Rule, error) {
+	result, err := e.Edges.RuleEventOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryRuleEvent().All(ctx)
+	}
+	return result, err
+}
+
+func (es *EventSeverity) Eventseverityevent(ctx context.Context) ([]*Event, error) {
+	result, err := es.Edges.EventseverityeventOrErr()
+	if IsNotLoaded(err) {
+		result, err = es.QueryEventseverityevent().All(ctx)
+	}
+	return result, err
+}
+
 func (ep *ExitPoint) NextEntryPoints(ctx context.Context) ([]*EntryPoint, error) {
 	result, err := ep.Edges.NextEntryPointsOrErr()
 	if IsNotLoaded(err) {
@@ -870,6 +902,14 @@ func (k *Kpi) Formulakpi(ctx context.Context) ([]*Formula, error) {
 		result, err = k.QueryFormulakpi().All(ctx)
 	}
 	return result, err
+}
+
+func (k *Kpi) Tresholdkpi(ctx context.Context) (*Treshold, error) {
+	result, err := k.Edges.TresholdkpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryTresholdkpi().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (l *Link) Ports(ctx context.Context) ([]*EquipmentPort, error) {
@@ -1344,6 +1384,62 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
+func (r *Rule) Ruletype(ctx context.Context) (*RuleType, error) {
+	result, err := r.Edges.RuletypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRuletype().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Rule) Event(ctx context.Context) (*Event, error) {
+	result, err := r.Edges.EventOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryEvent().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Rule) Treshold(ctx context.Context) (*Treshold, error) {
+	result, err := r.Edges.TresholdOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryTreshold().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Rule) Rulelimitrule(ctx context.Context) ([]*RuleLimit, error) {
+	result, err := r.Edges.RulelimitruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRulelimitrule().All(ctx)
+	}
+	return result, err
+}
+
+func (rl *RuleLimit) Comparator(ctx context.Context) (*Comparator, error) {
+	result, err := rl.Edges.ComparatorOrErr()
+	if IsNotLoaded(err) {
+		result, err = rl.QueryComparator().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rl *RuleLimit) Rule(ctx context.Context) (*Rule, error) {
+	result, err := rl.Edges.RuleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rl.QueryRule().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rt *RuleType) Ruletyperule(ctx context.Context) ([]*Rule, error) {
+	result, err := rt.Edges.RuletyperuleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryRuletyperule().All(ctx)
+	}
+	return result, err
+}
+
 func (s *Service) Type(ctx context.Context) (*ServiceType, error) {
 	result, err := s.Edges.TypeOrErr()
 	if IsNotLoaded(err) {
@@ -1636,6 +1732,22 @@ func (t *Tech) Formulatech(ctx context.Context) ([]*Formula, error) {
 	result, err := t.Edges.FormulatechOrErr()
 	if IsNotLoaded(err) {
 		result, err = t.QueryFormulatech().All(ctx)
+	}
+	return result, err
+}
+
+func (t *Treshold) Kpi(ctx context.Context) (*Kpi, error) {
+	result, err := t.Edges.KpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryKpi().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (t *Treshold) Ruletreshold(ctx context.Context) ([]*Rule, error) {
+	result, err := t.Edges.RuletresholdOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryRuletreshold().All(ctx)
 	}
 	return result, err
 }
