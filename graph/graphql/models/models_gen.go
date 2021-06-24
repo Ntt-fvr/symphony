@@ -84,7 +84,10 @@ type AddCounterInput struct {
 }
 
 type AddCounterVendorFormulaInput struct {
-	Mandatory *bool `json:"mandatory"`
+	Mandatory bool `json:"mandatory"`
+	VendorFk  int  `json:"vendorFk"`
+	CounterFk int  `json:"counterFk"`
+	FormulaFk int  `json:"formulaFk"`
 }
 
 type AddCustomerInput struct {
@@ -93,9 +96,7 @@ type AddCustomerInput struct {
 }
 
 type AddDomainInput struct {
-	Name string       `json:"name"`
-	Tech []*TechInput `json:"tech"`
-	Kpi  []*KpiInput  `json:"kpi"`
+	Name string `json:"name"`
 }
 
 type AddEquipmentInput struct {
@@ -160,9 +161,10 @@ type AddFlowDraftInput struct {
 }
 
 type AddFormulaInput struct {
-	Name                 string                           `json:"name"`
-	Active               bool                             `json:"active"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+	Name   string `json:"name"`
+	Active bool   `json:"active"`
+	TechFk int    `json:"techFk"`
+	KpiFk  int    `json:"kpiFk"`
 }
 
 type AddHyperlinkInput struct {
@@ -186,9 +188,8 @@ type AddImageInput struct {
 }
 
 type AddKpiInput struct {
-	Name     string           `json:"name"`
-	Formula  []*FormulaInput  `json:"formula"`
-	Treshold []*TresholdInput `json:"treshold"`
+	Name     string `json:"name"`
+	DomainFk int    `json:"domainFk"`
 }
 
 type AddLinkInput struct {
@@ -275,8 +276,8 @@ type AddServiceEndpointInput struct {
 }
 
 type AddTechInput struct {
-	Name    string          `json:"name"`
-	Formula []*FormulaInput `json:"formula"`
+	Name     string `json:"name"`
+	DomainFk int    `json:"domainFk"`
 }
 
 type AddTresholdInput struct {
@@ -294,8 +295,7 @@ type AddUsersGroupInput struct {
 }
 
 type AddVendorInput struct {
-	Name                 string                           `json:"name"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+	Name string `json:"name"`
 }
 
 type AddWorkOrderInput struct {
@@ -454,10 +454,8 @@ type DecisionRouteInput struct {
 }
 
 type DomainInput struct {
-	ID   int          `json:"id"`
-	Name string       `json:"name"`
-	Tech []*TechInput `json:"tech"`
-	Kpi  []*KpiInput  `json:"kpi"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditBlockInput struct {
@@ -486,15 +484,16 @@ type EditCounterInput struct {
 }
 
 type EditCounterVendorFormulaInput struct {
-	ID        int   `json:"id"`
-	Mandatory *bool `json:"mandatory"`
+	ID        int  `json:"id"`
+	Mandatory bool `json:"mandatory"`
+	VendorFk  int  `json:"vendorFk"`
+	CounterFk int  `json:"counterFk"`
+	FormulaFk int  `json:"formulaFk"`
 }
 
 type EditDomainInput struct {
-	ID   int          `json:"id"`
-	Name string       `json:"name"`
-	Tech []*TechInput `json:"tech"`
-	Kpi  []*KpiInput  `json:"kpi"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditEquipmentInput struct {
@@ -543,17 +542,17 @@ type EditEventSeverityInput struct {
 }
 
 type EditFormulaInput struct {
-	ID                   int                              `json:"id"`
-	Name                 string                           `json:"name"`
-	Active               bool                             `json:"active"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Active bool   `json:"active"`
+	TechFk int    `json:"techFk"`
+	KpiFk  int    `json:"kpiFk"`
 }
 
 type EditKpiInput struct {
-	ID       int              `json:"id"`
-	Name     string           `json:"name"`
-	Formula  []*FormulaInput  `json:"formula"`
-	Treshold []*TresholdInput `json:"treshold"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	DomainFk int    `json:"domainFk"`
 }
 
 type EditLinkInput struct {
@@ -642,9 +641,9 @@ type EditRuleTypeInput struct {
 }
 
 type EditTechInput struct {
-	ID      int             `json:"id"`
-	Name    string          `json:"name"`
-	Formula []*FormulaInput `json:"formula"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	DomainFk int    `json:"domainFk"`
 }
 
 type EditTresholdInput struct {
@@ -673,9 +672,8 @@ type EditUsersGroupInput struct {
 }
 
 type EditVendorInput struct {
-	ID                   int                              `json:"id"`
-	Name                 string                           `json:"name"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditWorkOrderInput struct {
@@ -785,13 +783,6 @@ type FileInput struct {
 	Annotation       *string    `json:"annotation"`
 }
 
-type FormulaInput struct {
-	ID                   int                              `json:"id"`
-	Name                 string                           `json:"name"`
-	Active               bool                             `json:"active"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
-}
-
 type GeneralFilter struct {
 	FilterType    string              `json:"filterType"`
 	Key           string              `json:"key"`
@@ -843,11 +834,13 @@ type ImportFlowDraftInput struct {
 	Connectors          []*ConnectorInput                `json:"connectors"`
 }
 
-type KpiInput struct {
-	ID       int              `json:"id"`
-	Name     string           `json:"name"`
-	Formula  []*FormulaInput  `json:"formula"`
-	Treshold []*TresholdInput `json:"treshold"`
+type KpiFilterInput struct {
+	FilterType  KpiFilterType       `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
 }
 
 type LatestPythonPackageResult struct {
@@ -1135,12 +1128,6 @@ type SurveyWiFiScanData struct {
 	Altitude     *float64 `json:"altitude"`
 	Heading      *float64 `json:"heading"`
 	Rssi         *float64 `json:"rssi"`
-}
-
-type TechInput struct {
-	ID      int             `json:"id"`
-	Name    string          `json:"name"`
-	Formula []*FormulaInput `json:"formula"`
 }
 
 type TechnicianCheckListItemInput struct {
@@ -1446,6 +1433,45 @@ func (e *ImageEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ImageEntity) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KpiFilterType string
+
+const (
+	KpiFilterTypeName KpiFilterType = "NAME"
+)
+
+var AllKpiFilterType = []KpiFilterType{
+	KpiFilterTypeName,
+}
+
+func (e KpiFilterType) IsValid() bool {
+	switch e {
+	case KpiFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KpiFilterType) String() string {
+	return string(e)
+}
+
+func (e *KpiFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KpiFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KpiFilterType", str)
+	}
+	return nil
+}
+
+func (e KpiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

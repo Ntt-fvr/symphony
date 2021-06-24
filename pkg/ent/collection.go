@@ -700,7 +700,7 @@ func (f *FormulaQuery) collectField(ctx *graphql.OperationContext, field graphql
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "counter_vendor_formula":
-			f = f.WithFormulaFk(func(query *CounterVendorFormulaQuery) {
+			f = f.WithCountervendorformula(func(query *CounterVendorFormulaQuery) {
 				query.collectField(ctx, field)
 			})
 		}

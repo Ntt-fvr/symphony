@@ -17,9 +17,14 @@ import (
 
 type techResolver struct{}
 
-func (techResolver) Formula(ctx context.Context, formula *ent.Tech) ([]*ent.Formula, error) {
-	var formulaVariable []*ent.Formula
-	return formulaVariable, nil
+func (techResolver) DomainFk(ctx context.Context, tech *ent.Tech) (*ent.Domain, error) {
+	variable, err := tech.Domain(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a domain valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddTech(ctx context.Context, input models.AddTechInput) (*ent.Tech, error) {
@@ -27,6 +32,7 @@ func (r mutationResolver) AddTech(ctx context.Context, input models.AddTechInput
 	typ, err := client.
 		Tech.Create().
 		SetName(input.Name).
+		SetDomainID(input.DomainFk).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -64,10 +70,11 @@ func (r mutationResolver) EditTech(ctx context.Context, input models.EditTechInp
 		}
 		return nil, errors.Wrapf(err, "updating tech: id=%q", input.ID)
 	}
-	if input.Name != et.Name {
+	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID {
 		if et, err = client.Tech.
 			UpdateOne(et).
 			SetName(input.Name).
+			SetDomainID(input.DomainFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("A tech with the name %v already exists", input.Name)

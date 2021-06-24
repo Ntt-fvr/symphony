@@ -26,7 +26,7 @@ func (CounterVendorFormula) Fields() []ent.Field {
 func (CounterVendorFormula) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("formula", Formula.Type).
-			Ref("formula_fk").
+			Ref("countervendorformula").
 			Unique(),
 		edge.From("vendor", Vendor.Type).
 			Ref("vendor_fk").

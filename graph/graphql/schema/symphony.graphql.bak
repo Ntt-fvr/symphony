@@ -4549,7 +4549,6 @@ type Counter implements Node {
   externalID: String!
   networkManagerSystem: String!
   countervendorformula: [CounterVendorFormula]!
-  counterFamily: CounterFamily
 }
 
 input CounterInput {

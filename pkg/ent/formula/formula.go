@@ -30,8 +30,8 @@ const (
 	EdgeTech = "tech"
 	// EdgeKpi holds the string denoting the kpi edge name in mutations.
 	EdgeKpi = "kpi"
-	// EdgeFormulaFk holds the string denoting the formula_fk edge name in mutations.
-	EdgeFormulaFk = "formula_fk"
+	// EdgeCountervendorformula holds the string denoting the countervendorformula edge name in mutations.
+	EdgeCountervendorformula = "countervendorformula"
 
 	// Table holds the table name of the formula in the database.
 	Table = "formulas"
@@ -49,13 +49,13 @@ const (
 	KpiInverseTable = "kpis"
 	// KpiColumn is the table column denoting the kpi relation/edge.
 	KpiColumn = "kpi_formulakpi"
-	// FormulaFkTable is the table the holds the formula_fk relation/edge.
-	FormulaFkTable = "counter_vendor_formulas"
-	// FormulaFkInverseTable is the table name for the CounterVendorFormula entity.
+	// CountervendorformulaTable is the table the holds the countervendorformula relation/edge.
+	CountervendorformulaTable = "counter_vendor_formulas"
+	// CountervendorformulaInverseTable is the table name for the CounterVendorFormula entity.
 	// It exists in this package in order to avoid circular dependency with the "countervendorformula" package.
-	FormulaFkInverseTable = "counter_vendor_formulas"
-	// FormulaFkColumn is the table column denoting the formula_fk relation/edge.
-	FormulaFkColumn = "formula_formula_fk"
+	CountervendorformulaInverseTable = "counter_vendor_formulas"
+	// CountervendorformulaColumn is the table column denoting the countervendorformula relation/edge.
+	CountervendorformulaColumn = "formula_countervendorformula"
 )
 
 // Columns holds all SQL columns for formula fields.

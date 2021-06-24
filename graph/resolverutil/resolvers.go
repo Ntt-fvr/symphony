@@ -167,3 +167,13 @@ func CounterFilter(query *ent.CounterQuery, filters []*models.CounterFilterInput
 	}
 	return query, nil
 }
+
+func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKpiFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

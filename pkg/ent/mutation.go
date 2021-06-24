@@ -28594,24 +28594,24 @@ func (m *FlowInstanceMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type FormulaMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	create_time       *time.Time
-	update_time       *time.Time
-	name              *string
-	active            *bool
-	clearedFields     map[string]struct{}
-	tech              *int
-	clearedtech       bool
-	kpi               *int
-	clearedkpi        bool
-	formula_fk        map[int]struct{}
-	removedformula_fk map[int]struct{}
-	clearedformula_fk bool
-	done              bool
-	oldValue          func(context.Context) (*Formula, error)
-	predicates        []predicate.Formula
+	op                          Op
+	typ                         string
+	id                          *int
+	create_time                 *time.Time
+	update_time                 *time.Time
+	name                        *string
+	active                      *bool
+	clearedFields               map[string]struct{}
+	tech                        *int
+	clearedtech                 bool
+	kpi                         *int
+	clearedkpi                  bool
+	countervendorformula        map[int]struct{}
+	removedcountervendorformula map[int]struct{}
+	clearedcountervendorformula bool
+	done                        bool
+	oldValue                    func(context.Context) (*Formula, error)
+	predicates                  []predicate.Formula
 }
 
 var _ ent.Mutation = (*FormulaMutation)(nil)
@@ -28919,57 +28919,57 @@ func (m *FormulaMutation) ResetKpi() {
 	m.clearedkpi = false
 }
 
-// AddFormulaFkIDs adds the formula_fk edge to CounterVendorFormula by ids.
-func (m *FormulaMutation) AddFormulaFkIDs(ids ...int) {
-	if m.formula_fk == nil {
-		m.formula_fk = make(map[int]struct{})
+// AddCountervendorformulaIDs adds the countervendorformula edge to CounterVendorFormula by ids.
+func (m *FormulaMutation) AddCountervendorformulaIDs(ids ...int) {
+	if m.countervendorformula == nil {
+		m.countervendorformula = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.formula_fk[ids[i]] = struct{}{}
+		m.countervendorformula[ids[i]] = struct{}{}
 	}
 }
 
-// ClearFormulaFk clears the formula_fk edge to CounterVendorFormula.
-func (m *FormulaMutation) ClearFormulaFk() {
-	m.clearedformula_fk = true
+// ClearCountervendorformula clears the countervendorformula edge to CounterVendorFormula.
+func (m *FormulaMutation) ClearCountervendorformula() {
+	m.clearedcountervendorformula = true
 }
 
-// FormulaFkCleared returns if the edge formula_fk was cleared.
-func (m *FormulaMutation) FormulaFkCleared() bool {
-	return m.clearedformula_fk
+// CountervendorformulaCleared returns if the edge countervendorformula was cleared.
+func (m *FormulaMutation) CountervendorformulaCleared() bool {
+	return m.clearedcountervendorformula
 }
 
-// RemoveFormulaFkIDs removes the formula_fk edge to CounterVendorFormula by ids.
-func (m *FormulaMutation) RemoveFormulaFkIDs(ids ...int) {
-	if m.removedformula_fk == nil {
-		m.removedformula_fk = make(map[int]struct{})
+// RemoveCountervendorformulaIDs removes the countervendorformula edge to CounterVendorFormula by ids.
+func (m *FormulaMutation) RemoveCountervendorformulaIDs(ids ...int) {
+	if m.removedcountervendorformula == nil {
+		m.removedcountervendorformula = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedformula_fk[ids[i]] = struct{}{}
+		m.removedcountervendorformula[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedFormulaFk returns the removed ids of formula_fk.
-func (m *FormulaMutation) RemovedFormulaFkIDs() (ids []int) {
-	for id := range m.removedformula_fk {
+// RemovedCountervendorformula returns the removed ids of countervendorformula.
+func (m *FormulaMutation) RemovedCountervendorformulaIDs() (ids []int) {
+	for id := range m.removedcountervendorformula {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// FormulaFkIDs returns the formula_fk ids in the mutation.
-func (m *FormulaMutation) FormulaFkIDs() (ids []int) {
-	for id := range m.formula_fk {
+// CountervendorformulaIDs returns the countervendorformula ids in the mutation.
+func (m *FormulaMutation) CountervendorformulaIDs() (ids []int) {
+	for id := range m.countervendorformula {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetFormulaFk reset all changes of the "formula_fk" edge.
-func (m *FormulaMutation) ResetFormulaFk() {
-	m.formula_fk = nil
-	m.clearedformula_fk = false
-	m.removedformula_fk = nil
+// ResetCountervendorformula reset all changes of the "countervendorformula" edge.
+func (m *FormulaMutation) ResetCountervendorformula() {
+	m.countervendorformula = nil
+	m.clearedcountervendorformula = false
+	m.removedcountervendorformula = nil
 }
 
 // Op returns the operation name.
@@ -29145,8 +29145,8 @@ func (m *FormulaMutation) AddedEdges() []string {
 	if m.kpi != nil {
 		edges = append(edges, formula.EdgeKpi)
 	}
-	if m.formula_fk != nil {
-		edges = append(edges, formula.EdgeFormulaFk)
+	if m.countervendorformula != nil {
+		edges = append(edges, formula.EdgeCountervendorformula)
 	}
 	return edges
 }
@@ -29163,9 +29163,9 @@ func (m *FormulaMutation) AddedIDs(name string) []ent.Value {
 		if id := m.kpi; id != nil {
 			return []ent.Value{*id}
 		}
-	case formula.EdgeFormulaFk:
-		ids := make([]ent.Value, 0, len(m.formula_fk))
-		for id := range m.formula_fk {
+	case formula.EdgeCountervendorformula:
+		ids := make([]ent.Value, 0, len(m.countervendorformula))
+		for id := range m.countervendorformula {
 			ids = append(ids, id)
 		}
 		return ids
@@ -29177,8 +29177,8 @@ func (m *FormulaMutation) AddedIDs(name string) []ent.Value {
 // mutation.
 func (m *FormulaMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removedformula_fk != nil {
-		edges = append(edges, formula.EdgeFormulaFk)
+	if m.removedcountervendorformula != nil {
+		edges = append(edges, formula.EdgeCountervendorformula)
 	}
 	return edges
 }
@@ -29187,9 +29187,9 @@ func (m *FormulaMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *FormulaMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case formula.EdgeFormulaFk:
-		ids := make([]ent.Value, 0, len(m.removedformula_fk))
-		for id := range m.removedformula_fk {
+	case formula.EdgeCountervendorformula:
+		ids := make([]ent.Value, 0, len(m.removedcountervendorformula))
+		for id := range m.removedcountervendorformula {
 			ids = append(ids, id)
 		}
 		return ids
@@ -29207,8 +29207,8 @@ func (m *FormulaMutation) ClearedEdges() []string {
 	if m.clearedkpi {
 		edges = append(edges, formula.EdgeKpi)
 	}
-	if m.clearedformula_fk {
-		edges = append(edges, formula.EdgeFormulaFk)
+	if m.clearedcountervendorformula {
+		edges = append(edges, formula.EdgeCountervendorformula)
 	}
 	return edges
 }
@@ -29221,8 +29221,8 @@ func (m *FormulaMutation) EdgeCleared(name string) bool {
 		return m.clearedtech
 	case formula.EdgeKpi:
 		return m.clearedkpi
-	case formula.EdgeFormulaFk:
-		return m.clearedformula_fk
+	case formula.EdgeCountervendorformula:
+		return m.clearedcountervendorformula
 	}
 	return false
 }
@@ -29252,8 +29252,8 @@ func (m *FormulaMutation) ResetEdge(name string) error {
 	case formula.EdgeKpi:
 		m.ResetKpi()
 		return nil
-	case formula.EdgeFormulaFk:
-		m.ResetFormulaFk()
+	case formula.EdgeCountervendorformula:
+		m.ResetCountervendorformula()
 		return nil
 	}
 	return fmt.Errorf("unknown Formula edge %s", name)

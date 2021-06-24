@@ -32,10 +32,10 @@ type FormulaQuery struct {
 	unique     []string
 	predicates []predicate.Formula
 	// eager-loading edges.
-	withTech      *TechQuery
-	withKpi       *KpiQuery
-	withFormulaFk *CounterVendorFormulaQuery
-	withFKs       bool
+	withTech                 *TechQuery
+	withKpi                  *KpiQuery
+	withCountervendorformula *CounterVendorFormulaQuery
+	withFKs                  bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -109,8 +109,8 @@ func (fq *FormulaQuery) QueryKpi() *KpiQuery {
 	return query
 }
 
-// QueryFormulaFk chains the current query on the formula_fk edge.
-func (fq *FormulaQuery) QueryFormulaFk() *CounterVendorFormulaQuery {
+// QueryCountervendorformula chains the current query on the countervendorformula edge.
+func (fq *FormulaQuery) QueryCountervendorformula() *CounterVendorFormulaQuery {
 	query := &CounterVendorFormulaQuery{config: fq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := fq.prepareQuery(ctx); err != nil {
@@ -123,7 +123,7 @@ func (fq *FormulaQuery) QueryFormulaFk() *CounterVendorFormulaQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(formula.Table, formula.FieldID, selector),
 			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, formula.FormulaFkTable, formula.FormulaFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, formula.CountervendorformulaTable, formula.CountervendorformulaColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
 		return fromU, nil
@@ -301,15 +301,15 @@ func (fq *FormulaQuery) Clone() *FormulaQuery {
 		return nil
 	}
 	return &FormulaQuery{
-		config:        fq.config,
-		limit:         fq.limit,
-		offset:        fq.offset,
-		order:         append([]OrderFunc{}, fq.order...),
-		unique:        append([]string{}, fq.unique...),
-		predicates:    append([]predicate.Formula{}, fq.predicates...),
-		withTech:      fq.withTech.Clone(),
-		withKpi:       fq.withKpi.Clone(),
-		withFormulaFk: fq.withFormulaFk.Clone(),
+		config:                   fq.config,
+		limit:                    fq.limit,
+		offset:                   fq.offset,
+		order:                    append([]OrderFunc{}, fq.order...),
+		unique:                   append([]string{}, fq.unique...),
+		predicates:               append([]predicate.Formula{}, fq.predicates...),
+		withTech:                 fq.withTech.Clone(),
+		withKpi:                  fq.withKpi.Clone(),
+		withCountervendorformula: fq.withCountervendorformula.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,
@@ -338,14 +338,14 @@ func (fq *FormulaQuery) WithKpi(opts ...func(*KpiQuery)) *FormulaQuery {
 	return fq
 }
 
-//  WithFormulaFk tells the query-builder to eager-loads the nodes that are connected to
-// the "formula_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (fq *FormulaQuery) WithFormulaFk(opts ...func(*CounterVendorFormulaQuery)) *FormulaQuery {
+//  WithCountervendorformula tells the query-builder to eager-loads the nodes that are connected to
+// the "countervendorformula" edge. The optional arguments used to configure the query builder of the edge.
+func (fq *FormulaQuery) WithCountervendorformula(opts ...func(*CounterVendorFormulaQuery)) *FormulaQuery {
 	query := &CounterVendorFormulaQuery{config: fq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	fq.withFormulaFk = query
+	fq.withCountervendorformula = query
 	return fq
 }
 
@@ -422,7 +422,7 @@ func (fq *FormulaQuery) sqlAll(ctx context.Context) ([]*Formula, error) {
 		loadedTypes = [3]bool{
 			fq.withTech != nil,
 			fq.withKpi != nil,
-			fq.withFormulaFk != nil,
+			fq.withCountervendorformula != nil,
 		}
 	)
 	if fq.withTech != nil || fq.withKpi != nil {
@@ -505,32 +505,32 @@ func (fq *FormulaQuery) sqlAll(ctx context.Context) ([]*Formula, error) {
 		}
 	}
 
-	if query := fq.withFormulaFk; query != nil {
+	if query := fq.withCountervendorformula; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*Formula)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.FormulaFk = []*CounterVendorFormula{}
+			nodes[i].Edges.Countervendorformula = []*CounterVendorFormula{}
 		}
 		query.withFKs = true
 		query.Where(predicate.CounterVendorFormula(func(s *sql.Selector) {
-			s.Where(sql.InValues(formula.FormulaFkColumn, fks...))
+			s.Where(sql.InValues(formula.CountervendorformulaColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.formula_formula_fk
+			fk := n.formula_countervendorformula
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "formula_formula_fk" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "formula_countervendorformula" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "formula_formula_fk" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "formula_countervendorformula" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.FormulaFk = append(node.Edges.FormulaFk, n)
+			node.Edges.Countervendorformula = append(node.Edges.Countervendorformula, n)
 		}
 	}
 

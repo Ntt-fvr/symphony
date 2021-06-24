@@ -102,23 +102,5 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 			return nil, errors.Wrap(err, "updating counter name")
 		}
 	}
-	/*
-		// TODO: validar formula
-			for _, input := range input.PropertyTypes {
-				if input.ID == nil {
-					if err := r.validateAddedNewPropertyType(input); err != nil {
-						return nil, err
-					}
-					if err := r.AddPropertyTypes(ctx,
-						func(b *ent.PropertyTypeCreate) {
-							b.SetWorkerTypeID(et.ID)
-						}, input); err != nil {
-						return nil, err
-					}
-				} else if err := r.updatePropType(ctx, input); err != nil {
-					return nil, err
-				}
-			}
-	*/
 	return et, nil
 }

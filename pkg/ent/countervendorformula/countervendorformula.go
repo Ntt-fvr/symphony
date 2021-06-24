@@ -39,7 +39,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "formula" package.
 	FormulaInverseTable = "formulas"
 	// FormulaColumn is the table column denoting the formula relation/edge.
-	FormulaColumn = "formula_formula_fk"
+	FormulaColumn = "formula_countervendorformula"
 	// VendorTable is the table the holds the vendor relation/edge.
 	VendorTable = "counter_vendor_formulas"
 	// VendorInverseTable is the table name for the Vendor entity.
@@ -67,7 +67,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the CounterVendorFormula type.
 var ForeignKeys = []string{
 	"counter_counter_fk",
-	"formula_formula_fk",
+	"formula_countervendorformula",
 	"vendor_vendor_fk",
 }
 

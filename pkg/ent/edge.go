@@ -856,10 +856,10 @@ func (f *Formula) Kpi(ctx context.Context) (*Kpi, error) {
 	return result, MaskNotFound(err)
 }
 
-func (f *Formula) FormulaFk(ctx context.Context) ([]*CounterVendorFormula, error) {
-	result, err := f.Edges.FormulaFkOrErr()
+func (f *Formula) Countervendorformula(ctx context.Context) ([]*CounterVendorFormula, error) {
+	result, err := f.Edges.CountervendorformulaOrErr()
 	if IsNotLoaded(err) {
-		result, err = f.QueryFormulaFk().All(ctx)
+		result, err = f.QueryCountervendorformula().All(ctx)
 	}
 	return result, err
 }

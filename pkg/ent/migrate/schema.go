@@ -375,7 +375,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "mandatory", Type: field.TypeBool},
 		{Name: "counter_counter_fk", Type: field.TypeInt, Nullable: true},
-		{Name: "formula_formula_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "formula_countervendorformula", Type: field.TypeInt, Nullable: true},
 		{Name: "vendor_vendor_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// CounterVendorFormulasTable holds the schema information for the "counter_vendor_formulas" table.
@@ -392,7 +392,7 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "counter_vendor_formulas_formulas_formula_fk",
+				Symbol:  "counter_vendor_formulas_formulas_countervendorformula",
 				Columns: []*schema.Column{CounterVendorFormulasColumns[5]},
 
 				RefColumns: []*schema.Column{FormulasColumns[0]},

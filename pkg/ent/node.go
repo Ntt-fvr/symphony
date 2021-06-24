@@ -3134,9 +3134,9 @@ func (f *Formula) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2] = &Edge{
 		Type: "CounterVendorFormula",
-		Name: "formula_fk",
+		Name: "countervendorformula",
 	}
-	node.Edges[2].IDs, err = f.QueryFormulaFk().
+	node.Edges[2].IDs, err = f.QueryCountervendorformula().
 		Select(countervendorformula.FieldID).
 		Ints(ctx)
 	if err != nil {

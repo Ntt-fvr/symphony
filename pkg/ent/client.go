@@ -5699,15 +5699,15 @@ func (c *FormulaClient) QueryKpi(f *Formula) *KpiQuery {
 	return query
 }
 
-// QueryFormulaFk queries the formula_fk edge of a Formula.
-func (c *FormulaClient) QueryFormulaFk(f *Formula) *CounterVendorFormulaQuery {
+// QueryCountervendorformula queries the countervendorformula edge of a Formula.
+func (c *FormulaClient) QueryCountervendorformula(f *Formula) *CounterVendorFormulaQuery {
 	query := &CounterVendorFormulaQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(formula.Table, formula.FieldID, id),
 			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, formula.FormulaFkTable, formula.FormulaFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, formula.CountervendorformulaTable, formula.CountervendorformulaColumn),
 		)
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil

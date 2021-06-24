@@ -17,14 +17,23 @@ import (
 
 type kpiResolver struct{}
 
-func (kpiResolver) Formula(ctx context.Context, formula *ent.Kpi) ([]*ent.Formula, error) {
-	var formulaVariable []*ent.Formula
-	return formulaVariable, nil
+func (r kpiResolver) DomainFk(ctx context.Context, kpi *ent.Kpi) (*ent.Domain, error) {
+	variable, err := kpi.Domain(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a domain valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
-func (kpiResolver) Treshold(ctx context.Context, counter *ent.Kpi) ([]*ent.Treshold, error) {
-	var response []*ent.Treshold
-	return response, nil
+func (kpiResolver) FormulaFk(ctx context.Context, kpi *ent.Kpi) ([]*ent.Formula, error) {
+	variable, err := kpi.Formulakpi(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) (*ent.Kpi, error) {
@@ -32,6 +41,7 @@ func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) 
 	typ, err := client.
 		Kpi.Create().
 		SetName(input.Name).
+		SetDomainID(input.DomainFk).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -69,10 +79,11 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 		}
 		return nil, errors.Wrapf(err, "updating kpi: id=%q", input.ID)
 	}
-	if input.Name != et.Name {
+	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID {
 		if et, err = client.Kpi.
 			UpdateOne(et).
 			SetName(input.Name).
+			SetDomainID(input.DomainFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("A kpi with the name %v already exists", input.Name)
