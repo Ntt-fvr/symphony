@@ -10,13 +10,6 @@
 
 import React, {useState} from 'react';
 
-import type {
-  AddCounterMutationResponse,
-  AddCounterMutationVariables,
-} from '../../mutations/__generated__/AddCounterMutation.graphql';
-
-import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
-
 import Button from '@symphony/design-system/components/Button';
 
 import AddCounterMutation from '../../mutations/AddCounterMutation';
@@ -24,6 +17,8 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+
+import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -62,10 +57,21 @@ export default function AddCounterItemForm() {
   }
 
   function handleClick() {
-    console.log('hola, es un click');
+    const variables: AddCounterMutationVariables = {
+      input: {
+        name: counters.data.family,
+        counter: [
+          {
+            name: counters.data.name,
+            externalID: counters.data.id,
+            networkManagerSystem: counters.data.nms,
+          },
+        ],
+      },
+    };
+    console.log(variables);
+    AddCounterMutation(variables);
   }
-
-  console.log(counters);
 
   return (
     <Card className={classes.root}>

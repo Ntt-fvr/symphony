@@ -61,15 +61,15 @@ const CountersTypes = () => {
   const classes = useStyles();
 
   const data = useLazyLoadQuery<CountersTypesQuery>(CountersQuery, {});
-  const [state, setState] = useState(data);
+
+  const [items, setItems] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  const counterItems = state.counters.edges;
 
   const handleRemove = id => {
-    const edges = counterItems.filter(item => item.node.id !== id);
+    const edges = items.counters.edges.filter(item => item.node.id !== id);
     const removeCounter = {counters: {edges}};
-    setState(removeCounter);
+    setItems(removeCounter);
   };
 
   const showEditCounterItemForm = (counters: {}) => {
@@ -106,7 +106,7 @@ const CountersTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs="12" lg="9">
           <List disablePadding="true">
-            {counterItems.map(item => (
+            {items.counters.edges.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
                   counter={item.node}
