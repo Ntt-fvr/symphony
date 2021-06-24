@@ -11,7 +11,7 @@
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
-import React, {useState} from 'react';
+import TitleTextCards from './TitleTextCards';
 import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
 import {Grid, List} from '@material-ui/core/';
@@ -20,6 +20,7 @@ import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
+import React, {useState} from 'react';
 const CountersQuery = graphql`
   query CountersTypesQuery {
     counters {
@@ -111,6 +112,7 @@ const CountersTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <List disablePadding="true">
+            <TitleTextCards />
             {point.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
