@@ -8,9 +8,18 @@
  * @format
  */
 
-import * as React from 'react';
+import React, {useState} from 'react';
+
+import type {
+  AddCounterMutationResponse,
+  AddCounterMutationVariables,
+} from '../../mutations/__generated__/AddCounterMutation.graphql';
+
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 
 import Button from '@symphony/design-system/components/Button';
+
+import AddCounterMutation from '../../mutations/AddCounterMutation';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
@@ -41,6 +50,23 @@ const useStyles = makeStyles(theme => ({
 export default function AddCounterItemForm() {
   const classes = useStyles();
 
+  const [counters, setCounters] = useState({data: {}});
+
+  function handleChange({target}) {
+    setCounters({
+      data: {
+        ...counters.data,
+        [target.name]: target.value,
+      },
+    });
+  }
+
+  function handleClick() {
+    console.log('hola, es un click');
+  }
+
+  console.log(counters);
+
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Counter</CardHeader>
@@ -50,6 +76,7 @@ export default function AddCounterItemForm() {
           name="name"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField className={classes.formField} label="Counter ID" required>
@@ -58,6 +85,7 @@ export default function AddCounterItemForm() {
           name="id"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField className={classes.formField} label="Family name" required>
@@ -66,6 +94,7 @@ export default function AddCounterItemForm() {
           name="family"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField className={classes.formField} label="Vendor name" required>
@@ -74,6 +103,7 @@ export default function AddCounterItemForm() {
           name="vendor"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField
@@ -85,10 +115,13 @@ export default function AddCounterItemForm() {
           variant="outlined"
           name="nms"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField>
-        <Button className={classes.addCounter}>Add Counter</Button>
+        <Button className={classes.addCounter} onClick={handleClick}>
+          Add Counter
+        </Button>
       </FormField>
     </Card>
   );
