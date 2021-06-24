@@ -64,11 +64,12 @@ const CountersTypes = () => {
   const [state, setState] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  const point = state.counters.edges;
+  const counterItems = state.counters.edges;
 
   const handleRemove = id => {
-    const newList = point.filter(item => item.node.id !== id);
-    setState(newList);
+    const edges = counterItems.filter(item => item.node.id !== id);
+    const removeCounter = {counters: {edges}};
+    setState(removeCounter);
   };
 
   const showEditCounterItemForm = (counters: {}) => {
@@ -105,7 +106,7 @@ const CountersTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs="12" lg="9">
           <List disablePadding="true">
-            {point.map(item => (
+            {counterItems.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
                   counter={item.node}
