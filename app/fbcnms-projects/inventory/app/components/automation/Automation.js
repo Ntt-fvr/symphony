@@ -24,9 +24,11 @@ import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import AutomationConfigure from './AutomationConfigure';
+import AutomationFlowInstances from './AutomationFlowInstances';
 import AutomationFlowsIcon from './flows/view/icons/AutomationFlowsIcon';
 import AutomationFlowsView from './flows/view/AutomationFlowsView';
-import AutomationConfigure from './AutomationConfigure';
+import WorkIcon from '@material-ui/icons/Work';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Suspense, useContext} from 'react';
 import {getProjectLinks} from '@fbcnms/projects/projects';
@@ -46,12 +48,18 @@ function NavItems() {
   return [
     <NavListItem
       key={1}
+      label={fbt('Instances Flows', '')}
+      path={relativeUrl('/search')}
+      icon={<WorkIcon />}
+    />,
+    <NavListItem
+      key={2}
       label={fbt('Automation Flows', '')}
       path={relativeUrl('/flows')}
       icon={<AutomationFlowsIcon />}
     />,
     <NavListItem
-      key={2}
+      key={3}
       label="Templates"
       path={relativeUrl('/configure')}
       icon={<AssignmentIcon />}
@@ -68,6 +76,10 @@ function NavRoutes() {
   const relativeUrl = useRelativeUrl();
   return (
     <Switch>
+      <Route
+        path={relativeUrl('/search')}
+        component={AutomationFlowInstances}
+      />
       <Route path={relativeUrl('/flows')} component={AutomationFlowsView} />
       <Route path={relativeUrl(FLOW_BUILDER_PATH)} component={FlowBuilder} />
       <Route path={relativeUrl('/configure')} component={AutomationConfigure} />

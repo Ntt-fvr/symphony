@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
@@ -116,6 +117,32 @@ func (biu *BlockInstanceUpdate) AddBlockInstanceCounter(i int) *BlockInstanceUpd
 // ClearBlockInstanceCounter clears the value of block_instance_counter.
 func (biu *BlockInstanceUpdate) ClearBlockInstanceCounter() *BlockInstanceUpdate {
 	biu.mutation.ClearBlockInstanceCounter()
+	return biu
+}
+
+// SetStartDate sets the start_date field.
+func (biu *BlockInstanceUpdate) SetStartDate(t time.Time) *BlockInstanceUpdate {
+	biu.mutation.SetStartDate(t)
+	return biu
+}
+
+// SetEndDate sets the end_date field.
+func (biu *BlockInstanceUpdate) SetEndDate(t time.Time) *BlockInstanceUpdate {
+	biu.mutation.SetEndDate(t)
+	return biu
+}
+
+// SetNillableEndDate sets the end_date field if the given value is not nil.
+func (biu *BlockInstanceUpdate) SetNillableEndDate(t *time.Time) *BlockInstanceUpdate {
+	if t != nil {
+		biu.SetEndDate(*t)
+	}
+	return biu
+}
+
+// ClearEndDate clears the value of end_date.
+func (biu *BlockInstanceUpdate) ClearEndDate() *BlockInstanceUpdate {
+	biu.mutation.ClearEndDate()
 	return biu
 }
 
@@ -356,6 +383,26 @@ func (biu *BlockInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Column: blockinstance.FieldBlockInstanceCounter,
 		})
 	}
+	if value, ok := biu.mutation.StartDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: blockinstance.FieldStartDate,
+		})
+	}
+	if value, ok := biu.mutation.EndDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: blockinstance.FieldEndDate,
+		})
+	}
+	if biu.mutation.EndDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: blockinstance.FieldEndDate,
+		})
+	}
 	if biu.mutation.FlowInstanceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -561,6 +608,32 @@ func (biuo *BlockInstanceUpdateOne) AddBlockInstanceCounter(i int) *BlockInstanc
 // ClearBlockInstanceCounter clears the value of block_instance_counter.
 func (biuo *BlockInstanceUpdateOne) ClearBlockInstanceCounter() *BlockInstanceUpdateOne {
 	biuo.mutation.ClearBlockInstanceCounter()
+	return biuo
+}
+
+// SetStartDate sets the start_date field.
+func (biuo *BlockInstanceUpdateOne) SetStartDate(t time.Time) *BlockInstanceUpdateOne {
+	biuo.mutation.SetStartDate(t)
+	return biuo
+}
+
+// SetEndDate sets the end_date field.
+func (biuo *BlockInstanceUpdateOne) SetEndDate(t time.Time) *BlockInstanceUpdateOne {
+	biuo.mutation.SetEndDate(t)
+	return biuo
+}
+
+// SetNillableEndDate sets the end_date field if the given value is not nil.
+func (biuo *BlockInstanceUpdateOne) SetNillableEndDate(t *time.Time) *BlockInstanceUpdateOne {
+	if t != nil {
+		biuo.SetEndDate(*t)
+	}
+	return biuo
+}
+
+// ClearEndDate clears the value of end_date.
+func (biuo *BlockInstanceUpdateOne) ClearEndDate() *BlockInstanceUpdateOne {
+	biuo.mutation.ClearEndDate()
 	return biuo
 }
 
@@ -797,6 +870,26 @@ func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (_node *BlockIn
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Column: blockinstance.FieldBlockInstanceCounter,
+		})
+	}
+	if value, ok := biuo.mutation.StartDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: blockinstance.FieldStartDate,
+		})
+	}
+	if value, ok := biuo.mutation.EndDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: blockinstance.FieldEndDate,
+		})
+	}
+	if biuo.mutation.EndDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: blockinstance.FieldEndDate,
 		})
 	}
 	if biuo.mutation.FlowInstanceCleared() {

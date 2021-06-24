@@ -24,6 +24,7 @@ export const EntityTypeMap = Object.freeze({
   wifi_scan: 'wifi_scan',
   service: 'service',
   alert: 'alert',
+  flow_instance: 'flow_instance',
 });
 
 export type EntityType = $Values<typeof EntityTypeMap>;

@@ -63,10 +63,11 @@ type ActivityFilterInput struct {
 }
 
 type AddBlockInstanceInput struct {
-	Status  *blockinstance.Status       `json:"status"`
-	Inputs  []*flowschema.VariableValue `json:"inputs"`
-	Outputs []*flowschema.VariableValue `json:"outputs"`
-	BlockID int                         `json:"blockId"`
+	Status    *blockinstance.Status       `json:"status"`
+	Inputs    []*flowschema.VariableValue `json:"inputs"`
+	Outputs   []*flowschema.VariableValue `json:"outputs"`
+	BlockID   int                         `json:"blockId"`
+	StartDate time.Time                   `json:"startDate"`
 }
 
 type AddBulkServiceLinksAndPortsInput struct {
@@ -358,6 +359,7 @@ type EditBlockInstanceInput struct {
 	Inputs        []*flowschema.VariableValue `json:"inputs"`
 	Outputs       []*flowschema.VariableValue `json:"outputs"`
 	FailureReason *string                     `json:"failure_reason"`
+	EndDate       *time.Time                  `json:"endDate"`
 }
 
 type EditEquipmentInput struct {
@@ -390,8 +392,10 @@ type EditEquipmentTypeInput struct {
 }
 
 type EditFlowInstanceInput struct {
-	ID     int                 `json:"id"`
-	Status flowinstance.Status `json:"status"`
+	ID                  int                  `json:"id"`
+	ServiceInstanceCode *string              `json:"serviceInstanceCode"`
+	Status              *flowinstance.Status `json:"status"`
+	EndDate             *time.Time           `json:"endDate"`
 }
 
 type EditLinkInput struct {
@@ -567,6 +571,17 @@ type FileInput struct {
 	MimeType         *string    `json:"mimeType"`
 	StoreKey         string     `json:"storeKey"`
 	Annotation       *string    `json:"annotation"`
+}
+
+type FlowInstanceFilterInput struct {
+	FilterType    FlowInstanceFilterType    `json:"filterType"`
+	Operator      enum.FilterOperator       `json:"operator"`
+	StringValue   *string                   `json:"stringValue"`
+	IDSet         []int                     `json:"idSet"`
+	StringSet     []string                  `json:"stringSet"`
+	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
+	TimeValue     *time.Time                `json:"timeValue"`
+	MaxDepth      *int                      `json:"maxDepth"`
 }
 
 type GeneralFilter struct {
@@ -780,8 +795,10 @@ type StartBlockInput struct {
 }
 
 type StartFlowInput struct {
-	FlowID int                         `json:"flowID"`
-	Params []*flowschema.VariableValue `json:"params"`
+	FlowID    int                         `json:"flowID"`
+	BssCode   string                      `json:"bssCode"`
+	StartDate time.Time                   `json:"startDate"`
+	Params    []*flowschema.VariableValue `json:"params"`
 }
 
 type SubflowBlock struct {
@@ -1100,6 +1117,52 @@ func (e *FilterEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FilterEntity) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// what filters should we apply on flow instances
+type FlowInstanceFilterType string
+
+const (
+	FlowInstanceFilterTypeFlowInstanceStatus              FlowInstanceFilterType = "FLOW_INSTANCE_STATUS"
+	FlowInstanceFilterTypeFlowInstanceType                FlowInstanceFilterType = "FLOW_INSTANCE_TYPE"
+	FlowInstanceFilterTypeFlowInstanceBssCode             FlowInstanceFilterType = "FLOW_INSTANCE_BSS_CODE"
+	FlowInstanceFilterTypeFlowInstanceServiceInstanceCode FlowInstanceFilterType = "FLOW_INSTANCE_SERVICE_INSTANCE_CODE"
+)
+
+var AllFlowInstanceFilterType = []FlowInstanceFilterType{
+	FlowInstanceFilterTypeFlowInstanceStatus,
+	FlowInstanceFilterTypeFlowInstanceType,
+	FlowInstanceFilterTypeFlowInstanceBssCode,
+	FlowInstanceFilterTypeFlowInstanceServiceInstanceCode,
+}
+
+func (e FlowInstanceFilterType) IsValid() bool {
+	switch e {
+	case FlowInstanceFilterTypeFlowInstanceStatus, FlowInstanceFilterTypeFlowInstanceType, FlowInstanceFilterTypeFlowInstanceBssCode, FlowInstanceFilterTypeFlowInstanceServiceInstanceCode:
+		return true
+	}
+	return false
+}
+
+func (e FlowInstanceFilterType) String() string {
+	return string(e)
+}
+
+func (e *FlowInstanceFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FlowInstanceFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FlowInstanceFilterType", str)
+	}
+	return nil
+}
+
+func (e FlowInstanceFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

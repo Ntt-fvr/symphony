@@ -12,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/alecthomas/kong"
+	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -47,6 +48,8 @@ func main() {
 		kong.Configuration(kongtoml.Loader),
 		cf.TelemetryConfig,
 	)
+
+	resolver.GlobalPropFlags.DatabaseURL = cf.DatabaseURL
 
 	ctx := ctxutil.WithSignal(
 		context.Background(),

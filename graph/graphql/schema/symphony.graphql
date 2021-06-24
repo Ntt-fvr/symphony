@@ -997,6 +997,41 @@ type FlowInstanceConnection {
 }
 
 """
+Ordering options for flow instance connections.
+"""
+input FlowInstanceOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order work orders by.
+  """
+  field: FlowInstanceOrderField
+}
+
+"""
+Properties by which flow instances connections can be ordered.
+"""
+enum FlowInstanceOrderField {
+  """
+  Order flow instances by start time.
+  """
+  START_AT
+
+  """
+  Order flow instances by end time.
+  """
+  END_AT
+
+  """
+  Order flow instances by update time.
+  """
+  UPDATED_AT
+}
+
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -1551,6 +1586,7 @@ enum WorkOrderStatus
     )
   BLOCKED
   CANCELED
+  SUSPENDED
 }
 
 enum ServiceStatus
@@ -2358,7 +2394,13 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
+
+  """
+  Order projects by property type.
+  """
+  PROPERTY
 }
+
 
 """
 Ordering options for project connections.
@@ -3602,6 +3644,27 @@ type FlowDraft implements Node {
   sameAsFlow: Boolean!
 }
 
+"""
+what filters should we apply on flow instances
+"""
+enum FlowInstanceFilterType {
+  FLOW_INSTANCE_STATUS
+  FLOW_INSTANCE_TYPE
+  FLOW_INSTANCE_BSS_CODE
+  FLOW_INSTANCE_SERVICE_INSTANCE_CODE
+}
+
+input FlowInstanceFilterInput {
+  filterType: FlowInstanceFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  stringSet: [String!]
+  propertyValue: PropertyTypeInput
+  timeValue: Time
+  maxDepth: Int = 5
+}
+
 enum FlowInstanceStatus
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
@@ -3609,7 +3672,7 @@ enum FlowInstanceStatus
   IN_PROGRESS
   FAILED
   COMPLETED
-  CANCELLED
+  CANCELED
 }
 
 type FlowExecutionTemplate implements Node {
@@ -3646,6 +3709,8 @@ type BlockInstance implements Node {
   outputs: [VariableValue!]!
   failure_reason: String
   block: Block!
+  startDate: Time!
+  endDate: Time
 }
 
 input AddBlockInstanceInput {
@@ -3653,6 +3718,7 @@ input AddBlockInstanceInput {
   inputs: [VariableValueInput!]
   outputs: [VariableValueInput!]
   blockId: ID!
+  startDate: Time!
 }
 
 input EditBlockInstanceInput {
@@ -3661,18 +3727,25 @@ input EditBlockInstanceInput {
   inputs: [VariableValueInput!]
   outputs: [VariableValueInput!]
   failure_reason: String
+  endDate: Time
 }
 
 type FlowInstance implements Node {
   id: ID!
+  bssCode: String!
+  serviceInstanceCode: String
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
   blocks: [BlockInstance!]!
+  startDate: Time!
+  endDate: Time
 }
 
 input EditFlowInstanceInput {
   id: ID!
-  status: FlowInstanceStatus!
+  serviceInstanceCode: String
+  status: FlowInstanceStatus
+  endDate: Time
 }
 
 input AddFlowDraftInput {
@@ -3697,6 +3770,8 @@ input VariableValueInput
 
 input StartFlowInput {
   flowID: ID!
+  bssCode: String!
+  startDate: Time!
   params: [VariableValueInput]!
 }
 
@@ -4056,6 +4131,16 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
+
+    """
+    Property value for ordering projects.
+    """
+    propertyValue: String,
+
+    """
+    Property direction for ordering projects.
+    """
+    propertyOrder: String
   ): ProjectConnection!
   customers(
     after: Cursor
@@ -4089,6 +4174,8 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    orderBy: FlowInstanceOrder
+    filterBy: [FlowInstanceFilterInput!]
   ): FlowInstanceConnection!
   workerTypes(
     after: Cursor

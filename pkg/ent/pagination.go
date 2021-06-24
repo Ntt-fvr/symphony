@@ -926,6 +926,77 @@ func (bi *BlockInstanceQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// BlockInstanceOrderFieldUpdateTime orders BlockInstance by update_time.
+	BlockInstanceOrderFieldUpdateTime = &BlockInstanceOrderField{
+		field: blockinstance.FieldUpdateTime,
+		toCursor: func(bi *BlockInstance) Cursor {
+			return Cursor{
+				ID:    bi.ID,
+				Value: bi.UpdateTime,
+			}
+		},
+	}
+	// BlockInstanceOrderFieldStartDate orders BlockInstance by start_date.
+	BlockInstanceOrderFieldStartDate = &BlockInstanceOrderField{
+		field: blockinstance.FieldStartDate,
+		toCursor: func(bi *BlockInstance) Cursor {
+			return Cursor{
+				ID:    bi.ID,
+				Value: bi.StartDate,
+			}
+		},
+	}
+	// BlockInstanceOrderFieldEndDate orders BlockInstance by end_date.
+	BlockInstanceOrderFieldEndDate = &BlockInstanceOrderField{
+		field: blockinstance.FieldEndDate,
+		toCursor: func(bi *BlockInstance) Cursor {
+			return Cursor{
+				ID:    bi.ID,
+				Value: bi.EndDate,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f BlockInstanceOrderField) String() string {
+	var str string
+	switch f.field {
+	case blockinstance.FieldUpdateTime:
+		str = "UPDATED_AT"
+	case blockinstance.FieldStartDate:
+		str = "START_AT"
+	case blockinstance.FieldEndDate:
+		str = "END_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f BlockInstanceOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *BlockInstanceOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("BlockInstanceOrderField %T must be a string", v)
+	}
+	switch str {
+	case "UPDATED_AT":
+		*f = *BlockInstanceOrderFieldUpdateTime
+	case "START_AT":
+		*f = *BlockInstanceOrderFieldStartDate
+	case "END_AT":
+		*f = *BlockInstanceOrderFieldEndDate
+	default:
+		return fmt.Errorf("%s is not a valid BlockInstanceOrderField", str)
+	}
+	return nil
+}
+
 // BlockInstanceOrderField defines the ordering field of BlockInstance.
 type BlockInstanceOrderField struct {
 	field    string
@@ -6675,6 +6746,77 @@ func (fi *FlowInstanceQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// FlowInstanceOrderFieldUpdateTime orders FlowInstance by update_time.
+	FlowInstanceOrderFieldUpdateTime = &FlowInstanceOrderField{
+		field: flowinstance.FieldUpdateTime,
+		toCursor: func(fi *FlowInstance) Cursor {
+			return Cursor{
+				ID:    fi.ID,
+				Value: fi.UpdateTime,
+			}
+		},
+	}
+	// FlowInstanceOrderFieldStartDate orders FlowInstance by start_date.
+	FlowInstanceOrderFieldStartDate = &FlowInstanceOrderField{
+		field: flowinstance.FieldStartDate,
+		toCursor: func(fi *FlowInstance) Cursor {
+			return Cursor{
+				ID:    fi.ID,
+				Value: fi.StartDate,
+			}
+		},
+	}
+	// FlowInstanceOrderFieldEndDate orders FlowInstance by end_date.
+	FlowInstanceOrderFieldEndDate = &FlowInstanceOrderField{
+		field: flowinstance.FieldEndDate,
+		toCursor: func(fi *FlowInstance) Cursor {
+			return Cursor{
+				ID:    fi.ID,
+				Value: fi.EndDate,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f FlowInstanceOrderField) String() string {
+	var str string
+	switch f.field {
+	case flowinstance.FieldUpdateTime:
+		str = "UPDATED_AT"
+	case flowinstance.FieldStartDate:
+		str = "START_AT"
+	case flowinstance.FieldEndDate:
+		str = "END_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f FlowInstanceOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *FlowInstanceOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("FlowInstanceOrderField %T must be a string", v)
+	}
+	switch str {
+	case "UPDATED_AT":
+		*f = *FlowInstanceOrderFieldUpdateTime
+	case "START_AT":
+		*f = *FlowInstanceOrderFieldStartDate
+	case "END_AT":
+		*f = *FlowInstanceOrderFieldEndDate
+	default:
+		return fmt.Errorf("%s is not a valid FlowInstanceOrderField", str)
+	}
+	return nil
 }
 
 // FlowInstanceOrderField defines the ordering field of FlowInstance.

@@ -369,7 +369,7 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     bi.ID,
 		Type:   "BlockInstance",
-		Fields: make([]*Field, 7),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -427,6 +427,22 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[6] = &Field{
 		Type:  "int",
 		Name:  "block_instance_counter",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.StartDate); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "start_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.EndDate); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "time.Time",
+		Name:  "end_date",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -2519,7 +2535,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fi.ID,
 		Type:   "FlowInstance",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -2561,6 +2577,38 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "string",
 		Name:  "incompletion_reason",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.BssCode); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "string",
+		Name:  "bss_code",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.ServiceInstanceCode); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "service_instance_code",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.StartDate); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "start_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.EndDate); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "time.Time",
+		Name:  "end_date",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
