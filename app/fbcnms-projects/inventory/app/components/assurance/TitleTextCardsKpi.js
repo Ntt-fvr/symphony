@@ -33,7 +33,8 @@ const useStyles = makeStyles({
     paddingRight: '5rem',
   },
   domain: {
-    paddingLeft: '2rem',
+    justifyContent: 'center',
+    paddingRight: '16rem',
   },
   edit: {
     justifyContent: 'flex-end',
@@ -47,7 +48,7 @@ function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs="6">
+      <Grid xs="4" className={classes.rooti}>
         <Text
           className={classNames(classes.title, classes.status)}
           variant="subtitle2">
@@ -60,7 +61,7 @@ function TitleTextCardsKpi() {
           KPI name
         </Text>
       </Grid>
-      <Grid xs="4">
+      <Grid xs="6" className={classes.rooti}>
         <Text
           className={classNames(
             classes.title,
@@ -71,7 +72,7 @@ function TitleTextCardsKpi() {
           Domain
         </Text>
       </Grid>
-      <Grid xs="1">
+      <Grid xs="1" className={classes.rooti}>
         <Text
           className={classNames(
             classes.title,
@@ -82,7 +83,7 @@ function TitleTextCardsKpi() {
           Edit
         </Text>
       </Grid>
-      <Grid xs="1">
+      <Grid xs="1" className={classes.rooti}>
         <Text
           className={classNames(classes.title, classes.delete)}
           variant="subtitle2">
