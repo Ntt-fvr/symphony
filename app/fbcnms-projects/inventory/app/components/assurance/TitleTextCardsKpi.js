@@ -25,11 +25,15 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
   },
-  network: {
-    paddingRight: '4rem',
+  status: {
+    paddingRight: '2rem',
   },
-  vendor: {
-    paddingRight: '3rem',
+  kpiName: {
+    justifyContent: 'flex-start',
+    paddingRight: '5rem',
+  },
+  domain: {
+    paddingLeft: '2rem',
   },
   edit: {
     justifyContent: 'flex-end',
@@ -39,38 +43,35 @@ const useStyles = makeStyles({
   },
 });
 
-function TitleTextCards() {
+function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid item xs="3">
-        <Text className={classes.title} variant="subtitle2">
-          Counter name
+      <Grid xs="6">
+        <Text
+          className={classNames(classes.title, classes.status)}
+          variant="subtitle2">
+          Status
+        </Text>
+
+        <Text
+          className={classNames(classes.title, classes.kpiName)}
+          variant="subtitle2">
+          KPI name
         </Text>
       </Grid>
-      <Grid item xs="4">
+      <Grid xs="4">
         <Text
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.network,
+            classes.domain,
           )}
           variant="subtitle2">
-          Network Manager System
+          Domain
         </Text>
       </Grid>
-      <Grid item xs="3">
-        <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.vendor,
-          )}
-          variant="subtitle2">
-          Vendor name
-        </Text>
-      </Grid>
-      <Grid item xs="1">
+      <Grid xs="1">
         <Text
           className={classNames(
             classes.title,
@@ -81,7 +82,7 @@ function TitleTextCards() {
           Edit
         </Text>
       </Grid>
-      <Grid item xs="1">
+      <Grid xs="1">
         <Text
           className={classNames(classes.title, classes.delete)}
           variant="subtitle2">
@@ -91,4 +92,4 @@ function TitleTextCards() {
     </Grid>
   );
 }
-export default TitleTextCards;
+export default TitleTextCardsKpi;

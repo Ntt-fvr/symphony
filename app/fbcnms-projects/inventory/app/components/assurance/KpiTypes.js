@@ -8,14 +8,14 @@
  * @format
  */
 
-import Grid from '@material-ui/core/Grid';
-import React from 'react';
-import {makeStyles} from '@material-ui/styles';
-
 import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+import Grid from '@material-ui/core/Grid';
 import KpiTypeItem from './KpiTypeItem';
+import React from 'react';
+import TitleTextCardsKpi from './TitleTextCardsKpi';
+import {makeStyles} from '@material-ui/styles';
 
 import fbt from 'fbt';
 
@@ -46,6 +46,7 @@ const KpiTypes = () => {
           />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+          <TitleTextCardsKpi />
           <KpiTypeItem />
           <KpiTypeItem />
           <KpiTypeItem />
