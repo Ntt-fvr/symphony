@@ -69,7 +69,6 @@ export default function AddCounterItemForm() {
         ],
       },
     };
-    console.log(variables);
     AddCounterMutation(variables);
   }
 

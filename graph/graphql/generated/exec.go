@@ -893,6 +893,7 @@ type ComplexityRoot struct {
 		DeleteReportFilter                       func(childComplexity int, id int) int
 		DeleteUsersGroup                         func(childComplexity int, id int) int
 		EditBlock                                func(childComplexity int, input models.EditBlockInput) int
+		EditBlockInstance                        func(childComplexity int, input models.EditBlockInstanceInput) int
 		EditComparator                           func(childComplexity int, input models.EditComparatorInput) int
 		EditCounter                              func(childComplexity int, input models.EditCounterInput) int
 		EditCounterFamily                        func(childComplexity int, input models.EditCounterFamilyInput) int
@@ -904,6 +905,7 @@ type ComplexityRoot struct {
 		EditEquipmentType                        func(childComplexity int, input models.EditEquipmentTypeInput) int
 		EditEvent                                func(childComplexity int, input models.EditEventInput) int
 		EditEventSeverity                        func(childComplexity int, input models.EditEventSeverityInput) int
+		EditFlowInstance                         func(childComplexity int, input *models.EditFlowInstanceInput) int
 		EditFormula                              func(childComplexity int, input models.EditFormulaInput) int
 		EditKpi                                  func(childComplexity int, input models.EditKpiInput) int
 		EditLink                                 func(childComplexity int, input models.EditLinkInput) int
@@ -5812,6 +5814,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditBlock(childComplexity, args["input"].(models.EditBlockInput)), true
 
+	case "Mutation.editBlockInstance":
+		if e.complexity.Mutation.EditBlockInstance == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editBlockInstance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditBlockInstance(childComplexity, args["input"].(models.EditBlockInstanceInput)), true
+
 	case "Mutation.editComparator":
 		if e.complexity.Mutation.EditComparator == nil {
 			break
@@ -5943,6 +5957,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditEventSeverity(childComplexity, args["input"].(models.EditEventSeverityInput)), true
+
+	case "Mutation.editFlowInstance":
+		if e.complexity.Mutation.EditFlowInstance == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editFlowInstance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditFlowInstance(childComplexity, args["input"].(*models.EditFlowInstanceInput)), true
 
 	case "Mutation.editFormula":
 		if e.complexity.Mutation.EditFormula == nil {
@@ -9491,6 +9517,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.VariableExpression.VariableDefinition(childComplexity), true
+
+	case "VariableValue.value":
+		if e.complexity.VariableValue.Value == nil {
+			break
+		}
+
+		return e.complexity.VariableValue.Value(childComplexity), true
+
+	case "VariableValue.variableDefinitionKey":
+		if e.complexity.VariableValue.VariableDefinitionKey == nil {
+			break
+		}
+
+		return e.complexity.VariableValue.VariableDefinitionKey(childComplexity), true
 
 	case "Vendor.id":
 		if e.complexity.Vendor.ID == nil {
@@ -16877,6 +16917,21 @@ func (ec *executionContext) field_Mutation_editEvent_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editFlowInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *models.EditFlowInstanceInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOEditFlowInstanceInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditFlowInstanceInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -18809,6 +18864,95 @@ func (ec *executionContext) field_Query_flowInstances_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_flows_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_kpis_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -18886,7 +19030,6 @@ func (ec *executionContext) field_Query_kpis_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["last"] = arg3
-
 	var arg4 *ent.KpiOrder
 	if tmp, ok := rawArgs["orderBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
@@ -18895,7 +19038,6 @@ func (ec *executionContext) field_Query_kpis_args(ctx context.Context, rawArgs m
 			return nil, err
 		}
 	}
-
 	args["orderBy"] = arg4
 	var arg5 []*models.KpiFilterInput
 	if tmp, ok := rawArgs["filterBy"]; ok {
@@ -60944,42 +61086,6 @@ func (ec *executionContext) unmarshalInputEditBlockInput(ctx context.Context, ob
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputEditComparatorInput(ctx context.Context, obj interface{}) (models.EditComparatorInput, error) {
-	var it models.EditComparatorInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputEditBlockInstanceInput(ctx context.Context, obj interface{}) (models.EditBlockInstanceInput, error) {
 	var it models.EditBlockInstanceInput
 	var asMap = obj.(map[string]interface{})
@@ -61023,6 +61129,42 @@ func (ec *executionContext) unmarshalInputEditBlockInstanceInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("failure_reason"))
 			it.FailureReason, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditComparatorInput(ctx context.Context, obj interface{}) (models.EditComparatorInput, error) {
+	var it models.EditComparatorInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "ruleLimit":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
+			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -61557,7 +61699,34 @@ func (ec *executionContext) unmarshalInputEditEventSeverityInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
 			it.Event, err = ec.unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx, v)
->>>>>>> issue_21_04_2021
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditFlowInstanceInput(ctx context.Context, obj interface{}) (models.EditFlowInstanceInput, error) {
+	var it models.EditFlowInstanceInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNFlowInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowinstanceᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -78030,6 +78199,11 @@ func (ec *executionContext) marshalNActivityField2githubᚗcomᚋfacebookincubat
 	return v
 }
 
+func (ec *executionContext) unmarshalNAddBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBlockInstanceInput(ctx context.Context, v interface{}) (models.AddBlockInstanceInput, error) {
+	res, err := ec.unmarshalInputAddBlockInstanceInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddComparatorInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddComparatorInput(ctx context.Context, v interface{}) (models.AddComparatorInput, error) {
 	res, err := ec.unmarshalInputAddComparatorInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -79216,6 +79390,11 @@ func (ec *executionContext) marshalNEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 
 func (ec *executionContext) unmarshalNEditBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditBlockInput(ctx context.Context, v interface{}) (models.EditBlockInput, error) {
 	res, err := ec.unmarshalInputEditBlockInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditBlockInstanceInput(ctx context.Context, v interface{}) (models.EditBlockInstanceInput, error) {
+	res, err := ec.unmarshalInputEditBlockInstanceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -85811,6 +85990,53 @@ func (ec *executionContext) marshalOFlowEdge2ᚕᚖgithubᚗcomᚋfacebookincuba
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNFlowEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOFlowInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx context.Context, sel ast.SelectionSet, v *ent.FlowInstance) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._FlowInstance(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOFlowInstanceEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.FlowInstanceEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFlowInstanceEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
