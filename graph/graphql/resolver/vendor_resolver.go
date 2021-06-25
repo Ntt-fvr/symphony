@@ -17,11 +17,6 @@ import (
 
 type vendorResolver struct{}
 
-func (vendorResolver) Countervendorformula(ctx context.Context, vendor *ent.Vendor) ([]*ent.CounterVendorFormula, error) {
-	var counterVendorFormula []*ent.CounterVendorFormula
-	return counterVendorFormula, nil
-}
-
 func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

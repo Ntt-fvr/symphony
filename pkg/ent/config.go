@@ -36,6 +36,7 @@ type hooks struct {
 	CheckListItem               []ent.Hook
 	CheckListItemDefinition     []ent.Hook
 	Comment                     []ent.Hook
+	Comparator                  []ent.Hook
 	Counter                     []ent.Hook
 	CounterFamily               []ent.Hook
 	CounterVendorFormula        []ent.Hook
@@ -50,6 +51,8 @@ type hooks struct {
 	EquipmentPosition           []ent.Hook
 	EquipmentPositionDefinition []ent.Hook
 	EquipmentType               []ent.Hook
+	Event                       []ent.Hook
+	EventSeverity               []ent.Hook
 	ExitPoint                   []ent.Hook
 	ExportTask                  []ent.Hook
 	Feature                     []ent.Hook
@@ -75,6 +78,9 @@ type hooks struct {
 	Property                    []ent.Hook
 	PropertyType                []ent.Hook
 	ReportFilter                []ent.Hook
+	Rule                        []ent.Hook
+	RuleLimit                   []ent.Hook
+	RuleType                    []ent.Hook
 	Service                     []ent.Hook
 	ServiceEndpoint             []ent.Hook
 	ServiceEndpointDefinition   []ent.Hook
@@ -86,6 +92,7 @@ type hooks struct {
 	SurveyTemplateQuestion      []ent.Hook
 	SurveyWiFiScan              []ent.Hook
 	Tech                        []ent.Hook
+	Treshold                    []ent.Hook
 	User                        []ent.Hook
 	UsersGroup                  []ent.Hook
 	Vendor                      []ent.Hook

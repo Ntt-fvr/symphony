@@ -34,7 +34,7 @@ func (Formula) Edges() []ent.Edge {
 		edge.From("kpi", Kpi.Type).
 			Ref("formulakpi").
 			Unique(),
-		edge.To("formula_fk", CounterVendorFormula.Type).
+		edge.To("countervendorformula", CounterVendorFormula.Type).
 			Annotations(entgql.MapsTo("counter_vendor_formula")),
 	}
 }

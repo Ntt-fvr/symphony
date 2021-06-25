@@ -264,6 +264,26 @@ func (r queryResolver) Counters(
 		)
 }
 
+func (r queryResolver) Kpis(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KpiOrder,
+	filterBy []*models.KpiFilterInput,
+) (*ent.KpiConnection, error) {
+	return r.ClientFrom(ctx).
+		Kpi.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKpiOrder(orderBy),
+			ent.WithKpiFilter(
+				func(query *ent.KpiQuery) (*ent.KpiQuery, error) {
+					return resolverutil.KpiFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

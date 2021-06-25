@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/treshold"
 )
 
 // KpiCreate is the builder for creating a Kpi entity.
@@ -92,6 +93,25 @@ func (kc *KpiCreate) AddFormulakpi(f ...*Formula) *KpiCreate {
 		ids[i] = f[i].ID
 	}
 	return kc.AddFormulakpiIDs(ids...)
+}
+
+// SetTresholdkpiID sets the tresholdkpi edge to Treshold by id.
+func (kc *KpiCreate) SetTresholdkpiID(id int) *KpiCreate {
+	kc.mutation.SetTresholdkpiID(id)
+	return kc
+}
+
+// SetNillableTresholdkpiID sets the tresholdkpi edge to Treshold by id if the given value is not nil.
+func (kc *KpiCreate) SetNillableTresholdkpiID(id *int) *KpiCreate {
+	if id != nil {
+		kc = kc.SetTresholdkpiID(*id)
+	}
+	return kc
+}
+
+// SetTresholdkpi sets the tresholdkpi edge to Treshold.
+func (kc *KpiCreate) SetTresholdkpi(t *Treshold) *KpiCreate {
+	return kc.SetTresholdkpiID(t.ID)
 }
 
 // Mutation returns the KpiMutation object of the builder.
@@ -253,6 +273,25 @@ func (kc *KpiCreate) createSpec() (*Kpi, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: formula.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := kc.mutation.TresholdkpiIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   kpi.TresholdkpiTable,
+			Columns: []string{kpi.TresholdkpiColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: treshold.FieldID,
 				},
 			},
 		}

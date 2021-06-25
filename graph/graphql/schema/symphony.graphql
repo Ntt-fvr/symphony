@@ -2459,6 +2459,74 @@ type CounterEdge {
   cursor: Cursor!
 }
 
+"""
+Properties by which kpi's connections can be ordered.
+"""
+enum KpiOrderField {
+  """
+  Order kpi's by name.
+  """
+  NAME
+
+  """
+  Order kpi's by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kpi's by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kpi's connections.
+"""
+input KpiOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kpi's by.
+  """
+  field: KpiOrderField
+}
+
+"""
+A connection to a list of kpi's.
+"""
+type KpiConnection {
+  """
+  Total kpi's of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kpi's edges.
+  """
+  edges: [KpiEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kpi's edge in a connection.
+"""
+type KpiEdge {
+  """
+  The kpi's at the end of the edge.
+  """
+  node: Kpi
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -2839,6 +2907,19 @@ input CounterFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: CounterFamilyInput
+}
+
+enum KpiFilterType {
+  NAME
+}
+
+input KpiFilterInput {
+  filterType: KpiFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 """
@@ -4229,6 +4310,41 @@ type Query {
     
     filterBy: [CounterFilterInput!]
   ): CounterConnection!
+  
+  """
+  A list of kpis.
+  """
+  kpis(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kpis.
+    """
+    orderBy: KpiOrder
+
+    
+    #Filtering options for the returned kpis.
+    
+    filterBy: [KpiFilterInput!]
+  ): KpiConnection!
 }
 
 type Mutation {
@@ -4469,6 +4585,30 @@ type Mutation {
   addTech(input: AddTechInput!):Tech!
   editTech(input: EditTechInput!): Tech!
   removeTech(id: ID!): ID!
+  addCounterVendorFormula(input: AddCounterVendorFormulaInput!):CounterVendorFormula!
+  editCounterVendorFormula(input: EditCounterVendorFormulaInput!):CounterVendorFormula!
+  removeCounterVendorFormula(id: ID!): ID!
+  addTreshold(input: AddTresholdInput!):Treshold!
+  editTreshold(input: EditTresholdInput!): Treshold!
+  removeTreshold(id: ID!): ID!
+  addEvent(input: AddEventInput!):Event!
+  editEvent(input: EditEventInput!): Event!
+  removeEvent(id: ID!): ID!
+  addComparator(input: AddComparatorInput!):Comparator!
+  editComparator(input: EditComparatorInput!): Comparator!
+  removeComparator(id: ID!): ID!
+  addEventSeverity(input: AddEventSeverityInput!):EventSeverity!
+  editEventSeverity(input: EditEventSeverityInput!): EventSeverity!
+  removeEventSeverity(id: ID!): ID!
+  addRule(input: AddRuleInput!):Rule!
+  editRule(input: EditRuleInput!): Rule!
+  removeRule(id: ID!): ID!
+  addRuleLimit(input: AddRuleLimitInput!):RuleLimit!
+  editRuleLimit(input: EditRuleLimitInput!): RuleLimit!
+  removeRuleLimit(id: ID!): ID!
+  addRuleType(input: AddRuleTypeInput!):RuleType!
+  editRuleType(input: EditRuleTypeInput!): RuleType!
+  removeRuleType(id: ID!): ID!
 }
 
 """
@@ -4511,6 +4651,7 @@ type Counter implements Node {
   externalID: String!
   networkManagerSystem: String!
   countervendorformula: [CounterVendorFormula]!
+  counterFamily: CounterFamily
 }
 
 input CounterInput {
@@ -4560,130 +4701,305 @@ input EditCounterFamilyInput {
 type Vendor implements Node {
   id: ID!
   name: String!
-  countervendorformula: [CounterVendorFormula!]
 }
 
 input AddVendorInput {
   name: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
 }
 
 input EditVendorInput {
   id: ID!
   name: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
 }
 
 type Domain implements Node {
   id: ID!
   name: String!
-  tech: [Tech]!
-  kpi: [Kpi]!
 }
 
 input DomainInput {
   id: ID!
   name: String!
-  tech: [TechInput!]
-  kpi: [KpiInput!]
 }
 
 input AddDomainInput {
   name: String!
-  tech: [TechInput!]
-  kpi: [KpiInput!]
 }
 
 input EditDomainInput {
   id: ID!
   name: String!
-  tech: [TechInput!]
-  kpi: [KpiInput!]
 }
 
 type Kpi implements Node {
   id: ID!
   name: String!
-  formula: [Formula]!
-}
-
-input KpiInput {
-  id: ID!
-  name: String!
-  formula: [FormulaInput!]
+  domainFk: Domain!
+  formulaFk: [Formula]
 }
 
 input AddKpiInput {
   name: String!
-  formula: [FormulaInput!]
+  domainFk: ID!
 }
 
 input EditKpiInput {
   id: ID!
   name: String!
-  formula: [FormulaInput!]
+  domainFk: ID!
 }
 
 type Tech implements Node {
   id: ID!
   name: String!
-  formula: [Formula]!
-}
-
-input TechInput {
-  id: ID!
-  name: String!
-  formula: [FormulaInput!]
+  domainFk: Domain!
 }
 
 input AddTechInput {
   name: String!
-  formula: [FormulaInput!]
+  domainFk: ID!
 }
 
 input EditTechInput {
   id: ID!
   name: String!
-  formula: [FormulaInput!]
+  domainFk: ID!
 }
 
 type Formula implements Node {
   id: ID!
   name: String!
   active: Boolean!
-  countervendorformula: [CounterVendorFormula!]
-}
-
-input FormulaInput {
-  id: ID!
-  name: String!
-  active: Boolean!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  techFk: Tech!
+  kpiFk: Kpi!
+  countervendorformulaFk: [CounterVendorFormula]
 }
 
 input AddFormulaInput {
   name: String!
   active: Boolean!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  techFk: ID!
+  kpiFk: ID!
 }
 
 input EditFormulaInput {
   id: ID!
   name: String!
   active: Boolean!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  techFk: ID!
+  kpiFk: ID!
 }
 
 type CounterVendorFormula implements Node {
   id: ID!
   mandatory: Boolean!
+  vendorFk: Vendor!
+  counterFk: Counter!
+  formulaFk: Formula!
 }
 
 input AddCounterVendorFormulaInput {
-  mandatory: Boolean
+  mandatory: Boolean!
+  vendorFk: ID!
+  counterFk: ID!
+  formulaFk: ID!
 }
 
 input EditCounterVendorFormulaInput {
   id: ID!
-  mandatory: Boolean
+  mandatory: Boolean!
+  vendorFk: ID!
+  counterFk: ID!
+  formulaFk: ID!
+}
+############################ mis tablas aqui ##################################
+type Treshold implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  rule: [Rule!]
+  kpi: Kpi
+  
+}
+
+input AddTresholdInput {
+  name: String!
+  description: String!
+  rule: [RuleInput!]
+  kpi: Int
+  
+}
+
+input TresholdInput {
+  name: String!
+  description: String!
+  rule: [RuleInput!]
+  kpi: Int
+  
+}
+
+input EditTresholdInput {
+  id: ID!
+  name: String!
+  description: String!
+  rule: [RuleInput!]  
+}
+type Comparator implements Node {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimit!]
+}
+
+input AddComparatorInput {
+  name: String!
+  ruleLimit: [RuleLimitInput!]
+}
+
+input EditComparatorInput {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimitInput!]
+}
+
+type Event implements Node {
+  id: ID!
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [Rule!]
+  eventSeverity: EventSeverity
+}
+
+input EventInput {
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [RuleInput!]
+  eventSeverity: ID
+}
+
+input AddEventInput {
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [RuleInput!]
+  eventSeverity: ID!
+}
+
+input EditEventInput {
+  id: ID!
+  name: String!
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  rule: [RuleInput!]
+  eventSeverity: ID!
+}
+
+type RuleType implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddRuleTypeInput {
+  name: String!
+}
+
+input EditRuleTypeInput {
+  id: ID!
+  name: String!
+}
+
+type RuleLimit implements Node {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: Comparator!
+  rule: Rule
+}
+
+input RuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input AddRuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input EditRuleLimitInput {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+type Rule implements Node {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimit!]
+  ruleType: RuleType!
+  event: Event!
+  treshold: Treshold!
+}
+
+input RuleInput {
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimitInput!]
+}
+
+input AddRuleInput {
+  name: String!
+  gracePeriod: Int!
+  startDateTime: Time!
+  endDateTime: Time!
+  ruleLimit: [RuleLimitInput!]
+  ruleType: ID!
+  event: ID!
+  treshold: ID!
+}
+
+input EditRuleInput {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimitInput!]
+  ruleType: ID!
+  event: ID!
+  treshold: ID!
+}
+
+type EventSeverity implements Node {
+  id: ID!
+  name: String!
+  event: [Event!]
+}
+
+input AddEventSeverityInput {
+  name: String!
+  event: [EventInput!]
+}
+
+input EditEventSeverityInput {
+  id: ID!
+  name: String!
+  event: [EventInput!]
 }

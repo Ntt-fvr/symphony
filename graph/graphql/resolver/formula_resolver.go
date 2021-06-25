@@ -17,9 +17,31 @@ import (
 
 type formulaResolver struct{}
 
-func (formulaResolver) Countervendorformula(ctx context.Context, formula *ent.Formula) ([]*ent.CounterVendorFormula, error) {
-	var counterVendorFormula []*ent.CounterVendorFormula
-	return counterVendorFormula, nil
+func (formulaResolver) TechFk(ctx context.Context, formula *ent.Formula) (*ent.Tech, error) {
+	variable, err := formula.Tech(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no return a tech valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
+func (formulaResolver) KpiFk(ctx context.Context, formula *ent.Formula) (*ent.Kpi, error) {
+	variable, err := formula.Kpi(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
+func (formulaResolver) CountervendorformulaFk(ctx context.Context, formula *ent.Formula) ([]*ent.CounterVendorFormula, error) {
+	variable, err := formula.Countervendorformula(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddFormula(ctx context.Context, input models.AddFormulaInput) (*ent.Formula, error) {
@@ -28,6 +50,8 @@ func (r mutationResolver) AddFormula(ctx context.Context, input models.AddFormul
 		Formula.Create().
 		SetName(input.Name).
 		SetActive(input.Active).
+		SetKpiID(input.KpiFk).
+		SetTechID(input.TechFk).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -48,8 +72,6 @@ func (r mutationResolver) RemoveFormula(ctx context.Context, id int) (int, error
 	if err != nil {
 		return id, errors.Wrapf(err, "querying formula: id=%q", id)
 	}
-	//TODO: borrar o editar los edges relacionados
-
 	if err := client.Formula.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "deleting formula")
 	}
@@ -65,11 +87,13 @@ func (r mutationResolver) EditFormula(ctx context.Context, input models.EditForm
 		}
 		return nil, errors.Wrapf(err, "updating formula: id=%q", input.ID)
 	}
-	if input.Name != et.Name || input.Active != et.Active {
+	if input.Name != et.Name || input.Active != et.Active || input.KpiFk != et.Edges.Kpi.ID || input.TechFk != et.Edges.Tech.ID {
 		if et, err = client.Formula.
 			UpdateOne(et).
 			SetName(input.Name).
 			SetActive(input.Active).
+			SetKpiID(input.KpiFk).
+			SetTechID(input.TechFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("A formula with the name %v already exists", input.Name)

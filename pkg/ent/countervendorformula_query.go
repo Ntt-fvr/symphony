@@ -458,7 +458,7 @@ func (cvfq *CounterVendorFormulaQuery) sqlAll(ctx context.Context) ([]*CounterVe
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*CounterVendorFormula)
 		for i := range nodes {
-			if fk := nodes[i].formula_formula_fk; fk != nil {
+			if fk := nodes[i].formula_countervendorformula; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -471,7 +471,7 @@ func (cvfq *CounterVendorFormulaQuery) sqlAll(ctx context.Context) ([]*CounterVe
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "formula_formula_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "formula_countervendorformula" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Formula = n

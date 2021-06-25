@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/treshold"
 )
 
 // Kpi is the model entity for the Kpi schema.
@@ -39,9 +40,11 @@ type KpiEdges struct {
 	Domain *Domain
 	// Formulakpi holds the value of the formulakpi edge.
 	Formulakpi []*Formula
+	// Tresholdkpi holds the value of the tresholdkpi edge.
+	Tresholdkpi *Treshold
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // DomainOrErr returns the Domain value or an error if the edge
@@ -65,6 +68,20 @@ func (e KpiEdges) FormulakpiOrErr() ([]*Formula, error) {
 		return e.Formulakpi, nil
 	}
 	return nil, &NotLoadedError{edge: "formulakpi"}
+}
+
+// TresholdkpiOrErr returns the Tresholdkpi value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e KpiEdges) TresholdkpiOrErr() (*Treshold, error) {
+	if e.loadedTypes[2] {
+		if e.Tresholdkpi == nil {
+			// The edge tresholdkpi was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: treshold.Label}
+		}
+		return e.Tresholdkpi, nil
+	}
+	return nil, &NotLoadedError{edge: "tresholdkpi"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -131,6 +148,11 @@ func (k *Kpi) QueryDomain() *DomainQuery {
 // QueryFormulakpi queries the formulakpi edge of the Kpi.
 func (k *Kpi) QueryFormulakpi() *FormulaQuery {
 	return (&KpiClient{config: k.config}).QueryFormulakpi(k)
+}
+
+// QueryTresholdkpi queries the tresholdkpi edge of the Kpi.
+func (k *Kpi) QueryTresholdkpi() *TresholdQuery {
+	return (&KpiClient{config: k.config}).QueryTresholdkpi(k)
 }
 
 // Update returns a builder for updating this Kpi.

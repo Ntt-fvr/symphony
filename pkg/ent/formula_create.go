@@ -105,19 +105,19 @@ func (fc *FormulaCreate) SetKpi(k *Kpi) *FormulaCreate {
 	return fc.SetKpiID(k.ID)
 }
 
-// AddFormulaFkIDs adds the formula_fk edge to CounterVendorFormula by ids.
-func (fc *FormulaCreate) AddFormulaFkIDs(ids ...int) *FormulaCreate {
-	fc.mutation.AddFormulaFkIDs(ids...)
+// AddCountervendorformulaIDs adds the countervendorformula edge to CounterVendorFormula by ids.
+func (fc *FormulaCreate) AddCountervendorformulaIDs(ids ...int) *FormulaCreate {
+	fc.mutation.AddCountervendorformulaIDs(ids...)
 	return fc
 }
 
-// AddFormulaFk adds the formula_fk edges to CounterVendorFormula.
-func (fc *FormulaCreate) AddFormulaFk(c ...*CounterVendorFormula) *FormulaCreate {
+// AddCountervendorformula adds the countervendorformula edges to CounterVendorFormula.
+func (fc *FormulaCreate) AddCountervendorformula(c ...*CounterVendorFormula) *FormulaCreate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return fc.AddFormulaFkIDs(ids...)
+	return fc.AddCountervendorformulaIDs(ids...)
 }
 
 // Mutation returns the FormulaMutation object of the builder.
@@ -298,12 +298,12 @@ func (fc *FormulaCreate) createSpec() (*Formula, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := fc.mutation.FormulaFkIDs(); len(nodes) > 0 {
+	if nodes := fc.mutation.CountervendorformulaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.FormulaFkTable,
-			Columns: []string{formula.FormulaFkColumn},
+			Table:   formula.CountervendorformulaTable,
+			Columns: []string{formula.CountervendorformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -18,11 +18,14 @@ import (
 type counterFamilyResolver struct{}
 
 func (counterFamilyResolver) Counter(ctx context.Context, counterFamily *ent.CounterFamily) ([]*ent.Counter, error) {
-	var counter []*ent.Counter
-	return counter, nil
+	variable, err := counterFamily.Counterfamily(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
-//*
 func (r mutationResolver) AddCounterFamily(ctx context.Context, input models.AddCounterFamilyInput) (*ent.CounterFamily, error) {
 	client := r.ClientFrom(ctx)
 	var counters []*ent.Counter

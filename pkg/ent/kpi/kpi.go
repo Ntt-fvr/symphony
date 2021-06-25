@@ -28,6 +28,8 @@ const (
 	EdgeDomain = "domain"
 	// EdgeFormulakpi holds the string denoting the formulakpi edge name in mutations.
 	EdgeFormulakpi = "formulakpi"
+	// EdgeTresholdkpi holds the string denoting the tresholdkpi edge name in mutations.
+	EdgeTresholdkpi = "tresholdkpi"
 
 	// Table holds the table name of the kpi in the database.
 	Table = "kpis"
@@ -45,6 +47,13 @@ const (
 	FormulakpiInverseTable = "formulas"
 	// FormulakpiColumn is the table column denoting the formulakpi relation/edge.
 	FormulakpiColumn = "kpi_formulakpi"
+	// TresholdkpiTable is the table the holds the tresholdkpi relation/edge.
+	TresholdkpiTable = "tresholds"
+	// TresholdkpiInverseTable is the table name for the Treshold entity.
+	// It exists in this package in order to avoid circular dependency with the "treshold" package.
+	TresholdkpiInverseTable = "tresholds"
+	// TresholdkpiColumn is the table column denoting the tresholdkpi relation/edge.
+	TresholdkpiColumn = "kpi_tresholdkpi"
 )
 
 // Columns holds all SQL columns for kpi fields.

@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/treshold"
 )
 
 // KpiUpdate is the builder for updating Kpi entities.
@@ -72,6 +73,25 @@ func (ku *KpiUpdate) AddFormulakpi(f ...*Formula) *KpiUpdate {
 	return ku.AddFormulakpiIDs(ids...)
 }
 
+// SetTresholdkpiID sets the tresholdkpi edge to Treshold by id.
+func (ku *KpiUpdate) SetTresholdkpiID(id int) *KpiUpdate {
+	ku.mutation.SetTresholdkpiID(id)
+	return ku
+}
+
+// SetNillableTresholdkpiID sets the tresholdkpi edge to Treshold by id if the given value is not nil.
+func (ku *KpiUpdate) SetNillableTresholdkpiID(id *int) *KpiUpdate {
+	if id != nil {
+		ku = ku.SetTresholdkpiID(*id)
+	}
+	return ku
+}
+
+// SetTresholdkpi sets the tresholdkpi edge to Treshold.
+func (ku *KpiUpdate) SetTresholdkpi(t *Treshold) *KpiUpdate {
+	return ku.SetTresholdkpiID(t.ID)
+}
+
 // Mutation returns the KpiMutation object of the builder.
 func (ku *KpiUpdate) Mutation() *KpiMutation {
 	return ku.mutation
@@ -102,6 +122,12 @@ func (ku *KpiUpdate) RemoveFormulakpi(f ...*Formula) *KpiUpdate {
 		ids[i] = f[i].ID
 	}
 	return ku.RemoveFormulakpiIDs(ids...)
+}
+
+// ClearTresholdkpi clears the "tresholdkpi" edge to type Treshold.
+func (ku *KpiUpdate) ClearTresholdkpi() *KpiUpdate {
+	ku.mutation.ClearTresholdkpi()
+	return ku
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -301,6 +327,41 @@ func (ku *KpiUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ku.mutation.TresholdkpiCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   kpi.TresholdkpiTable,
+			Columns: []string{kpi.TresholdkpiColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: treshold.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ku.mutation.TresholdkpiIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   kpi.TresholdkpiTable,
+			Columns: []string{kpi.TresholdkpiColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: treshold.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ku.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{kpi.Label}
@@ -359,6 +420,25 @@ func (kuo *KpiUpdateOne) AddFormulakpi(f ...*Formula) *KpiUpdateOne {
 	return kuo.AddFormulakpiIDs(ids...)
 }
 
+// SetTresholdkpiID sets the tresholdkpi edge to Treshold by id.
+func (kuo *KpiUpdateOne) SetTresholdkpiID(id int) *KpiUpdateOne {
+	kuo.mutation.SetTresholdkpiID(id)
+	return kuo
+}
+
+// SetNillableTresholdkpiID sets the tresholdkpi edge to Treshold by id if the given value is not nil.
+func (kuo *KpiUpdateOne) SetNillableTresholdkpiID(id *int) *KpiUpdateOne {
+	if id != nil {
+		kuo = kuo.SetTresholdkpiID(*id)
+	}
+	return kuo
+}
+
+// SetTresholdkpi sets the tresholdkpi edge to Treshold.
+func (kuo *KpiUpdateOne) SetTresholdkpi(t *Treshold) *KpiUpdateOne {
+	return kuo.SetTresholdkpiID(t.ID)
+}
+
 // Mutation returns the KpiMutation object of the builder.
 func (kuo *KpiUpdateOne) Mutation() *KpiMutation {
 	return kuo.mutation
@@ -389,6 +469,12 @@ func (kuo *KpiUpdateOne) RemoveFormulakpi(f ...*Formula) *KpiUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return kuo.RemoveFormulakpiIDs(ids...)
+}
+
+// ClearTresholdkpi clears the "tresholdkpi" edge to type Treshold.
+func (kuo *KpiUpdateOne) ClearTresholdkpi() *KpiUpdateOne {
+	kuo.mutation.ClearTresholdkpi()
+	return kuo
 }
 
 // Save executes the query and returns the updated entity.
@@ -578,6 +664,41 @@ func (kuo *KpiUpdateOne) sqlSave(ctx context.Context) (_node *Kpi, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: formula.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if kuo.mutation.TresholdkpiCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   kpi.TresholdkpiTable,
+			Columns: []string{kpi.TresholdkpiColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: treshold.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := kuo.mutation.TresholdkpiIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   kpi.TresholdkpiTable,
+			Columns: []string{kpi.TresholdkpiColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: treshold.FieldID,
 				},
 			},
 		}

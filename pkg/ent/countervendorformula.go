@@ -31,10 +31,10 @@ type CounterVendorFormula struct {
 	Mandatory bool `json:"mandatory,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CounterVendorFormulaQuery when eager-loading is set.
-	Edges              CounterVendorFormulaEdges `json:"edges"`
-	counter_counter_fk *int
-	formula_formula_fk *int
-	vendor_vendor_fk   *int
+	Edges                        CounterVendorFormulaEdges `json:"edges"`
+	counter_counter_fk           *int
+	formula_countervendorformula *int
+	vendor_vendor_fk             *int
 }
 
 // CounterVendorFormulaEdges holds the relations/edges for other nodes in the graph.
@@ -106,7 +106,7 @@ func (*CounterVendorFormula) scanValues() []interface{} {
 func (*CounterVendorFormula) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // counter_counter_fk
-		&sql.NullInt64{}, // formula_formula_fk
+		&sql.NullInt64{}, // formula_countervendorformula
 		&sql.NullInt64{}, // vendor_vendor_fk
 	}
 }
@@ -147,10 +147,10 @@ func (cvf *CounterVendorFormula) assignValues(values ...interface{}) error {
 			*cvf.counter_counter_fk = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field formula_formula_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field formula_countervendorformula", value)
 		} else if value.Valid {
-			cvf.formula_formula_fk = new(int)
-			*cvf.formula_formula_fk = int(value.Int64)
+			cvf.formula_countervendorformula = new(int)
+			*cvf.formula_countervendorformula = int(value.Int64)
 		}
 		if value, ok := values[2].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field vendor_vendor_fk", value)

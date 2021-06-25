@@ -205,17 +205,17 @@ func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
 
-func (r resolver) Domain() generated.DomainResolver {
+/*func (r resolver) Domain() generated.DomainResolver {
 	return domainResolver{}
-}
+}*/
 
 func (r resolver) CounterFamily() generated.CounterFamilyResolver {
 	return counterFamilyResolver{}
 }
 
-func (r resolver) Vendor() generated.VendorResolver {
+/*func (r resolver) Vendor() generated.VendorResolver {
 	return vendorResolver{}
-}
+}*/
 
 func (r resolver) Tech() generated.TechResolver {
 	return techResolver{}
@@ -225,10 +225,9 @@ func (r resolver) Kpi() generated.KpiResolver {
 	return kpiResolver{}
 }
 
-/*
 func (r resolver) CounterVendorFormula() generated.CounterVendorFormulaResolver {
 	return counterVendorFormulaResolver{}
-}*/
+}
 
 func (r resolver) Counter() generated.CounterResolver {
 	return counterResolver{}
@@ -236,4 +235,33 @@ func (r resolver) Counter() generated.CounterResolver {
 
 func (r resolver) Formula() generated.FormulaResolver {
 	return formulaResolver{}
+}
+
+/************************* mis tablas desde aqui********************************************************************/
+func (r resolver) Comparator() generated.ComparatorResolver {
+	return comparatorResolver{}
+}
+
+func (r resolver) Treshold() generated.TresholdResolver {
+	return tresholdResolver{}
+}
+
+func (r resolver) Rule() generated.RuleResolver {
+	return ruleResolver{}
+}
+
+func (r resolver) Event() generated.EventResolver {
+	return eventResolver{}
+}
+
+func (r resolver) RuleType() generated.RuleTypeResolver {
+	return ruleTypeResolver{}
+}
+
+/*
+func (r resolver) RuleLimit() generated.RuleLimitResolver {
+	return ruleLimitResolver{}
+}*/
+func (r resolver) EventSeverity() generated.EventSeverityResolver {
+	return eventSeverityResolver{}
 }

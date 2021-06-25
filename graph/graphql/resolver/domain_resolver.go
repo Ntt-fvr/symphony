@@ -17,16 +17,6 @@ import (
 
 type domainResolver struct{}
 
-func (domainResolver) Tech(ctx context.Context, domain *ent.Domain) ([]*ent.Tech, error) {
-	var tech []*ent.Tech
-	return tech, nil
-}
-
-func (domainResolver) Kpi(ctx context.Context, domain *ent.Domain) ([]*ent.Kpi, error) {
-	var kpi []*ent.Kpi
-	return kpi, nil
-}
-
 func (r mutationResolver) AddDomain(ctx context.Context, input models.AddDomainInput) (*ent.Domain, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

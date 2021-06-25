@@ -458,25 +458,25 @@ func HasKpiWith(preds ...predicate.Kpi) predicate.Formula {
 	})
 }
 
-// HasFormulaFk applies the HasEdge predicate on the "formula_fk" edge.
-func HasFormulaFk() predicate.Formula {
+// HasCountervendorformula applies the HasEdge predicate on the "countervendorformula" edge.
+func HasCountervendorformula() predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FormulaFkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, FormulaFkTable, FormulaFkColumn),
+			sqlgraph.To(CountervendorformulaTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CountervendorformulaTable, CountervendorformulaColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasFormulaFkWith applies the HasEdge predicate on the "formula_fk" edge with a given conditions (other predicates).
-func HasFormulaFkWith(preds ...predicate.CounterVendorFormula) predicate.Formula {
+// HasCountervendorformulaWith applies the HasEdge predicate on the "countervendorformula" edge with a given conditions (other predicates).
+func HasCountervendorformulaWith(preds ...predicate.CounterVendorFormula) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(FormulaFkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, FormulaFkTable, FormulaFkColumn),
+			sqlgraph.To(CountervendorformulaInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CountervendorformulaTable, CountervendorformulaColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
