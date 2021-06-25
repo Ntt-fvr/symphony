@@ -27,6 +27,7 @@ func (e *Eventer) HookTo(client *ent.Client) {
 	client.FlowInstance.Use(e.flowInstanceHook())
 	client.Project.Use(e.projectHook())
 	client.Location.Use(e.locationHook())
+	client.File.Use(e.imageHook())
 }
 
 func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {
