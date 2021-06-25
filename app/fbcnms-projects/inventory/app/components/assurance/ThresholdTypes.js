@@ -8,14 +8,14 @@
  * @format
  */
 
-import Grid from '@material-ui/core/Grid';
-import React from 'react';
-import {makeStyles} from '@material-ui/styles';
-
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+import Grid from '@material-ui/core/Grid';
+import React from 'react';
 import ThresholdTypeItem from './ThresholdTypeItem';
+import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,6 +44,7 @@ const ThresholdTypes = () => {
           />
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+          <TitleTextCardsThresholds />
           <ThresholdTypeItem />
           <ThresholdTypeItem />
           <ThresholdTypeItem />

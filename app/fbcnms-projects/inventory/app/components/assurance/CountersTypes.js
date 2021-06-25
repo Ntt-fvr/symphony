@@ -11,7 +11,7 @@
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
-import TitleTextCards from './TitleTextCards';
+import TitleTextCardsCounter from './TitleTextCardsCounter';
 import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
 import {Grid, List} from '@material-ui/core/';
@@ -106,7 +106,7 @@ const CountersTypes = () => {
           />
         </Grid>
         <Grid className={classes.paper} item xs="12" lg="9">
-          <TitleTextCards />
+          <TitleTextCardsCounter />
           <List disablePadding="true">
             {items.counters.edges.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>

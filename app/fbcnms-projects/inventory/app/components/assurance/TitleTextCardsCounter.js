@@ -39,7 +39,7 @@ const useStyles = makeStyles({
   },
 });
 
-function TitleTextCards() {
+function TitleTextCardsCounter() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
@@ -91,4 +91,4 @@ function TitleTextCards() {
     </Grid>
   );
 }
-export default TitleTextCards;
+export default TitleTextCardsCounter;
