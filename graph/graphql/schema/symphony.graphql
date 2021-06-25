@@ -4436,4 +4436,5 @@ type Subscription {
   projectChanged: Project
   locationAdded: Location
   locationChanged: Location
+  AddImage: File
 }

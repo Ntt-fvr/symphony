@@ -1128,6 +1128,7 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
+		AddImage               func(childComplexity int) int
 		FlowInstanceDone       func(childComplexity int) int
 		LocationAdded          func(childComplexity int) int
 		LocationChanged        func(childComplexity int) int
@@ -1732,6 +1733,7 @@ type SubscriptionResolver interface {
 	ProjectChanged(ctx context.Context) (<-chan *ent.Project, error)
 	LocationAdded(ctx context.Context) (<-chan *ent.Location, error)
 	LocationChanged(ctx context.Context) (<-chan *ent.Location, error)
+	AddImage(ctx context.Context) (<-chan *ent.File, error)
 }
 type SurveyResolver interface {
 	CreationTimestamp(ctx context.Context, obj *ent.Survey) (*int, error)
@@ -7158,6 +7160,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SubflowBlock.Params(childComplexity), true
+
+	case "Subscription.AddImage":
+		if e.complexity.Subscription.AddImage == nil {
+			break
+		}
+
+		return e.complexity.Subscription.AddImage(childComplexity), true
 
 	case "Subscription.flowInstanceDone":
 		if e.complexity.Subscription.FlowInstanceDone == nil {
@@ -13326,6 +13335,7 @@ type Subscription {
   projectChanged: Project
   locationAdded: Location
   locationChanged: Location
+  AddImage: File
 }
 `, BuiltIn: false},
 }
@@ -42067,6 +42077,48 @@ func (ec *executionContext) _Subscription_locationChanged(ctx context.Context, f
 	}
 }
 
+func (ec *executionContext) _Subscription_AddImage(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().AddImage(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.File)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalOFile2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFile(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _Survey_id(ctx context.Context, field graphql.CollectedField, obj *ent.Survey) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -65426,6 +65478,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_locationAdded(ctx, fields[0])
 	case "locationChanged":
 		return ec._Subscription_locationChanged(ctx, fields[0])
+	case "AddImage":
+		return ec._Subscription_AddImage(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
