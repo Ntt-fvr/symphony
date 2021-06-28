@@ -10,6 +10,7 @@
 
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 import CounterTypeItem from './CounterTypeItem';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
 import fbt from 'fbt';
@@ -130,6 +131,7 @@ const CountersTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddCounterItemForm />
+          <CounterAddedSuccessfully />
         </Grid>
       </Grid>
     </div>
