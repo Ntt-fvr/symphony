@@ -10,16 +10,16 @@
 import AddButton from './AddButton';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
+import SwitchLabels from './Switch';
+import Table from './Table';
 import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
-import Table from './Table';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import SwitchLabels from './Switch';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -125,27 +125,28 @@ export default function ThresholdTypeItem() {
         </AccordionSummary>
 
         <AccordionDetails>
-            <Grid container
+          <Grid
+            container
             spacing={3}
-            item xs={12}
+            item
+            xs={12}
             justify="center"
-            alignItems="center" 
-            >
-              <Grid xs={10}>
-                Description: : Chips allow users to enter information, make
-                selections, filter content, or trigger actions. While buttons
-                are expected.
-              </Grid>
-              <Grid xs={10}>
-                <Text 
-                className={classes.rulesContained}
-                weight='bold'
-                variant='subtitle1'>
-                  {'Rules contained'}
-                </Text>             
-                <Table/>              
-              </Grid>
+            alignItems="center">
+            <Grid xs={10}>
+              Description: : Chips allow users to enter information, make
+              selections, filter content, or trigger actions. While buttons are
+              expected.
             </Grid>
+            <Grid xs={10}>
+              <Text
+                className={classes.rulesContained}
+                weight="bold"
+                variant="subtitle1">
+                {'Rules contained'}
+              </Text>
+              <Table />
+            </Grid>
+          </Grid>
         </AccordionDetails>
       </Accordion>
     </div>

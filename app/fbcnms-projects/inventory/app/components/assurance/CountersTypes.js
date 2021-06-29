@@ -15,7 +15,6 @@ import TitleTextCardsCounter from './TitleTextCardsCounter';
 import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
 import {Grid, List} from '@material-ui/core/';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -75,7 +74,6 @@ const CountersTypes = () => {
   };
 
   const showEditCounterItemForm = (counters: {}) => {
-    ServerLogger.info(LogEvents.EDIT_COUNTER_ITEM_CLICKED);
     setShowAddEditCard(true);
     setDataEdit(counters);
   };
