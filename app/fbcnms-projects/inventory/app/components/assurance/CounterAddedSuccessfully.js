@@ -8,11 +8,13 @@
  * @format
  */
 import AddButton from './AddButton';
+import AddCounterItemForm from './AddCounterItemForm';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
+import Clickable from '@symphony/design-system/components/Core/Clickable';
 import Grid from '@material-ui/core/Grid';
-import React from 'react';
+import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
@@ -43,7 +45,15 @@ const useStyles = makeStyles(theme => ({
 
 const CounterAddedSuccessfully = () => {
   const classes = useStyles();
+  const [returnForm, setReturnForm] = useState(false);
 
+  function handleClick() {
+    setReturnForm(true);
+  }
+
+  if (returnForm) {
+    return <AddCounterItemForm />;
+  }
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Counter</CardHeader>
@@ -67,7 +77,9 @@ const CounterAddedSuccessfully = () => {
           </Grid>
         </Grid>
         <Grid className={classes.addButton}>
-          <AddButton textButton={'Add new counter'} />
+          <Clickable onClick={handleClick}>
+            <AddButton textButton={'Add new counter'} />
+          </Clickable>
         </Grid>
       </Grid>
     </Card>
