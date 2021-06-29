@@ -1296,10 +1296,8 @@
     url "^0.11.0"
     yarn "^1.12.3"
 
-"@fbcnms/projects@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@fbcnms/projects/-/projects-0.1.0.tgz#7e1d6641e6dbe0f8137560f25c6d89b1d5cd9354"
-  integrity sha512-vdP5+Y4XWkdVR3H97NCbZiuMpi2xSelyUFg5AR7vZXWzXLFKVziSQEvvqG442U3PQbuLV15LShfYJhEHDc13fA==
+"@fbcnms/projects@file:@fbcnms/projects":
+  version "0.1.1"
 
 "@fbcnms/relay@^0.2.0":
   version "0.2.0"
@@ -1318,10 +1316,13 @@
   resolved "https://registry.yarnpkg.com/@fbcnms/strings/-/strings-0.1.0.tgz#50dae22b4cb7cb7d1a30c013d0b40c96b741a1f1"
   integrity sha512-w1Z12YAhufVCsKL1lcO4+wwfwnQPwaLZyE5jjt36yg/2fcCRrpv55r3V+7M/VDc8wDOK4yRgJwiwEuOPrrwfKw==
 
-"@fbcnms/types@^0.1.10", "@fbcnms/types@^0.1.11":
+"@fbcnms/types@^0.1.10":
   version "0.1.11"
   resolved "https://registry.yarnpkg.com/@fbcnms/types/-/types-0.1.11.tgz#11b6d53fffccd26925fbfa64d9a308db6beafdfb"
   integrity sha512-fcSBUZpanxECQcqEiMa91ZktkP9tIkINmyTp0TcUCXyFbdkwu3aOxxXTR6cBD43YKvX885J5Oc7N+MPeZjTVgw==
+
+"@fbcnms/types@file:@fbcnms/projects":
+  version "0.1.1"
 
 "@fbcnms/ui@^0.1.4":
   version "0.1.7"

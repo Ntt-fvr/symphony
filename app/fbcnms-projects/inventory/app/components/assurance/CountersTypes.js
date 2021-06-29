@@ -18,6 +18,11 @@ import {Grid, List} from '@material-ui/core/';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation'
+import type {
+  RemoveCountersTypesMutationResponse,
+  RemoveCountersTypesMutationVariables,
+} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
 
 import React, {useState} from 'react';
 
@@ -71,6 +76,10 @@ const CountersTypes = () => {
     const edges = items.counters.edges.filter(item => item.node.id !== id);
     const removeCounter = {counters: {edges}};
     setItems(removeCounter);
+    const variables: RemoveCountersTypesMutationVariables = {
+      id: id
+    };
+    RemoveCountersTypesMutation(variables);
   };
 
   const showEditCounterItemForm = (counters: {}) => {
