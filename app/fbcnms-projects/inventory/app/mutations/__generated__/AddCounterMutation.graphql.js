@@ -26,7 +26,10 @@ export type AddCounterInput = {|
 |};
 export type EditCounterVendorFormulaInput = {|
   id: string,
-  mandatory?: ?boolean,
+  mandatory: boolean,
+  vendorFk: string,
+  counterFk: string,
+  formulaFk: string,
 |};
 export type AddCounterMutationVariables = {|
   input: AddCounterFamilyInput

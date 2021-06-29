@@ -15,6 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import KpiTypeItem from './KpiTypeItem';
 import React from 'react';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
+import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
 import fbt from 'fbt';
@@ -29,8 +30,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/*const KpiQuery = graphql`
+  query CountersTypesQuery {
+    counters {
+      edges {
+        node {
+          id
+          name
+          networkManagerSystem
+          externalID
+          countervendorformula {
+            id
+            mandatory
+          }
+        }
+      }
+    }
+  }
+`;
+ */
+
 const KpiTypes = () => {
   const classes = useStyles();
+
+  //const data = useLazyLoadQuery<>()
 
   return (
     <div className={classes.root}>

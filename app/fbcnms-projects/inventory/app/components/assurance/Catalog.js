@@ -90,9 +90,10 @@ export default function Catalog() {
   );
 
   useEffect(() => {
-    ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
+    /*ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
+     */
     history.push(`/assurance/performance/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 

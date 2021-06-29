@@ -8,10 +8,14 @@
  * @format
  */
 
+import type {EditCounterMutationVariables} from '../../mutations/__generated__/EditCounterMutation.graphql';
+
+import EditCounterMutation from '../../mutations/EditCounterMutation';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
@@ -41,22 +45,32 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const EditCounterItemForm = props => {
+export const EditCounterItemForm = ({formValues, onClose}) => {
   const classes = useStyles();
 
-  const name = useFormInput(props.formValues.Name);
-  const vendor = useFormInput(props.formValues.VendorName);
-  const NetworkManagerSystem = useFormInput(
-    props.formValues.NetworkManagerSystem,
-  );
-  const CounterID = useFormInput(props.formValues.CounterID);
-  const FamilyName = useFormInput(props.formValues.FamilyName);
+  const name = useFormInput(formValues.Name);
+  const vendor = useFormInput(formValues.VendorName);
+  const networkManagerSystem = useFormInput(formValues.NetworkManagerSystem);
+  const counterID = useFormInput(formValues.CounterID);
+  const familyName = useFormInput(formValues.FamilyName);
+
+  function handleClick() {
+    const variables: EditCounterMutationVariables = {
+      input: {
+        id: formValues.Id,
+        name: name.value,
+        externalID: counterID.value,
+        networkManagerSystem: networkManagerSystem.value,
+      },
+    };
+    EditCounterMutation(variables);
+  }
 
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item s={12} sm={12} lg={12} xl={12}>
-          <ConfigueTitle
+          <ConfigureTitle
             className={classes.title}
             title={fbt('Counters catalog', ' ')}
             subtitle={''}
@@ -97,7 +111,7 @@ export const EditCounterItemForm = props => {
                   label="Network Manager System"
                   required>
                   <TextInput
-                    {...NetworkManagerSystem}
+                    {...networkManagerSystem}
                     className={classes.textInput}
                     name="NetworkManagerSystem"
                     variant="outlined"
@@ -111,7 +125,7 @@ export const EditCounterItemForm = props => {
                   label="Counter ID"
                   required>
                   <TextInput
-                    {...CounterID}
+                    {...counterID}
                     className={classes.textInput}
                     name="CounterID"
                     variant="outlined"
@@ -126,7 +140,7 @@ export const EditCounterItemForm = props => {
                 label="Family name"
                 required>
                 <TextInput
-                  {...FamilyName}
+                  {...familyName}
                   className={classes.textInput}
                   name="FamilyName"
                   variant="outlined"
@@ -137,13 +151,15 @@ export const EditCounterItemForm = props => {
             <Grid container justify="flex-end">
               <Grid item s={2} sm={2} lg={1} xl={1}>
                 <FormField>
-                  <Button className={classes.addCounter}>Save</Button>
+                  <Button onClick={handleClick} className={classes.addCounter}>
+                    Save
+                  </Button>
                 </FormField>
               </Grid>
               <Grid item s={2} sm={2} lg={1} xl={1}>
                 <FormField>
                   <Button
-                    onClick={props.onClose}
+                    onClick={onClose}
                     className={classes.addCounter}
                     skin="brightGray">
                     Cancel

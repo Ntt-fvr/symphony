@@ -21,24 +21,6 @@ import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import React, {useState} from 'react';
-const CountersQuery = graphql`
-  query CountersTypesQuery {
-    counters {
-      edges {
-        node {
-          id
-          name
-          networkManagerSystem
-          externalID
-          countervendorformula {
-            id
-            mandatory
-          }
-        }
-      }
-    }
-  }
-`;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,6 +39,25 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
 }));
+
+const CountersQuery = graphql`
+  query CountersTypesQuery {
+    counters {
+      edges {
+        node {
+          id
+          name
+          networkManagerSystem
+          externalID
+          countervendorformula {
+            id
+            mandatory
+          }
+        }
+      }
+    }
+  }
+`;
 
 const CountersTypes = () => {
   const classes = useStyles();
