@@ -57,7 +57,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CounterTypeItem({counter, edit, onChange}) {
+type Props = $ReadOnly<{|
+  counter: object,
+  edit: void,
+  onChange: void,
+|}>;
+
+export default function CounterTypeItem(props: Props) {
+  const {counter, edit, onChange} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
