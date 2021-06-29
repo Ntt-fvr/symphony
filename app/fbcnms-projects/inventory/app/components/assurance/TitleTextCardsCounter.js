@@ -43,12 +43,12 @@ function TitleTextCardsCounter() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid item xs="3">
+      <Grid xs="3">
         <Text className={classes.title} variant="subtitle2">
           Counter name
         </Text>
       </Grid>
-      <Grid item xs="4">
+      <Grid xs="4">
         <Text
           className={classNames(
             classes.title,
@@ -59,7 +59,7 @@ function TitleTextCardsCounter() {
           Network Manager System
         </Text>
       </Grid>
-      <Grid item xs="3">
+      <Grid xs="3">
         <Text
           className={classNames(
             classes.title,
@@ -70,7 +70,7 @@ function TitleTextCardsCounter() {
           Vendor name
         </Text>
       </Grid>
-      <Grid item xs="1">
+      <Grid xs="1">
         <Text
           className={classNames(
             classes.title,
@@ -81,7 +81,7 @@ function TitleTextCardsCounter() {
           Edit
         </Text>
       </Grid>
-      <Grid item xs="1">
+      <Grid xs="1">
         <Text
           className={classNames(classes.title, classes.delete)}
           variant="subtitle2">

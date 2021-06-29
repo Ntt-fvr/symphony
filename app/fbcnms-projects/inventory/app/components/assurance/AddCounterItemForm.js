@@ -20,6 +20,7 @@ import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
 
+import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -46,6 +47,7 @@ export default function AddCounterItemForm() {
   const classes = useStyles();
 
   const [counters, setCounters] = useState({data: {}});
+  const [showChecking, setShowChecking] = useState(false);
 
   function handleChange({target}) {
     setCounters({
@@ -56,7 +58,7 @@ export default function AddCounterItemForm() {
     });
   }
 
-  function handleClick() {
+  async function handleClick() {
     const variables: AddCounterMutationVariables = {
       input: {
         name: counters.data.family,
@@ -69,8 +71,13 @@ export default function AddCounterItemForm() {
         ],
       },
     };
-    console.log(variables);
+
+    setShowChecking(true);
     AddCounterMutation(variables);
+  }
+
+  if (showChecking) {
+    return <CounterAddedSuccessfully />;
   }
 
   return (
