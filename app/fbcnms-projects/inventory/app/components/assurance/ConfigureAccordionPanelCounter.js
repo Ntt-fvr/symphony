@@ -89,14 +89,14 @@ function ConfigureAccordion(props: Props) {
       className={classes.container}
       container spacing={3}
       alignItems="center">
-      <Grid xs='5'>        
+      <Grid xs={5}>        
           <Text
             className={classNames(classes.text, classes.boldText)}
             variant="subtitle1">
             {name}
           </Text>        
       </Grid>
-      <Grid xs='3'>
+      <Grid xs={3}>
         <Text
           color='primary'
           weight='bold'
@@ -105,7 +105,7 @@ function ConfigureAccordion(props: Props) {
           {'Gestor_manager'}
         </Text> 
       </Grid>
-      <Grid xs='2'>
+      <Grid xs={2}>
         <Text
           weight='bold'
           className={classes.vendor}
@@ -116,7 +116,7 @@ function ConfigureAccordion(props: Props) {
       <Grid>
         <Link className={classes.edit}>{icon}</Link>
       </Grid>
-      <Grid xs='1'>
+      <Grid xs={1}>
         <div className={classes.delete}>
           <DeleteButton />
         </div>      

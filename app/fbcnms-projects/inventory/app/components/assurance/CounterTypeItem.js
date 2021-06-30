@@ -76,19 +76,19 @@ export default function CounterTypeItem(props: Props) {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs="4" container justify="flex-start" alignItems="center">
+          <Grid xs={4} container justify="flex-start" alignItems="center">
             <Text className={classes.bold}>{counter.name}</Text>
           </Grid>
 
-          <Grid xs="2" container alignItems="center">
+          <Grid xs={2} container alignItems="center">
             <Text className={classes.blue}>{counter.networkManagerSystem}</Text>
           </Grid>
 
-          <Grid xs="5" container justify="center" alignItems="center">
+          <Grid xs={5} container justify="center" alignItems="center">
             <Text className={classes.bold}>{'Erikson'}</Text>
           </Grid>
 
-          <Grid xs="1" container justify="flex-end" alignItems="center">
+          <Grid xs={1} container justify="flex-end" alignItems="center">
             <IconButton
               onClick={edit}
               className={classes.icons}
@@ -104,12 +104,12 @@ export default function CounterTypeItem(props: Props) {
 
         <AccordionDetails className={classes.detailsRoot}>
           <Grid container spacing={3}>
-            <Grid xs="4">
+            <Grid xs={4}>
               <p>
                 Counter ID:<span>40</span>
               </p>
             </Grid>
-            <Grid xs="8" className={classes.details}>
+            <Grid xs={8} className={classes.details}>
               <p>
                 Family Name:<span>Throughput and Data Volume Measurement</span>
               </p>
