@@ -61,6 +61,12 @@ func (kc *KpiCreate) SetName(s string) *KpiCreate {
 	return kc
 }
 
+// SetStatus sets the status field.
+func (kc *KpiCreate) SetStatus(b bool) *KpiCreate {
+	kc.mutation.SetStatus(b)
+	return kc
+}
+
 // SetDomainID sets the domain edge to Domain by id.
 func (kc *KpiCreate) SetDomainID(id int) *KpiCreate {
 	kc.mutation.SetDomainID(id)
@@ -192,6 +198,9 @@ func (kc *KpiCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := kc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
+	}
 	return nil
 }
 
@@ -242,6 +251,14 @@ func (kc *KpiCreate) createSpec() (*Kpi, *sqlgraph.CreateSpec) {
 			Column: kpi.FieldName,
 		})
 		_node.Name = value
+	}
+	if value, ok := kc.mutation.Status(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: kpi.FieldStatus,
+		})
+		_node.Status = value
 	}
 	if nodes := kc.mutation.DomainIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

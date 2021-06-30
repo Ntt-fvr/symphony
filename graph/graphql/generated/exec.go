@@ -673,6 +673,7 @@ type ComplexityRoot struct {
 		FormulaFk func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Name      func(childComplexity int) int
+		Status    func(childComplexity int) int
 	}
 
 	KpiConnection struct {
@@ -1119,6 +1120,7 @@ type ComplexityRoot struct {
 		ServiceTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Services                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
 		Surveys                  func(childComplexity int) int
+		Tresholds                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TresholdOrder, filterBy []*models.TresholdFilterInput) int
 		TriggerType              func(childComplexity int, id flowschema.TriggerTypeID) int
 		User                     func(childComplexity int, authID string) int
 		Users                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
@@ -1391,6 +1393,18 @@ type ComplexityRoot struct {
 		Kpi         func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Rule        func(childComplexity int) int
+		Status      func(childComplexity int) int
+	}
+
+	TresholdConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	TresholdEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	TriggerBlock struct {
@@ -1935,6 +1949,7 @@ type QueryResolver interface {
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 	Counters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) (*ent.CounterConnection, error)
 	Kpis(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) (*ent.KpiConnection, error)
+	Tresholds(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TresholdOrder, filterBy []*models.TresholdFilterInput) (*ent.TresholdConnection, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -4335,6 +4350,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Kpi.Name(childComplexity), true
+
+	case "Kpi.status":
+		if e.complexity.Kpi.Status == nil {
+			break
+		}
+
+		return e.complexity.Kpi.Status(childComplexity), true
 
 	case "KpiConnection.edges":
 		if e.complexity.KpiConnection.Edges == nil {
@@ -7557,6 +7579,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Surveys(childComplexity), true
 
+	case "Query.tresholds":
+		if e.complexity.Query.Tresholds == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tresholds_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tresholds(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.TresholdOrder), args["filterBy"].([]*models.TresholdFilterInput)), true
+
 	case "Query.triggerType":
 		if e.complexity.Query.TriggerType == nil {
 			break
@@ -8912,6 +8946,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Treshold.Rule(childComplexity), true
+
+	case "Treshold.status":
+		if e.complexity.Treshold.Status == nil {
+			break
+		}
+
+		return e.complexity.Treshold.Status(childComplexity), true
+
+	case "TresholdConnection.edges":
+		if e.complexity.TresholdConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.TresholdConnection.Edges(childComplexity), true
+
+	case "TresholdConnection.pageInfo":
+		if e.complexity.TresholdConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.TresholdConnection.PageInfo(childComplexity), true
+
+	case "TresholdConnection.totalCount":
+		if e.complexity.TresholdConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.TresholdConnection.TotalCount(childComplexity), true
+
+	case "TresholdEdge.cursor":
+		if e.complexity.TresholdEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.TresholdEdge.Cursor(childComplexity), true
+
+	case "TresholdEdge.node":
+		if e.complexity.TresholdEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.TresholdEdge.Node(childComplexity), true
 
 	case "TriggerBlock.exitPoint":
 		if e.complexity.TriggerBlock.ExitPoint == nil {
@@ -12514,7 +12590,73 @@ type KpiEdge {
   """
   cursor: Cursor!
 }
+################################ conection treshold ###############################################
+"""
+Properties by which Treshold connections can be ordered.
+"""
+enum TresholdOrderField {
+  """
+  Order Treshold by name.
+  """
+  NAME
 
+  """
+  Order Treshold by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Treshold by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Treshold connections.
+"""
+input TresholdOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Treshold by.
+  """
+  field: TresholdOrderField
+}
+
+"""
+A connection to a list of Treshold.
+"""
+type TresholdConnection {
+  """
+  Total Treshold of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Treshold edges.
+  """
+  edges: [TresholdEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Treshold edge in a connection.
+"""
+type TresholdEdge {
+  """
+  The Treshold at the end of the edge.
+  """
+  node: Treshold
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -14270,6 +14412,41 @@ type Query {
     
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
+
+  """
+  A list of tresholds.
+  """
+  tresholds(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: TresholdOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [TresholdFilterInput!]
+  ): TresholdConnection!
 }
 
 type Mutation {
@@ -14653,6 +14830,7 @@ input EditDomainInput {
 type Kpi implements Node {
   id: ID!
   name: String!
+  status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
 }
@@ -14660,12 +14838,14 @@ type Kpi implements Node {
 input AddKpiInput {
   name: String!
   domainFk: ID!
+  status: Boolean!
 }
 
 input EditKpiInput {
   id: ID!
   name: String!
   domainFk: ID!
+  status: Boolean!
 }
 
 type Tech implements Node {
@@ -14736,6 +14916,7 @@ type Treshold implements Node {
   id: ID!
   name: String!
   description: String!
+  status: Boolean!
   rule: [Rule!]
   kpi: Kpi
   
@@ -14744,6 +14925,7 @@ type Treshold implements Node {
 input AddTresholdInput {
   name: String!
   description: String!
+  status: Boolean!
   rule: [RuleInput!]
   kpi: Int
   
@@ -14752,6 +14934,7 @@ input AddTresholdInput {
 input TresholdInput {
   name: String!
   description: String!
+  status: Boolean!
   rule: [RuleInput!]
   kpi: Int
   
@@ -14761,7 +14944,21 @@ input EditTresholdInput {
   id: ID!
   name: String!
   description: String!
+  status: Boolean!
   rule: [RuleInput!]  
+}
+
+enum TresholdFilterType {
+  NAME
+}
+
+input TresholdFilterInput {
+  filterType: TresholdFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 type Comparator implements Node {
   id: ID!
@@ -19541,6 +19738,104 @@ func (ec *executionContext) field_Query_services_args(ctx context.Context, rawAr
 		}
 	}
 	args["filterBy"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tresholds_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.TresholdOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOTresholdOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.TresholdFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOTresholdFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -31229,6 +31524,41 @@ func (ec *executionContext) _Kpi_name(ctx context.Context, field graphql.Collect
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Kpi_status(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Kpi",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Kpi_domainFk(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
@@ -44481,6 +44811,48 @@ func (ec *executionContext) _Query_kpis(ctx context.Context, field graphql.Colle
 	return ec.marshalNKpiConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiConnection(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_tresholds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_tresholds_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tresholds(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.TresholdOrder), args["filterBy"].([]*models.TresholdFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.TresholdConnection)
+	fc.Result = res
+	return ec.marshalNTresholdConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdConnection(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -50640,6 +51012,41 @@ func (ec *executionContext) _Treshold_description(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Treshold_status(ctx context.Context, field graphql.CollectedField, obj *ent.Treshold) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Treshold",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Treshold_rule(ctx context.Context, field graphql.CollectedField, obj *ent.Treshold) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -50702,6 +51109,178 @@ func (ec *executionContext) _Treshold_kpi(ctx context.Context, field graphql.Col
 	res := resTmp.(*ent.Kpi)
 	fc.Result = res
 	return ec.marshalOKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TresholdConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.TresholdConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TresholdConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TresholdConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.TresholdConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TresholdConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.TresholdEdge)
+	fc.Result = res
+	return ec.marshalNTresholdEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TresholdConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.TresholdConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TresholdConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TresholdEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.TresholdEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TresholdEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Treshold)
+	fc.Result = res
+	return ec.marshalOTreshold2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTreshold(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TresholdEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.TresholdEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TresholdEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _TriggerBlock_triggerType(ctx context.Context, field graphql.CollectedField, obj *models.TriggerBlock) (ret graphql.Marshaler) {
@@ -57818,6 +58397,14 @@ func (ec *executionContext) unmarshalInputAddKpiInput(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -58529,6 +59116,14 @@ func (ec *executionContext) unmarshalInputAddTresholdInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60366,6 +60961,14 @@ func (ec *executionContext) unmarshalInputEditKpiInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -61083,6 +61686,14 @@ func (ec *executionContext) unmarshalInputEditTresholdInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -64772,6 +65383,70 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderUploadInput(ctx con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTresholdFilterInput(ctx context.Context, obj interface{}) (models.TresholdFilterInput, error) {
+	var it models.TresholdFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNTresholdFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTresholdInput(ctx context.Context, obj interface{}) (models.TresholdInput, error) {
 	var it models.TresholdInput
 	var asMap = obj.(map[string]interface{})
@@ -64794,6 +65469,14 @@ func (ec *executionContext) unmarshalInputTresholdInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "rule":
 			var err error
 
@@ -64807,6 +65490,34 @@ func (ec *executionContext) unmarshalInputTresholdInput(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpi"))
 			it.Kpi, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTresholdOrder(ctx context.Context, obj interface{}) (ent.TresholdOrder, error) {
+	var it ent.TresholdOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOTresholdOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -69676,6 +70387,11 @@ func (ec *executionContext) _Kpi(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "status":
+			out.Values[i] = ec._Kpi_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "domainFk":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -72750,6 +73466,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "tresholds":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tresholds(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -74433,6 +75163,11 @@ func (ec *executionContext) _Treshold(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "status":
+			out.Values[i] = ec._Treshold_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "rule":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -74455,6 +75190,72 @@ func (ec *executionContext) _Treshold(ctx context.Context, sel ast.SelectionSet,
 				res = ec._Treshold_kpi(ctx, field, obj)
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var tresholdConnectionImplementors = []string{"TresholdConnection"}
+
+func (ec *executionContext) _TresholdConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.TresholdConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tresholdConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TresholdConnection")
+		case "totalCount":
+			out.Values[i] = ec._TresholdConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._TresholdConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._TresholdConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var tresholdEdgeImplementors = []string{"TresholdEdge"}
+
+func (ec *executionContext) _TresholdEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.TresholdEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tresholdEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TresholdEdge")
+		case "node":
+			out.Values[i] = ec._TresholdEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._TresholdEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -81480,6 +82281,82 @@ func (ec *executionContext) marshalNTreshold2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._Treshold(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTresholdConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdConnection(ctx context.Context, sel ast.SelectionSet, v ent.TresholdConnection) graphql.Marshaler {
+	return ec._TresholdConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTresholdConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdConnection(ctx context.Context, sel ast.SelectionSet, v *ent.TresholdConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TresholdConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTresholdEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.TresholdEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTresholdEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTresholdEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdEdge(ctx context.Context, sel ast.SelectionSet, v *ent.TresholdEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TresholdEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTresholdFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterInput(ctx context.Context, v interface{}) (*models.TresholdFilterInput, error) {
+	res, err := ec.unmarshalInputTresholdFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNTresholdFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterType(ctx context.Context, v interface{}) (models.TresholdFilterType, error) {
+	var res models.TresholdFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTresholdFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterType(ctx context.Context, sel ast.SelectionSet, v models.TresholdFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNTriggerBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTriggerBlockInput(ctx context.Context, v interface{}) (models.TriggerBlockInput, error) {
 	res, err := ec.unmarshalInputTriggerBlockInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -85734,6 +86611,61 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 		return graphql.Null
 	}
 	return graphql.MarshalTime(*v)
+}
+
+func (ec *executionContext) marshalOTreshold2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTreshold(ctx context.Context, sel ast.SelectionSet, v *ent.Treshold) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Treshold(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTresholdFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.TresholdFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.TresholdFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTresholdFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTresholdFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOTresholdOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdOrder(ctx context.Context, v interface{}) (*ent.TresholdOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTresholdOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOTresholdOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdOrderField(ctx context.Context, v interface{}) (*ent.TresholdOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.TresholdOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTresholdOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.TresholdOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOTriggerBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTriggerBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.TriggerBlockInput, error) {

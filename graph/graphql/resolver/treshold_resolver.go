@@ -17,9 +17,24 @@ import (
 
 type tresholdResolver struct{}
 
-func (tresholdResolver) Rule(ctx context.Context, counter *ent.Treshold) ([]*ent.Rule, error) {
-	var response []*ent.Rule
-	return response, nil
+func (tresholdResolver) Rule(ctx context.Context, treshold *ent.Treshold) ([]*ent.Rule, error) {
+	variable, err := treshold.Ruletreshold(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a rule valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
+func (tresholdResolver) Kpi(ctx context.Context, treshold *ent.Treshold) (*ent.Kpi, error) {
+	variable, err := treshold.Kpi(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddTreshold(ctx context.Context, input models.AddTresholdInput) (*ent.Treshold, error) {
@@ -28,6 +43,7 @@ func (r mutationResolver) AddTreshold(ctx context.Context, input models.AddTresh
 	typ, err := client.
 		Treshold.Create().
 		SetName(input.Name).
+		SetStatus(input.Status).
 		SetDescription(input.Description).
 		Save(ctx)
 	if err != nil {
@@ -79,12 +95,13 @@ func (r mutationResolver) EditTreshold(ctx context.Context, input models.EditTre
 		}
 		return nil, errors.Wrapf(err, "updating Treshold: id=%q", input.ID)
 	}
-	if input.Name != et.Name || input.Description != et.Description {
+	if input.Name != et.Name || input.Description != et.Description || input.Status != et.Status {
 
 		if et, err = client.Treshold.
 			UpdateOne(et).
 			SetName(input.Name).
 			SetDescription(input.Description).
+			SetStatus(input.Status).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("A Treshold with the name %v already exists", input.Name)

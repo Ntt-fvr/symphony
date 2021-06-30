@@ -17,9 +17,14 @@ import (
 
 type ruleTypeResolver struct{}
 
-func (ruleTypeResolver) Rule(ctx context.Context, counter *ent.RuleType) ([]*ent.Rule, error) {
-	var response []*ent.Rule
-	return response, nil
+func (ruleTypeResolver) Rule(ctx context.Context, ruleType *ent.RuleType) ([]*ent.Rule, error) {
+	variable, err := ruleType.Ruletyperule(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no rule a rule limit valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddRuleType(ctx context.Context, input models.AddRuleTypeInput) (*ent.RuleType, error) {

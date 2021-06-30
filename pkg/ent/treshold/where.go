@@ -125,6 +125,13 @@ func Description(v string) predicate.Treshold {
 	})
 }
 
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v bool) predicate.Treshold {
+	return predicate.Treshold(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Treshold {
 	return predicate.Treshold(func(s *sql.Selector) {
@@ -496,6 +503,20 @@ func DescriptionEqualFold(v string) predicate.Treshold {
 func DescriptionContainsFold(v string) predicate.Treshold {
 	return predicate.Treshold(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDescription), v))
+	})
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v bool) predicate.Treshold {
+	return predicate.Treshold(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v bool) predicate.Treshold {
+	return predicate.Treshold(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStatus), v))
 	})
 }
 

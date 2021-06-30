@@ -17,6 +17,26 @@ import (
 
 type ruleLimitResolver struct{}
 
+func (ruleLimitResolver) Comparator(ctx context.Context, ruleLimit *ent.RuleLimit) (*ent.Comparator, error) {
+	variable, err := ruleLimit.Comparator(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a comparator valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
+func (ruleLimitResolver) Rule(ctx context.Context, ruleLimit *ent.RuleLimit) (*ent.Rule, error) {
+	variable, err := ruleLimit.Rule(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a rule valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
 func (r mutationResolver) AddRuleLimit(ctx context.Context, input models.AddRuleLimitInput) (*ent.RuleLimit, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

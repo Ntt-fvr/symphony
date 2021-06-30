@@ -23,6 +23,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 
 	// EdgeDomain holds the string denoting the domain edge name in mutations.
 	EdgeDomain = "domain"
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldStatus,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Kpi type.

@@ -118,6 +118,13 @@ func Name(v string) predicate.Kpi {
 	})
 }
 
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v bool) predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Kpi {
 	return predicate.Kpi(func(s *sql.Selector) {
@@ -378,6 +385,20 @@ func NameEqualFold(v string) predicate.Kpi {
 func NameContainsFold(v string) predicate.Kpi {
 	return predicate.Kpi(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v bool) predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v bool) predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStatus), v))
 	})
 }
 

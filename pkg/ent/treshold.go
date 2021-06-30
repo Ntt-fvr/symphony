@@ -29,6 +29,8 @@ type Treshold struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
+	// Status holds the value of the "status" field.
+	Status bool `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TresholdQuery when eager-loading is set.
 	Edges           TresholdEdges `json:"edges"`
@@ -77,6 +79,7 @@ func (*Treshold) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
+		&sql.NullBool{},   // status
 	}
 }
 
@@ -119,7 +122,12 @@ func (t *Treshold) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		t.Description = value.String
 	}
-	values = values[4:]
+	if value, ok := values[4].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[4])
+	} else if value.Valid {
+		t.Status = value.Bool
+	}
+	values = values[5:]
 	if len(values) == len(treshold.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field kpi_tresholdkpi", value)
@@ -172,6 +180,8 @@ func (t *Treshold) String() string {
 	builder.WriteString(t.Name)
 	builder.WriteString(", description=")
 	builder.WriteString(t.Description)
+	builder.WriteString(", status=")
+	builder.WriteString(fmt.Sprintf("%v", t.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -30011,6 +30011,7 @@ type KpiMutation struct {
 	create_time        *time.Time
 	update_time        *time.Time
 	name               *string
+	status             *bool
 	clearedFields      map[string]struct{}
 	domain             *int
 	cleareddomain      bool
@@ -30214,6 +30215,43 @@ func (m *KpiMutation) ResetName() {
 	m.name = nil
 }
 
+// SetStatus sets the status field.
+func (m *KpiMutation) SetStatus(b bool) {
+	m.status = &b
+}
+
+// Status returns the status value in the mutation.
+func (m *KpiMutation) Status() (r bool, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the Kpi.
+// If the Kpi object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *KpiMutation) OldStatus(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *KpiMutation) ResetStatus() {
+	m.status = nil
+}
+
 // SetDomainID sets the domain edge to Domain by id.
 func (m *KpiMutation) SetDomainID(id int) {
 	m.domain = &id
@@ -30359,7 +30397,7 @@ func (m *KpiMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *KpiMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.create_time != nil {
 		fields = append(fields, kpi.FieldCreateTime)
 	}
@@ -30368,6 +30406,9 @@ func (m *KpiMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, kpi.FieldName)
+	}
+	if m.status != nil {
+		fields = append(fields, kpi.FieldStatus)
 	}
 	return fields
 }
@@ -30383,6 +30424,8 @@ func (m *KpiMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case kpi.FieldName:
 		return m.Name()
+	case kpi.FieldStatus:
+		return m.Status()
 	}
 	return nil, false
 }
@@ -30398,6 +30441,8 @@ func (m *KpiMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldUpdateTime(ctx)
 	case kpi.FieldName:
 		return m.OldName(ctx)
+	case kpi.FieldStatus:
+		return m.OldStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown Kpi field %s", name)
 }
@@ -30427,6 +30472,13 @@ func (m *KpiMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case kpi.FieldStatus:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Kpi field %s", name)
@@ -30486,6 +30538,9 @@ func (m *KpiMutation) ResetField(name string) error {
 		return nil
 	case kpi.FieldName:
 		m.ResetName()
+		return nil
+	case kpi.FieldStatus:
+		m.ResetStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown Kpi field %s", name)
@@ -57108,6 +57163,7 @@ type TresholdMutation struct {
 	update_time         *time.Time
 	name                *string
 	description         *string
+	status              *bool
 	clearedFields       map[string]struct{}
 	kpi                 *int
 	clearedkpi          bool
@@ -57346,6 +57402,43 @@ func (m *TresholdMutation) ResetDescription() {
 	m.description = nil
 }
 
+// SetStatus sets the status field.
+func (m *TresholdMutation) SetStatus(b bool) {
+	m.status = &b
+}
+
+// Status returns the status value in the mutation.
+func (m *TresholdMutation) Status() (r bool, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the Treshold.
+// If the Treshold object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *TresholdMutation) OldStatus(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *TresholdMutation) ResetStatus() {
+	m.status = nil
+}
+
 // SetKpiID sets the kpi edge to Kpi by id.
 func (m *TresholdMutation) SetKpiID(id int) {
 	m.kpi = &id
@@ -57452,7 +57545,7 @@ func (m *TresholdMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *TresholdMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, treshold.FieldCreateTime)
 	}
@@ -57464,6 +57557,9 @@ func (m *TresholdMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, treshold.FieldDescription)
+	}
+	if m.status != nil {
+		fields = append(fields, treshold.FieldStatus)
 	}
 	return fields
 }
@@ -57481,6 +57577,8 @@ func (m *TresholdMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case treshold.FieldDescription:
 		return m.Description()
+	case treshold.FieldStatus:
+		return m.Status()
 	}
 	return nil, false
 }
@@ -57498,6 +57596,8 @@ func (m *TresholdMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldName(ctx)
 	case treshold.FieldDescription:
 		return m.OldDescription(ctx)
+	case treshold.FieldStatus:
+		return m.OldStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown Treshold field %s", name)
 }
@@ -57534,6 +57634,13 @@ func (m *TresholdMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case treshold.FieldStatus:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Treshold field %s", name)
@@ -57596,6 +57703,9 @@ func (m *TresholdMutation) ResetField(name string) error {
 		return nil
 	case treshold.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case treshold.FieldStatus:
+		m.ResetStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown Treshold field %s", name)

@@ -39,6 +39,12 @@ func (ku *KpiUpdate) SetName(s string) *KpiUpdate {
 	return ku
 }
 
+// SetStatus sets the status field.
+func (ku *KpiUpdate) SetStatus(b bool) *KpiUpdate {
+	ku.mutation.SetStatus(b)
+	return ku
+}
+
 // SetDomainID sets the domain edge to Domain by id.
 func (ku *KpiUpdate) SetDomainID(id int) *KpiUpdate {
 	ku.mutation.SetDomainID(id)
@@ -238,6 +244,13 @@ func (ku *KpiUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: kpi.FieldName,
 		})
 	}
+	if value, ok := ku.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: kpi.FieldStatus,
+		})
+	}
 	if ku.mutation.DomainCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -383,6 +396,12 @@ type KpiUpdateOne struct {
 // SetName sets the name field.
 func (kuo *KpiUpdateOne) SetName(s string) *KpiUpdateOne {
 	kuo.mutation.SetName(s)
+	return kuo
+}
+
+// SetStatus sets the status field.
+func (kuo *KpiUpdateOne) SetStatus(b bool) *KpiUpdateOne {
+	kuo.mutation.SetStatus(b)
 	return kuo
 }
 
@@ -581,6 +600,13 @@ func (kuo *KpiUpdateOne) sqlSave(ctx context.Context) (_node *Kpi, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: kpi.FieldName,
+		})
+	}
+	if value, ok := kuo.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: kpi.FieldStatus,
 		})
 	}
 	if kuo.mutation.DomainCleared() {
