@@ -72,7 +72,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function KpiTypeItem() {
+type Props = $ReadOnly<{|
+  kpi: object,
+  edit: void,
+  onChange: void,
+|}>;
+
+export default function KpiTypeItem(props: Props) {
+  const {kpi, edit, onChange} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -90,12 +97,12 @@ export default function KpiTypeItem() {
             control={<SwitchLabels />}
           />
           <Grid className={classes.rootGrid}>
-            <Text className={classes.nameKpi}>Nombre de KPI/Indicador</Text>
+            <Text className={classes.nameKpi}>{kpi.name}</Text>
           </Grid>
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>Tipo de red</Text>
+              <Text className={classes.typeRed}>{kpi.domainFk.name}</Text>
             </Button>
           </Grid>
 
