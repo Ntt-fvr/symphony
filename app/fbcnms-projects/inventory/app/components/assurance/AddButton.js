@@ -23,7 +23,12 @@ const useStyles = makeStyles({
   },
 });
 
-function AddButton({textButton}) {
+type Props = $ReadOnly<{|
+  textButton: String,
+|}>;
+
+function AddButton(props: Props) {
+  const {textButton} = props;
   const classes = useStyles();
 
   return (

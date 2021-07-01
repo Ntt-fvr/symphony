@@ -58,10 +58,10 @@ export default function AddCounterItemForm() {
     });
   }
 
-  async function handleClick() {
+  function handleClick() {
     const variables: AddCounterMutationVariables = {
       input: {
-        name: counters.data.family,
+        name: counters.data?.family,
         counter: [
           {
             name: counters.data.name,
