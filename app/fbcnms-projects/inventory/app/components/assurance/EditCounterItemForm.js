@@ -75,18 +75,18 @@ export const EditCounterItemForm = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item s={12} sm={12} lg={12} xl={12}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
             title={fbt('Counters catalog', ' ')}
             subtitle={''}
           />
         </Grid>
-        <Grid item s={12} sm={12} lg={12} xl={12}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
             <CardHeader>Edit container detail</CardHeader>
             <Grid container>
-              <Grid item s={12} sm={12} lg={12} xl={12}>
+              <Grid item xs={12} sm={12} lg={12} xl={12}>
                 <FormField className={classes.formField} label="Name" required>
                   <TextInput
                     {...name}
@@ -97,7 +97,7 @@ export const EditCounterItemForm = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item s={12} sm={12} lg={4} xl={4}>
+              <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField
                   className={classes.formField}
                   label="Vendor name"
@@ -111,7 +111,7 @@ export const EditCounterItemForm = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item s={12} sm={12} lg={4} xl={4}>
+              <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField
                   className={classes.formField}
                   label="Network Manager System"
@@ -125,7 +125,7 @@ export const EditCounterItemForm = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item s={12} sm={12} lg={4} xl={4}>
+              <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField
                   className={classes.formField}
                   label="Counter ID"
@@ -140,7 +140,7 @@ export const EditCounterItemForm = (props: Props) => {
                 </FormField>
               </Grid>
             </Grid>
-            <Grid item s={12} sm={12} lg={4} xl={4}>
+            <Grid item xs={12} sm={12} lg={4} xl={4}>
               <FormField
                 className={classes.formField}
                 label="Family name"
@@ -155,14 +155,14 @@ export const EditCounterItemForm = (props: Props) => {
               </FormField>
             </Grid>
             <Grid container justify="flex-end">
-              <Grid item s={2} sm={2} lg={1} xl={1}>
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
                 <FormField>
                   <Button onClick={handleClick} className={classes.addCounter}>
                     Save
                   </Button>
                 </FormField>
               </Grid>
-              <Grid item s={2} sm={2} lg={1} xl={1}>
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
                 <FormField>
                   <Button
                     onClick={onClose}

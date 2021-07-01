@@ -103,7 +103,7 @@ const CountersTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item s={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
             title={fbt('Counters catalog', 'Counters Title')}
             subtitle={fbt(

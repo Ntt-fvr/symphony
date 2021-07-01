@@ -62,7 +62,7 @@ const KpiTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid  s={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
             title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
             subtitle={fbt(
@@ -72,11 +72,11 @@ const KpiTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper}  xs={12} sm={12} lg={9} xl={9}>
+        <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
           <List disablePadding={true}>
             {items.kpis.edges.map((item, index) => (
-              <li className={classes.listCarCounter}>
+              <li className={classes.listCarCounter} key={index}>
                 <KpiTypeItem
                   key={index}
                   kpi={item.node}
@@ -85,7 +85,7 @@ const KpiTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper}  xs={12} sm={12} lg={3} xl={3}>
+        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddKpiItemForm />
           <AddFormulaItemForm />
         </Grid>
