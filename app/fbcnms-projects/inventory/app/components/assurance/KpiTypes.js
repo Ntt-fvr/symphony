@@ -11,10 +11,10 @@
 import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-import {Grid, List} from '@material-ui/core';
 import KpiTypeItem from './KpiTypeItem';
 import React, {useState} from 'react';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
+import {Grid, List} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -35,29 +35,25 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const KpiQuery = graphql`
-  query KpiTypesQuery{
-    kpis{
-      edges{
-        node{
+  query KpiTypesQuery {
+    kpis {
+      edges {
+        node {
           name
-          domainFk{
+          domainFk {
             id
             name
           }
         }
       }
     }
-}
+  }
 `;
 
 const KpiTypes = () => {
   const classes = useStyles();
   const data = useLazyLoadQuery<KpiTypesQuery>(KpiQuery, {});
-  console.log('hola soy la data de los kpi', data)
   const [items, setItems] = useState(data);
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
-
 
   return (
     <div className={classes.root}>
@@ -77,10 +73,7 @@ const KpiTypes = () => {
           <List disablePadding={true}>
             {items.kpis.edges.map((item, index) => (
               <li className={classes.listCarCounter} key={index}>
-                <KpiTypeItem
-                  key={index}
-                  kpi={item.node}
-                />
+                <KpiTypeItem key={index} kpi={item.node} />
               </li>
             ))}
           </List>

@@ -8,12 +8,12 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import AddKpiMutation from '../../mutations/AddKpiMutation'
+import AddKpiMutation from '../../mutations/AddKpiMutation';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import React, {useState} from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
@@ -41,7 +41,6 @@ const useStyles = makeStyles(theme => ({
 export default function AddKpiItemForm() {
   const classes = useStyles();
 
-
   const [kpis, setKpis] = useState({data: {}});
   const [showChecking, setShowChecking] = useState(false);
 
@@ -53,7 +52,7 @@ export default function AddKpiItemForm() {
       },
     });
   }
-  
+
   async function handleClick() {
     const variables: AddKpiMutationVariables = {
       input: {
@@ -61,15 +60,13 @@ export default function AddKpiItemForm() {
         domainFk: [
           {
             // id: kpis.data.id,
-            name: kpis.data.domine
+            name: kpis.data.domine,
           },
         ],
       },
     };
-
     setShowChecking(true);
     AddKpiMutation(variables);
-    console.log('hoal soy add kpi', variables)
   }
 
   if (showChecking) {
@@ -116,7 +113,9 @@ export default function AddKpiItemForm() {
         />
       </FormField>
       <FormField>
-        <Button className={classes.addCounter} onClick={handleClick}>Add KPI</Button>
+        <Button className={classes.addCounter} onClick={handleClick}>
+          Add KPI
+        </Button>
       </FormField>
     </Card>
   );
