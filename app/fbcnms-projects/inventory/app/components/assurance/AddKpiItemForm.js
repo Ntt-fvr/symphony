@@ -69,7 +69,6 @@ export default function AddKpiItemForm() {
 
     setShowChecking(true);
     AddKpiMutation(variables);
-    console.log('hoal soy add kpi', variables)
   }
 
   if (showChecking) {

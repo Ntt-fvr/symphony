@@ -53,7 +53,6 @@ const KpiQuery = graphql`
 const KpiTypes = () => {
   const classes = useStyles();
   const data = useLazyLoadQuery<KpiTypesQuery>(KpiQuery, {});
-  console.log('hola soy la data de los kpi', data)
   const [items, setItems] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
