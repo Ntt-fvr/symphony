@@ -48,7 +48,7 @@ function TitleTextCardsThresholds() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs="2">
+      <Grid xs={2}>
         <Text
           className={classNames(classes.title, classes.Enable)}
           variant="subtitle2">
@@ -59,7 +59,7 @@ function TitleTextCardsThresholds() {
           Threshold name
         </Text>
       </Grid>
-      <Grid xs="3">
+      <Grid xs={3}>
         <Text
           className={classNames(
             classes.title,
@@ -70,7 +70,7 @@ function TitleTextCardsThresholds() {
           ID
         </Text>
       </Grid>
-      <Grid xs="5">
+      <Grid xs={5}>
         <Text
           className={classNames(
             classes.title,
@@ -81,7 +81,7 @@ function TitleTextCardsThresholds() {
           Associated KPI
         </Text>
       </Grid>
-      <Grid xs="1">
+      <Grid xs={1}>
         <Text
           className={classNames(
             classes.title,
@@ -92,7 +92,7 @@ function TitleTextCardsThresholds() {
           Edit
         </Text>
       </Grid>
-      <Grid xs="1">
+      <Grid xs={1}>
         <Text
           className={classNames(classes.title, classes.delete)}
           variant="subtitle2">

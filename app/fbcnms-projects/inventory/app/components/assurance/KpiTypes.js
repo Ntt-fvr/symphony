@@ -11,12 +11,13 @@
 import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-import Grid from '@material-ui/core/Grid';
+import {Grid, List} from '@material-ui/core';
 import KpiTypeItem from './KpiTypeItem';
-import React from 'react';
+import React, {useState} from 'react';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import fbt from 'fbt';
 
@@ -28,37 +29,40 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
   },
+  listCarCounter: {
+    listStyle: 'none',
+  },
 }));
 
-/*const KpiQuery = graphql`
-  query CountersTypesQuery {
-    counters {
-      edges {
-        node {
-          id
+const KpiQuery = graphql`
+  query KpiTypesQuery{
+    kpis{
+      edges{
+        node{
           name
-          networkManagerSystem
-          externalID
-          countervendorformula {
+          domainFk{
             id
-            mandatory
+            name
           }
         }
       }
     }
-  }
+}
 `;
- */
 
 const KpiTypes = () => {
   const classes = useStyles();
+  const data = useLazyLoadQuery<KpiTypesQuery>(KpiQuery, {});
+  console.log('hola soy la data de los kpi', data)
+  const [items, setItems] = useState(data);
+  const [showAddEditCard, setShowAddEditCard] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
 
-  //const data = useLazyLoadQuery<>()
 
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item s={12} sm={12} lg={9} xl={9}>
+        <Grid  s={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
             title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
             subtitle={fbt(
@@ -68,20 +72,20 @@ const KpiTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+        <Grid className={classes.paper}  xs={12} sm={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
-          <KpiTypeItem />
+          <List disablePadding={true}>
+            {items.kpis.edges.map((item, index) => (
+              <li className={classes.listCarCounter}>
+                <KpiTypeItem
+                  key={index}
+                  kpi={item.node}
+                />
+              </li>
+            ))}
+          </List>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+        <Grid className={classes.paper}  xs={12} sm={12} lg={3} xl={3}>
           <AddKpiItemForm />
           <AddFormulaItemForm />
         </Grid>

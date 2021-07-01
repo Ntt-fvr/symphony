@@ -8,14 +8,17 @@
  * @format
  */
 
-import * as React from 'react';
-
+import React, {useState} from 'react';
+import AddKpiMutation from '../../mutations/AddKpiMutation'
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
+import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
+
+import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -38,6 +41,41 @@ const useStyles = makeStyles(theme => ({
 export default function AddKpiItemForm() {
   const classes = useStyles();
 
+
+  const [kpis, setKpis] = useState({data: {}});
+  const [showChecking, setShowChecking] = useState(false);
+
+  function handleChange({target}) {
+    setKpis({
+      data: {
+        ...kpis.data,
+        [target.name]: target.value,
+      },
+    });
+  }
+  
+  async function handleClick() {
+    const variables: AddKpiMutationVariables = {
+      input: {
+        name: kpis.data.name,
+        domainFk: [
+          {
+            // id: kpis.data.id,
+            name: kpis.data.domine
+          },
+        ],
+      },
+    };
+
+    setShowChecking(true);
+    AddKpiMutation(variables);
+    console.log('hoal soy add kpi', variables)
+  }
+
+  if (showChecking) {
+    return <CounterAddedSuccessfully />;
+  }
+
   return (
     <Card className={classes.root}>
       <CardHeader>Add KPI</CardHeader>
@@ -47,6 +85,7 @@ export default function AddKpiItemForm() {
           name="name"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField className={classes.formField} label="Category" required>
@@ -55,26 +94,29 @@ export default function AddKpiItemForm() {
           name="id"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField className={classes.formField} label="Status" required>
         <TextInput
           className={classes.textInput}
-          name="family"
+          name="status"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField className={classes.formField} label="Domine" required>
         <TextInput
           className={classes.textInput}
-          name="vendor"
+          name="domine"
           variant="outlined"
           type="string"
+          onChange={handleChange}
         />
       </FormField>
       <FormField>
-        <Button className={classes.addCounter}>Add KPI</Button>
+        <Button className={classes.addCounter} onClick={handleClick}>Add KPI</Button>
       </FormField>
     </Card>
   );
