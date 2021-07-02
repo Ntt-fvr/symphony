@@ -8,9 +8,16 @@
  * @format
  */
 
+import type {
+  RemoveCountersTypesMutationResponse,
+  RemoveCountersTypesMutationVariables,
+} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
+
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
+import React, {useState} from 'react';
+import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
 import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
@@ -18,10 +25,6 @@ import {Grid, List} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation'
-import type {RemoveCountersTypesMutationVariables} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
-
-import React, {useState} from 'react';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,7 +77,7 @@ const CountersTypes = () => {
     const removeCounter = {counters: {edges}};
     setItems(removeCounter);
     const variables: RemoveCountersTypesMutationVariables = {
-      id: id
+      id: id,
     };
     RemoveCountersTypesMutation(variables);
   };

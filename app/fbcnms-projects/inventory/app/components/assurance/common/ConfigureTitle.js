@@ -10,6 +10,7 @@ type Props = {|
   subtitle: ?string,
   className?: string,
 |} & WithStyles<typeof styles>;
+
 const styles = _theme => ({
   title: {
     display: 'block',

@@ -45,7 +45,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const EditCounterItemForm = ({formValues, onClose}) => {
+type Props = $ReadOnly<{|
+  formValues: object,
+  onClose: void,
+|}>;
+
+export const EditCounterItemForm = (props: Props) => {
+  const {formValues, onClose} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.Name);
