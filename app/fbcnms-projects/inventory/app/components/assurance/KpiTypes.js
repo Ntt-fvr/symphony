@@ -81,7 +81,7 @@ const KpiTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddKpiItemForm />
+          <AddKpiItemForm kpi={data} />
           <AddFormulaItemForm />
         </Grid>
       </Grid>

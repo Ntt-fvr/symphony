@@ -15,7 +15,7 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useState} from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-
+import {FormControl, Select, InputLabel} from '@material-ui/core'
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
 
 import CounterAddedSuccessfully from './CounterAddedSuccessfully';
@@ -38,12 +38,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddKpiItemForm() {
+type Props = $ReadOnly<{|
+  kpi: object,
+  edit: void,
+  onChange: void,
+|}>;
+
+
+export default function AddKpiItemForm(props: Props) {
+  const {kpi} = props;
   const classes = useStyles();
 
   const [kpis, setKpis] = useState({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-
   function handleChange({target}) {
     setKpis({
       data: {
@@ -63,7 +70,6 @@ export default function AddKpiItemForm() {
     setShowChecking(true);
     AddKpiMutation(variables);
   }
-
   if (showChecking) {
     return <CounterAddedSuccessfully />;
   }
@@ -98,15 +104,24 @@ export default function AddKpiItemForm() {
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="Domine" required>
-        <TextInput
-          className={classes.textInput}
-          name="domainFk"
-          variant="outlined"
-          type="string"
+      <FormControl variant="outlined" className={classes.formField}>
+        <InputLabel htmlFor="outlined-age-native-simple">Domain</InputLabel>
+        <Select
+          native
           onChange={handleChange}
-        />
-      </FormField>
+          label="Domain"
+          inputProps={{
+            name: 'domainFk',
+            id: 'outlined-age-native-simple',
+          }}
+        >
+          <option aria-label="None" value="" />
+          {kpi.kpis.edges.map((kpidata, index) => (
+            <option key={index} value={kpidata.node.domainFk.id}> {kpidata.node.domainFk.name} </option>
+          ))}
+        </Select>
+      </FormControl>
+      
       <FormField>
         <Button className={classes.addCounter} onClick={handleClick}>
           Add KPI
