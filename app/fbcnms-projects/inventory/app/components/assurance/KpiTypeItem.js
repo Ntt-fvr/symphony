@@ -111,11 +111,11 @@ export default function KpiTypeItem(props: Props) {
           </Grid>
 
           <Grid>
-            <IconButton className={classes.edit} icon={EditIcon} />
+            <IconButton className={classes.edit} icon={EditIcon} onClick={edit}/>
           </Grid>
 
           <Grid>
-            <IconButton className={classes.delete} icon={DeleteIcon} />
+            <IconButton className={classes.delete} icon={DeleteIcon} onClick={onChange}/>
           </Grid>
         </AccordionSummary>
 

@@ -8,12 +8,18 @@
  * @format
  */
 
+ import type {
+  RemoveKpiMutationVariables,
+} from '../../mutations/__generated__/RemoveKpiMutation.graphql';
+
 import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import KpiTypeItem from './KpiTypeItem';
+import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
 import React, {useState} from 'react';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
+import {EditCounterItemForm} from './EditCounterItemForm';
 import {Grid, List} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
@@ -39,6 +45,7 @@ const KpiQuery = graphql`
     kpis {
       edges {
         node {
+          id
           name
           domainFk {
             id
@@ -56,6 +63,34 @@ const KpiTypes = () => {
   const [items, setItems] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
+  
+  const handleRemove = id => {
+    const edges = items.kpis.edges.filter(item => item.node.id !== id);
+    const removeKpi = {kpis: {edges}};
+    setItems(removeKpi);
+    const variables: RemoveKpiMutationVariables = {
+      id: id,
+    };
+    RemoveKpiMutation(variables);
+  };
+
+  const showEditCounterItemForm = (kpis: {}) => {
+    setShowAddEditCard(true);
+    setDataEdit(kpis);
+  };
+
+  const hideKpItemForm = () => {
+    setShowAddEditCard(false);
+  };
+
+  if (showAddEditCard) {
+    return (
+      <EditCounterItemForm
+        formValues={dataEdit}
+        onClose={hideKpItemForm}
+      />
+    );
+  }
 
   return (
     <div className={classes.root}>
@@ -75,7 +110,7 @@ const KpiTypes = () => {
           <List disablePadding={true}>
             {items.kpis.edges.map((item, index) => (
               <li className={classes.listCarCounter} key={index}>
-                <KpiTypeItem key={index} kpi={item.node} />
+                <KpiTypeItem key={index} kpi={item.node} onChange={() => handleRemove(item.node.id)} />
               </li>
             ))}
           </List>
