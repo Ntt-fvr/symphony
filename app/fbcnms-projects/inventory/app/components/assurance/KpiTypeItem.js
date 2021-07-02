@@ -111,9 +111,7 @@ export default function KpiTypeItem(props: Props) {
           </Grid>
 
           <Grid>
-            <Link>
-              <IconButton className={classes.edit} icon={EditIcon} />
-            </Link>
+            <IconButton className={classes.edit} icon={EditIcon} />
           </Grid>
 
           <Grid>

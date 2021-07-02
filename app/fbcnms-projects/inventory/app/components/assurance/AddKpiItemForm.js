@@ -58,12 +58,7 @@ export default function AddKpiItemForm() {
     const variables: AddKpiMutationVariables = {
       input: {
         name: kpis.data.name,
-        domainFk: [
-          {
-            // id: kpis.data.id,
-            name: kpis.data.domine
-          },
-        ],
+        domainFk: kpis.data.domainFk
       },
     };
 
@@ -90,7 +85,7 @@ export default function AddKpiItemForm() {
       <FormField className={classes.formField} label="Category" required>
         <TextInput
           className={classes.textInput}
-          name="id"
+          name="category"
           variant="outlined"
           type="string"
           onChange={handleChange}
@@ -108,7 +103,7 @@ export default function AddKpiItemForm() {
       <FormField className={classes.formField} label="Domine" required>
         <TextInput
           className={classes.textInput}
-          name="domine"
+          name="domainFk"
           variant="outlined"
           type="string"
           onChange={handleChange}
