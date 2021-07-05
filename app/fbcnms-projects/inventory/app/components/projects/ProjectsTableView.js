@@ -157,9 +157,27 @@ const ProjectsTableView = (props: Props) => {
     props.projects,
   );
 
-  const allProjectPropertyNames = data?.projects?.edges
-    .flatMap(({node}) => node?.properties.map(p => p.propertyType.name))
-    .filter((propertyName, i, self) => self.indexOf(propertyName) === i);
+  //TODO: Temporal fix to dinamyc property columns using localStorage
+  const getPropertyColumns = () => {
+    const lst = window.localStorage;
+    const rawOldProps = lst.getItem('allProps');
+
+    const oldProps = !!rawOldProps ? JSON.parse(rawOldProps) : [];
+    const newProps = data?.projects?.edges
+      .flatMap(({node}) => node?.properties.map(p => p.propertyType.name))
+      .filter((propertyName, i, self) => self.indexOf(propertyName) === i);
+
+    let allProps = oldProps.concat(newProps);
+
+    //filter duplicate props
+    allProps = [...new Set([...oldProps, ...newProps])];
+
+    lst.setItem('allProps', JSON.stringify(allProps));
+
+    return allProps;
+  };
+
+  const allProjectPropertyNames = getPropertyColumns();
 
   const [columns, setColumns] = useState(
     [
