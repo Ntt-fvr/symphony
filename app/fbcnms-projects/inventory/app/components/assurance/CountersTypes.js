@@ -79,7 +79,6 @@ const CountersTypes = () => {
     };
     RemoveCountersTypesMutation(variables);
   };
-  const dataList = items.counters.edges.map(item => item);
 
   const showEditCounterItemForm = (counters: {}) => {
     setShowAddEditCard(true);
@@ -136,7 +135,7 @@ const CountersTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm dataValues={dataList} />
+          <AddCounterItemForm dataValues={items.counters.edges} />
         </Grid>
       </Grid>
     </div>

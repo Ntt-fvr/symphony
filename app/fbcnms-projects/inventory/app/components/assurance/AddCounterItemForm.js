@@ -51,9 +51,8 @@ export default function AddCounterItemForm(props) {
   const [showChecking, setShowChecking] = useState();
   const [activate, setActivate] = useState('');
 
-  const nameValidate = counters.data.name;
   const inputFilter = props.dataValues.filter(
-    item => item.node.name === nameValidate,
+    item => item.node.name === counters.data.name,
   );
 
   function handleChange({target}) {
