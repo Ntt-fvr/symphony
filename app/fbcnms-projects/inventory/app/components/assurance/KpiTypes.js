@@ -19,7 +19,7 @@ import KpiTypeItem from './KpiTypeItem';
 import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
 import React, {useState} from 'react';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
-import {EditCounterItemForm} from './EditCounterItemForm';
+import {EditKpiItemForm} from './EditKpiItemForm';
 import {Grid, List} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
   },
-  listCarCounter: {
+  listCarKpi: {
     listStyle: 'none',
   },
 }));
@@ -74,7 +74,7 @@ const KpiTypes = () => {
     RemoveKpiMutation(variables);
   };
 
-  const showEditCounterItemForm = (kpis: {}) => {
+  const showEditKpiItemForm = (kpis: {}) => {
     setShowAddEditCard(true);
     setDataEdit(kpis);
   };
@@ -85,7 +85,7 @@ const KpiTypes = () => {
 
   if (showAddEditCard) {
     return (
-      <EditCounterItemForm
+      <EditKpiItemForm
         formValues={dataEdit}
         onClose={hideKpItemForm}
       />
@@ -109,8 +109,18 @@ const KpiTypes = () => {
           <TitleTextCardsKpi />
           <List disablePadding={true}>
             {items.kpis.edges.map((item, index) => (
-              <li className={classes.listCarCounter} key={index}>
-                <KpiTypeItem key={index} kpi={item.node} onChange={() => handleRemove(item.node.id)} />
+              <li className={classes.listCarKpi} key={index}>
+                <KpiTypeItem 
+                key={index} 
+                kpi={item.node} 
+                onChange={() => handleRemove(item.node.id)}
+                edit={() =>
+                  showEditKpiItemForm({
+                    Id: item.node.id,
+                    Name: item.node.name,
+                    DomainName: item.node.domainFk
+                  })
+                } />
               </li>
             ))}
           </List>

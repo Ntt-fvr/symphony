@@ -14,7 +14,7 @@ import Grid from '@material-ui/core/Grid';
 import Table from './Table';
 
 //import Checkbox  from '@symphony/design-system/components/Checkbox/Checkbox';
-
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
@@ -115,7 +115,7 @@ export default function KpiTypeItem(props: Props) {
           </Grid>
 
           <Grid>
-            <IconButton className={classes.delete} icon={DeleteIcon} onClick={onChange}/>
+            <IconButton className={classes.delete} icon={DeleteOutlineIcon} onClick={onChange}/>
           </Grid>
         </AccordionSummary>
 

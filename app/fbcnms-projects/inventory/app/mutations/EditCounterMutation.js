@@ -9,10 +9,10 @@
  */
 
 import type {
-  AddCounterMutation,
-  AddCounterMutationResponse,
-  AddCounterMutationVariables,
-} from './__generated__/AddCounterMutation.graphql';
+  EditCounterMutation,
+  EditCounterMutationResponse,
+  EditCounterMutationVariables,
+} from './__generated__/EditCounterMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
@@ -31,12 +31,12 @@ const mutation = graphql`
 `;
 
 export default (
-  variables: AddCounterMutationVariables,
-  callbacks?: MutationCallbacks<AddCounterMutationResponse>,
+  variables: EditCounterMutationVariables,
+  callbacks?: MutationCallbacks<EditCounterMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddCounterMutation>(RelayEnvironment, {
+  commitMutation<EditCounterMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,
