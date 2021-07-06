@@ -10,19 +10,21 @@
 
 import React, {useState} from 'react';
 
+import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
+
 import Button from '@symphony/design-system/components/Button';
+import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 
 import AddCounterMutation from '../../mutations/AddCounterMutation';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import fbt from 'fbt';
+
+import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
-
-import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 import {makeStyles} from '@material-ui/styles';
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
@@ -42,12 +44,17 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-end',
   },
 }));
-
-export default function AddCounterItemForm() {
+export default function AddCounterItemForm(props) {
   const classes = useStyles();
 
   const [counters, setCounters] = useState({data: {}});
-  const [showChecking, setShowChecking] = useState(false);
+  const [showChecking, setShowChecking] = useState();
+  const [activate, setActivate] = useState('');
+
+  const nameValidate = counters.data.name;
+  const inputFilter = props.dataValues.filter(
+    item => item.node.name === nameValidate,
+  );
 
   function handleChange({target}) {
     setCounters({
@@ -56,9 +63,13 @@ export default function AddCounterItemForm() {
         [target.name]: target.value,
       },
     });
-  }
 
-  async function handleClick() {
+    const validateInputs = Object.values(counters.data);
+    validateInputs.map(item => item != null) &&
+      validateInputs.length == 5 &&
+      setActivate(validateInputs);
+  }
+  function handleClick() {
     const variables: AddCounterMutationVariables = {
       input: {
         name: counters.data.family,
@@ -83,7 +94,18 @@ export default function AddCounterItemForm() {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Counter</CardHeader>
-      <FormField className={classes.formField} label="Counter name" required>
+      <FormField
+        className={classes.formField}
+        label={
+          inputFilter[0] ? (
+            <Text className={classes.buttonText} variant="body2" color="error">
+              {fbt('Counter name existing', '')}
+            </Text>
+          ) : (
+            'Counter name'
+          )
+        }
+        required>
         <TextInput
           className={classes.textInput}
           name="name"
@@ -122,7 +144,7 @@ export default function AddCounterItemForm() {
       <FormField
         className={classes.formField}
         label="Network Manager System"
-        required>
+        required={true}>
         <TextInput
           className={classes.textInput}
           variant="outlined"
@@ -132,7 +154,10 @@ export default function AddCounterItemForm() {
         />
       </FormField>
       <FormField>
-        <Button className={classes.addCounter} onClick={handleClick}>
+        <Button
+          className={classes.addCounter}
+          onClick={handleClick}
+          disabled={!activate}>
           Add Counter
         </Button>
       </FormField>

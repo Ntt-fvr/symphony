@@ -8,18 +8,19 @@
  * @format
  */
 
+import type {RemoveCountersTypesMutationVariables} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
+
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
+import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
 import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
-import {Grid, List} from '@material-ui/core';
+import {Grid, List} from '@material-ui/core/';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation'
-import type {RemoveCountersTypesMutationVariables} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
 
 import React, {useState} from 'react';
 
@@ -74,10 +75,11 @@ const CountersTypes = () => {
     const removeCounter = {counters: {edges}};
     setItems(removeCounter);
     const variables: RemoveCountersTypesMutationVariables = {
-      id: id
+      id: id,
     };
     RemoveCountersTypesMutation(variables);
   };
+  const dataList = items.counters.edges.map(item => item);
 
   const showEditCounterItemForm = (counters: {}) => {
     setShowAddEditCard(true);
@@ -110,9 +112,9 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} lg={9}>
+        <Grid className={classes.paper} item xs="12" lg="9">
           <TitleTextCardsCounter />
-          <List disablePadding={true}>
+          <List disablePadding="true">
             {items.counters.edges.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
@@ -134,7 +136,7 @@ const CountersTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm />
+          <AddCounterItemForm dataValues={dataList} />
         </Grid>
       </Grid>
     </div>
