@@ -78,7 +78,7 @@ export const EditCounterItemForm = (props: Props) => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('Counters catalog', ' ')}
+            title={fbt('Counters Catalog', ' ')}
             subtitle={''}
           />
         </Grid>
