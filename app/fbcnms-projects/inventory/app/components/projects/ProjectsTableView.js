@@ -59,6 +59,7 @@ type Props = $ReadOnly<{|
   onOrderPropertyChanged: (newPropertyTypeValue: string) => void, //set string values
   onOrderDirectionChanged: (newPropertyTypeDirection: string) => void,
   visibleColumns: string[],
+  propertyNames: string[],
   setVisibleColumns: (string[]) => void,
 |}>;
 
@@ -71,6 +72,7 @@ const ProjectsTableView = (props: Props) => {
     setVisibleColumns,
     onOrderPropertyChanged,
     onOrderDirectionChanged,
+    propertyNames,
   } = props;
   const classes = useStyles();
 
@@ -157,10 +159,6 @@ const ProjectsTableView = (props: Props) => {
     props.projects,
   );
 
-  const allProjectPropertyNames = data?.projects?.edges
-    .flatMap(({node}) => node?.properties.map(p => p.propertyType.name))
-    .filter((propertyName, i, self) => self.indexOf(propertyName) === i);
-
   const [columns, setColumns] = useState(
     [
       {
@@ -225,7 +223,7 @@ const ProjectsTableView = (props: Props) => {
         isSortable: true,
       },
 
-      ...allProjectPropertyNames
+      ...propertyNames
         .filter(name => !!name)
         .map((name = '') => ({
           hidden: true,
