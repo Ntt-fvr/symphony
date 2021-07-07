@@ -88,6 +88,7 @@ const KpiTypes = () => {
       <EditKpiItemForm
         formValues={dataEdit}
         onClose={hideKpItemForm}
+        kpi={data}
       />
     );
   }
@@ -118,7 +119,7 @@ const KpiTypes = () => {
                   showEditKpiItemForm({
                     Id: item.node.id,
                     Name: item.node.name,
-                    DomainName: item.node.domainFk
+                    DomainFk: item.node.domainFk.id
                   })
                 } />
               </li>

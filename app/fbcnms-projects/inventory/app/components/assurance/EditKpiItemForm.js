@@ -8,149 +8,154 @@
  * @format
  */
 
- import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
+import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
 
- import EditKpiMutation from '../../mutations/EditKpiMutation';
- 
- import Button from '@symphony/design-system/components/Button';
- import Card from '@symphony/design-system/components/Card/Card';
- import CardHeader from '@symphony/design-system/components/Card/CardHeader';
- import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
- import FormField from '@symphony/design-system/components/FormField/FormField';
- import Grid from '@material-ui/core/Grid';
- import React from 'react';
- import TextInput from '@symphony/design-system/components/Input/TextInput';
- import fbt from 'fbt';
- import {makeStyles} from '@material-ui/styles';
- import {useFormInput} from './common/useFormInput';
- import Table from './Table';
+import EditKpiMutation from '../../mutations/EditKpiMutation';
 
- const useStyles = makeStyles(() => ({
-   root: {
-     flexGrow: 1,
-     margin: '40px',
-   },
-   formField: {
-     margin: '0 43px 22px 43px',
-   },
-   textInput: {
-     minHeight: '36px',
-   },
-   addKpi: {
-     margin: '20px',
-     width: '111px',
-     alignSelf: 'flex-end',
-   },
-   title: {
-     marginLeft: '10px',
-   },
- }));
- 
- type Props = $ReadOnly<{|
-   formValues: object,
-   onClose: void,
- |}>;
- 
- export const EditKpiItemForm = (props: Props) => {
-   const {formValues, onClose} = props;
-   const classes = useStyles();
- 
-   const name = useFormInput(formValues.Name);
-   const domain = useFormInput(formValues.DomainName);
-   
-  //  const AssociatedThreshold = useFormInput(formValues.AssociatedThreshold);
-  //  const Category = useFormInput(formValues.Category);
-  //  const Maturity = useFormInput(formValues.Maturity);
- 
-   function handleClick() {
-     const variables: EditKpiMutationVariables = {
-       input: {
-         id: formValues.Id,
-         name: name.value,
-         domain: domain.value,
-        //  externalID: Category.value,
-        //  AssociatedThreshold: AssociatedThreshold.value,
-        //  Maturity: Maturity.value
-       },
-     };
-     console.log("Hola soy edit kpi", variables);
-     EditKpiMutation(variables);
-   }
- 
-   return (
-     <div className={classes.root}>
-       <Grid container spacing={3}>
-         <Grid item xs={12} sm={12} lg={12} xl={12}>
-           <ConfigureTitle
-             className={classes.title}
-             title={fbt('Kpis catalog', ' ')}
-             subtitle={''}
-           />
-         </Grid>
-         <Grid item xs={12} sm={12} lg={12} xl={12}>
-           <Card>
-             <CardHeader>Edit container detail</CardHeader>
-             <Grid container>
-               <Grid item xs={12} sm={12} lg={12} xl={12}>
-                 <FormField className={classes.formField} label="Name" required>
-                   <TextInput
-                     {...name}
-                     className={classes.textInput}
-                     name="name"
-                     variant="outlined"
-                     type="string"
-                   />
-                 </FormField>
-               </Grid>
-               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                 <FormField
-                   className={classes.formField}
-                   label="Domain"
-                   required>
-                   <TextInput
-                     {...domain}
-                     className={classes.textInput}
-                     name="domain"
-                     variant="outlined"
-                     type="string"
-                   />
-                 </FormField>
-               </Grid>
-               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                 <FormField
-                   className={classes.formField}
-                   label="Network Manager System"
-                   required>
-                   <TextInput
-                     
-                     className={classes.textInput}
-                     name="AssociatedThreshold"
-                     variant="outlined"
-                     type="string"
-                   />
-                 </FormField>
-               </Grid>
-               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                 <FormField
-                   className={classes.formField}
-                   label="Category"
-                   required>
-                   <TextInput
-                     
-                     className={classes.textInput}
-                     name="Category"
-                     variant="outlined"
-                     type="string"
-                   />
-                 </FormField>
-               </Grid>
+import {FormControl, Select, InputLabel, MenuItem} from '@material-ui/core';
+import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
+import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import Grid from '@material-ui/core/Grid';
+import React from 'react';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+import fbt from 'fbt';
+import {makeStyles} from '@material-ui/styles';
+import {useFormInput} from './common/useFormInput';
+import Table from './Table';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+    margin: '40px',
+  },
+  formField: {
+    margin: '0 43px 22px 43px',
+  },
+  textInput: {
+    minHeight: '36px',
+  },
+  addKpi: {
+    margin: '20px',
+    width: '111px',
+    alignSelf: 'flex-end',
+  },
+  title: {
+    marginLeft: '10px',
+  },
+  select:{
+    paddingTop: '10px',
+    height: '36px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px'
+  },
+}));
+
+type Props = $ReadOnly<{|
+  formValues: object,
+  onClose: void,
+  kpi: object,
+|}>;
+
+export const EditKpiItemForm = (props: Props) => {
+  const {formValues, onClose, kpi} = props;
+  const classes = useStyles();
+
+  const name = useFormInput(formValues.Name);
+  const domainFk = useFormInput(formValues.DomainFk);
+  const id = useFormInput(formValues.Id);
+
+  function handleClick() {
+    const variables: EditKpiMutationVariables = {
+      input: {
+        id: formValues.Id,
+        name: name.value,
+        domainFk: domainFk.value,
+      },
+    };
+    console.log('Hola soy edit kpi', variables);
+    EditKpiMutation(variables);
+  }
+
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
+          <ConfigureTitle
+            className={classes.title}
+            title={fbt('Kpis catalog', ' ')}
+            subtitle={''}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
+          <Card>
+            <CardHeader>Edit container detail</CardHeader>
+            <Grid container>
+              <Grid item xs={12} sm={12} lg={12} xl={12}>
+                <FormField className={classes.formField} label="Name" required>
+                  <TextInput
+                    {...name}
+                    className={classes.textInput}
+                    name="name"
+                    variant="outlined"
+                    type="string"
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={12} sm={12} lg={3} xl={3}>
+                <FormField label="Name" className={classes.formField}>
+                  <Select
+                    {...domainFk}
+                    variant="outlined"
+                    className={classes.select}
+                    inputProps={{
+                      name: 'Domain',
+                    }}>
+                    
+                    {kpi.kpis.edges.map((kpidata, index) => (
+                      <MenuItem key={index} value={kpidata.node.domainFk.id}> {kpidata.node.domainFk.name} </MenuItem>
+                    ))}
+                  </Select>
+                </FormField>
+              </Grid>
+              <Grid item xs={12} sm={12} lg={3} xl={3}>
+                <FormField
+                  className={classes.formField}
+                  label="Network Manager System"
+                  required>
+                  <TextInput
+                    className={classes.textInput}
+                    name="AssociatedThreshold"
+                    variant="outlined"
+                    type="string"
+                  />
+                </FormField>
+              </Grid>
+              <Grid item xs={12} sm={12} lg={3} xl={3}>
+                <FormField
+                  className={classes.formField}
+                  label="Category"
+                  required>
+                  <TextInput
+                    className={classes.textInput}
+                    name="Category"
+                    variant="outlined"
+                    type="string"
+                  />
+                </FormField>
+              </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField
                   className={classes.formField}
                   label="Maturity"
                   required>
                   <TextInput
-                    
                     className={classes.textInput}
                     name="Maturity"
                     variant="outlined"
@@ -158,13 +163,10 @@
                   />
                 </FormField>
               </Grid>
-             </Grid>
-             <Grid container>
+            </Grid>
+            <Grid container>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <FormField
-                  className={classes.formField}
-                  label="Unit"
-                  required>
+                <FormField className={classes.formField} label="Unit" required>
                   <TextInput
                     className={classes.textInput}
                     name="Unit"
@@ -174,11 +176,9 @@
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <FormField
-                  className={classes.formField}
-                  label="Id"
-                  required>
+                <FormField className={classes.formField} label="Id" required>
                   <TextInput
+                    {...id}
                     className={classes.textInput}
                     name="Id"
                     variant="outlined"
@@ -199,32 +199,32 @@
                   />
                 </FormField>
               </Grid>
-             </Grid>
-             <Grid container justify="flex-end">
-               <Grid item xs={2} sm={2} lg={1} xl={1}>
-                 <FormField>
-                   <Button onClick={handleClick} className={classes.addKpi}>
-                     Save
-                   </Button>
-                 </FormField>
-               </Grid>
-               <Grid item xs={2} sm={2} lg={1} xl={1}>
-                 <FormField>
-                   <Button
-                     onClick={onClose}
-                     className={classes.addKpi}
-                     skin="brightGray">
-                     Cancel
-                   </Button>
-                 </FormField>
-               </Grid>
-             </Grid>
-           </Card>
-         </Grid>
-         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Table/>
-         </Grid>
-       </Grid>
-     </div>
-   );
- };
+            </Grid>
+            <Grid container justify="flex-end">
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
+                <FormField>
+                  <Button onClick={handleClick} className={classes.addKpi}>
+                    Save
+                  </Button>
+                </FormField>
+              </Grid>
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
+                <FormField>
+                  <Button
+                    onClick={onClose}
+                    className={classes.addKpi}
+                    skin="brightGray">
+                    Cancel
+                  </Button>
+                </FormField>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
+          <Table />
+        </Grid>
+      </Grid>
+    </div>
+  );
+};

@@ -15,7 +15,7 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useState} from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {FormControl, Select, InputLabel} from '@material-ui/core'
+import {FormControl, Select, InputLabel, MenuItem} from '@material-ui/core'
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
 
 import CounterAddedSuccessfully from './CounterAddedSuccessfully';
@@ -35,6 +35,16 @@ const useStyles = makeStyles(theme => ({
     margin: '20px',
     width: '111px',
     alignSelf: 'flex-end',
+  },
+  select:{
+    paddingTop: '10px',
+    height: '36px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px'
   },
 }));
 
@@ -104,23 +114,21 @@ export default function AddKpiItemForm(props: Props) {
           onChange={handleChange}
         />
       </FormField>
-      <FormControl variant="outlined" className={classes.formField}>
-        <InputLabel htmlFor="outlined-age-native-simple">Domain</InputLabel>
+      <FormField label="Domain" className={classes.formField}>
         <Select
-          native
+          variant="outlined"
+          className={classes.select}
           onChange={handleChange}
-          label="Domain"
           inputProps={{
             name: 'domainFk',
-            id: 'outlined-age-native-simple',
           }}
         >
-          <option aria-label="None" value="" />
+
           {kpi.kpis.edges.map((kpidata, index) => (
-            <option key={index} value={kpidata.node.domainFk.id}> {kpidata.node.domainFk.name} </option>
+            <MenuItem key={index} value={kpidata.node.domainFk.id}> {kpidata.node.domainFk.name} </MenuItem>
           ))}
         </Select>
-      </FormControl>
+      </FormField>
       
       <FormField>
         <Button className={classes.addCounter} onClick={handleClick}>
