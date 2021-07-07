@@ -64,12 +64,12 @@ const rows = [
     <IconButton icon={DeleteIcon} />,
   ),
 ];
-
+// CREAR PROP PARA MOSTRAR EL COMPONENTE PAPER component=Paper
 export default function DenseTable() {
   const classes = useStyles();
 
   return (
-    <TableContainer className={classes.root} component={Paper}>
+    <TableContainer className={classes.root}>
       <Table className={classes.table} size="small" aria-label="sticky table">
         <TableHead>
           <TableRow>

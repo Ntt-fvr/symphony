@@ -79,7 +79,6 @@ export const EditKpiItemForm = (props: Props) => {
         domainFk: domainFk.value,
       },
     };
-    console.log('Hola soy edit kpi', variables);
     EditKpiMutation(variables);
   }
 
@@ -109,7 +108,7 @@ export const EditKpiItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField label="Name" className={classes.formField}>
+                <FormField label="Domain" className={classes.formField} required>
                   <Select
                     {...domainFk}
                     variant="outlined"
@@ -221,8 +220,12 @@ export const EditKpiItemForm = (props: Props) => {
             </Grid>
           </Card>
         </Grid>
+        
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Table />
+            <Card>
+              <CardHeader>Formulas contained</CardHeader>
+              <Table />
+            </Card>
         </Grid>
       </Grid>
     </div>
