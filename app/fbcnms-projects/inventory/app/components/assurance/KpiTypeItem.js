@@ -7,24 +7,25 @@
  * @flow
  * @format
  */
+import React from 'react';
+
+// COMPONENTS //
+import Table from './Table';
 import AddButton from './AddButton';
+import SwitchLabels from './Switch';
+
+// DESING SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
-import Table from './Table';
-
-//import Checkbox  from '@symphony/design-system/components/Checkbox/Checkbox';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
-import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {Link} from 'react-router-dom';
+import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
-
+import {DARK} from '@symphony/design-system/theme/symphony';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import SwitchLabels from './Switch';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,13 +60,14 @@ const useStyles = makeStyles(theme => ({
     color: '#3984FF',
     fontWeight: 'bold',
   },
-  edit: {
+  editIcon: {
     flexGrow: '1',
     margin: '10px',
   },
-  delete: {
+  deleteIcon: {
     flexGrow: '1',
     margin: '10px',
+    color: DARK.D300,
   },
   button: {
     marginLeft: '20%',
@@ -111,11 +113,11 @@ export default function KpiTypeItem(props: Props) {
           </Grid>
 
           <Grid>
-            <IconButton className={classes.edit} icon={EditIcon} onClick={edit}/>
+            <IconButton className={classes.editIcon} icon={EditIcon} onClick={edit}/>
           </Grid>
 
           <Grid>
-            <IconButton className={classes.delete} icon={DeleteOutlineIcon} onClick={onChange}/>
+            <DeleteOutlinedIcon className={classes.deleteIcon} onClick={onChange}/>
           </Grid>
         </AccordionSummary>
 

@@ -7,26 +7,33 @@
  * @flow strict-local
  * @format
  */
+import React, {useState} from 'react';
 
+// COMPONENTS //
+import CounterAddedSuccessfully from './CounterAddedSuccessfully';
+
+// MUTATIONS //
 import AddKpiMutation from '../../mutations/AddKpiMutation';
+import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
+
+// DESING SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useState} from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {FormControl, Select, InputLabel, MenuItem} from '@material-ui/core'
-import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
-
-import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
   },
+  header: {
+    margin: '20px 0 24px 20px',
+  },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 20px 22px 20px',
   },
   textInput: {
     minHeight: '36px',
@@ -86,7 +93,7 @@ export default function AddKpiItemForm(props: Props) {
 
   return (
     <Card className={classes.root}>
-      <CardHeader>Add KPI</CardHeader>
+      <CardHeader className={classes.header}>Add KPI</CardHeader>
       <FormField className={classes.formField} label="Kpi name" required>
         <TextInput
           className={classes.textInput}

@@ -22,8 +22,11 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
   },
+  header: {
+    margin: '20px 0 24px 20px',
+  },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 20px 22px 20px',
   },
   textInput: {
     minHeight: '36px',
@@ -40,7 +43,7 @@ export default function AddFormulaItemForm() {
 
   return (
     <Card className={classes.root}>
-      <CardHeader>Add formula</CardHeader>
+      <CardHeader className={classes.header}>Add formula</CardHeader>
       <FormField className={classes.formField} label="KPI Name" required>
         <TextInput
           className={classes.textInput}

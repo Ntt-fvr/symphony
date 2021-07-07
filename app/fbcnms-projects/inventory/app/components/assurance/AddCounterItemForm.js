@@ -10,17 +10,19 @@
 
 import React, {useState} from 'react';
 
-import Button from '@symphony/design-system/components/Button';
+// COMPONENTS //
+import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 
+// MUTATIONS //
 import AddCounterMutation from '../../mutations/AddCounterMutation';
+import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
+
+// DESING SYSTEM //
+import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-
-import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
-
-import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({

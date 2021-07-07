@@ -8,12 +8,16 @@
  * @format
  */
 
+import React from 'react';
+
+// DESING SYSTEM //
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
@@ -48,9 +52,14 @@ const useStyles = makeStyles(theme => ({
     color: '#3984FF',
     fontWeight: 'bold',
   },
-  icons: {
+  editIcon: {
     flexGrow: '1',
     margin: '10px',
+  },
+  deleteIcon: {
+    flexGrow: '1',
+    margin: '10px',
+    color: DARK.D300,
   },
   button: {
     marginLeft: '20%',
@@ -91,28 +100,20 @@ export default function CounterTypeItem(props: Props) {
           <Grid xs={1} container justify="flex-end" alignItems="center">
             <IconButton
               onClick={edit}
-              className={classes.icons}
+              className={classes.editIcon}
               icon={EditIcon}
             />
-            <IconButton
-              onClick={onChange}
-              className={classes.icons}
-              icon={DeleteOutlineIcon}
-            />
+            <DeleteOutlinedIcon className={classes.deleteIcon} onClick={onChange}/>
           </Grid>
         </AccordionSummary>
 
         <AccordionDetails className={classes.detailsRoot}>
           <Grid container spacing={3}>
             <Grid xs={4}>
-              <p>
-                Counter ID:<span>40</span>
-              </p>
+              <strong>Counter ID: </strong>40
             </Grid>
             <Grid xs={8} className={classes.details}>
-              <p>
-                Family Name:<span>Throughput and Data Volume Measurement</span>
-              </p>
+              <strong>Family Name:</strong>Throughput and Data Volume Measurement
             </Grid>
           </Grid>
         </AccordionDetails>
