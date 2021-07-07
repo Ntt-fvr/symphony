@@ -77,6 +77,7 @@ type Props = $ReadOnly<{|
   createProjectButton: React.Node,
   visibleColumns: string[],
   setVisibleColumns: (string[]) => void,
+  propertyNames: string[],
 |}>;
 
 const projectSearchQuery = graphql`
@@ -88,7 +89,7 @@ const projectSearchQuery = graphql`
     $propertyOrder: String
   ) {
     ...ProjectsTableView_query
-    @arguments(
+      @arguments(
         first: $limit
         orderBy: $orderBy
         filterBy: $filters
@@ -115,6 +116,7 @@ const projectSearchQuery = graphql`
 const ProjectComparisonViewQueryRenderer = (props: Props) => {
   const classes = useStyles();
   const [tableKey, setTableKey] = useState(0);
+
   const {
     filters,
     orderBy,
@@ -128,6 +130,7 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
     orderPropertyDirection,
     onOrderPropertyChanged,
     onOrderDirectionChanged,
+    propertyNames,
     // createProjectButton,
   } = props;
 
@@ -145,16 +148,17 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
   );
   useEffect(() => setTableKey(key => key + 1), [filtersVariable, orderBy]);
 
-  const response = useLazyLoadQuery<ProjectComparisonViewQueryRendererSearchQuery>(
-    projectSearchQuery,
-    {
-      limit: PROJECTS_PAGE_SIZE,
-      filters: filtersVariable,
-      orderBy,
-      propertyValue: orderPropertyType,
-      propertyOrder: orderPropertyDirection,
-    },
-  );
+  const response =
+    useLazyLoadQuery<ProjectComparisonViewQueryRendererSearchQuery>(
+      projectSearchQuery,
+      {
+        limit: PROJECTS_PAGE_SIZE,
+        filters: filtersVariable,
+        orderBy,
+        propertyValue: orderPropertyType,
+        propertyOrder: orderPropertyDirection,
+      },
+    );
 
   if (response == null || response.projectsMap == null) {
     return null;
@@ -186,6 +190,7 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
           onOrderDirectionChanged={onOrderDirectionChanged}
           visibleColumns={visibleColumns}
           setVisibleColumns={setVisibleColumns}
+          propertyNames={propertyNames}
         />
       )}
     </div>

@@ -59,6 +59,7 @@ type Props = $ReadOnly<{|
   onOrderPropertyChanged: (newPropertyTypeValue: string) => void, //set string values
   onOrderDirectionChanged: (newPropertyTypeDirection: string) => void,
   visibleColumns: string[],
+  propertyNames: string[],
   setVisibleColumns: (string[]) => void,
 |}>;
 
@@ -71,6 +72,7 @@ const ProjectsTableView = (props: Props) => {
     setVisibleColumns,
     onOrderPropertyChanged,
     onOrderDirectionChanged,
+    propertyNames,
   } = props;
   const classes = useStyles();
 
@@ -157,28 +159,6 @@ const ProjectsTableView = (props: Props) => {
     props.projects,
   );
 
-  //TODO: Temporal fix to dinamyc property columns using localStorage
-  const getPropertyColumns = () => {
-    const lst = window.localStorage;
-    const rawOldProps = lst.getItem('allProps');
-
-    const oldProps = !!rawOldProps ? JSON.parse(rawOldProps) : [];
-    const newProps = data?.projects?.edges
-      .flatMap(({node}) => node?.properties.map(p => p.propertyType.name))
-      .filter((propertyName, i, self) => self.indexOf(propertyName) === i);
-
-    let allProps = oldProps.concat(newProps);
-
-    //filter duplicate props
-    allProps = [...new Set([...oldProps, ...newProps])];
-
-    lst.setItem('allProps', JSON.stringify(allProps));
-
-    return allProps;
-  };
-
-  const allProjectPropertyNames = getPropertyColumns();
-
   const [columns, setColumns] = useState(
     [
       {
@@ -243,7 +223,7 @@ const ProjectsTableView = (props: Props) => {
         isSortable: true,
       },
 
-      ...allProjectPropertyNames
+      ...propertyNames
         .filter(name => !!name)
         .map((name = '') => ({
           hidden: true,
