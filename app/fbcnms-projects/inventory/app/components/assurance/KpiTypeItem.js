@@ -18,10 +18,12 @@ import SwitchLabels from './Switch';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
 import {DARK} from '@symphony/design-system/theme/symphony';
@@ -75,7 +77,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  kpi: object,
+  kpi: Object,
   edit: void,
   onChange: void,
 |}>;

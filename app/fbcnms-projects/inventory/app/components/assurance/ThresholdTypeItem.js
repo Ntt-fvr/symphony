@@ -7,17 +7,24 @@
  * @flow
  * @format
  */
+
+import React from 'react';
+
+// COMPONENTS //
 import AddButton from './AddButton';
+import SwitchLabels from './Switch';
+import Table from './Table';
+
+// DESING SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-import React from 'react';
-import SwitchLabels from './Switch';
-import Table from './Table';
 import Text from '@symphony/design-system/components/Text';
-import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
 

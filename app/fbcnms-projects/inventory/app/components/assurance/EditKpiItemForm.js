@@ -8,10 +8,19 @@
  * @format
  */
 
-import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
+import React from 'react';
+import fbt from 'fbt';
 
+// COMPONENTS //
+import {useFormInput} from './common/useFormInput';
+import Table from './Table';
+
+// MUTATIONS //
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 
+// DESING SYSTEM //
 import {FormControl, Select, InputLabel, MenuItem} from '@material-ui/core';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -19,12 +28,7 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import React from 'react';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
-import {useFormInput} from './common/useFormInput';
-import Table from './Table';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -102,7 +106,6 @@ export const EditKpiItemForm = (props: Props) => {
                     {...name}
                     className={classes.textInput}
                     name="name"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>
@@ -131,7 +134,6 @@ export const EditKpiItemForm = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     name="AssociatedThreshold"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>
@@ -144,7 +146,6 @@ export const EditKpiItemForm = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     name="Category"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>
@@ -157,7 +158,6 @@ export const EditKpiItemForm = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     name="Maturity"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>
@@ -169,7 +169,6 @@ export const EditKpiItemForm = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     name="Unit"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>
@@ -180,7 +179,6 @@ export const EditKpiItemForm = (props: Props) => {
                     {...id}
                     className={classes.textInput}
                     name="Id"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>
@@ -193,7 +191,6 @@ export const EditKpiItemForm = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     name="Description"
-                    variant="outlined"
                     type="string"
                   />
                 </FormField>

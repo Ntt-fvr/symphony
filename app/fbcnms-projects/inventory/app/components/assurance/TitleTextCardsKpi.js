@@ -8,13 +8,15 @@
  * @format
  */
 import React from 'react';
-import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
-import {DARK} from '@symphony/design-system/theme/symphony';
-import {Grid} from '@material-ui/core/';
-import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles({
+// DESING SYSTEM //
+import Text from '@symphony/design-system/components/Text';
+import {DARK} from '@symphony/design-system/theme/symphony';
+import Grid from '@material-ui/core/Grid';
+import {makeStyles} from '@material-ui/styles';
+import classNames from 'classnames';
+
+const useStyles = makeStyles(theme =>({
   root: {
     padding: '0 9px 16px',
   },
@@ -42,13 +44,13 @@ const useStyles = makeStyles({
   delete: {
     paddingLeft: '1rem',
   },
-});
+}));
 
 function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={4} className={classes.rooti}>
+      <Grid xs={4}>
         <Text
           className={classNames(classes.title, classes.status)}
           variant="subtitle2">
@@ -61,7 +63,7 @@ function TitleTextCardsKpi() {
           KPI name
         </Text>
       </Grid>
-      <Grid xs={6} className={classes.rooti}>
+      <Grid xs={6}>
         <Text
           className={classNames(
             classes.title,
@@ -72,7 +74,7 @@ function TitleTextCardsKpi() {
           Domain
         </Text>
       </Grid>
-      <Grid xs={1} className={classes.rooti}>
+      <Grid xs={1} >
         <Text
           className={classNames(
             classes.title,
@@ -83,7 +85,7 @@ function TitleTextCardsKpi() {
           Edit
         </Text>
       </Grid>
-      <Grid xs={1} className={classes.rooti}>
+      <Grid xs={1}>
         <Text
           className={classNames(classes.title, classes.delete)}
           variant="subtitle2">

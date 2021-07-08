@@ -7,25 +7,29 @@
  * @flow
  * @format
  */
+import React, {useState} from 'react';
+import {graphql} from 'react-relay';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import fbt from 'fbt';
 
- import type {
-  RemoveKpiMutationVariables,
-} from '../../mutations/__generated__/RemoveKpiMutation.graphql';
-
+// COMPONENTS //
 import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import KpiTypeItem from './KpiTypeItem';
-import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
-import React, {useState} from 'react';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';
-import {Grid, List} from '@material-ui/core';
-import {graphql} from 'react-relay';
-import {makeStyles} from '@material-ui/styles';
-import {useLazyLoadQuery} from 'react-relay/hooks';
 
-import fbt from 'fbt';
+// MUTATIONS //
+import type {
+RemoveKpiMutationVariables,
+} from '../../mutations/__generated__/RemoveKpiMutation.graphql';
+import type {KpiTypesQuery} from './__generated__/KpiTypesQuery.graphql'
+import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
+
+// DESING SYSTEM //
+import {Grid, List} from '@material-ui/core';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {

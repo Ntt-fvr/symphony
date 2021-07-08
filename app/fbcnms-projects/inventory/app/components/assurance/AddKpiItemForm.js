@@ -56,9 +56,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  kpi: object,
-  edit: void,
-  onChange: void,
+  kpi: Object,
 |}>;
 
 
@@ -98,7 +96,6 @@ export default function AddKpiItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="name"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />
@@ -107,7 +104,6 @@ export default function AddKpiItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="category"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />
@@ -116,7 +112,6 @@ export default function AddKpiItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="status"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />

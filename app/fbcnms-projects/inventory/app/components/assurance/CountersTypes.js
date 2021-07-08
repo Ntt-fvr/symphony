@@ -8,23 +8,30 @@
  * @format
  */
 
+import React, {useState} from 'react';
+import {graphql} from 'react-relay';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import fbt from 'fbt';
+
+// MUTATIONS //
 import type {
   RemoveCountersTypesMutationResponse,
   RemoveCountersTypesMutationVariables,
 } from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
+import type {CountersTypesQuery} from './__generated__/CountersTypesQuery.graphql';
+import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 
+// COMPONENTS //
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
-import React, {useState} from 'react';
-import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
-import fbt from 'fbt';
 import {EditCounterItemForm} from './EditCounterItemForm';
+
+// DESING SYSTEM //
 import {Grid, List} from '@material-ui/core';
-import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+
 
 const useStyles = makeStyles(theme => ({
   root: {

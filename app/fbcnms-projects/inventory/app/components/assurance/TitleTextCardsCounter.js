@@ -14,7 +14,7 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme =>({
   root: {
     padding: '0 9px 16px',
   },
@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   delete: {
     paddingLeft: '1rem',
   },
-});
+}));
 
 function TitleTextCardsCounter() {
   const classes = useStyles();

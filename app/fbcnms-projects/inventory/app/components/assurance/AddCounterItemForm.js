@@ -89,7 +89,6 @@ export default function AddCounterItemForm() {
         <TextInput
           className={classes.textInput}
           name="name"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />
@@ -98,7 +97,6 @@ export default function AddCounterItemForm() {
         <TextInput
           className={classes.textInput}
           name="id"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />
@@ -107,7 +105,6 @@ export default function AddCounterItemForm() {
         <TextInput
           className={classes.textInput}
           name="family"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />
@@ -116,7 +113,6 @@ export default function AddCounterItemForm() {
         <TextInput
           className={classes.textInput}
           name="vendor"
-          variant="outlined"
           type="string"
           onChange={handleChange}
         />
@@ -127,7 +123,6 @@ export default function AddCounterItemForm() {
         required>
         <TextInput
           className={classes.textInput}
-          variant="outlined"
           name="nms"
           type="string"
           onChange={handleChange}

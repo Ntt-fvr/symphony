@@ -48,7 +48,6 @@ export default function AddFormulaItemForm() {
         <TextInput
           className={classes.textInput}
           name="name"
-          variant="outlined"
           type="string"
         />
       </FormField>
@@ -56,7 +55,6 @@ export default function AddFormulaItemForm() {
         <TextInput
           className={classes.textInput}
           name="id"
-          variant="outlined"
           type="string"
         />
       </FormField>
@@ -64,7 +62,6 @@ export default function AddFormulaItemForm() {
         <TextInput
           className={classes.textInput}
           name="family"
-          variant="outlined"
           type="string"
         />
       </FormField>

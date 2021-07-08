@@ -11,10 +11,10 @@ import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {Grid} from '@material-ui/core/';
+import Grid from '@material-ui/core/Grid';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme =>({
   root: {
     padding: '0 9px 16px',
   },
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   delete: {
     paddingLeft: '1rem',
   },
-});
+}));
 
 function TitleTextCardsThresholds() {
   const classes = useStyles();

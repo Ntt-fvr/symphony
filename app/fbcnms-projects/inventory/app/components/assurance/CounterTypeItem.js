@@ -11,14 +11,15 @@
 import React from 'react';
 
 // DESING SYSTEM //
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {Accordion, AccordionDetails, AccordionSummary} from '@material-ui/core';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -67,7 +68,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  counter: object,
+  counter: Object,
   edit: void,
   onChange: void,
 |}>;
