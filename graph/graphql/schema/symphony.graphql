@@ -2525,7 +2525,73 @@ type KpiEdge {
   """
   cursor: Cursor!
 }
+################################ conection treshold ###############################################
+"""
+Properties by which Treshold connections can be ordered.
+"""
+enum TresholdOrderField {
+  """
+  Order Treshold by name.
+  """
+  NAME
 
+  """
+  Order Treshold by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Treshold by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Treshold connections.
+"""
+input TresholdOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Treshold by.
+  """
+  field: TresholdOrderField
+}
+
+"""
+A connection to a list of Treshold.
+"""
+type TresholdConnection {
+  """
+  Total Treshold of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Treshold edges.
+  """
+  edges: [TresholdEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Treshold edge in a connection.
+"""
+type TresholdEdge {
+  """
+  The Treshold at the end of the edge.
+  """
+  node: Treshold
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -4345,6 +4411,41 @@ type Query {
     
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
+
+  """
+  A list of tresholds.
+  """
+  tresholds(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: TresholdOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [TresholdFilterInput!]
+  ): TresholdConnection!
 }
 
 type Mutation {
@@ -4734,6 +4835,7 @@ input EditDomainInput {
 type Kpi implements Node {
   id: ID!
   name: String!
+  status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
 }
@@ -4741,12 +4843,14 @@ type Kpi implements Node {
 input AddKpiInput {
   name: String!
   domainFk: ID!
+  status: Boolean!
 }
 
 input EditKpiInput {
   id: ID!
   name: String!
   domainFk: ID!
+  status: Boolean!
 }
 
 type Tech implements Node {
@@ -4817,6 +4921,7 @@ type Treshold implements Node {
   id: ID!
   name: String!
   description: String!
+  status: Boolean!
   rule: [Rule!]
   kpi: Kpi
   
@@ -4825,6 +4930,7 @@ type Treshold implements Node {
 input AddTresholdInput {
   name: String!
   description: String!
+  status: Boolean!
   rule: [RuleInput!]
   kpi: Int
   
@@ -4833,6 +4939,7 @@ input AddTresholdInput {
 input TresholdInput {
   name: String!
   description: String!
+  status: Boolean!
   rule: [RuleInput!]
   kpi: Int
   
@@ -4842,7 +4949,21 @@ input EditTresholdInput {
   id: ID!
   name: String!
   description: String!
+  status: Boolean!
   rule: [RuleInput!]  
+}
+
+enum TresholdFilterType {
+  NAME
+}
+
+input TresholdFilterInput {
+  filterType: TresholdFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 type Comparator implements Node {
   id: ID!

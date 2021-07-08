@@ -25,6 +25,8 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 
 	// EdgeKpi holds the string denoting the kpi edge name in mutations.
 	EdgeKpi = "kpi"
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldDescription,
+	FieldStatus,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Treshold type.

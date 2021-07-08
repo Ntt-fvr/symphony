@@ -66,6 +66,12 @@ func (tc *TresholdCreate) SetDescription(s string) *TresholdCreate {
 	return tc
 }
 
+// SetStatus sets the status field.
+func (tc *TresholdCreate) SetStatus(b bool) *TresholdCreate {
+	tc.mutation.SetStatus(b)
+	return tc
+}
+
 // SetKpiID sets the kpi edge to Kpi by id.
 func (tc *TresholdCreate) SetKpiID(id int) *TresholdCreate {
 	tc.mutation.SetKpiID(id)
@@ -186,6 +192,9 @@ func (tc *TresholdCreate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
 		}
 	}
+	if _, ok := tc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
+	}
 	return nil
 }
 
@@ -244,6 +253,14 @@ func (tc *TresholdCreate) createSpec() (*Treshold, *sqlgraph.CreateSpec) {
 			Column: treshold.FieldDescription,
 		})
 		_node.Description = value
+	}
+	if value, ok := tc.mutation.Status(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: treshold.FieldStatus,
+		})
+		_node.Status = value
 	}
 	if nodes := tc.mutation.KpiIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

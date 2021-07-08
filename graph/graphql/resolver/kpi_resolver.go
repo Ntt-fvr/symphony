@@ -36,11 +36,21 @@ func (kpiResolver) FormulaFk(ctx context.Context, kpi *ent.Kpi) ([]*ent.Formula,
 	}
 }
 
+func (kpiResolver) Treshold(ctx context.Context, kpi *ent.Kpi) (*ent.Treshold, error) {
+	variable, err := kpi.Tresholdkpi(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no return a treshold valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
 func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) (*ent.Kpi, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		Kpi.Create().
 		SetName(input.Name).
+		SetStatus(input.Status).
 		SetDomainID(input.DomainFk).
 		Save(ctx)
 	if err != nil {
@@ -79,10 +89,11 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 		}
 		return nil, errors.Wrapf(err, "updating kpi: id=%q", input.ID)
 	}
-	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID {
+	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID || input.Status != et.Status {
 		if et, err = client.Kpi.
 			UpdateOne(et).
 			SetName(input.Name).
+			SetStatus(input.Status).
 			SetDomainID(input.DomainFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {

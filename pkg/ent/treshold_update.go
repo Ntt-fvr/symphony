@@ -44,6 +44,12 @@ func (tu *TresholdUpdate) SetDescription(s string) *TresholdUpdate {
 	return tu
 }
 
+// SetStatus sets the status field.
+func (tu *TresholdUpdate) SetStatus(b bool) *TresholdUpdate {
+	tu.mutation.SetStatus(b)
+	return tu
+}
+
 // SetKpiID sets the kpi edge to Kpi by id.
 func (tu *TresholdUpdate) SetKpiID(id int) *TresholdUpdate {
 	tu.mutation.SetKpiID(id)
@@ -230,6 +236,13 @@ func (tu *TresholdUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: treshold.FieldDescription,
 		})
 	}
+	if value, ok := tu.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: treshold.FieldStatus,
+		})
+	}
 	if tu.mutation.KpiCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -346,6 +359,12 @@ func (tuo *TresholdUpdateOne) SetName(s string) *TresholdUpdateOne {
 // SetDescription sets the description field.
 func (tuo *TresholdUpdateOne) SetDescription(s string) *TresholdUpdateOne {
 	tuo.mutation.SetDescription(s)
+	return tuo
+}
+
+// SetStatus sets the status field.
+func (tuo *TresholdUpdateOne) SetStatus(b bool) *TresholdUpdateOne {
+	tuo.mutation.SetStatus(b)
 	return tuo
 }
 
@@ -531,6 +550,13 @@ func (tuo *TresholdUpdateOne) sqlSave(ctx context.Context) (_node *Treshold, err
 			Type:   field.TypeString,
 			Value:  value,
 			Column: treshold.FieldDescription,
+		})
+	}
+	if value, ok := tuo.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: treshold.FieldStatus,
 		})
 	}
 	if tuo.mutation.KpiCleared() {

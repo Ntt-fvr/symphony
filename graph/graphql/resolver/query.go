@@ -283,6 +283,25 @@ func (r queryResolver) Kpis(
 			),
 		)
 }
+func (r queryResolver) Tresholds(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.TresholdOrder,
+	filterBy []*models.TresholdFilterInput,
+) (*ent.TresholdConnection, error) {
+	return r.ClientFrom(ctx).
+		Treshold.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithTresholdOrder(orderBy),
+			ent.WithTresholdFilter(
+				func(query *ent.TresholdQuery) (*ent.TresholdQuery, error) {
+					return resolverutil.TresholdFilter(query, filterBy)
+				},
+			),
+		)
+}
 
 func (r queryResolver) Services(
 	ctx context.Context,

@@ -17,9 +17,14 @@ import (
 
 type comparatorResolver struct{}
 
-func (comparatorResolver) RuleLimit(ctx context.Context, counter *ent.Comparator) ([]*ent.RuleLimit, error) {
-	var response []*ent.RuleLimit
-	return response, nil
+func (comparatorResolver) RuleLimit(ctx context.Context, comparator *ent.Comparator) ([]*ent.RuleLimit, error) {
+	variable, err := comparator.Comparatorrulelimit(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no rule a rule limit valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddComparator(ctx context.Context, input models.AddComparatorInput) (*ent.Comparator, error) {

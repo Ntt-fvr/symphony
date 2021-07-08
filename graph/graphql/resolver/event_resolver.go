@@ -17,14 +17,24 @@ import (
 
 type eventResolver struct{}
 
-func (eventResolver) EventSeverity(ctx context.Context, counter *ent.Event) ([]*ent.EventSeverity, error) {
-	var response []*ent.EventSeverity
-	return response, nil
+func (eventResolver) EventSeverity(ctx context.Context, event *ent.Event) (*ent.EventSeverity, error) {
+	variable, err := event.Eventseverity(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a event severity limit valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
-func (eventResolver) Rule(ctx context.Context, counter *ent.Event) ([]*ent.Rule, error) {
-	var response []*ent.Rule
-	return response, nil
+func (eventResolver) Rule(ctx context.Context, event *ent.Event) ([]*ent.Rule, error) {
+	variable, err := event.RuleEvent(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a rule valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddEvent(ctx context.Context, input models.AddEventInput) (*ent.Event, error) {

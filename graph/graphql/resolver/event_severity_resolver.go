@@ -17,9 +17,14 @@ import (
 
 type eventSeverityResolver struct{}
 
-func (eventSeverityResolver) Event(ctx context.Context, counter *ent.EventSeverity) ([]*ent.Event, error) {
-	var response []*ent.Event
-	return response, nil
+func (eventSeverityResolver) Event(ctx context.Context, eventSeverity *ent.EventSeverity) ([]*ent.Event, error) {
+	variable, err := eventSeverity.Eventseverityevent(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("no return a event severity valid to id, %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddEventSeverity(ctx context.Context, input models.AddEventSeverityInput) (*ent.EventSeverity, error) {

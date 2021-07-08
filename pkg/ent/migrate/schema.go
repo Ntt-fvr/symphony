@@ -1201,6 +1201,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "status", Type: field.TypeBool},
 		{Name: "domain_kpidomain", Type: field.TypeInt, Nullable: true},
 	}
 	// KpisTable holds the schema information for the "kpis" table.
@@ -1211,7 +1212,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "kpis_domains_kpidomain",
-				Columns: []*schema.Column{KpisColumns[4]},
+				Columns: []*schema.Column{KpisColumns[5]},
 
 				RefColumns: []*schema.Column{DomainsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2257,6 +2258,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString},
+		{Name: "status", Type: field.TypeBool},
 		{Name: "kpi_tresholdkpi", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// TresholdsTable holds the schema information for the "tresholds" table.
@@ -2267,7 +2269,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "tresholds_kpis_tresholdkpi",
-				Columns: []*schema.Column{TresholdsColumns[5]},
+				Columns: []*schema.Column{TresholdsColumns[6]},
 
 				RefColumns: []*schema.Column{KpisColumns[0]},
 				OnDelete:   schema.SetNull,

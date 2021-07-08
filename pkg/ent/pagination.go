@@ -14963,6 +14963,49 @@ func (t *TresholdQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// TresholdOrderFieldName orders Treshold by name.
+	TresholdOrderFieldName = &TresholdOrderField{
+		field: treshold.FieldName,
+		toCursor: func(t *Treshold) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TresholdOrderField) String() string {
+	var str string
+	switch f.field {
+	case treshold.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TresholdOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TresholdOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TresholdOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *TresholdOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid TresholdOrderField", str)
+	}
+	return nil
+}
+
 // TresholdOrderField defines the ordering field of Treshold.
 type TresholdOrderField struct {
 	field    string

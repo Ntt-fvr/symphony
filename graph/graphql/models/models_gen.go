@@ -199,6 +199,7 @@ type AddImageInput struct {
 type AddKpiInput struct {
 	Name     string `json:"name"`
 	DomainFk int    `json:"domainFk"`
+	Status   bool   `json:"status"`
 }
 
 type AddLinkInput struct {
@@ -292,6 +293,7 @@ type AddTechInput struct {
 type AddTresholdInput struct {
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
+	Status      bool         `json:"status"`
 	Rule        []*RuleInput `json:"rule"`
 	Kpi         *int         `json:"kpi"`
 }
@@ -575,6 +577,7 @@ type EditKpiInput struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	DomainFk int    `json:"domainFk"`
+	Status   bool   `json:"status"`
 }
 
 type EditLinkInput struct {
@@ -672,6 +675,7 @@ type EditTresholdInput struct {
 	ID          int          `json:"id"`
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
+	Status      bool         `json:"status"`
 	Rule        []*RuleInput `json:"rule"`
 }
 
@@ -1188,9 +1192,19 @@ type TopologyLink struct {
 	Target ent.Noder        `json:"target"`
 }
 
+type TresholdFilterInput struct {
+	FilterType  TresholdFilterType  `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type TresholdInput struct {
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
+	Status      bool         `json:"status"`
 	Rule        []*RuleInput `json:"rule"`
 	Kpi         *int         `json:"kpi"`
 }
@@ -1726,6 +1740,45 @@ func (e *TopologyLinkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TopologyLinkType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TresholdFilterType string
+
+const (
+	TresholdFilterTypeName TresholdFilterType = "NAME"
+)
+
+var AllTresholdFilterType = []TresholdFilterType{
+	TresholdFilterTypeName,
+}
+
+func (e TresholdFilterType) IsValid() bool {
+	switch e {
+	case TresholdFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e TresholdFilterType) String() string {
+	return string(e)
+}
+
+func (e *TresholdFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TresholdFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TresholdFilterType", str)
+	}
+	return nil
+}
+
+func (e TresholdFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

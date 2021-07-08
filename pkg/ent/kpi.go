@@ -28,6 +28,8 @@ type Kpi struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Status holds the value of the "status" field.
+	Status bool `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the KpiQuery when eager-loading is set.
 	Edges            KpiEdges `json:"edges"`
@@ -91,6 +93,7 @@ func (*Kpi) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullBool{},   // status
 	}
 }
 
@@ -128,7 +131,12 @@ func (k *Kpi) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		k.Name = value.String
 	}
-	values = values[3:]
+	if value, ok := values[3].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[3])
+	} else if value.Valid {
+		k.Status = value.Bool
+	}
+	values = values[4:]
 	if len(values) == len(kpi.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field domain_kpidomain", value)
@@ -184,6 +192,8 @@ func (k *Kpi) String() string {
 	builder.WriteString(k.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(k.Name)
+	builder.WriteString(", status=")
+	builder.WriteString(fmt.Sprintf("%v", k.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }
