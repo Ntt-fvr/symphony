@@ -45,25 +45,13 @@ export default function AddFormulaItemForm() {
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add formula</CardHeader>
       <FormField className={classes.formField} label="KPI Name" required>
-        <TextInput
-          className={classes.textInput}
-          name="name"
-          type="string"
-        />
+        <TextInput className={classes.textInput} name="name" type="string" />
       </FormField>
       <FormField className={classes.formField} label="Vendor name" required>
-        <TextInput
-          className={classes.textInput}
-          name="id"
-          type="string"
-        />
+        <TextInput className={classes.textInput} name="id" type="string" />
       </FormField>
       <FormField className={classes.formField} label="Technology" required>
-        <TextInput
-          className={classes.textInput}
-          name="family"
-          type="string"
-        />
+        <TextInput className={classes.textInput} name="family" type="string" />
       </FormField>
       <FormField>
         <Button className={classes.addCounter}>Build formula</Button>

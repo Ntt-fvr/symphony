@@ -16,17 +16,17 @@ import SwitchLabels from './Switch';
 import Table from './Table';
 
 // DESING SYSTEM //
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {

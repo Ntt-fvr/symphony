@@ -28,7 +28,7 @@ import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMuta
 import TitleTextCardsCounter from './TitleTextCardsCounter';
 import {EditCounterItemForm} from './EditCounterItemForm';
 
-import {Grid, List} from '@material-ui/core/';
+import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({

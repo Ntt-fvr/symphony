@@ -60,6 +60,7 @@ override.tf.json
 
 # .idea
 .idea/
+.flowconfig
 
 # yarn
 yarn.lock

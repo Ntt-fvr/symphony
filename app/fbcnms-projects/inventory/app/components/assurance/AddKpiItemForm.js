@@ -23,7 +23,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {MenuItem, Select} from '@material-ui/core'
+import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -64,7 +64,7 @@ export default function AddKpiItemForm(props: Props) {
   const {kpi} = props;
   const classes = useStyles();
 
-  const [kpis, setKpis] = useState({data: {}});
+  const [kpis, setKpis] = useState<?kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
   function handleChange({target}) {
     setKpis({

@@ -51,20 +51,29 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  dataValues: Object,
+  dataValues: Array<string>,
+  filter: boolean,
 |}>;
+
+type Counters = {
+  data: {
+    name: string,
+    id: string,
+    nms: string,
+    family: string,
+  },
+};
 
 export default function AddCounterItemForm(props: Props) {
   const {dataValues} = props;
   const classes = useStyles();
-
-  const [counters, setCounters] = useState({data: {}});
+  const [counters, setCounters] = useState<Counters>({data: {}});
   const [showChecking, setShowChecking] = useState();
   const [activate, setActivate] = useState('');
 
   const inputFilter = () => {
     return (
-      dataValues.filter(item => item.node.name === counters.data.name) || []
+      dataValues?.filter(item => item.node.name === counters.data.name) || []
     );
   };
 
@@ -111,7 +120,7 @@ export default function AddCounterItemForm(props: Props) {
         className={classes.formField}
         label={
           inputFilter().length > 0 ? (
-            <Text className={classes.buttonText} variant="body2" color="error">
+            <Text variant="body2" color="error">
               {fbt('Counter name existing', '')}
             </Text>
           ) : (
