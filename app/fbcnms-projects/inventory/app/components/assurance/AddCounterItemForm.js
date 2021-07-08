@@ -23,6 +23,10 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+
+import fbt from 'fbt';
+
+import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
 
@@ -46,11 +50,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddCounterItemForm() {
+type Props = $ReadOnly<{|
+  dataValues: Object,
+|}>;
+
+export default function AddCounterItemForm(props: Props) {
+  const {dataValues} = props;
   const classes = useStyles();
 
   const [counters, setCounters] = useState({data: {}});
-  const [showChecking, setShowChecking] = useState(false);
+  const [showChecking, setShowChecking] = useState();
+  const [activate, setActivate] = useState('');
+
+  const inputFilter = () => {
+    return (
+      dataValues.filter(item => item.node.name === counters.data.name) || []
+    );
+  };
 
   function handleChange({target}) {
     setCounters({
@@ -59,6 +75,11 @@ export default function AddCounterItemForm() {
         [target.name]: target.value,
       },
     });
+
+    const validateInputs = Object.values(counters.data);
+    validateInputs.map(item => item != null) &&
+      validateInputs.length === 5 &&
+      setActivate(validateInputs);
   }
 
   function handleClick() {
@@ -86,7 +107,18 @@ export default function AddCounterItemForm() {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Counter</CardHeader>
-      <FormField className={classes.formField} label="Counter name" required>
+      <FormField
+        className={classes.formField}
+        label={
+          inputFilter().length > 0 ? (
+            <Text className={classes.buttonText} variant="body2" color="error">
+              {fbt('Counter name existing', '')}
+            </Text>
+          ) : (
+            'Counter name'
+          )
+        }
+        required>
         <TextInput
           className={classes.textInput}
           name="name"
@@ -121,7 +153,7 @@ export default function AddCounterItemForm() {
       <FormField
         className={classes.formField}
         label="Network Manager System"
-        required>
+        required={true}>
         <TextInput
           className={classes.textInput}
           name="nms"
@@ -130,7 +162,10 @@ export default function AddCounterItemForm() {
         />
       </FormField>
       <FormField>
-        <Button className={classes.addCounter} onClick={handleClick}>
+        <Button
+          className={classes.addCounter}
+          onClick={handleClick}
+          disabled={!activate}>
           Add Counter
         </Button>
       </FormField>

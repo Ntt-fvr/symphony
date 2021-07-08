@@ -14,6 +14,7 @@ import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 
 // MUTATIONS //
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
+
 import AddKpiMutation from '../../mutations/AddKpiMutation';
 
 // DESING SYSTEM //
@@ -22,7 +23,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {FormControl, InputLabel, MenuItem, Select} from '@material-ui/core'
+import {MenuItem, Select} from '@material-ui/core'
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -51,14 +52,13 @@ const useStyles = makeStyles(theme => ({
     boxSizing: 'border-box',
     minHeight: '36px',
     borderRadius: '4px',
-    fontSize: '14px'
+    fontSize: '14px',
   },
 }));
 
 type Props = $ReadOnly<{|
   kpi: Object,
 |}>;
-
 
 export default function AddKpiItemForm(props: Props) {
   const {kpi} = props;
@@ -75,11 +75,11 @@ export default function AddKpiItemForm(props: Props) {
     });
   }
 
-  async function handleClick() {
+  function handleClick() {
     const variables: AddKpiMutationVariables = {
       input: {
         name: kpis.data.name,
-        domainFk: kpis.data.domainFk
+        domainFk: kpis.data.domainFk,
       },
     };
     setShowChecking(true);
@@ -123,15 +123,16 @@ export default function AddKpiItemForm(props: Props) {
           onChange={handleChange}
           inputProps={{
             name: 'domainFk',
-          }}
-        >
-
+          }}>
           {kpi.kpis.edges.map((kpidata, index) => (
-            <MenuItem key={index} value={kpidata.node.domainFk.id}> {kpidata.node.domainFk.name} </MenuItem>
+            <MenuItem key={index} value={kpidata.node.domainFk.id}>
+              {' '}
+              {kpidata.node.domainFk.name}{' '}
+            </MenuItem>
           ))}
         </Select>
       </FormField>
-      
+
       <FormField>
         <Button className={classes.addCounter} onClick={handleClick}>
           Add KPI

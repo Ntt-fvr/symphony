@@ -9,29 +9,27 @@
  */
 
 import React, {useState} from 'react';
+import fbt from 'fbt';
 import {graphql} from 'react-relay';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import fbt from 'fbt';
 
 // MUTATIONS //
+import type {CountersTypesQuery} from './__generated__/CountersTypesQuery.graphql';
 import type {
   RemoveCountersTypesMutationResponse,
   RemoveCountersTypesMutationVariables,
 } from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
-import type {CountersTypesQuery} from './__generated__/CountersTypesQuery.graphql';
-import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 
 // COMPONENTS //
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
+import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
 import {EditCounterItemForm} from './EditCounterItemForm';
 
-// DESING SYSTEM //
-import {Grid, List} from '@material-ui/core';
+import {Grid, List} from '@material-ui/core/';
 import {makeStyles} from '@material-ui/styles';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -120,9 +118,9 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} lg={9}>
+        <Grid className={classes.paper} item xs="12" lg="9">
           <TitleTextCardsCounter />
-          <List disablePadding={true}>
+          <List disablePadding="true">
             {items.counters.edges.map(item => (
               <li className={classes.listCarCounter} key={item.node.id}>
                 <CounterTypeItem
@@ -144,7 +142,7 @@ const CountersTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm />
+          <AddCounterItemForm dataValues={items.counters.edges} />
         </Grid>
       </Grid>
     </div>
