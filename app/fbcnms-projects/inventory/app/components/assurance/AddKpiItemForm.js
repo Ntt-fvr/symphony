@@ -13,8 +13,8 @@ import React, {useState} from 'react';
 import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 
 // MUTATIONS //
-import AddKpiMutation from '../../mutations/AddKpiMutation';
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
+import AddKpiMutation from '../../mutations/AddKpiMutation';
 
 // DESING SYSTEM //
 import Button from '@symphony/design-system/components/Button';
@@ -22,7 +22,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {FormControl, Select, InputLabel, MenuItem} from '@material-ui/core'
+import {FormControl, InputLabel, MenuItem, Select} from '@material-ui/core'
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({

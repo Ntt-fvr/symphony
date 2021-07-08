@@ -14,8 +14,9 @@ import React, {useState} from 'react';
 import CounterAddedSuccessfully from './CounterAddedSuccessfully';
 
 // MUTATIONS //
-import AddCounterMutation from '../../mutations/AddCounterMutation';
 import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
+
+import AddCounterMutation from '../../mutations/AddCounterMutation';
 
 // DESING SYSTEM //
 import Button from '@symphony/design-system/components/Button';

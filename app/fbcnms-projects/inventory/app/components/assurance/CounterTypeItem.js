@@ -11,15 +11,15 @@
 import React from 'react';
 
 // DESING SYSTEM //
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -104,7 +104,10 @@ export default function CounterTypeItem(props: Props) {
               className={classes.editIcon}
               icon={EditIcon}
             />
-            <DeleteOutlinedIcon className={classes.deleteIcon} onClick={onChange}/>
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={onChange}
+            />
           </Grid>
         </AccordionSummary>
 
@@ -114,7 +117,8 @@ export default function CounterTypeItem(props: Props) {
               <strong>Counter ID: </strong>40
             </Grid>
             <Grid xs={8} className={classes.details}>
-              <strong>Family Name:</strong>Throughput and Data Volume Measurement
+              <strong>Family Name:</strong>Throughput and Data Volume
+              Measurement
             </Grid>
           </Grid>
         </AccordionDetails>
