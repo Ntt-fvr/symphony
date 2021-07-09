@@ -9,19 +9,17 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
-import CountersTypes from './CountersTypes';
+
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
-import KpiTypes from './KpiTypes';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
-import ThresholdTypes from './ThresholdTypes';
 import fbt from 'fbt';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
+import AlarmFilteringTypes from "./AlarmFilteringTypes";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,25 +58,11 @@ export default function Catalog() {
   const classes = useStyles();
   const tabBars: Array<RouteTab> = [
     {
-      id: 'counters_types',
+      id: 'alarm_filtering',
       tab: {
-        label: fbt('COUNTERS', ''),
+        label: fbt('ALARM FILTERING', ''),
       },
-      path: 'counters_types',
-    },
-    {
-      id: 'kpi_types',
-      tab: {
-        label: fbt('KPI', ''),
-      },
-      path: 'kpi_types',
-    },
-    {
-      id: 'threshold_types',
-      tab: {
-        label: fbt('THRESHOLD', ''),
-      },
-      path: 'threshold_types',
+      path: 'alarm_filtering',
     },
   ]
 
@@ -94,7 +78,7 @@ export default function Catalog() {
       id: tabBars[activeTabBar].id,
     });
      */
-    history.push(`/assurance/performance/${tabBars[activeTabBar].path}`);
+    history.push(`/assurance/fault_management/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 
   return (
@@ -111,20 +95,10 @@ export default function Catalog() {
           <Switch>
             <Route
               exact
-              path={relativeUrl('/counters_types')}
-              component={CountersTypes}
+              path={relativeUrl('/alarm_filtering')}
+              component={AlarmFilteringTypes}
             />
-            <Route
-              exact
-              path={relativeUrl('/kpi_types')}
-              component={KpiTypes}
-            />
-            <Route
-              exact
-              path={relativeUrl('/threshold_types')}
-              component={ThresholdTypes}
-            />
-            <Redirect to={relativeUrl('/counters_types')} />
+            <Redirect to={relativeUrl('/alarm_filtering')} />
           </Switch>
         </InventorySuspense>
       </InventoryErrorBoundary>

@@ -13,6 +13,7 @@ import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
 import Catalog from './Catalog';
+import FaultManagement from './FaultManagement';
 import InventorySuspense from '../../common/InventorySuspense';
 import React, {useContext} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
@@ -55,7 +56,15 @@ function AssuranceMain() {
             <RelayEnvironmentProvider environment={RelayEnvironment}>
               <Switch>
                 <Route path={relativeUrl('/performance')} component={Catalog} />
-                <Redirect to={relativeUrl('/performance/counters_types')} />
+                <Route
+                  path={relativeUrl('/fault_management')}
+                  component={FaultManagement}
+                />
+                <Redirect
+                  exact
+                  from="/assurance"
+                  to={relativeUrl('/performance/counters_types')}
+                />
               </Switch>
             </RelayEnvironmentProvider>
           </AppContent>

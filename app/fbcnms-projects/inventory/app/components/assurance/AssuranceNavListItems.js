@@ -8,9 +8,10 @@
  * @format
  */
 
+import ManageAccountsIcon from '@material-ui/icons/ManageAccounts';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import React from 'react';
-import StarsIcon from '@material-ui/icons/Stars';
+import SummarizeIcon from '@material-ui/icons/Summarize';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
@@ -21,9 +22,18 @@ export const AssuranceNavListItems = () => {
       key={1}
       label="Performance Catalog"
       path={relativeUrl('/performance/counters_types')}
-      icon={<StarsIcon />}
+      icon={<SummarizeIcon />}
       onClick={() => {
         ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED);
+      }}
+    />,
+    <NavListItem
+      key={2}
+      label="Fault Management"
+      path={relativeUrl('/fault_management/alarm_filtering')}
+      icon={<ManageAccountsIcon />}
+      onClick={() => {
+        ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED);
       }}
     />,
   ];
