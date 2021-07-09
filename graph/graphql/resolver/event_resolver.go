@@ -21,7 +21,7 @@ func (eventResolver) EventSeverity(ctx context.Context, event *ent.Event) (*ent.
 	variable, err := event.Eventseverity(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no return a event severity limit valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -31,7 +31,7 @@ func (eventResolver) Rule(ctx context.Context, event *ent.Event) ([]*ent.Rule, e
 	variable, err := event.RuleEvent(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no return a rule valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -49,9 +49,9 @@ func (r mutationResolver) AddEvent(ctx context.Context, input models.AddEventInp
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A Event with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating Event: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -64,12 +64,12 @@ func (r mutationResolver) RemoveEvent(ctx context.Context, id int) (int, error) 
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counter: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Event.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting counter")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -80,9 +80,9 @@ func (r mutationResolver) EditEvent(ctx context.Context, input models.EditEventI
 	et, err := client.Event.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A Event with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating Event: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 
 	var name, tpe, problem, info = et.Name, et.EventTypeName, et.SpecificProblem, et.AdditionalInfo
@@ -91,7 +91,7 @@ func (r mutationResolver) EditEvent(ctx context.Context, input models.EditEventI
 	if erro == nil && evst2 != nil {
 		evsp = evst2.ID
 	} else {
-		return nil, errors.Wrap(erro, "updating rule name")
+		return nil, errors.Wrap(erro, "has ocurred error on proces: %w")
 	}
 	var change = false
 
@@ -132,9 +132,9 @@ func (r mutationResolver) EditEvent(ctx context.Context, input models.EditEventI
 			SetEventseverityID(evsp).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A Event with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating Event name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil

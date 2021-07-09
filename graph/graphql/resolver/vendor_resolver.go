@@ -25,9 +25,9 @@ func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorI
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A vendor with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating vendor: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -40,11 +40,11 @@ func (r mutationResolver) RemoveVendor(ctx context.Context, id int) (int, error)
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying vendor: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	// TODO: borrar o editar los edges relacionados
 	if err := client.Vendor.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting vendor")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -54,9 +54,9 @@ func (r mutationResolver) EditVendor(ctx context.Context, input models.EditVendo
 	et, err := client.Vendor.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A vendor with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating vendor: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	if input.Name != et.Name {
 		if et, err = client.Vendor.
@@ -64,9 +64,9 @@ func (r mutationResolver) EditVendor(ctx context.Context, input models.EditVendo
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A vendor with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating vendor name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 

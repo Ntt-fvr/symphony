@@ -14762,6 +14762,7 @@ input AddCounterInput {
   externalID: String!
   networkManagerSystem: String!
   countervendorformula: [EditCounterVendorFormulaInput!]
+  counterFamily: ID!
 }
 
 input EditCounterInput {
@@ -14926,8 +14927,7 @@ input AddTresholdInput {
   name: String!
   description: String!
   status: Boolean!
-  rule: [RuleInput!]
-  kpi: Int
+  kpi: ID!
   
 }
 
@@ -14945,7 +14945,6 @@ input EditTresholdInput {
   name: String!
   description: String!
   status: Boolean!
-  rule: [RuleInput!]  
 }
 
 enum TresholdFilterType {
@@ -14968,13 +14967,11 @@ type Comparator implements Node {
 
 input AddComparatorInput {
   name: String!
-  ruleLimit: [RuleLimitInput!]
 }
 
 input EditComparatorInput {
   id: ID!
   name: String!
-  ruleLimit: [RuleLimitInput!]
 }
 
 type Event implements Node {
@@ -15001,7 +14998,6 @@ input AddEventInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
-  rule: [RuleInput!]
   eventSeverity: ID!
 }
 
@@ -15011,7 +15007,6 @@ input EditEventInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
-  rule: [RuleInput!]
   eventSeverity: ID!
 }
 
@@ -15085,7 +15080,6 @@ input AddRuleInput {
   gracePeriod: Int!
   startDateTime: Time!
   endDateTime: Time!
-  ruleLimit: [RuleLimitInput!]
   ruleType: ID!
   event: ID!
   treshold: ID!
@@ -15097,7 +15091,6 @@ input EditRuleInput {
   gracePeriod: Int
   startDateTime: Time
   endDateTime: Time
-  ruleLimit: [RuleLimitInput!]
   ruleType: ID!
   event: ID!
   treshold: ID!
@@ -15111,13 +15104,11 @@ type EventSeverity implements Node {
 
 input AddEventSeverityInput {
   name: String!
-  event: [EventInput!]
 }
 
 input EditEventSeverityInput {
   id: ID!
   name: String!
-  event: [EventInput!]
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -57517,14 +57508,6 @@ func (ec *executionContext) unmarshalInputAddComparatorInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -57594,6 +57577,14 @@ func (ec *executionContext) unmarshalInputAddCounterInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
 			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterFamily":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFamily"))
+			it.CounterFamily, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -57993,14 +57984,6 @@ func (ec *executionContext) unmarshalInputAddEventInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "eventSeverity":
 			var err error
 
@@ -58026,14 +58009,6 @@ func (ec *executionContext) unmarshalInputAddEventSeverityInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "event":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
-			it.Event, err = ec.unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -58923,14 +58898,6 @@ func (ec *executionContext) unmarshalInputAddRuleInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "ruleType":
 			var err error
 
@@ -59127,19 +59094,11 @@ func (ec *executionContext) unmarshalInputAddTresholdInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "kpi":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpi"))
-			it.Kpi, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Kpi, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60331,14 +60290,6 @@ func (ec *executionContext) unmarshalInputEditComparatorInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -60821,14 +60772,6 @@ func (ec *executionContext) unmarshalInputEditEventInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "eventSeverity":
 			var err error
 
@@ -60862,14 +60805,6 @@ func (ec *executionContext) unmarshalInputEditEventSeverityInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "event":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
-			it.Event, err = ec.unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -61505,14 +61440,6 @@ func (ec *executionContext) unmarshalInputEditRuleInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "ruleType":
 			var err error
 
@@ -61694,14 +61621,6 @@ func (ec *executionContext) unmarshalInputEditTresholdInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -79320,11 +79239,6 @@ func (ec *executionContext) marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋ
 	return ec._Event(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNEventInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInput(ctx context.Context, v interface{}) (*models.EventInput, error) {
-	res, err := ec.unmarshalInputEventInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNEventSeverity2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx context.Context, sel ast.SelectionSet, v ent.EventSeverity) graphql.Marshaler {
 	return ec._EventSeverity(ctx, sel, &v)
 }
@@ -84603,30 +84517,6 @@ func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋfacebookincubator
 	}
 	wg.Wait()
 	return ret
-}
-
-func (ec *executionContext) unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx context.Context, v interface{}) ([]*models.EventInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.EventInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEventInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) marshalOEventSeverity2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverity) graphql.Marshaler {

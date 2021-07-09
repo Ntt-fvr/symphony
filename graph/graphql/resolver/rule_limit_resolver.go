@@ -21,7 +21,7 @@ func (ruleLimitResolver) Comparator(ctx context.Context, ruleLimit *ent.RuleLimi
 	variable, err := ruleLimit.Comparator(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no return a comparator valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -31,7 +31,7 @@ func (ruleLimitResolver) Rule(ctx context.Context, ruleLimit *ent.RuleLimit) (*e
 	variable, err := ruleLimit.Rule(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no return a rule valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -48,9 +48,9 @@ func (r mutationResolver) AddRuleLimit(ctx context.Context, input models.AddRule
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A RuleLimit with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating RuleLimit: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -63,12 +63,12 @@ func (r mutationResolver) RemoveRuleLimit(ctx context.Context, id int) (int, err
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counter: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.RuleLimit.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting counter")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -78,9 +78,9 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	et, err := client.RuleLimit.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A RuleLimit with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating RuleLimit: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 
 	var name, limit = et.Name, et.LimitType
@@ -89,7 +89,7 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	if erro == nil && comparator2 != nil {
 		comparator = comparator2.ID
 	} else {
-		return nil, errors.Wrap(erro, "updating RuleLimit name")
+		return nil, errors.Wrap(erro, "has ocurred error on proces: %w")
 	}
 
 	var rule2, erro2 = et.Rule(ctx)
@@ -97,7 +97,7 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	if erro2 == nil && rule2 != nil {
 		rule = rule2.ID
 	} else {
-		return nil, errors.Wrap(erro2, "updating RuleLimit name")
+		return nil, errors.Wrap(erro2, "has ocurred error on proces: %w")
 	}
 
 	var change = false
@@ -128,9 +128,9 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 			SetRuleID(rule).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A RuleLimit with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating RuleLimit name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil

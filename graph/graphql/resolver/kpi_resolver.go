@@ -21,7 +21,7 @@ func (r kpiResolver) DomainFk(ctx context.Context, kpi *ent.Kpi) (*ent.Domain, e
 	variable, err := kpi.Domain(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no return a domain valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -30,7 +30,7 @@ func (r kpiResolver) DomainFk(ctx context.Context, kpi *ent.Kpi) (*ent.Domain, e
 func (kpiResolver) FormulaFk(ctx context.Context, kpi *ent.Kpi) ([]*ent.Formula, error) {
 	variable, err := kpi.Formulakpi(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -39,7 +39,7 @@ func (kpiResolver) FormulaFk(ctx context.Context, kpi *ent.Kpi) ([]*ent.Formula,
 func (kpiResolver) Treshold(ctx context.Context, kpi *ent.Kpi) (*ent.Treshold, error) {
 	variable, err := kpi.Tresholdkpi(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a treshold valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -55,9 +55,9 @@ func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) 
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A kpi with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating kpi: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -70,12 +70,12 @@ func (r mutationResolver) RemoveKpi(ctx context.Context, id int) (int, error) {
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying kpi: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Kpi.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting kpi")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -85,9 +85,9 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 	et, err := client.Kpi.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A kpi with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating kpi: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID || input.Status != et.Status {
 		if et, err = client.Kpi.
@@ -97,9 +97,9 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 			SetDomainID(input.DomainFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A kpi with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating kpi name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil

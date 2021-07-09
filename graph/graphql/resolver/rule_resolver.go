@@ -21,7 +21,7 @@ func (ruleResolver) RuleLimit(ctx context.Context, rule *ent.Rule) ([]*ent.RuleL
 	variable, err := rule.Rulelimitrule(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no rule a rule limit valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -30,7 +30,7 @@ func (ruleResolver) RuleType(ctx context.Context, rule *ent.Rule) (*ent.RuleType
 	variable, err := rule.Ruletype(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no rule a rule type valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -40,7 +40,7 @@ func (ruleResolver) Event(ctx context.Context, rule *ent.Rule) (*ent.Event, erro
 	variable, err := rule.Event(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("no rule a  event valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -60,9 +60,9 @@ func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A Rule with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating Rule: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -75,12 +75,12 @@ func (r mutationResolver) RemoveRule(ctx context.Context, id int) (int, error) {
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying rule: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Rule.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting rule")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -90,27 +90,27 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 	et, err := client.Rule.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A rule with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating rule: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	var eventid, rtypeid, tresholdid int
 	var name, start, end, grace = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod
 	var event, err1 = et.Event(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err1, "updating rule name")
+		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if event != nil {
 		eventid = event.ID
 	}
 	var rtype, err2 = et.Event(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err2, "updating rule name")
+		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
 	} else if rtype != nil {
 		rtypeid = rtype.ID
 	}
 	var treshold, err3 = et.Event(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err3, "updating rule name")
+		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
 	} else if treshold != nil {
 		tresholdid = treshold.ID
 	}
@@ -158,9 +158,9 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			SetEventID(eventid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A rule with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating rule name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil

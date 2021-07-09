@@ -29,12 +29,13 @@ func (r mutationResolver) AddCounter(ctx context.Context, input models.AddCounte
 		SetName(input.Name).
 		SetExternalId(input.ExternalID).
 		SetNetworkManagerSystem(input.NetworkManagerSystem).
+		SetCounterfamilyID(input.CounterFamily).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A counter with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating counter: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -52,9 +53,9 @@ func (r mutationResolver) AddCounterList(ctx context.Context, inputs []*models.A
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A counter with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, fmt.Errorf("creating counter: %w", err)
+			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 		}
 		counters = append(counters, typ)
 	}
@@ -70,12 +71,12 @@ func (r mutationResolver) RemoveCounter(ctx context.Context, id int) (int, error
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counter: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Counter.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting counter")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -85,9 +86,9 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 	et, err := client.Counter.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A counter with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	if input.Name != et.Name {
 		if et, err = client.Counter.
@@ -97,9 +98,9 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 			SetNetworkManagerSystem(input.NetworkManagerSystem).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A counter with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating counter name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil

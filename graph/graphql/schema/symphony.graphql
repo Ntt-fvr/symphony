@@ -4665,6 +4665,7 @@ input AddCounterInput {
   externalID: String!
   networkManagerSystem: String!
   countervendorformula: [EditCounterVendorFormulaInput!]
+  counterFamily: ID!
 }
 
 input EditCounterInput {
@@ -4829,8 +4830,7 @@ input AddTresholdInput {
   name: String!
   description: String!
   status: Boolean!
-  rule: [RuleInput!]
-  kpi: Int
+  kpi: ID!
   
 }
 
@@ -4848,7 +4848,6 @@ input EditTresholdInput {
   name: String!
   description: String!
   status: Boolean!
-  rule: [RuleInput!]  
 }
 
 enum TresholdFilterType {
@@ -4871,13 +4870,11 @@ type Comparator implements Node {
 
 input AddComparatorInput {
   name: String!
-  ruleLimit: [RuleLimitInput!]
 }
 
 input EditComparatorInput {
   id: ID!
   name: String!
-  ruleLimit: [RuleLimitInput!]
 }
 
 type Event implements Node {
@@ -4904,7 +4901,6 @@ input AddEventInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
-  rule: [RuleInput!]
   eventSeverity: ID!
 }
 
@@ -4914,7 +4910,6 @@ input EditEventInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
-  rule: [RuleInput!]
   eventSeverity: ID!
 }
 
@@ -4988,7 +4983,6 @@ input AddRuleInput {
   gracePeriod: Int!
   startDateTime: Time!
   endDateTime: Time!
-  ruleLimit: [RuleLimitInput!]
   ruleType: ID!
   event: ID!
   treshold: ID!
@@ -5000,7 +4994,6 @@ input EditRuleInput {
   gracePeriod: Int
   startDateTime: Time
   endDateTime: Time
-  ruleLimit: [RuleLimitInput!]
   ruleType: ID!
   event: ID!
   treshold: ID!
@@ -5014,11 +5007,9 @@ type EventSeverity implements Node {
 
 input AddEventSeverityInput {
   name: String!
-  event: [EventInput!]
 }
 
 input EditEventSeverityInput {
   id: ID!
   name: String!
-  event: [EventInput!]
 }
