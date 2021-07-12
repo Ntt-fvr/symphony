@@ -54,11 +54,13 @@ export const EditCounterItemForm = (props: Props) => {
   const {formValues, onClose} = props;
   const classes = useStyles();
 
-  const name = useFormInput(formValues.Name);
-  const vendor = useFormInput(formValues.VendorName);
-  const networkManagerSystem = useFormInput(formValues.NetworkManagerSystem);
-  const counterID = useFormInput(formValues.CounterID);
-  const familyName = useFormInput(formValues.FamilyName);
+  console.log(formValues);
+
+  const name = useFormInput(formValues.item.node.name);
+  const networkManagerSystem = useFormInput(
+    formValues.item.node.networkManagerSystem,
+  );
+  const counterID = useFormInput(formValues.item.node.externalID);
 
   function handleClick() {
     const variables: EditCounterMutationVariables = {
@@ -103,7 +105,7 @@ export const EditCounterItemForm = (props: Props) => {
                   label="Vendor name"
                   required>
                   <TextInput
-                    {...vendor}
+                    hola
                     className={classes.textInput}
                     name="vendorName"
                     variant="outlined"
@@ -146,7 +148,7 @@ export const EditCounterItemForm = (props: Props) => {
                 label="Family name"
                 required>
                 <TextInput
-                  {...familyName}
+                  hola
                   className={classes.textInput}
                   name="FamilyName"
                   variant="outlined"

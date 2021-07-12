@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 
 // DESING SYSTEM //
 import Accordion from '@material-ui/core/Accordion';
@@ -21,7 +21,7 @@ import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   details: {
     marginLeft: '-16px',
+    paddingBottom: '12px',
   },
   detailsRoot: {
     marginLeft: '11px',
@@ -68,15 +69,27 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  counter: Object,
+  externalID: string,
+  name: string,
+  networkManagerSystem: string,
+  counterFamily: {
+    name: string,
+  },
   edit: void,
   onChange: void,
 |}>;
 
 export default function CounterTypeItem(props: Props) {
-  const {counter, edit, onChange} = props;
+  const {
+    externalID,
+    name,
+    networkManagerSystem,
+    counterFamily,
+    edit,
+    onChange,
+  } = props;
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className={classes.root}>
@@ -87,11 +100,11 @@ export default function CounterTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <Grid xs={4} container justify="flex-start" alignItems="center">
-            <Text className={classes.bold}>{counter.name}</Text>
+            <Text className={classes.bold}>{name}</Text>
           </Grid>
 
           <Grid xs={2} container alignItems="center">
-            <Text className={classes.blue}>{counter.networkManagerSystem}</Text>
+            <Text className={classes.blue}>{networkManagerSystem}</Text>
           </Grid>
 
           <Grid xs={5} container justify="center" alignItems="center">
@@ -100,9 +113,9 @@ export default function CounterTypeItem(props: Props) {
 
           <Grid xs={1} container justify="flex-end" alignItems="center">
             <IconButton
-              onClick={edit}
               className={classes.editIcon}
               icon={EditIcon}
+              onClick={edit}
             />
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
@@ -114,11 +127,12 @@ export default function CounterTypeItem(props: Props) {
         <AccordionDetails className={classes.detailsRoot}>
           <Grid container spacing={3}>
             <Grid xs={4}>
-              <strong>Counter ID: </strong>40
+              <strong>Counter ID: </strong>
+              {externalID}
             </Grid>
             <Grid xs={8} className={classes.details}>
-              <strong>Family Name:</strong>Throughput and Data Volume
-              Measurement
+              <strong>Family Name: </strong>
+              {counterFamily.name}
             </Grid>
           </Grid>
         </AccordionDetails>

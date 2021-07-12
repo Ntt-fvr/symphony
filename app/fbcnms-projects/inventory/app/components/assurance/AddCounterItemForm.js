@@ -26,7 +26,6 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import fbt from 'fbt';
 
-import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
 
@@ -52,7 +51,6 @@ const useStyles = makeStyles(theme => ({
 
 type Props = $ReadOnly<{|
   dataValues: Array<string>,
-  filter: boolean,
 |}>;
 
 type Counters = {
@@ -72,9 +70,7 @@ export default function AddCounterItemForm(props: Props) {
   const [activate, setActivate] = useState('');
 
   const inputFilter = () => {
-    return (
-      dataValues?.filter(item => item.node.name === counters.data.name) || []
-    );
+    return dataValues?.filter(item => item === counters.data.name) || [];
   };
 
   function handleChange({target}) {
@@ -109,6 +105,12 @@ export default function AddCounterItemForm(props: Props) {
     AddCounterMutation(variables);
   }
 
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Counter name existing'};
+    }
+  };
+
   if (showChecking) {
     return <CounterAddedSuccessfully />;
   }
@@ -118,16 +120,9 @@ export default function AddCounterItemForm(props: Props) {
       <CardHeader className={classes.header}>Add Counter</CardHeader>
       <FormField
         className={classes.formField}
-        label={
-          inputFilter().length > 0 ? (
-            <Text variant="body2" color="error">
-              {fbt('Counter name existing', '')}
-            </Text>
-          ) : (
-            'Counter name'
-          )
-        }
-        required>
+        label="Counter name"
+        required
+        {...validationName()}>
         <TextInput
           className={classes.textInput}
           name="name"
