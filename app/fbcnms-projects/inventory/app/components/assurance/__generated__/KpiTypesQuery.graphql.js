@@ -21,6 +21,7 @@ export type KpiTypesQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
+        +status: boolean,
         +domainFk: {|
           +id: string,
           +name: string,
@@ -43,6 +44,7 @@ query KpiTypesQuery {
       node {
         id
         name
+        status
         domainFk {
           id
           name
@@ -98,6 +100,13 @@ v2 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "status",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "Domain",
                 "kind": "LinkedField",
                 "name": "domainFk",
@@ -136,16 +145,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "d8a9b469169b437fce339cc7ecc35325",
+    "cacheID": "ff540b32cb6af8d14a698df119473f93",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '42726b7f6627f8fb8e6d354b21351dc6';
+(node/*: any*/).hash = '8b1648a780e1cf3c526b8d464c857d09';
 
 module.exports = node;
