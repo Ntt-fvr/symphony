@@ -8,17 +8,13 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
-import {graphql} from 'react-relay';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 // MUTATIONS //
-import type {CountersTypesQuery} from './__generated__/CountersTypesQuery.graphql';
-import type {
-  RemoveCountersTypesMutationResponse,
-  RemoveCountersTypesMutationVariables,
-} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
+import type {RemoveCountersTypesMutationVariables} from '../../mutations/__generated__/RemoveCountersTypesMutation.graphql';
 
 // COMPONENTS //
 import AddCounterItemForm from './AddCounterItemForm';
@@ -58,9 +54,13 @@ const CountersQuery = graphql`
           name
           networkManagerSystem
           externalID
+          counterFamily {
+            name
+          }
           countervendorformula {
-            id
-            mandatory
+            vendorFk {
+              name
+            }
           }
         }
       }
@@ -71,16 +71,17 @@ const CountersQuery = graphql`
 const CountersTypes = () => {
   const classes = useStyles();
 
-  const data = useLazyLoadQuery<CountersTypesQuery>(CountersQuery, {});
-
-  const [items, setItems] = useState(data);
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
+  const [items, setItems] = useState({});
+  const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, CountersQuery, {}).then(data => {
+      setItems(data);
+    });
+  }, [items]);
+
   const handleRemove = id => {
-    const edges = items.counters.edges.filter(item => item.node.id !== id);
-    const removeCounter = {counters: {edges}};
-    setItems(removeCounter);
     const variables: RemoveCountersTypesMutationVariables = {
       id: id,
     };
@@ -88,19 +89,19 @@ const CountersTypes = () => {
   };
 
   const showEditCounterItemForm = (counters: {}) => {
-    setShowAddEditCard(true);
+    setShowEditCard(true);
     setDataEdit(counters);
   };
 
   const hideEditCounterItemForm = () => {
-    setShowAddEditCard(false);
+    setShowEditCard(false);
   };
 
-  if (showAddEditCard) {
+  if (showEditCard) {
     return (
       <EditCounterItemForm
         formValues={dataEdit}
-        onClose={hideEditCounterItemForm}
+        onClose={hideEditCounterItemForm()}
       />
     );
   }
@@ -118,31 +119,23 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs="12" lg="9">
+        <Grid className={classes.paper} item xs={12} lg={9}>
           <TitleTextCardsCounter />
-          <List disablePadding="true">
-            {items.counters.edges.map(item => (
-              <li className={classes.listCarCounter} key={item.node.id}>
-                <CounterTypeItem
-                  counter={item.node}
-                  onChange={() => handleRemove(item.node.id)}
-                  edit={() =>
-                    showEditCounterItemForm({
-                      Id: item.node.id,
-                      Name: item.node.name,
-                      VendorName: item.node.name,
-                      NetworkManagerSystem: item.node.networkManagerSystem,
-                      CounterID: item.node.externalID,
-                      FamilyName: item.node.networkManagerSystem,
-                    })
-                  }
-                />
-              </li>
+          <List disablePadding>
+            {items.counters?.edges.map(item => (
+              <CounterTypeItem
+                key={item.node.id}
+                onChange={() => handleRemove(item.node.id)}
+                edit={() => showEditCounterItemForm({item})}
+                {...item.node}
+              />
             ))}
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm dataValues={items.counters.edges} />
+          <AddCounterItemForm
+            dataValues={items.counters?.edges.map(item => item.node.name)}
+          />
         </Grid>
       </Grid>
     </div>

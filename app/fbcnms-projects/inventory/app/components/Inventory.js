@@ -84,6 +84,11 @@ function Index() {
           <Route path={relativeUrl('/services')} component={ServicesMain} />
           <Redirect exact from="/" to={relativeUrl('/inventory')} />
           <Redirect exact from="/inventory" to={relativeUrl('/inventory')} />
+          <Redirect
+            exact
+            from="/assurance/performance"
+            to={relativeUrl('/counters_types')}
+          />
         </Switch>
       </AppContent>
     </div>

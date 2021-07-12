@@ -46,8 +46,6 @@ export const LogEvents = {
   SEARCH_NAV_CLICKED: 'search_nav_clicked',
   WORK_ORDERS_NAV_CLICKED: 'work_orders_nav_clicked',
   CONFIGURE_TAB_NAVIGATION_CLICKED: 'configure_tab_navigation_clicked',
-  PERFORMANCE_TAB_NAVIGATION_CLICKED: 'performance_tab_navigation_clicked',
-  KPI_TAB_NAVIGATION_CLICKED: 'kpi_tab_navigation_clicked',
   EQUIPMENT_CARD_LOCATION_BREADCRUMB_CLICKED:
     'equipment_card_location_breadcrumb_clicked',
   EQUIPMENT_CARD_EQUIPMENT_BREADCRUMB_CLICKED:
@@ -86,6 +84,7 @@ export const LogEvents = {
   SAVED_SEARCH_CREATED: 'saved_search_created',
   SAVED_SEARCH_DELETED: 'saved_search_deleted',
   SAVED_SEARCH_EDITED: 'saved_search_edited',
+
   //Work Orders Logs:
   ADD_WORK_ORDER_TYPE_BUTTON_CLICKED: 'add_work_order_template_button_clicked',
   DELETE_WORK_ORDER_BUTTON_CLICKED: 'delete_work_order_button_clicked',
@@ -127,6 +126,12 @@ export const LogEvents = {
   AUTOMATION_CONFIGURE_NAV_CLICKED: 'automation_configure_nav_clicked',
   SAVE_WORKER_TYPE_BUTTON_CLICKED: 'save_worker_template_button_clicked',
   ADD_WORKER_TYPE_BUTTON_CLICKED: 'add_worker_template_button_clicked',
+
+  // Assurance
+  PERFORMANCE_TAB_NAVIGATION_CLICKED: 'performance_tab_navigation_clicked',
+  KPI_TAB_NAVIGATION_CLICKED: 'kpi_tab_navigation_clicked',
+  FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED:
+    'fault_management_tab_navigation_clicked',
 };
 
 export const ServerLogger = ServerLog('inventory');

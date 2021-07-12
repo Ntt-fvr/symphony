@@ -23,9 +23,13 @@ export type CountersTypesQueryResponse = {|
         +name: string,
         +networkManagerSystem: string,
         +externalID: string,
+        +counterFamily: ?{|
+          +name: string
+        |},
         +countervendorformula: $ReadOnlyArray<?{|
-          +id: string,
-          +mandatory: boolean,
+          +vendorFk: {|
+            +name: string
+          |}
         |}>,
       |}
     |}>
@@ -47,9 +51,16 @@ query CountersTypesQuery {
         name
         networkManagerSystem
         externalID
-        countervendorformula {
+        counterFamily {
+          name
           id
-          mandatory
+        }
+        countervendorformula {
+          vendorFk {
+            name
+            id
+          }
+          id
         }
       }
     }
@@ -65,67 +76,98 @@ var v0 = {
   "name": "id",
   "storageKey": null
 },
-v1 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "CounterConnection",
-    "kind": "LinkedField",
-    "name": "counters",
-    "plural": false,
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "networkManagerSystem",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "externalID",
+  "storageKey": null
+},
+v4 = [
+  (v1/*: any*/)
+],
+v5 = [
+  (v1/*: any*/),
+  (v0/*: any*/)
+];
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "CountersTypesQuery",
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "CounterEdge",
+        "concreteType": "CounterConnection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "counters",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "Counter",
+            "concreteType": "CounterEdge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
-              (v0/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "networkManagerSystem",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "externalID",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "CounterVendorFormula",
+                "concreteType": "Counter",
                 "kind": "LinkedField",
-                "name": "countervendorformula",
-                "plural": true,
+                "name": "node",
+                "plural": false,
                 "selections": [
                   (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "mandatory",
+                    "concreteType": "CounterFamily",
+                    "kind": "LinkedField",
+                    "name": "counterFamily",
+                    "plural": false,
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "CounterVendorFormula",
+                    "kind": "LinkedField",
+                    "name": "countervendorformula",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Vendor",
+                        "kind": "LinkedField",
+                        "name": "vendorFk",
+                        "plural": false,
+                        "selections": (v4/*: any*/),
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -138,16 +180,6 @@ v1 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "CountersTypesQuery",
-    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -156,19 +188,89 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "CountersTypesQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "CounterConnection",
+        "kind": "LinkedField",
+        "name": "counters",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "CounterEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Counter",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "CounterFamily",
+                    "kind": "LinkedField",
+                    "name": "counterFamily",
+                    "plural": false,
+                    "selections": (v5/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "CounterVendorFormula",
+                    "kind": "LinkedField",
+                    "name": "countervendorformula",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Vendor",
+                        "kind": "LinkedField",
+                        "name": "vendorFk",
+                        "plural": false,
+                        "selections": (v5/*: any*/),
+                        "storageKey": null
+                      },
+                      (v0/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "a98d20b30714908919542a50d85c103c",
+    "cacheID": "ca533c1984dcccd8edb95f4d7ebfb853",
     "id": null,
     "metadata": {},
     "name": "CountersTypesQuery",
     "operationKind": "query",
-    "text": "query CountersTypesQuery {\n  counters {\n    edges {\n      node {\n        id\n        name\n        networkManagerSystem\n        externalID\n        countervendorformula {\n          id\n          mandatory\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query CountersTypesQuery {\n  counters {\n    edges {\n      node {\n        id\n        name\n        networkManagerSystem\n        externalID\n        counterFamily {\n          name\n          id\n        }\n        countervendorformula {\n          vendorFk {\n            name\n            id\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '01f6f9837e309e931c5baa468d637d7b';
+(node/*: any*/).hash = '4d0807c329857e16bf3b8819ce09922c';
 
 module.exports = node;
