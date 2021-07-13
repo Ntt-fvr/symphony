@@ -64,7 +64,7 @@ export default function AddKpiItemForm(props: Props) {
   const {kpi} = props;
   const classes = useStyles();
 
-  const [kpis, setKpis] = useState<?kpis>({data: {}});
+  const [kpis, setKpis] = useState({data: {}});
   const [showChecking, setShowChecking] = useState(false);
   function handleChange({target}) {
     setKpis({
@@ -79,6 +79,7 @@ export default function AddKpiItemForm(props: Props) {
     const variables: AddKpiMutationVariables = {
       input: {
         name: kpis.data.name,
+        status: true,
         domainFk: kpis.data.domainFk,
       },
     };
@@ -112,7 +113,7 @@ export default function AddKpiItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="status"
-          type="string"
+          type="boolean"
           onChange={handleChange}
         />
       </FormField>
@@ -124,10 +125,10 @@ export default function AddKpiItemForm(props: Props) {
           inputProps={{
             name: 'domainFk',
           }}>
-          {kpi.kpis.edges.map((kpidata, index) => (
-            <MenuItem key={index} value={kpidata.node.domainFk.id}>
+          {kpi.map((kpidata, index) => (
+            <MenuItem key={index} value={kpidata.domainFk.id}>
               {' '}
-              {kpidata.node.domainFk.name}{' '}
+              {kpidata.domainFk.name}{' '}
             </MenuItem>
           ))}
         </Select>

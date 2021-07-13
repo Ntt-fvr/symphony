@@ -25,7 +25,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import {EditIcon} from '@symphony/design-system/icons';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/styles';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 

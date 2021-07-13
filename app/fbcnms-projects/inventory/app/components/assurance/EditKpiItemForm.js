@@ -120,8 +120,8 @@ export const EditKpiItemForm = (props: Props) => {
                       name: 'Domain',
                     }}>
                     
-                    {kpi.kpis.edges.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.node.domainFk.id}> {kpidata.node.domainFk.name} </MenuItem>
+                    {kpi.map((kpidata, index) => (
+                      <MenuItem key={index} value={kpidata.domainFk.id}> {kpidata.domainFk.name} </MenuItem>
                     ))}
                   </Select>
                 </FormField>
