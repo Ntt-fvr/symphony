@@ -590,6 +590,20 @@ func AutomationPolicyNotNil() predicate.PermissionsPolicy {
 	})
 }
 
+// AssurancePolicyIsNil applies the IsNil predicate on the "assurance_policy" field.
+func AssurancePolicyIsNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAssurancePolicy)))
+	})
+}
+
+// AssurancePolicyNotNil applies the NotNil predicate on the "assurance_policy" field.
+func AssurancePolicyNotNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAssurancePolicy)))
+	})
+}
+
 // HasGroups applies the HasEdge predicate on the "groups" edge.
 func HasGroups() predicate.PermissionsPolicy {
 	return predicate.PermissionsPolicy(func(s *sql.Selector) {

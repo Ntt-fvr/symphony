@@ -233,6 +233,13 @@ func (r resolver) Formula() generated.FormulaResolver {
 	return formulaResolver{}
 }
 
+func (r resolver) AlarmFilter() generated.AlarmFilterResolver {
+	return alarmFilterResolver{}
+}
+func (r resolver) AlarmStatus() generated.AlarmStatusResolver {
+	return alarmStatusResolver{}
+}
+
 /************************* mis tablas desde aqui********************************************************************/
 func (r resolver) Comparator() generated.ComparatorResolver {
 	return comparatorResolver{}

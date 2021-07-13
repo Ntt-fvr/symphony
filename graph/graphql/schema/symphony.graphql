@@ -84,6 +84,7 @@ type PermissionSettings
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
   automationPolicy: AutomationPolicy!
+  assurancePolicy: AssurancePolicy!
 }
 
 enum PermissionValue
@@ -202,6 +203,22 @@ input AutomationPolicyInput
   templates: BasicCUDInput
 }
 
+type AssurancePolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AssurancePolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AssurancePolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AssurancePolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -275,6 +292,7 @@ union SystemPolicy
     InventoryPolicy
   | WorkforcePolicy
   | AutomationPolicy
+  | AssurancePolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -292,6 +310,7 @@ input AddPermissionsPolicyInput {
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
+  assuranceInput: AssurancePolicyInput
   groups: [ID!]
 }
 
@@ -303,6 +322,7 @@ input EditPermissionsPolicyInput {
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
+  assuranceInput: AssurancePolicyInput
   groups: [ID!]
 }
 
@@ -2561,6 +2581,74 @@ type TresholdEdge {
   cursor: Cursor!
 }
 
+################################ conection Alarm filter ###############################################
+"""
+Properties by which AlarmFilter connections can be ordered.
+"""
+enum AlarmFilterOrderField {
+  """
+  Order AlarmFilter by name.
+  """
+  NAME
+
+  """
+  Order AlarmFilter by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order AlarmFilter by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for AlarmFilter connections.
+"""
+input AlarmFilterOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order AlarmFilter by.
+  """
+  field: AlarmFilterOrderField
+}
+
+"""
+A connection to a list of AlarmFilter.
+"""
+type AlarmFilterConnection {
+  """
+  Total AlarmFilter of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of AlarmFilter edges.
+  """
+  edges: [AlarmFilterEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A AlarmFilter edge in a connection.
+"""
+type AlarmFilterEdge {
+  """
+  The AlarmFilter at the end of the edge.
+  """
+  node: AlarmFilter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -4350,6 +4438,41 @@ type Query {
     
     filterBy: [TresholdFilterInput!]
   ): TresholdConnection!
+  
+  """
+  A list of AlarmFilter.
+  """
+  AlarmFilters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: AlarmFilterOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [AlarmFilterFilterInput!]
+  ): AlarmFilterConnection!
 }
 
 type Mutation {
@@ -4608,6 +4731,12 @@ type Mutation {
   addRuleType(input: AddRuleTypeInput!):RuleType!
   editRuleType(input: EditRuleTypeInput!): RuleType!
   removeRuleType(id: ID!): ID!
+  addAlarmFilter(input: AddAlarmFilterInput!):AlarmFilter!
+  editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter!
+  removeAlarmFilter(id: ID!): ID!
+  addAlarmStatus(input: AddAlarmStatusInput!):AlarmStatus!
+  editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus!
+  removeAlarmStatus(id: ID!): ID!
 }
 
 """
@@ -4826,6 +4955,86 @@ type Treshold implements Node {
   
 }
 
+type AlarmFilter implements Node {
+  id: ID!
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time! 
+  alarmStatus: AlarmStatus
+}
+
+input AddAlarmFilterInput {
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time!  
+  alarmStatus: ID!
+}
+
+input AlarmFilterInput {
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time!
+}
+
+input EditAlarmFilterInput {
+  id: ID!
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String! 
+  alarmStatus: ID!
+}
+
+enum AlarmFilterFilterType {
+  NAME
+}
+
+input AlarmFilterFilterInput {
+  filterType: AlarmFilterFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type AlarmStatus implements Node {
+  id: ID!
+  name: String!
+  AlarmFilter: [AlarmFilter!]
+}
+
+input AlarmStatusInput {
+  id: ID!
+  name: String!
+}
+
+input AddAlarmStatusInput {
+  name: String!
+}
+
+input EditAlarmStatusInput {
+  id: ID!
+  name: String!
+}
+
 input AddTresholdInput {
   name: String!
   description: String!
@@ -4839,7 +5048,7 @@ input TresholdInput {
   description: String!
   status: Boolean!
   rule: [RuleInput!]
-  kpi: Int
+  kpi: ID!
   
 }
 

@@ -26,6 +26,32 @@ func (f ActivityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The AlarmFilterFunc type is an adapter to allow the use of ordinary
+// function as AlarmFilter mutator.
+type AlarmFilterFunc func(context.Context, *ent.AlarmFilterMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlarmFilterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AlarmFilterMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlarmFilterMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The AlarmStatusFunc type is an adapter to allow the use of ordinary
+// function as AlarmStatus mutator.
+type AlarmStatusFunc func(context.Context, *ent.AlarmStatusMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlarmStatusFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AlarmStatusMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlarmStatusMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The BlockFunc type is an adapter to allow the use of ordinary
 // function as Block mutator.
 type BlockFunc func(context.Context, *ent.BlockMutation) (ent.Value, error)

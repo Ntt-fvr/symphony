@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/authz"
 )
 
 // Counter defines the property type schema.
@@ -34,4 +35,13 @@ func (Treshold) Edges() []ent.Edge {
 		edge.To("ruletreshold", Rule.Type).
 			Annotations(entgql.MapsTo("rule")),
 	}
+}
+
+// Policy returns entity policy.
+func (Treshold) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)
 }

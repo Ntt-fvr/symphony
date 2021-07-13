@@ -97,19 +97,19 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 	var eventid, rtypeid, tresholdid int
 	var name, start, end, grace = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod
 	var event, err1 = et.Event(ctx)
-	if err != nil {
+	if err1 != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if event != nil {
 		eventid = event.ID
 	}
 	var rtype, err2 = et.Event(ctx)
-	if err != nil {
+	if err2 != nil {
 		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
 	} else if rtype != nil {
 		rtypeid = rtype.ID
 	}
 	var treshold, err3 = et.Event(ctx)
-	if err != nil {
+	if err3 != nil {
 		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
 	} else if treshold != nil {
 		tresholdid = treshold.ID

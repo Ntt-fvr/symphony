@@ -106,6 +106,12 @@ func (ppc *PermissionsPolicyCreate) SetAutomationPolicy(mpi *models.AutomationPo
 	return ppc
 }
 
+// SetAssurancePolicy sets the assurance_policy field.
+func (ppc *PermissionsPolicyCreate) SetAssurancePolicy(mpi *models.AssurancePolicyInput) *PermissionsPolicyCreate {
+	ppc.mutation.SetAssurancePolicy(mpi)
+	return ppc
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (ppc *PermissionsPolicyCreate) AddGroupIDs(ids ...int) *PermissionsPolicyCreate {
 	ppc.mutation.AddGroupIDs(ids...)
@@ -293,6 +299,14 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Column: permissionspolicy.FieldAutomationPolicy,
 		})
 		_node.AutomationPolicy = value
+	}
+	if value, ok := ppc.mutation.AssurancePolicy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: permissionspolicy.FieldAssurancePolicy,
+		})
+		_node.AssurancePolicy = value
 	}
 	if nodes := ppc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

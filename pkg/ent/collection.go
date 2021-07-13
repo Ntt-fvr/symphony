@@ -25,6 +25,38 @@ func (a *ActivityQuery) collectField(ctx *graphql.OperationContext, field graphq
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (af *AlarmFilterQuery) CollectFields(ctx context.Context, satisfies ...string) *AlarmFilterQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		af = af.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return af
+}
+
+func (af *AlarmFilterQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AlarmFilterQuery {
+	return af
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (as *AlarmStatusQuery) CollectFields(ctx context.Context, satisfies ...string) *AlarmStatusQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		as = as.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return as
+}
+
+func (as *AlarmStatusQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AlarmStatusQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "alarmFilter":
+			as = as.WithAlarmStatusFk(func(query *AlarmFilterQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return as
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		b = b.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

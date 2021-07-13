@@ -14,6 +14,8 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -103,6 +105,8 @@ const (
 
 	// Node types.
 	TypeActivity                    = "Activity"
+	TypeAlarmFilter                 = "AlarmFilter"
+	TypeAlarmStatus                 = "AlarmStatus"
 	TypeBlock                       = "Block"
 	TypeBlockInstance               = "BlockInstance"
 	TypeCheckListCategory           = "CheckListCategory"
@@ -987,6 +991,1360 @@ func (m *ActivityMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Activity edge %s", name)
+}
+
+// AlarmFilterMutation represents an operation that mutate the AlarmFilters
+// nodes in the graph.
+type AlarmFilterMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	name                 *string
+	networkResource      *string
+	beginTime            *time.Time
+	endTime              *time.Time
+	reason               *string
+	user                 *string
+	creationTime         *time.Time
+	enable               *bool
+	clearedFields        map[string]struct{}
+	alarmStatusFk        *int
+	clearedalarmStatusFk bool
+	done                 bool
+	oldValue             func(context.Context) (*AlarmFilter, error)
+	predicates           []predicate.AlarmFilter
+}
+
+var _ ent.Mutation = (*AlarmFilterMutation)(nil)
+
+// alarmfilterOption allows to manage the mutation configuration using functional options.
+type alarmfilterOption func(*AlarmFilterMutation)
+
+// newAlarmFilterMutation creates new mutation for AlarmFilter.
+func newAlarmFilterMutation(c config, op Op, opts ...alarmfilterOption) *AlarmFilterMutation {
+	m := &AlarmFilterMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAlarmFilter,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAlarmFilterID sets the id field of the mutation.
+func withAlarmFilterID(id int) alarmfilterOption {
+	return func(m *AlarmFilterMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AlarmFilter
+		)
+		m.oldValue = func(ctx context.Context) (*AlarmFilter, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AlarmFilter.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAlarmFilter sets the old AlarmFilter of the mutation.
+func withAlarmFilter(node *AlarmFilter) alarmfilterOption {
+	return func(m *AlarmFilterMutation) {
+		m.oldValue = func(context.Context) (*AlarmFilter, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AlarmFilterMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AlarmFilterMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *AlarmFilterMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *AlarmFilterMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *AlarmFilterMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *AlarmFilterMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *AlarmFilterMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *AlarmFilterMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *AlarmFilterMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *AlarmFilterMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *AlarmFilterMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *AlarmFilterMutation) ResetName() {
+	m.name = nil
+}
+
+// SetNetworkResource sets the networkResource field.
+func (m *AlarmFilterMutation) SetNetworkResource(s string) {
+	m.networkResource = &s
+}
+
+// NetworkResource returns the networkResource value in the mutation.
+func (m *AlarmFilterMutation) NetworkResource() (r string, exists bool) {
+	v := m.networkResource
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNetworkResource returns the old networkResource value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldNetworkResource(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldNetworkResource is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldNetworkResource requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNetworkResource: %w", err)
+	}
+	return oldValue.NetworkResource, nil
+}
+
+// ResetNetworkResource reset all changes of the "networkResource" field.
+func (m *AlarmFilterMutation) ResetNetworkResource() {
+	m.networkResource = nil
+}
+
+// SetBeginTime sets the beginTime field.
+func (m *AlarmFilterMutation) SetBeginTime(t time.Time) {
+	m.beginTime = &t
+}
+
+// BeginTime returns the beginTime value in the mutation.
+func (m *AlarmFilterMutation) BeginTime() (r time.Time, exists bool) {
+	v := m.beginTime
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBeginTime returns the old beginTime value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldBeginTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBeginTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBeginTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBeginTime: %w", err)
+	}
+	return oldValue.BeginTime, nil
+}
+
+// ResetBeginTime reset all changes of the "beginTime" field.
+func (m *AlarmFilterMutation) ResetBeginTime() {
+	m.beginTime = nil
+}
+
+// SetEndTime sets the endTime field.
+func (m *AlarmFilterMutation) SetEndTime(t time.Time) {
+	m.endTime = &t
+}
+
+// EndTime returns the endTime value in the mutation.
+func (m *AlarmFilterMutation) EndTime() (r time.Time, exists bool) {
+	v := m.endTime
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndTime returns the old endTime value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldEndTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEndTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEndTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndTime: %w", err)
+	}
+	return oldValue.EndTime, nil
+}
+
+// ResetEndTime reset all changes of the "endTime" field.
+func (m *AlarmFilterMutation) ResetEndTime() {
+	m.endTime = nil
+}
+
+// SetReason sets the reason field.
+func (m *AlarmFilterMutation) SetReason(s string) {
+	m.reason = &s
+}
+
+// Reason returns the reason value in the mutation.
+func (m *AlarmFilterMutation) Reason() (r string, exists bool) {
+	v := m.reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReason returns the old reason value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldReason is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReason: %w", err)
+	}
+	return oldValue.Reason, nil
+}
+
+// ResetReason reset all changes of the "reason" field.
+func (m *AlarmFilterMutation) ResetReason() {
+	m.reason = nil
+}
+
+// SetUser sets the user field.
+func (m *AlarmFilterMutation) SetUser(s string) {
+	m.user = &s
+}
+
+// User returns the user value in the mutation.
+func (m *AlarmFilterMutation) User() (r string, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUser returns the old user value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldUser(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUser is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUser: %w", err)
+	}
+	return oldValue.User, nil
+}
+
+// ResetUser reset all changes of the "user" field.
+func (m *AlarmFilterMutation) ResetUser() {
+	m.user = nil
+}
+
+// SetCreationTime sets the creationTime field.
+func (m *AlarmFilterMutation) SetCreationTime(t time.Time) {
+	m.creationTime = &t
+}
+
+// CreationTime returns the creationTime value in the mutation.
+func (m *AlarmFilterMutation) CreationTime() (r time.Time, exists bool) {
+	v := m.creationTime
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreationTime returns the old creationTime value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldCreationTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreationTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreationTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreationTime: %w", err)
+	}
+	return oldValue.CreationTime, nil
+}
+
+// ResetCreationTime reset all changes of the "creationTime" field.
+func (m *AlarmFilterMutation) ResetCreationTime() {
+	m.creationTime = nil
+}
+
+// SetEnable sets the enable field.
+func (m *AlarmFilterMutation) SetEnable(b bool) {
+	m.enable = &b
+}
+
+// Enable returns the enable value in the mutation.
+func (m *AlarmFilterMutation) Enable() (r bool, exists bool) {
+	v := m.enable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnable returns the old enable value of the AlarmFilter.
+// If the AlarmFilter object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmFilterMutation) OldEnable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnable is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnable: %w", err)
+	}
+	return oldValue.Enable, nil
+}
+
+// ResetEnable reset all changes of the "enable" field.
+func (m *AlarmFilterMutation) ResetEnable() {
+	m.enable = nil
+}
+
+// SetAlarmStatusFkID sets the alarmStatusFk edge to AlarmStatus by id.
+func (m *AlarmFilterMutation) SetAlarmStatusFkID(id int) {
+	m.alarmStatusFk = &id
+}
+
+// ClearAlarmStatusFk clears the alarmStatusFk edge to AlarmStatus.
+func (m *AlarmFilterMutation) ClearAlarmStatusFk() {
+	m.clearedalarmStatusFk = true
+}
+
+// AlarmStatusFkCleared returns if the edge alarmStatusFk was cleared.
+func (m *AlarmFilterMutation) AlarmStatusFkCleared() bool {
+	return m.clearedalarmStatusFk
+}
+
+// AlarmStatusFkID returns the alarmStatusFk id in the mutation.
+func (m *AlarmFilterMutation) AlarmStatusFkID() (id int, exists bool) {
+	if m.alarmStatusFk != nil {
+		return *m.alarmStatusFk, true
+	}
+	return
+}
+
+// AlarmStatusFkIDs returns the alarmStatusFk ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// AlarmStatusFkID instead. It exists only for internal usage by the builders.
+func (m *AlarmFilterMutation) AlarmStatusFkIDs() (ids []int) {
+	if id := m.alarmStatusFk; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAlarmStatusFk reset all changes of the "alarmStatusFk" edge.
+func (m *AlarmFilterMutation) ResetAlarmStatusFk() {
+	m.alarmStatusFk = nil
+	m.clearedalarmStatusFk = false
+}
+
+// Op returns the operation name.
+func (m *AlarmFilterMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (AlarmFilter).
+func (m *AlarmFilterMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *AlarmFilterMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.create_time != nil {
+		fields = append(fields, alarmfilter.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, alarmfilter.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, alarmfilter.FieldName)
+	}
+	if m.networkResource != nil {
+		fields = append(fields, alarmfilter.FieldNetworkResource)
+	}
+	if m.beginTime != nil {
+		fields = append(fields, alarmfilter.FieldBeginTime)
+	}
+	if m.endTime != nil {
+		fields = append(fields, alarmfilter.FieldEndTime)
+	}
+	if m.reason != nil {
+		fields = append(fields, alarmfilter.FieldReason)
+	}
+	if m.user != nil {
+		fields = append(fields, alarmfilter.FieldUser)
+	}
+	if m.creationTime != nil {
+		fields = append(fields, alarmfilter.FieldCreationTime)
+	}
+	if m.enable != nil {
+		fields = append(fields, alarmfilter.FieldEnable)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *AlarmFilterMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case alarmfilter.FieldCreateTime:
+		return m.CreateTime()
+	case alarmfilter.FieldUpdateTime:
+		return m.UpdateTime()
+	case alarmfilter.FieldName:
+		return m.Name()
+	case alarmfilter.FieldNetworkResource:
+		return m.NetworkResource()
+	case alarmfilter.FieldBeginTime:
+		return m.BeginTime()
+	case alarmfilter.FieldEndTime:
+		return m.EndTime()
+	case alarmfilter.FieldReason:
+		return m.Reason()
+	case alarmfilter.FieldUser:
+		return m.User()
+	case alarmfilter.FieldCreationTime:
+		return m.CreationTime()
+	case alarmfilter.FieldEnable:
+		return m.Enable()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *AlarmFilterMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case alarmfilter.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case alarmfilter.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case alarmfilter.FieldName:
+		return m.OldName(ctx)
+	case alarmfilter.FieldNetworkResource:
+		return m.OldNetworkResource(ctx)
+	case alarmfilter.FieldBeginTime:
+		return m.OldBeginTime(ctx)
+	case alarmfilter.FieldEndTime:
+		return m.OldEndTime(ctx)
+	case alarmfilter.FieldReason:
+		return m.OldReason(ctx)
+	case alarmfilter.FieldUser:
+		return m.OldUser(ctx)
+	case alarmfilter.FieldCreationTime:
+		return m.OldCreationTime(ctx)
+	case alarmfilter.FieldEnable:
+		return m.OldEnable(ctx)
+	}
+	return nil, fmt.Errorf("unknown AlarmFilter field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AlarmFilterMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case alarmfilter.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case alarmfilter.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case alarmfilter.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case alarmfilter.FieldNetworkResource:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNetworkResource(v)
+		return nil
+	case alarmfilter.FieldBeginTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBeginTime(v)
+		return nil
+	case alarmfilter.FieldEndTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndTime(v)
+		return nil
+	case alarmfilter.FieldReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReason(v)
+		return nil
+	case alarmfilter.FieldUser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUser(v)
+		return nil
+	case alarmfilter.FieldCreationTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreationTime(v)
+		return nil
+	case alarmfilter.FieldEnable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnable(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmFilter field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *AlarmFilterMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *AlarmFilterMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AlarmFilterMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AlarmFilter numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *AlarmFilterMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *AlarmFilterMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AlarmFilterMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown AlarmFilter nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *AlarmFilterMutation) ResetField(name string) error {
+	switch name {
+	case alarmfilter.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case alarmfilter.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case alarmfilter.FieldName:
+		m.ResetName()
+		return nil
+	case alarmfilter.FieldNetworkResource:
+		m.ResetNetworkResource()
+		return nil
+	case alarmfilter.FieldBeginTime:
+		m.ResetBeginTime()
+		return nil
+	case alarmfilter.FieldEndTime:
+		m.ResetEndTime()
+		return nil
+	case alarmfilter.FieldReason:
+		m.ResetReason()
+		return nil
+	case alarmfilter.FieldUser:
+		m.ResetUser()
+		return nil
+	case alarmfilter.FieldCreationTime:
+		m.ResetCreationTime()
+		return nil
+	case alarmfilter.FieldEnable:
+		m.ResetEnable()
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmFilter field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *AlarmFilterMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.alarmStatusFk != nil {
+		edges = append(edges, alarmfilter.EdgeAlarmStatusFk)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *AlarmFilterMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case alarmfilter.EdgeAlarmStatusFk:
+		if id := m.alarmStatusFk; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *AlarmFilterMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *AlarmFilterMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *AlarmFilterMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedalarmStatusFk {
+		edges = append(edges, alarmfilter.EdgeAlarmStatusFk)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *AlarmFilterMutation) EdgeCleared(name string) bool {
+	switch name {
+	case alarmfilter.EdgeAlarmStatusFk:
+		return m.clearedalarmStatusFk
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *AlarmFilterMutation) ClearEdge(name string) error {
+	switch name {
+	case alarmfilter.EdgeAlarmStatusFk:
+		m.ClearAlarmStatusFk()
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmFilter unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *AlarmFilterMutation) ResetEdge(name string) error {
+	switch name {
+	case alarmfilter.EdgeAlarmStatusFk:
+		m.ResetAlarmStatusFk()
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmFilter edge %s", name)
+}
+
+// AlarmStatusMutation represents an operation that mutate the AlarmStatusSlice
+// nodes in the graph.
+type AlarmStatusMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	name                 *string
+	clearedFields        map[string]struct{}
+	alarmStatusFk        map[int]struct{}
+	removedalarmStatusFk map[int]struct{}
+	clearedalarmStatusFk bool
+	done                 bool
+	oldValue             func(context.Context) (*AlarmStatus, error)
+	predicates           []predicate.AlarmStatus
+}
+
+var _ ent.Mutation = (*AlarmStatusMutation)(nil)
+
+// alarmstatusOption allows to manage the mutation configuration using functional options.
+type alarmstatusOption func(*AlarmStatusMutation)
+
+// newAlarmStatusMutation creates new mutation for AlarmStatus.
+func newAlarmStatusMutation(c config, op Op, opts ...alarmstatusOption) *AlarmStatusMutation {
+	m := &AlarmStatusMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAlarmStatus,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAlarmStatusID sets the id field of the mutation.
+func withAlarmStatusID(id int) alarmstatusOption {
+	return func(m *AlarmStatusMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AlarmStatus
+		)
+		m.oldValue = func(ctx context.Context) (*AlarmStatus, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AlarmStatus.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAlarmStatus sets the old AlarmStatus of the mutation.
+func withAlarmStatus(node *AlarmStatus) alarmstatusOption {
+	return func(m *AlarmStatusMutation) {
+		m.oldValue = func(context.Context) (*AlarmStatus, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AlarmStatusMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AlarmStatusMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *AlarmStatusMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *AlarmStatusMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *AlarmStatusMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the AlarmStatus.
+// If the AlarmStatus object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmStatusMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *AlarmStatusMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *AlarmStatusMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *AlarmStatusMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the AlarmStatus.
+// If the AlarmStatus object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmStatusMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *AlarmStatusMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *AlarmStatusMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *AlarmStatusMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the AlarmStatus.
+// If the AlarmStatus object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AlarmStatusMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *AlarmStatusMutation) ResetName() {
+	m.name = nil
+}
+
+// AddAlarmStatusFkIDs adds the alarmStatusFk edge to AlarmFilter by ids.
+func (m *AlarmStatusMutation) AddAlarmStatusFkIDs(ids ...int) {
+	if m.alarmStatusFk == nil {
+		m.alarmStatusFk = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.alarmStatusFk[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAlarmStatusFk clears the alarmStatusFk edge to AlarmFilter.
+func (m *AlarmStatusMutation) ClearAlarmStatusFk() {
+	m.clearedalarmStatusFk = true
+}
+
+// AlarmStatusFkCleared returns if the edge alarmStatusFk was cleared.
+func (m *AlarmStatusMutation) AlarmStatusFkCleared() bool {
+	return m.clearedalarmStatusFk
+}
+
+// RemoveAlarmStatusFkIDs removes the alarmStatusFk edge to AlarmFilter by ids.
+func (m *AlarmStatusMutation) RemoveAlarmStatusFkIDs(ids ...int) {
+	if m.removedalarmStatusFk == nil {
+		m.removedalarmStatusFk = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedalarmStatusFk[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAlarmStatusFk returns the removed ids of alarmStatusFk.
+func (m *AlarmStatusMutation) RemovedAlarmStatusFkIDs() (ids []int) {
+	for id := range m.removedalarmStatusFk {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AlarmStatusFkIDs returns the alarmStatusFk ids in the mutation.
+func (m *AlarmStatusMutation) AlarmStatusFkIDs() (ids []int) {
+	for id := range m.alarmStatusFk {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAlarmStatusFk reset all changes of the "alarmStatusFk" edge.
+func (m *AlarmStatusMutation) ResetAlarmStatusFk() {
+	m.alarmStatusFk = nil
+	m.clearedalarmStatusFk = false
+	m.removedalarmStatusFk = nil
+}
+
+// Op returns the operation name.
+func (m *AlarmStatusMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (AlarmStatus).
+func (m *AlarmStatusMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *AlarmStatusMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, alarmstatus.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, alarmstatus.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, alarmstatus.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *AlarmStatusMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case alarmstatus.FieldCreateTime:
+		return m.CreateTime()
+	case alarmstatus.FieldUpdateTime:
+		return m.UpdateTime()
+	case alarmstatus.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *AlarmStatusMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case alarmstatus.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case alarmstatus.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case alarmstatus.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown AlarmStatus field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AlarmStatusMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case alarmstatus.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case alarmstatus.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case alarmstatus.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmStatus field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *AlarmStatusMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *AlarmStatusMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AlarmStatusMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AlarmStatus numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *AlarmStatusMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *AlarmStatusMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AlarmStatusMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown AlarmStatus nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *AlarmStatusMutation) ResetField(name string) error {
+	switch name {
+	case alarmstatus.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case alarmstatus.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case alarmstatus.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmStatus field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *AlarmStatusMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.alarmStatusFk != nil {
+		edges = append(edges, alarmstatus.EdgeAlarmStatusFk)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *AlarmStatusMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case alarmstatus.EdgeAlarmStatusFk:
+		ids := make([]ent.Value, 0, len(m.alarmStatusFk))
+		for id := range m.alarmStatusFk {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *AlarmStatusMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedalarmStatusFk != nil {
+		edges = append(edges, alarmstatus.EdgeAlarmStatusFk)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *AlarmStatusMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case alarmstatus.EdgeAlarmStatusFk:
+		ids := make([]ent.Value, 0, len(m.removedalarmStatusFk))
+		for id := range m.removedalarmStatusFk {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *AlarmStatusMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedalarmStatusFk {
+		edges = append(edges, alarmstatus.EdgeAlarmStatusFk)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *AlarmStatusMutation) EdgeCleared(name string) bool {
+	switch name {
+	case alarmstatus.EdgeAlarmStatusFk:
+		return m.clearedalarmStatusFk
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *AlarmStatusMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AlarmStatus unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *AlarmStatusMutation) ResetEdge(name string) error {
+	switch name {
+	case alarmstatus.EdgeAlarmStatusFk:
+		m.ResetAlarmStatusFk()
+		return nil
+	}
+	return fmt.Errorf("unknown AlarmStatus edge %s", name)
 }
 
 // BlockMutation represents an operation that mutate the Blocks
@@ -34181,6 +35539,7 @@ type PermissionsPolicyMutation struct {
 	inventory_policy  **models.InventoryPolicyInput
 	workforce_policy  **models.WorkforcePolicyInput
 	automation_policy **models.AutomationPolicyInput
+	assurance_policy  **models.AssurancePolicyInput
 	clearedFields     map[string]struct{}
 	groups            map[int]struct{}
 	removedgroups     map[int]struct{}
@@ -34630,6 +35989,56 @@ func (m *PermissionsPolicyMutation) ResetAutomationPolicy() {
 	delete(m.clearedFields, permissionspolicy.FieldAutomationPolicy)
 }
 
+// SetAssurancePolicy sets the assurance_policy field.
+func (m *PermissionsPolicyMutation) SetAssurancePolicy(mpi *models.AssurancePolicyInput) {
+	m.assurance_policy = &mpi
+}
+
+// AssurancePolicy returns the assurance_policy value in the mutation.
+func (m *PermissionsPolicyMutation) AssurancePolicy() (r *models.AssurancePolicyInput, exists bool) {
+	v := m.assurance_policy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAssurancePolicy returns the old assurance_policy value of the PermissionsPolicy.
+// If the PermissionsPolicy object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *PermissionsPolicyMutation) OldAssurancePolicy(ctx context.Context) (v *models.AssurancePolicyInput, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAssurancePolicy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAssurancePolicy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAssurancePolicy: %w", err)
+	}
+	return oldValue.AssurancePolicy, nil
+}
+
+// ClearAssurancePolicy clears the value of assurance_policy.
+func (m *PermissionsPolicyMutation) ClearAssurancePolicy() {
+	m.assurance_policy = nil
+	m.clearedFields[permissionspolicy.FieldAssurancePolicy] = struct{}{}
+}
+
+// AssurancePolicyCleared returns if the field assurance_policy was cleared in this mutation.
+func (m *PermissionsPolicyMutation) AssurancePolicyCleared() bool {
+	_, ok := m.clearedFields[permissionspolicy.FieldAssurancePolicy]
+	return ok
+}
+
+// ResetAssurancePolicy reset all changes of the "assurance_policy" field.
+func (m *PermissionsPolicyMutation) ResetAssurancePolicy() {
+	m.assurance_policy = nil
+	delete(m.clearedFields, permissionspolicy.FieldAssurancePolicy)
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (m *PermissionsPolicyMutation) AddGroupIDs(ids ...int) {
 	if m.groups == nil {
@@ -34697,7 +36106,7 @@ func (m *PermissionsPolicyMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *PermissionsPolicyMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, permissionspolicy.FieldCreateTime)
 	}
@@ -34721,6 +36130,9 @@ func (m *PermissionsPolicyMutation) Fields() []string {
 	}
 	if m.automation_policy != nil {
 		fields = append(fields, permissionspolicy.FieldAutomationPolicy)
+	}
+	if m.assurance_policy != nil {
+		fields = append(fields, permissionspolicy.FieldAssurancePolicy)
 	}
 	return fields
 }
@@ -34746,6 +36158,8 @@ func (m *PermissionsPolicyMutation) Field(name string) (ent.Value, bool) {
 		return m.WorkforcePolicy()
 	case permissionspolicy.FieldAutomationPolicy:
 		return m.AutomationPolicy()
+	case permissionspolicy.FieldAssurancePolicy:
+		return m.AssurancePolicy()
 	}
 	return nil, false
 }
@@ -34771,6 +36185,8 @@ func (m *PermissionsPolicyMutation) OldField(ctx context.Context, name string) (
 		return m.OldWorkforcePolicy(ctx)
 	case permissionspolicy.FieldAutomationPolicy:
 		return m.OldAutomationPolicy(ctx)
+	case permissionspolicy.FieldAssurancePolicy:
+		return m.OldAssurancePolicy(ctx)
 	}
 	return nil, fmt.Errorf("unknown PermissionsPolicy field %s", name)
 }
@@ -34836,6 +36252,13 @@ func (m *PermissionsPolicyMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetAutomationPolicy(v)
 		return nil
+	case permissionspolicy.FieldAssurancePolicy:
+		v, ok := value.(*models.AssurancePolicyInput)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAssurancePolicy(v)
+		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy field %s", name)
 }
@@ -34881,6 +36304,9 @@ func (m *PermissionsPolicyMutation) ClearedFields() []string {
 	if m.FieldCleared(permissionspolicy.FieldAutomationPolicy) {
 		fields = append(fields, permissionspolicy.FieldAutomationPolicy)
 	}
+	if m.FieldCleared(permissionspolicy.FieldAssurancePolicy) {
+		fields = append(fields, permissionspolicy.FieldAssurancePolicy)
+	}
 	return fields
 }
 
@@ -34909,6 +36335,9 @@ func (m *PermissionsPolicyMutation) ClearField(name string) error {
 		return nil
 	case permissionspolicy.FieldAutomationPolicy:
 		m.ClearAutomationPolicy()
+		return nil
+	case permissionspolicy.FieldAssurancePolicy:
+		m.ClearAssurancePolicy()
 		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy nullable field %s", name)
@@ -34942,6 +36371,9 @@ func (m *PermissionsPolicyMutation) ResetField(name string) error {
 		return nil
 	case permissionspolicy.FieldAutomationPolicy:
 		m.ResetAutomationPolicy()
+		return nil
+	case permissionspolicy.FieldAssurancePolicy:
+		m.ResetAssurancePolicy()
 		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy field %s", name)
