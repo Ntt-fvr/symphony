@@ -124,7 +124,10 @@ export default function Catalog() {
               path={relativeUrl('/threshold_types')}
               component={ThresholdTypes}
             />
-            <Redirect to={relativeUrl('/counters_types')} />
+            <Redirect
+              from={relativeUrl('/assurance/performance')}
+              to={relativeUrl('/counters_types')}
+            />
           </Switch>
         </InventorySuspense>
       </InventoryErrorBoundary>

@@ -46,33 +46,39 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  formValues: object,
-  onClose: void,
+  formValues: {
+    id: string,
+    name: string,
+    externalID: string,
+    networkManagerSystem: string,
+    counterFamily: {
+      name: string,
+    },
+  },
+  hideEditCounterForm: any,
 |}>;
 
-export const EditCounterItemForm = (props: Props) => {
-  const {formValues, onClose} = props;
+const EditCounterItemForm = (props: Props) => {
+  const {formValues, hideEditCounterForm} = props;
   const classes = useStyles();
 
-  console.log(formValues);
+  const name = useFormInput(formValues.name);
+  const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
+  const counterID = useFormInput(formValues.externalID);
+  const familyName = useFormInput(formValues.counterFamily.name);
 
-  const name = useFormInput(formValues.item.node.name);
-  const networkManagerSystem = useFormInput(
-    formValues.item.node.networkManagerSystem,
-  );
-  const counterID = useFormInput(formValues.item.node.externalID);
-
-  function handleClick() {
+  const handleClick = () => {
     const variables: EditCounterMutationVariables = {
       input: {
-        id: formValues.Id,
+        id: formValues.id,
         name: name.value,
         externalID: counterID.value,
         networkManagerSystem: networkManagerSystem.value,
       },
     };
+
     EditCounterMutation(variables);
-  }
+  };
 
   return (
     <div className={classes.root}>
@@ -105,7 +111,6 @@ export const EditCounterItemForm = (props: Props) => {
                   label="Vendor name"
                   required>
                   <TextInput
-                    hola
                     className={classes.textInput}
                     name="vendorName"
                     variant="outlined"
@@ -148,7 +153,7 @@ export const EditCounterItemForm = (props: Props) => {
                 label="Family name"
                 required>
                 <TextInput
-                  hola
+                  {...familyName}
                   className={classes.textInput}
                   name="FamilyName"
                   variant="outlined"
@@ -159,7 +164,12 @@ export const EditCounterItemForm = (props: Props) => {
             <Grid container justify="flex-end">
               <Grid item xs={2} sm={2} lg={1} xl={1}>
                 <FormField>
-                  <Button onClick={handleClick} className={classes.addCounter}>
+                  <Button
+                    className={classes.addCounter}
+                    onClick={() => {
+                      handleClick();
+                      hideEditCounterForm();
+                    }}>
                     Save
                   </Button>
                 </FormField>
@@ -167,9 +177,9 @@ export const EditCounterItemForm = (props: Props) => {
               <Grid item xs={2} sm={2} lg={1} xl={1}>
                 <FormField>
                   <Button
-                    onClick={onClose}
                     className={classes.addCounter}
-                    skin="brightGray">
+                    skin="brightGray"
+                    onClick={hideEditCounterForm}>
                     Cancel
                   </Button>
                 </FormField>
@@ -181,3 +191,5 @@ export const EditCounterItemForm = (props: Props) => {
     </div>
   );
 };
+
+export default EditCounterItemForm;

@@ -7,6 +7,7 @@
  * @flow strict-local
  * @format
  */
+
 import AddButton from './AddButton';
 import AddCounterItemForm from './AddCounterItemForm';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -52,7 +53,7 @@ const CounterAddedSuccessfully = () => {
   }
 
   if (returnForm) {
-    return <AddCounterItemForm />;
+    return <AddCounterItemForm dataValues={[]} />;
   }
   return (
     <Card className={classes.root}>
@@ -67,13 +68,9 @@ const CounterAddedSuccessfully = () => {
           <CheckCircleOutlineOutlinedIcon className={classes.icon} />
         </Grid>
         <Grid container direction="column" justify="center" alignItems="center">
-          <Text className={classes.message} variant="h6">
-            Counter added
-          </Text>
+          <Text variant="h6">Counter added</Text>
           <Grid>
-            <Text className={classes.message} variant="h6">
-              successfully
-            </Text>
+            <Text variant="h6">successfully</Text>
           </Grid>
         </Grid>
         <Grid className={classes.addButton}>

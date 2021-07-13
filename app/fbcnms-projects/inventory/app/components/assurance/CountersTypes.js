@@ -20,9 +20,9 @@ import type {RemoveCountersTypesMutationVariables} from '../../mutations/__gener
 import AddCounterItemForm from './AddCounterItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
+import EditCounterItemForm from './EditCounterItemForm';
 import RemoveCountersTypesMutation from '../../mutations/RemoveCountersTypesMutation';
 import TitleTextCardsCounter from './TitleTextCardsCounter';
-import {EditCounterItemForm} from './EditCounterItemForm';
 
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -68,6 +68,20 @@ const CountersQuery = graphql`
   }
 `;
 
+type Counters = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+      externalID: string,
+      networkManagerSystem: string,
+      counterFamily: {
+        name: string,
+      },
+    },
+  },
+};
+
 const CountersTypes = () => {
   const classes = useStyles();
 
@@ -88,20 +102,20 @@ const CountersTypes = () => {
     RemoveCountersTypesMutation(variables);
   };
 
-  const showEditCounterItemForm = (counters: {}) => {
+  const showEditCounterItemForm = (counters: Counters) => {
     setShowEditCard(true);
     setDataEdit(counters);
   };
 
-  const hideEditCounterItemForm = () => {
+  const hideEditCounterForm = () => {
     setShowEditCard(false);
   };
 
   if (showEditCard) {
     return (
       <EditCounterItemForm
-        formValues={dataEdit}
-        onClose={hideEditCounterItemForm()}
+        formValues={dataEdit.item.node}
+        hideEditCounterForm={hideEditCounterForm}
       />
     );
   }

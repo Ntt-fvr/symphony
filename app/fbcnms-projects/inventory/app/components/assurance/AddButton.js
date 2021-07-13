@@ -1,12 +1,20 @@
-/*[object Object]*/
-// eslint-disable-next-line header/header
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow strict-local
+ * @format
+ */
+
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(() => ({
   button: {
     padding: '0 9px',
     with: '121px',
@@ -21,10 +29,10 @@ const useStyles = makeStyles({
     paddingLeft: '0px',
     margin: '0px',
   },
-});
+}));
 
 type Props = $ReadOnly<{|
-  textButton: String,
+  textButton: string,
 |}>;
 
 function AddButton(props: Props) {

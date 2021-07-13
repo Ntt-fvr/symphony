@@ -24,8 +24,6 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
-import fbt from 'fbt';
-
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
 

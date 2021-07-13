@@ -61,7 +61,6 @@ function AssuranceMain() {
                   component={FaultManagement}
                 />
                 <Redirect
-                  exact
                   from="/assurance"
                   to={relativeUrl('/performance/counters_types')}
                 />
