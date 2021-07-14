@@ -22,6 +22,7 @@ import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
+import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
 import AddImageMutation from '../../mutations/AddImageMutation';
@@ -71,9 +72,8 @@ import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
-
 import {useSnackbar} from 'notistack';
-
+import {isChecklistItemDone} from '../checklist/ChecklistUtils.js'
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
@@ -159,6 +159,7 @@ const WorkOrderDetails = ({
   onWorkOrderRemoved,
   onCancelClicked,
   confirm,
+  alert
 }: Props) => {
   const classes = useStyles();
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
@@ -478,8 +479,16 @@ const WorkOrderDetails = ({
             'Verification message details',
           ),
           confirmLabel: Strings.common.okButton,
-        }).then(confirmed => {
+        }).then(async (confirmed) => {
           if (confirmed) {
+            // console.log('propsWorkOrder', editingCategories);
+            const items: Array<CheckListItem> = editingCategories.flatMap( x => x.checkList || [])
+            const isNotDone = await verifyMandatoryItems(items)
+            console.log('isNotDone', isNotDone);
+            if(isNotDone){
+              alert(`'Failed', checklist categories items have empty mandatory responses. Please complete them`);
+              return;
+            }
             resolve();
           } else {
             reject();
@@ -490,9 +499,21 @@ const WorkOrderDetails = ({
 
     verification.then(() => {
       setWorkOrder({...workOrder, status: value});
-    });
+    }).catch( x => console.log('error', x));
   };
 
+  const verifyMandatoryItems = async (itemsArray: Array<CheckListItem>) => {
+    return itemsArray.some((value, index) => {
+      const type = value.type;
+      const isMandatory = value.isMandatory;
+      if(!isMandatory){
+        return false // pass
+      }
+      const isDone = isChecklistItemDone(value);
+      // console.log(isDone, itemsArray[index]);
+      return !isDone; //if was not done
+    })
+  }
   const _setWorkOrderDetail = (
     key:
       | 'name'
