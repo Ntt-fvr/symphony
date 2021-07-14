@@ -7,7 +7,7 @@
  * @flow
  * @format
  */
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {graphql} from 'react-relay';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import RelayEnvironment from '../../common/RelayEnvironment';
@@ -64,48 +64,55 @@ const KpiQuery = graphql`
   }
 `;
 
+type Kpis = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+      status: boolean,
+      domainFk: {
+        id : string,
+        name: string,
+      }
+    },
+  },
+};
+
 const KpiTypes = () => {
   const classes = useStyles();
-  const [kpis, setkpis] = useState([])
-  // const data = useLazyLoadQuery<KpiTypesQuery>(KpiQuery, {});
-  // const [items, setItems] = useState(data);
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
+  
+  const [Datakpis, setDatakpis] = useState({})
+  const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   
-  const fethData = useCallback(()=>{
-    fetchQuery(RelayEnvironment, KpiQuery, {})
-    .then(data => {
-      setkpis(data.kpis.edges.map(edge => edge.node));
-    });
-  }, []) 
-  
   useEffect(() => {
-    fethData()
-  }, [fethData]);
+    fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
+      setDatakpis(data);
+    });
+  }, [Datakpis]);
 
   const handleRemove = id => {
-    setkpis(kpis.filter(item => item.id !== id));
     const variables: RemoveKpiMutationVariables = {
       id: id,
     };
     RemoveKpiMutation(variables);
   };
 
-  const showEditKpiItemForm = (kpis: {}) => {
-    setShowAddEditCard(true);
+  const showEditKpiItemForm = (kpis: Kpis) => {
+    setShowEditCard(true);
     setDataEdit(kpis);
   };
 
-  const hideKpItemForm = () => {
-    setShowAddEditCard(false);
+  const hideEditKpiForm = () => {
+    setShowEditCard(false);
   };
 
-  if (showAddEditCard) {
+  if (showEditCard) {
     return (
       <EditKpiItemForm
-        formValues={dataEdit}
-        onClose={hideKpItemForm}
-        kpi={kpis}
+        kpi={Datakpis.kpis?.edges.map(item => item.node)}
+        formValues={dataEdit.item.node}
+        hideEditKpiForm={hideEditKpiForm}
       />
     );
   }
@@ -125,28 +132,20 @@ const KpiTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
-          {kpis &&
-            kpis.map((item, index) => (
-              <li className={classes.listCarKpi} key={index}>
-                <KpiTypeItem 
+          <List disablePadding>
+            {Datakpis.kpis?.edges.map((item, index) => (
+              <KpiTypeItem 
                 key={index} 
-                kpi={item} 
-                onChange={() => handleRemove(item.id)}
-                edit={() =>
-                  showEditKpiItemForm({
-                    Id: item.id,
-                    Name: item.name,
-                    DomainFk: item.domainFk.id
-                  })
-                } />
-              </li>
-            )) 
-          }  
+                onChange={() => handleRemove(item.node.id)}
+                edit={() => showEditKpiItemForm({item})}
+                {...item.node} 
+              />
+              )) 
+            }
+          </List>  
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          {kpis &&
-            <AddKpiItemForm kpi={kpis} />
-          }
+          <AddKpiItemForm dataValues={Datakpis.kpis?.edges.map(item => item.node)} />
           <AddFormulaItemForm />
         </Grid>
       </Grid>

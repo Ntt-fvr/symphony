@@ -62,25 +62,31 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  formValues: object,
-  onClose: void,
+  formValues: {
+    id: string,
+    name: string,
+    domainFk: string,
+    status: boolean,
+  },
+  hideEditKpiForm: any,
   kpi: object,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {formValues, onClose, kpi} = props;
+  const {formValues, kpi, hideEditKpiForm} = props;
   const classes = useStyles();
 
-  const name = useFormInput(formValues.Name);
-  const domainFk = useFormInput(formValues.DomainFk);
-  const id = useFormInput(formValues.Id);
-
-  function handleClick() {
+  const name = useFormInput(formValues.name);
+  const domainFk = useFormInput(formValues.domainFk);
+  const id = useFormInput(formValues.id);
+  
+  const handleClick = () => {
     const variables: EditKpiMutationVariables = {
       input: {
-        id: formValues.Id,
+        id: formValues.id,
         name: name.value,
         domainFk: domainFk.value,
+        status: true,
       },
     };
     EditKpiMutation(variables);
@@ -199,7 +205,13 @@ export const EditKpiItemForm = (props: Props) => {
             <Grid container justify="flex-end">
               <Grid item xs={2} sm={2} lg={1} xl={1}>
                 <FormField>
-                  <Button onClick={handleClick} className={classes.addKpi}>
+                  <Button 
+                    className={classes.addKpi}
+                    onClick={() => {
+                      handleClick();
+                      hideEditKpiForm();
+                    }}
+                    >
                     Save
                   </Button>
                 </FormField>
@@ -207,8 +219,8 @@ export const EditKpiItemForm = (props: Props) => {
               <Grid item xs={2} sm={2} lg={1} xl={1}>
                 <FormField>
                   <Button
-                    onClick={onClose}
                     className={classes.addKpi}
+                    onClick={hideEditKpiForm}
                     skin="brightGray">
                     Cancel
                   </Button>

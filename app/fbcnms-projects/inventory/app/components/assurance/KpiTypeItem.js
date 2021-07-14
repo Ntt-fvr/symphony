@@ -7,7 +7,7 @@
  * @flow
  * @format
  */
-import React from 'react';
+import React, {useState} from 'react';
 
 // COMPONENTS //
 import Table from './Table';
@@ -77,15 +77,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  kpi: Object,
+  name: string,
+  domainFk: {
+    name: string,
+  },
   edit: void,
   onChange: void,
 |}>;
 
 export default function KpiTypeItem(props: Props) {
-  const {kpi, edit, onChange} = props;
+  const {name, domainFk, edit, onChange} = props;
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className={classes.root}>
@@ -95,18 +98,18 @@ export default function KpiTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <FormControlLabel
-            aria-label="Acknowledge"
+            label=""
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
             control={<SwitchLabels />}
           />
           <Grid className={classes.rootGrid}>
-            <Text className={classes.nameKpi}>{kpi.name}</Text>
+            <Text className={classes.nameKpi}>{name}</Text>
           </Grid>
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpi.domainFk.name}</Text>
+              <Text className={classes.typeRed}>{domainFk.name}</Text>
             </Button>
           </Grid>
 
