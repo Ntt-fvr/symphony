@@ -23,6 +23,7 @@ export type AddCounterInput = {|
   externalID: string,
   networkManagerSystem: string,
   countervendorformula?: ?$ReadOnlyArray<EditCounterVendorFormulaInput>,
+  counterFamily: string,
 |};
 export type EditCounterVendorFormulaInput = {|
   id: string,

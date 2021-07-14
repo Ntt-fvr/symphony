@@ -10,28 +10,28 @@
 
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
-  RemoveKpiMutation,
-  RemoveKpiMutationResponse,
-  RemoveKpiMutationVariables,
-} from './__generated__/RemoveKpiMutation.graphql';
+  RemoveTresholdMutation,
+  RemoveTresholdMutationResponse,
+  RemoveTresholdMutationVariables,
+} from './__generated__/RemoveTresholdMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation RemoveKpiMutation($id: ID!) {
-    removeKpi(id: $id)
+  mutation RemoveTresholdMutation($id: ID!) {
+    removeTreshold(id: $id)
   }
 `;
 
 export default (
-  variables: RemoveKpiMutationVariables,
-  callbacks?: MutationCallbacks<RemoveKpiMutationResponse>,
+  variables: RemoveTresholdMutationVariables,
+  callbacks?: MutationCallbacks<RemoveTresholdMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<RemoveKpiMutation>(RelayEnvironment, {
+  commitMutation<RemoveTresholdMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

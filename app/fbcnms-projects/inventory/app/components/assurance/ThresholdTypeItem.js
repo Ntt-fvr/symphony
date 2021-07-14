@@ -22,11 +22,13 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -65,13 +67,14 @@ const useStyles = makeStyles(theme => ({
     color: '#3984FF',
     fontWeight: 'bold',
   },
-  edit: {
+  editIcon: {
     flexGrow: '1',
     margin: '10px',
   },
-  delete: {
+  deleteIcon: {
     flexGrow: '1',
     margin: '10px',
+    color: DARK.D300,
   },
   button: {
     marginLeft: '20%',
@@ -81,7 +84,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ThresholdTypeItem() {
+type Props = $ReadOnly<{|
+  id: string,
+  name: string,
+  description: string,
+  kpi: {
+    name: string,
+  },
+  edit: void,
+  onChange: void,
+|}>;
+
+export default function ThresholdTypeItem(props: Props) {
+  const {name, description, id, kpi, edit, onChange} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   return (
@@ -95,24 +110,24 @@ export default function ThresholdTypeItem() {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <FormControlLabel
-            aria-label="Acknowledge"
+            label=""
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
             control={<SwitchLabels />}
           />
           <Grid className={classes.rootGrid}>
-            <Text className={classes.nameThreshold}>DROP_THR</Text>
+            <Text className={classes.nameThreshold}>{name}</Text>
           </Grid>
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text>1968392781902</Text>
+              <Text>{id}</Text>
             </Button>
           </Grid>
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>THROUGHPUT_USER_DL_3G</Text>
+              <Text className={classes.typeRed}>{kpi.name}</Text>
             </Button>
           </Grid>
 
@@ -121,13 +136,17 @@ export default function ThresholdTypeItem() {
           </Grid>
 
           <Grid>
-            <a href="https://www.w3schools.com">
-              <IconButton className={classes.edit} icon={EditIcon} />
-            </a>
+            <IconButton
+              className={classes.editIcon}
+              icon={EditIcon}
+              onClick={edit}
+            />
           </Grid>
-
           <Grid>
-            <IconButton className={classes.delete} icon={DeleteIcon} />
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={onChange}
+            />
           </Grid>
         </AccordionSummary>
 
@@ -140,9 +159,7 @@ export default function ThresholdTypeItem() {
             justify="center"
             alignItems="center">
             <Grid xs={10}>
-              Description: : Chips allow users to enter information, make
-              selections, filter content, or trigger actions. While buttons are
-              expected.
+              {description}
             </Grid>
             <Grid xs={10}>
               <Text

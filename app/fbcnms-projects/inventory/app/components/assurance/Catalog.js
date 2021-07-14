@@ -15,7 +15,7 @@ import InventorySuspense from '../../common/InventorySuspense';
 import KpiTypes from './KpiTypes';
 import React, {useEffect, useMemo, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
-import ThresholdTypes from './ThresholdTypes';
+import TresholdTypes from './TresholdTypes';
 import fbt from 'fbt';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
@@ -74,11 +74,11 @@ export default function Catalog() {
       path: 'kpi_types',
     },
     {
-      id: 'threshold_types',
+      id: 'treshold_types',
       tab: {
-        label: fbt('THRESHOLD', ''),
+        label: fbt('TRESHOLD', ''),
       },
-      path: 'threshold_types',
+      path: 'treshold_types',
     },
   ]
 
@@ -121,8 +121,8 @@ export default function Catalog() {
             />
             <Route
               exact
-              path={relativeUrl('/threshold_types')}
-              component={ThresholdTypes}
+              path={relativeUrl('/treshold_types')}
+              component={TresholdTypes}
             />
             <Redirect
               from={relativeUrl('/assurance/performance')}
