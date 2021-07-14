@@ -8,6 +8,7 @@
  * @format
  */
 
+import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React from 'react';
@@ -69,6 +70,9 @@ const AlarmFilteringTypes = () => {
           <FormField>
             <Button className={classes.button}>Add Alarm Filtering</Button>
           </FormField>
+        </Grid>
+        <Grid item xs={12}>
+          <AlarmFilteringTable />
         </Grid>
       </Grid>
     </div>
