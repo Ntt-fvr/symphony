@@ -7,27 +7,27 @@
  * @flow
  * @format
  */
-import React from 'react';
+import React, {useState} from 'react';
 
 // COMPONENTS //
-import Table from './Table';
 import AddButton from './AddButton';
 import SwitchLabels from './Switch';
+import Table from './Table';
 
 // DESING SYSTEM //
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Grid from '@material-ui/core/Grid';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {DARK} from '@symphony/design-system/theme/symphony';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,15 +77,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  kpi: Object,
+  name: string,
+  domainFk: {
+    name: string,
+  },
   edit: void,
   onChange: void,
 |}>;
 
 export default function KpiTypeItem(props: Props) {
-  const {kpi, edit, onChange} = props;
+  const {name, domainFk, edit, onChange} = props;
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className={classes.root}>
@@ -95,18 +98,18 @@ export default function KpiTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <FormControlLabel
-            aria-label="Acknowledge"
+            label=""
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
             control={<SwitchLabels />}
           />
           <Grid className={classes.rootGrid}>
-            <Text className={classes.nameKpi}>{kpi.name}</Text>
+            <Text className={classes.nameKpi}>{name}</Text>
           </Grid>
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpi.domainFk.name}</Text>
+              <Text className={classes.typeRed}>{domainFk.name}</Text>
             </Button>
           </Grid>
 
@@ -115,11 +118,18 @@ export default function KpiTypeItem(props: Props) {
           </Grid>
 
           <Grid>
-            <IconButton className={classes.editIcon} icon={EditIcon} onClick={edit}/>
+            <IconButton
+              className={classes.editIcon}
+              icon={EditIcon}
+              onClick={edit}
+            />
           </Grid>
 
           <Grid>
-            <DeleteOutlinedIcon className={classes.deleteIcon} onClick={onChange}/>
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={onChange}
+            />
           </Grid>
         </AccordionSummary>
 
@@ -155,7 +165,7 @@ export default function KpiTypeItem(props: Props) {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={6}>              
+            <Grid item xs={6}>
               <Table item xs={12} />
             </Grid>
           </Grid>

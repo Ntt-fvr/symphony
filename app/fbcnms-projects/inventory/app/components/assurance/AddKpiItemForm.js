@@ -57,15 +57,31 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
-  kpi: Object,
+  dataValues: Array<string>,
 |}>;
 
+
+type Kpis = {
+  data: {
+    id: string,
+    name: string,
+    domainFk: string,
+  },
+};
+
+
 export default function AddKpiItemForm(props: Props) {
-  const {kpi} = props;
+  const {dataValues} = props;
   const classes = useStyles();
 
-  const [kpis, setKpis] = useState({data: {}});
+  const [kpis, setKpis] = useState<Kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
+  const [activate, setActivate] = useState('');
+
+  // const inputFilter = () => {
+  //   return dataValues?.filter(item => item === kpis.data.name) || [];
+  // };
+  
   function handleChange({target}) {
     setKpis({
       data: {
@@ -73,7 +89,14 @@ export default function AddKpiItemForm(props: Props) {
         [target.name]: target.value,
       },
     });
+    
+    // const validateInputs = Object.values(kpis.data);
+    // validateInputs.map(item => item != null) &&
+    // validateInputs.length === 5 &&
+    // setActivate(validateInputs);
+
   }
+  
 
   function handleClick() {
     const variables: AddKpiMutationVariables = {
@@ -86,6 +109,12 @@ export default function AddKpiItemForm(props: Props) {
     setShowChecking(true);
     AddKpiMutation(variables);
   }
+  // const validationName = () => {
+  //   if (inputFilter().length > 0) {
+  //     return {hasError: true, errorText: 'Kpis existing'};
+  //   }
+  // };
+
   if (showChecking) {
     return <CounterAddedSuccessfully />;
   }
@@ -93,7 +122,12 @@ export default function AddKpiItemForm(props: Props) {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add KPI</CardHeader>
-      <FormField className={classes.formField} label="Kpi name" required>
+      <FormField 
+        className={classes.formField} 
+        label="Kpi name" 
+        required
+        // {...validationName()}
+        >
         <TextInput
           className={classes.textInput}
           name="name"
@@ -125,10 +159,9 @@ export default function AddKpiItemForm(props: Props) {
           inputProps={{
             name: 'domainFk',
           }}>
-          {kpi.map((kpidata, index) => (
+          {dataValues?.map((kpidata, index) => (
             <MenuItem key={index} value={kpidata.domainFk.id}>
-              {' '}
-              {kpidata.domainFk.name}{' '}
+              {kpidata.domainFk.name}
             </MenuItem>
           ))}
         </Select>
