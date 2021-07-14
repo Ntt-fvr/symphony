@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     width: '111px',
     alignSelf: 'flex-end',
   },
-  select:{
+  select: {
     paddingTop: '10px',
     height: '36px',
     overflow: 'hidden',

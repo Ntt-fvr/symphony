@@ -100,8 +100,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...name}
                     className={classes.textInput}
                     name="name"
-                    variant="outlined"
-                    type="string"
                   />
                 </FormField>
               </Grid>
@@ -113,8 +111,6 @@ const EditCounterItemForm = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     name="vendorName"
-                    variant="outlined"
-                    type="string"
                   />
                 </FormField>
               </Grid>
@@ -127,8 +123,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...networkManagerSystem}
                     className={classes.textInput}
                     name="NetworkManagerSystem"
-                    variant="outlined"
-                    type="string"
                   />
                 </FormField>
               </Grid>
@@ -141,8 +135,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...counterID}
                     className={classes.textInput}
                     name="CounterID"
-                    variant="outlined"
-                    type="string"
                   />
                 </FormField>
               </Grid>
@@ -156,8 +148,6 @@ const EditCounterItemForm = (props: Props) => {
                   {...familyName}
                   className={classes.textInput}
                   name="FamilyName"
-                  variant="outlined"
-                  type="string"
                 />
               </FormField>
             </Grid>

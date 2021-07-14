@@ -7,12 +7,12 @@
  * @flow
  * @format
  */
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import fbt from 'fbt';
+import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import RelayEnvironment from '../../common/RelayEnvironment';
-import {fetchQuery} from 'relay-runtime';
-import fbt from 'fbt';
 
 // COMPONENTS //
 import AddFormulaItemForm from './AddFormulaItemForm';
@@ -23,10 +23,9 @@ import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';
 
 // MUTATIONS //
-import type {
-RemoveKpiMutationVariables,
-} from '../../mutations/__generated__/RemoveKpiMutation.graphql';
-import type {KpiTypesQuery} from './__generated__/KpiTypesQuery.graphql'
+import type {KpiTypesQuery} from './__generated__/KpiTypesQuery.graphql';
+import type {RemoveKpiMutationVariables} from '../../mutations/__generated__/RemoveKpiMutation.graphql';
+
 import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
 
 // DESING SYSTEM //
@@ -66,21 +65,20 @@ const KpiQuery = graphql`
 
 const KpiTypes = () => {
   const classes = useStyles();
-  const [kpis, setkpis] = useState([])
+  const [kpis, setkpis] = useState([]);
   // const data = useLazyLoadQuery<KpiTypesQuery>(KpiQuery, {});
   // const [items, setItems] = useState(data);
   const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  
-  const fethData = useCallback(()=>{
-    fetchQuery(RelayEnvironment, KpiQuery, {})
-    .then(data => {
+
+  const fethData = useCallback(() => {
+    fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
       setkpis(data.kpis.edges.map(edge => edge.node));
     });
-  }, []) 
-  
+  }, []);
+
   useEffect(() => {
-    fethData()
+    fethData();
   }, [fethData]);
 
   const handleRemove = id => {
@@ -128,25 +126,23 @@ const KpiTypes = () => {
           {kpis &&
             kpis.map((item, index) => (
               <li className={classes.listCarKpi} key={index}>
-                <KpiTypeItem 
-                key={index} 
-                kpi={item} 
-                onChange={() => handleRemove(item.id)}
-                edit={() =>
-                  showEditKpiItemForm({
-                    Id: item.id,
-                    Name: item.name,
-                    DomainFk: item.domainFk.id
-                  })
-                } />
+                <KpiTypeItem
+                  key={index}
+                  kpi={item}
+                  onChange={() => handleRemove(item.id)}
+                  edit={() =>
+                    showEditKpiItemForm({
+                      Id: item.id,
+                      Name: item.name,
+                      DomainFk: item.domainFk.id,
+                    })
+                  }
+                />
               </li>
-            )) 
-          }  
+            ))}
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          {kpis &&
-            <AddKpiItemForm kpi={kpis} />
-          }
+          {kpis && <AddKpiItemForm kpi={kpis} />}
           <AddFormulaItemForm />
         </Grid>
       </Grid>
