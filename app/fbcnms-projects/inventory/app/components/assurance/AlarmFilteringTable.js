@@ -7,51 +7,69 @@
  * @flow
  * @format
  */
+import React, {useState} from 'react';
 
-import React from 'react';
+import {withStyles} from '@material-ui/core/styles';
 
-// DESING SYSTEM //
-import ActiveButton from './ActiveButton';
-import Button from '@symphony/design-system/components/Button';
+import {makeStyles} from '@material-ui/styles';
 
-import IconButton from '@symphony/design-system/components/IconButton';
 import Paper from '@material-ui/core/Paper';
-import Switch from '@symphony/design-system/components/switch/Switch';
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Text from '@symphony/design-system/components/Text';
-import {makeStyles} from '@material-ui/styles';
-import {withStyles} from '@material-ui/core/styles';
 
-import FilterListIcon from '@material-ui/icons/FilterList';
-
-import {BLUE} from '@symphony/design-system/theme/symphony';
-
-const useStyles = makeStyles(() => ({
-  root: {
-    margin: '10px 0',
+const columns = [
+  {id: 'enable', label: 'Enable', minWidth: 170},
+  {id: 'name', label: 'Name', minWidth: 170},
+  {
+    id: 'creationTime',
+    label: 'Creation Time',
+    minWidth: 170,
+    center: 'right',
+    format: value => value.toFixed(2),
   },
-  table: {
-    minWidth: '100%',
+  {
+    id: 'networkResource',
+    label: 'Network Resource',
+    minWidth: 170,
+    center: 'right',
   },
-  name: {
-    color: BLUE.B600,
+  {
+    id: 'status',
+    label: 'Status',
+    minWidth: 170,
+    center: 'center',
   },
-}));
-
-const StyledTableCell = withStyles(() => ({
-  head: {
-    backgroundColor: 'white',
-    color: BLUE.B600,
+  {
+    id: 'beginTime',
+    label: 'Begin Time',
+    minWidth: 170,
+    center: 'right',
   },
-  body: {
-    fontSize: 14,
+  {
+    id: 'endTime',
+    label: 'End Time',
+    minWidth: 170,
+    center: 'right',
   },
-}))(TableCell);
+  {
+    id: 'iD',
+    label: 'ID',
+    minWidth: 170,
+    center: 'right',
+  },
+  {
+    id: 'icon',
+    label: 'Icon',
+    minWidth: 170,
+    center: 'right',
+  },
+];
 
 function createData(
   id,
@@ -82,18 +100,7 @@ function createData(
 const rows = [
   createData(
     '123',
-    '',
-    'ancorName',
-    '27/05/21     12:50',
-    'AMS/OLT-SYS-AL1/rack=',
-    'Button',
-    '27/05/21     12:50',
-    '24/06/21     17:23',
-    '1526735162',
-  ),
-  createData(
-    '321',
-    <Switch />,
+    'switch',
     'ancorName',
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
@@ -104,18 +111,7 @@ const rows = [
   ),
   createData(
     '234',
-    '',
-    'ancorName',
-    '27/05/21     12:50',
-    'AMS/OLT-SYS-AL1/rack=',
-    'Button',
-    '27/05/21     12:50',
-    '24/06/21     17:23',
-    '1526735162',
-  ),
-  createData(
-    '432',
-    <Switch />,
+    'switch',
     'ancorName',
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
@@ -126,7 +122,139 @@ const rows = [
   ),
   createData(
     '345',
-    <Switch />,
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '456',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '567',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '678',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '789',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '890',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '909',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '987',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '876',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '765',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '654',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '543',
+    'switch',
+    'ancorName',
+    '27/05/21     12:50',
+    'AMS/OLT-SYS-AL1/rack=',
+    'Button',
+    '27/05/21     12:50',
+    '24/06/21     17:23',
+    '1526735162',
+  ),
+  createData(
+    '432',
+    'switch',
     'ancorName',
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
@@ -136,50 +264,97 @@ const rows = [
     '1526735162',
   ),
 ];
-// CREAR PROP PARA MOSTRAR EL COMPONENTE PAPER component=Paper
-export default function DenseTable() {
+const StyledTableCell = withStyles(() => ({
+  head: {
+    backgroundColor: 'white',
+    color: 'blue',
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles(() => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#EDF0F9',
+    },
+  },
+}))(TableRow);
+
+const useStyles = makeStyles(() => ({
+  root: {
+    width: '100%',
+  },
+  container: {
+    maxHeight: '440px',
+  },
+}));
+
+const AlarmFilteringTable = () => {
   const classes = useStyles();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(event.target.value);
+    setPage(0);
+  };
 
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Enable</StyledTableCell>
-            <StyledTableCell align="left">Name</StyledTableCell>
-            <StyledTableCell align="left">Creation Time</StyledTableCell>
-            <StyledTableCell align="left">Network Resource</StyledTableCell>
-            <StyledTableCell align="left">Status</StyledTableCell>
-            <StyledTableCell align="left">Begin Time</StyledTableCell>
-            <StyledTableCell align="left">End Time</StyledTableCell>
-            <StyledTableCell align="left">ID</StyledTableCell>
-            <StyledTableCell align="left">
-              <IconButton icon={FilterListIcon} />,
-            </StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                {row.enable}
-              </TableCell>
-              <TableCell>
-                <Button variant="text">
-                  <Text className={classes.name}>{row.name}</Text>
-                </Button>
-              </TableCell>
-              <TableCell>{row.creationTime}</TableCell>
-              <TableCell>{row.networkResource}</TableCell>
-              <TableCell>{row.status}</TableCell>
-              <TableCell>{row.beginTime}</TableCell>
-              <TableCell>{row.endTime}</TableCell>
-              <TableCell>{row.iD}</TableCell>
-              <TableCell>{row.icon}</TableCell>
+    <Paper className={classes.root}>
+      <TableContainer className={classes.container}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map(column => (
+                <StyledTableCell
+                  key={column.id}
+                  align={column.center}
+                  style={{minWidth: column.minWidth}}>
+                  {column.label}
+                </StyledTableCell>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map(row => {
+                return (
+                  <StyledTableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={row.id}>
+                    {columns.map(column => {
+                      const value = row[column.id];
+                      console.log(value);
+                      return (
+                        <TableCell key={column.id} align={column.center}>
+                          {column.format && typeof value === 'number'
+                            ? column.format(value)
+                            : value}
+                        </TableCell>
+                      );
+                    })}
+                  </StyledTableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 15]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
   );
-}
+};
+export default AlarmFilteringTable;
