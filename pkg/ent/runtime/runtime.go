@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -120,6 +122,60 @@ func init() {
 	activityDescIsCreate := activityFields[1].Descriptor()
 	// activity.DefaultIsCreate holds the default value on creation for the is_create field.
 	activity.DefaultIsCreate = activityDescIsCreate.Default.(bool)
+	alarmfilterMixin := schema.AlarmFilter{}.Mixin()
+	alarmfilter.Policy = privacy.NewPolicies(schema.AlarmFilter{})
+	alarmfilter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := alarmfilter.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	alarmfilterMixinFields0 := alarmfilterMixin[0].Fields()
+	alarmfilterFields := schema.AlarmFilter{}.Fields()
+	_ = alarmfilterFields
+	// alarmfilterDescCreateTime is the schema descriptor for create_time field.
+	alarmfilterDescCreateTime := alarmfilterMixinFields0[0].Descriptor()
+	// alarmfilter.DefaultCreateTime holds the default value on creation for the create_time field.
+	alarmfilter.DefaultCreateTime = alarmfilterDescCreateTime.Default.(func() time.Time)
+	// alarmfilterDescUpdateTime is the schema descriptor for update_time field.
+	alarmfilterDescUpdateTime := alarmfilterMixinFields0[1].Descriptor()
+	// alarmfilter.DefaultUpdateTime holds the default value on creation for the update_time field.
+	alarmfilter.DefaultUpdateTime = alarmfilterDescUpdateTime.Default.(func() time.Time)
+	// alarmfilter.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	alarmfilter.UpdateDefaultUpdateTime = alarmfilterDescUpdateTime.UpdateDefault.(func() time.Time)
+	// alarmfilterDescName is the schema descriptor for name field.
+	alarmfilterDescName := alarmfilterFields[0].Descriptor()
+	// alarmfilter.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	alarmfilter.NameValidator = alarmfilterDescName.Validators[0].(func(string) error)
+	alarmstatusMixin := schema.AlarmStatus{}.Mixin()
+	alarmstatus.Policy = privacy.NewPolicies(schema.AlarmStatus{})
+	alarmstatus.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := alarmstatus.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	alarmstatusMixinFields0 := alarmstatusMixin[0].Fields()
+	alarmstatusFields := schema.AlarmStatus{}.Fields()
+	_ = alarmstatusFields
+	// alarmstatusDescCreateTime is the schema descriptor for create_time field.
+	alarmstatusDescCreateTime := alarmstatusMixinFields0[0].Descriptor()
+	// alarmstatus.DefaultCreateTime holds the default value on creation for the create_time field.
+	alarmstatus.DefaultCreateTime = alarmstatusDescCreateTime.Default.(func() time.Time)
+	// alarmstatusDescUpdateTime is the schema descriptor for update_time field.
+	alarmstatusDescUpdateTime := alarmstatusMixinFields0[1].Descriptor()
+	// alarmstatus.DefaultUpdateTime holds the default value on creation for the update_time field.
+	alarmstatus.DefaultUpdateTime = alarmstatusDescUpdateTime.Default.(func() time.Time)
+	// alarmstatus.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	alarmstatus.UpdateDefaultUpdateTime = alarmstatusDescUpdateTime.UpdateDefault.(func() time.Time)
+	// alarmstatusDescName is the schema descriptor for name field.
+	alarmstatusDescName := alarmstatusFields[0].Descriptor()
+	// alarmstatus.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	alarmstatus.NameValidator = alarmstatusDescName.Validators[0].(func(string) error)
 	blockMixin := schema.Block{}.Mixin()
 	block.Policy = privacy.NewPolicies(schema.Block{})
 	block.Hooks[0] = func(next ent.Mutator) ent.Mutator {

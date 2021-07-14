@@ -23,6 +23,8 @@ func (c *Client) ReadOnly() *Client {
 		config:                      cfg,
 		Schema:                      migrate.NewSchema(cfg.driver),
 		Activity:                    NewActivityClient(cfg),
+		AlarmFilter:                 NewAlarmFilterClient(cfg),
+		AlarmStatus:                 NewAlarmStatusClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),

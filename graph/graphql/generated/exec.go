@@ -63,6 +63,8 @@ type Config struct {
 
 type ResolverRoot interface {
 	Activity() ActivityResolver
+	AlarmFilter() AlarmFilterResolver
+	AlarmStatus() AlarmStatusResolver
 	Block() BlockResolver
 	BlockVariable() BlockVariableResolver
 	Comparator() ComparatorResolver
@@ -152,6 +154,41 @@ type ComplexityRoot struct {
 
 	AdministrativePolicy struct {
 		Access func(childComplexity int) int
+	}
+
+	AlarmFilter struct {
+		AlarmStatus     func(childComplexity int) int
+		BeginTime       func(childComplexity int) int
+		CreationTime    func(childComplexity int) int
+		Enable          func(childComplexity int) int
+		EndTime         func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		NetworkResource func(childComplexity int) int
+		Reason          func(childComplexity int) int
+		User            func(childComplexity int) int
+	}
+
+	AlarmFilterConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	AlarmFilterEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	AlarmStatus struct {
+		AlarmFilter func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
+
+	AssurancePolicy struct {
+		Read      func(childComplexity int) int
+		Templates func(childComplexity int) int
 	}
 
 	AutomationPolicy struct {
@@ -829,6 +866,8 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
+		AddAlarmFilter                           func(childComplexity int, input models.AddAlarmFilterInput) int
+		AddAlarmStatus                           func(childComplexity int, input models.AddAlarmStatusInput) int
 		AddBlockInstance                         func(childComplexity int, flowInstanceID int, input models.AddBlockInstanceInput) int
 		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
@@ -893,6 +932,8 @@ type ComplexityRoot struct {
 		DeleteProjectType                        func(childComplexity int, id int) int
 		DeleteReportFilter                       func(childComplexity int, id int) int
 		DeleteUsersGroup                         func(childComplexity int, id int) int
+		EditAlarmFilter                          func(childComplexity int, input models.EditAlarmFilterInput) int
+		EditAlarmStatus                          func(childComplexity int, input models.EditAlarmStatusInput) int
 		EditBlock                                func(childComplexity int, input models.EditBlockInput) int
 		EditBlockInstance                        func(childComplexity int, input models.EditBlockInstanceInput) int
 		EditComparator                           func(childComplexity int, input models.EditComparatorInput) int
@@ -937,6 +978,8 @@ type ComplexityRoot struct {
 		MoveEquipmentToPosition                  func(childComplexity int, parentEquipmentID *int, positionDefinitionID *int, equipmentID int) int
 		MoveLocation                             func(childComplexity int, locationID int, parentLocationID *int) int
 		PublishFlow                              func(childComplexity int, input models.PublishFlowInput) int
+		RemoveAlarmFilter                        func(childComplexity int, id int) int
+		RemoveAlarmStatus                        func(childComplexity int, id int) int
 		RemoveComparator                         func(childComplexity int, id int) int
 		RemoveCounter                            func(childComplexity int, id int) int
 		RemoveCounterFamily                      func(childComplexity int, id int) int
@@ -990,6 +1033,7 @@ type ComplexityRoot struct {
 
 	PermissionSettings struct {
 		AdminPolicy      func(childComplexity int) int
+		AssurancePolicy  func(childComplexity int) int
 		AutomationPolicy func(childComplexity int) int
 		InventoryPolicy  func(childComplexity int) int
 		WorkforcePolicy  func(childComplexity int) int
@@ -1127,6 +1171,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		ActionType               func(childComplexity int, id flowschema.ActionTypeID) int
+		AlarmFilters             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
 		Counters                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
 		Customers                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EndToEndPath             func(childComplexity int, linkID *int, portID *int) int
@@ -1697,6 +1742,12 @@ type ActivityResolver interface {
 	NewRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error)
 	OldRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error)
 }
+type AlarmFilterResolver interface {
+	AlarmStatus(ctx context.Context, obj *ent.AlarmFilter) (*ent.AlarmStatus, error)
+}
+type AlarmStatusResolver interface {
+	AlarmFilter(ctx context.Context, obj *ent.AlarmStatus) ([]*ent.AlarmFilter, error)
+}
 type BlockResolver interface {
 	NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
 	PrevBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
@@ -1941,6 +1992,12 @@ type MutationResolver interface {
 	AddRuleType(ctx context.Context, input models.AddRuleTypeInput) (*ent.RuleType, error)
 	EditRuleType(ctx context.Context, input models.EditRuleTypeInput) (*ent.RuleType, error)
 	RemoveRuleType(ctx context.Context, id int) (int, error)
+	AddAlarmFilter(ctx context.Context, input models.AddAlarmFilterInput) (*ent.AlarmFilter, error)
+	EditAlarmFilter(ctx context.Context, input models.EditAlarmFilterInput) (*ent.AlarmFilter, error)
+	RemoveAlarmFilter(ctx context.Context, id int) (int, error)
+	AddAlarmStatus(ctx context.Context, input models.AddAlarmStatusInput) (*ent.AlarmStatus, error)
+	EditAlarmStatus(ctx context.Context, input models.EditAlarmStatusInput) (*ent.AlarmStatus, error)
+	RemoveAlarmStatus(ctx context.Context, id int) (int, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -1998,6 +2055,7 @@ type QueryResolver interface {
 	Counters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) (*ent.CounterConnection, error)
 	Kpis(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) (*ent.KpiConnection, error)
 	Tresholds(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TresholdOrder, filterBy []*models.TresholdFilterInput) (*ent.TresholdConnection, error)
+	AlarmFilters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) (*ent.AlarmFilterConnection, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -2244,6 +2302,146 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AdministrativePolicy.Access(childComplexity), true
+
+	case "AlarmFilter.alarmStatus":
+		if e.complexity.AlarmFilter.AlarmStatus == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.AlarmStatus(childComplexity), true
+
+	case "AlarmFilter.beginTime":
+		if e.complexity.AlarmFilter.BeginTime == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.BeginTime(childComplexity), true
+
+	case "AlarmFilter.creationTime":
+		if e.complexity.AlarmFilter.CreationTime == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.CreationTime(childComplexity), true
+
+	case "AlarmFilter.enable":
+		if e.complexity.AlarmFilter.Enable == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.Enable(childComplexity), true
+
+	case "AlarmFilter.endTime":
+		if e.complexity.AlarmFilter.EndTime == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.EndTime(childComplexity), true
+
+	case "AlarmFilter.id":
+		if e.complexity.AlarmFilter.ID == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.ID(childComplexity), true
+
+	case "AlarmFilter.name":
+		if e.complexity.AlarmFilter.Name == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.Name(childComplexity), true
+
+	case "AlarmFilter.networkResource":
+		if e.complexity.AlarmFilter.NetworkResource == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.NetworkResource(childComplexity), true
+
+	case "AlarmFilter.reason":
+		if e.complexity.AlarmFilter.Reason == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.Reason(childComplexity), true
+
+	case "AlarmFilter.user":
+		if e.complexity.AlarmFilter.User == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilter.User(childComplexity), true
+
+	case "AlarmFilterConnection.edges":
+		if e.complexity.AlarmFilterConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilterConnection.Edges(childComplexity), true
+
+	case "AlarmFilterConnection.pageInfo":
+		if e.complexity.AlarmFilterConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilterConnection.PageInfo(childComplexity), true
+
+	case "AlarmFilterConnection.totalCount":
+		if e.complexity.AlarmFilterConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilterConnection.TotalCount(childComplexity), true
+
+	case "AlarmFilterEdge.cursor":
+		if e.complexity.AlarmFilterEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilterEdge.Cursor(childComplexity), true
+
+	case "AlarmFilterEdge.node":
+		if e.complexity.AlarmFilterEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.AlarmFilterEdge.Node(childComplexity), true
+
+	case "AlarmStatus.AlarmFilter":
+		if e.complexity.AlarmStatus.AlarmFilter == nil {
+			break
+		}
+
+		return e.complexity.AlarmStatus.AlarmFilter(childComplexity), true
+
+	case "AlarmStatus.id":
+		if e.complexity.AlarmStatus.ID == nil {
+			break
+		}
+
+		return e.complexity.AlarmStatus.ID(childComplexity), true
+
+	case "AlarmStatus.name":
+		if e.complexity.AlarmStatus.Name == nil {
+			break
+		}
+
+		return e.complexity.AlarmStatus.Name(childComplexity), true
+
+	case "AssurancePolicy.read":
+		if e.complexity.AssurancePolicy.Read == nil {
+			break
+		}
+
+		return e.complexity.AssurancePolicy.Read(childComplexity), true
+
+	case "AssurancePolicy.templates":
+		if e.complexity.AssurancePolicy.Templates == nil {
+			break
+		}
+
+		return e.complexity.AssurancePolicy.Templates(childComplexity), true
 
 	case "AutomationPolicy.read":
 		if e.complexity.AutomationPolicy.Read == nil {
@@ -5056,6 +5254,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddActionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.ActionBlockInput)), true
 
+	case "Mutation.addAlarmFilter":
+		if e.complexity.Mutation.AddAlarmFilter == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addAlarmFilter_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddAlarmFilter(childComplexity, args["input"].(models.AddAlarmFilterInput)), true
+
+	case "Mutation.addAlarmStatus":
+		if e.complexity.Mutation.AddAlarmStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addAlarmStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddAlarmStatus(childComplexity, args["input"].(models.AddAlarmStatusInput)), true
+
 	case "Mutation.addBlockInstance":
 		if e.complexity.Mutation.AddBlockInstance == nil {
 			break
@@ -5824,6 +6046,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteUsersGroup(childComplexity, args["id"].(int)), true
 
+	case "Mutation.editAlarmFilter":
+		if e.complexity.Mutation.EditAlarmFilter == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editAlarmFilter_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditAlarmFilter(childComplexity, args["input"].(models.EditAlarmFilterInput)), true
+
+	case "Mutation.editAlarmStatus":
+		if e.complexity.Mutation.EditAlarmStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editAlarmStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditAlarmStatus(childComplexity, args["input"].(models.EditAlarmStatusInput)), true
+
 	case "Mutation.editBlock":
 		if e.complexity.Mutation.EditBlock == nil {
 			break
@@ -6352,6 +6598,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.PublishFlow(childComplexity, args["input"].(models.PublishFlowInput)), true
 
+	case "Mutation.removeAlarmFilter":
+		if e.complexity.Mutation.RemoveAlarmFilter == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeAlarmFilter_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveAlarmFilter(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeAlarmStatus":
+		if e.complexity.Mutation.RemoveAlarmStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeAlarmStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveAlarmStatus(childComplexity, args["id"].(int)), true
+
 	case "Mutation.removeComparator":
 		if e.complexity.Mutation.RemoveComparator == nil {
 			break
@@ -6844,6 +7114,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PermissionSettings.AdminPolicy(childComplexity), true
+
+	case "PermissionSettings.assurancePolicy":
+		if e.complexity.PermissionSettings.AssurancePolicy == nil {
+			break
+		}
+
+		return e.complexity.PermissionSettings.AssurancePolicy(childComplexity), true
 
 	case "PermissionSettings.automationPolicy":
 		if e.complexity.PermissionSettings.AutomationPolicy == nil {
@@ -7472,6 +7749,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ActionType(childComplexity, args["id"].(flowschema.ActionTypeID)), true
+
+	case "Query.AlarmFilters":
+		if e.complexity.Query.AlarmFilters == nil {
+			break
+		}
+
+		args, err := ec.field_Query_AlarmFilters_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AlarmFilters(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.AlarmFilterOrder), args["filterBy"].([]*models.AlarmFilterFilterInput)), true
 
 	case "Query.counters":
 		if e.complexity.Query.Counters == nil {
@@ -10417,6 +10706,7 @@ type PermissionSettings
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
   automationPolicy: AutomationPolicy!
+  assurancePolicy: AssurancePolicy!
 }
 
 enum PermissionValue
@@ -10535,6 +10825,22 @@ input AutomationPolicyInput
   templates: BasicCUDInput
 }
 
+type AssurancePolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AssurancePolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AssurancePolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AssurancePolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -10608,6 +10914,7 @@ union SystemPolicy
     InventoryPolicy
   | WorkforcePolicy
   | AutomationPolicy
+  | AssurancePolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -10625,6 +10932,7 @@ input AddPermissionsPolicyInput {
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
+  assuranceInput: AssurancePolicyInput
   groups: [ID!]
 }
 
@@ -10636,6 +10944,7 @@ input EditPermissionsPolicyInput {
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
+  assuranceInput: AssurancePolicyInput
   groups: [ID!]
 }
 
@@ -12926,6 +13235,74 @@ type TresholdEdge {
   cursor: Cursor!
 }
 
+################################ conection Alarm filter ###############################################
+"""
+Properties by which AlarmFilter connections can be ordered.
+"""
+enum AlarmFilterOrderField {
+  """
+  Order AlarmFilter by name.
+  """
+  NAME
+
+  """
+  Order AlarmFilter by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order AlarmFilter by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for AlarmFilter connections.
+"""
+input AlarmFilterOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order AlarmFilter by.
+  """
+  field: AlarmFilterOrderField
+}
+
+"""
+A connection to a list of AlarmFilter.
+"""
+type AlarmFilterConnection {
+  """
+  Total AlarmFilter of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of AlarmFilter edges.
+  """
+  edges: [AlarmFilterEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A AlarmFilter edge in a connection.
+"""
+type AlarmFilterEdge {
+  """
+  The AlarmFilter at the end of the edge.
+  """
+  node: AlarmFilter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -14779,6 +15156,41 @@ type Query {
     
     filterBy: [TresholdFilterInput!]
   ): TresholdConnection!
+  
+  """
+  A list of AlarmFilter.
+  """
+  AlarmFilters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: AlarmFilterOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [AlarmFilterFilterInput!]
+  ): AlarmFilterConnection!
 }
 
 type Mutation {
@@ -15043,6 +15455,12 @@ type Mutation {
   addRuleType(input: AddRuleTypeInput!):RuleType!
   editRuleType(input: EditRuleTypeInput!): RuleType!
   removeRuleType(id: ID!): ID!
+  addAlarmFilter(input: AddAlarmFilterInput!):AlarmFilter!
+  editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter!
+  removeAlarmFilter(id: ID!): ID!
+  addAlarmStatus(input: AddAlarmStatusInput!):AlarmStatus!
+  editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus!
+  removeAlarmStatus(id: ID!): ID!
 }
 
 """
@@ -15100,6 +15518,7 @@ input AddCounterInput {
   externalID: String!
   networkManagerSystem: String!
   countervendorformula: [EditCounterVendorFormulaInput!]
+  counterFamily: ID!
 }
 
 input EditCounterInput {
@@ -15260,12 +15679,91 @@ type Treshold implements Node {
   
 }
 
+type AlarmFilter implements Node {
+  id: ID!
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time! 
+  alarmStatus: AlarmStatus
+}
+
+input AddAlarmFilterInput {
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time!  
+  alarmStatus: ID!
+}
+
+input AlarmFilterInput {
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time!
+}
+
+input EditAlarmFilterInput {
+  id: ID!
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String! 
+  alarmStatus: ID!
+}
+
+enum AlarmFilterFilterType {
+  NAME
+}
+
+input AlarmFilterFilterInput {
+  filterType: AlarmFilterFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type AlarmStatus implements Node {
+  id: ID!
+  name: String!
+  AlarmFilter: [AlarmFilter!]
+}
+
+input AlarmStatusInput {
+  id: ID!
+  name: String!
+}
+
+input AddAlarmStatusInput {
+  name: String!
+}
+
+input EditAlarmStatusInput {
+  id: ID!
+  name: String!
+}
+
 input AddTresholdInput {
   name: String!
   description: String!
   status: Boolean!
-  rule: [RuleInput!]
-  kpi: Int
+  kpi: ID!
   
 }
 
@@ -15274,7 +15772,7 @@ input TresholdInput {
   description: String!
   status: Boolean!
   rule: [RuleInput!]
-  kpi: Int
+  kpi: ID!
   
 }
 
@@ -15283,7 +15781,6 @@ input EditTresholdInput {
   name: String!
   description: String!
   status: Boolean!
-  rule: [RuleInput!]  
 }
 
 enum TresholdFilterType {
@@ -15306,13 +15803,11 @@ type Comparator implements Node {
 
 input AddComparatorInput {
   name: String!
-  ruleLimit: [RuleLimitInput!]
 }
 
 input EditComparatorInput {
   id: ID!
   name: String!
-  ruleLimit: [RuleLimitInput!]
 }
 
 type Event implements Node {
@@ -15339,7 +15834,6 @@ input AddEventInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
-  rule: [RuleInput!]
   eventSeverity: ID!
 }
 
@@ -15349,7 +15843,6 @@ input EditEventInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
-  rule: [RuleInput!]
   eventSeverity: ID!
 }
 
@@ -15423,7 +15916,6 @@ input AddRuleInput {
   gracePeriod: Int!
   startDateTime: Time!
   endDateTime: Time!
-  ruleLimit: [RuleLimitInput!]
   ruleType: ID!
   event: ID!
   treshold: ID!
@@ -15435,7 +15927,6 @@ input EditRuleInput {
   gracePeriod: Int
   startDateTime: Time
   endDateTime: Time
-  ruleLimit: [RuleLimitInput!]
   ruleType: ID!
   event: ID!
   treshold: ID!
@@ -15449,13 +15940,11 @@ type EventSeverity implements Node {
 
 input AddEventSeverityInput {
   name: String!
-  event: [EventInput!]
 }
 
 input EditEventSeverityInput {
   id: ID!
   name: String!
-  event: [EventInput!]
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -15812,6 +16301,36 @@ func (ec *executionContext) field_Mutation_addActionBlock_args(ctx context.Conte
 		}
 	}
 	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addAlarmFilter_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddAlarmFilterInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddAlarmFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAlarmFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addAlarmStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddAlarmStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddAlarmStatusInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAlarmStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -16919,6 +17438,36 @@ func (ec *executionContext) field_Mutation_deleteUsersGroup_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editAlarmFilter_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditAlarmFilterInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditAlarmFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAlarmFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editAlarmStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditAlarmStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditAlarmStatusInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAlarmStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editBlockInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -17624,6 +18173,36 @@ func (ec *executionContext) field_Mutation_publishFlow_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_removeAlarmFilter_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeAlarmStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_removeComparator_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -18230,6 +18809,104 @@ func (ec *executionContext) field_Mutation_updateUserGroups_args(ctx context.Con
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_AlarmFilters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.AlarmFilterOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOAlarmFilterOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.AlarmFilterFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOAlarmFilterFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -21569,6 +22246,697 @@ func (ec *executionContext) _AdministrativePolicy_access(ctx context.Context, fi
 	res := resTmp.(*models2.BasicPermissionRule)
 	fc.Result = res
 	return ec.marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_id(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_name(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_networkResource(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NetworkResource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_enable(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_beginTime(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BeginTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_endTime(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EndTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_reason(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_user(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_creationTime(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreationTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilter_alarmStatus(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.AlarmFilter().AlarmStatus(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmStatus)
+	fc.Result = res
+	return ec.marshalOAlarmStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilterConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilterConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilterConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilterConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilterConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilterConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.AlarmFilterEdge)
+	fc.Result = res
+	return ec.marshalNAlarmFilterEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilterConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilterConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilterConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilterEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilterEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilterEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmFilter)
+	fc.Result = res
+	return ec.marshalOAlarmFilter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmFilterEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmFilterEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmFilterEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmStatus_id(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmStatus_name(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlarmStatus_AlarmFilter(ctx context.Context, field graphql.CollectedField, obj *ent.AlarmStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlarmStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.AlarmStatus().AlarmFilter(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.AlarmFilter)
+	fc.Result = res
+	return ec.marshalOAlarmFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AssurancePolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.AssurancePolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AssurancePolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Read, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.BasicPermissionRule)
+	fc.Result = res
+	return ec.marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AssurancePolicy_templates(ctx context.Context, field graphql.CollectedField, obj *models2.AssurancePolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AssurancePolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Templates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.Cud)
+	fc.Result = res
+	return ec.marshalNCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐCud(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AutomationPolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.AutomationPolicy) (ret graphql.Marshaler) {
@@ -41293,6 +42661,258 @@ func (ec *executionContext) _Mutation_removeRuleType(ctx context.Context, field 
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addAlarmFilter(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addAlarmFilter_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddAlarmFilter(rctx, args["input"].(models.AddAlarmFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmFilter)
+	fc.Result = res
+	return ec.marshalNAlarmFilter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editAlarmFilter(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editAlarmFilter_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditAlarmFilter(rctx, args["input"].(models.EditAlarmFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmFilter)
+	fc.Result = res
+	return ec.marshalNAlarmFilter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeAlarmFilter(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeAlarmFilter_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveAlarmFilter(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addAlarmStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addAlarmStatus_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddAlarmStatus(rctx, args["input"].(models.AddAlarmStatusInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmStatus)
+	fc.Result = res
+	return ec.marshalNAlarmStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editAlarmStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editAlarmStatus_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditAlarmStatus(rctx, args["input"].(models.EditAlarmStatusInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmStatus)
+	fc.Result = res
+	return ec.marshalNAlarmStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeAlarmStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeAlarmStatus_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveAlarmStatus(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -41635,6 +43255,41 @@ func (ec *executionContext) _PermissionSettings_automationPolicy(ctx context.Con
 	res := resTmp.(*models2.AutomationPolicy)
 	fc.Result = res
 	return ec.marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PermissionSettings_assurancePolicy(ctx context.Context, field graphql.CollectedField, obj *models2.PermissionSettings) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PermissionSettings",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AssurancePolicy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.AssurancePolicy)
+	fc.Result = res
+	return ec.marshalNAssurancePolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAssurancePolicy(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PermissionsPolicy_id(ctx context.Context, field graphql.CollectedField, obj *ent.PermissionsPolicy) (ret graphql.Marshaler) {
@@ -46109,6 +47764,48 @@ func (ec *executionContext) _Query_tresholds(ctx context.Context, field graphql.
 	res := resTmp.(*ent.TresholdConnection)
 	fc.Result = res
 	return ec.marshalNTresholdConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTresholdConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_AlarmFilters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_AlarmFilters_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AlarmFilters(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.AlarmFilterOrder), args["filterBy"].([]*models.AlarmFilterFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AlarmFilterConnection)
+	fc.Result = res
+	return ec.marshalNAlarmFilterConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -58795,6 +60492,110 @@ func (ec *executionContext) unmarshalInputActivityFilterInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddAlarmFilterInput(ctx context.Context, obj interface{}) (models.AddAlarmFilterInput, error) {
+	var it models.AddAlarmFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "networkResource":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("networkResource"))
+			it.NetworkResource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enable"))
+			it.Enable, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "beginTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("beginTime"))
+			it.BeginTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "endTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endTime"))
+			it.EndTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "reason":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reason"))
+			it.Reason, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "user":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			it.User, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "creationTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creationTime"))
+			it.CreationTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alarmStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
+			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddAlarmStatusInput(ctx context.Context, obj interface{}) (models.AddAlarmStatusInput, error) {
+	var it models.AddAlarmStatusInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddBlockInstanceInput(ctx context.Context, obj interface{}) (models.AddBlockInstanceInput, error) {
 	var it models.AddBlockInstanceInput
 	var asMap = obj.(map[string]interface{})
@@ -58889,14 +60690,6 @@ func (ec *executionContext) unmarshalInputAddComparatorInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -58966,6 +60759,14 @@ func (ec *executionContext) unmarshalInputAddCounterInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
 			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterFamily":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFamily"))
+			it.CounterFamily, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -59365,14 +61166,6 @@ func (ec *executionContext) unmarshalInputAddEventInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "eventSeverity":
 			var err error
 
@@ -59398,14 +61191,6 @@ func (ec *executionContext) unmarshalInputAddEventSeverityInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "event":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
-			it.Event, err = ec.unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60069,6 +61854,14 @@ func (ec *executionContext) unmarshalInputAddPermissionsPolicyInput(ctx context.
 			if err != nil {
 				return it, err
 			}
+		case "assuranceInput":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assuranceInput"))
+			it.AssuranceInput, err = ec.unmarshalOAssurancePolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAssurancePolicyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "groups":
 			var err error
 
@@ -60295,14 +62088,6 @@ func (ec *executionContext) unmarshalInputAddRuleInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "ruleType":
 			var err error
 
@@ -60499,19 +62284,11 @@ func (ec *executionContext) unmarshalInputAddTresholdInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "kpi":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpi"))
-			it.Kpi, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Kpi, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60834,6 +62611,230 @@ func (ec *executionContext) unmarshalInputAddWorkerTypeInput(ctx context.Context
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAlarmFilterFilterInput(ctx context.Context, obj interface{}) (models.AlarmFilterFilterInput, error) {
+	var it models.AlarmFilterFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNAlarmFilterFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAlarmFilterInput(ctx context.Context, obj interface{}) (models.AlarmFilterInput, error) {
+	var it models.AlarmFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "networkResource":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("networkResource"))
+			it.NetworkResource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enable"))
+			it.Enable, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "beginTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("beginTime"))
+			it.BeginTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "endTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endTime"))
+			it.EndTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "reason":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reason"))
+			it.Reason, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "user":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			it.User, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "creationTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creationTime"))
+			it.CreationTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAlarmFilterOrder(ctx context.Context, obj interface{}) (ent.AlarmFilterOrder, error) {
+	var it ent.AlarmFilterOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOAlarmFilterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAlarmStatusInput(ctx context.Context, obj interface{}) (models.AlarmStatusInput, error) {
+	var it models.AlarmStatusInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAssurancePolicyInput(ctx context.Context, obj interface{}) (models2.AssurancePolicyInput, error) {
+	var it models2.AssurancePolicyInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "read":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("read"))
+			it.Read, err = ec.unmarshalOBasicPermissionRuleInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicPermissionRuleInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "templates":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templates"))
+			it.Templates, err = ec.unmarshalOBasicCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicCUDInput(ctx, v)
+			if err != nil {
+				return it, err
 			}
 		}
 	}
@@ -61653,6 +63654,110 @@ func (ec *executionContext) unmarshalInputDomainInput(ctx context.Context, obj i
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditAlarmFilterInput(ctx context.Context, obj interface{}) (models.EditAlarmFilterInput, error) {
+	var it models.EditAlarmFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "networkResource":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("networkResource"))
+			it.NetworkResource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enable":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enable"))
+			it.Enable, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "beginTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("beginTime"))
+			it.BeginTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "endTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endTime"))
+			it.EndTime, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "reason":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reason"))
+			it.Reason, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alarmStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
+			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditAlarmStatusInput(ctx context.Context, obj interface{}) (models.EditAlarmStatusInput, error) {
+	var it models.EditAlarmStatusInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditBlockInput(ctx context.Context, obj interface{}) (models.EditBlockInput, error) {
 	var it models.EditBlockInput
 	var asMap = obj.(map[string]interface{})
@@ -61752,14 +63857,6 @@ func (ec *executionContext) unmarshalInputEditComparatorInput(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -62245,14 +64342,6 @@ func (ec *executionContext) unmarshalInputEditEventInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "eventSeverity":
 			var err error
 
@@ -62286,14 +64375,6 @@ func (ec *executionContext) unmarshalInputEditEventSeverityInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "event":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
-			it.Event, err = ec.unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -62679,6 +64760,14 @@ func (ec *executionContext) unmarshalInputEditPermissionsPolicyInput(ctx context
 			if err != nil {
 				return it, err
 			}
+		case "assuranceInput":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assuranceInput"))
+			it.AssuranceInput, err = ec.unmarshalOAssurancePolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAssurancePolicyInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "groups":
 			var err error
 
@@ -62957,14 +65046,6 @@ func (ec *executionContext) unmarshalInputEditRuleInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "ruleLimit":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ruleLimit"))
-			it.RuleLimit, err = ec.unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleLimitInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "ruleType":
 			var err error
 
@@ -63146,14 +65227,6 @@ func (ec *executionContext) unmarshalInputEditTresholdInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -66941,7 +69014,7 @@ func (ec *executionContext) unmarshalInputTresholdInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpi"))
-			it.Kpi, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Kpi, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -68030,6 +70103,16 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Treshold(ctx, sel, obj)
+	case *ent.AlarmFilter:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AlarmFilter(ctx, sel, obj)
+	case *ent.AlarmStatus:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AlarmStatus(ctx, sel, obj)
 	case *ent.Comparator:
 		if obj == nil {
 			return graphql.Null
@@ -68090,6 +70173,13 @@ func (ec *executionContext) _SystemPolicy(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._AutomationPolicy(ctx, sel, obj)
+	case models2.AssurancePolicy:
+		return ec._AssurancePolicy(ctx, sel, &obj)
+	case *models2.AssurancePolicy:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AssurancePolicy(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -68290,6 +70380,225 @@ func (ec *executionContext) _AdministrativePolicy(ctx context.Context, sel ast.S
 			out.Values[i] = graphql.MarshalString("AdministrativePolicy")
 		case "access":
 			out.Values[i] = ec._AdministrativePolicy_access(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var alarmFilterImplementors = []string{"AlarmFilter", "Node"}
+
+func (ec *executionContext) _AlarmFilter(ctx context.Context, sel ast.SelectionSet, obj *ent.AlarmFilter) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, alarmFilterImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AlarmFilter")
+		case "id":
+			out.Values[i] = ec._AlarmFilter_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._AlarmFilter_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "networkResource":
+			out.Values[i] = ec._AlarmFilter_networkResource(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "enable":
+			out.Values[i] = ec._AlarmFilter_enable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "beginTime":
+			out.Values[i] = ec._AlarmFilter_beginTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "endTime":
+			out.Values[i] = ec._AlarmFilter_endTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "reason":
+			out.Values[i] = ec._AlarmFilter_reason(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "user":
+			out.Values[i] = ec._AlarmFilter_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "creationTime":
+			out.Values[i] = ec._AlarmFilter_creationTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "alarmStatus":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._AlarmFilter_alarmStatus(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var alarmFilterConnectionImplementors = []string{"AlarmFilterConnection"}
+
+func (ec *executionContext) _AlarmFilterConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.AlarmFilterConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, alarmFilterConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AlarmFilterConnection")
+		case "totalCount":
+			out.Values[i] = ec._AlarmFilterConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._AlarmFilterConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._AlarmFilterConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var alarmFilterEdgeImplementors = []string{"AlarmFilterEdge"}
+
+func (ec *executionContext) _AlarmFilterEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.AlarmFilterEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, alarmFilterEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AlarmFilterEdge")
+		case "node":
+			out.Values[i] = ec._AlarmFilterEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._AlarmFilterEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var alarmStatusImplementors = []string{"AlarmStatus", "Node"}
+
+func (ec *executionContext) _AlarmStatus(ctx context.Context, sel ast.SelectionSet, obj *ent.AlarmStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, alarmStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AlarmStatus")
+		case "id":
+			out.Values[i] = ec._AlarmStatus_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._AlarmStatus_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "AlarmFilter":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._AlarmStatus_AlarmFilter(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var assurancePolicyImplementors = []string{"AssurancePolicy", "SystemPolicy"}
+
+func (ec *executionContext) _AssurancePolicy(ctx context.Context, sel ast.SelectionSet, obj *models2.AssurancePolicy) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, assurancePolicyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AssurancePolicy")
+		case "read":
+			out.Values[i] = ec._AssurancePolicy_read(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "templates":
+			out.Values[i] = ec._AssurancePolicy_templates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -73724,6 +76033,36 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addAlarmFilter":
+			out.Values[i] = ec._Mutation_addAlarmFilter(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editAlarmFilter":
+			out.Values[i] = ec._Mutation_editAlarmFilter(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeAlarmFilter":
+			out.Values[i] = ec._Mutation_removeAlarmFilter(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addAlarmStatus":
+			out.Values[i] = ec._Mutation_addAlarmStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editAlarmStatus":
+			out.Values[i] = ec._Mutation_editAlarmStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeAlarmStatus":
+			out.Values[i] = ec._Mutation_removeAlarmStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -73831,6 +76170,11 @@ func (ec *executionContext) _PermissionSettings(ctx context.Context, sel ast.Sel
 			}
 		case "automationPolicy":
 			out.Values[i] = ec._PermissionSettings_automationPolicy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "assurancePolicy":
+			out.Values[i] = ec._PermissionSettings_assurancePolicy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -75177,6 +77521,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_tresholds(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "AlarmFilters":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_AlarmFilters(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -79000,6 +81358,16 @@ func (ec *executionContext) marshalNActivityField2githubᚗcomᚋfacebookincubat
 	return v
 }
 
+func (ec *executionContext) unmarshalNAddAlarmFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAlarmFilterInput(ctx context.Context, v interface{}) (models.AddAlarmFilterInput, error) {
+	res, err := ec.unmarshalInputAddAlarmFilterInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddAlarmStatusInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAlarmStatusInput(ctx context.Context, v interface{}) (models.AddAlarmStatusInput, error) {
+	res, err := ec.unmarshalInputAddAlarmStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBlockInstanceInput(ctx context.Context, v interface{}) (models.AddBlockInstanceInput, error) {
 	res, err := ec.unmarshalInputAddBlockInstanceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -79193,6 +81561,120 @@ func (ec *executionContext) marshalNAdministrativePolicy2ᚖgithubᚗcomᚋfaceb
 		return graphql.Null
 	}
 	return ec._AdministrativePolicy(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAlarmFilter2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx context.Context, sel ast.SelectionSet, v ent.AlarmFilter) graphql.Marshaler {
+	return ec._AlarmFilter(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAlarmFilter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmFilter) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AlarmFilter(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAlarmFilterConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterConnection(ctx context.Context, sel ast.SelectionSet, v ent.AlarmFilterConnection) graphql.Marshaler {
+	return ec._AlarmFilterConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAlarmFilterConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterConnection(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmFilterConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AlarmFilterConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAlarmFilterEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.AlarmFilterEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAlarmFilterEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNAlarmFilterEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmFilterEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AlarmFilterEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNAlarmFilterFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterInput(ctx context.Context, v interface{}) (*models.AlarmFilterFilterInput, error) {
+	res, err := ec.unmarshalInputAlarmFilterFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAlarmFilterFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterType(ctx context.Context, v interface{}) (models.AlarmFilterFilterType, error) {
+	var res models.AlarmFilterFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAlarmFilterFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterType(ctx context.Context, sel ast.SelectionSet, v models.AlarmFilterFilterType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNAlarmStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatus(ctx context.Context, sel ast.SelectionSet, v ent.AlarmStatus) graphql.Marshaler {
+	return ec._AlarmStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAlarmStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatus(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AlarmStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAssurancePolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAssurancePolicy(ctx context.Context, sel ast.SelectionSet, v *models2.AssurancePolicy) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AssurancePolicy(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNAutomationPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicy(ctx context.Context, sel ast.SelectionSet, v *models2.AutomationPolicy) graphql.Marshaler {
@@ -80189,6 +82671,16 @@ func (ec *executionContext) marshalNEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 	return ec._Edge(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNEditAlarmFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAlarmFilterInput(ctx context.Context, v interface{}) (models.EditAlarmFilterInput, error) {
+	res, err := ec.unmarshalInputEditAlarmFilterInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditAlarmStatusInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAlarmStatusInput(ctx context.Context, v interface{}) (models.EditAlarmStatusInput, error) {
+	res, err := ec.unmarshalInputEditAlarmStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNEditBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditBlockInput(ctx context.Context, v interface{}) (models.EditBlockInput, error) {
 	res, err := ec.unmarshalInputEditBlockInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -81123,11 +83615,6 @@ func (ec *executionContext) marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋ
 		return graphql.Null
 	}
 	return ec._Event(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNEventInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInput(ctx context.Context, v interface{}) (*models.EventInput, error) {
-	res, err := ec.unmarshalInputEventInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNEventSeverity2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx context.Context, sel ast.SelectionSet, v ent.EventSeverity) graphql.Marshaler {
@@ -85580,6 +88067,116 @@ func (ec *executionContext) unmarshalOAddCounterInput2ᚕᚖgithubᚗcomᚋfaceb
 	return res, nil
 }
 
+func (ec *executionContext) marshalOAlarmFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.AlarmFilter) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAlarmFilter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOAlarmFilter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilter(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmFilter) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._AlarmFilter(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAlarmFilterFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.AlarmFilterFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AlarmFilterFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAlarmFilterFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmFilterFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOAlarmFilterOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterOrder(ctx context.Context, v interface{}) (*ent.AlarmFilterOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAlarmFilterOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAlarmFilterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterOrderField(ctx context.Context, v interface{}) (*ent.AlarmFilterOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.AlarmFilterOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAlarmFilterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmFilterOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalOAlarmStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatus(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._AlarmStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAssurancePolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAssurancePolicyInput(ctx context.Context, v interface{}) (*models2.AssurancePolicyInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAssurancePolicyInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOAutomationPolicyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAutomationPolicyInput(ctx context.Context, v interface{}) (*models2.AutomationPolicyInput, error) {
 	if v == nil {
 		return nil, nil
@@ -86518,30 +89115,6 @@ func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋfacebookincubator
 	}
 	wg.Wait()
 	return ret
-}
-
-func (ec *executionContext) unmarshalOEventInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInputᚄ(ctx context.Context, v interface{}) ([]*models.EventInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.EventInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEventInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) marshalOEventSeverity2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverity) graphql.Marshaler {

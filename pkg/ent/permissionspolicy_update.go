@@ -114,6 +114,18 @@ func (ppu *PermissionsPolicyUpdate) ClearAutomationPolicy() *PermissionsPolicyUp
 	return ppu
 }
 
+// SetAssurancePolicy sets the assurance_policy field.
+func (ppu *PermissionsPolicyUpdate) SetAssurancePolicy(mpi *models.AssurancePolicyInput) *PermissionsPolicyUpdate {
+	ppu.mutation.SetAssurancePolicy(mpi)
+	return ppu
+}
+
+// ClearAssurancePolicy clears the value of assurance_policy.
+func (ppu *PermissionsPolicyUpdate) ClearAssurancePolicy() *PermissionsPolicyUpdate {
+	ppu.mutation.ClearAssurancePolicy()
+	return ppu
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (ppu *PermissionsPolicyUpdate) AddGroupIDs(ids ...int) *PermissionsPolicyUpdate {
 	ppu.mutation.AddGroupIDs(ids...)
@@ -328,6 +340,19 @@ func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: permissionspolicy.FieldAutomationPolicy,
 		})
 	}
+	if value, ok := ppu.mutation.AssurancePolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: permissionspolicy.FieldAssurancePolicy,
+		})
+	}
+	if ppu.mutation.AssurancePolicyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: permissionspolicy.FieldAssurancePolicy,
+		})
+	}
 	if ppu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -479,6 +504,18 @@ func (ppuo *PermissionsPolicyUpdateOne) SetAutomationPolicy(mpi *models.Automati
 // ClearAutomationPolicy clears the value of automation_policy.
 func (ppuo *PermissionsPolicyUpdateOne) ClearAutomationPolicy() *PermissionsPolicyUpdateOne {
 	ppuo.mutation.ClearAutomationPolicy()
+	return ppuo
+}
+
+// SetAssurancePolicy sets the assurance_policy field.
+func (ppuo *PermissionsPolicyUpdateOne) SetAssurancePolicy(mpi *models.AssurancePolicyInput) *PermissionsPolicyUpdateOne {
+	ppuo.mutation.SetAssurancePolicy(mpi)
+	return ppuo
+}
+
+// ClearAssurancePolicy clears the value of assurance_policy.
+func (ppuo *PermissionsPolicyUpdateOne) ClearAssurancePolicy() *PermissionsPolicyUpdateOne {
+	ppuo.mutation.ClearAssurancePolicy()
 	return ppuo
 }
 
@@ -692,6 +729,19 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (_node *Per
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Column: permissionspolicy.FieldAutomationPolicy,
+		})
+	}
+	if value, ok := ppuo.mutation.AssurancePolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: permissionspolicy.FieldAssurancePolicy,
+		})
+	}
+	if ppuo.mutation.AssurancePolicyCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: permissionspolicy.FieldAssurancePolicy,
 		})
 	}
 	if ppuo.mutation.GroupsCleared() {

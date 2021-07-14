@@ -47,6 +47,50 @@ var (
 			},
 		},
 	}
+	// AlarmFiltersColumns holds the columns for the "alarm_filters" table.
+	AlarmFiltersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "network_resource", Type: field.TypeString},
+		{Name: "begin_time", Type: field.TypeTime},
+		{Name: "end_time", Type: field.TypeTime},
+		{Name: "reason", Type: field.TypeString},
+		{Name: "user", Type: field.TypeString},
+		{Name: "creation_time", Type: field.TypeTime},
+		{Name: "enable", Type: field.TypeBool},
+		{Name: "alarm_status_alarm_status_fk", Type: field.TypeInt, Nullable: true},
+	}
+	// AlarmFiltersTable holds the schema information for the "alarm_filters" table.
+	AlarmFiltersTable = &schema.Table{
+		Name:       "alarm_filters",
+		Columns:    AlarmFiltersColumns,
+		PrimaryKey: []*schema.Column{AlarmFiltersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "alarm_filters_alarm_status_alarmStatusFk",
+				Columns: []*schema.Column{AlarmFiltersColumns[11]},
+
+				RefColumns: []*schema.Column{AlarmStatusColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// AlarmStatusColumns holds the columns for the "alarm_status" table.
+	AlarmStatusColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// AlarmStatusTable holds the schema information for the "alarm_status" table.
+	AlarmStatusTable = &schema.Table{
+		Name:        "alarm_status",
+		Columns:     AlarmStatusColumns,
+		PrimaryKey:  []*schema.Column{AlarmStatusColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// BlocksColumns holds the columns for the "blocks" table.
 	BlocksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1313,6 +1357,7 @@ var (
 		{Name: "inventory_policy", Type: field.TypeJSON, Nullable: true},
 		{Name: "workforce_policy", Type: field.TypeJSON, Nullable: true},
 		{Name: "automation_policy", Type: field.TypeJSON, Nullable: true},
+		{Name: "assurance_policy", Type: field.TypeJSON, Nullable: true},
 	}
 	// PermissionsPoliciesTable holds the schema information for the "permissions_policies" table.
 	PermissionsPoliciesTable = &schema.Table{
@@ -2793,6 +2838,8 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ActivitiesTable,
+		AlarmFiltersTable,
+		AlarmStatusTable,
 		BlocksTable,
 		BlockInstancesTable,
 		CheckListCategoriesTable,
@@ -2881,6 +2928,7 @@ var (
 func init() {
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
+	AlarmFiltersTable.ForeignKeys[0].RefTable = AlarmStatusTable
 	BlocksTable.ForeignKeys[0].RefTable = FlowsTable
 	BlocksTable.ForeignKeys[1].RefTable = BlocksTable
 	BlocksTable.ForeignKeys[2].RefTable = FlowsTable

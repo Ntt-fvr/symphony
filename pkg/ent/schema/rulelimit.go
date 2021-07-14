@@ -8,6 +8,7 @@ import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/authz"
 )
 
 // Counter defines the property type schema.
@@ -31,4 +32,13 @@ func (RuleLimit) Edges() []ent.Edge {
 		edge.From("rule", Rule.Type).
 			Ref("rulelimitrule").Unique(),
 	}
+}
+
+// Policy returns entity policy.
+func (RuleLimit) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)
 }

@@ -18,6 +18,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -201,6 +203,152 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = a.QueryWorkOrder().
 		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (af *AlarmFilter) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     af.ID,
+		Type:   "AlarmFilter",
+		Fields: make([]*Field, 10),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(af.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.NetworkResource); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "networkResource",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.BeginTime); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "time.Time",
+		Name:  "beginTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.EndTime); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "time.Time",
+		Name:  "endTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.Reason); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "reason",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.User); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "string",
+		Name:  "user",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.CreationTime); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "time.Time",
+		Name:  "creationTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(af.Enable); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "bool",
+		Name:  "enable",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "AlarmStatus",
+		Name: "alarmStatusFk",
+	}
+	node.Edges[0].IDs, err = af.QueryAlarmStatusFk().
+		Select(alarmstatus.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (as *AlarmStatus) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     as.ID,
+		Type:   "AlarmStatus",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(as.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(as.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(as.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "AlarmFilter",
+		Name: "alarmStatusFk",
+	}
+	node.Edges[0].IDs, err = as.QueryAlarmStatusFk().
+		Select(alarmfilter.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3672,7 +3820,7 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
 		Type:   "PermissionsPolicy",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -3738,6 +3886,14 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[7] = &Field{
 		Type:  "*models.AutomationPolicyInput",
 		Name:  "automation_policy",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pp.AssurancePolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "*models.AssurancePolicyInput",
+		Name:  "assurance_policy",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -6985,6 +7141,24 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Activity.Query().
 			Where(activity.ID(id)).
 			CollectFields(ctx, "Activity").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case alarmfilter.Table:
+		n, err := c.AlarmFilter.Query().
+			Where(alarmfilter.ID(id)).
+			CollectFields(ctx, "AlarmFilter").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case alarmstatus.Table:
+		n, err := c.AlarmStatus.Query().
+			Where(alarmstatus.ID(id)).
+			CollectFields(ctx, "AlarmStatus").
 			Only(ctx)
 		if err != nil {
 			return nil, err

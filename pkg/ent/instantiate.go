@@ -13,6 +13,18 @@ func (c *ActivityClient) Instantiate(a *Activity) *Activity {
 }
 
 // Instantiate entity configuration.
+func (c *AlarmFilterClient) Instantiate(af *AlarmFilter) *AlarmFilter {
+	af.config = c.config
+	return af
+}
+
+// Instantiate entity configuration.
+func (c *AlarmStatusClient) Instantiate(as *AlarmStatus) *AlarmStatus {
+	as.config = c.config
+	return as
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b

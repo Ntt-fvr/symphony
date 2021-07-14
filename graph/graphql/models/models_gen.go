@@ -62,6 +62,22 @@ type ActivityFilterInput struct {
 	ActivityType   activity.ActivityType `json:"activityType"`
 }
 
+type AddAlarmFilterInput struct {
+	Name            string    `json:"name"`
+	NetworkResource string    `json:"networkResource"`
+	Enable          bool      `json:"enable"`
+	BeginTime       time.Time `json:"beginTime"`
+	EndTime         time.Time `json:"endTime"`
+	Reason          string    `json:"reason"`
+	User            string    `json:"user"`
+	CreationTime    time.Time `json:"creationTime"`
+	AlarmStatus     int       `json:"alarmStatus"`
+}
+
+type AddAlarmStatusInput struct {
+	Name string `json:"name"`
+}
+
 type AddBlockInstanceInput struct {
 	Status  *blockinstance.Status       `json:"status"`
 	Inputs  []*flowschema.VariableValue `json:"inputs"`
@@ -76,8 +92,7 @@ type AddBulkServiceLinksAndPortsInput struct {
 }
 
 type AddComparatorInput struct {
-	Name      string            `json:"name"`
-	RuleLimit []*RuleLimitInput `json:"ruleLimit"`
+	Name string `json:"name"`
 }
 
 type AddCounterFamilyInput struct {
@@ -90,6 +105,7 @@ type AddCounterInput struct {
 	ExternalID           string                           `json:"externalID"`
 	NetworkManagerSystem string                           `json:"networkManagerSystem"`
 	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
+	CounterFamily        int                              `json:"counterFamily"`
 }
 
 type AddCounterVendorFormulaInput struct {
@@ -134,17 +150,15 @@ type AddEquipmentTypeInput struct {
 }
 
 type AddEventInput struct {
-	Name            string       `json:"name"`
-	EventTypeName   string       `json:"eventTypeName"`
-	SpecificProblem string       `json:"specificProblem"`
-	AdditionalInfo  string       `json:"additionalInfo"`
-	Rule            []*RuleInput `json:"rule"`
-	EventSeverity   int          `json:"eventSeverity"`
+	Name            string `json:"name"`
+	EventTypeName   string `json:"eventTypeName"`
+	SpecificProblem string `json:"specificProblem"`
+	AdditionalInfo  string `json:"additionalInfo"`
+	EventSeverity   int    `json:"eventSeverity"`
 }
 
 type AddEventSeverityInput struct {
-	Name  string        `json:"name"`
-	Event []*EventInput `json:"event"`
+	Name string `json:"name"`
 }
 
 type AddFloorPlanInput struct {
@@ -236,6 +250,7 @@ type AddPermissionsPolicyInput struct {
 	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
 	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
 	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
 	Groups          []int                          `json:"groups"`
 }
 
@@ -257,14 +272,13 @@ type AddProjectTypeInput struct {
 }
 
 type AddRuleInput struct {
-	Name          string            `json:"name"`
-	GracePeriod   int               `json:"gracePeriod"`
-	StartDateTime time.Time         `json:"startDateTime"`
-	EndDateTime   time.Time         `json:"endDateTime"`
-	RuleLimit     []*RuleLimitInput `json:"ruleLimit"`
-	RuleType      int               `json:"ruleType"`
-	Event         int               `json:"event"`
-	Treshold      int               `json:"treshold"`
+	Name          string    `json:"name"`
+	GracePeriod   int       `json:"gracePeriod"`
+	StartDateTime time.Time `json:"startDateTime"`
+	EndDateTime   time.Time `json:"endDateTime"`
+	RuleType      int       `json:"ruleType"`
+	Event         int       `json:"event"`
+	Treshold      int       `json:"treshold"`
 }
 
 type AddRuleLimitInput struct {
@@ -291,11 +305,10 @@ type AddTechInput struct {
 }
 
 type AddTresholdInput struct {
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	Status      bool         `json:"status"`
-	Rule        []*RuleInput `json:"rule"`
-	Kpi         *int         `json:"kpi"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      bool   `json:"status"`
+	Kpi         int    `json:"kpi"`
 }
 
 type AddUsersGroupInput struct {
@@ -337,6 +350,31 @@ type AddWorkerTypeInput struct {
 	Name          string                      `json:"name"`
 	Description   *string                     `json:"description"`
 	PropertyTypes []*models.PropertyTypeInput `json:"propertyTypes"`
+}
+
+type AlarmFilterFilterInput struct {
+	FilterType  AlarmFilterFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
+}
+
+type AlarmFilterInput struct {
+	Name            string    `json:"name"`
+	NetworkResource string    `json:"networkResource"`
+	Enable          bool      `json:"enable"`
+	BeginTime       time.Time `json:"beginTime"`
+	EndTime         time.Time `json:"endTime"`
+	Reason          string    `json:"reason"`
+	User            string    `json:"user"`
+	CreationTime    time.Time `json:"creationTime"`
+}
+
+type AlarmStatusInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type BlockVariableInput struct {
@@ -469,6 +507,22 @@ type DomainInput struct {
 	Name string `json:"name"`
 }
 
+type EditAlarmFilterInput struct {
+	ID              int       `json:"id"`
+	Name            string    `json:"name"`
+	NetworkResource string    `json:"networkResource"`
+	Enable          bool      `json:"enable"`
+	BeginTime       time.Time `json:"beginTime"`
+	EndTime         time.Time `json:"endTime"`
+	Reason          string    `json:"reason"`
+	AlarmStatus     int       `json:"alarmStatus"`
+}
+
+type EditAlarmStatusInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditBlockInput struct {
 	ID               int                               `json:"id"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -483,9 +537,8 @@ type EditBlockInstanceInput struct {
 }
 
 type EditComparatorInput struct {
-	ID        int               `json:"id"`
-	Name      string            `json:"name"`
-	RuleLimit []*RuleLimitInput `json:"ruleLimit"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditCounterFamilyInput struct {
@@ -545,19 +598,17 @@ type EditEquipmentTypeInput struct {
 }
 
 type EditEventInput struct {
-	ID              int          `json:"id"`
-	Name            string       `json:"name"`
-	EventTypeName   string       `json:"eventTypeName"`
-	SpecificProblem string       `json:"specificProblem"`
-	AdditionalInfo  string       `json:"additionalInfo"`
-	Rule            []*RuleInput `json:"rule"`
-	EventSeverity   int          `json:"eventSeverity"`
+	ID              int    `json:"id"`
+	Name            string `json:"name"`
+	EventTypeName   string `json:"eventTypeName"`
+	SpecificProblem string `json:"specificProblem"`
+	AdditionalInfo  string `json:"additionalInfo"`
+	EventSeverity   int    `json:"eventSeverity"`
 }
 
 type EditEventSeverityInput struct {
-	ID    int           `json:"id"`
-	Name  string        `json:"name"`
-	Event []*EventInput `json:"event"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditFlowInstanceInput struct {
@@ -613,6 +664,7 @@ type EditPermissionsPolicyInput struct {
 	InventoryInput  *models1.InventoryPolicyInput  `json:"inventoryInput"`
 	WorkforceInput  *models1.WorkforcePolicyInput  `json:"workforceInput"`
 	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
+	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
 	Groups          []int                          `json:"groups"`
 }
 
@@ -641,15 +693,14 @@ type EditReportFilterInput struct {
 }
 
 type EditRuleInput struct {
-	ID            int               `json:"id"`
-	Name          string            `json:"name"`
-	GracePeriod   *int              `json:"gracePeriod"`
-	StartDateTime *time.Time        `json:"startDateTime"`
-	EndDateTime   *time.Time        `json:"endDateTime"`
-	RuleLimit     []*RuleLimitInput `json:"ruleLimit"`
-	RuleType      int               `json:"ruleType"`
-	Event         int               `json:"event"`
-	Treshold      int               `json:"treshold"`
+	ID            int        `json:"id"`
+	Name          string     `json:"name"`
+	GracePeriod   *int       `json:"gracePeriod"`
+	StartDateTime *time.Time `json:"startDateTime"`
+	EndDateTime   *time.Time `json:"endDateTime"`
+	RuleType      int        `json:"ruleType"`
+	Event         int        `json:"event"`
+	Treshold      int        `json:"treshold"`
 }
 
 type EditRuleLimitInput struct {
@@ -672,11 +723,10 @@ type EditTechInput struct {
 }
 
 type EditTresholdInput struct {
-	ID          int          `json:"id"`
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	Status      bool         `json:"status"`
-	Rule        []*RuleInput `json:"rule"`
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      bool   `json:"status"`
 }
 
 type EditUserInput struct {
@@ -1206,7 +1256,7 @@ type TresholdInput struct {
 	Description string       `json:"description"`
 	Status      bool         `json:"status"`
 	Rule        []*RuleInput `json:"rule"`
-	Kpi         *int         `json:"kpi"`
+	Kpi         int          `json:"kpi"`
 }
 
 type TriggerBlock struct {
@@ -1292,6 +1342,45 @@ type WorkOrderExecutionResult struct {
 	EquipmentRemoved []int            `json:"equipmentRemoved"`
 	LinkAdded        []*ent.Link      `json:"linkAdded"`
 	LinkRemoved      []int            `json:"linkRemoved"`
+}
+
+type AlarmFilterFilterType string
+
+const (
+	AlarmFilterFilterTypeName AlarmFilterFilterType = "NAME"
+)
+
+var AllAlarmFilterFilterType = []AlarmFilterFilterType{
+	AlarmFilterFilterTypeName,
+}
+
+func (e AlarmFilterFilterType) IsValid() bool {
+	switch e {
+	case AlarmFilterFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e AlarmFilterFilterType) String() string {
+	return string(e)
+}
+
+func (e *AlarmFilterFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AlarmFilterFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AlarmFilterFilterType", str)
+	}
+	return nil
+}
+
+func (e AlarmFilterFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type CommentEntity string

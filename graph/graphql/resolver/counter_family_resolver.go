@@ -20,7 +20,7 @@ type counterFamilyResolver struct{}
 func (counterFamilyResolver) Counter(ctx context.Context, counterFamily *ent.CounterFamily) ([]*ent.Counter, error) {
 	variable, err := counterFamily.Counterfamily(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -35,14 +35,14 @@ func (r mutationResolver) AddCounterFamily(ctx context.Context, input models.Add
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A counter family with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating counter family: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		// TODO: agregar counters
 		counters, err = r.AddCounterList(ctx, input.Counter, fam.ID)
 		if err != nil {
-			return nil, fmt.Errorf("creating counter: %w", err)
+			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 		} else {
 			fam.Edges.Counterfamily = counters
 		}
@@ -58,13 +58,13 @@ func (r mutationResolver) RemoveCounterFamily(ctx context.Context, id int) (int,
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counter family: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 
 	// TODO: Borrar validar formulas relation/edge.
 
 	if err := client.CounterFamily.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting counter family")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -74,9 +74,9 @@ func (r mutationResolver) EditCounterFamily(ctx context.Context, input models.Ed
 	et, err := client.CounterFamily.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A counter with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	// TODO: borrar o editar los edges relacionados
 	if input.Name != et.Name {
@@ -85,9 +85,9 @@ func (r mutationResolver) EditCounterFamily(ctx context.Context, input models.Ed
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A counter family with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating counter name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 

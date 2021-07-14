@@ -303,6 +303,26 @@ func (r queryResolver) Tresholds(
 		)
 }
 
+func (r queryResolver) AlarmFilters(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.AlarmFilterOrder,
+	filterBy []*models.AlarmFilterFilterInput,
+) (*ent.AlarmFilterConnection, error) {
+	return r.ClientFrom(ctx).
+		AlarmFilter.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithAlarmFilterOrder(orderBy),
+			ent.WithAlarmFilterFilter(
+				func(query *ent.AlarmFilterQuery) (*ent.AlarmFilterQuery, error) {
+					return resolverutil.AlarmFilterFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

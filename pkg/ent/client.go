@@ -14,6 +14,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -99,6 +101,10 @@ type Client struct {
 	Schema *migrate.Schema
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
+	// AlarmFilter is the client for interacting with the AlarmFilter builders.
+	AlarmFilter *AlarmFilterClient
+	// AlarmStatus is the client for interacting with the AlarmStatus builders.
+	AlarmStatus *AlarmStatusClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -259,6 +265,8 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Activity = NewActivityClient(c.config)
+	c.AlarmFilter = NewAlarmFilterClient(c.config)
+	c.AlarmStatus = NewAlarmStatusClient(c.config)
 	c.Block = NewBlockClient(c.config)
 	c.BlockInstance = NewBlockInstanceClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
@@ -364,6 +372,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                         ctx,
 		config:                      cfg,
 		Activity:                    NewActivityClient(cfg),
+		AlarmFilter:                 NewAlarmFilterClient(cfg),
+		AlarmStatus:                 NewAlarmStatusClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
@@ -452,6 +462,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		config:                      cfg,
 		Activity:                    NewActivityClient(cfg),
+		AlarmFilter:                 NewAlarmFilterClient(cfg),
+		AlarmStatus:                 NewAlarmStatusClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
@@ -553,6 +565,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Activity.Use(hooks...)
+	c.AlarmFilter.Use(hooks...)
+	c.AlarmStatus.Use(hooks...)
 	c.Block.Use(hooks...)
 	c.BlockInstance.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
@@ -746,6 +760,216 @@ func (c *ActivityClient) QueryWorkOrder(a *Activity) *WorkOrderQuery {
 func (c *ActivityClient) Hooks() []Hook {
 	hooks := c.hooks.Activity
 	return append(hooks[:len(hooks):len(hooks)], activity.Hooks[:]...)
+}
+
+// AlarmFilterClient is a client for the AlarmFilter schema.
+type AlarmFilterClient struct {
+	config
+}
+
+// NewAlarmFilterClient returns a client for the AlarmFilter from the given config.
+func NewAlarmFilterClient(c config) *AlarmFilterClient {
+	return &AlarmFilterClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `alarmfilter.Hooks(f(g(h())))`.
+func (c *AlarmFilterClient) Use(hooks ...Hook) {
+	c.hooks.AlarmFilter = append(c.hooks.AlarmFilter, hooks...)
+}
+
+// Create returns a create builder for AlarmFilter.
+func (c *AlarmFilterClient) Create() *AlarmFilterCreate {
+	mutation := newAlarmFilterMutation(c.config, OpCreate)
+	return &AlarmFilterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AlarmFilter entities.
+func (c *AlarmFilterClient) CreateBulk(builders ...*AlarmFilterCreate) *AlarmFilterCreateBulk {
+	return &AlarmFilterCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AlarmFilter.
+func (c *AlarmFilterClient) Update() *AlarmFilterUpdate {
+	mutation := newAlarmFilterMutation(c.config, OpUpdate)
+	return &AlarmFilterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlarmFilterClient) UpdateOne(af *AlarmFilter) *AlarmFilterUpdateOne {
+	mutation := newAlarmFilterMutation(c.config, OpUpdateOne, withAlarmFilter(af))
+	return &AlarmFilterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlarmFilterClient) UpdateOneID(id int) *AlarmFilterUpdateOne {
+	mutation := newAlarmFilterMutation(c.config, OpUpdateOne, withAlarmFilterID(id))
+	return &AlarmFilterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AlarmFilter.
+func (c *AlarmFilterClient) Delete() *AlarmFilterDelete {
+	mutation := newAlarmFilterMutation(c.config, OpDelete)
+	return &AlarmFilterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AlarmFilterClient) DeleteOne(af *AlarmFilter) *AlarmFilterDeleteOne {
+	return c.DeleteOneID(af.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AlarmFilterClient) DeleteOneID(id int) *AlarmFilterDeleteOne {
+	builder := c.Delete().Where(alarmfilter.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlarmFilterDeleteOne{builder}
+}
+
+// Query returns a query builder for AlarmFilter.
+func (c *AlarmFilterClient) Query() *AlarmFilterQuery {
+	return &AlarmFilterQuery{config: c.config}
+}
+
+// Get returns a AlarmFilter entity by its id.
+func (c *AlarmFilterClient) Get(ctx context.Context, id int) (*AlarmFilter, error) {
+	return c.Query().Where(alarmfilter.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlarmFilterClient) GetX(ctx context.Context, id int) *AlarmFilter {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAlarmStatusFk queries the alarmStatusFk edge of a AlarmFilter.
+func (c *AlarmFilterClient) QueryAlarmStatusFk(af *AlarmFilter) *AlarmStatusQuery {
+	query := &AlarmStatusQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := af.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alarmfilter.Table, alarmfilter.FieldID, id),
+			sqlgraph.To(alarmstatus.Table, alarmstatus.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, alarmfilter.AlarmStatusFkTable, alarmfilter.AlarmStatusFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(af.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AlarmFilterClient) Hooks() []Hook {
+	hooks := c.hooks.AlarmFilter
+	return append(hooks[:len(hooks):len(hooks)], alarmfilter.Hooks[:]...)
+}
+
+// AlarmStatusClient is a client for the AlarmStatus schema.
+type AlarmStatusClient struct {
+	config
+}
+
+// NewAlarmStatusClient returns a client for the AlarmStatus from the given config.
+func NewAlarmStatusClient(c config) *AlarmStatusClient {
+	return &AlarmStatusClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `alarmstatus.Hooks(f(g(h())))`.
+func (c *AlarmStatusClient) Use(hooks ...Hook) {
+	c.hooks.AlarmStatus = append(c.hooks.AlarmStatus, hooks...)
+}
+
+// Create returns a create builder for AlarmStatus.
+func (c *AlarmStatusClient) Create() *AlarmStatusCreate {
+	mutation := newAlarmStatusMutation(c.config, OpCreate)
+	return &AlarmStatusCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AlarmStatus entities.
+func (c *AlarmStatusClient) CreateBulk(builders ...*AlarmStatusCreate) *AlarmStatusCreateBulk {
+	return &AlarmStatusCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AlarmStatus.
+func (c *AlarmStatusClient) Update() *AlarmStatusUpdate {
+	mutation := newAlarmStatusMutation(c.config, OpUpdate)
+	return &AlarmStatusUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlarmStatusClient) UpdateOne(as *AlarmStatus) *AlarmStatusUpdateOne {
+	mutation := newAlarmStatusMutation(c.config, OpUpdateOne, withAlarmStatus(as))
+	return &AlarmStatusUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlarmStatusClient) UpdateOneID(id int) *AlarmStatusUpdateOne {
+	mutation := newAlarmStatusMutation(c.config, OpUpdateOne, withAlarmStatusID(id))
+	return &AlarmStatusUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AlarmStatus.
+func (c *AlarmStatusClient) Delete() *AlarmStatusDelete {
+	mutation := newAlarmStatusMutation(c.config, OpDelete)
+	return &AlarmStatusDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AlarmStatusClient) DeleteOne(as *AlarmStatus) *AlarmStatusDeleteOne {
+	return c.DeleteOneID(as.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AlarmStatusClient) DeleteOneID(id int) *AlarmStatusDeleteOne {
+	builder := c.Delete().Where(alarmstatus.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlarmStatusDeleteOne{builder}
+}
+
+// Query returns a query builder for AlarmStatus.
+func (c *AlarmStatusClient) Query() *AlarmStatusQuery {
+	return &AlarmStatusQuery{config: c.config}
+}
+
+// Get returns a AlarmStatus entity by its id.
+func (c *AlarmStatusClient) Get(ctx context.Context, id int) (*AlarmStatus, error) {
+	return c.Query().Where(alarmstatus.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlarmStatusClient) GetX(ctx context.Context, id int) *AlarmStatus {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAlarmStatusFk queries the alarmStatusFk edge of a AlarmStatus.
+func (c *AlarmStatusClient) QueryAlarmStatusFk(as *AlarmStatus) *AlarmFilterQuery {
+	query := &AlarmFilterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := as.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alarmstatus.Table, alarmstatus.FieldID, id),
+			sqlgraph.To(alarmfilter.Table, alarmfilter.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, alarmstatus.AlarmStatusFkTable, alarmstatus.AlarmStatusFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(as.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AlarmStatusClient) Hooks() []Hook {
+	hooks := c.hooks.AlarmStatus
+	return append(hooks[:len(hooks):len(hooks)], alarmstatus.Hooks[:]...)
 }
 
 // BlockClient is a client for the Block schema.

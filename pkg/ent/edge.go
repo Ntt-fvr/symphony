@@ -24,6 +24,22 @@ func (a *Activity) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 	return result, MaskNotFound(err)
 }
 
+func (af *AlarmFilter) AlarmStatusFk(ctx context.Context) (*AlarmStatus, error) {
+	result, err := af.Edges.AlarmStatusFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = af.QueryAlarmStatusFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (as *AlarmStatus) AlarmStatusFk(ctx context.Context) ([]*AlarmFilter, error) {
+	result, err := as.Edges.AlarmStatusFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = as.QueryAlarmStatusFk().All(ctx)
+	}
+	return result, err
+}
+
 func (b *Block) Flow(ctx context.Context) (*Flow, error) {
 	result, err := b.Edges.FlowOrErr()
 	if IsNotLoaded(err) {

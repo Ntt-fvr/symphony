@@ -13,6 +13,12 @@ import (
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 
+// AlarmFilter is the predicate function for alarmfilter builders.
+type AlarmFilter func(*sql.Selector)
+
+// AlarmStatus is the predicate function for alarmstatus builders.
+type AlarmStatus func(*sql.Selector)
+
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 

@@ -192,6 +192,54 @@ func (f ActivityMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ActivityMutation", m)
 }
 
+// The AlarmFilterQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AlarmFilterQueryRuleFunc func(context.Context, *ent.AlarmFilterQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AlarmFilterQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AlarmFilterQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AlarmFilterQuery", q)
+}
+
+// The AlarmFilterMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AlarmFilterMutationRuleFunc func(context.Context, *ent.AlarmFilterMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AlarmFilterMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AlarmFilterMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AlarmFilterMutation", m)
+}
+
+// The AlarmStatusQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AlarmStatusQueryRuleFunc func(context.Context, *ent.AlarmStatusQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AlarmStatusQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AlarmStatusQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AlarmStatusQuery", q)
+}
+
+// The AlarmStatusMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AlarmStatusMutationRuleFunc func(context.Context, *ent.AlarmStatusMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AlarmStatusMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AlarmStatusMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AlarmStatusMutation", m)
+}
+
 // The BlockQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type BlockQueryRuleFunc func(context.Context, *ent.BlockQuery) error

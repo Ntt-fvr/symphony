@@ -35,9 +35,9 @@ func (r mutationResolver) AddRuleType(ctx context.Context, input models.AddRuleT
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A RuleType with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating RuleType: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -50,12 +50,12 @@ func (r mutationResolver) RemoveRuleType(ctx context.Context, id int) (int, erro
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counter: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.RuleType.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting counter")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -65,9 +65,9 @@ func (r mutationResolver) EditRuleType(ctx context.Context, input models.EditRul
 	et, err := client.RuleType.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A RuleType with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating RuleType: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	if input.Name != et.Name {
 
@@ -76,9 +76,9 @@ func (r mutationResolver) EditRuleType(ctx context.Context, input models.EditRul
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A RuleType with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating RuleType name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil

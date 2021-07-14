@@ -20,7 +20,7 @@ type counterVendorFormulaResolver struct{}
 func (counterVendorFormulaResolver) CounterFk(ctx context.Context, counterVendorFormula *ent.CounterVendorFormula) (*ent.Counter, error) {
 	variable, err := counterVendorFormula.Counter(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a counter valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -29,7 +29,7 @@ func (counterVendorFormulaResolver) CounterFk(ctx context.Context, counterVendor
 func (counterVendorFormulaResolver) VendorFk(ctx context.Context, counterVendorFormula *ent.CounterVendorFormula) (*ent.Vendor, error) {
 	variable, err := counterVendorFormula.Vendor(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a vendor valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -38,7 +38,7 @@ func (counterVendorFormulaResolver) VendorFk(ctx context.Context, counterVendorF
 func (counterVendorFormulaResolver) FormulaFk(ctx context.Context, counterVendorFormula *ent.CounterVendorFormula) (*ent.Formula, error) {
 	variable, err := counterVendorFormula.Formula(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a vendor valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -54,9 +54,9 @@ func (r mutationResolver) AddCounterVendorFormula(ctx context.Context, input mod
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A CounterVendorFormula with the parameters %v %x %z already exists", input.CounterFk, input.VendorFk, input.FormulaFk)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating CounterVendorFormula: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -66,7 +66,7 @@ func (r mutationResolver) EditCounterVendorFormula(ctx context.Context, input mo
 	et, err := client.CounterVendorFormula.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A counter with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
 		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
 	}
@@ -82,9 +82,9 @@ func (r mutationResolver) EditCounterVendorFormula(ctx context.Context, input mo
 			SetMandatory(input.Mandatory).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A CounterVendorFormula with the parameters %v %x %z already exists", input.CounterFk, input.VendorFk, input.FormulaFk)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating counter vendor formula entity")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil
@@ -98,11 +98,11 @@ func (r mutationResolver) RemoveCounterVendorFormula(ctx context.Context, id int
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying counterVendorFormula: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 
 	if err := client.CounterVendorFormula.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting counterVendorFormula")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }

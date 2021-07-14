@@ -187,3 +187,13 @@ func TresholdFilter(query *ent.TresholdQuery, filters []*models.TresholdFilterIn
 	}
 	return query, nil
 }
+
+func AlarmFilterFilter(query *ent.AlarmFilterQuery, filters []*models.AlarmFilterFilterInput) (*ent.AlarmFilterQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleAlarmFilterFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

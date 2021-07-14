@@ -20,7 +20,7 @@ type formulaResolver struct{}
 func (formulaResolver) TechFk(ctx context.Context, formula *ent.Formula) (*ent.Tech, error) {
 	variable, err := formula.Tech(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a tech valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -29,7 +29,7 @@ func (formulaResolver) TechFk(ctx context.Context, formula *ent.Formula) (*ent.T
 func (formulaResolver) KpiFk(ctx context.Context, formula *ent.Formula) (*ent.Kpi, error) {
 	variable, err := formula.Kpi(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -38,7 +38,7 @@ func (formulaResolver) KpiFk(ctx context.Context, formula *ent.Formula) (*ent.Kp
 func (formulaResolver) CountervendorformulaFk(ctx context.Context, formula *ent.Formula) ([]*ent.CounterVendorFormula, error) {
 	variable, err := formula.Countervendorformula(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -55,9 +55,9 @@ func (r mutationResolver) AddFormula(ctx context.Context, input models.AddFormul
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A formula with the name %v already exists", input.Name)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("creating formula: %w", err)
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -70,10 +70,10 @@ func (r mutationResolver) RemoveFormula(ctx context.Context, id int) (int, error
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying formula: id=%q", id)
+		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	if err := client.Formula.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "deleting formula")
+		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
@@ -83,9 +83,9 @@ func (r mutationResolver) EditFormula(ctx context.Context, input models.EditForm
 	et, err := client.Formula.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("A formula with id=%q does not exist", input.ID)
+			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "updating formula: id=%q", input.ID)
+		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	if input.Name != et.Name || input.Active != et.Active || input.KpiFk != et.Edges.Kpi.ID || input.TechFk != et.Edges.Tech.ID {
 		if et, err = client.Formula.
@@ -96,9 +96,9 @@ func (r mutationResolver) EditFormula(ctx context.Context, input models.EditForm
 			SetTechID(input.TechFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("A formula with the name %v already exists", input.Name)
+				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "updating formula name")
+			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
 		}
 	}
 	return et, nil
