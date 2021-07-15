@@ -7,14 +7,22 @@
  * @flow
  * @format
  */
+import Button from '@material-ui/core/Button';
+
 import React, {useState} from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 
+import {
+  StatusActive,
+  StatusClosed,
+  StatusPending,
+} from './AlarmFilteringStatus';
+
 import {makeStyles} from '@material-ui/styles';
 
 import Paper from '@material-ui/core/Paper';
-
+import Switch from '@symphony/design-system/components/switch/Switch';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -22,6 +30,30 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+
+const StyledTableCell = withStyles(() => ({
+  head: {
+    backgroundColor: 'white',
+    color: 'blue',
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles(() => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#EDF0F9',
+    },
+  },
+}))(TableRow);
+
+const useStyles = makeStyles(() => ({
+  root: {
+    width: '100%',
+  },
+  container: {
+    maxHeight: '440px',
+  },
+}));
 
 const columns = [
   {id: 'enable', label: 'Enable', minWidth: 170},
@@ -100,198 +132,175 @@ function createData(
 const rows = [
   createData(
     '123',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusActive />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '234',
-    'switch',
-    'ancorName',
+    '',
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusPending />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '345',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusClosed />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '456',
-    'switch',
-    'ancorName',
+    '',
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    '',
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '567',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    '',
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '678',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusPending />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '789',
-    'switch',
-    'ancorName',
+    '',
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    '',
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '890',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    '',
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '909',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusActive />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '987',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    '',
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '876',
-    'switch',
-    'ancorName',
+    '',
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusPending />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '765',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusPending />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '654',
-    'switch',
-    'ancorName',
+    <Switch />,
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusActive />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '543',
-    'switch',
-    'ancorName',
+    '',
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusActive />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
   createData(
     '432',
-    'switch',
-    'ancorName',
+    '',
+    <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    'Button',
+    <StatusActive />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
   ),
 ];
-const StyledTableCell = withStyles(() => ({
-  head: {
-    backgroundColor: 'white',
-    color: 'blue',
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles(() => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: '#EDF0F9',
-    },
-  },
-}))(TableRow);
-
-const useStyles = makeStyles(() => ({
-  root: {
-    width: '100%',
-  },
-  container: {
-    maxHeight: '440px',
-  },
-}));
 
 const AlarmFilteringTable = () => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -323,14 +332,9 @@ const AlarmFilteringTable = () => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => {
                 return (
-                  <StyledTableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.id}>
+                  <StyledTableRow role="checkbox" tabIndex={-1} key={row.id}>
                     {columns.map(column => {
                       const value = row[column.id];
-                      console.log(value);
                       return (
                         <TableCell key={column.id} align={column.center}>
                           {column.format && typeof value === 'number'
