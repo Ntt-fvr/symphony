@@ -19,6 +19,7 @@ import {
   StatusPending,
 } from './AlarmFilteringStatus';
 
+import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeStyles} from '@material-ui/styles';
 
 import Paper from '@material-ui/core/Paper';
@@ -97,7 +98,7 @@ const columns = [
   },
   {
     id: 'icon',
-    label: 'Icon',
+    label: <FilterListIcon />,
     minWidth: 170,
     center: 'right',
   },
@@ -235,7 +236,7 @@ const rows = [
     <Button color="primary">ancorName</Button>,
     '27/05/21     12:50',
     'AMS/OLT-SYS-AL1/rack=',
-    '',
+    <StatusClosed />,
     '27/05/21     12:50',
     '24/06/21     17:23',
     '1526735162',
