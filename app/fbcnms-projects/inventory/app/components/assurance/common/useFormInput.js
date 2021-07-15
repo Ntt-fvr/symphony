@@ -10,18 +10,12 @@
 
 import {useEffect, useState} from 'react';
 
-type Target = $ReadOnly<{|
-  target: {
-    value: string,
-  },
-|}>;
-
 export function useFormInput(initialValue: string) {
   const [value, setValue] = useState(initialValue);
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
-  function handleChange({target}: Target) {
+  function handleChange({target}: SyntheticInputEvent<HTMLInputElement>) {
     setValue(target.value);
   }
   return {

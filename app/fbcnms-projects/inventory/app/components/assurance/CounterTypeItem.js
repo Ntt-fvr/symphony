@@ -76,7 +76,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   edit: void,
-  onChange: void,
+  handleRemove: void,
 |}>;
 
 export default function CounterTypeItem(props: Props) {
@@ -86,7 +86,7 @@ export default function CounterTypeItem(props: Props) {
     networkManagerSystem,
     counterFamily,
     edit,
-    onChange,
+    handleRemove,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -119,7 +119,7 @@ export default function CounterTypeItem(props: Props) {
             />
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
-              onClick={onChange}
+              onClick={handleRemove}
             />
           </Grid>
         </AccordionSummary>
