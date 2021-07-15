@@ -8,19 +8,22 @@
  * @format
  */
 
+import type {RemoveTresholdMutationVariables} from '../../mutations/__generated__/RemoveTresholdMutation.graphql';
+
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-import {Grid, List} from '@material-ui/core';
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import {fetchQuery} from 'relay-runtime';
-import {graphql} from 'react-relay';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
+import {Grid, List} from '@material-ui/core';
+import {fetchQuery} from 'relay-runtime';
+import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
-import type {RemoveTresholdMutationVariables} from '../../mutations/__generated__/RemoveTresholdMutation.graphql';
 
+import AddRuleItemForm from './AddRuleItemForm';
+import EditCounterItemForm from './EditCounterItemForm';
 import RemoveTresholdMutation from '../../mutations/RemoveTresholdMutation';
 
 const useStyles = makeStyles(theme => ({
@@ -35,14 +38,14 @@ const useStyles = makeStyles(theme => ({
 
 const TresholdQuery = graphql`
   query TresholdTypesQuery {
-    tresholds{
-      edges{
-        node{
+    tresholds {
+      edges {
+        node {
           id
           name
           description
           status
-          kpi{
+          kpi {
             id
             name
           }
@@ -56,7 +59,7 @@ const TresholdTypes = () => {
   const classes = useStyles();
 
   const [DataTreshold, setDataTreshold] = useState({});
-  const [showEditCard, setShowEditCard] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 
   useEffect(() => {
@@ -91,6 +94,14 @@ const TresholdTypes = () => {
   //   );
   // }
 
+  const showAddRuleItemForm = () => {
+    setShowAddForm(true);
+  };
+
+  if (showAddForm) {
+    return <AddRuleItemForm />;
+  }
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -106,6 +117,15 @@ const TresholdTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <TitleTextCardsThresholds />
+
+          <ThresholdTypeItem
+            id={'hola'}
+            name={'hola'}
+            description={'hola'}
+            kpi={'hola'}
+            addRule={showAddRuleItemForm}
+          />
+
           <List disablePadding>
             {DataTreshold.tresholds?.edges.map((item, index) => (
               <ThresholdTypeItem

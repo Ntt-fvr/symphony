@@ -20,15 +20,15 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -92,11 +92,11 @@ type Props = $ReadOnly<{|
     name: string,
   },
   edit: void,
-  onChange: void,
+  addRule: void => void,
 |}>;
 
 export default function ThresholdTypeItem(props: Props) {
-  const {name, description, id, kpi, edit, onChange} = props;
+  const {name, description, id, kpi, edit, addRule} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   return (
@@ -132,7 +132,7 @@ export default function ThresholdTypeItem(props: Props) {
           </Grid>
 
           <Grid className={classes.rootGrid}>
-            <AddButton textButton={'Add rule'} />
+            <AddButton textButton={'Add rule'} onClick={addRule} />
           </Grid>
 
           <Grid>
@@ -145,7 +145,6 @@ export default function ThresholdTypeItem(props: Props) {
           <Grid>
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
-              onClick={onChange}
             />
           </Grid>
         </AccordionSummary>
@@ -158,9 +157,7 @@ export default function ThresholdTypeItem(props: Props) {
             xs={12}
             justify="center"
             alignItems="center">
-            <Grid xs={10}>
-              {description}
-            </Grid>
+            <Grid xs={10}>{description}</Grid>
             <Grid xs={10}>
               <Text
                 className={classes.rulesContained}

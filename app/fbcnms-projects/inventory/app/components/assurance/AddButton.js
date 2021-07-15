@@ -33,10 +33,11 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   textButton: string,
+  onClick?: void => void,
 |}>;
 
 function AddButton(props: Props) {
-  const {textButton} = props;
+  const {textButton, onClick} = props;
   const classes = useStyles();
 
   return (
@@ -45,6 +46,7 @@ function AddButton(props: Props) {
         variant="outlined"
         color="primary"
         weight="bold"
+        onClick={onClick}
         className={classes.button}
         startIcon={<AddCircleOutlineIcon className={classes.icon} />}>
         <Text className={''} color="primary" variant="subtitle2">
