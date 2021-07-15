@@ -55,7 +55,7 @@ type Props = $ReadOnly<{|
       name: string,
     },
   },
-  hideEditCounterForm: any,
+  hideEditCounterForm: void => void,
 |}>;
 
 const EditCounterItemForm = (props: Props) => {
@@ -108,10 +108,7 @@ const EditCounterItemForm = (props: Props) => {
                   className={classes.formField}
                   label="Vendor name"
                   required>
-                  <TextInput
-                    className={classes.textInput}
-                    name="vendorName"
-                  />
+                  <TextInput className={classes.textInput} name="vendorName" />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
@@ -169,7 +166,9 @@ const EditCounterItemForm = (props: Props) => {
                   <Button
                     className={classes.addCounter}
                     skin="brightGray"
-                    onClick={hideEditCounterForm}>
+                    onClick={() => {
+                      hideEditCounterForm();
+                    }}>
                     Cancel
                   </Button>
                 </FormField>
