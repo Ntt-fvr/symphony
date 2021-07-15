@@ -135,14 +135,6 @@ export default function AddKpiItemForm(props: Props) {
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="Category" required>
-        <TextInput
-          className={classes.textInput}
-          name="category"
-          type="string"
-          onChange={handleChange}
-        />
-      </FormField>
       <FormField className={classes.formField} label="Status" required>
         <TextInput
           className={classes.textInput}

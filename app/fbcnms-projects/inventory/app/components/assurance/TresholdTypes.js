@@ -17,6 +17,7 @@ import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
+import {EditTresholdItemForm} from './EditTresholdItemForm';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import type {RemoveTresholdMutationVariables} from '../../mutations/__generated__/RemoveTresholdMutation.graphql';
@@ -52,6 +53,21 @@ const TresholdQuery = graphql`
   }
 `;
 
+type Tresholds = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+      description: string,
+      status: boolean,
+      kpi: {
+        id: string,
+        name: string,
+      },
+    },
+  },
+};
+
 const TresholdTypes = () => {
   const classes = useStyles();
 
@@ -72,24 +88,23 @@ const TresholdTypes = () => {
     RemoveTresholdMutation(variables);
   };
 
-  // const showEditKpiItemForm = (kpis: Kpis) => {
-  //   setShowEditCard(true);
-  //   setDataEdit(kpis);
-  // };
+  const showEditTresholdItemForm = (tresholds: Tresholds) => {
+    setShowEditCard(true);
+    setDataEdit(tresholds);
+  };
 
-  // const hideEditKpiForm = () => {
-  //   setShowEditCard(false);
-  // };
+  const hideEditTresholdForm = () => {
+    setShowEditCard(false);
+  };
 
-  // if (showEditCard) {
-  //   return (
-  //     <EditKpiItemForm
-  //       kpi={DataTreshold.kpis?.edges.map(item => item.node)}
-  //       formValues={dataEdit.item.node}
-  //       hideEditKpiForm={hideEditKpiForm}
-  //     />
-  //   );
-  // }
+  if (showEditCard) {
+    return (
+      <EditTresholdItemForm
+        formValues={dataEdit.item.node}
+        hideEditTresholdForm={hideEditTresholdForm}
+      />
+    );
+  }
 
   return (
     <div className={classes.root}>
@@ -111,7 +126,7 @@ const TresholdTypes = () => {
               <ThresholdTypeItem
                 key={index}
                 onChange={() => handleRemove(item.node.id)}
-                // edit={() => showEditKpiItemForm({item})}
+                edit={() => showEditTresholdItemForm({item})}
                 {...item.node}
               />
             ))}
