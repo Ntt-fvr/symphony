@@ -139,7 +139,7 @@ const CountersTypes = () => {
             {items.counters?.edges.map(item => (
               <CounterTypeItem
                 key={item.node.id}
-                onChange={() => handleRemove(item.node.id)}
+                handleRemove={() => handleRemove(item.node.id)}
                 edit={() => showEditCounterItemForm({item})}
                 {...item.node}
               />
