@@ -159,7 +159,7 @@ export default function ThresholdTypeItem(props: Props) {
             justify="center"
             alignItems="center">
             <Grid xs={10}>
-              {description}
+              Description:<br/>{description}
             </Grid>
             <Grid xs={10}>
               <Text

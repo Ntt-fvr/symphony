@@ -133,7 +133,9 @@ const TresholdTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddThresholdItemForm />
+          <AddThresholdItemForm 
+            dataValues={DataTreshold.tresholds?.edges.map(item => item.node)}
+          />
         </Grid>
       </Grid>
     </div>
