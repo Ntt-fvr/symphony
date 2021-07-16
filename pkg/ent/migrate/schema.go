@@ -753,32 +753,6 @@ var (
 			},
 		},
 	}
-	// EventsColumns holds the columns for the "events" table.
-	EventsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "event_type_name", Type: field.TypeString},
-		{Name: "specific_problem", Type: field.TypeString},
-		{Name: "additional_info", Type: field.TypeString},
-		{Name: "event_severity_eventseverityevent", Type: field.TypeInt, Nullable: true},
-	}
-	// EventsTable holds the schema information for the "events" table.
-	EventsTable = &schema.Table{
-		Name:       "events",
-		Columns:    EventsColumns,
-		PrimaryKey: []*schema.Column{EventsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:  "events_event_severities_eventseverityevent",
-				Columns: []*schema.Column{EventsColumns[7]},
-
-				RefColumns: []*schema.Column{EventSeveritiesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
 	// EventSeveritiesColumns holds the columns for the "event_severities" table.
 	EventSeveritiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1830,7 +1804,10 @@ var (
 		{Name: "grace_period", Type: field.TypeInt},
 		{Name: "start_date_time", Type: field.TypeTime},
 		{Name: "end_date_time", Type: field.TypeTime},
-		{Name: "event_rule_event", Type: field.TypeInt, Nullable: true},
+		{Name: "event_type_name", Type: field.TypeString, Nullable: true},
+		{Name: "specific_problem", Type: field.TypeString, Nullable: true},
+		{Name: "additional_info", Type: field.TypeString, Nullable: true},
+		{Name: "event_severity_eventseverityrule", Type: field.TypeInt, Nullable: true},
 		{Name: "rule_type_ruletyperule", Type: field.TypeInt, Nullable: true},
 		{Name: "treshold_ruletreshold", Type: field.TypeInt, Nullable: true},
 	}
@@ -1841,22 +1818,22 @@ var (
 		PrimaryKey: []*schema.Column{RulesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "rules_events_ruleEvent",
-				Columns: []*schema.Column{RulesColumns[7]},
+				Symbol:  "rules_event_severities_eventseverityrule",
+				Columns: []*schema.Column{RulesColumns[10]},
 
-				RefColumns: []*schema.Column{EventsColumns[0]},
+				RefColumns: []*schema.Column{EventSeveritiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "rules_rule_types_ruletyperule",
-				Columns: []*schema.Column{RulesColumns[8]},
+				Columns: []*schema.Column{RulesColumns[11]},
 
 				RefColumns: []*schema.Column{RuleTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "rules_tresholds_ruletreshold",
-				Columns: []*schema.Column{RulesColumns[9]},
+				Columns: []*schema.Column{RulesColumns[12]},
 
 				RefColumns: []*schema.Column{TresholdsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2867,7 +2844,6 @@ var (
 		EquipmentPositionsTable,
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
-		EventsTable,
 		EventSeveritiesTable,
 		ExitPointsTable,
 		ExportTasksTable,
@@ -2967,7 +2943,6 @@ func init() {
 	EquipmentPositionsTable.ForeignKeys[1].RefTable = EquipmentPositionDefinitionsTable
 	EquipmentPositionDefinitionsTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
-	EventsTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = EquipmentTable
@@ -3024,7 +2999,7 @@ func init() {
 	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
 	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
 	PropertyTypesTable.ForeignKeys[9].RefTable = WorkerTypesTable
-	RulesTable.ForeignKeys[0].RefTable = EventsTable
+	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
 	RulesTable.ForeignKeys[2].RefTable = TresholdsTable
 	RuleLimitsTable.ForeignKeys[0].RefTable = ComparatorsTable

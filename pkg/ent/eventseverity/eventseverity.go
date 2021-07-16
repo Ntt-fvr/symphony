@@ -24,18 +24,18 @@ const (
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 
-	// EdgeEventseverityevent holds the string denoting the eventseverityevent edge name in mutations.
-	EdgeEventseverityevent = "eventseverityevent"
+	// EdgeEventseverityrule holds the string denoting the eventseverityrule edge name in mutations.
+	EdgeEventseverityrule = "eventseverityrule"
 
 	// Table holds the table name of the eventseverity in the database.
 	Table = "event_severities"
-	// EventseverityeventTable is the table the holds the eventseverityevent relation/edge.
-	EventseverityeventTable = "events"
-	// EventseverityeventInverseTable is the table name for the Event entity.
-	// It exists in this package in order to avoid circular dependency with the "event" package.
-	EventseverityeventInverseTable = "events"
-	// EventseverityeventColumn is the table column denoting the eventseverityevent relation/edge.
-	EventseverityeventColumn = "event_severity_eventseverityevent"
+	// EventseverityruleTable is the table the holds the eventseverityrule relation/edge.
+	EventseverityruleTable = "rules"
+	// EventseverityruleInverseTable is the table name for the Rule entity.
+	// It exists in this package in order to avoid circular dependency with the "rule" package.
+	EventseverityruleInverseTable = "rules"
+	// EventseverityruleColumn is the table column denoting the eventseverityrule relation/edge.
+	EventseverityruleColumn = "event_severity_eventseverityrule"
 )
 
 // Columns holds all SQL columns for eventseverity fields.

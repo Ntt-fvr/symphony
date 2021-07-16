@@ -17,8 +17,8 @@ import (
 
 type eventSeverityResolver struct{}
 
-func (eventSeverityResolver) Event(ctx context.Context, eventSeverity *ent.EventSeverity) ([]*ent.Event, error) {
-	variable, err := eventSeverity.Eventseverityevent(ctx)
+func (eventSeverityResolver) Rule(ctx context.Context, eventSeverity *ent.EventSeverity) ([]*ent.Rule, error) {
+	variable, err := eventSeverity.Eventseverityrule(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)

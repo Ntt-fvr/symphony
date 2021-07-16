@@ -323,6 +323,124 @@ func (r queryResolver) AlarmFilters(
 		)
 }
 
+func (r queryResolver) Domains(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.DomainOrder,
+	filterBy []*models.DomainFilterInput,
+) (*ent.DomainConnection, error) {
+	return r.ClientFrom(ctx).
+		Domain.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithDomainOrder(orderBy),
+			ent.WithDomainFilter(
+				func(query *ent.DomainQuery) (*ent.DomainQuery, error) {
+					return resolverutil.DomainFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) Vendors(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.VendorOrder,
+	filterBy []*models.VendorFilterInput,
+) (*ent.VendorConnection, error) {
+	return r.ClientFrom(ctx).
+		Vendor.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithVendorOrder(orderBy),
+			ent.WithVendorFilter(
+				func(query *ent.VendorQuery) (*ent.VendorQuery, error) {
+					return resolverutil.VendorFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) CounterFamilys(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.CounterFamilyOrder,
+	filterBy []*models.CounterFamilyFilterInput,
+) (*ent.CounterFamilyConnection, error) {
+	return r.ClientFrom(ctx).
+		CounterFamily.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithCounterFamilyOrder(orderBy),
+			ent.WithCounterFamilyFilter(
+				func(query *ent.CounterFamilyQuery) (*ent.CounterFamilyQuery, error) {
+					return resolverutil.CounterFamilyFilter(query, filterBy)
+				},
+			),
+		)
+}
+func (r queryResolver) RuleTypes(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RuleTypeOrder,
+	filterBy []*models.RuleTypeFilterInput,
+) (*ent.RuleTypeConnection, error) {
+	return r.ClientFrom(ctx).
+		RuleType.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRuleTypeOrder(orderBy),
+			ent.WithRuleTypeFilter(
+				func(query *ent.RuleTypeQuery) (*ent.RuleTypeQuery, error) {
+					return resolverutil.RuleTypeFilter(query, filterBy)
+				},
+			),
+		)
+}
+func (r queryResolver) EventSeveritys(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.EventSeverityOrder,
+	filterBy []*models.EventSeverityFilterInput,
+) (*ent.EventSeverityConnection, error) {
+	return r.ClientFrom(ctx).
+		EventSeverity.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithEventSeverityOrder(orderBy),
+			ent.WithEventSeverityFilter(
+				func(query *ent.EventSeverityQuery) (*ent.EventSeverityQuery, error) {
+					return resolverutil.EventSeverityFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) Comparators(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.ComparatorOrder,
+	filterBy []*models.ComparatorFilterInput,
+) (*ent.ComparatorConnection, error) {
+	return r.ClientFrom(ctx).
+		Comparator.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithComparatorOrder(orderBy),
+			ent.WithComparatorFilter(
+				func(query *ent.ComparatorQuery) (*ent.ComparatorQuery, error) {
+					return resolverutil.ComparatorFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

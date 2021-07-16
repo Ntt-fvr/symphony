@@ -68,12 +68,10 @@ type ResolverRoot interface {
 	BlockVariable() BlockVariableResolver
 	Comparator() ComparatorResolver
 	Counter() CounterResolver
-	CounterFamily() CounterFamilyResolver
 	CounterVendorFormula() CounterVendorFormulaResolver
 	Equipment() EquipmentResolver
 	EquipmentPortType() EquipmentPortTypeResolver
 	EquipmentType() EquipmentTypeResolver
-	Event() EventResolver
 	EventSeverity() EventSeverityResolver
 	ExportTask() ExportTaskResolver
 	FileCategoryType() FileCategoryTypeResolver
@@ -297,6 +295,17 @@ type ComplexityRoot struct {
 		RuleLimit func(childComplexity int) int
 	}
 
+	ComparatorConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	ComparatorEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Connector struct {
 		Source func(childComplexity int) int
 		Target func(childComplexity int) int
@@ -328,9 +337,19 @@ type ComplexityRoot struct {
 	}
 
 	CounterFamily struct {
-		Counter func(childComplexity int) int
-		ID      func(childComplexity int) int
-		Name    func(childComplexity int) int
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
+	}
+
+	CounterFamilyConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	CounterFamilyEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	CounterVendorFormula struct {
@@ -371,6 +390,17 @@ type ComplexityRoot struct {
 	Domain struct {
 		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
+	}
+
+	DomainConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	DomainEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	Edge struct {
@@ -531,20 +561,21 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
-	Event struct {
-		AdditionalInfo  func(childComplexity int) int
-		EventTypeName   func(childComplexity int) int
-		Eventseverity   func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Name            func(childComplexity int) int
-		Rule            func(childComplexity int) int
-		SpecificProblem func(childComplexity int) int
+	EventSeverity struct {
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
+		Rule func(childComplexity int) int
 	}
 
-	EventSeverity struct {
-		Event func(childComplexity int) int
-		ID    func(childComplexity int) int
-		Name  func(childComplexity int) int
+	EventSeverityConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	EventSeverityEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	ExitPoint struct {
@@ -851,7 +882,6 @@ type ComplexityRoot struct {
 		AddEquipment                             func(childComplexity int, input models.AddEquipmentInput) int
 		AddEquipmentPortType                     func(childComplexity int, input models.AddEquipmentPortTypeInput) int
 		AddEquipmentType                         func(childComplexity int, input models.AddEquipmentTypeInput) int
-		AddEvent                                 func(childComplexity int, input models.AddEventInput) int
 		AddEventSeverity                         func(childComplexity int, input models.AddEventSeverityInput) int
 		AddFloorPlan                             func(childComplexity int, input models.AddFloorPlanInput) int
 		AddFlowDraft                             func(childComplexity int, input models.AddFlowDraftInput) int
@@ -911,7 +941,6 @@ type ComplexityRoot struct {
 		EditEquipmentPort                        func(childComplexity int, input models.EditEquipmentPortInput) int
 		EditEquipmentPortType                    func(childComplexity int, input models.EditEquipmentPortTypeInput) int
 		EditEquipmentType                        func(childComplexity int, input models.EditEquipmentTypeInput) int
-		EditEvent                                func(childComplexity int, input models.EditEventInput) int
 		EditEventSeverity                        func(childComplexity int, input models.EditEventSeverityInput) int
 		EditFormula                              func(childComplexity int, input models.EditFormulaInput) int
 		EditKpi                                  func(childComplexity int, input models.EditKpiInput) int
@@ -955,7 +984,6 @@ type ComplexityRoot struct {
 		RemoveEquipmentFromPosition              func(childComplexity int, positionID int, workOrderID *int) int
 		RemoveEquipmentPortType                  func(childComplexity int, id int) int
 		RemoveEquipmentType                      func(childComplexity int, id int) int
-		RemoveEvent                              func(childComplexity int, id int) int
 		RemoveEventSeverity                      func(childComplexity int, id int) int
 		RemoveFormula                            func(childComplexity int, id int) int
 		RemoveKpi                                func(childComplexity int, id int) int
@@ -1137,14 +1165,18 @@ type ComplexityRoot struct {
 	Query struct {
 		ActionType               func(childComplexity int, id flowschema.ActionTypeID) int
 		AlarmFilters             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
+		Comparators              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) int
+		CounterFamilys           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) int
 		Counters                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
 		Customers                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Domains                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) int
 		EndToEndPath             func(childComplexity int, linkID *int, portID *int) int
 		EquipmentPortDefinitions func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPortTypes       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
+		EventSeveritys           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) int
 		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		Kpis                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
@@ -1161,6 +1193,7 @@ type ComplexityRoot struct {
 		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) int
 		PythonPackages           func(childComplexity int) int
 		ReportFilters            func(childComplexity int, entity models.FilterEntity) int
+		RuleTypes                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) int
 		SearchForNode            func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		ServiceTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Services                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
@@ -1170,6 +1203,7 @@ type ComplexityRoot struct {
 		User                     func(childComplexity int, authID string) int
 		Users                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
 		UsersGroups              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
+		Vendors                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) int
 		Vertex                   func(childComplexity int, id int) int
 		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
@@ -1184,15 +1218,18 @@ type ComplexityRoot struct {
 	}
 
 	Rule struct {
-		EndDateTime   func(childComplexity int) int
-		Event         func(childComplexity int) int
-		GracePeriod   func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Name          func(childComplexity int) int
-		RuleLimit     func(childComplexity int) int
-		Ruletype      func(childComplexity int) int
-		StartDateTime func(childComplexity int) int
-		Treshold      func(childComplexity int) int
+		AdditionalInfo  func(childComplexity int) int
+		EndDateTime     func(childComplexity int) int
+		EventTypeName   func(childComplexity int) int
+		Eventseverity   func(childComplexity int) int
+		GracePeriod     func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		RuleLimit       func(childComplexity int) int
+		Ruletype        func(childComplexity int) int
+		SpecificProblem func(childComplexity int) int
+		StartDateTime   func(childComplexity int) int
+		Treshold        func(childComplexity int) int
 	}
 
 	RuleLimit struct {
@@ -1207,6 +1244,17 @@ type ComplexityRoot struct {
 		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
 		Rule func(childComplexity int) int
+	}
+
+	RuleTypeConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	RuleTypeEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	SearchEntry struct {
@@ -1550,6 +1598,17 @@ type ComplexityRoot struct {
 		Name func(childComplexity int) int
 	}
 
+	VendorConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	VendorEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Vertex struct {
 		Edges  func(childComplexity int) int
 		Fields func(childComplexity int) int
@@ -1727,9 +1786,6 @@ type ComparatorResolver interface {
 type CounterResolver interface {
 	Countervendorformula(ctx context.Context, obj *ent.Counter) ([]*ent.CounterVendorFormula, error)
 }
-type CounterFamilyResolver interface {
-	Counter(ctx context.Context, obj *ent.CounterFamily) ([]*ent.Counter, error)
-}
 type CounterVendorFormulaResolver interface {
 	VendorFk(ctx context.Context, obj *ent.CounterVendorFormula) (*ent.Vendor, error)
 	CounterFk(ctx context.Context, obj *ent.CounterVendorFormula) (*ent.Counter, error)
@@ -1754,11 +1810,8 @@ type EquipmentTypeResolver interface {
 
 	NumberOfEquipment(ctx context.Context, obj *ent.EquipmentType) (int, error)
 }
-type EventResolver interface {
-	Rule(ctx context.Context, obj *ent.Event) ([]*ent.Rule, error)
-}
 type EventSeverityResolver interface {
-	Event(ctx context.Context, obj *ent.EventSeverity) ([]*ent.Event, error)
+	Rule(ctx context.Context, obj *ent.EventSeverity) ([]*ent.Rule, error)
 }
 type ExportTaskResolver interface {
 	Filters(ctx context.Context, obj *ent.ExportTask) ([]*models.GeneralFilter, error)
@@ -1927,9 +1980,6 @@ type MutationResolver interface {
 	AddTreshold(ctx context.Context, input models.AddTresholdInput) (*ent.Treshold, error)
 	EditTreshold(ctx context.Context, input models.EditTresholdInput) (*ent.Treshold, error)
 	RemoveTreshold(ctx context.Context, id int) (int, error)
-	AddEvent(ctx context.Context, input models.AddEventInput) (*ent.Event, error)
-	EditEvent(ctx context.Context, input models.EditEventInput) (*ent.Event, error)
-	RemoveEvent(ctx context.Context, id int) (int, error)
 	AddComparator(ctx context.Context, input models.AddComparatorInput) (*ent.Comparator, error)
 	EditComparator(ctx context.Context, input models.EditComparatorInput) (*ent.Comparator, error)
 	RemoveComparator(ctx context.Context, id int) (int, error)
@@ -2008,6 +2058,12 @@ type QueryResolver interface {
 	Kpis(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) (*ent.KpiConnection, error)
 	Tresholds(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TresholdOrder, filterBy []*models.TresholdFilterInput) (*ent.TresholdConnection, error)
 	AlarmFilters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) (*ent.AlarmFilterConnection, error)
+	Domains(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) (*ent.DomainConnection, error)
+	Vendors(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) (*ent.VendorConnection, error)
+	CounterFamilys(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) (*ent.CounterFamilyConnection, error)
+	RuleTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) (*ent.RuleTypeConnection, error)
+	EventSeveritys(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) (*ent.EventSeverityConnection, error)
+	Comparators(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) (*ent.ComparatorConnection, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -2857,6 +2913,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Comparator.RuleLimit(childComplexity), true
 
+	case "ComparatorConnection.edges":
+		if e.complexity.ComparatorConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.ComparatorConnection.Edges(childComplexity), true
+
+	case "ComparatorConnection.pageInfo":
+		if e.complexity.ComparatorConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.ComparatorConnection.PageInfo(childComplexity), true
+
+	case "ComparatorConnection.totalCount":
+		if e.complexity.ComparatorConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ComparatorConnection.TotalCount(childComplexity), true
+
+	case "ComparatorEdge.cursor":
+		if e.complexity.ComparatorEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.ComparatorEdge.Cursor(childComplexity), true
+
+	case "ComparatorEdge.node":
+		if e.complexity.ComparatorEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.ComparatorEdge.Node(childComplexity), true
+
 	case "Connector.source":
 		if e.complexity.Connector.Source == nil {
 			break
@@ -2962,13 +3053,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CounterEdge.Node(childComplexity), true
 
-	case "CounterFamily.counter":
-		if e.complexity.CounterFamily.Counter == nil {
-			break
-		}
-
-		return e.complexity.CounterFamily.Counter(childComplexity), true
-
 	case "CounterFamily.id":
 		if e.complexity.CounterFamily.ID == nil {
 			break
@@ -2982,6 +3066,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CounterFamily.Name(childComplexity), true
+
+	case "CounterFamilyConnection.edges":
+		if e.complexity.CounterFamilyConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.CounterFamilyConnection.Edges(childComplexity), true
+
+	case "CounterFamilyConnection.pageInfo":
+		if e.complexity.CounterFamilyConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.CounterFamilyConnection.PageInfo(childComplexity), true
+
+	case "CounterFamilyConnection.totalCount":
+		if e.complexity.CounterFamilyConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.CounterFamilyConnection.TotalCount(childComplexity), true
+
+	case "CounterFamilyEdge.cursor":
+		if e.complexity.CounterFamilyEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.CounterFamilyEdge.Cursor(childComplexity), true
+
+	case "CounterFamilyEdge.node":
+		if e.complexity.CounterFamilyEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.CounterFamilyEdge.Node(childComplexity), true
 
 	case "CounterVendorFormula.counterFk":
 		if e.complexity.CounterVendorFormula.CounterFk == nil {
@@ -3115,6 +3234,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Domain.Name(childComplexity), true
+
+	case "DomainConnection.edges":
+		if e.complexity.DomainConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.DomainConnection.Edges(childComplexity), true
+
+	case "DomainConnection.pageInfo":
+		if e.complexity.DomainConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.DomainConnection.PageInfo(childComplexity), true
+
+	case "DomainConnection.totalCount":
+		if e.complexity.DomainConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.DomainConnection.TotalCount(childComplexity), true
+
+	case "DomainEdge.cursor":
+		if e.complexity.DomainEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.DomainEdge.Cursor(childComplexity), true
+
+	case "DomainEdge.node":
+		if e.complexity.DomainEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.DomainEdge.Node(childComplexity), true
 
 	case "Edge.ids":
 		if e.complexity.Edge.IDs == nil {
@@ -3765,62 +3919,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EquipmentTypeEdge.Node(childComplexity), true
 
-	case "Event.additionalInfo":
-		if e.complexity.Event.AdditionalInfo == nil {
-			break
-		}
-
-		return e.complexity.Event.AdditionalInfo(childComplexity), true
-
-	case "Event.eventTypeName":
-		if e.complexity.Event.EventTypeName == nil {
-			break
-		}
-
-		return e.complexity.Event.EventTypeName(childComplexity), true
-
-	case "Event.eventSeverity":
-		if e.complexity.Event.Eventseverity == nil {
-			break
-		}
-
-		return e.complexity.Event.Eventseverity(childComplexity), true
-
-	case "Event.id":
-		if e.complexity.Event.ID == nil {
-			break
-		}
-
-		return e.complexity.Event.ID(childComplexity), true
-
-	case "Event.name":
-		if e.complexity.Event.Name == nil {
-			break
-		}
-
-		return e.complexity.Event.Name(childComplexity), true
-
-	case "Event.rule":
-		if e.complexity.Event.Rule == nil {
-			break
-		}
-
-		return e.complexity.Event.Rule(childComplexity), true
-
-	case "Event.specificProblem":
-		if e.complexity.Event.SpecificProblem == nil {
-			break
-		}
-
-		return e.complexity.Event.SpecificProblem(childComplexity), true
-
-	case "EventSeverity.event":
-		if e.complexity.EventSeverity.Event == nil {
-			break
-		}
-
-		return e.complexity.EventSeverity.Event(childComplexity), true
-
 	case "EventSeverity.id":
 		if e.complexity.EventSeverity.ID == nil {
 			break
@@ -3834,6 +3932,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EventSeverity.Name(childComplexity), true
+
+	case "EventSeverity.rule":
+		if e.complexity.EventSeverity.Rule == nil {
+			break
+		}
+
+		return e.complexity.EventSeverity.Rule(childComplexity), true
+
+	case "EventSeverityConnection.edges":
+		if e.complexity.EventSeverityConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.EventSeverityConnection.Edges(childComplexity), true
+
+	case "EventSeverityConnection.pageInfo":
+		if e.complexity.EventSeverityConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.EventSeverityConnection.PageInfo(childComplexity), true
+
+	case "EventSeverityConnection.totalCount":
+		if e.complexity.EventSeverityConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.EventSeverityConnection.TotalCount(childComplexity), true
+
+	case "EventSeverityEdge.cursor":
+		if e.complexity.EventSeverityEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.EventSeverityEdge.Cursor(childComplexity), true
+
+	case "EventSeverityEdge.node":
+		if e.complexity.EventSeverityEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.EventSeverityEdge.Node(childComplexity), true
 
 	case "ExitPoint.cid":
 		if e.complexity.ExitPoint.Cid == nil {
@@ -5284,18 +5424,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddEquipmentType(childComplexity, args["input"].(models.AddEquipmentTypeInput)), true
 
-	case "Mutation.addEvent":
-		if e.complexity.Mutation.AddEvent == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addEvent_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddEvent(childComplexity, args["input"].(models.AddEventInput)), true
-
 	case "Mutation.addEventSeverity":
 		if e.complexity.Mutation.AddEventSeverity == nil {
 			break
@@ -6004,18 +6132,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditEquipmentType(childComplexity, args["input"].(models.EditEquipmentTypeInput)), true
 
-	case "Mutation.editEvent":
-		if e.complexity.Mutation.EditEvent == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_editEvent_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.EditEvent(childComplexity, args["input"].(models.EditEventInput)), true
-
 	case "Mutation.editEventSeverity":
 		if e.complexity.Mutation.EditEventSeverity == nil {
 			break
@@ -6531,18 +6647,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveEquipmentType(childComplexity, args["id"].(int)), true
-
-	case "Mutation.removeEvent":
-		if e.complexity.Mutation.RemoveEvent == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeEvent_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveEvent(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeEventSeverity":
 		if e.complexity.Mutation.RemoveEventSeverity == nil {
@@ -7552,6 +7656,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.AlarmFilters(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.AlarmFilterOrder), args["filterBy"].([]*models.AlarmFilterFilterInput)), true
 
+	case "Query.comparators":
+		if e.complexity.Query.Comparators == nil {
+			break
+		}
+
+		args, err := ec.field_Query_comparators_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Comparators(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ComparatorOrder), args["filterBy"].([]*models.ComparatorFilterInput)), true
+
+	case "Query.counterFamilys":
+		if e.complexity.Query.CounterFamilys == nil {
+			break
+		}
+
+		args, err := ec.field_Query_counterFamilys_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CounterFamilys(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.CounterFamilyOrder), args["filterBy"].([]*models.CounterFamilyFilterInput)), true
+
 	case "Query.counters":
 		if e.complexity.Query.Counters == nil {
 			break
@@ -7575,6 +7703,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Customers(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+
+	case "Query.domains":
+		if e.complexity.Query.Domains == nil {
+			break
+		}
+
+		args, err := ec.field_Query_domains_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Domains(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.DomainOrder), args["filterBy"].([]*models.DomainFilterInput)), true
 
 	case "Query.endToEndPath":
 		if e.complexity.Query.EndToEndPath == nil {
@@ -7647,6 +7787,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Equipments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models1.EquipmentFilterInput)), true
+
+	case "Query.eventSeveritys":
+		if e.complexity.Query.EventSeveritys == nil {
+			break
+		}
+
+		args, err := ec.field_Query_eventSeveritys_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EventSeveritys(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EventSeverityOrder), args["filterBy"].([]*models.EventSeverityFilterInput)), true
 
 	case "Query.flowDrafts":
 		if e.complexity.Query.FlowDrafts == nil {
@@ -7825,6 +7977,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ReportFilters(childComplexity, args["entity"].(models.FilterEntity)), true
 
+	case "Query.ruleTypes":
+		if e.complexity.Query.RuleTypes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_ruleTypes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RuleTypes(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RuleTypeOrder), args["filterBy"].([]*models.RuleTypeFilterInput)), true
+
 	case "Query.searchForNode":
 		if e.complexity.Query.SearchForNode == nil {
 			break
@@ -7928,6 +8092,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.UsersGroups(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UsersGroupFilterInput)), true
 
+	case "Query.vendors":
+		if e.complexity.Query.Vendors == nil {
+			break
+		}
+
+		args, err := ec.field_Query_vendors_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Vendors(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.VendorOrder), args["filterBy"].([]*models.VendorFilterInput)), true
+
 	case "Query.vertex":
 		if e.complexity.Query.Vertex == nil {
 			break
@@ -8004,6 +8180,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ReportFilter.Name(childComplexity), true
 
+	case "Rule.additionalInfo":
+		if e.complexity.Rule.AdditionalInfo == nil {
+			break
+		}
+
+		return e.complexity.Rule.AdditionalInfo(childComplexity), true
+
 	case "Rule.endDateTime":
 		if e.complexity.Rule.EndDateTime == nil {
 			break
@@ -8011,12 +8194,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Rule.EndDateTime(childComplexity), true
 
-	case "Rule.event":
-		if e.complexity.Rule.Event == nil {
+	case "Rule.eventTypeName":
+		if e.complexity.Rule.EventTypeName == nil {
 			break
 		}
 
-		return e.complexity.Rule.Event(childComplexity), true
+		return e.complexity.Rule.EventTypeName(childComplexity), true
+
+	case "Rule.eventSeverity":
+		if e.complexity.Rule.Eventseverity == nil {
+			break
+		}
+
+		return e.complexity.Rule.Eventseverity(childComplexity), true
 
 	case "Rule.gracePeriod":
 		if e.complexity.Rule.GracePeriod == nil {
@@ -8052,6 +8242,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Rule.Ruletype(childComplexity), true
+
+	case "Rule.specificProblem":
+		if e.complexity.Rule.SpecificProblem == nil {
+			break
+		}
+
+		return e.complexity.Rule.SpecificProblem(childComplexity), true
 
 	case "Rule.startDateTime":
 		if e.complexity.Rule.StartDateTime == nil {
@@ -8122,6 +8319,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RuleType.Rule(childComplexity), true
+
+	case "RuleTypeConnection.edges":
+		if e.complexity.RuleTypeConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.RuleTypeConnection.Edges(childComplexity), true
+
+	case "RuleTypeConnection.pageInfo":
+		if e.complexity.RuleTypeConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.RuleTypeConnection.PageInfo(childComplexity), true
+
+	case "RuleTypeConnection.totalCount":
+		if e.complexity.RuleTypeConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.RuleTypeConnection.TotalCount(childComplexity), true
+
+	case "RuleTypeEdge.cursor":
+		if e.complexity.RuleTypeEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.RuleTypeEdge.Cursor(childComplexity), true
+
+	case "RuleTypeEdge.node":
+		if e.complexity.RuleTypeEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.RuleTypeEdge.Node(childComplexity), true
 
 	case "SearchEntry.entityId":
 		if e.complexity.SearchEntry.EntityID == nil {
@@ -9674,6 +9906,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Vendor.Name(childComplexity), true
+
+	case "VendorConnection.edges":
+		if e.complexity.VendorConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.VendorConnection.Edges(childComplexity), true
+
+	case "VendorConnection.pageInfo":
+		if e.complexity.VendorConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.VendorConnection.PageInfo(childComplexity), true
+
+	case "VendorConnection.totalCount":
+		if e.complexity.VendorConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.VendorConnection.TotalCount(childComplexity), true
+
+	case "VendorEdge.cursor":
+		if e.complexity.VendorEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.VendorEdge.Cursor(childComplexity), true
+
+	case "VendorEdge.node":
+		if e.complexity.VendorEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.VendorEdge.Node(childComplexity), true
 
 	case "Vertex.edges":
 		if e.complexity.Vertex.Edges == nil {
@@ -13034,6 +13301,417 @@ type AlarmFilterEdge {
   """
   cursor: Cursor!
 }
+################################ conection Domains ###############################################
+
+"""
+Properties by which domains connections can be ordered.
+"""
+enum DomainOrderField {
+  """
+  Order domains by name.
+  """
+  NAME
+
+  """
+  Order domains by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order domains by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for domains connections.
+"""
+input DomainOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order domains by.
+  """
+  field: DomainOrderField
+}
+
+"""
+A connection to a list of domains.
+"""
+type DomainConnection {
+  """
+  Total domains of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of domains edges.
+  """
+  edges: [DomainEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A domains edge in a connection.
+"""
+type DomainEdge {
+  """
+  The domains at the end of the edge.
+  """
+  node: Domain
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection Vendors ###############################################
+
+"""
+Properties by which vendors connections can be ordered.
+"""
+enum VendorOrderField {
+  """
+  Order vendors by name.
+  """
+  NAME
+
+  """
+  Order vendors by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order vendors by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for vendors connections.
+"""
+input VendorOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order vendors by.
+  """
+  field: VendorOrderField
+}
+
+"""
+A connection to a list of vendors.
+"""
+type VendorConnection {
+  """
+  Total vendors of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of vendors edges.
+  """
+  edges: [VendorEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A vendors edge in a connection.
+"""
+type VendorEdge {
+  """
+  The vendors at the end of the edge.
+  """
+  node: Vendor
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection CounterFamilys ###############################################
+
+"""
+Properties by which counterFamilys connections can be ordered.
+"""
+enum CounterFamilyOrderField {
+  """
+  Order counterFamilys by name.
+  """
+  NAME
+
+  """
+  Order counterFamilys by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order counterFamilys by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for counterFamilys connections.
+"""
+input CounterFamilyOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order counterFamilys by.
+  """
+  field: CounterFamilyOrderField
+}
+
+"""
+A connection to a list of counterFamilys.
+"""
+type CounterFamilyConnection {
+  """
+  Total counterFamilys of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of counterFamilys edges.
+  """
+  edges: [CounterFamilyEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A counterFamilys edge in a connection.
+"""
+type CounterFamilyEdge {
+  """
+  The counterFamilys at the end of the edge.
+  """
+  node: CounterFamily
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection RuleTypes ###############################################
+
+"""
+Properties by which ruleTypes connections can be ordered.
+"""
+enum RuleTypeOrderField {
+  """
+  Order ruleTypes by name.
+  """
+  NAME
+
+  """
+  Order ruleTypes by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ruleTypes by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ruleTypes connections.
+"""
+input RuleTypeOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ruleTypes by.
+  """
+  field: RuleTypeOrderField
+}
+
+"""
+A connection to a list of ruleTypes.
+"""
+type RuleTypeConnection {
+  """
+  Total ruleTypes of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ruleTypes edges.
+  """
+  edges: [RuleTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ruleTypes edge in a connection.
+"""
+type RuleTypeEdge {
+  """
+  The ruleTypes at the end of the edge.
+  """
+  node: RuleType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection EventSeveritys ###############################################
+
+"""
+Properties by which eventSeveritys connections can be ordered.
+"""
+enum EventSeverityOrderField {
+  """
+  Order eventSeveritys by name.
+  """
+  NAME
+
+  """
+  Order eventSeveritys by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order eventSeveritys by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for eventSeveritys connections.
+"""
+input EventSeverityOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order eventSeveritys by.
+  """
+  field: EventSeverityOrderField
+}
+
+"""
+A connection to a list of eventSeveritys.
+"""
+type EventSeverityConnection {
+  """
+  Total eventSeveritys of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of eventSeveritys edges.
+  """
+  edges: [EventSeverityEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A eventSeveritys edge in a connection.
+"""
+type EventSeverityEdge {
+  """
+  The eventSeveritys at the end of the edge.
+  """
+  node: EventSeverity
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection Comparator ###############################################
+
+"""
+Properties by which comparator connections can be ordered.
+"""
+enum ComparatorOrderField {
+  """
+  Order comparator by name.
+  """
+  NAME
+
+  """
+  Order comparator by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order comparator by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for comparator connections.
+"""
+input ComparatorOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order comparator by.
+  """
+  field: ComparatorOrderField
+}
+
+"""
+A connection to a list of comparator.
+"""
+type ComparatorConnection {
+  """
+  Total comparator of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of comparator edges.
+  """
+  edges: [ComparatorEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A comparator edge in a connection.
+"""
+type ComparatorEdge {
+  """
+  The comparator at the end of the edge.
+  """
+  node: Comparator
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -14859,6 +15537,220 @@ type Query {
     
     filterBy: [AlarmFilterFilterInput!]
   ): AlarmFilterConnection!
+
+  
+  """
+  A list of domains.
+  """
+  domains(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned domains.
+    """
+    orderBy: DomainOrder
+
+    
+    #Filtering options for the returned domains.
+    
+    filterBy: [DomainFilterInput!]
+  ): DomainConnection!
+
+  """
+  A list of vendors.
+  """
+  vendors(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned vendors.
+    """
+    orderBy: VendorOrder
+
+    
+    #Filtering options for the returned vendors.
+    
+    filterBy: [VendorFilterInput!]
+  ): VendorConnection!
+
+  """
+  A list of counterFamilys.
+  """
+  counterFamilys(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counterFamilys.
+    """
+    orderBy: CounterFamilyOrder
+
+    
+    #Filtering options for the returned counterFamilys.
+    
+    filterBy: [CounterFamilyFilterInput!]
+  ): CounterFamilyConnection!
+
+  
+  """
+  A list of ruleTypes.
+  """
+  ruleTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned ruleTypes.
+    """
+    orderBy: RuleTypeOrder
+
+    
+    #Filtering options for the returned ruleTypes.
+    
+    filterBy: [RuleTypeFilterInput!]
+  ): RuleTypeConnection!
+
+  """
+  A list of eventSeveritys.
+  """
+  eventSeveritys(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned eventSeveritys.
+    """
+    orderBy: EventSeverityOrder
+
+    
+    #Filtering options for the returned eventSeveritys.
+    
+    filterBy: [EventSeverityFilterInput!]
+  ): EventSeverityConnection!
+  
+  """
+  A list of comparator.
+  """
+  
+  comparators(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned comparator.
+    """
+    orderBy: ComparatorOrder
+
+    
+    #Filtering options for the returned comparator.
+    
+    filterBy: [ComparatorFilterInput!]
+  ): ComparatorConnection!
+  
 }
 
 type Mutation {
@@ -15099,9 +15991,6 @@ type Mutation {
   addTreshold(input: AddTresholdInput!):Treshold!
   editTreshold(input: EditTresholdInput!): Treshold!
   removeTreshold(id: ID!): ID!
-  addEvent(input: AddEventInput!):Event!
-  editEvent(input: EditEventInput!): Event!
-  removeEvent(id: ID!): ID!
   addComparator(input: AddComparatorInput!):Comparator!
   editComparator(input: EditComparatorInput!): Comparator!
   removeComparator(id: ID!): ID!
@@ -15194,24 +16083,38 @@ input EditCounterInput {
 type CounterFamily implements Node {
   id: ID!
   name: String!
-  counter: [Counter]!
+  
 }
 
 input CounterFamilyInput {
   name: String!
-  counter: [AddCounterInput!]
+  
 }
 
 input AddCounterFamilyInput {
   name: String!
-  counter: [AddCounterInput!]
+  
 }
 
 input EditCounterFamilyInput {
   id: ID!
   name: String!
-  counter: [EditCounterInput!]
+  
 }
+
+enum CounterFamilyFilterType {
+  NAME
+}
+
+input CounterFamilyFilterInput {
+  filterType: CounterFamilyFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 
 type Vendor implements Node {
   id: ID!
@@ -15225,6 +16128,18 @@ input AddVendorInput {
 input EditVendorInput {
   id: ID!
   name: String!
+}
+enum VendorFilterType {
+  NAME
+}
+
+input VendorFilterInput {
+  filterType: VendorFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 type Domain implements Node {
@@ -15244,6 +16159,18 @@ input AddDomainInput {
 input EditDomainInput {
   id: ID!
   name: String!
+}
+enum DomainFilterType {
+  NAME
+}
+
+input DomainFilterInput {
+  filterType: DomainFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 type Kpi implements Node {
@@ -15341,6 +16268,209 @@ type Treshold implements Node {
   
 }
 
+input AddTresholdInput {
+  name: String!
+  description: String!
+  status: Boolean!
+  kpi: ID!
+  
+}
+
+input TresholdInput {
+  name: String!
+  description: String!
+  status: Boolean!
+  rule: [RuleInput!]
+  kpi: ID!
+  
+}
+
+input EditTresholdInput {
+  id: ID!
+  name: String!
+  description: String!
+  status: Boolean!
+}
+
+enum TresholdFilterType {
+  NAME
+}
+
+input TresholdFilterInput {
+  filterType: TresholdFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+type Comparator implements Node {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimit!]
+}
+
+input AddComparatorInput {
+  name: String!
+}
+
+input EditComparatorInput {
+  id: ID!
+  name: String!
+}
+enum ComparatorFilterType {
+  NAME
+}
+
+input ComparatorFilterInput {
+  filterType: ComparatorFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RuleType implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddRuleTypeInput {
+  name: String!
+}
+
+input EditRuleTypeInput {
+  id: ID!
+  name: String!
+}
+enum RuleTypeFilterType {
+  NAME
+}
+
+input RuleTypeFilterInput {
+  filterType: RuleTypeFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+
+type RuleLimit implements Node {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: Comparator!
+  rule: Rule
+}
+
+input RuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input AddRuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input EditRuleLimitInput {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+type Rule implements Node {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimit!]
+  ruleType: RuleType!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  eventSeverity: EventSeverity!
+  treshold: Treshold!
+}
+
+input RuleInput {
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  ruleLimit: [RuleLimitInput!]
+}
+
+input AddRuleInput {
+  name: String!
+  gracePeriod: Int!
+  startDateTime: Time!
+  endDateTime: Time!
+  ruleType: ID!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  eventSeverity: ID!
+  treshold: ID!
+}
+
+input EditRuleInput {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleType: ID!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  eventSeverity: ID!
+  treshold: ID!
+}
+
+type EventSeverity implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddEventSeverityInput {
+  name: String!
+}
+
+input EditEventSeverityInput {
+  id: ID!
+  name: String!
+}
+enum EventSeverityFilterType {
+  NAME
+}
+
+input EventSeverityFilterInput {
+  filterType: EventSeverityFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+############################ alarm filter ##################################
+
 type AlarmFilter implements Node {
   id: ID!
   name: String!
@@ -15417,194 +16547,6 @@ input AddAlarmStatusInput {
 }
 
 input EditAlarmStatusInput {
-  id: ID!
-  name: String!
-}
-
-input AddTresholdInput {
-  name: String!
-  description: String!
-  status: Boolean!
-  kpi: ID!
-  
-}
-
-input TresholdInput {
-  name: String!
-  description: String!
-  status: Boolean!
-  rule: [RuleInput!]
-  kpi: ID!
-  
-}
-
-input EditTresholdInput {
-  id: ID!
-  name: String!
-  description: String!
-  status: Boolean!
-}
-
-enum TresholdFilterType {
-  NAME
-}
-
-input TresholdFilterInput {
-  filterType: TresholdFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-type Comparator implements Node {
-  id: ID!
-  name: String!
-  ruleLimit: [RuleLimit!]
-}
-
-input AddComparatorInput {
-  name: String!
-}
-
-input EditComparatorInput {
-  id: ID!
-  name: String!
-}
-
-type Event implements Node {
-  id: ID!
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  rule: [Rule!]
-  eventSeverity: EventSeverity
-}
-
-input EventInput {
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  rule: [RuleInput!]
-  eventSeverity: ID
-}
-
-input AddEventInput {
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  eventSeverity: ID!
-}
-
-input EditEventInput {
-  id: ID!
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  eventSeverity: ID!
-}
-
-type RuleType implements Node {
-  id: ID!
-  name: String!
-  rule: [Rule!]
-}
-
-input AddRuleTypeInput {
-  name: String!
-}
-
-input EditRuleTypeInput {
-  id: ID!
-  name: String!
-}
-
-type RuleLimit implements Node {
-  id: ID!
-  name: String!
-  limitType: String!
-  comparator: Comparator!
-  rule: Rule
-}
-
-input RuleLimitInput {
-  name: String!
-  limitType: String!
-  comparator: ID!
-  rule: ID!
-}
-
-input AddRuleLimitInput {
-  name: String!
-  limitType: String!
-  comparator: ID!
-  rule: ID!
-}
-
-input EditRuleLimitInput {
-  id: ID!
-  name: String!
-  limitType: String!
-  comparator: ID!
-  rule: ID!
-}
-
-type Rule implements Node {
-  id: ID!
-  name: String!
-  gracePeriod: Int
-  startDateTime: Time
-  endDateTime: Time
-  ruleLimit: [RuleLimit!]
-  ruleType: RuleType!
-  event: Event!
-  treshold: Treshold!
-}
-
-input RuleInput {
-  name: String!
-  gracePeriod: Int
-  startDateTime: Time
-  endDateTime: Time
-  ruleLimit: [RuleLimitInput!]
-}
-
-input AddRuleInput {
-  name: String!
-  gracePeriod: Int!
-  startDateTime: Time!
-  endDateTime: Time!
-  ruleType: ID!
-  event: ID!
-  treshold: ID!
-}
-
-input EditRuleInput {
-  id: ID!
-  name: String!
-  gracePeriod: Int
-  startDateTime: Time
-  endDateTime: Time
-  ruleType: ID!
-  event: ID!
-  treshold: ID!
-}
-
-type EventSeverity implements Node {
-  id: ID!
-  name: String!
-  event: [Event!]
-}
-
-input AddEventSeverityInput {
-  name: String!
-}
-
-input EditEventSeverityInput {
   id: ID!
   name: String!
 }`, BuiltIn: false},
@@ -16264,21 +17206,6 @@ func (ec *executionContext) field_Mutation_addEventSeverity_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddEventSeverityInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEventSeverityInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_addEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.AddEventInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddEventInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEventInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -17271,21 +18198,6 @@ func (ec *executionContext) field_Mutation_editEventSeverity_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_editEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.EditEventInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNEditEventInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditEventInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_editFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -17994,21 +18906,6 @@ func (ec *executionContext) field_Mutation_removeEventSeverity_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_removeEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 int
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_removeFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -18548,6 +19445,202 @@ func (ec *executionContext) field_Query_actionType_args(ctx context.Context, raw
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_comparators_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.ComparatorOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOComparatorOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.ComparatorFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOComparatorFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_counterFamilys_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.CounterFamilyOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOCounterFamilyOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.CounterFamilyFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOCounterFamilyFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_counters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -18723,6 +19816,104 @@ func (ec *executionContext) field_Query_customers_args(ctx context.Context, rawA
 		}
 	}
 	args["last"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_domains_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.DomainOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalODomainOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.DomainFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalODomainFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -19169,6 +20360,104 @@ func (ec *executionContext) field_Query_equipments_args(ctx context.Context, raw
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
 		arg5, err = ec.unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_eventSeveritys_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.EventSeverityOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOEventSeverityOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.EventSeverityFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOEventSeverityFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -20160,6 +21449,104 @@ func (ec *executionContext) field_Query_reportFilters_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_ruleTypes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.RuleTypeOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalORuleTypeOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.RuleTypeFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalORuleTypeFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_searchForNode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -20721,6 +22108,104 @@ func (ec *executionContext) field_Query_users_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["filterBy"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_vendors_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.VendorOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOVendorOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.VendorFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOVendorFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -24696,6 +26181,178 @@ func (ec *executionContext) _Comparator_ruleLimit(ctx context.Context, field gra
 	return ec.marshalORuleLimit2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleLimitᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ComparatorConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ComparatorConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ComparatorConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ComparatorConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.ComparatorConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ComparatorConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.ComparatorEdge)
+	fc.Result = res
+	return ec.marshalNComparatorEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ComparatorConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.ComparatorConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ComparatorConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ComparatorEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.ComparatorEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ComparatorEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Comparator)
+	fc.Result = res
+	return ec.marshalOComparator2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparator(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ComparatorEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.ComparatorEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ComparatorEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Connector_source(ctx context.Context, field graphql.CollectedField, obj *models.Connector) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -25285,7 +26942,7 @@ func (ec *executionContext) _CounterFamily_name(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CounterFamily_counter(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFamily) (ret graphql.Marshaler) {
+func (ec *executionContext) _CounterFamilyConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFamilyConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -25293,17 +26950,17 @@ func (ec *executionContext) _CounterFamily_counter(ctx context.Context, field gr
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "CounterFamily",
+		Object:     "CounterFamilyConnection",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CounterFamily().Counter(rctx, obj)
+		return obj.TotalCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25315,9 +26972,146 @@ func (ec *executionContext) _CounterFamily_counter(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*ent.Counter)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNCounter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounter(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CounterFamilyConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFamilyConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CounterFamilyConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.CounterFamilyEdge)
+	fc.Result = res
+	return ec.marshalNCounterFamilyEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CounterFamilyConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFamilyConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CounterFamilyConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CounterFamilyEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFamilyEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CounterFamilyEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.CounterFamily)
+	fc.Result = res
+	return ec.marshalOCounterFamily2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamily(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CounterFamilyEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFamilyEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CounterFamilyEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CounterVendorFormula_id(ctx context.Context, field graphql.CollectedField, obj *ent.CounterVendorFormula) (ret graphql.Marshaler) {
@@ -25974,6 +27768,178 @@ func (ec *executionContext) _Domain_name(ctx context.Context, field graphql.Coll
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DomainConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.DomainConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DomainConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DomainConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.DomainConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DomainConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.DomainEdge)
+	fc.Result = res
+	return ec.marshalNDomainEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DomainConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.DomainConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DomainConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DomainEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.DomainEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DomainEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Domain)
+	fc.Result = res
+	return ec.marshalODomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DomainEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.DomainEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DomainEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Edge_name(ctx context.Context, field graphql.CollectedField, obj *ent.Edge) (ret graphql.Marshaler) {
@@ -29134,245 +31100,6 @@ func (ec *executionContext) _EquipmentTypeEdge_cursor(ctx context.Context, field
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Event_id(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Event_name(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Event_eventTypeName(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EventTypeName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Event_specificProblem(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SpecificProblem, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Event_additionalInfo(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AdditionalInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Event_rule(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Event().Rule(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.Rule)
-	fc.Result = res
-	return ec.marshalORule2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Event_eventSeverity(ctx context.Context, field graphql.CollectedField, obj *ent.Event) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Eventseverity(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.EventSeverity)
-	fc.Result = res
-	return ec.marshalOEventSeverity2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _EventSeverity_id(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverity) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -29443,7 +31170,7 @@ func (ec *executionContext) _EventSeverity_name(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _EventSeverity_event(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverity) (ret graphql.Marshaler) {
+func (ec *executionContext) _EventSeverity_rule(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverity) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -29461,7 +31188,7 @@ func (ec *executionContext) _EventSeverity_event(ctx context.Context, field grap
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.EventSeverity().Event(rctx, obj)
+		return ec.resolvers.EventSeverity().Rule(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -29470,9 +31197,181 @@ func (ec *executionContext) _EventSeverity_event(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*ent.Event)
+	res := resTmp.([]*ent.Rule)
 	fc.Result = res
-	return ec.marshalOEvent2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventᚄ(ctx, field.Selections, res)
+	return ec.marshalORule2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EventSeverityConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverityConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EventSeverityConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EventSeverityConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverityConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EventSeverityConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.EventSeverityEdge)
+	fc.Result = res
+	return ec.marshalNEventSeverityEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EventSeverityConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverityConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EventSeverityConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EventSeverityEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverityEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EventSeverityEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EventSeverity)
+	fc.Result = res
+	return ec.marshalOEventSeverity2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EventSeverityEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.EventSeverityEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EventSeverityEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExitPoint_id(ctx context.Context, field graphql.CollectedField, obj *ent.ExitPoint) (ret graphql.Marshaler) {
@@ -40689,132 +42588,6 @@ func (ec *executionContext) _Mutation_removeTreshold(ctx context.Context, field 
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_addEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addEvent_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddEvent(rctx, args["input"].(models.AddEventInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Event)
-	fc.Result = res
-	return ec.marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEvent(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_editEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_editEvent_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditEvent(rctx, args["input"].(models.EditEventInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Event)
-	fc.Result = res
-	return ec.marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEvent(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_removeEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_removeEvent_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveEvent(rctx, args["id"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_addComparator(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -46550,6 +48323,258 @@ func (ec *executionContext) _Query_AlarmFilters(ctx context.Context, field graph
 	return ec.marshalNAlarmFilterConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterConnection(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_domains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_domains_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Domains(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.DomainOrder), args["filterBy"].([]*models.DomainFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.DomainConnection)
+	fc.Result = res
+	return ec.marshalNDomainConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_vendors(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_vendors_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Vendors(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.VendorOrder), args["filterBy"].([]*models.VendorFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.VendorConnection)
+	fc.Result = res
+	return ec.marshalNVendorConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_counterFamilys(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_counterFamilys_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CounterFamilys(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.CounterFamilyOrder), args["filterBy"].([]*models.CounterFamilyFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.CounterFamilyConnection)
+	fc.Result = res
+	return ec.marshalNCounterFamilyConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_ruleTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_ruleTypes_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().RuleTypes(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RuleTypeOrder), args["filterBy"].([]*models.RuleTypeFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RuleTypeConnection)
+	fc.Result = res
+	return ec.marshalNRuleTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_eventSeveritys(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_eventSeveritys_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().EventSeveritys(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EventSeverityOrder), args["filterBy"].([]*models.EventSeverityFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.EventSeverityConnection)
+	fc.Result = res
+	return ec.marshalNEventSeverityConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_comparators(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_comparators_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Comparators(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ComparatorOrder), args["filterBy"].([]*models.ComparatorFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ComparatorConnection)
+	fc.Result = res
+	return ec.marshalNComparatorConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorConnection(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -46994,7 +49019,103 @@ func (ec *executionContext) _Rule_ruleType(ctx context.Context, field graphql.Co
 	return ec.marshalNRuleType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Rule_event(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
+func (ec *executionContext) _Rule_eventTypeName(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Rule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EventTypeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Rule_specificProblem(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Rule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpecificProblem, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Rule_additionalInfo(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Rule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AdditionalInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Rule_eventSeverity(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -47012,7 +49133,7 @@ func (ec *executionContext) _Rule_event(ctx context.Context, field graphql.Colle
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Event(ctx)
+		return obj.Eventseverity(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -47024,9 +49145,9 @@ func (ec *executionContext) _Rule_event(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.Event)
+	res := resTmp.(*ent.EventSeverity)
 	fc.Result = res
-	return ec.marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEvent(ctx, field.Selections, res)
+	return ec.marshalNEventSeverity2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Rule_treshold(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
@@ -47336,6 +49457,178 @@ func (ec *executionContext) _RuleType_rule(ctx context.Context, field graphql.Co
 	res := resTmp.([]*ent.Rule)
 	fc.Result = res
 	return ec.marshalORule2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RuleTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.RuleTypeConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RuleTypeConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RuleTypeConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.RuleTypeConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RuleTypeConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.RuleTypeEdge)
+	fc.Result = res
+	return ec.marshalNRuleTypeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RuleTypeConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.RuleTypeConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RuleTypeConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RuleTypeEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.RuleTypeEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RuleTypeEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RuleType)
+	fc.Result = res
+	return ec.marshalORuleType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RuleTypeEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.RuleTypeEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RuleTypeEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SearchEntry_entityId(ctx context.Context, field graphql.CollectedField, obj *models.SearchEntry) (ret graphql.Marshaler) {
@@ -54917,6 +57210,178 @@ func (ec *executionContext) _Vendor_name(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _VendorConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.VendorConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VendorConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.VendorConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VendorConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.VendorEdge)
+	fc.Result = res
+	return ec.marshalNVendorEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.VendorConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VendorConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.VendorEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VendorEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Vendor)
+	fc.Result = res
+	return ec.marshalOVendor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _VendorEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.VendorEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "VendorEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Vertex_id(ctx context.Context, field graphql.CollectedField, obj *ent.Node) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -59338,14 +61803,6 @@ func (ec *executionContext) unmarshalInputAddCounterFamilyInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "counter":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counter"))
-			it.Counter, err = ec.unmarshalOAddCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -59749,58 +62206,6 @@ func (ec *executionContext) unmarshalInputAddEquipmentTypeInput(ctx context.Cont
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddEventInput(ctx context.Context, obj interface{}) (models.AddEventInput, error) {
-	var it models.AddEventInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "eventTypeName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTypeName"))
-			it.EventTypeName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "specificProblem":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("specificProblem"))
-			it.SpecificProblem, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "additionalInfo":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
-			it.AdditionalInfo, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "eventSeverity":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventSeverity"))
-			it.EventSeverity, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
 			}
 		}
 	}
@@ -60724,11 +63129,35 @@ func (ec *executionContext) unmarshalInputAddRuleInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
-		case "event":
+		case "eventTypeName":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
-			it.Event, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTypeName"))
+			it.EventTypeName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "specificProblem":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("specificProblem"))
+			it.SpecificProblem, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "additionalInfo":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
+			it.AdditionalInfo, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "eventSeverity":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventSeverity"))
+			it.EventSeverity, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -61974,6 +64403,98 @@ func (ec *executionContext) unmarshalInputCommentInput(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputComparatorFilterInput(ctx context.Context, obj interface{}) (models.ComparatorFilterInput, error) {
+	var it models.ComparatorFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNComparatorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputComparatorOrder(ctx context.Context, obj interface{}) (ent.ComparatorOrder, error) {
+	var it ent.ComparatorOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOComparatorOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, obj interface{}) (models.ConnectorInput, error) {
 	var it models.ConnectorInput
 	var asMap = obj.(map[string]interface{})
@@ -62018,6 +64539,70 @@ func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCounterFamilyFilterInput(ctx context.Context, obj interface{}) (models.CounterFamilyFilterInput, error) {
+	var it models.CounterFamilyFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNCounterFamilyFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCounterFamilyInput(ctx context.Context, obj interface{}) (models.CounterFamilyInput, error) {
 	var it models.CounterFamilyInput
 	var asMap = obj.(map[string]interface{})
@@ -62032,11 +64617,31 @@ func (ec *executionContext) unmarshalInputCounterFamilyInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "counter":
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCounterFamilyOrder(ctx context.Context, obj interface{}) (ent.CounterFamilyOrder, error) {
+	var it ent.CounterFamilyOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counter"))
-			it.Counter, err = ec.unmarshalOAddCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInputᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOCounterFamilyOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -62254,6 +64859,70 @@ func (ec *executionContext) unmarshalInputDecisionRouteInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDomainFilterInput(ctx context.Context, obj interface{}) (models.DomainFilterInput, error) {
+	var it models.DomainFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNDomainFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDomainInput(ctx context.Context, obj interface{}) (models.DomainInput, error) {
 	var it models.DomainInput
 	var asMap = obj.(map[string]interface{})
@@ -62273,6 +64942,34 @@ func (ec *executionContext) unmarshalInputDomainInput(ctx context.Context, obj i
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDomainOrder(ctx context.Context, obj interface{}) (ent.DomainOrder, error) {
+	var it ent.DomainOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalODomainOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -62461,14 +65158,6 @@ func (ec *executionContext) unmarshalInputEditCounterFamilyInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "counter":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counter"))
-			it.Counter, err = ec.unmarshalOEditCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -62865,66 +65554,6 @@ func (ec *executionContext) unmarshalInputEditEquipmentTypeInput(ctx context.Con
 			} else {
 				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 				return it, graphql.ErrorOnPath(ctx, err)
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputEditEventInput(ctx context.Context, obj interface{}) (models.EditEventInput, error) {
-	var it models.EditEventInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "eventTypeName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTypeName"))
-			it.EventTypeName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "specificProblem":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("specificProblem"))
-			it.SpecificProblem, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "additionalInfo":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
-			it.AdditionalInfo, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "eventSeverity":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventSeverity"))
-			it.EventSeverity, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
 			}
 		}
 	}
@@ -63602,11 +66231,35 @@ func (ec *executionContext) unmarshalInputEditRuleInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "event":
+		case "eventTypeName":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
-			it.Event, err = ec.unmarshalNID2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTypeName"))
+			it.EventTypeName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "specificProblem":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("specificProblem"))
+			it.SpecificProblem, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "additionalInfo":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
+			it.AdditionalInfo, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "eventSeverity":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventSeverity"))
+			it.EventSeverity, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -64516,57 +67169,89 @@ func (ec *executionContext) unmarshalInputEquipmentPositionInput(ctx context.Con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputEventInput(ctx context.Context, obj interface{}) (models.EventInput, error) {
-	var it models.EventInput
+func (ec *executionContext) unmarshalInputEventSeverityFilterInput(ctx context.Context, obj interface{}) (models.EventSeverityFilterInput, error) {
+	var it models.EventSeverityFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNEventSeverityFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEventSeverityOrder(ctx context.Context, obj interface{}) (ent.EventSeverityOrder, error) {
+	var it ent.EventSeverityOrder
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
+		case "direction":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "eventTypeName":
+		case "field":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTypeName"))
-			it.EventTypeName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "specificProblem":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("specificProblem"))
-			it.SpecificProblem, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "additionalInfo":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
-			it.AdditionalInfo, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "rule":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
-			it.Rule, err = ec.unmarshalORuleInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "eventSeverity":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventSeverity"))
-			it.EventSeverity, err = ec.unmarshalOID2ᚖint(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOEventSeverityOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -66014,6 +68699,30 @@ func (ec *executionContext) unmarshalInputRuleInput(ctx context.Context, obj int
 			if err != nil {
 				return it, err
 			}
+		case "eventTypeName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("eventTypeName"))
+			it.EventTypeName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "specificProblem":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("specificProblem"))
+			it.SpecificProblem, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "additionalInfo":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
+			it.AdditionalInfo, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "ruleLimit":
 			var err error
 
@@ -66063,6 +68772,98 @@ func (ec *executionContext) unmarshalInputRuleLimitInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rule"))
 			it.Rule, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRuleTypeFilterInput(ctx context.Context, obj interface{}) (models.RuleTypeFilterInput, error) {
+	var it models.RuleTypeFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNRuleTypeFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRuleTypeOrder(ctx context.Context, obj interface{}) (ent.RuleTypeOrder, error) {
+	var it ent.RuleTypeOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalORuleTypeOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -67976,6 +70777,98 @@ func (ec *executionContext) unmarshalInputVariableValue(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputVendorFilterInput(ctx context.Context, obj interface{}) (models.VendorFilterInput, error) {
+	var it models.VendorFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNVendorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputVendorOrder(ctx context.Context, obj interface{}) (ent.VendorOrder, error) {
+	var it ent.VendorOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOVendorOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputWorkOrderDefinitionInput(ctx context.Context, obj interface{}) (models.WorkOrderDefinitionInput, error) {
 	var it models.WorkOrderDefinitionInput
 	var asMap = obj.(map[string]interface{})
@@ -68641,26 +71534,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Treshold(ctx, sel, obj)
-	case *ent.AlarmFilter:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._AlarmFilter(ctx, sel, obj)
-	case *ent.AlarmStatus:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._AlarmStatus(ctx, sel, obj)
 	case *ent.Comparator:
 		if obj == nil {
 			return graphql.Null
 		}
 		return ec._Comparator(ctx, sel, obj)
-	case *ent.Event:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Event(ctx, sel, obj)
 	case *ent.RuleType:
 		if obj == nil {
 			return graphql.Null
@@ -68681,6 +71559,16 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._EventSeverity(ctx, sel, obj)
+	case *ent.AlarmFilter:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AlarmFilter(ctx, sel, obj)
+	case *ent.AlarmStatus:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AlarmStatus(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -69852,6 +72740,72 @@ func (ec *executionContext) _Comparator(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
+var comparatorConnectionImplementors = []string{"ComparatorConnection"}
+
+func (ec *executionContext) _ComparatorConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.ComparatorConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, comparatorConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ComparatorConnection")
+		case "totalCount":
+			out.Values[i] = ec._ComparatorConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._ComparatorConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._ComparatorConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var comparatorEdgeImplementors = []string{"ComparatorEdge"}
+
+func (ec *executionContext) _ComparatorEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.ComparatorEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, comparatorEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ComparatorEdge")
+		case "node":
+			out.Values[i] = ec._ComparatorEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._ComparatorEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var connectorImplementors = []string{"Connector"}
 
 func (ec *executionContext) _Connector(ctx context.Context, sel ast.SelectionSet, obj *models.Connector) graphql.Marshaler {
@@ -70063,27 +73017,79 @@ func (ec *executionContext) _CounterFamily(ctx context.Context, sel ast.Selectio
 		case "id":
 			out.Values[i] = ec._CounterFamily_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "name":
 			out.Values[i] = ec._CounterFamily_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
-		case "counter":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CounterFamily_counter(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var counterFamilyConnectionImplementors = []string{"CounterFamilyConnection"}
+
+func (ec *executionContext) _CounterFamilyConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.CounterFamilyConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, counterFamilyConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CounterFamilyConnection")
+		case "totalCount":
+			out.Values[i] = ec._CounterFamilyConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._CounterFamilyConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._CounterFamilyConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var counterFamilyEdgeImplementors = []string{"CounterFamilyEdge"}
+
+func (ec *executionContext) _CounterFamilyEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.CounterFamilyEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, counterFamilyEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CounterFamilyEdge")
+		case "node":
+			out.Values[i] = ec._CounterFamilyEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._CounterFamilyEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -70348,6 +73354,72 @@ func (ec *executionContext) _Domain(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "name":
 			out.Values[i] = ec._Domain_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var domainConnectionImplementors = []string{"DomainConnection"}
+
+func (ec *executionContext) _DomainConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.DomainConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, domainConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DomainConnection")
+		case "totalCount":
+			out.Values[i] = ec._DomainConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._DomainConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._DomainConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var domainEdgeImplementors = []string{"DomainEdge"}
+
+func (ec *executionContext) _DomainEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.DomainEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, domainEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DomainEdge")
+		case "node":
+			out.Values[i] = ec._DomainEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._DomainEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -71570,75 +74642,6 @@ func (ec *executionContext) _EquipmentTypeEdge(ctx context.Context, sel ast.Sele
 	return out
 }
 
-var eventImplementors = []string{"Event", "Node"}
-
-func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *ent.Event) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, eventImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Event")
-		case "id":
-			out.Values[i] = ec._Event_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "name":
-			out.Values[i] = ec._Event_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "eventTypeName":
-			out.Values[i] = ec._Event_eventTypeName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "specificProblem":
-			out.Values[i] = ec._Event_specificProblem(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "additionalInfo":
-			out.Values[i] = ec._Event_additionalInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "rule":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Event_rule(ctx, field, obj)
-				return res
-			})
-		case "eventSeverity":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Event_eventSeverity(ctx, field, obj)
-				return res
-			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var eventSeverityImplementors = []string{"EventSeverity", "Node"}
 
 func (ec *executionContext) _EventSeverity(ctx context.Context, sel ast.SelectionSet, obj *ent.EventSeverity) graphql.Marshaler {
@@ -71660,7 +74663,7 @@ func (ec *executionContext) _EventSeverity(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "event":
+		case "rule":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -71668,9 +74671,75 @@ func (ec *executionContext) _EventSeverity(ctx context.Context, sel ast.Selectio
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._EventSeverity_event(ctx, field, obj)
+				res = ec._EventSeverity_rule(ctx, field, obj)
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var eventSeverityConnectionImplementors = []string{"EventSeverityConnection"}
+
+func (ec *executionContext) _EventSeverityConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.EventSeverityConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, eventSeverityConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EventSeverityConnection")
+		case "totalCount":
+			out.Values[i] = ec._EventSeverityConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._EventSeverityConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._EventSeverityConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var eventSeverityEdgeImplementors = []string{"EventSeverityEdge"}
+
+func (ec *executionContext) _EventSeverityEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.EventSeverityEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, eventSeverityEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EventSeverityEdge")
+		case "node":
+			out.Values[i] = ec._EventSeverityEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._EventSeverityEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -74255,21 +77324,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "addEvent":
-			out.Values[i] = ec._Mutation_addEvent(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "editEvent":
-			out.Values[i] = ec._Mutation_editEvent(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "removeEvent":
-			out.Values[i] = ec._Mutation_removeEvent(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "addComparator":
 			out.Values[i] = ec._Mutation_addComparator(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -75838,6 +78892,90 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "domains":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_domains(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "vendors":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_vendors(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "counterFamilys":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_counterFamilys(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "ruleTypes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_ruleTypes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "eventSeveritys":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_eventSeveritys(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "comparators":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_comparators(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -75965,7 +79103,13 @@ func (ec *executionContext) _Rule(ctx context.Context, sel ast.SelectionSet, obj
 				}
 				return res
 			})
-		case "event":
+		case "eventTypeName":
+			out.Values[i] = ec._Rule_eventTypeName(ctx, field, obj)
+		case "specificProblem":
+			out.Values[i] = ec._Rule_specificProblem(ctx, field, obj)
+		case "additionalInfo":
+			out.Values[i] = ec._Rule_additionalInfo(ctx, field, obj)
+		case "eventSeverity":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -75973,7 +79117,7 @@ func (ec *executionContext) _Rule(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Rule_event(ctx, field, obj)
+				res = ec._Rule_eventSeverity(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -76098,6 +79242,72 @@ func (ec *executionContext) _RuleType(ctx context.Context, sel ast.SelectionSet,
 				res = ec._RuleType_rule(ctx, field, obj)
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var ruleTypeConnectionImplementors = []string{"RuleTypeConnection"}
+
+func (ec *executionContext) _RuleTypeConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.RuleTypeConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, ruleTypeConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RuleTypeConnection")
+		case "totalCount":
+			out.Values[i] = ec._RuleTypeConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._RuleTypeConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._RuleTypeConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var ruleTypeEdgeImplementors = []string{"RuleTypeEdge"}
+
+func (ec *executionContext) _RuleTypeEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.RuleTypeEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, ruleTypeEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RuleTypeEdge")
+		case "node":
+			out.Values[i] = ec._RuleTypeEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._RuleTypeEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -78255,6 +81465,72 @@ func (ec *executionContext) _Vendor(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var vendorConnectionImplementors = []string{"VendorConnection"}
+
+func (ec *executionContext) _VendorConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.VendorConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, vendorConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("VendorConnection")
+		case "totalCount":
+			out.Values[i] = ec._VendorConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._VendorConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._VendorConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var vendorEdgeImplementors = []string{"VendorEdge"}
+
+func (ec *executionContext) _VendorEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.VendorEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, vendorEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("VendorEdge")
+		case "node":
+			out.Values[i] = ec._VendorEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._VendorEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var vertexImplementors = []string{"Vertex"}
 
 func (ec *executionContext) _Vertex(ctx context.Context, sel ast.SelectionSet, obj *ent.Node) graphql.Marshaler {
@@ -79649,11 +82925,6 @@ func (ec *executionContext) unmarshalNAddCounterInput2githubᚗcomᚋfacebookinc
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddCounterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx context.Context, v interface{}) (*models.AddCounterInput, error) {
-	res, err := ec.unmarshalInputAddCounterInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNAddCounterVendorFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterVendorFormulaInput(ctx context.Context, v interface{}) (models.AddCounterVendorFormulaInput, error) {
 	res, err := ec.unmarshalInputAddCounterVendorFormulaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -79681,11 +82952,6 @@ func (ec *executionContext) unmarshalNAddEquipmentPortTypeInput2githubᚗcomᚋf
 
 func (ec *executionContext) unmarshalNAddEquipmentTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEquipmentTypeInput(ctx context.Context, v interface{}) (models.AddEquipmentTypeInput, error) {
 	res, err := ec.unmarshalInputAddEquipmentTypeInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNAddEventInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEventInput(ctx context.Context, v interface{}) (models.AddEventInput, error) {
-	res, err := ec.unmarshalInputAddEventInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -80414,6 +83680,82 @@ func (ec *executionContext) marshalNComparator2ᚖgithubᚗcomᚋfacebookincubat
 	return ec._Comparator(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNComparatorConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorConnection(ctx context.Context, sel ast.SelectionSet, v ent.ComparatorConnection) graphql.Marshaler {
+	return ec._ComparatorConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNComparatorConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorConnection(ctx context.Context, sel ast.SelectionSet, v *ent.ComparatorConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ComparatorConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNComparatorEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ComparatorEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNComparatorEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNComparatorEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorEdge(ctx context.Context, sel ast.SelectionSet, v *ent.ComparatorEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ComparatorEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNComparatorFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterInput(ctx context.Context, v interface{}) (*models.ComparatorFilterInput, error) {
+	res, err := ec.unmarshalInputComparatorFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNComparatorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterType(ctx context.Context, v interface{}) (models.ComparatorFilterType, error) {
+	var res models.ComparatorFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNComparatorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterType(ctx context.Context, sel ast.SelectionSet, v models.ComparatorFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNConnector2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐConnector(ctx context.Context, sel ast.SelectionSet, v models.Connector) graphql.Marshaler {
 	return ec._Connector(ctx, sel, &v)
 }
@@ -80477,43 +83819,6 @@ func (ec *executionContext) unmarshalNConnectorInput2ᚖgithubᚗcomᚋfacebooki
 
 func (ec *executionContext) marshalNCounter2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounter(ctx context.Context, sel ast.SelectionSet, v ent.Counter) graphql.Marshaler {
 	return ec._Counter(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNCounter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounter(ctx context.Context, sel ast.SelectionSet, v []*ent.Counter) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOCounter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounter(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) marshalNCounter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounter(ctx context.Context, sel ast.SelectionSet, v *ent.Counter) graphql.Marshaler {
@@ -80599,6 +83904,82 @@ func (ec *executionContext) marshalNCounterFamily2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._CounterFamily(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCounterFamilyConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyConnection(ctx context.Context, sel ast.SelectionSet, v ent.CounterFamilyConnection) graphql.Marshaler {
+	return ec._CounterFamilyConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCounterFamilyConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyConnection(ctx context.Context, sel ast.SelectionSet, v *ent.CounterFamilyConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CounterFamilyConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCounterFamilyEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.CounterFamilyEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCounterFamilyEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNCounterFamilyEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyEdge(ctx context.Context, sel ast.SelectionSet, v *ent.CounterFamilyEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CounterFamilyEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCounterFamilyFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterInput(ctx context.Context, v interface{}) (*models.CounterFamilyFilterInput, error) {
+	res, err := ec.unmarshalInputCounterFamilyFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCounterFamilyFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterType(ctx context.Context, v interface{}) (models.CounterFamilyFilterType, error) {
+	var res models.CounterFamilyFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCounterFamilyFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterType(ctx context.Context, sel ast.SelectionSet, v models.CounterFamilyFilterType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNCounterFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFilterInput(ctx context.Context, v interface{}) (*models.CounterFilterInput, error) {
@@ -80824,6 +84205,82 @@ func (ec *executionContext) marshalNDomain2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Domain(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNDomainConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainConnection(ctx context.Context, sel ast.SelectionSet, v ent.DomainConnection) graphql.Marshaler {
+	return ec._DomainConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDomainConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainConnection(ctx context.Context, sel ast.SelectionSet, v *ent.DomainConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._DomainConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDomainEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.DomainEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDomainEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNDomainEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainEdge(ctx context.Context, sel ast.SelectionSet, v *ent.DomainEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._DomainEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDomainFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterInput(ctx context.Context, v interface{}) (*models.DomainFilterInput, error) {
+	res, err := ec.unmarshalInputDomainFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDomainFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterType(ctx context.Context, v interface{}) (models.DomainFilterType, error) {
+	var res models.DomainFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDomainFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterType(ctx context.Context, sel ast.SelectionSet, v models.DomainFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Edge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -80901,11 +84358,6 @@ func (ec *executionContext) unmarshalNEditCounterInput2githubᚗcomᚋfacebookin
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNEditCounterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterInput(ctx context.Context, v interface{}) (*models.EditCounterInput, error) {
-	res, err := ec.unmarshalInputEditCounterInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNEditCounterVendorFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInput(ctx context.Context, v interface{}) (models.EditCounterVendorFormulaInput, error) {
 	res, err := ec.unmarshalInputEditCounterVendorFormulaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -80938,11 +84390,6 @@ func (ec *executionContext) unmarshalNEditEquipmentPortTypeInput2githubᚗcomᚋ
 
 func (ec *executionContext) unmarshalNEditEquipmentTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditEquipmentTypeInput(ctx context.Context, v interface{}) (models.EditEquipmentTypeInput, error) {
 	res, err := ec.unmarshalInputEditEquipmentTypeInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNEditEventInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditEventInput(ctx context.Context, v interface{}) (models.EditEventInput, error) {
-	res, err := ec.unmarshalInputEditEventInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -81798,20 +85245,6 @@ func (ec *executionContext) marshalNEquipmentTypeEdge2ᚖgithubᚗcomᚋfacebook
 	return ec._EquipmentTypeEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNEvent2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEvent(ctx context.Context, sel ast.SelectionSet, v ent.Event) graphql.Marshaler {
-	return ec._Event(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEvent(ctx context.Context, sel ast.SelectionSet, v *ent.Event) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Event(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNEventSeverity2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx context.Context, sel ast.SelectionSet, v ent.EventSeverity) graphql.Marshaler {
 	return ec._EventSeverity(ctx, sel, &v)
 }
@@ -81824,6 +85257,82 @@ func (ec *executionContext) marshalNEventSeverity2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._EventSeverity(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNEventSeverityConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityConnection(ctx context.Context, sel ast.SelectionSet, v ent.EventSeverityConnection) graphql.Marshaler {
+	return ec._EventSeverityConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEventSeverityConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityConnection(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverityConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._EventSeverityConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNEventSeverityEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.EventSeverityEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNEventSeverityEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNEventSeverityEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityEdge(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverityEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._EventSeverityEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNEventSeverityFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterInput(ctx context.Context, v interface{}) (*models.EventSeverityFilterInput, error) {
+	res, err := ec.unmarshalInputEventSeverityFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEventSeverityFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterType(ctx context.Context, v interface{}) (models.EventSeverityFilterType, error) {
+	var res models.EventSeverityFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNEventSeverityFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterType(ctx context.Context, sel ast.SelectionSet, v models.EventSeverityFilterType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNExitPoint2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.ExitPoint) graphql.Marshaler {
@@ -83869,6 +87378,82 @@ func (ec *executionContext) marshalNRuleType2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._RuleType(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNRuleTypeConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeConnection(ctx context.Context, sel ast.SelectionSet, v ent.RuleTypeConnection) graphql.Marshaler {
+	return ec._RuleTypeConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRuleTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeConnection(ctx context.Context, sel ast.SelectionSet, v *ent.RuleTypeConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RuleTypeConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRuleTypeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.RuleTypeEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRuleTypeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNRuleTypeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeEdge(ctx context.Context, sel ast.SelectionSet, v *ent.RuleTypeEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RuleTypeEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRuleTypeFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterInput(ctx context.Context, v interface{}) (*models.RuleTypeFilterInput, error) {
+	res, err := ec.unmarshalInputRuleTypeFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNRuleTypeFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterType(ctx context.Context, v interface{}) (models.RuleTypeFilterType, error) {
+	var res models.RuleTypeFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNRuleTypeFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterType(ctx context.Context, sel ast.SelectionSet, v models.RuleTypeFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNSearchNodeEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSearchNodeEdge(ctx context.Context, sel ast.SelectionSet, v *models.SearchNodeEdge) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -85436,6 +89021,82 @@ func (ec *executionContext) marshalNVendor2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Vendor(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNVendorConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorConnection(ctx context.Context, sel ast.SelectionSet, v ent.VendorConnection) graphql.Marshaler {
+	return ec._VendorConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNVendorConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorConnection(ctx context.Context, sel ast.SelectionSet, v *ent.VendorConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._VendorConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNVendorEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.VendorEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNVendorEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNVendorEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorEdge(ctx context.Context, sel ast.SelectionSet, v *ent.VendorEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._VendorEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNVendorFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterInput(ctx context.Context, v interface{}) (*models.VendorFilterInput, error) {
+	res, err := ec.unmarshalInputVendorFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNVendorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterType(ctx context.Context, v interface{}) (models.VendorFilterType, error) {
+	var res models.VendorFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNVendorFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterType(ctx context.Context, sel ast.SelectionSet, v models.VendorFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNWorkOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrder) graphql.Marshaler {
 	return ec._WorkOrder(ctx, sel, &v)
 }
@@ -86152,30 +89813,6 @@ func (ec *executionContext) unmarshalOAddBulkServiceLinksAndPortsInput2ᚖgithub
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOAddCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInputᚄ(ctx context.Context, v interface{}) ([]*models.AddCounterInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.AddCounterInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNAddCounterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) marshalOAlarmFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmFilterᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.AlarmFilter) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -86542,6 +90179,61 @@ func (ec *executionContext) marshalOComment2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Comment(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOComparator2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparator(ctx context.Context, sel ast.SelectionSet, v *ent.Comparator) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Comparator(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOComparatorFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ComparatorFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.ComparatorFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNComparatorFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐComparatorFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOComparatorOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorOrder(ctx context.Context, v interface{}) (*ent.ComparatorOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputComparatorOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOComparatorOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorOrderField(ctx context.Context, v interface{}) (*ent.ComparatorOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.ComparatorOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOComparatorOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComparatorOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ComparatorOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOConnectorInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐConnectorInputᚄ(ctx context.Context, v interface{}) ([]*models.ConnectorInput, error) {
 	if v == nil {
 		return nil, nil
@@ -86587,12 +90279,60 @@ func (ec *executionContext) marshalOCounterFamily2ᚖgithubᚗcomᚋfacebookincu
 	return ec._CounterFamily(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOCounterFamilyFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.CounterFamilyFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.CounterFamilyFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCounterFamilyFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOCounterFamilyInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFamilyInput(ctx context.Context, v interface{}) (*models.CounterFamilyInput, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputCounterFamilyInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOCounterFamilyOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyOrder(ctx context.Context, v interface{}) (*ent.CounterFamilyOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCounterFamilyOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOCounterFamilyOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyOrderField(ctx context.Context, v interface{}) (*ent.CounterFamilyOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.CounterFamilyOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOCounterFamilyOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamilyOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.CounterFamilyOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOCounterFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCounterFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.CounterFilterInput, error) {
@@ -86810,7 +90550,14 @@ func (ec *executionContext) marshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincub
 	return v
 }
 
-func (ec *executionContext) unmarshalOEditCounterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterInputᚄ(ctx context.Context, v interface{}) ([]*models.EditCounterInput, error) {
+func (ec *executionContext) marshalODomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx context.Context, sel ast.SelectionSet, v *ent.Domain) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Domain(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODomainFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.DomainFilterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -86823,15 +90570,39 @@ func (ec *executionContext) unmarshalOEditCounterInput2ᚕᚖgithubᚗcomᚋface
 		}
 	}
 	var err error
-	res := make([]*models.EditCounterInput, len(vSlice))
+	res := make([]*models.DomainFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEditCounterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNDomainFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDomainFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalODomainOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainOrder(ctx context.Context, v interface{}) (*ent.DomainOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputDomainOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalODomainOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainOrderField(ctx context.Context, v interface{}) (*ent.DomainOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.DomainOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODomainOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomainOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.DomainOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx context.Context, v interface{}) ([]*models.EditCounterVendorFormulaInput, error) {
@@ -87162,51 +90933,59 @@ func (ec *executionContext) marshalOEquipmentType2ᚖgithubᚗcomᚋfacebookincu
 	return ec._EquipmentType(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOEvent2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Event) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNEvent2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEvent(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalOEventSeverity2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverity(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverity) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._EventSeverity(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOEventSeverityFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.EventSeverityFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.EventSeverityFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNEventSeverityFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEventSeverityFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOEventSeverityOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrder(ctx context.Context, v interface{}) (*ent.EventSeverityOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputEventSeverityOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOEventSeverityOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrderField(ctx context.Context, v interface{}) (*ent.EventSeverityOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.EventSeverityOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOEventSeverityOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEventSeverityOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.EventSeverityOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx context.Context, sel ast.SelectionSet, v *ent.ExitPoint) graphql.Marshaler {
@@ -88448,6 +92227,61 @@ func (ec *executionContext) unmarshalORuleLimitInput2ᚕᚖgithubᚗcomᚋfacebo
 	return res, nil
 }
 
+func (ec *executionContext) marshalORuleType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleType(ctx context.Context, sel ast.SelectionSet, v *ent.RuleType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RuleType(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalORuleTypeFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.RuleTypeFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.RuleTypeFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNRuleTypeFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRuleTypeFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalORuleTypeOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeOrder(ctx context.Context, v interface{}) (*ent.RuleTypeOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputRuleTypeOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalORuleTypeOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeOrderField(ctx context.Context, v interface{}) (*ent.RuleTypeOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.RuleTypeOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalORuleTypeOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleTypeOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.RuleTypeOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) marshalOSearchNodeEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSearchNodeEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.SearchNodeEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -89440,6 +93274,61 @@ func (ec *executionContext) unmarshalOVariableValue2ᚖgithubᚗcomᚋfacebookin
 	}
 	res, err := ec.unmarshalInputVariableValue(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOVendor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendor(ctx context.Context, sel ast.SelectionSet, v *ent.Vendor) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Vendor(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOVendorFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.VendorFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.VendorFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNVendorFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐVendorFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOVendorOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorOrder(ctx context.Context, v interface{}) (*ent.VendorOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputVendorOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOVendorOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorOrderField(ctx context.Context, v interface{}) (*ent.VendorOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.VendorOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOVendorOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendorOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.VendorOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOVertex2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐNode(ctx context.Context, sel ast.SelectionSet, v *ent.Node) graphql.Marshaler {

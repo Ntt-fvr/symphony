@@ -14,7 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
+	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
@@ -80,6 +80,48 @@ func (rc *RuleCreate) SetEndDateTime(t time.Time) *RuleCreate {
 	return rc
 }
 
+// SetEventTypeName sets the eventTypeName field.
+func (rc *RuleCreate) SetEventTypeName(s string) *RuleCreate {
+	rc.mutation.SetEventTypeName(s)
+	return rc
+}
+
+// SetNillableEventTypeName sets the eventTypeName field if the given value is not nil.
+func (rc *RuleCreate) SetNillableEventTypeName(s *string) *RuleCreate {
+	if s != nil {
+		rc.SetEventTypeName(*s)
+	}
+	return rc
+}
+
+// SetSpecificProblem sets the specificProblem field.
+func (rc *RuleCreate) SetSpecificProblem(s string) *RuleCreate {
+	rc.mutation.SetSpecificProblem(s)
+	return rc
+}
+
+// SetNillableSpecificProblem sets the specificProblem field if the given value is not nil.
+func (rc *RuleCreate) SetNillableSpecificProblem(s *string) *RuleCreate {
+	if s != nil {
+		rc.SetSpecificProblem(*s)
+	}
+	return rc
+}
+
+// SetAdditionalInfo sets the additionalInfo field.
+func (rc *RuleCreate) SetAdditionalInfo(s string) *RuleCreate {
+	rc.mutation.SetAdditionalInfo(s)
+	return rc
+}
+
+// SetNillableAdditionalInfo sets the additionalInfo field if the given value is not nil.
+func (rc *RuleCreate) SetNillableAdditionalInfo(s *string) *RuleCreate {
+	if s != nil {
+		rc.SetAdditionalInfo(*s)
+	}
+	return rc
+}
+
 // SetRuletypeID sets the ruletype edge to RuleType by id.
 func (rc *RuleCreate) SetRuletypeID(id int) *RuleCreate {
 	rc.mutation.SetRuletypeID(id)
@@ -99,23 +141,23 @@ func (rc *RuleCreate) SetRuletype(r *RuleType) *RuleCreate {
 	return rc.SetRuletypeID(r.ID)
 }
 
-// SetEventID sets the event edge to Event by id.
-func (rc *RuleCreate) SetEventID(id int) *RuleCreate {
-	rc.mutation.SetEventID(id)
+// SetEventseverityID sets the eventseverity edge to EventSeverity by id.
+func (rc *RuleCreate) SetEventseverityID(id int) *RuleCreate {
+	rc.mutation.SetEventseverityID(id)
 	return rc
 }
 
-// SetNillableEventID sets the event edge to Event by id if the given value is not nil.
-func (rc *RuleCreate) SetNillableEventID(id *int) *RuleCreate {
+// SetNillableEventseverityID sets the eventseverity edge to EventSeverity by id if the given value is not nil.
+func (rc *RuleCreate) SetNillableEventseverityID(id *int) *RuleCreate {
 	if id != nil {
-		rc = rc.SetEventID(*id)
+		rc = rc.SetEventseverityID(*id)
 	}
 	return rc
 }
 
-// SetEvent sets the event edge to Event.
-func (rc *RuleCreate) SetEvent(e *Event) *RuleCreate {
-	return rc.SetEventID(e.ID)
+// SetEventseverity sets the eventseverity edge to EventSeverity.
+func (rc *RuleCreate) SetEventseverity(e *EventSeverity) *RuleCreate {
+	return rc.SetEventseverityID(e.ID)
 }
 
 // SetTresholdID sets the treshold edge to Treshold by id.
@@ -314,6 +356,30 @@ func (rc *RuleCreate) createSpec() (*Rule, *sqlgraph.CreateSpec) {
 		})
 		_node.EndDateTime = value
 	}
+	if value, ok := rc.mutation.EventTypeName(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldEventTypeName,
+		})
+		_node.EventTypeName = &value
+	}
+	if value, ok := rc.mutation.SpecificProblem(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldSpecificProblem,
+		})
+		_node.SpecificProblem = &value
+	}
+	if value, ok := rc.mutation.AdditionalInfo(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldAdditionalInfo,
+		})
+		_node.AdditionalInfo = &value
+	}
 	if nodes := rc.mutation.RuletypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -333,17 +399,17 @@ func (rc *RuleCreate) createSpec() (*Rule, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rc.mutation.EventIDs(); len(nodes) > 0 {
+	if nodes := rc.mutation.EventseverityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   rule.EventTable,
-			Columns: []string{rule.EventColumn},
+			Table:   rule.EventseverityTable,
+			Columns: []string{rule.EventseverityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: eventseverity.FieldID,
 				},
 			},
 		}

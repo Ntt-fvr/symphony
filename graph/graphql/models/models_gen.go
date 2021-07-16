@@ -87,8 +87,7 @@ type AddComparatorInput struct {
 }
 
 type AddCounterFamilyInput struct {
-	Name    string             `json:"name"`
-	Counter []*AddCounterInput `json:"counter"`
+	Name string `json:"name"`
 }
 
 type AddCounterInput struct {
@@ -138,14 +137,6 @@ type AddEquipmentTypeInput struct {
 	Positions  []*EquipmentPositionInput   `json:"positions"`
 	Ports      []*EquipmentPortInput       `json:"ports"`
 	Properties []*models.PropertyTypeInput `json:"properties"`
-}
-
-type AddEventInput struct {
-	Name            string `json:"name"`
-	EventTypeName   string `json:"eventTypeName"`
-	SpecificProblem string `json:"specificProblem"`
-	AdditionalInfo  string `json:"additionalInfo"`
-	EventSeverity   int    `json:"eventSeverity"`
 }
 
 type AddEventSeverityInput struct {
@@ -263,13 +254,16 @@ type AddProjectTypeInput struct {
 }
 
 type AddRuleInput struct {
-	Name          string    `json:"name"`
-	GracePeriod   int       `json:"gracePeriod"`
-	StartDateTime time.Time `json:"startDateTime"`
-	EndDateTime   time.Time `json:"endDateTime"`
-	RuleType      int       `json:"ruleType"`
-	Event         int       `json:"event"`
-	Treshold      int       `json:"treshold"`
+	Name            string    `json:"name"`
+	GracePeriod     int       `json:"gracePeriod"`
+	StartDateTime   time.Time `json:"startDateTime"`
+	EndDateTime     time.Time `json:"endDateTime"`
+	RuleType        int       `json:"ruleType"`
+	EventTypeName   *string   `json:"eventTypeName"`
+	SpecificProblem *string   `json:"specificProblem"`
+	AdditionalInfo  *string   `json:"additionalInfo"`
+	EventSeverity   int       `json:"eventSeverity"`
+	Treshold        int       `json:"treshold"`
 }
 
 type AddRuleLimitInput struct {
@@ -431,6 +425,15 @@ type CommentInput struct {
 	Text       string        `json:"text"`
 }
 
+type ComparatorFilterInput struct {
+	FilterType  ComparatorFilterType `json:"filterType"`
+	Operator    enum.FilterOperator  `json:"operator"`
+	StringValue *string              `json:"stringValue"`
+	IDSet       []int                `json:"idSet"`
+	MaxDepth    *int                 `json:"maxDepth"`
+	StringSet   []string             `json:"stringSet"`
+}
+
 type Connector struct {
 	Source *ent.ExitPoint  `json:"source"`
 	Target *ent.EntryPoint `json:"target"`
@@ -448,9 +451,17 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
+type CounterFamilyFilterInput struct {
+	FilterType  CounterFamilyFilterType `json:"filterType"`
+	Operator    enum.FilterOperator     `json:"operator"`
+	StringValue *string                 `json:"stringValue"`
+	IDSet       []int                   `json:"idSet"`
+	MaxDepth    *int                    `json:"maxDepth"`
+	StringSet   []string                `json:"stringSet"`
+}
+
 type CounterFamilyInput struct {
-	Name    string             `json:"name"`
-	Counter []*AddCounterInput `json:"counter"`
+	Name string `json:"name"`
 }
 
 type CounterFilterInput struct {
@@ -493,6 +504,15 @@ type DecisionRouteInput struct {
 	Condition *VariableExpressionInput `json:"condition"`
 }
 
+type DomainFilterInput struct {
+	FilterType  DomainFilterType    `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type DomainInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -525,9 +545,8 @@ type EditComparatorInput struct {
 }
 
 type EditCounterFamilyInput struct {
-	ID      int                 `json:"id"`
-	Name    string              `json:"name"`
-	Counter []*EditCounterInput `json:"counter"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditCounterInput struct {
@@ -578,15 +597,6 @@ type EditEquipmentTypeInput struct {
 	Positions  []*EquipmentPositionInput   `json:"positions"`
 	Ports      []*EquipmentPortInput       `json:"ports"`
 	Properties []*models.PropertyTypeInput `json:"properties"`
-}
-
-type EditEventInput struct {
-	ID              int    `json:"id"`
-	Name            string `json:"name"`
-	EventTypeName   string `json:"eventTypeName"`
-	SpecificProblem string `json:"specificProblem"`
-	AdditionalInfo  string `json:"additionalInfo"`
-	EventSeverity   int    `json:"eventSeverity"`
 }
 
 type EditEventSeverityInput struct {
@@ -671,14 +681,17 @@ type EditReportFilterInput struct {
 }
 
 type EditRuleInput struct {
-	ID            int        `json:"id"`
-	Name          string     `json:"name"`
-	GracePeriod   *int       `json:"gracePeriod"`
-	StartDateTime *time.Time `json:"startDateTime"`
-	EndDateTime   *time.Time `json:"endDateTime"`
-	RuleType      int        `json:"ruleType"`
-	Event         int        `json:"event"`
-	Treshold      int        `json:"treshold"`
+	ID              int        `json:"id"`
+	Name            string     `json:"name"`
+	GracePeriod     *int       `json:"gracePeriod"`
+	StartDateTime   *time.Time `json:"startDateTime"`
+	EndDateTime     *time.Time `json:"endDateTime"`
+	RuleType        int        `json:"ruleType"`
+	EventTypeName   *string    `json:"eventTypeName"`
+	SpecificProblem *string    `json:"specificProblem"`
+	AdditionalInfo  *string    `json:"additionalInfo"`
+	EventSeverity   int        `json:"eventSeverity"`
+	Treshold        int        `json:"treshold"`
 }
 
 type EditRuleLimitInput struct {
@@ -811,13 +824,13 @@ type EquipmentPositionInput struct {
 	VisibleLabel *string `json:"visibleLabel"`
 }
 
-type EventInput struct {
-	Name            string       `json:"name"`
-	EventTypeName   string       `json:"eventTypeName"`
-	SpecificProblem string       `json:"specificProblem"`
-	AdditionalInfo  string       `json:"additionalInfo"`
-	Rule            []*RuleInput `json:"rule"`
-	EventSeverity   *int         `json:"eventSeverity"`
+type EventSeverityFilterInput struct {
+	FilterType  EventSeverityFilterType `json:"filterType"`
+	Operator    enum.FilterOperator     `json:"operator"`
+	StringValue *string                 `json:"stringValue"`
+	IDSet       []int                   `json:"idSet"`
+	MaxDepth    *int                    `json:"maxDepth"`
+	StringSet   []string                `json:"stringSet"`
 }
 
 type ExitPointInput struct {
@@ -974,11 +987,14 @@ type ReportFilterInput struct {
 }
 
 type RuleInput struct {
-	Name          string            `json:"name"`
-	GracePeriod   *int              `json:"gracePeriod"`
-	StartDateTime *time.Time        `json:"startDateTime"`
-	EndDateTime   *time.Time        `json:"endDateTime"`
-	RuleLimit     []*RuleLimitInput `json:"ruleLimit"`
+	Name            string            `json:"name"`
+	GracePeriod     *int              `json:"gracePeriod"`
+	StartDateTime   *time.Time        `json:"startDateTime"`
+	EndDateTime     *time.Time        `json:"endDateTime"`
+	EventTypeName   string            `json:"eventTypeName"`
+	SpecificProblem string            `json:"specificProblem"`
+	AdditionalInfo  string            `json:"additionalInfo"`
+	RuleLimit       []*RuleLimitInput `json:"ruleLimit"`
 }
 
 type RuleLimitInput struct {
@@ -986,6 +1002,15 @@ type RuleLimitInput struct {
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`
+}
+
+type RuleTypeFilterInput struct {
+	FilterType  RuleTypeFilterType  `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
 }
 
 type SearchEntry struct {
@@ -1307,6 +1332,15 @@ type VariableExpressionInput struct {
 	BlockVariables        []*BlockVariableInput       `json:"blockVariables"`
 }
 
+type VendorFilterInput struct {
+	FilterType  VendorFilterType    `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type WorkOrderDefinitionInput struct {
 	ID    *int `json:"id"`
 	Index *int `json:"index"`
@@ -1402,6 +1436,84 @@ func (e CommentEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ComparatorFilterType string
+
+const (
+	ComparatorFilterTypeName ComparatorFilterType = "NAME"
+)
+
+var AllComparatorFilterType = []ComparatorFilterType{
+	ComparatorFilterTypeName,
+}
+
+func (e ComparatorFilterType) IsValid() bool {
+	switch e {
+	case ComparatorFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ComparatorFilterType) String() string {
+	return string(e)
+}
+
+func (e *ComparatorFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ComparatorFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ComparatorFilterType", str)
+	}
+	return nil
+}
+
+func (e ComparatorFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CounterFamilyFilterType string
+
+const (
+	CounterFamilyFilterTypeName CounterFamilyFilterType = "NAME"
+)
+
+var AllCounterFamilyFilterType = []CounterFamilyFilterType{
+	CounterFamilyFilterTypeName,
+}
+
+func (e CounterFamilyFilterType) IsValid() bool {
+	switch e {
+	case CounterFamilyFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e CounterFamilyFilterType) String() string {
+	return string(e)
+}
+
+func (e *CounterFamilyFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CounterFamilyFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CounterFamilyFilterType", str)
+	}
+	return nil
+}
+
+func (e CounterFamilyFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type CounterFilterType string
 
 const (
@@ -1438,6 +1550,84 @@ func (e *CounterFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CounterFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type DomainFilterType string
+
+const (
+	DomainFilterTypeName DomainFilterType = "NAME"
+)
+
+var AllDomainFilterType = []DomainFilterType{
+	DomainFilterTypeName,
+}
+
+func (e DomainFilterType) IsValid() bool {
+	switch e {
+	case DomainFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e DomainFilterType) String() string {
+	return string(e)
+}
+
+func (e *DomainFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DomainFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DomainFilterType", str)
+	}
+	return nil
+}
+
+func (e DomainFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EventSeverityFilterType string
+
+const (
+	EventSeverityFilterTypeName EventSeverityFilterType = "NAME"
+)
+
+var AllEventSeverityFilterType = []EventSeverityFilterType{
+	EventSeverityFilterTypeName,
+}
+
+func (e EventSeverityFilterType) IsValid() bool {
+	switch e {
+	case EventSeverityFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e EventSeverityFilterType) String() string {
+	return string(e)
+}
+
+func (e *EventSeverityFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EventSeverityFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EventSeverityFilterType", str)
+	}
+	return nil
+}
+
+func (e EventSeverityFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -1664,6 +1854,45 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RuleTypeFilterType string
+
+const (
+	RuleTypeFilterTypeName RuleTypeFilterType = "NAME"
+)
+
+var AllRuleTypeFilterType = []RuleTypeFilterType{
+	RuleTypeFilterTypeName,
+}
+
+func (e RuleTypeFilterType) IsValid() bool {
+	switch e {
+	case RuleTypeFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RuleTypeFilterType) String() string {
+	return string(e)
+}
+
+func (e *RuleTypeFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RuleTypeFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RuleTypeFilterType", str)
+	}
+	return nil
+}
+
+func (e RuleTypeFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -1928,5 +2157,44 @@ func (e *UsersGroupFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e UsersGroupFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type VendorFilterType string
+
+const (
+	VendorFilterTypeName VendorFilterType = "NAME"
+)
+
+var AllVendorFilterType = []VendorFilterType{
+	VendorFilterTypeName,
+}
+
+func (e VendorFilterType) IsValid() bool {
+	switch e {
+	case VendorFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e VendorFilterType) String() string {
+	return string(e)
+}
+
+func (e *VendorFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = VendorFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid VendorFilterType", str)
+	}
+	return nil
+}
+
+func (e VendorFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

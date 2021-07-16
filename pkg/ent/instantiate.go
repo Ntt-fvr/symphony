@@ -157,12 +157,6 @@ func (c *EquipmentTypeClient) Instantiate(et *EquipmentType) *EquipmentType {
 }
 
 // Instantiate entity configuration.
-func (c *EventClient) Instantiate(e *Event) *Event {
-	e.config = c.config
-	return e
-}
-
-// Instantiate entity configuration.
 func (c *EventSeverityClient) Instantiate(es *EventSeverity) *EventSeverity {
 	es.config = c.config
 	return es

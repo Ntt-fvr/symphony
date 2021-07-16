@@ -13,9 +13,9 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/rule"
 )
 
 // EventSeverityUpdate is the builder for updating EventSeverity entities.
@@ -37,19 +37,19 @@ func (esu *EventSeverityUpdate) SetName(s string) *EventSeverityUpdate {
 	return esu
 }
 
-// AddEventseverityeventIDs adds the eventseverityevent edge to Event by ids.
-func (esu *EventSeverityUpdate) AddEventseverityeventIDs(ids ...int) *EventSeverityUpdate {
-	esu.mutation.AddEventseverityeventIDs(ids...)
+// AddEventseverityruleIDs adds the eventseverityrule edge to Rule by ids.
+func (esu *EventSeverityUpdate) AddEventseverityruleIDs(ids ...int) *EventSeverityUpdate {
+	esu.mutation.AddEventseverityruleIDs(ids...)
 	return esu
 }
 
-// AddEventseverityevent adds the eventseverityevent edges to Event.
-func (esu *EventSeverityUpdate) AddEventseverityevent(e ...*Event) *EventSeverityUpdate {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddEventseverityrule adds the eventseverityrule edges to Rule.
+func (esu *EventSeverityUpdate) AddEventseverityrule(r ...*Rule) *EventSeverityUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return esu.AddEventseverityeventIDs(ids...)
+	return esu.AddEventseverityruleIDs(ids...)
 }
 
 // Mutation returns the EventSeverityMutation object of the builder.
@@ -57,25 +57,25 @@ func (esu *EventSeverityUpdate) Mutation() *EventSeverityMutation {
 	return esu.mutation
 }
 
-// ClearEventseverityevent clears all "eventseverityevent" edges to type Event.
-func (esu *EventSeverityUpdate) ClearEventseverityevent() *EventSeverityUpdate {
-	esu.mutation.ClearEventseverityevent()
+// ClearEventseverityrule clears all "eventseverityrule" edges to type Rule.
+func (esu *EventSeverityUpdate) ClearEventseverityrule() *EventSeverityUpdate {
+	esu.mutation.ClearEventseverityrule()
 	return esu
 }
 
-// RemoveEventseverityeventIDs removes the eventseverityevent edge to Event by ids.
-func (esu *EventSeverityUpdate) RemoveEventseverityeventIDs(ids ...int) *EventSeverityUpdate {
-	esu.mutation.RemoveEventseverityeventIDs(ids...)
+// RemoveEventseverityruleIDs removes the eventseverityrule edge to Rule by ids.
+func (esu *EventSeverityUpdate) RemoveEventseverityruleIDs(ids ...int) *EventSeverityUpdate {
+	esu.mutation.RemoveEventseverityruleIDs(ids...)
 	return esu
 }
 
-// RemoveEventseverityevent removes eventseverityevent edges to Event.
-func (esu *EventSeverityUpdate) RemoveEventseverityevent(e ...*Event) *EventSeverityUpdate {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveEventseverityrule removes eventseverityrule edges to Rule.
+func (esu *EventSeverityUpdate) RemoveEventseverityrule(r ...*Rule) *EventSeverityUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return esu.RemoveEventseverityeventIDs(ids...)
+	return esu.RemoveEventseverityruleIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -186,33 +186,33 @@ func (esu *EventSeverityUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Column: eventseverity.FieldName,
 		})
 	}
-	if esu.mutation.EventseverityeventCleared() {
+	if esu.mutation.EventseverityruleCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := esu.mutation.RemovedEventseverityeventIDs(); len(nodes) > 0 && !esu.mutation.EventseverityeventCleared() {
+	if nodes := esu.mutation.RemovedEventseverityruleIDs(); len(nodes) > 0 && !esu.mutation.EventseverityruleCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
@@ -221,17 +221,17 @@ func (esu *EventSeverityUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := esu.mutation.EventseverityeventIDs(); len(nodes) > 0 {
+	if nodes := esu.mutation.EventseverityruleIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
@@ -264,19 +264,19 @@ func (esuo *EventSeverityUpdateOne) SetName(s string) *EventSeverityUpdateOne {
 	return esuo
 }
 
-// AddEventseverityeventIDs adds the eventseverityevent edge to Event by ids.
-func (esuo *EventSeverityUpdateOne) AddEventseverityeventIDs(ids ...int) *EventSeverityUpdateOne {
-	esuo.mutation.AddEventseverityeventIDs(ids...)
+// AddEventseverityruleIDs adds the eventseverityrule edge to Rule by ids.
+func (esuo *EventSeverityUpdateOne) AddEventseverityruleIDs(ids ...int) *EventSeverityUpdateOne {
+	esuo.mutation.AddEventseverityruleIDs(ids...)
 	return esuo
 }
 
-// AddEventseverityevent adds the eventseverityevent edges to Event.
-func (esuo *EventSeverityUpdateOne) AddEventseverityevent(e ...*Event) *EventSeverityUpdateOne {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddEventseverityrule adds the eventseverityrule edges to Rule.
+func (esuo *EventSeverityUpdateOne) AddEventseverityrule(r ...*Rule) *EventSeverityUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return esuo.AddEventseverityeventIDs(ids...)
+	return esuo.AddEventseverityruleIDs(ids...)
 }
 
 // Mutation returns the EventSeverityMutation object of the builder.
@@ -284,25 +284,25 @@ func (esuo *EventSeverityUpdateOne) Mutation() *EventSeverityMutation {
 	return esuo.mutation
 }
 
-// ClearEventseverityevent clears all "eventseverityevent" edges to type Event.
-func (esuo *EventSeverityUpdateOne) ClearEventseverityevent() *EventSeverityUpdateOne {
-	esuo.mutation.ClearEventseverityevent()
+// ClearEventseverityrule clears all "eventseverityrule" edges to type Rule.
+func (esuo *EventSeverityUpdateOne) ClearEventseverityrule() *EventSeverityUpdateOne {
+	esuo.mutation.ClearEventseverityrule()
 	return esuo
 }
 
-// RemoveEventseverityeventIDs removes the eventseverityevent edge to Event by ids.
-func (esuo *EventSeverityUpdateOne) RemoveEventseverityeventIDs(ids ...int) *EventSeverityUpdateOne {
-	esuo.mutation.RemoveEventseverityeventIDs(ids...)
+// RemoveEventseverityruleIDs removes the eventseverityrule edge to Rule by ids.
+func (esuo *EventSeverityUpdateOne) RemoveEventseverityruleIDs(ids ...int) *EventSeverityUpdateOne {
+	esuo.mutation.RemoveEventseverityruleIDs(ids...)
 	return esuo
 }
 
-// RemoveEventseverityevent removes eventseverityevent edges to Event.
-func (esuo *EventSeverityUpdateOne) RemoveEventseverityevent(e ...*Event) *EventSeverityUpdateOne {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// RemoveEventseverityrule removes eventseverityrule edges to Rule.
+func (esuo *EventSeverityUpdateOne) RemoveEventseverityrule(r ...*Rule) *EventSeverityUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return esuo.RemoveEventseverityeventIDs(ids...)
+	return esuo.RemoveEventseverityruleIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -411,33 +411,33 @@ func (esuo *EventSeverityUpdateOne) sqlSave(ctx context.Context) (_node *EventSe
 			Column: eventseverity.FieldName,
 		})
 	}
-	if esuo.mutation.EventseverityeventCleared() {
+	if esuo.mutation.EventseverityruleCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := esuo.mutation.RemovedEventseverityeventIDs(); len(nodes) > 0 && !esuo.mutation.EventseverityeventCleared() {
+	if nodes := esuo.mutation.RemovedEventseverityruleIDs(); len(nodes) > 0 && !esuo.mutation.EventseverityruleCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
@@ -446,17 +446,17 @@ func (esuo *EventSeverityUpdateOne) sqlSave(ctx context.Context) (_node *EventSe
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := esuo.mutation.EventseverityeventIDs(); len(nodes) > 0 {
+	if nodes := esuo.mutation.EventseverityruleIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
