@@ -7,11 +7,11 @@
  * @flow
  * @format
  */
-
+import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -38,6 +38,14 @@ const useStyles = makeStyles(() => ({
 const AlarmFilteringTypes = () => {
   const classes = useStyles();
 
+  const [showForm, setShowForm] = useState(false);
+
+  function handleClick() {
+    setShowForm(true);
+  }
+  if (showForm) {
+    return <AlarmFilteringFormCreate />;
+  }
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
@@ -68,7 +76,9 @@ const AlarmFilteringTypes = () => {
         </Grid>
         <Grid className={classes.addButton} item xs={2}>
           <FormField>
-            <Button className={classes.button}>Add Alarm Filtering</Button>
+            <Button onClick={handleClick} className={classes.button}>
+              Add Alarm Filtering
+            </Button>
           </FormField>
         </Grid>
         <Grid item xs={12}>
