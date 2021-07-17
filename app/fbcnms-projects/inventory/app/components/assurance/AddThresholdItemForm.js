@@ -10,7 +10,7 @@
 
 import React, {useState} from 'react';
 
-import CounterAddedSuccessfully from './CounterAddedSuccessfully';
+import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
 
 import type {AddTresholdMutationVariables} from '../../mutations/__generated__/AddTresholdMutation.graphql';
 
@@ -139,7 +139,7 @@ export default function AddThresholdItemForm(props: Props) {
   // };
 
   if (showChecking) {
-    return <CounterAddedSuccessfully />;
+    return <AddedSuccessfullyMessage data_entry="threshold" card_header="Add Treshold" title="Treshold" text_button="Add new treshold"/>;
   }
 
   return (

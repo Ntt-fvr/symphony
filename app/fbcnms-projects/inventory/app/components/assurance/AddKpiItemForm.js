@@ -10,7 +10,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import CounterAddedSuccessfully from './CounterAddedSuccessfully';
+import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
@@ -65,6 +65,7 @@ type Kpis = {
   data: {
     id: string,
     name: string,
+    status: boolean,
     domainFk: string,
   },
 };
@@ -116,7 +117,7 @@ export default function AddKpiItemForm(props: Props) {
   // };
 
   if (showChecking) {
-    return <CounterAddedSuccessfully />;
+    return <AddedSuccessfullyMessage data_entry="kpi" card_header="Add Kpi" title="Kpi" text_button="Add new Kpi"/>;
   }
 
   return (
