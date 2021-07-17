@@ -154,7 +154,6 @@ func propertyTypeColumn(propertyTypeRows *sql.Rows) (*string, error) {
 }
 
 func populateEdge(project *ent.Project, projectID int, val interface{}) *ent.ProjectEdge {
-
 	var val2 interface{}
 
 	if val == nil {
