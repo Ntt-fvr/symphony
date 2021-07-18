@@ -8,15 +8,17 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
+import AlarmFilteringAddDialog from './AlarmFilteringAddDialog';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
+import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 
@@ -56,6 +58,30 @@ const useStyles = makeStyles(() => ({
 
 const AlarmFilteringFormCreate = () => {
   const classes = useStyles();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState(1);
+
+  const showDialog = () => {
+    setDialogOpen(true);
+    setDialogKey(dialogKey + 1);
+  };
+  const hideDialog = () => setDialogOpen(false);
+  if (dialogOpen) {
+    return (
+      <InventorySuspense permissions={{entity: 'workorder'}}>
+        <AlarmFilteringFormCreate />
+        >
+        <AlarmFilteringAddDialog
+          key={`new_work_order_${dialogKey}`}
+          open={dialogOpen}
+          onClose={hideDialog}
+          onWorkOrderTypeSelected={typeId => {
+            setDialogOpen(false);
+          }}
+        />
+      </InventorySuspense>
+    );
+  }
 
   return (
     <div className={classes.root}>
@@ -77,7 +103,9 @@ const AlarmFilteringFormCreate = () => {
               </Grid>
               <Grid xs={6}>
                 <FormField>
-                  <Button className={classes.addKpi}>Save</Button>
+                  <Button onClick={showDialog} className={classes.addKpi}>
+                    Save
+                  </Button>
                 </FormField>
               </Grid>
             </Grid>
