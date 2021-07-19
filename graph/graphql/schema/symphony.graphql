@@ -3091,6 +3091,74 @@ type ComparatorEdge {
   """
   cursor: Cursor!
 }
+################################ conection AlarmStatus ###############################################
+
+"""
+Properties by which alarmStatus connections can be ordered.
+"""
+enum AlarmStatusOrderField {
+  """
+  Order alarmStatus by name.
+  """
+  NAME
+
+  """
+  Order alarmStatus by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order alarmStatus by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for alarmStatus connections.
+"""
+input AlarmStatusOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order alarmStatus by.
+  """
+  field: AlarmStatusOrderField
+}
+
+"""
+A connection to a list of alarmStatus.
+"""
+type AlarmStatusConnection {
+  """
+  Total alarmStatus of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of alarmStatus edges.
+  """
+  edges: [AlarmStatusEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A alarmStatus edge in a connection.
+"""
+type AlarmStatusEdge {
+  """
+  The alarmStatus at the end of the edge.
+  """
+  node: AlarmStatus
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -5193,6 +5261,42 @@ type Query {
     
     filterBy: [ComparatorFilterInput!]
   ): ComparatorConnection!
+
+  """
+  A list of alarmStatus.
+  """
+  
+  alarmStatuss(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned alarmStatus.
+    """
+    orderBy: AlarmStatusOrder
+
+    
+    #Filtering options for the returned alarmStatus.
+    
+    filterBy: [AlarmStatusFilterInput!]
+  ): AlarmStatusConnection!
   
 }
 
@@ -5998,4 +6102,16 @@ input AddAlarmStatusInput {
 input EditAlarmStatusInput {
   id: ID!
   name: String!
+}
+enum AlarmStatusFilterType {
+  NAME
+}
+
+input AlarmStatusFilterInput {
+  filterType: AlarmStatusFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
