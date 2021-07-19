@@ -338,19 +338,6 @@ func (f EquipmentTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return f(ctx, mv)
 }
 
-// The EventFunc type is an adapter to allow the use of ordinary
-// function as Event mutator.
-type EventFunc func(context.Context, *ent.EventMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.EventMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The EventSeverityFunc type is an adapter to allow the use of ordinary
 // function as EventSeverity mutator.
 type EventSeverityFunc func(context.Context, *ent.EventSeverityMutation) (ent.Value, error)

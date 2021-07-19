@@ -15,20 +15,8 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type counterFamilyResolver struct{}
-
-func (counterFamilyResolver) Counter(ctx context.Context, counterFamily *ent.CounterFamily) ([]*ent.Counter, error) {
-	variable, err := counterFamily.Counterfamily(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-
 func (r mutationResolver) AddCounterFamily(ctx context.Context, input models.AddCounterFamilyInput) (*ent.CounterFamily, error) {
 	client := r.ClientFrom(ctx)
-	var counters []*ent.Counter
 	fam, err := client.
 		CounterFamily.Create().
 		SetName(input.Name).
@@ -38,14 +26,6 @@ func (r mutationResolver) AddCounterFamily(ctx context.Context, input models.Add
 			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
 		}
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		// TODO: agregar counters
-		counters, err = r.AddCounterList(ctx, input.Counter, fam.ID)
-		if err != nil {
-			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-		} else {
-			fam.Edges.Counterfamily = counters
-		}
 	}
 	return fam, nil
 }

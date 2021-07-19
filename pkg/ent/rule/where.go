@@ -139,6 +139,27 @@ func EndDateTime(v time.Time) predicate.Rule {
 	})
 }
 
+// EventTypeName applies equality check predicate on the "eventTypeName" field. It's identical to EventTypeNameEQ.
+func EventTypeName(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEventTypeName), v))
+	})
+}
+
+// SpecificProblem applies equality check predicate on the "specificProblem" field. It's identical to SpecificProblemEQ.
+func SpecificProblem(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// AdditionalInfo applies equality check predicate on the "additionalInfo" field. It's identical to AdditionalInfoEQ.
+func AdditionalInfo(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdditionalInfo), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
@@ -630,6 +651,381 @@ func EndDateTimeLTE(v time.Time) predicate.Rule {
 	})
 }
 
+// EventTypeNameEQ applies the EQ predicate on the "eventTypeName" field.
+func EventTypeNameEQ(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameNEQ applies the NEQ predicate on the "eventTypeName" field.
+func EventTypeNameNEQ(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameIn applies the In predicate on the "eventTypeName" field.
+func EventTypeNameIn(vs ...string) predicate.Rule {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Rule(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldEventTypeName), v...))
+	})
+}
+
+// EventTypeNameNotIn applies the NotIn predicate on the "eventTypeName" field.
+func EventTypeNameNotIn(vs ...string) predicate.Rule {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Rule(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldEventTypeName), v...))
+	})
+}
+
+// EventTypeNameGT applies the GT predicate on the "eventTypeName" field.
+func EventTypeNameGT(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameGTE applies the GTE predicate on the "eventTypeName" field.
+func EventTypeNameGTE(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameLT applies the LT predicate on the "eventTypeName" field.
+func EventTypeNameLT(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameLTE applies the LTE predicate on the "eventTypeName" field.
+func EventTypeNameLTE(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameContains applies the Contains predicate on the "eventTypeName" field.
+func EventTypeNameContains(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameHasPrefix applies the HasPrefix predicate on the "eventTypeName" field.
+func EventTypeNameHasPrefix(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameHasSuffix applies the HasSuffix predicate on the "eventTypeName" field.
+func EventTypeNameHasSuffix(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameIsNil applies the IsNil predicate on the "eventTypeName" field.
+func EventTypeNameIsNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEventTypeName)))
+	})
+}
+
+// EventTypeNameNotNil applies the NotNil predicate on the "eventTypeName" field.
+func EventTypeNameNotNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEventTypeName)))
+	})
+}
+
+// EventTypeNameEqualFold applies the EqualFold predicate on the "eventTypeName" field.
+func EventTypeNameEqualFold(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldEventTypeName), v))
+	})
+}
+
+// EventTypeNameContainsFold applies the ContainsFold predicate on the "eventTypeName" field.
+func EventTypeNameContainsFold(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldEventTypeName), v))
+	})
+}
+
+// SpecificProblemEQ applies the EQ predicate on the "specificProblem" field.
+func SpecificProblemEQ(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemNEQ applies the NEQ predicate on the "specificProblem" field.
+func SpecificProblemNEQ(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemIn applies the In predicate on the "specificProblem" field.
+func SpecificProblemIn(vs ...string) predicate.Rule {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Rule(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSpecificProblem), v...))
+	})
+}
+
+// SpecificProblemNotIn applies the NotIn predicate on the "specificProblem" field.
+func SpecificProblemNotIn(vs ...string) predicate.Rule {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Rule(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSpecificProblem), v...))
+	})
+}
+
+// SpecificProblemGT applies the GT predicate on the "specificProblem" field.
+func SpecificProblemGT(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemGTE applies the GTE predicate on the "specificProblem" field.
+func SpecificProblemGTE(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemLT applies the LT predicate on the "specificProblem" field.
+func SpecificProblemLT(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemLTE applies the LTE predicate on the "specificProblem" field.
+func SpecificProblemLTE(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemContains applies the Contains predicate on the "specificProblem" field.
+func SpecificProblemContains(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemHasPrefix applies the HasPrefix predicate on the "specificProblem" field.
+func SpecificProblemHasPrefix(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemHasSuffix applies the HasSuffix predicate on the "specificProblem" field.
+func SpecificProblemHasSuffix(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemIsNil applies the IsNil predicate on the "specificProblem" field.
+func SpecificProblemIsNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSpecificProblem)))
+	})
+}
+
+// SpecificProblemNotNil applies the NotNil predicate on the "specificProblem" field.
+func SpecificProblemNotNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSpecificProblem)))
+	})
+}
+
+// SpecificProblemEqualFold applies the EqualFold predicate on the "specificProblem" field.
+func SpecificProblemEqualFold(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// SpecificProblemContainsFold applies the ContainsFold predicate on the "specificProblem" field.
+func SpecificProblemContainsFold(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldSpecificProblem), v))
+	})
+}
+
+// AdditionalInfoEQ applies the EQ predicate on the "additionalInfo" field.
+func AdditionalInfoEQ(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoNEQ applies the NEQ predicate on the "additionalInfo" field.
+func AdditionalInfoNEQ(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoIn applies the In predicate on the "additionalInfo" field.
+func AdditionalInfoIn(vs ...string) predicate.Rule {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Rule(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAdditionalInfo), v...))
+	})
+}
+
+// AdditionalInfoNotIn applies the NotIn predicate on the "additionalInfo" field.
+func AdditionalInfoNotIn(vs ...string) predicate.Rule {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Rule(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAdditionalInfo), v...))
+	})
+}
+
+// AdditionalInfoGT applies the GT predicate on the "additionalInfo" field.
+func AdditionalInfoGT(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoGTE applies the GTE predicate on the "additionalInfo" field.
+func AdditionalInfoGTE(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoLT applies the LT predicate on the "additionalInfo" field.
+func AdditionalInfoLT(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoLTE applies the LTE predicate on the "additionalInfo" field.
+func AdditionalInfoLTE(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoContains applies the Contains predicate on the "additionalInfo" field.
+func AdditionalInfoContains(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoHasPrefix applies the HasPrefix predicate on the "additionalInfo" field.
+func AdditionalInfoHasPrefix(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoHasSuffix applies the HasSuffix predicate on the "additionalInfo" field.
+func AdditionalInfoHasSuffix(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoIsNil applies the IsNil predicate on the "additionalInfo" field.
+func AdditionalInfoIsNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAdditionalInfo)))
+	})
+}
+
+// AdditionalInfoNotNil applies the NotNil predicate on the "additionalInfo" field.
+func AdditionalInfoNotNil() predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAdditionalInfo)))
+	})
+}
+
+// AdditionalInfoEqualFold applies the EqualFold predicate on the "additionalInfo" field.
+func AdditionalInfoEqualFold(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAdditionalInfo), v))
+	})
+}
+
+// AdditionalInfoContainsFold applies the ContainsFold predicate on the "additionalInfo" field.
+func AdditionalInfoContainsFold(v string) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAdditionalInfo), v))
+	})
+}
+
 // HasRuletype applies the HasEdge predicate on the "ruletype" edge.
 func HasRuletype() predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
@@ -658,25 +1054,25 @@ func HasRuletypeWith(preds ...predicate.RuleType) predicate.Rule {
 	})
 }
 
-// HasEvent applies the HasEdge predicate on the "event" edge.
-func HasEvent() predicate.Rule {
+// HasEventseverity applies the HasEdge predicate on the "eventseverity" edge.
+func HasEventseverity() predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(EventTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
+			sqlgraph.To(EventseverityTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, EventseverityTable, EventseverityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasEventWith applies the HasEdge predicate on the "event" edge with a given conditions (other predicates).
-func HasEventWith(preds ...predicate.Event) predicate.Rule {
+// HasEventseverityWith applies the HasEdge predicate on the "eventseverity" edge with a given conditions (other predicates).
+func HasEventseverityWith(preds ...predicate.EventSeverity) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(EventInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
+			sqlgraph.To(EventseverityInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, EventseverityTable, EventseverityColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

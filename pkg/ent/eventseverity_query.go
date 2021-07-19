@@ -16,9 +16,9 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/rule"
 )
 
 // EventSeverityQuery is the builder for querying EventSeverity entities.
@@ -30,7 +30,7 @@ type EventSeverityQuery struct {
 	unique     []string
 	predicates []predicate.EventSeverity
 	// eager-loading edges.
-	withEventseverityevent *EventQuery
+	withEventseverityrule *RuleQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,9 +60,9 @@ func (esq *EventSeverityQuery) Order(o ...OrderFunc) *EventSeverityQuery {
 	return esq
 }
 
-// QueryEventseverityevent chains the current query on the eventseverityevent edge.
-func (esq *EventSeverityQuery) QueryEventseverityevent() *EventQuery {
-	query := &EventQuery{config: esq.config}
+// QueryEventseverityrule chains the current query on the eventseverityrule edge.
+func (esq *EventSeverityQuery) QueryEventseverityrule() *RuleQuery {
+	query := &RuleQuery{config: esq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := esq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -73,8 +73,8 @@ func (esq *EventSeverityQuery) QueryEventseverityevent() *EventQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(eventseverity.Table, eventseverity.FieldID, selector),
-			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, eventseverity.EventseverityeventTable, eventseverity.EventseverityeventColumn),
+			sqlgraph.To(rule.Table, rule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, eventseverity.EventseverityruleTable, eventseverity.EventseverityruleColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(esq.driver.Dialect(), step)
 		return fromU, nil
@@ -252,27 +252,27 @@ func (esq *EventSeverityQuery) Clone() *EventSeverityQuery {
 		return nil
 	}
 	return &EventSeverityQuery{
-		config:                 esq.config,
-		limit:                  esq.limit,
-		offset:                 esq.offset,
-		order:                  append([]OrderFunc{}, esq.order...),
-		unique:                 append([]string{}, esq.unique...),
-		predicates:             append([]predicate.EventSeverity{}, esq.predicates...),
-		withEventseverityevent: esq.withEventseverityevent.Clone(),
+		config:                esq.config,
+		limit:                 esq.limit,
+		offset:                esq.offset,
+		order:                 append([]OrderFunc{}, esq.order...),
+		unique:                append([]string{}, esq.unique...),
+		predicates:            append([]predicate.EventSeverity{}, esq.predicates...),
+		withEventseverityrule: esq.withEventseverityrule.Clone(),
 		// clone intermediate query.
 		sql:  esq.sql.Clone(),
 		path: esq.path,
 	}
 }
 
-//  WithEventseverityevent tells the query-builder to eager-loads the nodes that are connected to
-// the "eventseverityevent" edge. The optional arguments used to configure the query builder of the edge.
-func (esq *EventSeverityQuery) WithEventseverityevent(opts ...func(*EventQuery)) *EventSeverityQuery {
-	query := &EventQuery{config: esq.config}
+//  WithEventseverityrule tells the query-builder to eager-loads the nodes that are connected to
+// the "eventseverityrule" edge. The optional arguments used to configure the query builder of the edge.
+func (esq *EventSeverityQuery) WithEventseverityrule(opts ...func(*RuleQuery)) *EventSeverityQuery {
+	query := &RuleQuery{config: esq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	esq.withEventseverityevent = query
+	esq.withEventseverityrule = query
 	return esq
 }
 
@@ -346,7 +346,7 @@ func (esq *EventSeverityQuery) sqlAll(ctx context.Context) ([]*EventSeverity, er
 		nodes       = []*EventSeverity{}
 		_spec       = esq.querySpec()
 		loadedTypes = [1]bool{
-			esq.withEventseverityevent != nil,
+			esq.withEventseverityrule != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -370,32 +370,32 @@ func (esq *EventSeverityQuery) sqlAll(ctx context.Context) ([]*EventSeverity, er
 		return nodes, nil
 	}
 
-	if query := esq.withEventseverityevent; query != nil {
+	if query := esq.withEventseverityrule; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*EventSeverity)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Eventseverityevent = []*Event{}
+			nodes[i].Edges.Eventseverityrule = []*Rule{}
 		}
 		query.withFKs = true
-		query.Where(predicate.Event(func(s *sql.Selector) {
-			s.Where(sql.InValues(eventseverity.EventseverityeventColumn, fks...))
+		query.Where(predicate.Rule(func(s *sql.Selector) {
+			s.Where(sql.InValues(eventseverity.EventseverityruleColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.event_severity_eventseverityevent
+			fk := n.event_severity_eventseverityrule
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "event_severity_eventseverityevent" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "event_severity_eventseverityrule" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_severity_eventseverityevent" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_severity_eventseverityrule" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Eventseverityevent = append(node.Edges.Eventseverityevent, n)
+			node.Edges.Eventseverityrule = append(node.Edges.Eventseverityrule, n)
 		}
 	}
 

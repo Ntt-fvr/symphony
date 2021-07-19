@@ -42,7 +42,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
@@ -2134,85 +2133,6 @@ func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (e *Event) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     e.ID,
-		Type:   "Event",
-		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 2),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(e.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(e.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(e.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(e.EventTypeName); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "string",
-		Name:  "eventTypeName",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(e.SpecificProblem); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "string",
-		Name:  "specificProblem",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(e.AdditionalInfo); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "string",
-		Name:  "additionalInfo",
-		Value: string(buf),
-	}
-	node.Edges[0] = &Edge{
-		Type: "EventSeverity",
-		Name: "eventseverity",
-	}
-	node.Edges[0].IDs, err = e.QueryEventseverity().
-		Select(eventseverity.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[1] = &Edge{
-		Type: "Rule",
-		Name: "ruleEvent",
-	}
-	node.Edges[1].IDs, err = e.QueryRuleEvent().
-		Select(rule.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
 func (es *EventSeverity) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     es.ID,
@@ -2246,11 +2166,11 @@ func (es *EventSeverity) Node(ctx context.Context) (node *Node, err error) {
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
-		Type: "Event",
-		Name: "eventseverityevent",
+		Type: "Rule",
+		Name: "eventseverityrule",
 	}
-	node.Edges[0].IDs, err = es.QueryEventseverityevent().
-		Select(event.FieldID).
+	node.Edges[0].IDs, err = es.QueryEventseverityrule().
+		Select(rule.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -4743,7 +4663,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     r.ID,
 		Type:   "Rule",
-		Fields: make([]*Field, 6),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -4795,6 +4715,30 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "endDateTime",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(r.EventTypeName); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "eventTypeName",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(r.SpecificProblem); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "string",
+		Name:  "specificProblem",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(r.AdditionalInfo); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "string",
+		Name:  "additionalInfo",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "RuleType",
 		Name: "ruletype",
@@ -4806,11 +4750,11 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "Event",
-		Name: "event",
+		Type: "EventSeverity",
+		Name: "eventseverity",
 	}
-	node.Edges[1].IDs, err = r.QueryEvent().
-		Select(event.FieldID).
+	node.Edges[1].IDs, err = r.QueryEventseverity().
+		Select(eventseverity.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -7357,15 +7301,6 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.EquipmentType.Query().
 			Where(equipmenttype.ID(id)).
 			CollectFields(ctx, "EquipmentType").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case event.Table:
-		n, err := c.Event.Query().
-			Where(event.ID(id)).
-			CollectFields(ctx, "Event").
 			Only(ctx)
 		if err != nil {
 			return nil, err

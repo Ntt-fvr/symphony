@@ -381,25 +381,25 @@ func NameContainsFold(v string) predicate.EventSeverity {
 	})
 }
 
-// HasEventseverityevent applies the HasEdge predicate on the "eventseverityevent" edge.
-func HasEventseverityevent() predicate.EventSeverity {
+// HasEventseverityrule applies the HasEdge predicate on the "eventseverityrule" edge.
+func HasEventseverityrule() predicate.EventSeverity {
 	return predicate.EventSeverity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(EventseverityeventTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, EventseverityeventTable, EventseverityeventColumn),
+			sqlgraph.To(EventseverityruleTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EventseverityruleTable, EventseverityruleColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasEventseverityeventWith applies the HasEdge predicate on the "eventseverityevent" edge with a given conditions (other predicates).
-func HasEventseverityeventWith(preds ...predicate.Event) predicate.EventSeverity {
+// HasEventseverityruleWith applies the HasEdge predicate on the "eventseverityrule" edge with a given conditions (other predicates).
+func HasEventseverityruleWith(preds ...predicate.Rule) predicate.EventSeverity {
 	return predicate.EventSeverity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(EventseverityeventInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, EventseverityeventTable, EventseverityeventColumn),
+			sqlgraph.To(EventseverityruleInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EventseverityruleTable, EventseverityruleColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

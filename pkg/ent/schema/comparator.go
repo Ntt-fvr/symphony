@@ -20,7 +20,8 @@ type Comparator struct {
 // Counter returns property type counter.
 func (Comparator) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
 	}
 }
 

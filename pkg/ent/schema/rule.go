@@ -24,6 +24,9 @@ func (Rule) Fields() []ent.Field {
 		field.Int("gracePeriod"),
 		field.Time("startDateTime"),
 		field.Time("endDateTime"),
+		field.String("eventTypeName").Optional().Nillable(),
+		field.String("specificProblem").Optional().Nillable(),
+		field.String("additionalInfo").Optional().Nillable(),
 	}
 }
 
@@ -33,8 +36,8 @@ func (Rule) Edges() []ent.Edge {
 		edge.From("ruletype", RuleType.Type).
 			Ref("ruletyperule").
 			Unique(),
-		edge.From("event", Event.Type).
-			Ref("ruleEvent").
+		edge.From("eventseverity", EventSeverity.Type).
+			Ref("eventseverityrule").
 			Unique(),
 		edge.From("treshold", Treshold.Type).
 			Ref("ruletreshold").

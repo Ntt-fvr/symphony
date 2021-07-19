@@ -47,7 +47,6 @@ func (c *Client) ReadOnly() *Client {
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
-		Event:                       NewEventClient(cfg),
 		EventSeverity:               NewEventSeverityClient(cfg),
 		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),

@@ -14,7 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
+	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -66,6 +66,66 @@ func (ru *RuleUpdate) SetEndDateTime(t time.Time) *RuleUpdate {
 	return ru
 }
 
+// SetEventTypeName sets the eventTypeName field.
+func (ru *RuleUpdate) SetEventTypeName(s string) *RuleUpdate {
+	ru.mutation.SetEventTypeName(s)
+	return ru
+}
+
+// SetNillableEventTypeName sets the eventTypeName field if the given value is not nil.
+func (ru *RuleUpdate) SetNillableEventTypeName(s *string) *RuleUpdate {
+	if s != nil {
+		ru.SetEventTypeName(*s)
+	}
+	return ru
+}
+
+// ClearEventTypeName clears the value of eventTypeName.
+func (ru *RuleUpdate) ClearEventTypeName() *RuleUpdate {
+	ru.mutation.ClearEventTypeName()
+	return ru
+}
+
+// SetSpecificProblem sets the specificProblem field.
+func (ru *RuleUpdate) SetSpecificProblem(s string) *RuleUpdate {
+	ru.mutation.SetSpecificProblem(s)
+	return ru
+}
+
+// SetNillableSpecificProblem sets the specificProblem field if the given value is not nil.
+func (ru *RuleUpdate) SetNillableSpecificProblem(s *string) *RuleUpdate {
+	if s != nil {
+		ru.SetSpecificProblem(*s)
+	}
+	return ru
+}
+
+// ClearSpecificProblem clears the value of specificProblem.
+func (ru *RuleUpdate) ClearSpecificProblem() *RuleUpdate {
+	ru.mutation.ClearSpecificProblem()
+	return ru
+}
+
+// SetAdditionalInfo sets the additionalInfo field.
+func (ru *RuleUpdate) SetAdditionalInfo(s string) *RuleUpdate {
+	ru.mutation.SetAdditionalInfo(s)
+	return ru
+}
+
+// SetNillableAdditionalInfo sets the additionalInfo field if the given value is not nil.
+func (ru *RuleUpdate) SetNillableAdditionalInfo(s *string) *RuleUpdate {
+	if s != nil {
+		ru.SetAdditionalInfo(*s)
+	}
+	return ru
+}
+
+// ClearAdditionalInfo clears the value of additionalInfo.
+func (ru *RuleUpdate) ClearAdditionalInfo() *RuleUpdate {
+	ru.mutation.ClearAdditionalInfo()
+	return ru
+}
+
 // SetRuletypeID sets the ruletype edge to RuleType by id.
 func (ru *RuleUpdate) SetRuletypeID(id int) *RuleUpdate {
 	ru.mutation.SetRuletypeID(id)
@@ -85,23 +145,23 @@ func (ru *RuleUpdate) SetRuletype(r *RuleType) *RuleUpdate {
 	return ru.SetRuletypeID(r.ID)
 }
 
-// SetEventID sets the event edge to Event by id.
-func (ru *RuleUpdate) SetEventID(id int) *RuleUpdate {
-	ru.mutation.SetEventID(id)
+// SetEventseverityID sets the eventseverity edge to EventSeverity by id.
+func (ru *RuleUpdate) SetEventseverityID(id int) *RuleUpdate {
+	ru.mutation.SetEventseverityID(id)
 	return ru
 }
 
-// SetNillableEventID sets the event edge to Event by id if the given value is not nil.
-func (ru *RuleUpdate) SetNillableEventID(id *int) *RuleUpdate {
+// SetNillableEventseverityID sets the eventseverity edge to EventSeverity by id if the given value is not nil.
+func (ru *RuleUpdate) SetNillableEventseverityID(id *int) *RuleUpdate {
 	if id != nil {
-		ru = ru.SetEventID(*id)
+		ru = ru.SetEventseverityID(*id)
 	}
 	return ru
 }
 
-// SetEvent sets the event edge to Event.
-func (ru *RuleUpdate) SetEvent(e *Event) *RuleUpdate {
-	return ru.SetEventID(e.ID)
+// SetEventseverity sets the eventseverity edge to EventSeverity.
+func (ru *RuleUpdate) SetEventseverity(e *EventSeverity) *RuleUpdate {
+	return ru.SetEventseverityID(e.ID)
 }
 
 // SetTresholdID sets the treshold edge to Treshold by id.
@@ -149,9 +209,9 @@ func (ru *RuleUpdate) ClearRuletype() *RuleUpdate {
 	return ru
 }
 
-// ClearEvent clears the "event" edge to type Event.
-func (ru *RuleUpdate) ClearEvent() *RuleUpdate {
-	ru.mutation.ClearEvent()
+// ClearEventseverity clears the "eventseverity" edge to type EventSeverity.
+func (ru *RuleUpdate) ClearEventseverity() *RuleUpdate {
+	ru.mutation.ClearEventseverity()
 	return ru
 }
 
@@ -318,6 +378,45 @@ func (ru *RuleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: rule.FieldEndDateTime,
 		})
 	}
+	if value, ok := ru.mutation.EventTypeName(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldEventTypeName,
+		})
+	}
+	if ru.mutation.EventTypeNameCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: rule.FieldEventTypeName,
+		})
+	}
+	if value, ok := ru.mutation.SpecificProblem(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldSpecificProblem,
+		})
+	}
+	if ru.mutation.SpecificProblemCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: rule.FieldSpecificProblem,
+		})
+	}
+	if value, ok := ru.mutation.AdditionalInfo(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldAdditionalInfo,
+		})
+	}
+	if ru.mutation.AdditionalInfoCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: rule.FieldAdditionalInfo,
+		})
+	}
 	if ru.mutation.RuletypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -353,33 +452,33 @@ func (ru *RuleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ru.mutation.EventCleared() {
+	if ru.mutation.EventseverityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   rule.EventTable,
-			Columns: []string{rule.EventColumn},
+			Table:   rule.EventseverityTable,
+			Columns: []string{rule.EventseverityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: eventseverity.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ru.mutation.EventIDs(); len(nodes) > 0 {
+	if nodes := ru.mutation.EventseverityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   rule.EventTable,
-			Columns: []string{rule.EventColumn},
+			Table:   rule.EventseverityTable,
+			Columns: []string{rule.EventseverityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: eventseverity.FieldID,
 				},
 			},
 		}
@@ -526,6 +625,66 @@ func (ruo *RuleUpdateOne) SetEndDateTime(t time.Time) *RuleUpdateOne {
 	return ruo
 }
 
+// SetEventTypeName sets the eventTypeName field.
+func (ruo *RuleUpdateOne) SetEventTypeName(s string) *RuleUpdateOne {
+	ruo.mutation.SetEventTypeName(s)
+	return ruo
+}
+
+// SetNillableEventTypeName sets the eventTypeName field if the given value is not nil.
+func (ruo *RuleUpdateOne) SetNillableEventTypeName(s *string) *RuleUpdateOne {
+	if s != nil {
+		ruo.SetEventTypeName(*s)
+	}
+	return ruo
+}
+
+// ClearEventTypeName clears the value of eventTypeName.
+func (ruo *RuleUpdateOne) ClearEventTypeName() *RuleUpdateOne {
+	ruo.mutation.ClearEventTypeName()
+	return ruo
+}
+
+// SetSpecificProblem sets the specificProblem field.
+func (ruo *RuleUpdateOne) SetSpecificProblem(s string) *RuleUpdateOne {
+	ruo.mutation.SetSpecificProblem(s)
+	return ruo
+}
+
+// SetNillableSpecificProblem sets the specificProblem field if the given value is not nil.
+func (ruo *RuleUpdateOne) SetNillableSpecificProblem(s *string) *RuleUpdateOne {
+	if s != nil {
+		ruo.SetSpecificProblem(*s)
+	}
+	return ruo
+}
+
+// ClearSpecificProblem clears the value of specificProblem.
+func (ruo *RuleUpdateOne) ClearSpecificProblem() *RuleUpdateOne {
+	ruo.mutation.ClearSpecificProblem()
+	return ruo
+}
+
+// SetAdditionalInfo sets the additionalInfo field.
+func (ruo *RuleUpdateOne) SetAdditionalInfo(s string) *RuleUpdateOne {
+	ruo.mutation.SetAdditionalInfo(s)
+	return ruo
+}
+
+// SetNillableAdditionalInfo sets the additionalInfo field if the given value is not nil.
+func (ruo *RuleUpdateOne) SetNillableAdditionalInfo(s *string) *RuleUpdateOne {
+	if s != nil {
+		ruo.SetAdditionalInfo(*s)
+	}
+	return ruo
+}
+
+// ClearAdditionalInfo clears the value of additionalInfo.
+func (ruo *RuleUpdateOne) ClearAdditionalInfo() *RuleUpdateOne {
+	ruo.mutation.ClearAdditionalInfo()
+	return ruo
+}
+
 // SetRuletypeID sets the ruletype edge to RuleType by id.
 func (ruo *RuleUpdateOne) SetRuletypeID(id int) *RuleUpdateOne {
 	ruo.mutation.SetRuletypeID(id)
@@ -545,23 +704,23 @@ func (ruo *RuleUpdateOne) SetRuletype(r *RuleType) *RuleUpdateOne {
 	return ruo.SetRuletypeID(r.ID)
 }
 
-// SetEventID sets the event edge to Event by id.
-func (ruo *RuleUpdateOne) SetEventID(id int) *RuleUpdateOne {
-	ruo.mutation.SetEventID(id)
+// SetEventseverityID sets the eventseverity edge to EventSeverity by id.
+func (ruo *RuleUpdateOne) SetEventseverityID(id int) *RuleUpdateOne {
+	ruo.mutation.SetEventseverityID(id)
 	return ruo
 }
 
-// SetNillableEventID sets the event edge to Event by id if the given value is not nil.
-func (ruo *RuleUpdateOne) SetNillableEventID(id *int) *RuleUpdateOne {
+// SetNillableEventseverityID sets the eventseverity edge to EventSeverity by id if the given value is not nil.
+func (ruo *RuleUpdateOne) SetNillableEventseverityID(id *int) *RuleUpdateOne {
 	if id != nil {
-		ruo = ruo.SetEventID(*id)
+		ruo = ruo.SetEventseverityID(*id)
 	}
 	return ruo
 }
 
-// SetEvent sets the event edge to Event.
-func (ruo *RuleUpdateOne) SetEvent(e *Event) *RuleUpdateOne {
-	return ruo.SetEventID(e.ID)
+// SetEventseverity sets the eventseverity edge to EventSeverity.
+func (ruo *RuleUpdateOne) SetEventseverity(e *EventSeverity) *RuleUpdateOne {
+	return ruo.SetEventseverityID(e.ID)
 }
 
 // SetTresholdID sets the treshold edge to Treshold by id.
@@ -609,9 +768,9 @@ func (ruo *RuleUpdateOne) ClearRuletype() *RuleUpdateOne {
 	return ruo
 }
 
-// ClearEvent clears the "event" edge to type Event.
-func (ruo *RuleUpdateOne) ClearEvent() *RuleUpdateOne {
-	ruo.mutation.ClearEvent()
+// ClearEventseverity clears the "eventseverity" edge to type EventSeverity.
+func (ruo *RuleUpdateOne) ClearEventseverity() *RuleUpdateOne {
+	ruo.mutation.ClearEventseverity()
 	return ruo
 }
 
@@ -776,6 +935,45 @@ func (ruo *RuleUpdateOne) sqlSave(ctx context.Context) (_node *Rule, err error) 
 			Column: rule.FieldEndDateTime,
 		})
 	}
+	if value, ok := ruo.mutation.EventTypeName(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldEventTypeName,
+		})
+	}
+	if ruo.mutation.EventTypeNameCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: rule.FieldEventTypeName,
+		})
+	}
+	if value, ok := ruo.mutation.SpecificProblem(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldSpecificProblem,
+		})
+	}
+	if ruo.mutation.SpecificProblemCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: rule.FieldSpecificProblem,
+		})
+	}
+	if value, ok := ruo.mutation.AdditionalInfo(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: rule.FieldAdditionalInfo,
+		})
+	}
+	if ruo.mutation.AdditionalInfoCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: rule.FieldAdditionalInfo,
+		})
+	}
 	if ruo.mutation.RuletypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -811,33 +1009,33 @@ func (ruo *RuleUpdateOne) sqlSave(ctx context.Context) (_node *Rule, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ruo.mutation.EventCleared() {
+	if ruo.mutation.EventseverityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   rule.EventTable,
-			Columns: []string{rule.EventColumn},
+			Table:   rule.EventseverityTable,
+			Columns: []string{rule.EventseverityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: eventseverity.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ruo.mutation.EventIDs(); len(nodes) > 0 {
+	if nodes := ruo.mutation.EventseverityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   rule.EventTable,
-			Columns: []string{rule.EventColumn},
+			Table:   rule.EventseverityTable,
+			Columns: []string{rule.EventseverityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: eventseverity.FieldID,
 				},
 			},
 		}

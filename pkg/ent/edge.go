@@ -616,26 +616,10 @@ func (et *EquipmentType) ServiceEndpointDefinitions(ctx context.Context) ([]*Ser
 	return result, err
 }
 
-func (e *Event) Eventseverity(ctx context.Context) (*EventSeverity, error) {
-	result, err := e.Edges.EventseverityOrErr()
+func (es *EventSeverity) Eventseverityrule(ctx context.Context) ([]*Rule, error) {
+	result, err := es.Edges.EventseverityruleOrErr()
 	if IsNotLoaded(err) {
-		result, err = e.QueryEventseverity().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (e *Event) RuleEvent(ctx context.Context) ([]*Rule, error) {
-	result, err := e.Edges.RuleEventOrErr()
-	if IsNotLoaded(err) {
-		result, err = e.QueryRuleEvent().All(ctx)
-	}
-	return result, err
-}
-
-func (es *EventSeverity) Eventseverityevent(ctx context.Context) ([]*Event, error) {
-	result, err := es.Edges.EventseverityeventOrErr()
-	if IsNotLoaded(err) {
-		result, err = es.QueryEventseverityevent().All(ctx)
+		result, err = es.QueryEventseverityrule().All(ctx)
 	}
 	return result, err
 }
@@ -1408,10 +1392,10 @@ func (r *Rule) Ruletype(ctx context.Context) (*RuleType, error) {
 	return result, MaskNotFound(err)
 }
 
-func (r *Rule) Event(ctx context.Context) (*Event, error) {
-	result, err := r.Edges.EventOrErr()
+func (r *Rule) Eventseverity(ctx context.Context) (*EventSeverity, error) {
+	result, err := r.Edges.EventseverityOrErr()
 	if IsNotLoaded(err) {
-		result, err = r.QueryEvent().Only(ctx)
+		result, err = r.QueryEventseverity().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

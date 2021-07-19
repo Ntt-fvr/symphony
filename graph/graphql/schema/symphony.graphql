@@ -2680,6 +2680,417 @@ type AlarmFilterEdge {
   """
   cursor: Cursor!
 }
+################################ conection Domains ###############################################
+
+"""
+Properties by which domains connections can be ordered.
+"""
+enum DomainOrderField {
+  """
+  Order domains by name.
+  """
+  NAME
+
+  """
+  Order domains by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order domains by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for domains connections.
+"""
+input DomainOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order domains by.
+  """
+  field: DomainOrderField
+}
+
+"""
+A connection to a list of domains.
+"""
+type DomainConnection {
+  """
+  Total domains of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of domains edges.
+  """
+  edges: [DomainEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A domains edge in a connection.
+"""
+type DomainEdge {
+  """
+  The domains at the end of the edge.
+  """
+  node: Domain
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection Vendors ###############################################
+
+"""
+Properties by which vendors connections can be ordered.
+"""
+enum VendorOrderField {
+  """
+  Order vendors by name.
+  """
+  NAME
+
+  """
+  Order vendors by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order vendors by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for vendors connections.
+"""
+input VendorOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order vendors by.
+  """
+  field: VendorOrderField
+}
+
+"""
+A connection to a list of vendors.
+"""
+type VendorConnection {
+  """
+  Total vendors of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of vendors edges.
+  """
+  edges: [VendorEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A vendors edge in a connection.
+"""
+type VendorEdge {
+  """
+  The vendors at the end of the edge.
+  """
+  node: Vendor
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection CounterFamilys ###############################################
+
+"""
+Properties by which counterFamilys connections can be ordered.
+"""
+enum CounterFamilyOrderField {
+  """
+  Order counterFamilys by name.
+  """
+  NAME
+
+  """
+  Order counterFamilys by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order counterFamilys by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for counterFamilys connections.
+"""
+input CounterFamilyOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order counterFamilys by.
+  """
+  field: CounterFamilyOrderField
+}
+
+"""
+A connection to a list of counterFamilys.
+"""
+type CounterFamilyConnection {
+  """
+  Total counterFamilys of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of counterFamilys edges.
+  """
+  edges: [CounterFamilyEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A counterFamilys edge in a connection.
+"""
+type CounterFamilyEdge {
+  """
+  The counterFamilys at the end of the edge.
+  """
+  node: CounterFamily
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection RuleTypes ###############################################
+
+"""
+Properties by which ruleTypes connections can be ordered.
+"""
+enum RuleTypeOrderField {
+  """
+  Order ruleTypes by name.
+  """
+  NAME
+
+  """
+  Order ruleTypes by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ruleTypes by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ruleTypes connections.
+"""
+input RuleTypeOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ruleTypes by.
+  """
+  field: RuleTypeOrderField
+}
+
+"""
+A connection to a list of ruleTypes.
+"""
+type RuleTypeConnection {
+  """
+  Total ruleTypes of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ruleTypes edges.
+  """
+  edges: [RuleTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ruleTypes edge in a connection.
+"""
+type RuleTypeEdge {
+  """
+  The ruleTypes at the end of the edge.
+  """
+  node: RuleType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection EventSeveritys ###############################################
+
+"""
+Properties by which eventSeveritys connections can be ordered.
+"""
+enum EventSeverityOrderField {
+  """
+  Order eventSeveritys by name.
+  """
+  NAME
+
+  """
+  Order eventSeveritys by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order eventSeveritys by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for eventSeveritys connections.
+"""
+input EventSeverityOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order eventSeveritys by.
+  """
+  field: EventSeverityOrderField
+}
+
+"""
+A connection to a list of eventSeveritys.
+"""
+type EventSeverityConnection {
+  """
+  Total eventSeveritys of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of eventSeveritys edges.
+  """
+  edges: [EventSeverityEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A eventSeveritys edge in a connection.
+"""
+type EventSeverityEdge {
+  """
+  The eventSeveritys at the end of the edge.
+  """
+  node: EventSeverity
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection Comparator ###############################################
+
+"""
+Properties by which comparator connections can be ordered.
+"""
+enum ComparatorOrderField {
+  """
+  Order comparator by name.
+  """
+  NAME
+
+  """
+  Order comparator by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order comparator by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for comparator connections.
+"""
+input ComparatorOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order comparator by.
+  """
+  field: ComparatorOrderField
+}
+
+"""
+A connection to a list of comparator.
+"""
+type ComparatorConnection {
+  """
+  Total comparator of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of comparator edges.
+  """
+  edges: [ComparatorEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A comparator edge in a connection.
+"""
+type ComparatorEdge {
+  """
+  The comparator at the end of the edge.
+  """
+  node: Comparator
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -4569,6 +4980,220 @@ type Query {
     
     filterBy: [AlarmFilterFilterInput!]
   ): AlarmFilterConnection!
+
+  
+  """
+  A list of domains.
+  """
+  domains(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned domains.
+    """
+    orderBy: DomainOrder
+
+    
+    #Filtering options for the returned domains.
+    
+    filterBy: [DomainFilterInput!]
+  ): DomainConnection!
+
+  """
+  A list of vendors.
+  """
+  vendors(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned vendors.
+    """
+    orderBy: VendorOrder
+
+    
+    #Filtering options for the returned vendors.
+    
+    filterBy: [VendorFilterInput!]
+  ): VendorConnection!
+
+  """
+  A list of counterFamilys.
+  """
+  counterFamilys(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counterFamilys.
+    """
+    orderBy: CounterFamilyOrder
+
+    
+    #Filtering options for the returned counterFamilys.
+    
+    filterBy: [CounterFamilyFilterInput!]
+  ): CounterFamilyConnection!
+
+  
+  """
+  A list of ruleTypes.
+  """
+  ruleTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned ruleTypes.
+    """
+    orderBy: RuleTypeOrder
+
+    
+    #Filtering options for the returned ruleTypes.
+    
+    filterBy: [RuleTypeFilterInput!]
+  ): RuleTypeConnection!
+
+  """
+  A list of eventSeveritys.
+  """
+  eventSeveritys(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned eventSeveritys.
+    """
+    orderBy: EventSeverityOrder
+
+    
+    #Filtering options for the returned eventSeveritys.
+    
+    filterBy: [EventSeverityFilterInput!]
+  ): EventSeverityConnection!
+  
+  """
+  A list of comparator.
+  """
+  
+  comparators(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned comparator.
+    """
+    orderBy: ComparatorOrder
+
+    
+    #Filtering options for the returned comparator.
+    
+    filterBy: [ComparatorFilterInput!]
+  ): ComparatorConnection!
+  
 }
 
 type Mutation {
@@ -4815,9 +5440,6 @@ type Mutation {
   addTreshold(input: AddTresholdInput!):Treshold!
   editTreshold(input: EditTresholdInput!): Treshold!
   removeTreshold(id: ID!): ID!
-  addEvent(input: AddEventInput!):Event!
-  editEvent(input: EditEventInput!): Event!
-  removeEvent(id: ID!): ID!
   addComparator(input: AddComparatorInput!):Comparator!
   editComparator(input: EditComparatorInput!): Comparator!
   removeComparator(id: ID!): ID!
@@ -4910,24 +5532,38 @@ input EditCounterInput {
 type CounterFamily implements Node {
   id: ID!
   name: String!
-  counter: [Counter]!
+  
 }
 
 input CounterFamilyInput {
   name: String!
-  counter: [AddCounterInput!]
+  
 }
 
 input AddCounterFamilyInput {
   name: String!
-  counter: [AddCounterInput!]
+  
 }
 
 input EditCounterFamilyInput {
   id: ID!
   name: String!
-  counter: [EditCounterInput!]
+  
 }
+
+enum CounterFamilyFilterType {
+  NAME
+}
+
+input CounterFamilyFilterInput {
+  filterType: CounterFamilyFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 
 type Vendor implements Node {
   id: ID!
@@ -4941,6 +5577,18 @@ input AddVendorInput {
 input EditVendorInput {
   id: ID!
   name: String!
+}
+enum VendorFilterType {
+  NAME
+}
+
+input VendorFilterInput {
+  filterType: VendorFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 type Domain implements Node {
@@ -4960,6 +5608,18 @@ input AddDomainInput {
 input EditDomainInput {
   id: ID!
   name: String!
+}
+enum DomainFilterType {
+  NAME
+}
+
+input DomainFilterInput {
+  filterType: DomainFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 type Kpi implements Node {
@@ -5057,6 +5717,209 @@ type Treshold implements Node {
   
 }
 
+input AddTresholdInput {
+  name: String!
+  description: String!
+  status: Boolean!
+  kpi: ID!
+  
+}
+
+input TresholdInput {
+  name: String!
+  description: String!
+  status: Boolean!
+  rule: [RuleInput!]
+  kpi: ID!
+  
+}
+
+input EditTresholdInput {
+  id: ID!
+  name: String!
+  description: String!
+  status: Boolean!
+}
+
+enum TresholdFilterType {
+  NAME
+}
+
+input TresholdFilterInput {
+  filterType: TresholdFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+type Comparator implements Node {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimit!]
+}
+
+input AddComparatorInput {
+  name: String!
+}
+
+input EditComparatorInput {
+  id: ID!
+  name: String!
+}
+enum ComparatorFilterType {
+  NAME
+}
+
+input ComparatorFilterInput {
+  filterType: ComparatorFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RuleType implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddRuleTypeInput {
+  name: String!
+}
+
+input EditRuleTypeInput {
+  id: ID!
+  name: String!
+}
+enum RuleTypeFilterType {
+  NAME
+}
+
+input RuleTypeFilterInput {
+  filterType: RuleTypeFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+
+type RuleLimit implements Node {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: Comparator!
+  rule: Rule
+}
+
+input RuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input AddRuleLimitInput {
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input EditRuleLimitInput {
+  id: ID!
+  name: String!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+type Rule implements Node {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimit!]
+  ruleType: RuleType!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  eventSeverity: EventSeverity!
+  treshold: Treshold!
+}
+
+input RuleInput {
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  ruleLimit: [RuleLimitInput!]
+}
+
+input AddRuleInput {
+  name: String!
+  gracePeriod: Int!
+  startDateTime: Time!
+  endDateTime: Time!
+  ruleType: ID!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  eventSeverity: ID!
+  treshold: ID!
+}
+
+input EditRuleInput {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleType: ID!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  eventSeverity: ID!
+  treshold: ID!
+}
+
+type EventSeverity implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddEventSeverityInput {
+  name: String!
+}
+
+input EditEventSeverityInput {
+  id: ID!
+  name: String!
+}
+enum EventSeverityFilterType {
+  NAME
+}
+
+input EventSeverityFilterInput {
+  filterType: EventSeverityFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+############################ alarm filter ##################################
+
 type AlarmFilter implements Node {
   id: ID!
   name: String!
@@ -5133,194 +5996,6 @@ input AddAlarmStatusInput {
 }
 
 input EditAlarmStatusInput {
-  id: ID!
-  name: String!
-}
-
-input AddTresholdInput {
-  name: String!
-  description: String!
-  status: Boolean!
-  kpi: ID!
-  
-}
-
-input TresholdInput {
-  name: String!
-  description: String!
-  status: Boolean!
-  rule: [RuleInput!]
-  kpi: ID!
-  
-}
-
-input EditTresholdInput {
-  id: ID!
-  name: String!
-  description: String!
-  status: Boolean!
-}
-
-enum TresholdFilterType {
-  NAME
-}
-
-input TresholdFilterInput {
-  filterType: TresholdFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-type Comparator implements Node {
-  id: ID!
-  name: String!
-  ruleLimit: [RuleLimit!]
-}
-
-input AddComparatorInput {
-  name: String!
-}
-
-input EditComparatorInput {
-  id: ID!
-  name: String!
-}
-
-type Event implements Node {
-  id: ID!
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  rule: [Rule!]
-  eventSeverity: EventSeverity
-}
-
-input EventInput {
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  rule: [RuleInput!]
-  eventSeverity: ID
-}
-
-input AddEventInput {
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  eventSeverity: ID!
-}
-
-input EditEventInput {
-  id: ID!
-  name: String!
-  eventTypeName: String!
-  specificProblem: String!
-  additionalInfo: String!
-  eventSeverity: ID!
-}
-
-type RuleType implements Node {
-  id: ID!
-  name: String!
-  rule: [Rule!]
-}
-
-input AddRuleTypeInput {
-  name: String!
-}
-
-input EditRuleTypeInput {
-  id: ID!
-  name: String!
-}
-
-type RuleLimit implements Node {
-  id: ID!
-  name: String!
-  limitType: String!
-  comparator: Comparator!
-  rule: Rule
-}
-
-input RuleLimitInput {
-  name: String!
-  limitType: String!
-  comparator: ID!
-  rule: ID!
-}
-
-input AddRuleLimitInput {
-  name: String!
-  limitType: String!
-  comparator: ID!
-  rule: ID!
-}
-
-input EditRuleLimitInput {
-  id: ID!
-  name: String!
-  limitType: String!
-  comparator: ID!
-  rule: ID!
-}
-
-type Rule implements Node {
-  id: ID!
-  name: String!
-  gracePeriod: Int
-  startDateTime: Time
-  endDateTime: Time
-  ruleLimit: [RuleLimit!]
-  ruleType: RuleType!
-  event: Event!
-  treshold: Treshold!
-}
-
-input RuleInput {
-  name: String!
-  gracePeriod: Int
-  startDateTime: Time
-  endDateTime: Time
-  ruleLimit: [RuleLimitInput!]
-}
-
-input AddRuleInput {
-  name: String!
-  gracePeriod: Int!
-  startDateTime: Time!
-  endDateTime: Time!
-  ruleType: ID!
-  event: ID!
-  treshold: ID!
-}
-
-input EditRuleInput {
-  id: ID!
-  name: String!
-  gracePeriod: Int
-  startDateTime: Time
-  endDateTime: Time
-  ruleType: ID!
-  event: ID!
-  treshold: ID!
-}
-
-type EventSeverity implements Node {
-  id: ID!
-  name: String!
-  event: [Event!]
-}
-
-input AddEventSeverityInput {
-  name: String!
-}
-
-input EditEventSeverityInput {
   id: ID!
   name: String!
 }

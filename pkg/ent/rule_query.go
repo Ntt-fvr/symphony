@@ -16,7 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
+	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -34,7 +34,7 @@ type RuleQuery struct {
 	predicates []predicate.Rule
 	// eager-loading edges.
 	withRuletype      *RuleTypeQuery
-	withEvent         *EventQuery
+	withEventseverity *EventSeverityQuery
 	withTreshold      *TresholdQuery
 	withRulelimitrule *RuleLimitQuery
 	withFKs           bool
@@ -89,9 +89,9 @@ func (rq *RuleQuery) QueryRuletype() *RuleTypeQuery {
 	return query
 }
 
-// QueryEvent chains the current query on the event edge.
-func (rq *RuleQuery) QueryEvent() *EventQuery {
-	query := &EventQuery{config: rq.config}
+// QueryEventseverity chains the current query on the eventseverity edge.
+func (rq *RuleQuery) QueryEventseverity() *EventSeverityQuery {
+	query := &EventSeverityQuery{config: rq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -102,8 +102,8 @@ func (rq *RuleQuery) QueryEvent() *EventQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(rule.Table, rule.FieldID, selector),
-			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, rule.EventTable, rule.EventColumn),
+			sqlgraph.To(eventseverity.Table, eventseverity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.EventseverityTable, rule.EventseverityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -332,7 +332,7 @@ func (rq *RuleQuery) Clone() *RuleQuery {
 		unique:            append([]string{}, rq.unique...),
 		predicates:        append([]predicate.Rule{}, rq.predicates...),
 		withRuletype:      rq.withRuletype.Clone(),
-		withEvent:         rq.withEvent.Clone(),
+		withEventseverity: rq.withEventseverity.Clone(),
 		withTreshold:      rq.withTreshold.Clone(),
 		withRulelimitrule: rq.withRulelimitrule.Clone(),
 		// clone intermediate query.
@@ -352,14 +352,14 @@ func (rq *RuleQuery) WithRuletype(opts ...func(*RuleTypeQuery)) *RuleQuery {
 	return rq
 }
 
-//  WithEvent tells the query-builder to eager-loads the nodes that are connected to
-// the "event" edge. The optional arguments used to configure the query builder of the edge.
-func (rq *RuleQuery) WithEvent(opts ...func(*EventQuery)) *RuleQuery {
-	query := &EventQuery{config: rq.config}
+//  WithEventseverity tells the query-builder to eager-loads the nodes that are connected to
+// the "eventseverity" edge. The optional arguments used to configure the query builder of the edge.
+func (rq *RuleQuery) WithEventseverity(opts ...func(*EventSeverityQuery)) *RuleQuery {
+	query := &EventSeverityQuery{config: rq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rq.withEvent = query
+	rq.withEventseverity = query
 	return rq
 }
 
@@ -457,12 +457,12 @@ func (rq *RuleQuery) sqlAll(ctx context.Context) ([]*Rule, error) {
 		_spec       = rq.querySpec()
 		loadedTypes = [4]bool{
 			rq.withRuletype != nil,
-			rq.withEvent != nil,
+			rq.withEventseverity != nil,
 			rq.withTreshold != nil,
 			rq.withRulelimitrule != nil,
 		}
 	)
-	if rq.withRuletype != nil || rq.withEvent != nil || rq.withTreshold != nil {
+	if rq.withRuletype != nil || rq.withEventseverity != nil || rq.withTreshold != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -517,16 +517,16 @@ func (rq *RuleQuery) sqlAll(ctx context.Context) ([]*Rule, error) {
 		}
 	}
 
-	if query := rq.withEvent; query != nil {
+	if query := rq.withEventseverity; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Rule)
 		for i := range nodes {
-			if fk := nodes[i].event_rule_event; fk != nil {
+			if fk := nodes[i].event_severity_eventseverityrule; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(event.IDIn(ids...))
+		query.Where(eventseverity.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -534,10 +534,10 @@ func (rq *RuleQuery) sqlAll(ctx context.Context) ([]*Rule, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "event_rule_event" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "event_severity_eventseverityrule" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Event = n
+				nodes[i].Edges.Eventseverity = n
 			}
 		}
 	}

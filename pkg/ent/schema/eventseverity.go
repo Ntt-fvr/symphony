@@ -20,15 +20,16 @@ type EventSeverity struct {
 // Counter returns property type counter.
 func (EventSeverity) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
 	}
 }
 
 // Edges returns property type edges.
 func (EventSeverity) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("eventseverityevent", Event.Type).
-			Annotations(entgql.MapsTo("event")),
+		edge.To("eventseverityrule", Rule.Type).
+			Annotations(entgql.MapsTo("rule")),
 	}
 }
 

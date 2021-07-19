@@ -14,8 +14,8 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
+	"github.com/facebookincubator/symphony/pkg/ent/rule"
 )
 
 // EventSeverityCreate is the builder for creating a EventSeverity entity.
@@ -59,19 +59,19 @@ func (esc *EventSeverityCreate) SetName(s string) *EventSeverityCreate {
 	return esc
 }
 
-// AddEventseverityeventIDs adds the eventseverityevent edge to Event by ids.
-func (esc *EventSeverityCreate) AddEventseverityeventIDs(ids ...int) *EventSeverityCreate {
-	esc.mutation.AddEventseverityeventIDs(ids...)
+// AddEventseverityruleIDs adds the eventseverityrule edge to Rule by ids.
+func (esc *EventSeverityCreate) AddEventseverityruleIDs(ids ...int) *EventSeverityCreate {
+	esc.mutation.AddEventseverityruleIDs(ids...)
 	return esc
 }
 
-// AddEventseverityevent adds the eventseverityevent edges to Event.
-func (esc *EventSeverityCreate) AddEventseverityevent(e ...*Event) *EventSeverityCreate {
-	ids := make([]int, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// AddEventseverityrule adds the eventseverityrule edges to Rule.
+func (esc *EventSeverityCreate) AddEventseverityrule(r ...*Rule) *EventSeverityCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return esc.AddEventseverityeventIDs(ids...)
+	return esc.AddEventseverityruleIDs(ids...)
 }
 
 // Mutation returns the EventSeverityMutation object of the builder.
@@ -203,17 +203,17 @@ func (esc *EventSeverityCreate) createSpec() (*EventSeverity, *sqlgraph.CreateSp
 		})
 		_node.Name = value
 	}
-	if nodes := esc.mutation.EventseverityeventIDs(); len(nodes) > 0 {
+	if nodes := esc.mutation.EventseverityruleIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   eventseverity.EventseverityeventTable,
-			Columns: []string{eventseverity.EventseverityeventColumn},
+			Table:   eventseverity.EventseverityruleTable,
+			Columns: []string{eventseverity.EventseverityruleColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: event.FieldID,
+					Column: rule.FieldID,
 				},
 			},
 		}
