@@ -357,6 +357,15 @@ type AlarmFilterInput struct {
 	CreationTime    time.Time `json:"creationTime"`
 }
 
+type AlarmStatusFilterInput struct {
+	FilterType  AlarmStatusFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
+}
+
 type AlarmStatusInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -1392,6 +1401,45 @@ func (e *AlarmFilterFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AlarmFilterFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type AlarmStatusFilterType string
+
+const (
+	AlarmStatusFilterTypeName AlarmStatusFilterType = "NAME"
+)
+
+var AllAlarmStatusFilterType = []AlarmStatusFilterType{
+	AlarmStatusFilterTypeName,
+}
+
+func (e AlarmStatusFilterType) IsValid() bool {
+	switch e {
+	case AlarmStatusFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e AlarmStatusFilterType) String() string {
+	return string(e)
+}
+
+func (e *AlarmStatusFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AlarmStatusFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AlarmStatusFilterType", str)
+	}
+	return nil
+}
+
+func (e AlarmStatusFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

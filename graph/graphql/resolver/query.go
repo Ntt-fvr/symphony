@@ -441,6 +441,26 @@ func (r queryResolver) Comparators(
 		)
 }
 
+func (r queryResolver) AlarmStatuss(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.AlarmStatusOrder,
+	filterBy []*models.AlarmStatusFilterInput,
+) (*ent.AlarmStatusConnection, error) {
+	return r.ClientFrom(ctx).
+		AlarmStatus.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithAlarmStatusOrder(orderBy),
+			ent.WithAlarmStatusFilter(
+				func(query *ent.AlarmStatusQuery) (*ent.AlarmStatusQuery, error) {
+					return resolverutil.AlarmStatusFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

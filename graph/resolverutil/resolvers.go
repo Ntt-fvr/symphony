@@ -255,3 +255,12 @@ func ComparatorFilter(query *ent.ComparatorQuery, filters []*models.ComparatorFi
 	}
 	return query, nil
 }
+func AlarmStatusFilter(query *ent.AlarmStatusQuery, filters []*models.AlarmStatusFilterInput) (*ent.AlarmStatusQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleAlarmStatusFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
