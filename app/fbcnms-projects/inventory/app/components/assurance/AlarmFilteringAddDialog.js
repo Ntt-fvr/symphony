@@ -21,25 +21,16 @@ import CloseIcon from '@material-ui/icons/Close';
 import Warning from './Warning';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
   },
   icon: {
     fontsize: '10px',
   },
-  avatar: {
-    backgroundColor: '#e4f2ff',
-  },
   dialogTitle: {
     padding: '24px',
     paddingBottom: '16px',
-  },
-  dialogTitleText: {
-    fontSize: '20px',
-    lineHeight: '24px',
-    color: theme.palette.blueGrayDark,
-    fontWeight: 500,
   },
   dialogContent: {
     padding: '2rem',
@@ -63,7 +54,6 @@ const useStyles = makeStyles(theme => ({
 type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
-  onWorkOrderTypeSelected: (id: string) => void,
 |}>;
 
 const AlarmFilteringAddDialog = (props: Props) => {

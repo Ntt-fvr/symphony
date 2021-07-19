@@ -70,6 +70,7 @@ const AlarmFilteringFormCreate = () => {
     setDialogKey(dialogKey + 1);
   };
   const hideDialog = () => setDialogOpen(false);
+
   if (dialogOpen) {
     return (
       <InventorySuspense permissions={{entity: 'workorder'}}>
