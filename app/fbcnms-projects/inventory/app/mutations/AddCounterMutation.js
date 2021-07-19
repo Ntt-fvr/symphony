@@ -20,14 +20,10 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddCounterMutation($input: AddCounterFamilyInput!) {
-    addCounterFamily(input: $input) {
+  mutation AddCounterMutation($input: AddCounterInput!) {
+    addCounter(input: $input) {
+      id
       name
-      counter {
-        name
-        externalID
-        networkManagerSystem
-      }
     }
   }
 `;

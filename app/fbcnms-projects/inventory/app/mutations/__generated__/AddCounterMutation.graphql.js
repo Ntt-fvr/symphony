@@ -14,10 +14,6 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type AddCounterFamilyInput = {|
-  name: string,
-  counter?: ?$ReadOnlyArray<AddCounterInput>,
-|};
 export type AddCounterInput = {|
   name: string,
   externalID: string,
@@ -33,16 +29,12 @@ export type EditCounterVendorFormulaInput = {|
   formulaFk: string,
 |};
 export type AddCounterMutationVariables = {|
-  input: AddCounterFamilyInput
+  input: AddCounterInput
 |};
 export type AddCounterMutationResponse = {|
-  +addCounterFamily: {|
+  +addCounter: {|
+    +id: string,
     +name: string,
-    +counter: $ReadOnlyArray<?{|
-      +name: string,
-      +externalID: string,
-      +networkManagerSystem: string,
-    |}>,
   |}
 |};
 export type AddCounterMutation = {|
@@ -54,17 +46,11 @@ export type AddCounterMutation = {|
 
 /*
 mutation AddCounterMutation(
-  $input: AddCounterFamilyInput!
+  $input: AddCounterInput!
 ) {
-  addCounterFamily(input: $input) {
-    name
-    counter {
-      name
-      externalID
-      networkManagerSystem
-      id
-    }
+  addCounter(input: $input) {
     id
+    name
   }
 }
 */
@@ -79,73 +65,44 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "Counter",
+    "kind": "LinkedField",
+    "name": "addCounter",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "externalID",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "networkManagerSystem",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AddCounterMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "CounterFamily",
-        "kind": "LinkedField",
-        "name": "addCounterFamily",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Counter",
-            "kind": "LinkedField",
-            "name": "counter",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v4/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -154,48 +111,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddCounterMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "CounterFamily",
-        "kind": "LinkedField",
-        "name": "addCounterFamily",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Counter",
-            "kind": "LinkedField",
-            "name": "counter",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v5/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "8865730b5d1f599340ebf44046df36d0",
+    "cacheID": "5a92a0596fbe46c5ed06a70945087405",
     "id": null,
     "metadata": {},
     "name": "AddCounterMutation",
     "operationKind": "mutation",
-    "text": "mutation AddCounterMutation(\n  $input: AddCounterFamilyInput!\n) {\n  addCounterFamily(input: $input) {\n    name\n    counter {\n      name\n      externalID\n      networkManagerSystem\n      id\n    }\n    id\n  }\n}\n"
+    "text": "mutation AddCounterMutation(\n  $input: AddCounterInput!\n) {\n  addCounter(input: $input) {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '32fdd2add12a71ef54c87ad5f905424d';
+(node/*: any*/).hash = 'ea55240b40f19c7038f41b1ca59c0abc';
 
 module.exports = node;
