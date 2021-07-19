@@ -10,6 +10,8 @@
 
 import AddButton from './AddButton';
 import AddCounterItemForm from './AddCounterItemForm';
+import AddKpiItemForm from './AddKpiItemForm';
+import AddThresholdItemForm from './AddThresholdItemForm';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
@@ -44,7 +46,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const CounterAddedSuccessfully = () => {
+type Props = $ReadOnly<{|
+  card_header: string,
+  title: string,
+  text_button: string,
+  data_entry: string,
+|}>;
+
+const AddedSuccessfullyMessage = (props: Props) => {
+  const {card_header, title, text_button, data_entry} = props
   const classes = useStyles();
   const [returnForm, setReturnForm] = useState(false);
 
@@ -53,11 +63,19 @@ const CounterAddedSuccessfully = () => {
   }
 
   if (returnForm) {
-    return <AddCounterItemForm dataValues={[]} />;
+    return (
+      <>
+        { 
+          data_entry == "kpi" && <AddKpiItemForm dataValues={[]} />  || 
+          data_entry == "threshold" && <AddThresholdItemForm dataValues={[]}/> || 
+          data_entry == "counter" && <AddCounterItemForm dataValues={[]}/>
+        }
+      </>
+    )
   }
   return (
     <Card className={classes.root}>
-      <CardHeader className={classes.header}>Add Counter</CardHeader>
+      <CardHeader className={classes.header}>{card_header}</CardHeader>
       <Grid
         container
         className={classes.content}
@@ -68,18 +86,18 @@ const CounterAddedSuccessfully = () => {
           <CheckCircleOutlineOutlinedIcon className={classes.icon} />
         </Grid>
         <Grid container direction="column" justify="center" alignItems="center">
-          <Text variant="h6">Counter added</Text>
+          <Text variant="h6">{title} added</Text>
           <Grid>
             <Text variant="h6">successfully</Text>
           </Grid>
         </Grid>
         <Grid className={classes.addButton}>
           <Clickable onClick={handleClick}>
-            <AddButton textButton={'Add new counter'} />
+            <AddButton textButton={text_button} />
           </Clickable>
         </Grid>
       </Grid>
     </Card>
   );
 };
-export default CounterAddedSuccessfully;
+export default AddedSuccessfullyMessage;

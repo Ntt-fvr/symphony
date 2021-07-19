@@ -157,7 +157,9 @@ export default function ThresholdTypeItem(props: Props) {
             xs={12}
             justify="center"
             alignItems="center">
-            <Grid xs={10}>{description}</Grid>
+            <Grid xs={10}>
+              Description:<br/>{description}
+            </Grid>
             <Grid xs={10}>
               <Text
                 className={classes.rulesContained}

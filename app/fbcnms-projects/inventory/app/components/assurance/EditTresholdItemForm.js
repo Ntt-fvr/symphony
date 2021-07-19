@@ -17,9 +17,9 @@ import Table from './Table';
 import {useFormInput} from './common/useFormInput';
 
 // MUTATIONS //
-import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
+import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
 
-import EditKpiMutation from '../../mutations/EditKpiMutation';
+import EditTresholdMutation from '../../mutations/EditTresholdMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 // DESING SYSTEM //
@@ -28,7 +28,8 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import {Grid, Switch, FormControl, InputLabel, MenuItem, Select, FormControlLabel} from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+import {FormControl, InputLabel, MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -66,34 +67,36 @@ type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
-    domainFk: {
-      id: string,
-      name : string,
-    },
+    description: string,
     status: boolean,
+    kpi: {
+      id: string,
+      name: string,
+    },
   },
-  hideEditKpiForm: any,
-  kpi: object,
+  hideEditTresholdForm: any,
 |}>;
 
-export const EditKpiItemForm = (props: Props) => {
-  const {formValues, kpi, hideEditKpiForm} = props;
+export const EditTresholdItemForm = (props: Props) => {
+  const {formValues, hideEditTresholdForm} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
-  const domainFk = useFormInput(formValues.domainFk.id);
+  const description = useFormInput(formValues.description);
   const id = useFormInput(formValues.id);
+  const kpi = useFormInput(formValues.kpi.name);
 
   const handleClick = () => {
-    const variables: EditKpiMutationVariables = {
+    const variables: EditTresholdMutationVariables = {
       input: {
         id: formValues.id,
         name: name.value,
-        domainFk: domainFk.value,
+        description: description.value,
         status: true,
+        
       },
     };
-    EditKpiMutation(variables);
+    EditTresholdMutation(variables);
   };
 
   return (
@@ -108,14 +111,14 @@ export const EditKpiItemForm = (props: Props) => {
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
-            <CardHeader>Edit Kpi detail</CardHeader>
+            <CardHeader>Edit container detail</CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
-              <FormField className={classes.formField} label="Enabled" >
-                <SwitchLabels />
-              </FormField>
+                <FormField className={classes.formField} label="Enabled" >
+                  <SwitchLabels />
+                </FormField>
               </Grid>
-              <Grid item xs={12} sm={12} lg={8} xl={8}>
+              <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField className={classes.formField} label="Name" required>
                   <TextInput
                     {...name}
@@ -126,11 +129,14 @@ export const EditKpiItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField className={classes.formField} label="ID">
+                <FormField
+                  className={classes.formField}
+                  label="ID"
+                  required>
                   <TextInput
                     {...id}
                     className={classes.textInput}
-                    name="Id"
+                    name="id"
                     type="string"
                     disabled
                   />
@@ -138,58 +144,31 @@ export const EditKpiItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField
-                  label="Domain"
                   className={classes.formField}
-                  required>
-                  <Select
-                    {...domainFk}
-                    variant="outlined"
-                    className={classes.select}
-                    inputProps={{
-                      name: 'Domain',
-                    }}>
-                    {kpi.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {' '}
-                        {kpidata.domainFk.name}{' '}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  label="Associated KPI">
+                  <TextInput
+                    {...kpi}
+                    className={classes.textInput}
+                    name="kpi"
+                    type="string"
+                    disabled
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField
-                  label="Associated Treshold"
-                  className={classes.formField}
-                  required>
-                  <Select
-                    {...domainFk}
-                    variant="outlined"
-                    className={classes.select}
-                    inputProps={{
-                      name: 'treshold',
-                    }}>
-                    {kpi.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {' '}
-                        {kpidata.domainFk.name}{' '}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormField>
-              </Grid>
-              <Grid item xs={12} sm={12} lg={6} xl={6}>
                 <FormField
                   className={classes.formField}
                   label="Description"
                   required>
                   <TextInput
+                    {...description}
                     className={classes.textInput}
-                    name="Description"
+                    name="description"
                     type="string"
                   />
                 </FormField>
               </Grid>
+
             </Grid>
             <Grid container justify="flex-end">
               <Grid item xs={2} sm={2} lg={1} xl={1}>
@@ -198,7 +177,7 @@ export const EditKpiItemForm = (props: Props) => {
                     className={classes.addKpi}
                     onClick={() => {
                       handleClick();
-                      hideEditKpiForm();
+                      hideEditTresholdForm();
                     }}>
                     Save
                   </Button>
@@ -208,7 +187,7 @@ export const EditKpiItemForm = (props: Props) => {
                 <FormField>
                   <Button
                     className={classes.addKpi}
-                    onClick={hideEditKpiForm}
+                    onClick={hideEditTresholdForm}
                     skin="brightGray">
                     Cancel
                   </Button>

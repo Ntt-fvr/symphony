@@ -11,7 +11,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import CounterAddedSuccessfully from './CounterAddedSuccessfully';
+import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
@@ -110,7 +110,7 @@ export default function AddCounterItemForm(props: Props) {
   };
 
   if (showChecking) {
-    return <CounterAddedSuccessfully />;
+    return <AddedSuccessfullyMessage data_entry="counter" card_header="Add Counter" title="Counter" text_button="Add new counter" />;
   }
 
   return (

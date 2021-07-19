@@ -138,25 +138,13 @@ export default function KpiTypeItem(props: Props) {
             <Grid item xs={6}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  Associated threshold:
+                  Associated threshold: 
                   <Button variant="text">
                     <Text className={classes.threshold}>DROP_THR</Text>
                   </Button>
                 </Grid>
                 <Grid item xs={12}>
-                  Category: Text
-                </Grid>
-                <Grid item xs={12}>
-                  Maturity: : Text
-                </Grid>
-                <Grid item xs={12}>
-                  Unit: : Text
-                </Grid>
-                <Grid item xs={12}>
                   ID: Text
-                </Grid>
-                <Grid item xs={12}>
-                  Last modification:: Text
                 </Grid>
                 <Grid item xs={12}>
                   Description: : Chips allow users to enter information, make

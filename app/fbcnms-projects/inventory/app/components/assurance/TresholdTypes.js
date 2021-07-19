@@ -16,6 +16,7 @@ import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
+import {EditTresholdItemForm} from './EditTresholdItemForm';
 import fbt from 'fbt';
 import {Grid, List} from '@material-ui/core';
 import {fetchQuery} from 'relay-runtime';
@@ -55,6 +56,21 @@ const TresholdQuery = graphql`
   }
 `;
 
+type Tresholds = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+      description: string,
+      status: boolean,
+      kpi: {
+        id: string,
+        name: string,
+      },
+    },
+  },
+};
+
 const TresholdTypes = () => {
   const classes = useStyles();
 
@@ -75,24 +91,23 @@ const TresholdTypes = () => {
     RemoveTresholdMutation(variables);
   };
 
-  // const showEditKpiItemForm = (kpis: Kpis) => {
-  //   setShowEditCard(true);
-  //   setDataEdit(kpis);
-  // };
+  const showEditTresholdItemForm = (tresholds: Tresholds) => {
+    setShowEditCard(true);
+    setDataEdit(tresholds);
+  };
 
-  // const hideEditKpiForm = () => {
-  //   setShowEditCard(false);
-  // };
+  const hideEditTresholdForm = () => {
+    setShowEditCard(false);
+  };
 
-  // if (showEditCard) {
-  //   return (
-  //     <EditKpiItemForm
-  //       kpi={DataTreshold.kpis?.edges.map(item => item.node)}
-  //       formValues={dataEdit.item.node}
-  //       hideEditKpiForm={hideEditKpiForm}
-  //     />
-  //   );
-  // }
+  if (showEditCard) {
+    return (
+      <EditTresholdItemForm
+        formValues={dataEdit.item.node}
+        hideEditTresholdForm={hideEditTresholdForm}
+      />
+    );
+  }
 
   const showAddRuleItemForm = () => {
     setShowAddForm(true);
@@ -118,27 +133,21 @@ const TresholdTypes = () => {
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <TitleTextCardsThresholds />
 
-          <ThresholdTypeItem
-            id={'hola'}
-            name={'hola'}
-            description={'hola'}
-            kpi={'hola'}
-            addRule={showAddRuleItemForm}
-          />
-
           <List disablePadding>
             {DataTreshold.tresholds?.edges.map((item, index) => (
               <ThresholdTypeItem
                 key={index}
                 onChange={() => handleRemove(item.node.id)}
-                // edit={() => showEditKpiItemForm({item})}
+                edit={() => showEditTresholdItemForm({item})}
                 {...item.node}
               />
             ))}
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddThresholdItemForm />
+          <AddThresholdItemForm
+            dataValues={DataTreshold.tresholds?.edges.map(item => item.node)}
+          />
         </Grid>
       </Grid>
     </div>
