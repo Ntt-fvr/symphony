@@ -768,30 +768,6 @@ func (f EquipmentTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EquipmentTypeMutation", m)
 }
 
-// The EventQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type EventQueryRuleFunc func(context.Context, *ent.EventQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f EventQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.EventQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EventQuery", q)
-}
-
-// The EventMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type EventMutationRuleFunc func(context.Context, *ent.EventMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f EventMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.EventMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventMutation", m)
-}
-
 // The EventSeverityQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EventSeverityQueryRuleFunc func(context.Context, *ent.EventSeverityQuery) error

@@ -20,7 +20,8 @@ type RuleType struct {
 // Counter returns property type counter.
 func (RuleType) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
 	}
 }
 

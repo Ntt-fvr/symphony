@@ -38,7 +38,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
@@ -149,8 +148,6 @@ type Client struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
-	// Event is the client for interacting with the Event builders.
-	Event *EventClient
 	// EventSeverity is the client for interacting with the EventSeverity builders.
 	EventSeverity *EventSeverityClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
@@ -289,7 +286,6 @@ func (c *Client) init() {
 	c.EquipmentPosition = NewEquipmentPositionClient(c.config)
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
-	c.Event = NewEventClient(c.config)
 	c.EventSeverity = NewEventSeverityClient(c.config)
 	c.ExitPoint = NewExitPointClient(c.config)
 	c.ExportTask = NewExportTaskClient(c.config)
@@ -396,7 +392,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
-		Event:                       NewEventClient(cfg),
 		EventSeverity:               NewEventSeverityClient(cfg),
 		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
@@ -486,7 +481,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
-		Event:                       NewEventClient(cfg),
 		EventSeverity:               NewEventSeverityClient(cfg),
 		ExitPoint:                   NewExitPointClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
@@ -589,7 +583,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPosition.Use(hooks...)
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
-	c.Event.Use(hooks...)
 	c.EventSeverity.Use(hooks...)
 	c.ExitPoint.Use(hooks...)
 	c.ExportTask.Use(hooks...)
@@ -4082,127 +4075,6 @@ func (c *EquipmentTypeClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], equipmenttype.Hooks[:]...)
 }
 
-// EventClient is a client for the Event schema.
-type EventClient struct {
-	config
-}
-
-// NewEventClient returns a client for the Event from the given config.
-func NewEventClient(c config) *EventClient {
-	return &EventClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `event.Hooks(f(g(h())))`.
-func (c *EventClient) Use(hooks ...Hook) {
-	c.hooks.Event = append(c.hooks.Event, hooks...)
-}
-
-// Create returns a create builder for Event.
-func (c *EventClient) Create() *EventCreate {
-	mutation := newEventMutation(c.config, OpCreate)
-	return &EventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Event entities.
-func (c *EventClient) CreateBulk(builders ...*EventCreate) *EventCreateBulk {
-	return &EventCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Event.
-func (c *EventClient) Update() *EventUpdate {
-	mutation := newEventMutation(c.config, OpUpdate)
-	return &EventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *EventClient) UpdateOne(e *Event) *EventUpdateOne {
-	mutation := newEventMutation(c.config, OpUpdateOne, withEvent(e))
-	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *EventClient) UpdateOneID(id int) *EventUpdateOne {
-	mutation := newEventMutation(c.config, OpUpdateOne, withEventID(id))
-	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Event.
-func (c *EventClient) Delete() *EventDelete {
-	mutation := newEventMutation(c.config, OpDelete)
-	return &EventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *EventClient) DeleteOne(e *Event) *EventDeleteOne {
-	return c.DeleteOneID(e.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *EventClient) DeleteOneID(id int) *EventDeleteOne {
-	builder := c.Delete().Where(event.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &EventDeleteOne{builder}
-}
-
-// Query returns a query builder for Event.
-func (c *EventClient) Query() *EventQuery {
-	return &EventQuery{config: c.config}
-}
-
-// Get returns a Event entity by its id.
-func (c *EventClient) Get(ctx context.Context, id int) (*Event, error) {
-	return c.Query().Where(event.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *EventClient) GetX(ctx context.Context, id int) *Event {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryEventseverity queries the eventseverity edge of a Event.
-func (c *EventClient) QueryEventseverity(e *Event) *EventSeverityQuery {
-	query := &EventSeverityQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(event.Table, event.FieldID, id),
-			sqlgraph.To(eventseverity.Table, eventseverity.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, event.EventseverityTable, event.EventseverityColumn),
-		)
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRuleEvent queries the ruleEvent edge of a Event.
-func (c *EventClient) QueryRuleEvent(e *Event) *RuleQuery {
-	query := &RuleQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := e.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(event.Table, event.FieldID, id),
-			sqlgraph.To(rule.Table, rule.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, event.RuleEventTable, event.RuleEventColumn),
-		)
-		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *EventClient) Hooks() []Hook {
-	hooks := c.hooks.Event
-	return append(hooks[:len(hooks):len(hooks)], event.Hooks[:]...)
-}
-
 // EventSeverityClient is a client for the EventSeverity schema.
 type EventSeverityClient struct {
 	config
@@ -4286,15 +4158,15 @@ func (c *EventSeverityClient) GetX(ctx context.Context, id int) *EventSeverity {
 	return obj
 }
 
-// QueryEventseverityevent queries the eventseverityevent edge of a EventSeverity.
-func (c *EventSeverityClient) QueryEventseverityevent(es *EventSeverity) *EventQuery {
-	query := &EventQuery{config: c.config}
+// QueryEventseverityrule queries the eventseverityrule edge of a EventSeverity.
+func (c *EventSeverityClient) QueryEventseverityrule(es *EventSeverity) *RuleQuery {
+	query := &RuleQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := es.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(eventseverity.Table, eventseverity.FieldID, id),
-			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, eventseverity.EventseverityeventTable, eventseverity.EventseverityeventColumn),
+			sqlgraph.To(rule.Table, rule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, eventseverity.EventseverityruleTable, eventseverity.EventseverityruleColumn),
 		)
 		fromV = sqlgraph.Neighbors(es.driver.Dialect(), step)
 		return fromV, nil
@@ -8152,15 +8024,15 @@ func (c *RuleClient) QueryRuletype(r *Rule) *RuleTypeQuery {
 	return query
 }
 
-// QueryEvent queries the event edge of a Rule.
-func (c *RuleClient) QueryEvent(r *Rule) *EventQuery {
-	query := &EventQuery{config: c.config}
+// QueryEventseverity queries the eventseverity edge of a Rule.
+func (c *RuleClient) QueryEventseverity(r *Rule) *EventSeverityQuery {
+	query := &EventSeverityQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := r.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(rule.Table, rule.FieldID, id),
-			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, rule.EventTable, rule.EventColumn),
+			sqlgraph.To(eventseverity.Table, eventseverity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.EventseverityTable, rule.EventseverityColumn),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil

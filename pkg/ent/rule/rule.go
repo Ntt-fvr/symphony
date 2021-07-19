@@ -29,11 +29,17 @@ const (
 	FieldStartDateTime = "start_date_time"
 	// FieldEndDateTime holds the string denoting the enddatetime field in the database.
 	FieldEndDateTime = "end_date_time"
+	// FieldEventTypeName holds the string denoting the eventtypename field in the database.
+	FieldEventTypeName = "event_type_name"
+	// FieldSpecificProblem holds the string denoting the specificproblem field in the database.
+	FieldSpecificProblem = "specific_problem"
+	// FieldAdditionalInfo holds the string denoting the additionalinfo field in the database.
+	FieldAdditionalInfo = "additional_info"
 
 	// EdgeRuletype holds the string denoting the ruletype edge name in mutations.
 	EdgeRuletype = "ruletype"
-	// EdgeEvent holds the string denoting the event edge name in mutations.
-	EdgeEvent = "event"
+	// EdgeEventseverity holds the string denoting the eventseverity edge name in mutations.
+	EdgeEventseverity = "eventseverity"
 	// EdgeTreshold holds the string denoting the treshold edge name in mutations.
 	EdgeTreshold = "treshold"
 	// EdgeRulelimitrule holds the string denoting the rulelimitrule edge name in mutations.
@@ -48,13 +54,13 @@ const (
 	RuletypeInverseTable = "rule_types"
 	// RuletypeColumn is the table column denoting the ruletype relation/edge.
 	RuletypeColumn = "rule_type_ruletyperule"
-	// EventTable is the table the holds the event relation/edge.
-	EventTable = "rules"
-	// EventInverseTable is the table name for the Event entity.
-	// It exists in this package in order to avoid circular dependency with the "event" package.
-	EventInverseTable = "events"
-	// EventColumn is the table column denoting the event relation/edge.
-	EventColumn = "event_rule_event"
+	// EventseverityTable is the table the holds the eventseverity relation/edge.
+	EventseverityTable = "rules"
+	// EventseverityInverseTable is the table name for the EventSeverity entity.
+	// It exists in this package in order to avoid circular dependency with the "eventseverity" package.
+	EventseverityInverseTable = "event_severities"
+	// EventseverityColumn is the table column denoting the eventseverity relation/edge.
+	EventseverityColumn = "event_severity_eventseverityrule"
 	// TresholdTable is the table the holds the treshold relation/edge.
 	TresholdTable = "rules"
 	// TresholdInverseTable is the table name for the Treshold entity.
@@ -80,11 +86,14 @@ var Columns = []string{
 	FieldGracePeriod,
 	FieldStartDateTime,
 	FieldEndDateTime,
+	FieldEventTypeName,
+	FieldSpecificProblem,
+	FieldAdditionalInfo,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Rule type.
 var ForeignKeys = []string{
-	"event_rule_event",
+	"event_severity_eventseverityrule",
 	"rule_type_ruletyperule",
 	"treshold_ruletreshold",
 }

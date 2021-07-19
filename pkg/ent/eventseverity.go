@@ -33,20 +33,20 @@ type EventSeverity struct {
 
 // EventSeverityEdges holds the relations/edges for other nodes in the graph.
 type EventSeverityEdges struct {
-	// Eventseverityevent holds the value of the eventseverityevent edge.
-	Eventseverityevent []*Event
+	// Eventseverityrule holds the value of the eventseverityrule edge.
+	Eventseverityrule []*Rule
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// EventseverityeventOrErr returns the Eventseverityevent value or an error if the edge
+// EventseverityruleOrErr returns the Eventseverityrule value or an error if the edge
 // was not loaded in eager-loading.
-func (e EventSeverityEdges) EventseverityeventOrErr() ([]*Event, error) {
+func (e EventSeverityEdges) EventseverityruleOrErr() ([]*Rule, error) {
 	if e.loadedTypes[0] {
-		return e.Eventseverityevent, nil
+		return e.Eventseverityrule, nil
 	}
-	return nil, &NotLoadedError{edge: "eventseverityevent"}
+	return nil, &NotLoadedError{edge: "eventseverityrule"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -89,9 +89,9 @@ func (es *EventSeverity) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryEventseverityevent queries the eventseverityevent edge of the EventSeverity.
-func (es *EventSeverity) QueryEventseverityevent() *EventQuery {
-	return (&EventSeverityClient{config: es.config}).QueryEventseverityevent(es)
+// QueryEventseverityrule queries the eventseverityrule edge of the EventSeverity.
+func (es *EventSeverity) QueryEventseverityrule() *RuleQuery {
+	return (&EventSeverityClient{config: es.config}).QueryEventseverityrule(es)
 }
 
 // Update returns a builder for updating this EventSeverity.

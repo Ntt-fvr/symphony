@@ -197,3 +197,61 @@ func AlarmFilterFilter(query *ent.AlarmFilterQuery, filters []*models.AlarmFilte
 	}
 	return query, nil
 }
+
+func DomainFilter(query *ent.DomainQuery, filters []*models.DomainFilterInput) (*ent.DomainQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleDomainFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func VendorFilter(query *ent.VendorQuery, filters []*models.VendorFilterInput) (*ent.VendorQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleVendorFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func CounterFamilyFilter(query *ent.CounterFamilyQuery, filters []*models.CounterFamilyFilterInput) (*ent.CounterFamilyQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleCounterFamilyFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func RuleTypeFilter(query *ent.RuleTypeQuery, filters []*models.RuleTypeFilterInput) (*ent.RuleTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRuleTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func EventSeverityFilter(query *ent.EventSeverityQuery, filters []*models.EventSeverityFilterInput) (*ent.EventSeverityQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleEventSeverityFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ComparatorFilter(query *ent.ComparatorQuery, filters []*models.ComparatorFilterInput) (*ent.ComparatorQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleComparatorFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

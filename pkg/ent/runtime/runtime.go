@@ -35,7 +35,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
@@ -725,33 +724,6 @@ func init() {
 	equipmenttype.DefaultUpdateTime = equipmenttypeDescUpdateTime.Default.(func() time.Time)
 	// equipmenttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmenttype.UpdateDefaultUpdateTime = equipmenttypeDescUpdateTime.UpdateDefault.(func() time.Time)
-	eventMixin := schema.Event{}.Mixin()
-	event.Policy = privacy.NewPolicies(schema.Event{})
-	event.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := event.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	eventMixinFields0 := eventMixin[0].Fields()
-	eventFields := schema.Event{}.Fields()
-	_ = eventFields
-	// eventDescCreateTime is the schema descriptor for create_time field.
-	eventDescCreateTime := eventMixinFields0[0].Descriptor()
-	// event.DefaultCreateTime holds the default value on creation for the create_time field.
-	event.DefaultCreateTime = eventDescCreateTime.Default.(func() time.Time)
-	// eventDescUpdateTime is the schema descriptor for update_time field.
-	eventDescUpdateTime := eventMixinFields0[1].Descriptor()
-	// event.DefaultUpdateTime holds the default value on creation for the update_time field.
-	event.DefaultUpdateTime = eventDescUpdateTime.Default.(func() time.Time)
-	// event.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	event.UpdateDefaultUpdateTime = eventDescUpdateTime.UpdateDefault.(func() time.Time)
-	// eventDescName is the schema descriptor for name field.
-	eventDescName := eventFields[0].Descriptor()
-	// event.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	event.NameValidator = eventDescName.Validators[0].(func(string) error)
 	eventseverityMixin := schema.EventSeverity{}.Mixin()
 	eventseverity.Policy = privacy.NewPolicies(schema.EventSeverity{})
 	eventseverity.Hooks[0] = func(next ent.Mutator) ent.Mutator {

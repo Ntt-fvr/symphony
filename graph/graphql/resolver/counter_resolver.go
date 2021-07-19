@@ -40,29 +40,6 @@ func (r mutationResolver) AddCounter(ctx context.Context, input models.AddCounte
 	return typ, nil
 }
 
-func (r mutationResolver) AddCounterList(ctx context.Context, inputs []*models.AddCounterInput, counterFamilyId int) ([]*ent.Counter, error) {
-	var counters []*ent.Counter
-	for _, input := range inputs {
-		client := r.ClientFrom(ctx)
-		typ, err := client.
-			Counter.Create().
-			SetName(input.Name).
-			SetCounterfamilyID(counterFamilyId).
-			SetExternalId(input.ExternalID).
-			SetNetworkManagerSystem(input.NetworkManagerSystem).
-			Save(ctx)
-		if err != nil {
-			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
-			}
-			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-		}
-		counters = append(counters, typ)
-	}
-
-	return counters, nil
-}
-
 func (r mutationResolver) RemoveCounter(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
 	t, err := client.Counter.Query().

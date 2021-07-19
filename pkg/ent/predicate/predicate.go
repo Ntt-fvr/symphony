@@ -85,9 +85,6 @@ type EquipmentPositionDefinition func(*sql.Selector)
 // EquipmentType is the predicate function for equipmenttype builders.
 type EquipmentType func(*sql.Selector)
 
-// Event is the predicate function for event builders.
-type Event func(*sql.Selector)
-
 // EventSeverity is the predicate function for eventseverity builders.
 type EventSeverity func(*sql.Selector)
 

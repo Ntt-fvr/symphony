@@ -36,8 +36,8 @@ func (ruleResolver) RuleType(ctx context.Context, rule *ent.Rule) (*ent.RuleType
 	}
 }
 
-func (ruleResolver) Event(ctx context.Context, rule *ent.Rule) (*ent.Event, error) {
-	variable, err := rule.Event(ctx)
+func (ruleResolver) EventSeverity(ctx context.Context, rule *ent.Rule) (*ent.EventSeverity, error) {
+	variable, err := rule.Eventseverity(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
@@ -56,7 +56,10 @@ func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput
 		SetEndDateTime(input.EndDateTime).
 		SetTresholdID(input.Treshold).
 		SetRuletypeID(input.RuleType).
-		SetEventID(input.Event).
+		SetNillableEventTypeName(input.EventTypeName).
+		SetNillableSpecificProblem(input.SpecificProblem).
+		SetNillableAdditionalInfo(input.AdditionalInfo).
+		SetEventseverityID(input.EventSeverity).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -94,21 +97,22 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	var eventid, rtypeid, tresholdid int
-	var name, start, end, grace = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod
-	var event, err1 = et.Event(ctx)
+	var eventSeverityid, rtypeid, tresholdid int
+	var name, start, end, grace, tpe, problem, info = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod,
+		et.EventTypeName, et.SpecificProblem, et.AdditionalInfo
+	var event, err1 = et.Eventseverity(ctx)
 	if err1 != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if event != nil {
-		eventid = event.ID
+		eventSeverityid = event.ID
 	}
-	var rtype, err2 = et.Event(ctx)
+	var rtype, err2 = et.Ruletype(ctx)
 	if err2 != nil {
 		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
 	} else if rtype != nil {
 		rtypeid = rtype.ID
 	}
-	var treshold, err3 = et.Event(ctx)
+	var treshold, err3 = et.Treshold(ctx)
 	if err3 != nil {
 		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
 	} else if treshold != nil {
@@ -132,8 +136,8 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		grace = *input.GracePeriod
 		change = true
 	}
-	if (event != nil && event.ID != input.Event) || event == nil {
-		eventid = input.Event
+	if (event != nil && event.ID != input.EventSeverity) || event == nil {
+		eventSeverityid = input.EventSeverity
 		change = true
 	}
 	if (rtype != nil && rtype.ID != input.RuleType) || rtype == nil {
@@ -142,6 +146,18 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 	}
 	if (treshold != nil && treshold.ID != input.Treshold) || treshold == nil {
 		tresholdid = input.Treshold
+		change = true
+	}
+	if input.EventTypeName != nil && ((tpe != nil && *tpe != *input.EventTypeName) || tpe == nil) {
+		*tpe = *input.EventTypeName
+		change = true
+	}
+	if input.SpecificProblem != nil && ((problem != nil && *problem != *input.SpecificProblem) || problem == nil) {
+		*problem = *input.SpecificProblem
+		change = true
+	}
+	if input.AdditionalInfo != nil && ((info != nil && *info != *input.AdditionalInfo) || info == nil) {
+		*info = *input.AdditionalInfo
 		change = true
 	}
 
@@ -155,7 +171,10 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			SetEndDateTime(end).
 			SetTresholdID(tresholdid).
 			SetRuletypeID(rtypeid).
-			SetEventID(eventid).
+			SetNillableEventTypeName(tpe).
+			SetNillableSpecificProblem(problem).
+			SetNillableAdditionalInfo(info).
+			SetEventseverityID(eventSeverityid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)

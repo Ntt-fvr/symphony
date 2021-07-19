@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/pkg/ent/event"
+	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
 	"github.com/facebookincubator/symphony/pkg/ent/treshold"
@@ -35,20 +35,26 @@ type Rule struct {
 	StartDateTime time.Time `json:"startDateTime,omitempty"`
 	// EndDateTime holds the value of the "endDateTime" field.
 	EndDateTime time.Time `json:"endDateTime,omitempty"`
+	// EventTypeName holds the value of the "eventTypeName" field.
+	EventTypeName *string `json:"eventTypeName,omitempty"`
+	// SpecificProblem holds the value of the "specificProblem" field.
+	SpecificProblem *string `json:"specificProblem,omitempty"`
+	// AdditionalInfo holds the value of the "additionalInfo" field.
+	AdditionalInfo *string `json:"additionalInfo,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RuleQuery when eager-loading is set.
-	Edges                  RuleEdges `json:"edges"`
-	event_rule_event       *int
-	rule_type_ruletyperule *int
-	treshold_ruletreshold  *int
+	Edges                            RuleEdges `json:"edges"`
+	event_severity_eventseverityrule *int
+	rule_type_ruletyperule           *int
+	treshold_ruletreshold            *int
 }
 
 // RuleEdges holds the relations/edges for other nodes in the graph.
 type RuleEdges struct {
 	// Ruletype holds the value of the ruletype edge.
 	Ruletype *RuleType
-	// Event holds the value of the event edge.
-	Event *Event
+	// Eventseverity holds the value of the eventseverity edge.
+	Eventseverity *EventSeverity
 	// Treshold holds the value of the treshold edge.
 	Treshold *Treshold
 	// Rulelimitrule holds the value of the rulelimitrule edge.
@@ -72,18 +78,18 @@ func (e RuleEdges) RuletypeOrErr() (*RuleType, error) {
 	return nil, &NotLoadedError{edge: "ruletype"}
 }
 
-// EventOrErr returns the Event value or an error if the edge
+// EventseverityOrErr returns the Eventseverity value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e RuleEdges) EventOrErr() (*Event, error) {
+func (e RuleEdges) EventseverityOrErr() (*EventSeverity, error) {
 	if e.loadedTypes[1] {
-		if e.Event == nil {
-			// The edge event was loaded in eager-loading,
+		if e.Eventseverity == nil {
+			// The edge eventseverity was loaded in eager-loading,
 			// but was not found.
-			return nil, &NotFoundError{label: event.Label}
+			return nil, &NotFoundError{label: eventseverity.Label}
 		}
-		return e.Event, nil
+		return e.Eventseverity, nil
 	}
-	return nil, &NotLoadedError{edge: "event"}
+	return nil, &NotLoadedError{edge: "eventseverity"}
 }
 
 // TresholdOrErr returns the Treshold value or an error if the edge
@@ -119,13 +125,16 @@ func (*Rule) scanValues() []interface{} {
 		&sql.NullInt64{},  // gracePeriod
 		&sql.NullTime{},   // startDateTime
 		&sql.NullTime{},   // endDateTime
+		&sql.NullString{}, // eventTypeName
+		&sql.NullString{}, // specificProblem
+		&sql.NullString{}, // additionalInfo
 	}
 }
 
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Rule) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // event_rule_event
+		&sql.NullInt64{}, // event_severity_eventseverityrule
 		&sql.NullInt64{}, // rule_type_ruletyperule
 		&sql.NullInt64{}, // treshold_ruletreshold
 	}
@@ -173,13 +182,31 @@ func (r *Rule) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		r.EndDateTime = value.Time
 	}
-	values = values[6:]
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field eventTypeName", values[6])
+	} else if value.Valid {
+		r.EventTypeName = new(string)
+		*r.EventTypeName = value.String
+	}
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field specificProblem", values[7])
+	} else if value.Valid {
+		r.SpecificProblem = new(string)
+		*r.SpecificProblem = value.String
+	}
+	if value, ok := values[8].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field additionalInfo", values[8])
+	} else if value.Valid {
+		r.AdditionalInfo = new(string)
+		*r.AdditionalInfo = value.String
+	}
+	values = values[9:]
 	if len(values) == len(rule.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field event_rule_event", value)
+			return fmt.Errorf("unexpected type %T for edge-field event_severity_eventseverityrule", value)
 		} else if value.Valid {
-			r.event_rule_event = new(int)
-			*r.event_rule_event = int(value.Int64)
+			r.event_severity_eventseverityrule = new(int)
+			*r.event_severity_eventseverityrule = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field rule_type_ruletyperule", value)
@@ -202,9 +229,9 @@ func (r *Rule) QueryRuletype() *RuleTypeQuery {
 	return (&RuleClient{config: r.config}).QueryRuletype(r)
 }
 
-// QueryEvent queries the event edge of the Rule.
-func (r *Rule) QueryEvent() *EventQuery {
-	return (&RuleClient{config: r.config}).QueryEvent(r)
+// QueryEventseverity queries the eventseverity edge of the Rule.
+func (r *Rule) QueryEventseverity() *EventSeverityQuery {
+	return (&RuleClient{config: r.config}).QueryEventseverity(r)
 }
 
 // QueryTreshold queries the treshold edge of the Rule.
@@ -252,6 +279,18 @@ func (r *Rule) String() string {
 	builder.WriteString(r.StartDateTime.Format(time.ANSIC))
 	builder.WriteString(", endDateTime=")
 	builder.WriteString(r.EndDateTime.Format(time.ANSIC))
+	if v := r.EventTypeName; v != nil {
+		builder.WriteString(", eventTypeName=")
+		builder.WriteString(*v)
+	}
+	if v := r.SpecificProblem; v != nil {
+		builder.WriteString(", specificProblem=")
+		builder.WriteString(*v)
+	}
+	if v := r.AdditionalInfo; v != nil {
+		builder.WriteString(", additionalInfo=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }
