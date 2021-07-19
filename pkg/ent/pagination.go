@@ -986,6 +986,49 @@ func (as *AlarmStatusQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// AlarmStatusOrderFieldName orders AlarmStatus by name.
+	AlarmStatusOrderFieldName = &AlarmStatusOrderField{
+		field: alarmstatus.FieldName,
+		toCursor: func(as *AlarmStatus) Cursor {
+			return Cursor{
+				ID:    as.ID,
+				Value: as.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f AlarmStatusOrderField) String() string {
+	var str string
+	switch f.field {
+	case alarmstatus.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f AlarmStatusOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *AlarmStatusOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("AlarmStatusOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *AlarmStatusOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid AlarmStatusOrderField", str)
+	}
+	return nil
+}
+
 // AlarmStatusOrderField defines the ordering field of AlarmStatus.
 type AlarmStatusOrderField struct {
 	field    string
