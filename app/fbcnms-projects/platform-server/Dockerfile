@@ -9,6 +9,7 @@ WORKDIR /app
 # Copy package dependencies
 COPY package.json yarn.lock babel.config.js ./
 COPY fbcnms-projects/platform-server/package.json fbcnms-projects/platform-server/
+COPY @fbcnms /app/@fbcnms
 
 # Install shared dependencies
 COPY fbcnms-packages fbcnms-packages

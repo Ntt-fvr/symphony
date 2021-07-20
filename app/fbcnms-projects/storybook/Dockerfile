@@ -6,7 +6,7 @@ COPY package.json yarn.lock babel.config.js ./
 
 # copy storybook
 COPY fbcnms-packages /src/fbcnms-packages
-
+COPY @fbcnms @fbcnms
 # install assets
 RUN yarn install --frozen-lockfile && yarn cache clean
 
