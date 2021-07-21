@@ -49,6 +49,10 @@ const useStyles = makeStyles(() => ({
   time: {
     marginTop: '2rem',
   },
+  option: {
+    width: '111px',
+    height: '36px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -97,10 +101,10 @@ const AlarmFilteringAddDialog = (props: Props) => {
         </Grid>
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="outlined" color="primary">
+        <Button className={classes.option} variant="outlined" color="primary">
           Edit
         </Button>
-        <Button variant="contained" color="primary">
+        <Button className={classes.option} variant="contained" color="primary">
           Save
         </Button>
       </DialogActions>

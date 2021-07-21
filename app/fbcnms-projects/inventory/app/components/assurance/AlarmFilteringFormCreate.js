@@ -23,6 +23,9 @@ import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {StatusActive} from './AlarmFilteringStatus';
 
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import IconButton from '@symphony/design-system/components/IconButton';
+
 import Switch from './Switch';
 
 import {makeStyles} from '@material-ui/styles';
@@ -45,9 +48,14 @@ const useStyles = makeStyles(() => ({
   textInput: {
     minHeight: '36px',
   },
-  addKpi: {
+  option: {
     width: '111px',
+    height: '36px',
     alignSelf: 'flex-end',
+  },
+  delete: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
   title: {
     marginLeft: '10px',
@@ -61,6 +69,12 @@ const useStyles = makeStyles(() => ({
   },
   reason: {
     minHeight: '100px',
+  },
+  status: {
+    paddingTop: '40px',
+  },
+  time: {
+    marginBottom: '20px',
   },
 }));
 
@@ -142,21 +156,33 @@ const AlarmFilteringFormCreate = (props: Props) => {
   //   );
   // }
 
+  const handleRemove = () => {
+    console.log('REMOVE ALARM');
+  };
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid container className={classes.titleButtons}>
-          <Grid item xs={10}>
+          <Grid item xs={9}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Create Alarm Filtering', ' ')}
             </Text>
+          </Grid>
+          <Grid item xs={1}>
+            <IconButton
+              className={classes.delete}
+              skin={'gray'}
+              icon={DeleteOutlinedIcon}
+              onClick={handleRemove}
+            />
           </Grid>
           <Grid item xs={2}>
             <Grid container>
               <Grid xs={6}>
                 <FormField>
                   <Button
-                    className={classes.addKpi}
+                    className={classes.option}
                     variant="outlined"
                     color="primary">
                     Cancel
@@ -168,7 +194,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   <Button
                     onClick={handleClick}
                     // onClick={showDialog}
-                    className={classes.addKpi}
+                    className={classes.option}
                     variant="contained"
                     color="primary">
                     Save
@@ -214,13 +240,16 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   <TextInput
                     className={classes.textInput}
                     type="multiline"
-                    rows={5}
+                    rows={4}
                     name="reason"
                     onChange={handleChange}
                   />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
+                <Grid className={classes.time} item xs={12}>
+                  <Text variant="subtitle1">Exception period</Text>
+                </Grid>
                 <Grid item xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
@@ -246,7 +275,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={6}>
+              <Grid container item xs={6} className={classes.status}>
                 <Grid item xs={3}>
                   <FormField label="Status" className={classes.formField}>
                     <StatusActive className={classes.formFieldStatus} name="alarmStatus"/>
