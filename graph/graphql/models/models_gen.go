@@ -90,19 +90,18 @@ type AddCounterFamilyInput struct {
 	Name string `json:"name"`
 }
 
-type AddCounterInput struct {
-	Name                 string                           `json:"name"`
-	ExternalID           string                           `json:"externalID"`
-	NetworkManagerSystem string                           `json:"networkManagerSystem"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
-	CounterFamily        int                              `json:"counterFamily"`
-}
-
-type AddCounterVendorFormulaInput struct {
+type AddCounterFormulaInput struct {
 	Mandatory bool `json:"mandatory"`
-	VendorFk  int  `json:"vendorFk"`
 	CounterFk int  `json:"counterFk"`
 	FormulaFk int  `json:"formulaFk"`
+}
+
+type AddCounterInput struct {
+	Name                 string `json:"name"`
+	ExternalID           string `json:"externalID"`
+	NetworkManagerSystem string `json:"networkManagerSystem"`
+	CounterFamily        int    `json:"counterFamily"`
+	VendorFk             int    `json:"vendorFk"`
 }
 
 type AddCustomerInput struct {
@@ -483,13 +482,6 @@ type CounterFilterInput struct {
 	PropertyValue *CounterFamilyInput `json:"propertyValue"`
 }
 
-type CounterInput struct {
-	Name                 string                           `json:"name"`
-	ExternalID           string                           `json:"externalID"`
-	NetworkManagerSystem string                           `json:"networkManagerSystem"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
-}
-
 type DecisionBlock struct {
 	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
 	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
@@ -558,20 +550,19 @@ type EditCounterFamilyInput struct {
 	Name string `json:"name"`
 }
 
-type EditCounterInput struct {
-	ID                   int                              `json:"id"`
-	Name                 string                           `json:"name"`
-	ExternalID           string                           `json:"externalID"`
-	NetworkManagerSystem string                           `json:"networkManagerSystem"`
-	Countervendorformula []*EditCounterVendorFormulaInput `json:"countervendorformula"`
-}
-
-type EditCounterVendorFormulaInput struct {
+type EditCounterFormulaInput struct {
 	ID        int  `json:"id"`
 	Mandatory bool `json:"mandatory"`
-	VendorFk  int  `json:"vendorFk"`
 	CounterFk int  `json:"counterFk"`
 	FormulaFk int  `json:"formulaFk"`
+}
+
+type EditCounterInput struct {
+	ID                   int    `json:"id"`
+	Name                 string `json:"name"`
+	ExternalID           string `json:"externalID"`
+	NetworkManagerSystem string `json:"networkManagerSystem"`
+	VendorFk             int    `json:"vendorFk"`
 }
 
 type EditDomainInput struct {

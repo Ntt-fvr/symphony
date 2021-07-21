@@ -26,7 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
@@ -116,7 +116,7 @@ const (
 	TypeComparator                  = "Comparator"
 	TypeCounter                     = "Counter"
 	TypeCounterFamily               = "CounterFamily"
-	TypeCounterVendorFormula        = "CounterVendorFormula"
+	TypeCounterFormula              = "CounterFormula"
 	TypeCustomer                    = "Customer"
 	TypeDomain                      = "Domain"
 	TypeEntryPoint                  = "EntryPoint"
@@ -9447,6 +9447,8 @@ type CounterMutation struct {
 	clearedFields        map[string]struct{}
 	counterfamily        *int
 	clearedcounterfamily bool
+	vendor               *int
+	clearedvendor        bool
 	counter_fk           map[int]struct{}
 	removedcounter_fk    map[int]struct{}
 	clearedcounter_fk    bool
@@ -9758,7 +9760,46 @@ func (m *CounterMutation) ResetCounterfamily() {
 	m.clearedcounterfamily = false
 }
 
-// AddCounterFkIDs adds the counter_fk edge to CounterVendorFormula by ids.
+// SetVendorID sets the vendor edge to Vendor by id.
+func (m *CounterMutation) SetVendorID(id int) {
+	m.vendor = &id
+}
+
+// ClearVendor clears the vendor edge to Vendor.
+func (m *CounterMutation) ClearVendor() {
+	m.clearedvendor = true
+}
+
+// VendorCleared returns if the edge vendor was cleared.
+func (m *CounterMutation) VendorCleared() bool {
+	return m.clearedvendor
+}
+
+// VendorID returns the vendor id in the mutation.
+func (m *CounterMutation) VendorID() (id int, exists bool) {
+	if m.vendor != nil {
+		return *m.vendor, true
+	}
+	return
+}
+
+// VendorIDs returns the vendor ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// VendorID instead. It exists only for internal usage by the builders.
+func (m *CounterMutation) VendorIDs() (ids []int) {
+	if id := m.vendor; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetVendor reset all changes of the "vendor" edge.
+func (m *CounterMutation) ResetVendor() {
+	m.vendor = nil
+	m.clearedvendor = false
+}
+
+// AddCounterFkIDs adds the counter_fk edge to CounterFormula by ids.
 func (m *CounterMutation) AddCounterFkIDs(ids ...int) {
 	if m.counter_fk == nil {
 		m.counter_fk = make(map[int]struct{})
@@ -9768,7 +9809,7 @@ func (m *CounterMutation) AddCounterFkIDs(ids ...int) {
 	}
 }
 
-// ClearCounterFk clears the counter_fk edge to CounterVendorFormula.
+// ClearCounterFk clears the counter_fk edge to CounterFormula.
 func (m *CounterMutation) ClearCounterFk() {
 	m.clearedcounter_fk = true
 }
@@ -9778,7 +9819,7 @@ func (m *CounterMutation) CounterFkCleared() bool {
 	return m.clearedcounter_fk
 }
 
-// RemoveCounterFkIDs removes the counter_fk edge to CounterVendorFormula by ids.
+// RemoveCounterFkIDs removes the counter_fk edge to CounterFormula by ids.
 func (m *CounterMutation) RemoveCounterFkIDs(ids ...int) {
 	if m.removedcounter_fk == nil {
 		m.removedcounter_fk = make(map[int]struct{})
@@ -9994,9 +10035,12 @@ func (m *CounterMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *CounterMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.counterfamily != nil {
 		edges = append(edges, counter.EdgeCounterfamily)
+	}
+	if m.vendor != nil {
+		edges = append(edges, counter.EdgeVendor)
 	}
 	if m.counter_fk != nil {
 		edges = append(edges, counter.EdgeCounterFk)
@@ -10012,6 +10056,10 @@ func (m *CounterMutation) AddedIDs(name string) []ent.Value {
 		if id := m.counterfamily; id != nil {
 			return []ent.Value{*id}
 		}
+	case counter.EdgeVendor:
+		if id := m.vendor; id != nil {
+			return []ent.Value{*id}
+		}
 	case counter.EdgeCounterFk:
 		ids := make([]ent.Value, 0, len(m.counter_fk))
 		for id := range m.counter_fk {
@@ -10025,7 +10073,7 @@ func (m *CounterMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *CounterMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedcounter_fk != nil {
 		edges = append(edges, counter.EdgeCounterFk)
 	}
@@ -10049,9 +10097,12 @@ func (m *CounterMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *CounterMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedcounterfamily {
 		edges = append(edges, counter.EdgeCounterfamily)
+	}
+	if m.clearedvendor {
+		edges = append(edges, counter.EdgeVendor)
 	}
 	if m.clearedcounter_fk {
 		edges = append(edges, counter.EdgeCounterFk)
@@ -10065,6 +10116,8 @@ func (m *CounterMutation) EdgeCleared(name string) bool {
 	switch name {
 	case counter.EdgeCounterfamily:
 		return m.clearedcounterfamily
+	case counter.EdgeVendor:
+		return m.clearedvendor
 	case counter.EdgeCounterFk:
 		return m.clearedcounter_fk
 	}
@@ -10078,6 +10131,9 @@ func (m *CounterMutation) ClearEdge(name string) error {
 	case counter.EdgeCounterfamily:
 		m.ClearCounterfamily()
 		return nil
+	case counter.EdgeVendor:
+		m.ClearVendor()
+		return nil
 	}
 	return fmt.Errorf("unknown Counter unique edge %s", name)
 }
@@ -10089,6 +10145,9 @@ func (m *CounterMutation) ResetEdge(name string) error {
 	switch name {
 	case counter.EdgeCounterfamily:
 		m.ResetCounterfamily()
+		return nil
+	case counter.EdgeVendor:
+		m.ResetVendor()
 		return nil
 	case counter.EdgeCounterFk:
 		m.ResetCounterFk()
@@ -10593,9 +10652,9 @@ func (m *CounterFamilyMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown CounterFamily edge %s", name)
 }
 
-// CounterVendorFormulaMutation represents an operation that mutate the CounterVendorFormulas
+// CounterFormulaMutation represents an operation that mutate the CounterFormulas
 // nodes in the graph.
-type CounterVendorFormulaMutation struct {
+type CounterFormulaMutation struct {
 	config
 	op             Op
 	typ            string
@@ -10606,26 +10665,24 @@ type CounterVendorFormulaMutation struct {
 	clearedFields  map[string]struct{}
 	formula        *int
 	clearedformula bool
-	vendor         *int
-	clearedvendor  bool
 	counter        *int
 	clearedcounter bool
 	done           bool
-	oldValue       func(context.Context) (*CounterVendorFormula, error)
-	predicates     []predicate.CounterVendorFormula
+	oldValue       func(context.Context) (*CounterFormula, error)
+	predicates     []predicate.CounterFormula
 }
 
-var _ ent.Mutation = (*CounterVendorFormulaMutation)(nil)
+var _ ent.Mutation = (*CounterFormulaMutation)(nil)
 
-// countervendorformulaOption allows to manage the mutation configuration using functional options.
-type countervendorformulaOption func(*CounterVendorFormulaMutation)
+// counterformulaOption allows to manage the mutation configuration using functional options.
+type counterformulaOption func(*CounterFormulaMutation)
 
-// newCounterVendorFormulaMutation creates new mutation for CounterVendorFormula.
-func newCounterVendorFormulaMutation(c config, op Op, opts ...countervendorformulaOption) *CounterVendorFormulaMutation {
-	m := &CounterVendorFormulaMutation{
+// newCounterFormulaMutation creates new mutation for CounterFormula.
+func newCounterFormulaMutation(c config, op Op, opts ...counterformulaOption) *CounterFormulaMutation {
+	m := &CounterFormulaMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeCounterVendorFormula,
+		typ:           TypeCounterFormula,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -10634,20 +10691,20 @@ func newCounterVendorFormulaMutation(c config, op Op, opts ...countervendorformu
 	return m
 }
 
-// withCounterVendorFormulaID sets the id field of the mutation.
-func withCounterVendorFormulaID(id int) countervendorformulaOption {
-	return func(m *CounterVendorFormulaMutation) {
+// withCounterFormulaID sets the id field of the mutation.
+func withCounterFormulaID(id int) counterformulaOption {
+	return func(m *CounterFormulaMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *CounterVendorFormula
+			value *CounterFormula
 		)
-		m.oldValue = func(ctx context.Context) (*CounterVendorFormula, error) {
+		m.oldValue = func(ctx context.Context) (*CounterFormula, error) {
 			once.Do(func() {
 				if m.done {
 					err = fmt.Errorf("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().CounterVendorFormula.Get(ctx, id)
+					value, err = m.Client().CounterFormula.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -10656,10 +10713,10 @@ func withCounterVendorFormulaID(id int) countervendorformulaOption {
 	}
 }
 
-// withCounterVendorFormula sets the old CounterVendorFormula of the mutation.
-func withCounterVendorFormula(node *CounterVendorFormula) countervendorformulaOption {
-	return func(m *CounterVendorFormulaMutation) {
-		m.oldValue = func(context.Context) (*CounterVendorFormula, error) {
+// withCounterFormula sets the old CounterFormula of the mutation.
+func withCounterFormula(node *CounterFormula) counterformulaOption {
+	return func(m *CounterFormulaMutation) {
+		m.oldValue = func(context.Context) (*CounterFormula, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -10668,7 +10725,7 @@ func withCounterVendorFormula(node *CounterVendorFormula) countervendorformulaOp
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m CounterVendorFormulaMutation) Client() *Client {
+func (m CounterFormulaMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -10676,7 +10733,7 @@ func (m CounterVendorFormulaMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m CounterVendorFormulaMutation) Tx() (*Tx, error) {
+func (m CounterFormulaMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
 	}
@@ -10687,7 +10744,7 @@ func (m CounterVendorFormulaMutation) Tx() (*Tx, error) {
 
 // ID returns the id value in the mutation. Note that, the id
 // is available only if it was provided to the builder.
-func (m *CounterVendorFormulaMutation) ID() (id int, exists bool) {
+func (m *CounterFormulaMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -10695,12 +10752,12 @@ func (m *CounterVendorFormulaMutation) ID() (id int, exists bool) {
 }
 
 // SetCreateTime sets the create_time field.
-func (m *CounterVendorFormulaMutation) SetCreateTime(t time.Time) {
+func (m *CounterFormulaMutation) SetCreateTime(t time.Time) {
 	m.create_time = &t
 }
 
 // CreateTime returns the create_time value in the mutation.
-func (m *CounterVendorFormulaMutation) CreateTime() (r time.Time, exists bool) {
+func (m *CounterFormulaMutation) CreateTime() (r time.Time, exists bool) {
 	v := m.create_time
 	if v == nil {
 		return
@@ -10708,11 +10765,11 @@ func (m *CounterVendorFormulaMutation) CreateTime() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreateTime returns the old create_time value of the CounterVendorFormula.
-// If the CounterVendorFormula object wasn't provided to the builder, the object is fetched
+// OldCreateTime returns the old create_time value of the CounterFormula.
+// If the CounterFormula object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CounterVendorFormulaMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+func (m *CounterFormulaMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
 	}
@@ -10727,17 +10784,17 @@ func (m *CounterVendorFormulaMutation) OldCreateTime(ctx context.Context) (v tim
 }
 
 // ResetCreateTime reset all changes of the "create_time" field.
-func (m *CounterVendorFormulaMutation) ResetCreateTime() {
+func (m *CounterFormulaMutation) ResetCreateTime() {
 	m.create_time = nil
 }
 
 // SetUpdateTime sets the update_time field.
-func (m *CounterVendorFormulaMutation) SetUpdateTime(t time.Time) {
+func (m *CounterFormulaMutation) SetUpdateTime(t time.Time) {
 	m.update_time = &t
 }
 
 // UpdateTime returns the update_time value in the mutation.
-func (m *CounterVendorFormulaMutation) UpdateTime() (r time.Time, exists bool) {
+func (m *CounterFormulaMutation) UpdateTime() (r time.Time, exists bool) {
 	v := m.update_time
 	if v == nil {
 		return
@@ -10745,11 +10802,11 @@ func (m *CounterVendorFormulaMutation) UpdateTime() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldUpdateTime returns the old update_time value of the CounterVendorFormula.
-// If the CounterVendorFormula object wasn't provided to the builder, the object is fetched
+// OldUpdateTime returns the old update_time value of the CounterFormula.
+// If the CounterFormula object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CounterVendorFormulaMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+func (m *CounterFormulaMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
 	}
@@ -10764,17 +10821,17 @@ func (m *CounterVendorFormulaMutation) OldUpdateTime(ctx context.Context) (v tim
 }
 
 // ResetUpdateTime reset all changes of the "update_time" field.
-func (m *CounterVendorFormulaMutation) ResetUpdateTime() {
+func (m *CounterFormulaMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
 // SetMandatory sets the mandatory field.
-func (m *CounterVendorFormulaMutation) SetMandatory(b bool) {
+func (m *CounterFormulaMutation) SetMandatory(b bool) {
 	m.mandatory = &b
 }
 
 // Mandatory returns the mandatory value in the mutation.
-func (m *CounterVendorFormulaMutation) Mandatory() (r bool, exists bool) {
+func (m *CounterFormulaMutation) Mandatory() (r bool, exists bool) {
 	v := m.mandatory
 	if v == nil {
 		return
@@ -10782,11 +10839,11 @@ func (m *CounterVendorFormulaMutation) Mandatory() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldMandatory returns the old mandatory value of the CounterVendorFormula.
-// If the CounterVendorFormula object wasn't provided to the builder, the object is fetched
+// OldMandatory returns the old mandatory value of the CounterFormula.
+// If the CounterFormula object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CounterVendorFormulaMutation) OldMandatory(ctx context.Context) (v bool, err error) {
+func (m *CounterFormulaMutation) OldMandatory(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldMandatory is allowed only on UpdateOne operations")
 	}
@@ -10801,27 +10858,27 @@ func (m *CounterVendorFormulaMutation) OldMandatory(ctx context.Context) (v bool
 }
 
 // ResetMandatory reset all changes of the "mandatory" field.
-func (m *CounterVendorFormulaMutation) ResetMandatory() {
+func (m *CounterFormulaMutation) ResetMandatory() {
 	m.mandatory = nil
 }
 
 // SetFormulaID sets the formula edge to Formula by id.
-func (m *CounterVendorFormulaMutation) SetFormulaID(id int) {
+func (m *CounterFormulaMutation) SetFormulaID(id int) {
 	m.formula = &id
 }
 
 // ClearFormula clears the formula edge to Formula.
-func (m *CounterVendorFormulaMutation) ClearFormula() {
+func (m *CounterFormulaMutation) ClearFormula() {
 	m.clearedformula = true
 }
 
 // FormulaCleared returns if the edge formula was cleared.
-func (m *CounterVendorFormulaMutation) FormulaCleared() bool {
+func (m *CounterFormulaMutation) FormulaCleared() bool {
 	return m.clearedformula
 }
 
 // FormulaID returns the formula id in the mutation.
-func (m *CounterVendorFormulaMutation) FormulaID() (id int, exists bool) {
+func (m *CounterFormulaMutation) FormulaID() (id int, exists bool) {
 	if m.formula != nil {
 		return *m.formula, true
 	}
@@ -10831,7 +10888,7 @@ func (m *CounterVendorFormulaMutation) FormulaID() (id int, exists bool) {
 // FormulaIDs returns the formula ids in the mutation.
 // Note that ids always returns len(ids) <= 1 for unique edges, and you should use
 // FormulaID instead. It exists only for internal usage by the builders.
-func (m *CounterVendorFormulaMutation) FormulaIDs() (ids []int) {
+func (m *CounterFormulaMutation) FormulaIDs() (ids []int) {
 	if id := m.formula; id != nil {
 		ids = append(ids, *id)
 	}
@@ -10839,67 +10896,28 @@ func (m *CounterVendorFormulaMutation) FormulaIDs() (ids []int) {
 }
 
 // ResetFormula reset all changes of the "formula" edge.
-func (m *CounterVendorFormulaMutation) ResetFormula() {
+func (m *CounterFormulaMutation) ResetFormula() {
 	m.formula = nil
 	m.clearedformula = false
 }
 
-// SetVendorID sets the vendor edge to Vendor by id.
-func (m *CounterVendorFormulaMutation) SetVendorID(id int) {
-	m.vendor = &id
-}
-
-// ClearVendor clears the vendor edge to Vendor.
-func (m *CounterVendorFormulaMutation) ClearVendor() {
-	m.clearedvendor = true
-}
-
-// VendorCleared returns if the edge vendor was cleared.
-func (m *CounterVendorFormulaMutation) VendorCleared() bool {
-	return m.clearedvendor
-}
-
-// VendorID returns the vendor id in the mutation.
-func (m *CounterVendorFormulaMutation) VendorID() (id int, exists bool) {
-	if m.vendor != nil {
-		return *m.vendor, true
-	}
-	return
-}
-
-// VendorIDs returns the vendor ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// VendorID instead. It exists only for internal usage by the builders.
-func (m *CounterVendorFormulaMutation) VendorIDs() (ids []int) {
-	if id := m.vendor; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetVendor reset all changes of the "vendor" edge.
-func (m *CounterVendorFormulaMutation) ResetVendor() {
-	m.vendor = nil
-	m.clearedvendor = false
-}
-
 // SetCounterID sets the counter edge to Counter by id.
-func (m *CounterVendorFormulaMutation) SetCounterID(id int) {
+func (m *CounterFormulaMutation) SetCounterID(id int) {
 	m.counter = &id
 }
 
 // ClearCounter clears the counter edge to Counter.
-func (m *CounterVendorFormulaMutation) ClearCounter() {
+func (m *CounterFormulaMutation) ClearCounter() {
 	m.clearedcounter = true
 }
 
 // CounterCleared returns if the edge counter was cleared.
-func (m *CounterVendorFormulaMutation) CounterCleared() bool {
+func (m *CounterFormulaMutation) CounterCleared() bool {
 	return m.clearedcounter
 }
 
 // CounterID returns the counter id in the mutation.
-func (m *CounterVendorFormulaMutation) CounterID() (id int, exists bool) {
+func (m *CounterFormulaMutation) CounterID() (id int, exists bool) {
 	if m.counter != nil {
 		return *m.counter, true
 	}
@@ -10909,7 +10927,7 @@ func (m *CounterVendorFormulaMutation) CounterID() (id int, exists bool) {
 // CounterIDs returns the counter ids in the mutation.
 // Note that ids always returns len(ids) <= 1 for unique edges, and you should use
 // CounterID instead. It exists only for internal usage by the builders.
-func (m *CounterVendorFormulaMutation) CounterIDs() (ids []int) {
+func (m *CounterFormulaMutation) CounterIDs() (ids []int) {
 	if id := m.counter; id != nil {
 		ids = append(ids, *id)
 	}
@@ -10917,34 +10935,34 @@ func (m *CounterVendorFormulaMutation) CounterIDs() (ids []int) {
 }
 
 // ResetCounter reset all changes of the "counter" edge.
-func (m *CounterVendorFormulaMutation) ResetCounter() {
+func (m *CounterFormulaMutation) ResetCounter() {
 	m.counter = nil
 	m.clearedcounter = false
 }
 
 // Op returns the operation name.
-func (m *CounterVendorFormulaMutation) Op() Op {
+func (m *CounterFormulaMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (CounterVendorFormula).
-func (m *CounterVendorFormulaMutation) Type() string {
+// Type returns the node type of this mutation (CounterFormula).
+func (m *CounterFormulaMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
-func (m *CounterVendorFormulaMutation) Fields() []string {
+func (m *CounterFormulaMutation) Fields() []string {
 	fields := make([]string, 0, 3)
 	if m.create_time != nil {
-		fields = append(fields, countervendorformula.FieldCreateTime)
+		fields = append(fields, counterformula.FieldCreateTime)
 	}
 	if m.update_time != nil {
-		fields = append(fields, countervendorformula.FieldUpdateTime)
+		fields = append(fields, counterformula.FieldUpdateTime)
 	}
 	if m.mandatory != nil {
-		fields = append(fields, countervendorformula.FieldMandatory)
+		fields = append(fields, counterformula.FieldMandatory)
 	}
 	return fields
 }
@@ -10952,13 +10970,13 @@ func (m *CounterVendorFormulaMutation) Fields() []string {
 // Field returns the value of a field with the given name.
 // The second boolean value indicates that this field was
 // not set, or was not define in the schema.
-func (m *CounterVendorFormulaMutation) Field(name string) (ent.Value, bool) {
+func (m *CounterFormulaMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case countervendorformula.FieldCreateTime:
+	case counterformula.FieldCreateTime:
 		return m.CreateTime()
-	case countervendorformula.FieldUpdateTime:
+	case counterformula.FieldUpdateTime:
 		return m.UpdateTime()
-	case countervendorformula.FieldMandatory:
+	case counterformula.FieldMandatory:
 		return m.Mandatory()
 	}
 	return nil, false
@@ -10967,38 +10985,38 @@ func (m *CounterVendorFormulaMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database.
 // An error is returned if the mutation operation is not UpdateOne,
 // or the query to the database was failed.
-func (m *CounterVendorFormulaMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *CounterFormulaMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case countervendorformula.FieldCreateTime:
+	case counterformula.FieldCreateTime:
 		return m.OldCreateTime(ctx)
-	case countervendorformula.FieldUpdateTime:
+	case counterformula.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case countervendorformula.FieldMandatory:
+	case counterformula.FieldMandatory:
 		return m.OldMandatory(ctx)
 	}
-	return nil, fmt.Errorf("unknown CounterVendorFormula field %s", name)
+	return nil, fmt.Errorf("unknown CounterFormula field %s", name)
 }
 
 // SetField sets the value for the given name. It returns an
 // error if the field is not defined in the schema, or if the
 // type mismatch the field type.
-func (m *CounterVendorFormulaMutation) SetField(name string, value ent.Value) error {
+func (m *CounterFormulaMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case countervendorformula.FieldCreateTime:
+	case counterformula.FieldCreateTime:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreateTime(v)
 		return nil
-	case countervendorformula.FieldUpdateTime:
+	case counterformula.FieldUpdateTime:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
 		return nil
-	case countervendorformula.FieldMandatory:
+	case counterformula.FieldMandatory:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -11006,97 +11024,90 @@ func (m *CounterVendorFormulaMutation) SetField(name string, value ent.Value) er
 		m.SetMandatory(v)
 		return nil
 	}
-	return fmt.Errorf("unknown CounterVendorFormula field %s", name)
+	return fmt.Errorf("unknown CounterFormula field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
-func (m *CounterVendorFormulaMutation) AddedFields() []string {
+func (m *CounterFormulaMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
-func (m *CounterVendorFormulaMutation) AddedField(name string) (ent.Value, bool) {
+func (m *CounterFormulaMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value for the given name. It returns an
 // error if the field is not defined in the schema, or if the
 // type mismatch the field type.
-func (m *CounterVendorFormulaMutation) AddField(name string, value ent.Value) error {
+func (m *CounterFormulaMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown CounterVendorFormula numeric field %s", name)
+	return fmt.Errorf("unknown CounterFormula numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
-func (m *CounterVendorFormulaMutation) ClearedFields() []string {
+func (m *CounterFormulaMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicates if this field was
 // cleared in this mutation.
-func (m *CounterVendorFormulaMutation) FieldCleared(name string) bool {
+func (m *CounterFormulaMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *CounterVendorFormulaMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown CounterVendorFormula nullable field %s", name)
+func (m *CounterFormulaMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown CounterFormula nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation regarding the
 // given field name. It returns an error if the field is not
 // defined in the schema.
-func (m *CounterVendorFormulaMutation) ResetField(name string) error {
+func (m *CounterFormulaMutation) ResetField(name string) error {
 	switch name {
-	case countervendorformula.FieldCreateTime:
+	case counterformula.FieldCreateTime:
 		m.ResetCreateTime()
 		return nil
-	case countervendorformula.FieldUpdateTime:
+	case counterformula.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
-	case countervendorformula.FieldMandatory:
+	case counterformula.FieldMandatory:
 		m.ResetMandatory()
 		return nil
 	}
-	return fmt.Errorf("unknown CounterVendorFormula field %s", name)
+	return fmt.Errorf("unknown CounterFormula field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
-func (m *CounterVendorFormulaMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+func (m *CounterFormulaMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
 	if m.formula != nil {
-		edges = append(edges, countervendorformula.EdgeFormula)
-	}
-	if m.vendor != nil {
-		edges = append(edges, countervendorformula.EdgeVendor)
+		edges = append(edges, counterformula.EdgeFormula)
 	}
 	if m.counter != nil {
-		edges = append(edges, countervendorformula.EdgeCounter)
+		edges = append(edges, counterformula.EdgeCounter)
 	}
 	return edges
 }
 
 // AddedIDs returns all ids (to other nodes) that were added for
 // the given edge name.
-func (m *CounterVendorFormulaMutation) AddedIDs(name string) []ent.Value {
+func (m *CounterFormulaMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case countervendorformula.EdgeFormula:
+	case counterformula.EdgeFormula:
 		if id := m.formula; id != nil {
 			return []ent.Value{*id}
 		}
-	case countervendorformula.EdgeVendor:
-		if id := m.vendor; id != nil {
-			return []ent.Value{*id}
-		}
-	case countervendorformula.EdgeCounter:
+	case counterformula.EdgeCounter:
 		if id := m.counter; id != nil {
 			return []ent.Value{*id}
 		}
@@ -11106,14 +11117,14 @@ func (m *CounterVendorFormulaMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
-func (m *CounterVendorFormulaMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+func (m *CounterFormulaMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
 	return edges
 }
 
 // RemovedIDs returns all ids (to other nodes) that were removed for
 // the given edge name.
-func (m *CounterVendorFormulaMutation) RemovedIDs(name string) []ent.Value {
+func (m *CounterFormulaMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
 	}
 	return nil
@@ -11121,29 +11132,24 @@ func (m *CounterVendorFormulaMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
-func (m *CounterVendorFormulaMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+func (m *CounterFormulaMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
 	if m.clearedformula {
-		edges = append(edges, countervendorformula.EdgeFormula)
-	}
-	if m.clearedvendor {
-		edges = append(edges, countervendorformula.EdgeVendor)
+		edges = append(edges, counterformula.EdgeFormula)
 	}
 	if m.clearedcounter {
-		edges = append(edges, countervendorformula.EdgeCounter)
+		edges = append(edges, counterformula.EdgeCounter)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean indicates if this edge was
 // cleared in this mutation.
-func (m *CounterVendorFormulaMutation) EdgeCleared(name string) bool {
+func (m *CounterFormulaMutation) EdgeCleared(name string) bool {
 	switch name {
-	case countervendorformula.EdgeFormula:
+	case counterformula.EdgeFormula:
 		return m.clearedformula
-	case countervendorformula.EdgeVendor:
-		return m.clearedvendor
-	case countervendorformula.EdgeCounter:
+	case counterformula.EdgeCounter:
 		return m.clearedcounter
 	}
 	return false
@@ -11151,37 +11157,31 @@ func (m *CounterVendorFormulaMutation) EdgeCleared(name string) bool {
 
 // ClearEdge clears the value for the given name. It returns an
 // error if the edge name is not defined in the schema.
-func (m *CounterVendorFormulaMutation) ClearEdge(name string) error {
+func (m *CounterFormulaMutation) ClearEdge(name string) error {
 	switch name {
-	case countervendorformula.EdgeFormula:
+	case counterformula.EdgeFormula:
 		m.ClearFormula()
 		return nil
-	case countervendorformula.EdgeVendor:
-		m.ClearVendor()
-		return nil
-	case countervendorformula.EdgeCounter:
+	case counterformula.EdgeCounter:
 		m.ClearCounter()
 		return nil
 	}
-	return fmt.Errorf("unknown CounterVendorFormula unique edge %s", name)
+	return fmt.Errorf("unknown CounterFormula unique edge %s", name)
 }
 
 // ResetEdge resets all changes in the mutation regarding the
 // given edge name. It returns an error if the edge is not
 // defined in the schema.
-func (m *CounterVendorFormulaMutation) ResetEdge(name string) error {
+func (m *CounterFormulaMutation) ResetEdge(name string) error {
 	switch name {
-	case countervendorformula.EdgeFormula:
+	case counterformula.EdgeFormula:
 		m.ResetFormula()
 		return nil
-	case countervendorformula.EdgeVendor:
-		m.ResetVendor()
-		return nil
-	case countervendorformula.EdgeCounter:
+	case counterformula.EdgeCounter:
 		m.ResetCounter()
 		return nil
 	}
-	return fmt.Errorf("unknown CounterVendorFormula edge %s", name)
+	return fmt.Errorf("unknown CounterFormula edge %s", name)
 }
 
 // CustomerMutation represents an operation that mutate the Customers
@@ -29230,24 +29230,24 @@ func (m *FlowInstanceMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type FormulaMutation struct {
 	config
-	op                          Op
-	typ                         string
-	id                          *int
-	create_time                 *time.Time
-	update_time                 *time.Time
-	name                        *string
-	active                      *bool
-	clearedFields               map[string]struct{}
-	tech                        *int
-	clearedtech                 bool
-	kpi                         *int
-	clearedkpi                  bool
-	countervendorformula        map[int]struct{}
-	removedcountervendorformula map[int]struct{}
-	clearedcountervendorformula bool
-	done                        bool
-	oldValue                    func(context.Context) (*Formula, error)
-	predicates                  []predicate.Formula
+	op                    Op
+	typ                   string
+	id                    *int
+	create_time           *time.Time
+	update_time           *time.Time
+	name                  *string
+	active                *bool
+	clearedFields         map[string]struct{}
+	tech                  *int
+	clearedtech           bool
+	kpi                   *int
+	clearedkpi            bool
+	counterformula        map[int]struct{}
+	removedcounterformula map[int]struct{}
+	clearedcounterformula bool
+	done                  bool
+	oldValue              func(context.Context) (*Formula, error)
+	predicates            []predicate.Formula
 }
 
 var _ ent.Mutation = (*FormulaMutation)(nil)
@@ -29555,57 +29555,57 @@ func (m *FormulaMutation) ResetKpi() {
 	m.clearedkpi = false
 }
 
-// AddCountervendorformulaIDs adds the countervendorformula edge to CounterVendorFormula by ids.
-func (m *FormulaMutation) AddCountervendorformulaIDs(ids ...int) {
-	if m.countervendorformula == nil {
-		m.countervendorformula = make(map[int]struct{})
+// AddCounterformulaIDs adds the counterformula edge to CounterFormula by ids.
+func (m *FormulaMutation) AddCounterformulaIDs(ids ...int) {
+	if m.counterformula == nil {
+		m.counterformula = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.countervendorformula[ids[i]] = struct{}{}
+		m.counterformula[ids[i]] = struct{}{}
 	}
 }
 
-// ClearCountervendorformula clears the countervendorformula edge to CounterVendorFormula.
-func (m *FormulaMutation) ClearCountervendorformula() {
-	m.clearedcountervendorformula = true
+// ClearCounterformula clears the counterformula edge to CounterFormula.
+func (m *FormulaMutation) ClearCounterformula() {
+	m.clearedcounterformula = true
 }
 
-// CountervendorformulaCleared returns if the edge countervendorformula was cleared.
-func (m *FormulaMutation) CountervendorformulaCleared() bool {
-	return m.clearedcountervendorformula
+// CounterformulaCleared returns if the edge counterformula was cleared.
+func (m *FormulaMutation) CounterformulaCleared() bool {
+	return m.clearedcounterformula
 }
 
-// RemoveCountervendorformulaIDs removes the countervendorformula edge to CounterVendorFormula by ids.
-func (m *FormulaMutation) RemoveCountervendorformulaIDs(ids ...int) {
-	if m.removedcountervendorformula == nil {
-		m.removedcountervendorformula = make(map[int]struct{})
+// RemoveCounterformulaIDs removes the counterformula edge to CounterFormula by ids.
+func (m *FormulaMutation) RemoveCounterformulaIDs(ids ...int) {
+	if m.removedcounterformula == nil {
+		m.removedcounterformula = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.removedcountervendorformula[ids[i]] = struct{}{}
+		m.removedcounterformula[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedCountervendorformula returns the removed ids of countervendorformula.
-func (m *FormulaMutation) RemovedCountervendorformulaIDs() (ids []int) {
-	for id := range m.removedcountervendorformula {
+// RemovedCounterformula returns the removed ids of counterformula.
+func (m *FormulaMutation) RemovedCounterformulaIDs() (ids []int) {
+	for id := range m.removedcounterformula {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// CountervendorformulaIDs returns the countervendorformula ids in the mutation.
-func (m *FormulaMutation) CountervendorformulaIDs() (ids []int) {
-	for id := range m.countervendorformula {
+// CounterformulaIDs returns the counterformula ids in the mutation.
+func (m *FormulaMutation) CounterformulaIDs() (ids []int) {
+	for id := range m.counterformula {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetCountervendorformula reset all changes of the "countervendorformula" edge.
-func (m *FormulaMutation) ResetCountervendorformula() {
-	m.countervendorformula = nil
-	m.clearedcountervendorformula = false
-	m.removedcountervendorformula = nil
+// ResetCounterformula reset all changes of the "counterformula" edge.
+func (m *FormulaMutation) ResetCounterformula() {
+	m.counterformula = nil
+	m.clearedcounterformula = false
+	m.removedcounterformula = nil
 }
 
 // Op returns the operation name.
@@ -29781,8 +29781,8 @@ func (m *FormulaMutation) AddedEdges() []string {
 	if m.kpi != nil {
 		edges = append(edges, formula.EdgeKpi)
 	}
-	if m.countervendorformula != nil {
-		edges = append(edges, formula.EdgeCountervendorformula)
+	if m.counterformula != nil {
+		edges = append(edges, formula.EdgeCounterformula)
 	}
 	return edges
 }
@@ -29799,9 +29799,9 @@ func (m *FormulaMutation) AddedIDs(name string) []ent.Value {
 		if id := m.kpi; id != nil {
 			return []ent.Value{*id}
 		}
-	case formula.EdgeCountervendorformula:
-		ids := make([]ent.Value, 0, len(m.countervendorformula))
-		for id := range m.countervendorformula {
+	case formula.EdgeCounterformula:
+		ids := make([]ent.Value, 0, len(m.counterformula))
+		for id := range m.counterformula {
 			ids = append(ids, id)
 		}
 		return ids
@@ -29813,8 +29813,8 @@ func (m *FormulaMutation) AddedIDs(name string) []ent.Value {
 // mutation.
 func (m *FormulaMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removedcountervendorformula != nil {
-		edges = append(edges, formula.EdgeCountervendorformula)
+	if m.removedcounterformula != nil {
+		edges = append(edges, formula.EdgeCounterformula)
 	}
 	return edges
 }
@@ -29823,9 +29823,9 @@ func (m *FormulaMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *FormulaMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case formula.EdgeCountervendorformula:
-		ids := make([]ent.Value, 0, len(m.removedcountervendorformula))
-		for id := range m.removedcountervendorformula {
+	case formula.EdgeCounterformula:
+		ids := make([]ent.Value, 0, len(m.removedcounterformula))
+		for id := range m.removedcounterformula {
 			ids = append(ids, id)
 		}
 		return ids
@@ -29843,8 +29843,8 @@ func (m *FormulaMutation) ClearedEdges() []string {
 	if m.clearedkpi {
 		edges = append(edges, formula.EdgeKpi)
 	}
-	if m.clearedcountervendorformula {
-		edges = append(edges, formula.EdgeCountervendorformula)
+	if m.clearedcounterformula {
+		edges = append(edges, formula.EdgeCounterformula)
 	}
 	return edges
 }
@@ -29857,8 +29857,8 @@ func (m *FormulaMutation) EdgeCleared(name string) bool {
 		return m.clearedtech
 	case formula.EdgeKpi:
 		return m.clearedkpi
-	case formula.EdgeCountervendorformula:
-		return m.clearedcountervendorformula
+	case formula.EdgeCounterformula:
+		return m.clearedcounterformula
 	}
 	return false
 }
@@ -29888,8 +29888,8 @@ func (m *FormulaMutation) ResetEdge(name string) error {
 	case formula.EdgeKpi:
 		m.ResetKpi()
 		return nil
-	case formula.EdgeCountervendorformula:
-		m.ResetCountervendorformula()
+	case formula.EdgeCounterformula:
+		m.ResetCounterformula()
 		return nil
 	}
 	return fmt.Errorf("unknown Formula edge %s", name)
@@ -61026,7 +61026,7 @@ func (m *VendorMutation) ResetName() {
 	m.name = nil
 }
 
-// AddVendorFkIDs adds the vendor_fk edge to CounterVendorFormula by ids.
+// AddVendorFkIDs adds the vendor_fk edge to Counter by ids.
 func (m *VendorMutation) AddVendorFkIDs(ids ...int) {
 	if m.vendor_fk == nil {
 		m.vendor_fk = make(map[int]struct{})
@@ -61036,7 +61036,7 @@ func (m *VendorMutation) AddVendorFkIDs(ids ...int) {
 	}
 }
 
-// ClearVendorFk clears the vendor_fk edge to CounterVendorFormula.
+// ClearVendorFk clears the vendor_fk edge to Counter.
 func (m *VendorMutation) ClearVendorFk() {
 	m.clearedvendor_fk = true
 }
@@ -61046,7 +61046,7 @@ func (m *VendorMutation) VendorFkCleared() bool {
 	return m.clearedvendor_fk
 }
 
-// RemoveVendorFkIDs removes the vendor_fk edge to CounterVendorFormula by ids.
+// RemoveVendorFkIDs removes the vendor_fk edge to Counter by ids.
 func (m *VendorMutation) RemoveVendorFkIDs(ids ...int) {
 	if m.removedvendor_fk == nil {
 		m.removedvendor_fk = make(map[int]struct{})

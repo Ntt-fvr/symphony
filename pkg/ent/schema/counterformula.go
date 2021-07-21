@@ -12,25 +12,22 @@ import (
 )
 
 // Counter defines the property type schema.
-type CounterVendorFormula struct {
+type CounterFormula struct {
 	schema
 }
 
 // Counter returns property type counter.
-func (CounterVendorFormula) Fields() []ent.Field {
+func (CounterFormula) Fields() []ent.Field {
 	return []ent.Field{
 		field.Bool("mandatory"),
 	}
 }
 
 // Edges returns expression type edges.
-func (CounterVendorFormula) Edges() []ent.Edge {
+func (CounterFormula) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("formula", Formula.Type).
-			Ref("countervendorformula").
-			Unique(),
-		edge.From("vendor", Vendor.Type).
-			Ref("vendor_fk").
+			Ref("counterformula").
 			Unique(),
 		edge.From("counter", Counter.Type).
 			Ref("counter_fk").
@@ -39,7 +36,7 @@ func (CounterVendorFormula) Edges() []ent.Edge {
 }
 
 // Policy returns entity policy.
-func (CounterVendorFormula) Policy() ent.Policy {
+func (CounterFormula) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

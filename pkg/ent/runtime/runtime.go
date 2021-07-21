@@ -23,7 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
@@ -420,29 +420,29 @@ func init() {
 	counterfamilyDescName := counterfamilyFields[0].Descriptor()
 	// counterfamily.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	counterfamily.NameValidator = counterfamilyDescName.Validators[0].(func(string) error)
-	countervendorformulaMixin := schema.CounterVendorFormula{}.Mixin()
-	countervendorformula.Policy = privacy.NewPolicies(schema.CounterVendorFormula{})
-	countervendorformula.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	counterformulaMixin := schema.CounterFormula{}.Mixin()
+	counterformula.Policy = privacy.NewPolicies(schema.CounterFormula{})
+	counterformula.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := countervendorformula.Policy.EvalMutation(ctx, m); err != nil {
+			if err := counterformula.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-	countervendorformulaMixinFields0 := countervendorformulaMixin[0].Fields()
-	countervendorformulaFields := schema.CounterVendorFormula{}.Fields()
-	_ = countervendorformulaFields
-	// countervendorformulaDescCreateTime is the schema descriptor for create_time field.
-	countervendorformulaDescCreateTime := countervendorformulaMixinFields0[0].Descriptor()
-	// countervendorformula.DefaultCreateTime holds the default value on creation for the create_time field.
-	countervendorformula.DefaultCreateTime = countervendorformulaDescCreateTime.Default.(func() time.Time)
-	// countervendorformulaDescUpdateTime is the schema descriptor for update_time field.
-	countervendorformulaDescUpdateTime := countervendorformulaMixinFields0[1].Descriptor()
-	// countervendorformula.DefaultUpdateTime holds the default value on creation for the update_time field.
-	countervendorformula.DefaultUpdateTime = countervendorformulaDescUpdateTime.Default.(func() time.Time)
-	// countervendorformula.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	countervendorformula.UpdateDefaultUpdateTime = countervendorformulaDescUpdateTime.UpdateDefault.(func() time.Time)
+	counterformulaMixinFields0 := counterformulaMixin[0].Fields()
+	counterformulaFields := schema.CounterFormula{}.Fields()
+	_ = counterformulaFields
+	// counterformulaDescCreateTime is the schema descriptor for create_time field.
+	counterformulaDescCreateTime := counterformulaMixinFields0[0].Descriptor()
+	// counterformula.DefaultCreateTime holds the default value on creation for the create_time field.
+	counterformula.DefaultCreateTime = counterformulaDescCreateTime.Default.(func() time.Time)
+	// counterformulaDescUpdateTime is the schema descriptor for update_time field.
+	counterformulaDescUpdateTime := counterformulaMixinFields0[1].Descriptor()
+	// counterformula.DefaultUpdateTime holds the default value on creation for the update_time field.
+	counterformula.DefaultUpdateTime = counterformulaDescUpdateTime.Default.(func() time.Time)
+	// counterformula.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	counterformula.UpdateDefaultUpdateTime = counterformulaDescUpdateTime.UpdateDefault.(func() time.Time)
 	customerMixin := schema.Customer{}.Mixin()
 	customer.Policy = privacy.NewPolicies(schema.Customer{})
 	customer.Hooks[0] = func(next ent.Mutator) ent.Mutator {

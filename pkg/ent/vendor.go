@@ -34,7 +34,7 @@ type Vendor struct {
 // VendorEdges holds the relations/edges for other nodes in the graph.
 type VendorEdges struct {
 	// VendorFk holds the value of the vendor_fk edge.
-	VendorFk []*CounterVendorFormula
+	VendorFk []*Counter
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -42,7 +42,7 @@ type VendorEdges struct {
 
 // VendorFkOrErr returns the VendorFk value or an error if the edge
 // was not loaded in eager-loading.
-func (e VendorEdges) VendorFkOrErr() ([]*CounterVendorFormula, error) {
+func (e VendorEdges) VendorFkOrErr() ([]*Counter, error) {
 	if e.loadedTypes[0] {
 		return e.VendorFk, nil
 	}
@@ -90,7 +90,7 @@ func (v *Vendor) assignValues(values ...interface{}) error {
 }
 
 // QueryVendorFk queries the vendor_fk edge of the Vendor.
-func (v *Vendor) QueryVendorFk() *CounterVendorFormulaQuery {
+func (v *Vendor) QueryVendorFk() *CounterQuery {
 	return (&VendorClient{config: v.config}).QueryVendorFk(v)
 }
 

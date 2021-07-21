@@ -15,8 +15,9 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // CounterUpdate is the builder for updating Counter entities.
@@ -69,14 +70,33 @@ func (cu *CounterUpdate) SetCounterfamily(c *CounterFamily) *CounterUpdate {
 	return cu.SetCounterfamilyID(c.ID)
 }
 
-// AddCounterFkIDs adds the counter_fk edge to CounterVendorFormula by ids.
+// SetVendorID sets the vendor edge to Vendor by id.
+func (cu *CounterUpdate) SetVendorID(id int) *CounterUpdate {
+	cu.mutation.SetVendorID(id)
+	return cu
+}
+
+// SetNillableVendorID sets the vendor edge to Vendor by id if the given value is not nil.
+func (cu *CounterUpdate) SetNillableVendorID(id *int) *CounterUpdate {
+	if id != nil {
+		cu = cu.SetVendorID(*id)
+	}
+	return cu
+}
+
+// SetVendor sets the vendor edge to Vendor.
+func (cu *CounterUpdate) SetVendor(v *Vendor) *CounterUpdate {
+	return cu.SetVendorID(v.ID)
+}
+
+// AddCounterFkIDs adds the counter_fk edge to CounterFormula by ids.
 func (cu *CounterUpdate) AddCounterFkIDs(ids ...int) *CounterUpdate {
 	cu.mutation.AddCounterFkIDs(ids...)
 	return cu
 }
 
-// AddCounterFk adds the counter_fk edges to CounterVendorFormula.
-func (cu *CounterUpdate) AddCounterFk(c ...*CounterVendorFormula) *CounterUpdate {
+// AddCounterFk adds the counter_fk edges to CounterFormula.
+func (cu *CounterUpdate) AddCounterFk(c ...*CounterFormula) *CounterUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -95,20 +115,26 @@ func (cu *CounterUpdate) ClearCounterfamily() *CounterUpdate {
 	return cu
 }
 
-// ClearCounterFk clears all "counter_fk" edges to type CounterVendorFormula.
+// ClearVendor clears the "vendor" edge to type Vendor.
+func (cu *CounterUpdate) ClearVendor() *CounterUpdate {
+	cu.mutation.ClearVendor()
+	return cu
+}
+
+// ClearCounterFk clears all "counter_fk" edges to type CounterFormula.
 func (cu *CounterUpdate) ClearCounterFk() *CounterUpdate {
 	cu.mutation.ClearCounterFk()
 	return cu
 }
 
-// RemoveCounterFkIDs removes the counter_fk edge to CounterVendorFormula by ids.
+// RemoveCounterFkIDs removes the counter_fk edge to CounterFormula by ids.
 func (cu *CounterUpdate) RemoveCounterFkIDs(ids ...int) *CounterUpdate {
 	cu.mutation.RemoveCounterFkIDs(ids...)
 	return cu
 }
 
-// RemoveCounterFk removes counter_fk edges to CounterVendorFormula.
-func (cu *CounterUpdate) RemoveCounterFk(c ...*CounterVendorFormula) *CounterUpdate {
+// RemoveCounterFk removes counter_fk edges to CounterFormula.
+func (cu *CounterUpdate) RemoveCounterFk(c ...*CounterFormula) *CounterUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -273,6 +299,41 @@ func (cu *CounterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if cu.mutation.VendorCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   counter.VendorTable,
+			Columns: []string{counter.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.VendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   counter.VendorTable,
+			Columns: []string{counter.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if cu.mutation.CounterFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -283,7 +344,7 @@ func (cu *CounterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -299,7 +360,7 @@ func (cu *CounterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -318,7 +379,7 @@ func (cu *CounterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -382,14 +443,33 @@ func (cuo *CounterUpdateOne) SetCounterfamily(c *CounterFamily) *CounterUpdateOn
 	return cuo.SetCounterfamilyID(c.ID)
 }
 
-// AddCounterFkIDs adds the counter_fk edge to CounterVendorFormula by ids.
+// SetVendorID sets the vendor edge to Vendor by id.
+func (cuo *CounterUpdateOne) SetVendorID(id int) *CounterUpdateOne {
+	cuo.mutation.SetVendorID(id)
+	return cuo
+}
+
+// SetNillableVendorID sets the vendor edge to Vendor by id if the given value is not nil.
+func (cuo *CounterUpdateOne) SetNillableVendorID(id *int) *CounterUpdateOne {
+	if id != nil {
+		cuo = cuo.SetVendorID(*id)
+	}
+	return cuo
+}
+
+// SetVendor sets the vendor edge to Vendor.
+func (cuo *CounterUpdateOne) SetVendor(v *Vendor) *CounterUpdateOne {
+	return cuo.SetVendorID(v.ID)
+}
+
+// AddCounterFkIDs adds the counter_fk edge to CounterFormula by ids.
 func (cuo *CounterUpdateOne) AddCounterFkIDs(ids ...int) *CounterUpdateOne {
 	cuo.mutation.AddCounterFkIDs(ids...)
 	return cuo
 }
 
-// AddCounterFk adds the counter_fk edges to CounterVendorFormula.
-func (cuo *CounterUpdateOne) AddCounterFk(c ...*CounterVendorFormula) *CounterUpdateOne {
+// AddCounterFk adds the counter_fk edges to CounterFormula.
+func (cuo *CounterUpdateOne) AddCounterFk(c ...*CounterFormula) *CounterUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -408,20 +488,26 @@ func (cuo *CounterUpdateOne) ClearCounterfamily() *CounterUpdateOne {
 	return cuo
 }
 
-// ClearCounterFk clears all "counter_fk" edges to type CounterVendorFormula.
+// ClearVendor clears the "vendor" edge to type Vendor.
+func (cuo *CounterUpdateOne) ClearVendor() *CounterUpdateOne {
+	cuo.mutation.ClearVendor()
+	return cuo
+}
+
+// ClearCounterFk clears all "counter_fk" edges to type CounterFormula.
 func (cuo *CounterUpdateOne) ClearCounterFk() *CounterUpdateOne {
 	cuo.mutation.ClearCounterFk()
 	return cuo
 }
 
-// RemoveCounterFkIDs removes the counter_fk edge to CounterVendorFormula by ids.
+// RemoveCounterFkIDs removes the counter_fk edge to CounterFormula by ids.
 func (cuo *CounterUpdateOne) RemoveCounterFkIDs(ids ...int) *CounterUpdateOne {
 	cuo.mutation.RemoveCounterFkIDs(ids...)
 	return cuo
 }
 
-// RemoveCounterFk removes counter_fk edges to CounterVendorFormula.
-func (cuo *CounterUpdateOne) RemoveCounterFk(c ...*CounterVendorFormula) *CounterUpdateOne {
+// RemoveCounterFk removes counter_fk edges to CounterFormula.
+func (cuo *CounterUpdateOne) RemoveCounterFk(c ...*CounterFormula) *CounterUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -584,6 +670,41 @@ func (cuo *CounterUpdateOne) sqlSave(ctx context.Context) (_node *Counter, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if cuo.mutation.VendorCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   counter.VendorTable,
+			Columns: []string{counter.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.VendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   counter.VendorTable,
+			Columns: []string{counter.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if cuo.mutation.CounterFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -594,7 +715,7 @@ func (cuo *CounterUpdateOne) sqlSave(ctx context.Context) (_node *Counter, err e
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -610,7 +731,7 @@ func (cuo *CounterUpdateOne) sqlSave(ctx context.Context) (_node *Counter, err e
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -629,7 +750,7 @@ func (cuo *CounterUpdateOne) sqlSave(ctx context.Context) (_node *Counter, err e
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}

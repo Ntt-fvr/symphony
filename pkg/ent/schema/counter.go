@@ -33,7 +33,10 @@ func (Counter) Edges() []ent.Edge {
 		edge.From("counterfamily", CounterFamily.Type).
 			Ref("counterfamily").
 			Unique(),
-		edge.To("counter_fk", CounterVendorFormula.Type).
+		edge.From("vendor", Vendor.Type).
+			Ref("vendor_fk").
+			Unique(),
+		edge.To("counter_fk", CounterFormula.Type).
 			Annotations(entgql.MapsTo("counter")),
 	}
 }

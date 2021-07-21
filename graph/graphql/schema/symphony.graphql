@@ -5436,9 +5436,9 @@ type Mutation {
   addTech(input: AddTechInput!):Tech!
   editTech(input: EditTechInput!): Tech!
   removeTech(id: ID!): ID!
-  addCounterVendorFormula(input: AddCounterVendorFormulaInput!):CounterVendorFormula!
-  editCounterVendorFormula(input: EditCounterVendorFormulaInput!):CounterVendorFormula!
-  removeCounterVendorFormula(id: ID!): ID!
+  addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
+  editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
+  removeCounterFormula(id: ID!): ID!
   addTreshold(input: AddTresholdInput!):Treshold!
   editTreshold(input: EditTresholdInput!): Treshold!
   removeTreshold(id: ID!): ID!
@@ -5504,23 +5504,17 @@ type Counter implements Node {
   name: String!
   externalID: String!
   networkManagerSystem: String!
-  countervendorformula: [CounterVendorFormula]!
+  counterformula: [CounterFormula]!
   counterFamily: CounterFamily
-}
-
-input CounterInput {
-  name: String!
-  externalID: String!
-  networkManagerSystem: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  vendorFk: Vendor!
 }
 
 input AddCounterInput {
   name: String!
   externalID: String!
   networkManagerSystem: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
   counterFamily: ID!
+  vendorFk: ID!
 }
 
 input EditCounterInput {
@@ -5528,7 +5522,7 @@ input EditCounterInput {
   name: String!
   externalID: String!
   networkManagerSystem: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  vendorFk: ID!
 }
 
 type CounterFamily implements Node {
@@ -5668,7 +5662,7 @@ type Formula implements Node {
   active: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
-  countervendorformulaFk: [CounterVendorFormula]
+  counterformulaFk: [CounterFormula]
 }
 
 input AddFormulaInput {
@@ -5686,25 +5680,22 @@ input EditFormulaInput {
   kpiFk: ID!
 }
 
-type CounterVendorFormula implements Node {
+type CounterFormula implements Node {
   id: ID!
   mandatory: Boolean!
-  vendorFk: Vendor!
   counterFk: Counter!
   formulaFk: Formula!
 }
 
-input AddCounterVendorFormulaInput {
+input AddCounterFormulaInput {
   mandatory: Boolean!
-  vendorFk: ID!
   counterFk: ID!
   formulaFk: ID!
 }
 
-input EditCounterVendorFormulaInput {
+input EditCounterFormulaInput {
   id: ID!
   mandatory: Boolean!
-  vendorFk: ID!
   counterFk: ID!
   formulaFk: ID!
 }

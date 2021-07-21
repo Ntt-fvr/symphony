@@ -13,7 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -83,19 +83,19 @@ func (fu *FormulaUpdate) SetKpi(k *Kpi) *FormulaUpdate {
 	return fu.SetKpiID(k.ID)
 }
 
-// AddCountervendorformulaIDs adds the countervendorformula edge to CounterVendorFormula by ids.
-func (fu *FormulaUpdate) AddCountervendorformulaIDs(ids ...int) *FormulaUpdate {
-	fu.mutation.AddCountervendorformulaIDs(ids...)
+// AddCounterformulaIDs adds the counterformula edge to CounterFormula by ids.
+func (fu *FormulaUpdate) AddCounterformulaIDs(ids ...int) *FormulaUpdate {
+	fu.mutation.AddCounterformulaIDs(ids...)
 	return fu
 }
 
-// AddCountervendorformula adds the countervendorformula edges to CounterVendorFormula.
-func (fu *FormulaUpdate) AddCountervendorformula(c ...*CounterVendorFormula) *FormulaUpdate {
+// AddCounterformula adds the counterformula edges to CounterFormula.
+func (fu *FormulaUpdate) AddCounterformula(c ...*CounterFormula) *FormulaUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return fu.AddCountervendorformulaIDs(ids...)
+	return fu.AddCounterformulaIDs(ids...)
 }
 
 // Mutation returns the FormulaMutation object of the builder.
@@ -115,25 +115,25 @@ func (fu *FormulaUpdate) ClearKpi() *FormulaUpdate {
 	return fu
 }
 
-// ClearCountervendorformula clears all "countervendorformula" edges to type CounterVendorFormula.
-func (fu *FormulaUpdate) ClearCountervendorformula() *FormulaUpdate {
-	fu.mutation.ClearCountervendorformula()
+// ClearCounterformula clears all "counterformula" edges to type CounterFormula.
+func (fu *FormulaUpdate) ClearCounterformula() *FormulaUpdate {
+	fu.mutation.ClearCounterformula()
 	return fu
 }
 
-// RemoveCountervendorformulaIDs removes the countervendorformula edge to CounterVendorFormula by ids.
-func (fu *FormulaUpdate) RemoveCountervendorformulaIDs(ids ...int) *FormulaUpdate {
-	fu.mutation.RemoveCountervendorformulaIDs(ids...)
+// RemoveCounterformulaIDs removes the counterformula edge to CounterFormula by ids.
+func (fu *FormulaUpdate) RemoveCounterformulaIDs(ids ...int) *FormulaUpdate {
+	fu.mutation.RemoveCounterformulaIDs(ids...)
 	return fu
 }
 
-// RemoveCountervendorformula removes countervendorformula edges to CounterVendorFormula.
-func (fu *FormulaUpdate) RemoveCountervendorformula(c ...*CounterVendorFormula) *FormulaUpdate {
+// RemoveCounterformula removes counterformula edges to CounterFormula.
+func (fu *FormulaUpdate) RemoveCounterformula(c ...*CounterFormula) *FormulaUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return fu.RemoveCountervendorformulaIDs(ids...)
+	return fu.RemoveCounterformulaIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -321,33 +321,33 @@ func (fu *FormulaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if fu.mutation.CountervendorformulaCleared() {
+	if fu.mutation.CounterformulaCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fu.mutation.RemovedCountervendorformulaIDs(); len(nodes) > 0 && !fu.mutation.CountervendorformulaCleared() {
+	if nodes := fu.mutation.RemovedCounterformulaIDs(); len(nodes) > 0 && !fu.mutation.CounterformulaCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -356,17 +356,17 @@ func (fu *FormulaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fu.mutation.CountervendorformulaIDs(); len(nodes) > 0 {
+	if nodes := fu.mutation.CounterformulaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -443,19 +443,19 @@ func (fuo *FormulaUpdateOne) SetKpi(k *Kpi) *FormulaUpdateOne {
 	return fuo.SetKpiID(k.ID)
 }
 
-// AddCountervendorformulaIDs adds the countervendorformula edge to CounterVendorFormula by ids.
-func (fuo *FormulaUpdateOne) AddCountervendorformulaIDs(ids ...int) *FormulaUpdateOne {
-	fuo.mutation.AddCountervendorformulaIDs(ids...)
+// AddCounterformulaIDs adds the counterformula edge to CounterFormula by ids.
+func (fuo *FormulaUpdateOne) AddCounterformulaIDs(ids ...int) *FormulaUpdateOne {
+	fuo.mutation.AddCounterformulaIDs(ids...)
 	return fuo
 }
 
-// AddCountervendorformula adds the countervendorformula edges to CounterVendorFormula.
-func (fuo *FormulaUpdateOne) AddCountervendorformula(c ...*CounterVendorFormula) *FormulaUpdateOne {
+// AddCounterformula adds the counterformula edges to CounterFormula.
+func (fuo *FormulaUpdateOne) AddCounterformula(c ...*CounterFormula) *FormulaUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return fuo.AddCountervendorformulaIDs(ids...)
+	return fuo.AddCounterformulaIDs(ids...)
 }
 
 // Mutation returns the FormulaMutation object of the builder.
@@ -475,25 +475,25 @@ func (fuo *FormulaUpdateOne) ClearKpi() *FormulaUpdateOne {
 	return fuo
 }
 
-// ClearCountervendorformula clears all "countervendorformula" edges to type CounterVendorFormula.
-func (fuo *FormulaUpdateOne) ClearCountervendorformula() *FormulaUpdateOne {
-	fuo.mutation.ClearCountervendorformula()
+// ClearCounterformula clears all "counterformula" edges to type CounterFormula.
+func (fuo *FormulaUpdateOne) ClearCounterformula() *FormulaUpdateOne {
+	fuo.mutation.ClearCounterformula()
 	return fuo
 }
 
-// RemoveCountervendorformulaIDs removes the countervendorformula edge to CounterVendorFormula by ids.
-func (fuo *FormulaUpdateOne) RemoveCountervendorformulaIDs(ids ...int) *FormulaUpdateOne {
-	fuo.mutation.RemoveCountervendorformulaIDs(ids...)
+// RemoveCounterformulaIDs removes the counterformula edge to CounterFormula by ids.
+func (fuo *FormulaUpdateOne) RemoveCounterformulaIDs(ids ...int) *FormulaUpdateOne {
+	fuo.mutation.RemoveCounterformulaIDs(ids...)
 	return fuo
 }
 
-// RemoveCountervendorformula removes countervendorformula edges to CounterVendorFormula.
-func (fuo *FormulaUpdateOne) RemoveCountervendorformula(c ...*CounterVendorFormula) *FormulaUpdateOne {
+// RemoveCounterformula removes counterformula edges to CounterFormula.
+func (fuo *FormulaUpdateOne) RemoveCounterformula(c ...*CounterFormula) *FormulaUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return fuo.RemoveCountervendorformulaIDs(ids...)
+	return fuo.RemoveCounterformulaIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -679,33 +679,33 @@ func (fuo *FormulaUpdateOne) sqlSave(ctx context.Context) (_node *Formula, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if fuo.mutation.CountervendorformulaCleared() {
+	if fuo.mutation.CounterformulaCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fuo.mutation.RemovedCountervendorformulaIDs(); len(nodes) > 0 && !fuo.mutation.CountervendorformulaCleared() {
+	if nodes := fuo.mutation.RemovedCounterformulaIDs(); len(nodes) > 0 && !fuo.mutation.CounterformulaCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}
@@ -714,17 +714,17 @@ func (fuo *FormulaUpdateOne) sqlSave(ctx context.Context) (_node *Formula, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fuo.mutation.CountervendorformulaIDs(); len(nodes) > 0 {
+	if nodes := fuo.mutation.CounterformulaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}

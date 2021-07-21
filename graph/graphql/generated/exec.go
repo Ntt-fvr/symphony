@@ -68,7 +68,7 @@ type ResolverRoot interface {
 	BlockVariable() BlockVariableResolver
 	Comparator() ComparatorResolver
 	Counter() CounterResolver
-	CounterVendorFormula() CounterVendorFormulaResolver
+	CounterFormula() CounterFormulaResolver
 	Equipment() EquipmentResolver
 	EquipmentPortType() EquipmentPortTypeResolver
 	EquipmentType() EquipmentTypeResolver
@@ -329,11 +329,12 @@ type ComplexityRoot struct {
 
 	Counter struct {
 		Counterfamily        func(childComplexity int) int
-		Countervendorformula func(childComplexity int) int
+		Counterformula       func(childComplexity int) int
 		ExternalId           func(childComplexity int) int
 		ID                   func(childComplexity int) int
 		Name                 func(childComplexity int) int
 		NetworkManagerSystem func(childComplexity int) int
+		VendorFk             func(childComplexity int) int
 	}
 
 	CounterConnection struct {
@@ -363,12 +364,11 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
-	CounterVendorFormula struct {
+	CounterFormula struct {
 		CounterFk func(childComplexity int) int
 		FormulaFk func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Mandatory func(childComplexity int) int
-		VendorFk  func(childComplexity int) int
 	}
 
 	Customer struct {
@@ -705,12 +705,12 @@ type ComplexityRoot struct {
 	}
 
 	Formula struct {
-		Active                 func(childComplexity int) int
-		CountervendorformulaFk func(childComplexity int) int
-		ID                     func(childComplexity int) int
-		KpiFk                  func(childComplexity int) int
-		Name                   func(childComplexity int) int
-		TechFk                 func(childComplexity int) int
+		Active           func(childComplexity int) int
+		CounterformulaFk func(childComplexity int) int
+		ID               func(childComplexity int) int
+		KpiFk            func(childComplexity int) int
+		Name             func(childComplexity int) int
+		TechFk           func(childComplexity int) int
 	}
 
 	GeneralFilter struct {
@@ -885,7 +885,7 @@ type ComplexityRoot struct {
 		AddConnector                             func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
 		AddCounter                               func(childComplexity int, input models.AddCounterInput) int
 		AddCounterFamily                         func(childComplexity int, input models.AddCounterFamilyInput) int
-		AddCounterVendorFormula                  func(childComplexity int, input models.AddCounterVendorFormulaInput) int
+		AddCounterFormula                        func(childComplexity int, input models.AddCounterFormulaInput) int
 		AddCustomer                              func(childComplexity int, input models.AddCustomerInput) int
 		AddDecisionBlock                         func(childComplexity int, flowDraftID int, input models.DecisionBlockInput) int
 		AddDomain                                func(childComplexity int, input models.AddDomainInput) int
@@ -946,7 +946,7 @@ type ComplexityRoot struct {
 		EditComparator                           func(childComplexity int, input models.EditComparatorInput) int
 		EditCounter                              func(childComplexity int, input models.EditCounterInput) int
 		EditCounterFamily                        func(childComplexity int, input models.EditCounterFamilyInput) int
-		EditCounterVendorFormula                 func(childComplexity int, input models.EditCounterVendorFormulaInput) int
+		EditCounterFormula                       func(childComplexity int, input models.EditCounterFormulaInput) int
 		EditDomain                               func(childComplexity int, input models.EditDomainInput) int
 		EditEquipment                            func(childComplexity int, input models.EditEquipmentInput) int
 		EditEquipmentPort                        func(childComplexity int, input models.EditEquipmentPortInput) int
@@ -988,7 +988,7 @@ type ComplexityRoot struct {
 		RemoveComparator                         func(childComplexity int, id int) int
 		RemoveCounter                            func(childComplexity int, id int) int
 		RemoveCounterFamily                      func(childComplexity int, id int) int
-		RemoveCounterVendorFormula               func(childComplexity int, id int) int
+		RemoveCounterFormula                     func(childComplexity int, id int) int
 		RemoveCustomer                           func(childComplexity int, id int) int
 		RemoveDomain                             func(childComplexity int, id int) int
 		RemoveEquipment                          func(childComplexity int, id int, workOrderID *int) int
@@ -1796,12 +1796,13 @@ type ComparatorResolver interface {
 	RuleLimit(ctx context.Context, obj *ent.Comparator) ([]*ent.RuleLimit, error)
 }
 type CounterResolver interface {
-	Countervendorformula(ctx context.Context, obj *ent.Counter) ([]*ent.CounterVendorFormula, error)
+	Counterformula(ctx context.Context, obj *ent.Counter) ([]*ent.CounterFormula, error)
+
+	VendorFk(ctx context.Context, obj *ent.Counter) (*ent.Vendor, error)
 }
-type CounterVendorFormulaResolver interface {
-	VendorFk(ctx context.Context, obj *ent.CounterVendorFormula) (*ent.Vendor, error)
-	CounterFk(ctx context.Context, obj *ent.CounterVendorFormula) (*ent.Counter, error)
-	FormulaFk(ctx context.Context, obj *ent.CounterVendorFormula) (*ent.Formula, error)
+type CounterFormulaResolver interface {
+	CounterFk(ctx context.Context, obj *ent.CounterFormula) (*ent.Counter, error)
+	FormulaFk(ctx context.Context, obj *ent.CounterFormula) (*ent.Formula, error)
 }
 type EquipmentResolver interface {
 	Ports(ctx context.Context, obj *ent.Equipment, availableOnly *bool) ([]*ent.EquipmentPort, error)
@@ -1843,7 +1844,7 @@ type FlowDraftResolver interface {
 type FormulaResolver interface {
 	TechFk(ctx context.Context, obj *ent.Formula) (*ent.Tech, error)
 	KpiFk(ctx context.Context, obj *ent.Formula) (*ent.Kpi, error)
-	CountervendorformulaFk(ctx context.Context, obj *ent.Formula) ([]*ent.CounterVendorFormula, error)
+	CounterformulaFk(ctx context.Context, obj *ent.Formula) ([]*ent.CounterFormula, error)
 }
 type KpiResolver interface {
 	DomainFk(ctx context.Context, obj *ent.Kpi) (*ent.Domain, error)
@@ -1986,9 +1987,9 @@ type MutationResolver interface {
 	AddTech(ctx context.Context, input models.AddTechInput) (*ent.Tech, error)
 	EditTech(ctx context.Context, input models.EditTechInput) (*ent.Tech, error)
 	RemoveTech(ctx context.Context, id int) (int, error)
-	AddCounterVendorFormula(ctx context.Context, input models.AddCounterVendorFormulaInput) (*ent.CounterVendorFormula, error)
-	EditCounterVendorFormula(ctx context.Context, input models.EditCounterVendorFormulaInput) (*ent.CounterVendorFormula, error)
-	RemoveCounterVendorFormula(ctx context.Context, id int) (int, error)
+	AddCounterFormula(ctx context.Context, input models.AddCounterFormulaInput) (*ent.CounterFormula, error)
+	EditCounterFormula(ctx context.Context, input models.EditCounterFormulaInput) (*ent.CounterFormula, error)
+	RemoveCounterFormula(ctx context.Context, id int) (int, error)
 	AddTreshold(ctx context.Context, input models.AddTresholdInput) (*ent.Treshold, error)
 	EditTreshold(ctx context.Context, input models.EditTresholdInput) (*ent.Treshold, error)
 	RemoveTreshold(ctx context.Context, id int) (int, error)
@@ -3031,12 +3032,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Counter.Counterfamily(childComplexity), true
 
-	case "Counter.countervendorformula":
-		if e.complexity.Counter.Countervendorformula == nil {
+	case "Counter.counterformula":
+		if e.complexity.Counter.Counterformula == nil {
 			break
 		}
 
-		return e.complexity.Counter.Countervendorformula(childComplexity), true
+		return e.complexity.Counter.Counterformula(childComplexity), true
 
 	case "Counter.externalID":
 		if e.complexity.Counter.ExternalId == nil {
@@ -3065,6 +3066,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Counter.NetworkManagerSystem(childComplexity), true
+
+	case "Counter.vendorFk":
+		if e.complexity.Counter.VendorFk == nil {
+			break
+		}
+
+		return e.complexity.Counter.VendorFk(childComplexity), true
 
 	case "CounterConnection.edges":
 		if e.complexity.CounterConnection.Edges == nil {
@@ -3150,40 +3158,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CounterFamilyEdge.Node(childComplexity), true
 
-	case "CounterVendorFormula.counterFk":
-		if e.complexity.CounterVendorFormula.CounterFk == nil {
+	case "CounterFormula.counterFk":
+		if e.complexity.CounterFormula.CounterFk == nil {
 			break
 		}
 
-		return e.complexity.CounterVendorFormula.CounterFk(childComplexity), true
+		return e.complexity.CounterFormula.CounterFk(childComplexity), true
 
-	case "CounterVendorFormula.formulaFk":
-		if e.complexity.CounterVendorFormula.FormulaFk == nil {
+	case "CounterFormula.formulaFk":
+		if e.complexity.CounterFormula.FormulaFk == nil {
 			break
 		}
 
-		return e.complexity.CounterVendorFormula.FormulaFk(childComplexity), true
+		return e.complexity.CounterFormula.FormulaFk(childComplexity), true
 
-	case "CounterVendorFormula.id":
-		if e.complexity.CounterVendorFormula.ID == nil {
+	case "CounterFormula.id":
+		if e.complexity.CounterFormula.ID == nil {
 			break
 		}
 
-		return e.complexity.CounterVendorFormula.ID(childComplexity), true
+		return e.complexity.CounterFormula.ID(childComplexity), true
 
-	case "CounterVendorFormula.mandatory":
-		if e.complexity.CounterVendorFormula.Mandatory == nil {
+	case "CounterFormula.mandatory":
+		if e.complexity.CounterFormula.Mandatory == nil {
 			break
 		}
 
-		return e.complexity.CounterVendorFormula.Mandatory(childComplexity), true
-
-	case "CounterVendorFormula.vendorFk":
-		if e.complexity.CounterVendorFormula.VendorFk == nil {
-			break
-		}
-
-		return e.complexity.CounterVendorFormula.VendorFk(childComplexity), true
+		return e.complexity.CounterFormula.Mandatory(childComplexity), true
 
 	case "Customer.externalId":
 		if e.complexity.Customer.ExternalID == nil {
@@ -4520,12 +4521,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Formula.Active(childComplexity), true
 
-	case "Formula.countervendorformulaFk":
-		if e.complexity.Formula.CountervendorformulaFk == nil {
+	case "Formula.counterformulaFk":
+		if e.complexity.Formula.CounterformulaFk == nil {
 			break
 		}
 
-		return e.complexity.Formula.CountervendorformulaFk(childComplexity), true
+		return e.complexity.Formula.CounterformulaFk(childComplexity), true
 
 	case "Formula.id":
 		if e.complexity.Formula.ID == nil {
@@ -5376,17 +5377,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddCounterFamily(childComplexity, args["input"].(models.AddCounterFamilyInput)), true
 
-	case "Mutation.addCounterVendorFormula":
-		if e.complexity.Mutation.AddCounterVendorFormula == nil {
+	case "Mutation.addCounterFormula":
+		if e.complexity.Mutation.AddCounterFormula == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_addCounterVendorFormula_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addCounterFormula_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddCounterVendorFormula(childComplexity, args["input"].(models.AddCounterVendorFormulaInput)), true
+		return e.complexity.Mutation.AddCounterFormula(childComplexity, args["input"].(models.AddCounterFormulaInput)), true
 
 	case "Mutation.addCustomer":
 		if e.complexity.Mutation.AddCustomer == nil {
@@ -6108,17 +6109,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditCounterFamily(childComplexity, args["input"].(models.EditCounterFamilyInput)), true
 
-	case "Mutation.editCounterVendorFormula":
-		if e.complexity.Mutation.EditCounterVendorFormula == nil {
+	case "Mutation.editCounterFormula":
+		if e.complexity.Mutation.EditCounterFormula == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_editCounterVendorFormula_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_editCounterFormula_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditCounterVendorFormula(childComplexity, args["input"].(models.EditCounterVendorFormulaInput)), true
+		return e.complexity.Mutation.EditCounterFormula(childComplexity, args["input"].(models.EditCounterFormulaInput)), true
 
 	case "Mutation.editDomain":
 		if e.complexity.Mutation.EditDomain == nil {
@@ -6612,17 +6613,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RemoveCounterFamily(childComplexity, args["id"].(int)), true
 
-	case "Mutation.removeCounterVendorFormula":
-		if e.complexity.Mutation.RemoveCounterVendorFormula == nil {
+	case "Mutation.removeCounterFormula":
+		if e.complexity.Mutation.RemoveCounterFormula == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_removeCounterVendorFormula_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeCounterFormula_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveCounterVendorFormula(childComplexity, args["id"].(int)), true
+		return e.complexity.Mutation.RemoveCounterFormula(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeCustomer":
 		if e.complexity.Mutation.RemoveCustomer == nil {
@@ -16149,9 +16150,9 @@ type Mutation {
   addTech(input: AddTechInput!):Tech!
   editTech(input: EditTechInput!): Tech!
   removeTech(id: ID!): ID!
-  addCounterVendorFormula(input: AddCounterVendorFormulaInput!):CounterVendorFormula!
-  editCounterVendorFormula(input: EditCounterVendorFormulaInput!):CounterVendorFormula!
-  removeCounterVendorFormula(id: ID!): ID!
+  addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
+  editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
+  removeCounterFormula(id: ID!): ID!
   addTreshold(input: AddTresholdInput!):Treshold!
   editTreshold(input: EditTresholdInput!): Treshold!
   removeTreshold(id: ID!): ID!
@@ -16217,23 +16218,17 @@ type Counter implements Node {
   name: String!
   externalID: String!
   networkManagerSystem: String!
-  countervendorformula: [CounterVendorFormula]!
+  counterformula: [CounterFormula]!
   counterFamily: CounterFamily
-}
-
-input CounterInput {
-  name: String!
-  externalID: String!
-  networkManagerSystem: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  vendorFk: Vendor!
 }
 
 input AddCounterInput {
   name: String!
   externalID: String!
   networkManagerSystem: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
   counterFamily: ID!
+  vendorFk: ID!
 }
 
 input EditCounterInput {
@@ -16241,7 +16236,7 @@ input EditCounterInput {
   name: String!
   externalID: String!
   networkManagerSystem: String!
-  countervendorformula: [EditCounterVendorFormulaInput!]
+  vendorFk: ID!
 }
 
 type CounterFamily implements Node {
@@ -16381,7 +16376,7 @@ type Formula implements Node {
   active: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
-  countervendorformulaFk: [CounterVendorFormula]
+  counterformulaFk: [CounterFormula]
 }
 
 input AddFormulaInput {
@@ -16399,25 +16394,22 @@ input EditFormulaInput {
   kpiFk: ID!
 }
 
-type CounterVendorFormula implements Node {
+type CounterFormula implements Node {
   id: ID!
   mandatory: Boolean!
-  vendorFk: Vendor!
   counterFk: Counter!
   formulaFk: Formula!
 }
 
-input AddCounterVendorFormulaInput {
+input AddCounterFormulaInput {
   mandatory: Boolean!
-  vendorFk: ID!
   counterFk: ID!
   formulaFk: ID!
 }
 
-input EditCounterVendorFormulaInput {
+input EditCounterFormulaInput {
   id: ID!
   mandatory: Boolean!
-  vendorFk: ID!
   counterFk: ID!
   formulaFk: ID!
 }
@@ -17223,13 +17215,13 @@ func (ec *executionContext) field_Mutation_addCounterFamily_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_addCounterVendorFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_addCounterFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.AddCounterVendorFormulaInput
+	var arg0 models.AddCounterFormulaInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddCounterVendorFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterVendorFormulaInput(ctx, tmp)
+		arg0, err = ec.unmarshalNAddCounterFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterFormulaInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -18255,13 +18247,13 @@ func (ec *executionContext) field_Mutation_editCounterFamily_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_editCounterVendorFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_editCounterFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.EditCounterVendorFormulaInput
+	var arg0 models.EditCounterFormulaInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNEditCounterVendorFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInput(ctx, tmp)
+		arg0, err = ec.unmarshalNEditCounterFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterFormulaInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -18930,7 +18922,7 @@ func (ec *executionContext) field_Mutation_removeCounterFamily_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_removeCounterVendorFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_removeCounterFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -27080,7 +27072,7 @@ func (ec *executionContext) _Counter_networkManagerSystem(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Counter_countervendorformula(ctx context.Context, field graphql.CollectedField, obj *ent.Counter) (ret graphql.Marshaler) {
+func (ec *executionContext) _Counter_counterformula(ctx context.Context, field graphql.CollectedField, obj *ent.Counter) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -27098,7 +27090,7 @@ func (ec *executionContext) _Counter_countervendorformula(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Counter().Countervendorformula(rctx, obj)
+		return ec.resolvers.Counter().Counterformula(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27110,9 +27102,9 @@ func (ec *executionContext) _Counter_countervendorformula(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*ent.CounterVendorFormula)
+	res := resTmp.([]*ent.CounterFormula)
 	fc.Result = res
-	return ec.marshalNCounterVendorFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx, field.Selections, res)
+	return ec.marshalNCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Counter_counterFamily(ctx context.Context, field graphql.CollectedField, obj *ent.Counter) (ret graphql.Marshaler) {
@@ -27145,6 +27137,41 @@ func (ec *executionContext) _Counter_counterFamily(ctx context.Context, field gr
 	res := resTmp.(*ent.CounterFamily)
 	fc.Result = res
 	return ec.marshalOCounterFamily2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFamily(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Counter_vendorFk(ctx context.Context, field graphql.CollectedField, obj *ent.Counter) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Counter",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Counter().VendorFk(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Vendor)
+	fc.Result = res
+	return ec.marshalNVendor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CounterConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.CounterConnection) (ret graphql.Marshaler) {
@@ -27561,7 +27588,7 @@ func (ec *executionContext) _CounterFamilyEdge_cursor(ctx context.Context, field
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CounterVendorFormula_id(ctx context.Context, field graphql.CollectedField, obj *ent.CounterVendorFormula) (ret graphql.Marshaler) {
+func (ec *executionContext) _CounterFormula_id(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFormula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -27569,7 +27596,7 @@ func (ec *executionContext) _CounterVendorFormula_id(ctx context.Context, field 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "CounterVendorFormula",
+		Object:     "CounterFormula",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -27596,7 +27623,7 @@ func (ec *executionContext) _CounterVendorFormula_id(ctx context.Context, field 
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CounterVendorFormula_mandatory(ctx context.Context, field graphql.CollectedField, obj *ent.CounterVendorFormula) (ret graphql.Marshaler) {
+func (ec *executionContext) _CounterFormula_mandatory(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFormula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -27604,7 +27631,7 @@ func (ec *executionContext) _CounterVendorFormula_mandatory(ctx context.Context,
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "CounterVendorFormula",
+		Object:     "CounterFormula",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -27631,7 +27658,7 @@ func (ec *executionContext) _CounterVendorFormula_mandatory(ctx context.Context,
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CounterVendorFormula_vendorFk(ctx context.Context, field graphql.CollectedField, obj *ent.CounterVendorFormula) (ret graphql.Marshaler) {
+func (ec *executionContext) _CounterFormula_counterFk(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFormula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -27639,7 +27666,7 @@ func (ec *executionContext) _CounterVendorFormula_vendorFk(ctx context.Context, 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "CounterVendorFormula",
+		Object:     "CounterFormula",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
@@ -27649,42 +27676,7 @@ func (ec *executionContext) _CounterVendorFormula_vendorFk(ctx context.Context, 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CounterVendorFormula().VendorFk(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Vendor)
-	fc.Result = res
-	return ec.marshalNVendor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CounterVendorFormula_counterFk(ctx context.Context, field graphql.CollectedField, obj *ent.CounterVendorFormula) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CounterVendorFormula",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CounterVendorFormula().CounterFk(rctx, obj)
+		return ec.resolvers.CounterFormula().CounterFk(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27701,7 +27693,7 @@ func (ec *executionContext) _CounterVendorFormula_counterFk(ctx context.Context,
 	return ec.marshalNCounter2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounter(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CounterVendorFormula_formulaFk(ctx context.Context, field graphql.CollectedField, obj *ent.CounterVendorFormula) (ret graphql.Marshaler) {
+func (ec *executionContext) _CounterFormula_formulaFk(ctx context.Context, field graphql.CollectedField, obj *ent.CounterFormula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -27709,7 +27701,7 @@ func (ec *executionContext) _CounterVendorFormula_formulaFk(ctx context.Context,
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "CounterVendorFormula",
+		Object:     "CounterFormula",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
@@ -27719,7 +27711,7 @@ func (ec *executionContext) _CounterVendorFormula_formulaFk(ctx context.Context,
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CounterVendorFormula().FormulaFk(rctx, obj)
+		return ec.resolvers.CounterFormula().FormulaFk(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34392,7 +34384,7 @@ func (ec *executionContext) _Formula_kpiFk(ctx context.Context, field graphql.Co
 	return ec.marshalNKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpi(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Formula_countervendorformulaFk(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
+func (ec *executionContext) _Formula_counterformulaFk(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -34410,7 +34402,7 @@ func (ec *executionContext) _Formula_countervendorformulaFk(ctx context.Context,
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Formula().CountervendorformulaFk(rctx, obj)
+		return ec.resolvers.Formula().CounterformulaFk(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34419,9 +34411,9 @@ func (ec *executionContext) _Formula_countervendorformulaFk(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*ent.CounterVendorFormula)
+	res := resTmp.([]*ent.CounterFormula)
 	fc.Result = res
-	return ec.marshalOCounterVendorFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx, field.Selections, res)
+	return ec.marshalOCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GeneralFilter_filterType(ctx context.Context, field graphql.CollectedField, obj *models.GeneralFilter) (ret graphql.Marshaler) {
@@ -42783,7 +42775,7 @@ func (ec *executionContext) _Mutation_removeTech(ctx context.Context, field grap
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_addCounterVendorFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_addCounterFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -42800,7 +42792,7 @@ func (ec *executionContext) _Mutation_addCounterVendorFormula(ctx context.Contex
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addCounterVendorFormula_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_addCounterFormula_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -42808,7 +42800,7 @@ func (ec *executionContext) _Mutation_addCounterVendorFormula(ctx context.Contex
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddCounterVendorFormula(rctx, args["input"].(models.AddCounterVendorFormulaInput))
+		return ec.resolvers.Mutation().AddCounterFormula(rctx, args["input"].(models.AddCounterFormulaInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42820,12 +42812,12 @@ func (ec *executionContext) _Mutation_addCounterVendorFormula(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.CounterVendorFormula)
+	res := resTmp.(*ent.CounterFormula)
 	fc.Result = res
-	return ec.marshalNCounterVendorFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx, field.Selections, res)
+	return ec.marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_editCounterVendorFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_editCounterFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -42842,7 +42834,7 @@ func (ec *executionContext) _Mutation_editCounterVendorFormula(ctx context.Conte
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_editCounterVendorFormula_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_editCounterFormula_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -42850,7 +42842,7 @@ func (ec *executionContext) _Mutation_editCounterVendorFormula(ctx context.Conte
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditCounterVendorFormula(rctx, args["input"].(models.EditCounterVendorFormulaInput))
+		return ec.resolvers.Mutation().EditCounterFormula(rctx, args["input"].(models.EditCounterFormulaInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42862,12 +42854,12 @@ func (ec *executionContext) _Mutation_editCounterVendorFormula(ctx context.Conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.CounterVendorFormula)
+	res := resTmp.(*ent.CounterFormula)
 	fc.Result = res
-	return ec.marshalNCounterVendorFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx, field.Selections, res)
+	return ec.marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_removeCounterVendorFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_removeCounterFormula(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -42884,7 +42876,7 @@ func (ec *executionContext) _Mutation_removeCounterVendorFormula(ctx context.Con
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_removeCounterVendorFormula_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_removeCounterFormula_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -42892,7 +42884,7 @@ func (ec *executionContext) _Mutation_removeCounterVendorFormula(ctx context.Con
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveCounterVendorFormula(rctx, args["id"].(int))
+		return ec.resolvers.Mutation().RemoveCounterFormula(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -62298,6 +62290,42 @@ func (ec *executionContext) unmarshalInputAddCounterFamilyInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddCounterFormulaInput(ctx context.Context, obj interface{}) (models.AddCounterFormulaInput, error) {
+	var it models.AddCounterFormulaInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "mandatory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
+			it.Mandatory, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFk"))
+			it.CounterFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "formulaFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formulaFk"))
+			it.FormulaFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddCounterInput(ctx context.Context, obj interface{}) (models.AddCounterInput, error) {
 	var it models.AddCounterInput
 	var asMap = obj.(map[string]interface{})
@@ -62328,14 +62356,6 @@ func (ec *executionContext) unmarshalInputAddCounterInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "countervendorformula":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
-			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "counterFamily":
 			var err error
 
@@ -62344,47 +62364,11 @@ func (ec *executionContext) unmarshalInputAddCounterInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddCounterVendorFormulaInput(ctx context.Context, obj interface{}) (models.AddCounterVendorFormulaInput, error) {
-	var it models.AddCounterVendorFormulaInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "mandatory":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
-			it.Mandatory, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "vendorFk":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vendorFk"))
 			it.VendorFk, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "counterFk":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFk"))
-			it.CounterFk, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "formulaFk":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formulaFk"))
-			it.FormulaFk, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -65304,50 +65288,6 @@ func (ec *executionContext) unmarshalInputCounterFilterInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCounterInput(ctx context.Context, obj interface{}) (models.CounterInput, error) {
-	var it models.CounterInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "externalID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalID"))
-			it.ExternalID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "networkManagerSystem":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("networkManagerSystem"))
-			it.NetworkManagerSystem, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "countervendorformula":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
-			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputCounterOrder(ctx context.Context, obj interface{}) (ent.CounterOrder, error) {
 	var it ent.CounterOrder
 	var asMap = obj.(map[string]interface{})
@@ -65748,6 +65688,50 @@ func (ec *executionContext) unmarshalInputEditCounterFamilyInput(ctx context.Con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditCounterFormulaInput(ctx context.Context, obj interface{}) (models.EditCounterFormulaInput, error) {
+	var it models.EditCounterFormulaInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mandatory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
+			it.Mandatory, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "counterFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFk"))
+			it.CounterFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "formulaFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formulaFk"))
+			it.FormulaFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditCounterInput(ctx context.Context, obj interface{}) (models.EditCounterInput, error) {
 	var it models.EditCounterInput
 	var asMap = obj.(map[string]interface{})
@@ -65786,63 +65770,11 @@ func (ec *executionContext) unmarshalInputEditCounterInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "countervendorformula":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countervendorformula"))
-			it.Countervendorformula, err = ec.unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputEditCounterVendorFormulaInput(ctx context.Context, obj interface{}) (models.EditCounterVendorFormulaInput, error) {
-	var it models.EditCounterVendorFormulaInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "mandatory":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mandatory"))
-			it.Mandatory, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "vendorFk":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vendorFk"))
 			it.VendorFk, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "counterFk":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("counterFk"))
-			it.CounterFk, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "formulaFk":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("formulaFk"))
-			it.FormulaFk, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -72105,11 +72037,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Formula(ctx, sel, obj)
-	case *ent.CounterVendorFormula:
+	case *ent.CounterFormula:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._CounterVendorFormula(ctx, sel, obj)
+		return ec._CounterFormula(ctx, sel, obj)
 	case *ent.Treshold:
 		if obj == nil {
 			return graphql.Null
@@ -73548,7 +73480,7 @@ func (ec *executionContext) _Counter(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "countervendorformula":
+		case "counterformula":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -73556,7 +73488,7 @@ func (ec *executionContext) _Counter(ctx context.Context, sel ast.SelectionSet, 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Counter_countervendorformula(ctx, field, obj)
+				res = ec._Counter_counterformula(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -73571,6 +73503,20 @@ func (ec *executionContext) _Counter(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Counter_counterFamily(ctx, field, obj)
+				return res
+			})
+		case "vendorFk":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Counter_vendorFk(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		default:
@@ -73748,41 +73694,27 @@ func (ec *executionContext) _CounterFamilyEdge(ctx context.Context, sel ast.Sele
 	return out
 }
 
-var counterVendorFormulaImplementors = []string{"CounterVendorFormula", "Node"}
+var counterFormulaImplementors = []string{"CounterFormula", "Node"}
 
-func (ec *executionContext) _CounterVendorFormula(ctx context.Context, sel ast.SelectionSet, obj *ent.CounterVendorFormula) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, counterVendorFormulaImplementors)
+func (ec *executionContext) _CounterFormula(ctx context.Context, sel ast.SelectionSet, obj *ent.CounterFormula) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, counterFormulaImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("CounterVendorFormula")
+			out.Values[i] = graphql.MarshalString("CounterFormula")
 		case "id":
-			out.Values[i] = ec._CounterVendorFormula_id(ctx, field, obj)
+			out.Values[i] = ec._CounterFormula_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "mandatory":
-			out.Values[i] = ec._CounterVendorFormula_mandatory(ctx, field, obj)
+			out.Values[i] = ec._CounterFormula_mandatory(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "vendorFk":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CounterVendorFormula_vendorFk(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "counterFk":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -73791,7 +73723,7 @@ func (ec *executionContext) _CounterVendorFormula(ctx context.Context, sel ast.S
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._CounterVendorFormula_counterFk(ctx, field, obj)
+				res = ec._CounterFormula_counterFk(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -73805,7 +73737,7 @@ func (ec *executionContext) _CounterVendorFormula(ctx context.Context, sel ast.S
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._CounterVendorFormula_formulaFk(ctx, field, obj)
+				res = ec._CounterFormula_formulaFk(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -76195,7 +76127,7 @@ func (ec *executionContext) _Formula(ctx context.Context, sel ast.SelectionSet, 
 				}
 				return res
 			})
-		case "countervendorformulaFk":
+		case "counterformulaFk":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -76203,7 +76135,7 @@ func (ec *executionContext) _Formula(ctx context.Context, sel ast.SelectionSet, 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Formula_countervendorformulaFk(ctx, field, obj)
+				res = ec._Formula_counterformulaFk(ctx, field, obj)
 				return res
 			})
 		default:
@@ -77941,18 +77873,18 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "addCounterVendorFormula":
-			out.Values[i] = ec._Mutation_addCounterVendorFormula(ctx, field)
+		case "addCounterFormula":
+			out.Values[i] = ec._Mutation_addCounterFormula(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "editCounterVendorFormula":
-			out.Values[i] = ec._Mutation_editCounterVendorFormula(ctx, field)
+		case "editCounterFormula":
+			out.Values[i] = ec._Mutation_editCounterFormula(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "removeCounterVendorFormula":
-			out.Values[i] = ec._Mutation_removeCounterVendorFormula(ctx, field)
+		case "removeCounterFormula":
+			out.Values[i] = ec._Mutation_removeCounterFormula(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -83581,13 +83513,13 @@ func (ec *executionContext) unmarshalNAddCounterFamilyInput2githubᚗcomᚋfaceb
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddCounterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx context.Context, v interface{}) (models.AddCounterInput, error) {
-	res, err := ec.unmarshalInputAddCounterInput(ctx, v)
+func (ec *executionContext) unmarshalNAddCounterFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterFormulaInput(ctx context.Context, v interface{}) (models.AddCounterFormulaInput, error) {
+	res, err := ec.unmarshalInputAddCounterFormulaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddCounterVendorFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterVendorFormulaInput(ctx context.Context, v interface{}) (models.AddCounterVendorFormulaInput, error) {
-	res, err := ec.unmarshalInputAddCounterVendorFormulaInput(ctx, v)
+func (ec *executionContext) unmarshalNAddCounterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCounterInput(ctx context.Context, v interface{}) (models.AddCounterInput, error) {
+	res, err := ec.unmarshalInputAddCounterInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -84734,11 +84666,11 @@ func (ec *executionContext) marshalNCounterFilterType2githubᚗcomᚋfacebookinc
 	return v
 }
 
-func (ec *executionContext) marshalNCounterVendorFormula2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx context.Context, sel ast.SelectionSet, v ent.CounterVendorFormula) graphql.Marshaler {
-	return ec._CounterVendorFormula(ctx, sel, &v)
+func (ec *executionContext) marshalNCounterFormula2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx context.Context, sel ast.SelectionSet, v ent.CounterFormula) graphql.Marshaler {
+	return ec._CounterFormula(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCounterVendorFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx context.Context, sel ast.SelectionSet, v []*ent.CounterVendorFormula) graphql.Marshaler {
+func (ec *executionContext) marshalNCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx context.Context, sel ast.SelectionSet, v []*ent.CounterFormula) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -84762,7 +84694,7 @@ func (ec *executionContext) marshalNCounterVendorFormula2ᚕᚖgithubᚗcomᚋfa
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOCounterVendorFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx, sel, v[i])
+			ret[i] = ec.marshalOCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -84775,14 +84707,14 @@ func (ec *executionContext) marshalNCounterVendorFormula2ᚕᚖgithubᚗcomᚋfa
 	return ret
 }
 
-func (ec *executionContext) marshalNCounterVendorFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx context.Context, sel ast.SelectionSet, v *ent.CounterVendorFormula) graphql.Marshaler {
+func (ec *executionContext) marshalNCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx context.Context, sel ast.SelectionSet, v *ent.CounterFormula) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._CounterVendorFormula(ctx, sel, v)
+	return ec._CounterFormula(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
@@ -85090,19 +85022,14 @@ func (ec *executionContext) unmarshalNEditCounterFamilyInput2githubᚗcomᚋface
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNEditCounterFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterFormulaInput(ctx context.Context, v interface{}) (models.EditCounterFormulaInput, error) {
+	res, err := ec.unmarshalInputEditCounterFormulaInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNEditCounterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterInput(ctx context.Context, v interface{}) (models.EditCounterInput, error) {
 	res, err := ec.unmarshalInputEditCounterInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNEditCounterVendorFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInput(ctx context.Context, v interface{}) (models.EditCounterVendorFormulaInput, error) {
-	res, err := ec.unmarshalInputEditCounterVendorFormulaInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNEditCounterVendorFormulaInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInput(ctx context.Context, v interface{}) (*models.EditCounterVendorFormulaInput, error) {
-	res, err := ec.unmarshalInputEditCounterVendorFormulaInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNEditDomainInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditDomainInput(ctx context.Context, v interface{}) (models.EditDomainInput, error) {
@@ -91144,31 +91071,7 @@ func (ec *executionContext) unmarshalOCounterFilterInput2ᚕᚖgithubᚗcomᚋfa
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOCounterOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrder(ctx context.Context, v interface{}) (*ent.CounterOrder, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCounterOrder(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOCounterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrderField(ctx context.Context, v interface{}) (*ent.CounterOrderField, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(ent.CounterOrderField)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOCounterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.CounterOrderField) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
-func (ec *executionContext) marshalOCounterVendorFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx context.Context, sel ast.SelectionSet, v []*ent.CounterVendorFormula) graphql.Marshaler {
+func (ec *executionContext) marshalOCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx context.Context, sel ast.SelectionSet, v []*ent.CounterFormula) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -91195,7 +91098,7 @@ func (ec *executionContext) marshalOCounterVendorFormula2ᚕᚖgithubᚗcomᚋfa
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOCounterVendorFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx, sel, v[i])
+			ret[i] = ec.marshalOCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -91208,11 +91111,35 @@ func (ec *executionContext) marshalOCounterVendorFormula2ᚕᚖgithubᚗcomᚋfa
 	return ret
 }
 
-func (ec *executionContext) marshalOCounterVendorFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterVendorFormula(ctx context.Context, sel ast.SelectionSet, v *ent.CounterVendorFormula) graphql.Marshaler {
+func (ec *executionContext) marshalOCounterFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx context.Context, sel ast.SelectionSet, v *ent.CounterFormula) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._CounterVendorFormula(ctx, sel, v)
+	return ec._CounterFormula(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOCounterOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrder(ctx context.Context, v interface{}) (*ent.CounterOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCounterOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOCounterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrderField(ctx context.Context, v interface{}) (*ent.CounterOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.CounterOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOCounterOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.CounterOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
@@ -91388,30 +91315,6 @@ func (ec *executionContext) marshalODomainOrderField2ᚖgithubᚗcomᚋfacebooki
 		return graphql.Null
 	}
 	return v
-}
-
-func (ec *executionContext) unmarshalOEditCounterVendorFormulaInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInputᚄ(ctx context.Context, v interface{}) ([]*models.EditCounterVendorFormulaInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.EditCounterVendorFormulaInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEditCounterVendorFormulaInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditCounterVendorFormulaInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) unmarshalOEndBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEndBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.EndBlockInput, error) {

@@ -394,7 +394,7 @@ func HasVendorFk() predicate.Vendor {
 }
 
 // HasVendorFkWith applies the HasEdge predicate on the "vendor_fk" edge with a given conditions (other predicates).
-func HasVendorFkWith(preds ...predicate.CounterVendorFormula) predicate.Vendor {
+func HasVendorFkWith(preds ...predicate.Counter) predicate.Vendor {
 	return predicate.Vendor(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
