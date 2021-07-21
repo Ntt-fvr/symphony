@@ -27,6 +27,10 @@ import Switch from './Switch';
 
 import {makeStyles} from '@material-ui/styles';
 
+import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
+
+import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
+
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
@@ -60,33 +64,83 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const AlarmFilteringFormCreate = () => {
+
+type Props = $ReadOnly<{|
+  dataValues: Array<string>,
+|}>;
+
+type AlarmFilter = {
+  id: string,
+  name: string,
+  networkResource: string,
+  enable: boolean,
+  beginTime: string,
+  endTime: string,
+  reason: string,
+  user: string,
+  creationTime: string,
+  alarmStatus: {
+    id: string,
+    name: string,
+  }
+}
+
+
+const AlarmFilteringFormCreate = (props: Props) => {
+  const {dataValues} = props;
   const classes = useStyles();
+  const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogKey, setDialogKey] = useState(1);
 
+
+  function handleChange({target}) {
+    setAlarmFilter({
+      data: {
+        ...AlarmFilter.data,
+        [target.name]: target.value,
+      },
+    });
+  }
+  
+  function handleClick() {
+    const variables: AddAlarmFilterMutationVariables = {
+      input: {
+        name: AlarmFilter.data.name,
+        networkResource: AlarmFilter.data.networkResource,
+        enable: true,
+        beginTime: AlarmFilter.data.beginTime,
+        endTime: AlarmFilter.data.endTime,
+        reason: AlarmFilter.data.reason,
+        user: "roman",
+        creationTime: "2021-07-16T00:00:00Z",
+        alarmStatus:  8589934592,
+      },
+    };
+    AddAlarmFilterMutation(variables);
+  }
   const showDialog = () => {
     setDialogOpen(true);
     setDialogKey(dialogKey + 1);
   };
   const hideDialog = () => setDialogOpen(false);
 
-  if (dialogOpen) {
-    return (
-      <InventorySuspense permissions={{entity: 'workorder'}}>
-        <AlarmFilteringFormCreate />
-        >
-        <AlarmFilteringAddDialog
-          key={`new_work_order_${dialogKey}`}
-          open={dialogOpen}
-          onClose={hideDialog}
-          onWorkOrderTypeSelected={typeId => {
-            setDialogOpen(false);
-          }}
-        />
-      </InventorySuspense>
-    );
-  }
+  // if (dialogOpen) {
+  //   return (
+  //     <InventorySuspense permissions={{entity: 'workorder'}}>
+  //       <AlarmFilteringFormCreate />
+  //       >
+  //       <AlarmFilteringAddDialog
+  //         key={`new_work_order_${dialogKey}`}
+  //         open={dialogOpen}
+  //         onClose={hideDialog}
+  //         onWorkOrderTypeSelected={typeId => {
+  //           setDialogOpen(false);
+  //         }}
+  //       />
+  //     </InventorySuspense>
+  //   );
+  // }
 
   return (
     <div className={classes.root}>
@@ -112,7 +166,8 @@ const AlarmFilteringFormCreate = () => {
               <Grid xs={6}>
                 <FormField>
                   <Button
-                    onClick={showDialog}
+                    onClick={handleClick}
+                    // onClick={showDialog}
                     className={classes.addKpi}
                     variant="contained"
                     color="primary">
@@ -128,19 +183,30 @@ const AlarmFilteringFormCreate = () => {
             <Grid container>
               <Grid item xs={1}>
                 <FormField label="Enabled">
-                  <Switch />
+                  <Switch
+                    name="enable"
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
                 <FormField className={classes.formField} label="Name">
-                  <TextInput className={classes.textInput} />
+                  <TextInput
+                    className={classes.textInput}
+                    name="name"
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={6}>
                 <FormField
                   label="Network Resource"
                   className={classes.formField}>
-                  <TextInput className={classes.textInput} />
+                  <TextInput
+                    className={classes.textInput}
+                    name="networkResource"
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={6}>
@@ -149,6 +215,8 @@ const AlarmFilteringFormCreate = () => {
                     className={classes.textInput}
                     type="multiline"
                     rows={5}
+                    name="reason"
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -159,6 +227,8 @@ const AlarmFilteringFormCreate = () => {
                       id="datetime-local"
                       type="datetime-local"
                       defaultValue="2017-05-24T10:30"
+                      name="beginTime"
+                      onChange={handleChange}
                       className={''}
                     />
                   </FormField>
@@ -169,6 +239,8 @@ const AlarmFilteringFormCreate = () => {
                       id="datetime-local"
                       type="datetime-local"
                       defaultValue="2017-05-24T10:30"
+                      name="endTime"
+                      onChange={handleChange}
                       className={''}
                     />
                   </FormField>
@@ -177,12 +249,12 @@ const AlarmFilteringFormCreate = () => {
               <Grid container item xs={6}>
                 <Grid item xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    <StatusActive className={classes.formFieldStatus} />
+                    <StatusActive className={classes.formFieldStatus} name="alarmStatus"/>
                   </FormField>
                 </Grid>
                 <Grid item xs={9}>
                   <FormField label="ID" className={classes.formField}>
-                    <TextInput className={classes.textInput} />
+                    <TextInput className={classes.textInput} disabled />
                   </FormField>
                 </Grid>
               </Grid>
