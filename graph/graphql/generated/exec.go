@@ -9412,7 +9412,7 @@ type File implements Node {
   mimeType: String
   storeKey: String
   category: String
-  annotation: String,
+  annotation: String
   workorder: WorkOrder
 }
 
