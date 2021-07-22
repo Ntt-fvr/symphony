@@ -256,7 +256,15 @@ func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
 	return result, MaskNotFound(err)
 }
 
-func (c *Counter) CounterFk(ctx context.Context) ([]*CounterVendorFormula, error) {
+func (c *Counter) Vendor(ctx context.Context) (*Vendor, error) {
+	result, err := c.Edges.VendorOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryVendor().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Counter) CounterFk(ctx context.Context) ([]*CounterFormula, error) {
 	result, err := c.Edges.CounterFkOrErr()
 	if IsNotLoaded(err) {
 		result, err = c.QueryCounterFk().All(ctx)
@@ -272,26 +280,18 @@ func (cf *CounterFamily) Counterfamily(ctx context.Context) ([]*Counter, error) 
 	return result, err
 }
 
-func (cvf *CounterVendorFormula) Formula(ctx context.Context) (*Formula, error) {
-	result, err := cvf.Edges.FormulaOrErr()
+func (cf *CounterFormula) Formula(ctx context.Context) (*Formula, error) {
+	result, err := cf.Edges.FormulaOrErr()
 	if IsNotLoaded(err) {
-		result, err = cvf.QueryFormula().Only(ctx)
+		result, err = cf.QueryFormula().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
 
-func (cvf *CounterVendorFormula) Vendor(ctx context.Context) (*Vendor, error) {
-	result, err := cvf.Edges.VendorOrErr()
+func (cf *CounterFormula) Counter(ctx context.Context) (*Counter, error) {
+	result, err := cf.Edges.CounterOrErr()
 	if IsNotLoaded(err) {
-		result, err = cvf.QueryVendor().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
-func (cvf *CounterVendorFormula) Counter(ctx context.Context) (*Counter, error) {
-	result, err := cvf.Edges.CounterOrErr()
-	if IsNotLoaded(err) {
-		result, err = cvf.QueryCounter().Only(ctx)
+		result, err = cf.QueryCounter().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -856,10 +856,10 @@ func (f *Formula) Kpi(ctx context.Context) (*Kpi, error) {
 	return result, MaskNotFound(err)
 }
 
-func (f *Formula) Countervendorformula(ctx context.Context) ([]*CounterVendorFormula, error) {
-	result, err := f.Edges.CountervendorformulaOrErr()
+func (f *Formula) Counterformula(ctx context.Context) ([]*CounterFormula, error) {
+	result, err := f.Edges.CounterformulaOrErr()
 	if IsNotLoaded(err) {
-		result, err = f.QueryCountervendorformula().All(ctx)
+		result, err = f.QueryCounterformula().All(ctx)
 	}
 	return result, err
 }
@@ -1824,7 +1824,7 @@ func (ug *UsersGroup) Features(ctx context.Context) ([]*Feature, error) {
 	return result, err
 }
 
-func (v *Vendor) VendorFk(ctx context.Context) ([]*CounterVendorFormula, error) {
+func (v *Vendor) VendorFk(ctx context.Context) ([]*Counter, error) {
 	result, err := v.Edges.VendorFkOrErr()
 	if IsNotLoaded(err) {
 		result, err = v.QueryVendorFk().All(ctx)

@@ -14,7 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
@@ -105,19 +105,19 @@ func (fc *FormulaCreate) SetKpi(k *Kpi) *FormulaCreate {
 	return fc.SetKpiID(k.ID)
 }
 
-// AddCountervendorformulaIDs adds the countervendorformula edge to CounterVendorFormula by ids.
-func (fc *FormulaCreate) AddCountervendorformulaIDs(ids ...int) *FormulaCreate {
-	fc.mutation.AddCountervendorformulaIDs(ids...)
+// AddCounterformulaIDs adds the counterformula edge to CounterFormula by ids.
+func (fc *FormulaCreate) AddCounterformulaIDs(ids ...int) *FormulaCreate {
+	fc.mutation.AddCounterformulaIDs(ids...)
 	return fc
 }
 
-// AddCountervendorformula adds the countervendorformula edges to CounterVendorFormula.
-func (fc *FormulaCreate) AddCountervendorformula(c ...*CounterVendorFormula) *FormulaCreate {
+// AddCounterformula adds the counterformula edges to CounterFormula.
+func (fc *FormulaCreate) AddCounterformula(c ...*CounterFormula) *FormulaCreate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return fc.AddCountervendorformulaIDs(ids...)
+	return fc.AddCounterformulaIDs(ids...)
 }
 
 // Mutation returns the FormulaMutation object of the builder.
@@ -298,17 +298,17 @@ func (fc *FormulaCreate) createSpec() (*Formula, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := fc.mutation.CountervendorformulaIDs(); len(nodes) > 0 {
+	if nodes := fc.mutation.CounterformulaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   formula.CountervendorformulaTable,
-			Columns: []string{formula.CountervendorformulaColumn},
+			Table:   formula.CounterformulaTable,
+			Columns: []string{formula.CounterformulaColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}

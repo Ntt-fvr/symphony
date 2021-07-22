@@ -85,9 +85,9 @@ func (c *CounterFamilyClient) Instantiate(cf *CounterFamily) *CounterFamily {
 }
 
 // Instantiate entity configuration.
-func (c *CounterVendorFormulaClient) Instantiate(cvf *CounterVendorFormula) *CounterVendorFormula {
-	cvf.config = c.config
-	return cvf
+func (c *CounterFormulaClient) Instantiate(cf *CounterFormula) *CounterFormula {
+	cf.config = c.config
+	return cf
 }
 
 // Instantiate entity configuration.

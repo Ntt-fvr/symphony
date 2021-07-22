@@ -18,8 +18,9 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // CounterQuery is the builder for querying Counter entities.
@@ -32,7 +33,8 @@ type CounterQuery struct {
 	predicates []predicate.Counter
 	// eager-loading edges.
 	withCounterfamily *CounterFamilyQuery
-	withCounterFk     *CounterVendorFormulaQuery
+	withVendor        *VendorQuery
+	withCounterFk     *CounterFormulaQuery
 	withFKs           bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -85,9 +87,9 @@ func (cq *CounterQuery) QueryCounterfamily() *CounterFamilyQuery {
 	return query
 }
 
-// QueryCounterFk chains the current query on the counter_fk edge.
-func (cq *CounterQuery) QueryCounterFk() *CounterVendorFormulaQuery {
-	query := &CounterVendorFormulaQuery{config: cq.config}
+// QueryVendor chains the current query on the vendor edge.
+func (cq *CounterQuery) QueryVendor() *VendorQuery {
+	query := &VendorQuery{config: cq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := cq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -98,7 +100,29 @@ func (cq *CounterQuery) QueryCounterFk() *CounterVendorFormulaQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(counter.Table, counter.FieldID, selector),
-			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, counter.VendorTable, counter.VendorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCounterFk chains the current query on the counter_fk edge.
+func (cq *CounterQuery) QueryCounterFk() *CounterFormulaQuery {
+	query := &CounterFormulaQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counter.Table, counter.FieldID, selector),
+			sqlgraph.To(counterformula.Table, counterformula.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, counter.CounterFkTable, counter.CounterFkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
@@ -284,6 +308,7 @@ func (cq *CounterQuery) Clone() *CounterQuery {
 		unique:            append([]string{}, cq.unique...),
 		predicates:        append([]predicate.Counter{}, cq.predicates...),
 		withCounterfamily: cq.withCounterfamily.Clone(),
+		withVendor:        cq.withVendor.Clone(),
 		withCounterFk:     cq.withCounterFk.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
@@ -302,10 +327,21 @@ func (cq *CounterQuery) WithCounterfamily(opts ...func(*CounterFamilyQuery)) *Co
 	return cq
 }
 
+//  WithVendor tells the query-builder to eager-loads the nodes that are connected to
+// the "vendor" edge. The optional arguments used to configure the query builder of the edge.
+func (cq *CounterQuery) WithVendor(opts ...func(*VendorQuery)) *CounterQuery {
+	query := &VendorQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withVendor = query
+	return cq
+}
+
 //  WithCounterFk tells the query-builder to eager-loads the nodes that are connected to
 // the "counter_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (cq *CounterQuery) WithCounterFk(opts ...func(*CounterVendorFormulaQuery)) *CounterQuery {
-	query := &CounterVendorFormulaQuery{config: cq.config}
+func (cq *CounterQuery) WithCounterFk(opts ...func(*CounterFormulaQuery)) *CounterQuery {
+	query := &CounterFormulaQuery{config: cq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -383,12 +419,13 @@ func (cq *CounterQuery) sqlAll(ctx context.Context) ([]*Counter, error) {
 		nodes       = []*Counter{}
 		withFKs     = cq.withFKs
 		_spec       = cq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			cq.withCounterfamily != nil,
+			cq.withVendor != nil,
 			cq.withCounterFk != nil,
 		}
 	)
-	if cq.withCounterfamily != nil {
+	if cq.withCounterfamily != nil || cq.withVendor != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -443,16 +480,41 @@ func (cq *CounterQuery) sqlAll(ctx context.Context) ([]*Counter, error) {
 		}
 	}
 
+	if query := cq.withVendor; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Counter)
+		for i := range nodes {
+			if fk := nodes[i].vendor_vendor_fk; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(vendor.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "vendor_vendor_fk" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Vendor = n
+			}
+		}
+	}
+
 	if query := cq.withCounterFk; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*Counter)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.CounterFk = []*CounterVendorFormula{}
+			nodes[i].Edges.CounterFk = []*CounterFormula{}
 		}
 		query.withFKs = true
-		query.Where(predicate.CounterVendorFormula(func(s *sql.Selector) {
+		query.Where(predicate.CounterFormula(func(s *sql.Selector) {
 			s.Where(sql.InValues(counter.CounterFkColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)

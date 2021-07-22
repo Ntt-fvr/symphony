@@ -10,15 +10,15 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type counterVendorFormulaResolver struct{}
+type counterFormulaResolver struct{}
 
-func (counterVendorFormulaResolver) CounterFk(ctx context.Context, counterVendorFormula *ent.CounterVendorFormula) (*ent.Counter, error) {
-	variable, err := counterVendorFormula.Counter(ctx)
+func (counterFormulaResolver) CounterFk(ctx context.Context, counterFormula *ent.CounterFormula) (*ent.Counter, error) {
+	variable, err := counterFormula.Counter(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
@@ -26,8 +26,8 @@ func (counterVendorFormulaResolver) CounterFk(ctx context.Context, counterVendor
 	}
 }
 
-func (counterVendorFormulaResolver) VendorFk(ctx context.Context, counterVendorFormula *ent.CounterVendorFormula) (*ent.Vendor, error) {
-	variable, err := counterVendorFormula.Vendor(ctx)
+func (counterFormulaResolver) FormulaFk(ctx context.Context, counterFormula *ent.CounterFormula) (*ent.Formula, error) {
+	variable, err := counterFormula.Formula(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
@@ -35,20 +35,10 @@ func (counterVendorFormulaResolver) VendorFk(ctx context.Context, counterVendorF
 	}
 }
 
-func (counterVendorFormulaResolver) FormulaFk(ctx context.Context, counterVendorFormula *ent.CounterVendorFormula) (*ent.Formula, error) {
-	variable, err := counterVendorFormula.Formula(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-
-func (r mutationResolver) AddCounterVendorFormula(ctx context.Context, input models.AddCounterVendorFormulaInput) (*ent.CounterVendorFormula, error) {
+func (r mutationResolver) AddCounterFormula(ctx context.Context, input models.AddCounterFormulaInput) (*ent.CounterFormula, error) {
 	client := r.ClientFrom(ctx)
-	typ, err := client.CounterVendorFormula.Create().
+	typ, err := client.CounterFormula.Create().
 		SetCounterID(input.CounterFk).
-		SetVendorID(input.VendorFk).
 		SetFormulaID(input.FormulaFk).
 		SetMandatory(input.Mandatory).
 		Save(ctx)
@@ -61,9 +51,9 @@ func (r mutationResolver) AddCounterVendorFormula(ctx context.Context, input mod
 	return typ, nil
 }
 
-func (r mutationResolver) EditCounterVendorFormula(ctx context.Context, input models.EditCounterVendorFormulaInput) (*ent.CounterVendorFormula, error) {
+func (r mutationResolver) EditCounterFormula(ctx context.Context, input models.EditCounterFormulaInput) (*ent.CounterFormula, error) {
 	client := r.ClientFrom(ctx)
-	et, err := client.CounterVendorFormula.Get(ctx, input.ID)
+	et, err := client.CounterFormula.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
@@ -72,12 +62,10 @@ func (r mutationResolver) EditCounterVendorFormula(ctx context.Context, input mo
 	}
 
 	if input.FormulaFk != et.Edges.Formula.ID ||
-		input.VendorFk != et.Edges.Vendor.ID ||
 		input.CounterFk != et.Edges.Counter.ID {
-		if et, err = client.CounterVendorFormula.
+		if et, err = client.CounterFormula.
 			UpdateOne(et).
 			SetCounterID(input.CounterFk).
-			SetVendorID(input.VendorFk).
 			SetFormulaID(input.FormulaFk).
 			SetMandatory(input.Mandatory).
 			Save(ctx); err != nil {
@@ -90,18 +78,18 @@ func (r mutationResolver) EditCounterVendorFormula(ctx context.Context, input mo
 	return et, nil
 }
 
-func (r mutationResolver) RemoveCounterVendorFormula(ctx context.Context, id int) (int, error) {
+func (r mutationResolver) RemoveCounterFormula(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
-	t, err := client.CounterVendorFormula.Query().
+	t, err := client.CounterFormula.Query().
 		Where(
-			countervendorformula.ID(id),
+			counterformula.ID(id),
 		).
 		Only(ctx)
 	if err != nil {
 		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 
-	if err := client.CounterVendorFormula.DeleteOne(t).Exec(ctx); err != nil {
+	if err := client.CounterFormula.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil

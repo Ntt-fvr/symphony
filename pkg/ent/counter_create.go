@@ -16,7 +16,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // CounterCreate is the builder for creating a Counter entity.
@@ -91,14 +92,33 @@ func (cc *CounterCreate) SetCounterfamily(c *CounterFamily) *CounterCreate {
 	return cc.SetCounterfamilyID(c.ID)
 }
 
-// AddCounterFkIDs adds the counter_fk edge to CounterVendorFormula by ids.
+// SetVendorID sets the vendor edge to Vendor by id.
+func (cc *CounterCreate) SetVendorID(id int) *CounterCreate {
+	cc.mutation.SetVendorID(id)
+	return cc
+}
+
+// SetNillableVendorID sets the vendor edge to Vendor by id if the given value is not nil.
+func (cc *CounterCreate) SetNillableVendorID(id *int) *CounterCreate {
+	if id != nil {
+		cc = cc.SetVendorID(*id)
+	}
+	return cc
+}
+
+// SetVendor sets the vendor edge to Vendor.
+func (cc *CounterCreate) SetVendor(v *Vendor) *CounterCreate {
+	return cc.SetVendorID(v.ID)
+}
+
+// AddCounterFkIDs adds the counter_fk edge to CounterFormula by ids.
 func (cc *CounterCreate) AddCounterFkIDs(ids ...int) *CounterCreate {
 	cc.mutation.AddCounterFkIDs(ids...)
 	return cc
 }
 
-// AddCounterFk adds the counter_fk edges to CounterVendorFormula.
-func (cc *CounterCreate) AddCounterFk(c ...*CounterVendorFormula) *CounterCreate {
+// AddCounterFk adds the counter_fk edges to CounterFormula.
+func (cc *CounterCreate) AddCounterFk(c ...*CounterFormula) *CounterCreate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -276,6 +296,25 @@ func (cc *CounterCreate) createSpec() (*Counter, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := cc.mutation.VendorIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   counter.VendorTable,
+			Columns: []string{counter.VendorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: vendor.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := cc.mutation.CounterFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -286,7 +325,7 @@ func (cc *CounterCreate) createSpec() (*Counter, *sqlgraph.CreateSpec) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counterformula.FieldID,
 				},
 			},
 		}

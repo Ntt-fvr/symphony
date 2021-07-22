@@ -645,6 +645,34 @@ func HasCounterfamilyWith(preds ...predicate.CounterFamily) predicate.Counter {
 	})
 }
 
+// HasVendor applies the HasEdge predicate on the "vendor" edge.
+func HasVendor() predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VendorTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VendorTable, VendorColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVendorWith applies the HasEdge predicate on the "vendor" edge with a given conditions (other predicates).
+func HasVendorWith(preds ...predicate.Vendor) predicate.Counter {
+	return predicate.Counter(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VendorInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VendorTable, VendorColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasCounterFk applies the HasEdge predicate on the "counter_fk" edge.
 func HasCounterFk() predicate.Counter {
 	return predicate.Counter(func(s *sql.Selector) {
@@ -658,7 +686,7 @@ func HasCounterFk() predicate.Counter {
 }
 
 // HasCounterFkWith applies the HasEdge predicate on the "counter_fk" edge with a given conditions (other predicates).
-func HasCounterFkWith(preds ...predicate.CounterVendorFormula) predicate.Counter {
+func HasCounterFkWith(preds ...predicate.CounterFormula) predicate.Counter {
 	return predicate.Counter(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

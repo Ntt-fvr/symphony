@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
+	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
 // Counter is the model entity for the Counter schema.
@@ -35,17 +36,20 @@ type Counter struct {
 	// The values are being populated by the CounterQuery when eager-loading is set.
 	Edges                        CounterEdges `json:"edges"`
 	counter_family_counterfamily *int
+	vendor_vendor_fk             *int
 }
 
 // CounterEdges holds the relations/edges for other nodes in the graph.
 type CounterEdges struct {
 	// Counterfamily holds the value of the counterfamily edge.
 	Counterfamily *CounterFamily
+	// Vendor holds the value of the vendor edge.
+	Vendor *Vendor
 	// CounterFk holds the value of the counter_fk edge.
-	CounterFk []*CounterVendorFormula
+	CounterFk []*CounterFormula
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // CounterfamilyOrErr returns the Counterfamily value or an error if the edge
@@ -62,10 +66,24 @@ func (e CounterEdges) CounterfamilyOrErr() (*CounterFamily, error) {
 	return nil, &NotLoadedError{edge: "counterfamily"}
 }
 
+// VendorOrErr returns the Vendor value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CounterEdges) VendorOrErr() (*Vendor, error) {
+	if e.loadedTypes[1] {
+		if e.Vendor == nil {
+			// The edge vendor was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: vendor.Label}
+		}
+		return e.Vendor, nil
+	}
+	return nil, &NotLoadedError{edge: "vendor"}
+}
+
 // CounterFkOrErr returns the CounterFk value or an error if the edge
 // was not loaded in eager-loading.
-func (e CounterEdges) CounterFkOrErr() ([]*CounterVendorFormula, error) {
-	if e.loadedTypes[1] {
+func (e CounterEdges) CounterFkOrErr() ([]*CounterFormula, error) {
+	if e.loadedTypes[2] {
 		return e.CounterFk, nil
 	}
 	return nil, &NotLoadedError{edge: "counter_fk"}
@@ -87,6 +105,7 @@ func (*Counter) scanValues() []interface{} {
 func (*Counter) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // counter_family_counterfamily
+		&sql.NullInt64{}, // vendor_vendor_fk
 	}
 }
 
@@ -135,6 +154,12 @@ func (c *Counter) assignValues(values ...interface{}) error {
 			c.counter_family_counterfamily = new(int)
 			*c.counter_family_counterfamily = int(value.Int64)
 		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field vendor_vendor_fk", value)
+		} else if value.Valid {
+			c.vendor_vendor_fk = new(int)
+			*c.vendor_vendor_fk = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -144,8 +169,13 @@ func (c *Counter) QueryCounterfamily() *CounterFamilyQuery {
 	return (&CounterClient{config: c.config}).QueryCounterfamily(c)
 }
 
+// QueryVendor queries the vendor edge of the Counter.
+func (c *Counter) QueryVendor() *VendorQuery {
+	return (&CounterClient{config: c.config}).QueryVendor(c)
+}
+
 // QueryCounterFk queries the counter_fk edge of the Counter.
-func (c *Counter) QueryCounterFk() *CounterVendorFormulaQuery {
+func (c *Counter) QueryCounterFk() *CounterFormulaQuery {
 	return (&CounterClient{config: c.config}).QueryCounterFk(c)
 }
 
