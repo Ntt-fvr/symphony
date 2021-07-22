@@ -138,8 +138,8 @@ const CountersTypes = () => {
           <List disablePadding>
             {items.counters?.edges.map(item => (
               <CounterTypeItem
-                key={item.node.id}
-                handleRemove={() => handleRemove(item.node.id)}
+                key={item.node?.id}
+                handleRemove={() => handleRemove(item.node?.id)}
                 edit={() => showEditCounterItemForm({item})}
                 {...item.node}
               />

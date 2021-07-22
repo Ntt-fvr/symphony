@@ -34,10 +34,11 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   textButton: string,
   onClick?: void => void,
+  disabled: boolean,
 |}>;
 
 function AddButton(props: Props) {
-  const {textButton, onClick} = props;
+  const {textButton, onClick, disabled} = props;
   const classes = useStyles();
 
   return (
@@ -46,10 +47,14 @@ function AddButton(props: Props) {
         variant="outlined"
         color="primary"
         weight="bold"
+        disabled={disabled}
         onClick={onClick}
         className={classes.button}
         startIcon={<AddCircleOutlineIcon className={classes.icon} />}>
-        <Text className={''} color="primary" variant="subtitle2">
+        <Text
+          className={''}
+          color={disabled ? 'gray' : 'primary'}
+          variant="subtitle2">
           {textButton}
         </Text>
       </Button>

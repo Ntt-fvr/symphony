@@ -12,6 +12,8 @@ import type {EditCounterMutationVariables} from '../../mutations/__generated__/E
 
 import EditCounterMutation from '../../mutations/EditCounterMutation';
 
+import type {EditCounterItemFormQuery} from './__generated__/AddKpiItemFormQuery.graphql';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -21,8 +23,32 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
+import {MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from './common/useFormInput';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const EditCountersQuery = graphql`
+  query EditCounterItemFormQuery {
+    counterFamilys {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    vendors {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -42,6 +68,16 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     marginLeft: '10px',
+  },
+  select: {
+    paddingTop: '10px',
+    height: '36px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px',
   },
 }));
 
@@ -66,6 +102,11 @@ const EditCounterItemForm = (props: Props) => {
   const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
   const counterID = useFormInput(formValues.externalID);
   const familyName = useFormInput(formValues.counterFamily.name);
+
+  const data = useLazyLoadQuery<EditCounterItemFormQuery>(
+    EditCountersQuery,
+    {},
+  );
 
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
@@ -108,7 +149,17 @@ const EditCounterItemForm = (props: Props) => {
                   className={classes.formField}
                   label="Vendor name"
                   required>
-                  <TextInput className={classes.textInput} name="vendorName" />
+                  <Select
+                    variant="outlined"
+                    className={classes.select}
+                    name="vendor">
+                    {data.vendors.edges.map((item, index) => (
+                      <MenuItem key={index} value={item.node?.id}>
+                        {' '}
+                        {item.node?.name}{' '}
+                      </MenuItem>
+                    ))}
+                  </Select>
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
@@ -138,14 +189,20 @@ const EditCounterItemForm = (props: Props) => {
             </Grid>
             <Grid item xs={12} sm={12} lg={4} xl={4}>
               <FormField
+                label="Counter Family"
                 className={classes.formField}
-                label="Family name"
                 required>
-                <TextInput
+                <Select
                   {...familyName}
-                  className={classes.textInput}
-                  name="FamilyName"
-                />
+                  variant="outlined"
+                  className={classes.select}>
+                  {data.counterFamilys.edges.map((item, index) => (
+                    <MenuItem key={index} value={item.node.id}>
+                      {' '}
+                      {item.node?.name}{' '}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormField>
             </Grid>
             <Grid container justify="flex-end">

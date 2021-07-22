@@ -112,8 +112,8 @@ export const EditKpiItemForm = (props: Props) => {
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
               <FormField className={classes.formField} label="Enabled" >
-                <SwitchLabels />
-              </FormField>
+                  <SwitchLabels />
+                </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={8} xl={8}>
                 <FormField className={classes.formField} label="Name" required>

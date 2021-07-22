@@ -14,7 +14,7 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme =>({
+const useStyles = makeStyles(() => ({
   root: {
     padding: '0 9px 16px',
   },
@@ -31,11 +31,11 @@ const useStyles = makeStyles(theme =>({
   vendor: {
     paddingRight: '3rem',
   },
-  edit: {
+  delete: {
     justifyContent: 'flex-end',
   },
-  delete: {
-    paddingLeft: '1rem',
+  edit: {
+    paddingLeft: '2rem',
   },
 }));
 
@@ -75,17 +75,17 @@ function TitleTextCardsCounter() {
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.edit,
+            classes.delete,
           )}
           variant="subtitle2">
-          Edit
+          Delete
         </Text>
       </Grid>
       <Grid xs={1}>
         <Text
-          className={classNames(classes.title, classes.delete)}
+          className={classNames(classes.title, classes.edit)}
           variant="subtitle2">
-          Delete
+          Edit
         </Text>
       </Grid>
     </Grid>

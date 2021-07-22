@@ -91,7 +91,7 @@ const TresholdTypes = () => {
     RemoveTresholdMutation(variables);
   };
 
-  const showEditTresholdItemForm = (tresholds: Tresholds) => {
+  /*const showEditTresholdItemForm = (tresholds: Tresholds) => {
     setShowEditCard(true);
     setDataEdit(tresholds);
   };
@@ -116,6 +116,8 @@ const TresholdTypes = () => {
   if (showAddForm) {
     return <AddRuleItemForm />;
   }
+
+   */
 
   return (
     <div className={classes.root}>

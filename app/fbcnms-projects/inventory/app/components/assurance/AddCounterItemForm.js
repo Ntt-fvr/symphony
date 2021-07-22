@@ -14,7 +14,10 @@ import React, {useState} from 'react';
 import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
 
 // MUTATIONS //
+import type {AddCounterItemFormQuery} from './__generated__/AddCounterItemFormQuery.graphql';
 import type {AddCounterMutationVariables} from '../../mutations/__generated__/AddCounterMutation.graphql';
+
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import AddCounterMutation from '../../mutations/AddCounterMutation';
 
@@ -25,7 +28,30 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import {MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+
+const AddCountersQuery = graphql`
+  query AddCounterItemFormQuery {
+    counterFamilys {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    vendors {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,6 +70,20 @@ const useStyles = makeStyles(theme => ({
     margin: '20px',
     width: '111px',
     alignSelf: 'flex-end',
+  },
+  select: {
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
+    height: '36px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px',
+    backgroundColor: '#FFFFFF',
   },
 }));
 
@@ -67,6 +107,8 @@ export default function AddCounterItemForm(props: Props) {
   const [showChecking, setShowChecking] = useState();
   const [activate, setActivate] = useState('');
 
+  const data = useLazyLoadQuery<AddCounterItemFormQuery>(AddCountersQuery, {});
+
   const inputFilter = () => {
     return dataValues?.filter(item => item === counters.data.name) || [];
   };
@@ -81,21 +123,17 @@ export default function AddCounterItemForm(props: Props) {
 
     const validateInputs = Object.values(counters.data);
     validateInputs.map(item => item != null) &&
-      validateInputs.length === 5 &&
+      validateInputs.length === 4 &&
       setActivate(validateInputs);
   }
 
   function handleClick() {
     const variables: AddCounterMutationVariables = {
       input: {
-        name: counters.data?.family,
-        counter: [
-          {
-            name: counters.data.name,
-            externalID: counters.data.id,
-            networkManagerSystem: counters.data.nms,
-          },
-        ],
+        name: counters.data.name,
+        externalID: counters.data.id,
+        networkManagerSystem: counters.data.nms,
+        counterFamily: counters.data.family,
       },
     };
 
@@ -110,7 +148,14 @@ export default function AddCounterItemForm(props: Props) {
   };
 
   if (showChecking) {
-    return <AddedSuccessfullyMessage data_entry="counter" card_header="Add Counter" title="Counter" text_button="Add new counter" />;
+    return (
+      <AddedSuccessfullyMessage
+        data_entry="counter"
+        card_header="Add Counter"
+        title="Counter"
+        text_button="Add new counter"
+      />
+    );
   }
 
   return (
@@ -137,20 +182,30 @@ export default function AddCounterItemForm(props: Props) {
         />
       </FormField>
       <FormField className={classes.formField} label="Family name" required>
-        <TextInput
-          className={classes.textInput}
+        <Select
+          className={classes.select}
+          disableUnderline
           name="family"
-          type="string"
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+          {data.counterFamilys.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
+            </MenuItem>
+          ))}
+        </Select>
       </FormField>
       <FormField className={classes.formField} label="Vendor name" required>
-        <TextInput
-          className={classes.textInput}
+        <Select
+          className={classes.select}
+          disableUnderline
           name="vendor"
-          type="string"
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+          {data.vendors.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
+            </MenuItem>
+          ))}
+        </Select>
       </FormField>
       <FormField
         className={classes.formField}

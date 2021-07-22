@@ -15,7 +15,6 @@ import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
 // COMPONENTS //
-import AddFormulaItemForm from './AddFormulaItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import KpiTypeItem from './KpiTypeItem';
@@ -27,7 +26,7 @@ import type {RemoveKpiMutationVariables} from '../../mutations/__generated__/Rem
 
 import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -79,15 +78,15 @@ type Kpis = {
 const KpiTypes = () => {
   const classes = useStyles();
 
-  const [Datakpis, setDatakpis] = useState({});
+  const [dataKpis, setDataKpis] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
-      setDatakpis(data);
+      setDataKpis(data);
     });
-  }, [Datakpis]);
+  }, [dataKpis]);
 
   const handleRemove = id => {
     const variables: RemoveKpiMutationVariables = {
@@ -108,7 +107,7 @@ const KpiTypes = () => {
   if (showEditCard) {
     return (
       <EditKpiItemForm
-        kpi={Datakpis.kpis?.edges.map(item => item.node)}
+        kpi={dataKpis.kpis?.edges.map(item => item.node)}
         formValues={dataEdit.item.node}
         hideEditKpiForm={hideEditKpiForm}
       />
@@ -131,7 +130,7 @@ const KpiTypes = () => {
         <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
           <List disablePadding>
-            {Datakpis.kpis?.edges.map((item, index) => (
+            {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
                 onChange={() => handleRemove(item.node.id)}
@@ -143,9 +142,8 @@ const KpiTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddKpiItemForm
-            dataValues={Datakpis.kpis?.edges.map(item => item.node)}
+            dataValues={dataKpis.kpis?.edges.map(item => item.node)}
           />
-          <AddFormulaItemForm />
         </Grid>
       </Grid>
     </div>
