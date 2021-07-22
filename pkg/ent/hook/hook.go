@@ -182,15 +182,15 @@ func (f CounterFamilyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return f(ctx, mv)
 }
 
-// The CounterVendorFormulaFunc type is an adapter to allow the use of ordinary
-// function as CounterVendorFormula mutator.
-type CounterVendorFormulaFunc func(context.Context, *ent.CounterVendorFormulaMutation) (ent.Value, error)
+// The CounterFormulaFunc type is an adapter to allow the use of ordinary
+// function as CounterFormula mutator.
+type CounterFormulaFunc func(context.Context, *ent.CounterFormulaMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f CounterVendorFormulaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.CounterVendorFormulaMutation)
+func (f CounterFormulaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CounterFormulaMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CounterVendorFormulaMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CounterFormulaMutation", m)
 	}
 	return f(ctx, mv)
 }

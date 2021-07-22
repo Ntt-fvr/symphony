@@ -14,7 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -59,14 +59,14 @@ func (vc *VendorCreate) SetName(s string) *VendorCreate {
 	return vc
 }
 
-// AddVendorFkIDs adds the vendor_fk edge to CounterVendorFormula by ids.
+// AddVendorFkIDs adds the vendor_fk edge to Counter by ids.
 func (vc *VendorCreate) AddVendorFkIDs(ids ...int) *VendorCreate {
 	vc.mutation.AddVendorFkIDs(ids...)
 	return vc
 }
 
-// AddVendorFk adds the vendor_fk edges to CounterVendorFormula.
-func (vc *VendorCreate) AddVendorFk(c ...*CounterVendorFormula) *VendorCreate {
+// AddVendorFk adds the vendor_fk edges to Counter.
+func (vc *VendorCreate) AddVendorFk(c ...*Counter) *VendorCreate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -213,7 +213,7 @@ func (vc *VendorCreate) createSpec() (*Vendor, *sqlgraph.CreateSpec) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}

@@ -27,7 +27,7 @@ func (Vendor) Fields() []ent.Field {
 
 func (Vendor) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("vendor_fk", CounterVendorFormula.Type).
+		edge.To("vendor_fk", Counter.Type).
 			Annotations(entgql.MapsTo("vendor")),
 	}
 }

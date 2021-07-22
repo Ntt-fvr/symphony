@@ -35,7 +35,7 @@ func (c *Client) ReadOnly() *Client {
 		Comparator:                  NewComparatorClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
-		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
+		CounterFormula:              NewCounterFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
 		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
