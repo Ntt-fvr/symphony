@@ -176,7 +176,7 @@ const WorkOrderDetails = ({
   const {enqueueSnackbar} = useSnackbar();
 
   const linkFiles = () => {
-    countDispatch({type: 'apply', value: '', file: null});
+    countDispatch({type: 'apply', value: '', file: null, link: null});
     enqueueSnackbar('Linking files');
     state.files.map(item => {
       linkFileToLocation(
@@ -485,10 +485,9 @@ const WorkOrderDetails = ({
               x => x.checkList || [],
             );
             const isNotDone = await verifyMandatoryItems(items);
-            console.log('isNotDone', isNotDone);
             if (isNotDone) {
               alert(
-                `'Failed', checklist categories items have empty mandatory responses. Please complete them`,
+                `There are mandatory checklist items pending to be answered. Please complete them before closing the Work Order.`,
               );
               return;
             }
@@ -504,12 +503,11 @@ const WorkOrderDetails = ({
       .then(() => {
         setWorkOrder({...workOrder, status: value});
       })
-      .catch(x => console.log('error', x));
+      .catch(x => console.error('error', x));
   };
 
   const verifyMandatoryItems = async (itemsArray: Array<CheckListItem>) => {
-    return itemsArray.some((value, index) => {
-      const type = value.type;
+    return itemsArray.some(value => {
       const isMandatory = value.isMandatory;
       if (!isMandatory) {
         return false;
