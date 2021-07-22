@@ -86,7 +86,13 @@ const CheckListTableFilling = ({items}: Props) => {
               return (
                 <div className={classes.titleContainer}>
                   <Icon
-                    className={classNames(classes.icon, classes[row.item.isMandatory ? isChecklistItemDone(row.item).toString() : 'true'],
+                    className={classNames(
+                      classes.icon,
+                      classes[
+                        row.item.isMandatory
+                          ? isChecklistItemDone(row.item).toString()
+                          : 'true'
+                      ],
                     )}
                   />
                   <Text
@@ -98,10 +104,17 @@ const CheckListTableFilling = ({items}: Props) => {
                     ) : (
                       <fbt desc="">Item</fbt>
                     )}
-                    {
-                      row.item  && !!row.item.isMandatory &&
-                      <span className={classNames(!isChecklistItemDone(row.item) ? classes.mandatory : '')}> * </span>
-                    }
+                    {row.item && !!row.item.isMandatory && (
+                      <span
+                        className={classNames(
+                          !isChecklistItemDone(row.item)
+                            ? classes.mandatory
+                            : '',
+                        )}>
+                        {' '}
+                        *{' '}
+                      </span>
+                    )}
                   </Text>
                 </div>
               );
@@ -109,7 +122,7 @@ const CheckListTableFilling = ({items}: Props) => {
           },
           {
             key: 'response',
-            title: <fbt desc="">Responses</fbt>,
+            title: <fbt desc="">Response</fbt>,
             render: row => (
               <CheckListItemFilling
                 item={row.item}
