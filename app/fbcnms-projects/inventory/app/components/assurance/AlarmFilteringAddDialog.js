@@ -58,19 +58,22 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
+  onAlarmSelected: () => void,
+  onAlarmSelectedData: string
 |}>;
 
 const AlarmFilteringAddDialog = (props: Props) => {
+  const {onClose, onAlarmSelected, onAlarmSelectedData} = props;
   const classes = useStyles();
   return (
     <Dialog
       maxWidth="sm"
       open={true}
-      onClose={props.onClose}
+      onClose={onClose}
       fullWidth={true}
       className={classes.root}>
       <DialogActions>
-        <Button onClick={props.onClose} skin="regular">
+        <Button onClick={onClose} skin="regular">
           <CloseIcon fontSize="large" color="action" />
         </Button>
       </DialogActions>
@@ -85,7 +88,7 @@ const AlarmFilteringAddDialog = (props: Props) => {
             </Text>
           </Grid>
           <Grid item xs={12}>
-            <Text>AMS/OLT-SYS-AL1/rack=1/shelf=1/slot=LT1/port=1</Text>
+            <Text> {onAlarmSelectedData.name} </Text>
           </Grid>
         </Grid>
         <Grid container spacing={2} className={classes.time}>
@@ -93,10 +96,10 @@ const AlarmFilteringAddDialog = (props: Props) => {
             <Text>During the period:</Text>
           </Grid>
           <Grid item xs={6}>
-            <Text weight="bold">Start: 02/06/2021</Text>
+            <Text weight="bold">Start: {onAlarmSelectedData.beginTime}</Text>
           </Grid>
           <Grid item xs={6}>
-            <Text weight="bold">End: 13/09/2021</Text>
+            <Text weight="bold">End: {onAlarmSelectedData.endTime} </Text>
           </Grid>
         </Grid>
       </DialogContent>
@@ -104,7 +107,11 @@ const AlarmFilteringAddDialog = (props: Props) => {
         <Button className={classes.option} variant="outlined" color="primary">
           Edit
         </Button>
-        <Button className={classes.option} variant="contained" color="primary">
+        <Button
+          onClick={() => onAlarmSelected()}
+          className={classes.option}
+          variant="contained"
+          color="primary">
           Save
         </Button>
       </DialogActions>

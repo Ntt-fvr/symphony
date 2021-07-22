@@ -81,21 +81,21 @@ const AlarmFilteringTypes = () => {
   const [DataAlarms, setDataAlarms] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-
+  const [showForm, setShowForm] = useState(false);
+  
   useEffect(() => {
     fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
       setDataAlarms(data);
     });
   }, []);
 
-  const [showForm, setShowForm] = useState(false);
 
   function handleClick() {
     setShowForm(true);
   }
   
   if (showForm) {
-    return <AlarmFilteringFormCreate />;
+    return <AlarmFilteringFormCreate returnTableAlarm={()=> setShowForm(false)} />;
   }
   return (
     <div className={classes.root}>

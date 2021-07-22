@@ -18,6 +18,7 @@ import {
   StatusClosed,
   StatusPending,
 } from './AlarmFilteringStatus';
+import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeStyles} from '@material-ui/styles';
@@ -70,6 +71,7 @@ const AlarmFilteringTable = (props: Props) => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -79,7 +81,14 @@ const AlarmFilteringTable = (props: Props) => {
     setRowsPerPage(event.target.value);
     setPage(0);
   };
-
+  
+  if (showEditForm) {
+    return (
+        
+          <AlarmFilteringFormCreate />
+        
+    );
+  }
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -105,7 +114,12 @@ const AlarmFilteringTable = (props: Props) => {
                     <Switch />
                   </TableCell>
                   <TableCell>
-                    <Button color="primary">{Alarmdata.name}</Button>
+                    <Button 
+                      color="primary"
+                      onClick={() => setShowEditForm(true)}
+                    >
+                      {Alarmdata.name}
+                    </Button>
                   </TableCell>
                   <TableCell>{Alarmdata.creationTime}</TableCell>
                   <TableCell>{Alarmdata.networkResource}</TableCell>

@@ -79,10 +79,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 
-type Props = $ReadOnly<{|
-  dataValues: Array<string>,
-|}>;
-
 type AlarmFilter = {
   id: string,
   name: string,
@@ -101,11 +97,10 @@ type AlarmFilter = {
 
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {dataValues} = props;
+  const {dataValues, returnTableAlarm} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogKey, setDialogKey] = useState(1);
 
 
   function handleChange({target}) {
@@ -117,6 +112,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
     });
   }
   
+
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
       input: {
@@ -126,35 +122,28 @@ const AlarmFilteringFormCreate = (props: Props) => {
         beginTime: AlarmFilter.data.beginTime,
         endTime: AlarmFilter.data.endTime,
         reason: AlarmFilter.data.reason,
-        user: "roman",
-        creationTime: "2021-07-16T00:00:00Z",
+        user: "user",
+        creationTime: "2021-07-21T00:00:00Z",
         alarmStatus:  8589934592,
       },
     };
     AddAlarmFilterMutation(variables);
   }
-  const showDialog = () => {
-    setDialogOpen(true);
-    setDialogKey(dialogKey + 1);
-  };
-  const hideDialog = () => setDialogOpen(false);
+  
 
-  // if (dialogOpen) {
-  //   return (
-  //     <InventorySuspense permissions={{entity: 'workorder'}}>
-  //       <AlarmFilteringFormCreate />
-  //       >
-  //       <AlarmFilteringAddDialog
-  //         key={`new_work_order_${dialogKey}`}
-  //         open={dialogOpen}
-  //         onClose={hideDialog}
-  //         onWorkOrderTypeSelected={typeId => {
-  //           setDialogOpen(false);
-  //         }}
-  //       />
-  //     </InventorySuspense>
-  //   );
-  // }
+  if (dialogOpen) {
+    return (
+        <>
+          <AlarmFilteringFormCreate />
+          <AlarmFilteringAddDialog
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}  
+            onAlarmSelected={handleClick}
+            onAlarmSelectedData={AlarmFilter.data}
+          />
+        </>
+    );
+  }
 
   const handleRemove = () => {
     console.log('REMOVE ALARM');
@@ -184,7 +173,9 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   <Button
                     className={classes.option}
                     variant="outlined"
-                    color="primary">
+                    color="primary"
+                    onClick={() => returnTableAlarm()}
+                  >
                     Cancel
                   </Button>
                 </FormField>
@@ -192,8 +183,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid xs={6}>
                 <FormField>
                   <Button
-                    onClick={handleClick}
-                    // onClick={showDialog}
+                    onClick={() => setDialogOpen(true)}
                     className={classes.option}
                     variant="contained"
                     color="primary">
@@ -219,7 +209,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 <FormField className={classes.formField} label="Name">
                   <TextInput
                     className={classes.textInput}
-                    name="name"
+                    name="name"  
                     onChange={handleChange}
                   />
                 </FormField>
@@ -255,7 +245,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     <TextField
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2017-05-24T10:30"
+                      defaultValue="2021-07-01T10:30"
                       name="beginTime"
                       onChange={handleChange}
                       className={''}
@@ -267,7 +257,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     <TextField
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2017-05-24T10:30"
+                      defaultValue="2021-07-01T11:30"
                       name="endTime"
                       onChange={handleChange}
                       className={''}
