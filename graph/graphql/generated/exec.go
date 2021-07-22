@@ -483,6 +483,7 @@ type ComplexityRoot struct {
 		StoreKey    func(childComplexity int) int
 		Type        func(childComplexity int) int
 		UploadedAt  func(childComplexity int) int
+		WorkOrder   func(childComplexity int) int
 	}
 
 	FloorPlan struct {
@@ -3372,6 +3373,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.File.UploadedAt(childComplexity), true
+
+	case "File.workorder":
+		if e.complexity.File.WorkOrder == nil {
+			break
+		}
+
+		return e.complexity.File.WorkOrder(childComplexity), true
 
 	case "FloorPlan.id":
 		if e.complexity.FloorPlan.ID == nil {
@@ -9405,6 +9413,7 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
+  workorder: WorkOrder
 }
 
 type Hyperlink implements Node {
@@ -25437,6 +25446,38 @@ func (ec *executionContext) _File_annotation(ctx context.Context, field graphql.
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _File_workorder(ctx context.Context, field graphql.CollectedField, obj *ent.File) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "File",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrder(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrder)
+	fc.Result = res
+	return ec.marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FloorPlan_id(ctx context.Context, field graphql.CollectedField, obj *ent.FloorPlan) (ret graphql.Marshaler) {
@@ -61002,12 +61043,12 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._File_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "fileName":
 			out.Values[i] = ec._File_fileName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "sizeInBytes":
 			out.Values[i] = ec._File_sizeInBytes(ctx, field, obj)
@@ -61025,6 +61066,17 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._File_category(ctx, field, obj)
 		case "annotation":
 			out.Values[i] = ec._File_annotation(ctx, field, obj)
+		case "workorder":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._File_workorder(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

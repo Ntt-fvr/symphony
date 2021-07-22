@@ -506,6 +506,7 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
+  workorder: WorkOrder
 }
 
 type Hyperlink implements Node {
