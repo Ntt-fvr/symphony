@@ -12,7 +12,7 @@ import type {EditCounterMutationVariables} from '../../mutations/__generated__/E
 
 import EditCounterMutation from '../../mutations/EditCounterMutation';
 
-import type {EditCounterItemFormQuery} from './__generated__/AddKpiItemFormQuery.graphql';
+import type {EditCounterItemFormQuery} from './__generated__/EditCounterItemFormQuery.graphql';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -31,14 +31,6 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const EditCountersQuery = graphql`
   query EditCounterItemFormQuery {
-    counterFamilys {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
     vendors {
       edges {
         node {
@@ -70,7 +62,10 @@ const useStyles = makeStyles(() => ({
     marginLeft: '10px',
   },
   select: {
-    paddingTop: '10px',
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
     height: '36px',
     overflow: 'hidden',
     position: 'relative',
@@ -90,6 +85,9 @@ type Props = $ReadOnly<{|
     counterFamily: {
       name: string,
     },
+    vendorFk: {
+      name: string,
+    },
   },
   hideEditCounterForm: void => void,
 |}>;
@@ -101,7 +99,8 @@ const EditCounterItemForm = (props: Props) => {
   const name = useFormInput(formValues.name);
   const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
   const counterID = useFormInput(formValues.externalID);
-  const familyName = useFormInput(formValues.counterFamily.name);
+  const counterFamily = useFormInput(formValues.counterFamily.name);
+  const vendor = useFormInput(formValues.vendorFk.name);
 
   const data = useLazyLoadQuery<EditCounterItemFormQuery>(
     EditCountersQuery,
@@ -115,6 +114,7 @@ const EditCounterItemForm = (props: Props) => {
         name: name.value,
         externalID: counterID.value,
         networkManagerSystem: networkManagerSystem.value,
+        vendorFk: vendor.value,
       },
     };
 
@@ -147,19 +147,13 @@ const EditCounterItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField
                   className={classes.formField}
-                  label="Vendor name"
-                  required>
-                  <Select
-                    variant="outlined"
-                    className={classes.select}
-                    name="vendor">
-                    {data.vendors.edges.map((item, index) => (
-                      <MenuItem key={index} value={item.node?.id}>
-                        {' '}
-                        {item.node?.name}{' '}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  label="Counter Family"
+                  disabled>
+                  <TextInput
+                    {...counterFamily}
+                    className={classes.textInput}
+                    name="counterFamily"
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
@@ -193,13 +187,13 @@ const EditCounterItemForm = (props: Props) => {
                 className={classes.formField}
                 required>
                 <Select
-                  {...familyName}
-                  variant="outlined"
-                  className={classes.select}>
-                  {data.counterFamilys.edges.map((item, index) => (
-                    <MenuItem key={index} value={item.node.id}>
-                      {' '}
-                      {item.node?.name}{' '}
+                  {...vendor}
+                  className={classes.select}
+                  disableUnderline
+                  name="vendor">
+                  {data.vendors.edges.map((item, index) => (
+                    <MenuItem key={index} value={item.node?.id}>
+                      {item.node?.name}
                     </MenuItem>
                   ))}
                 </Select>

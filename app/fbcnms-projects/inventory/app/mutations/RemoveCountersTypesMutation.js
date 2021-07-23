@@ -8,35 +8,36 @@
  * @format
  */
 
- import type {MutationCallbacks} from './MutationCallbacks.js';
- import type {
-    RemoveCountersTypesMutation,
-    RemoveCountersTypesMutationResponse,
-    RemoveCountersTypesMutationVariables,
- } from './__generated__/RemoveCountersTypesMutation.graphql';
- import type {SelectorStoreUpdater} from 'relay-runtime';
- 
- import RelayEnvironment from '../common/RelayEnvironment.js';
- import {commitMutation, graphql} from 'react-relay';
- 
- const mutation = graphql`
-   mutation RemoveCountersTypesMutation($id: ID!) {
-     removeCounter(id: $id)
-   }
- `;
- 
- export default (
-   variables: RemoveCountersTypesMutationVariables,
-   callbacks?: MutationCallbacks<RemoveCountersTypesMutationResponse>,
-   updater?: SelectorStoreUpdater,
- ) => {
-   const {onCompleted, onError} = callbacks ? callbacks : {};
-    commitMutation<RemoveCountersTypesMutation>(RelayEnvironment, {
-     mutation,
-     variables,
-     updater,
-     onCompleted,
-     onError,
-   });
- };
- 
+import type {MutationCallbacks} from './MutationCallbacks.js';
+
+import type {
+  RemoveCountersTypesMutation,
+  RemoveCountersTypesMutationResponse,
+  RemoveCountersTypesMutationVariables,
+} from './__generated__/RemoveCountersTypesMutation.graphql';
+
+import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
+
+const mutation = graphql`
+  mutation RemoveCountersTypesMutation($id: ID!) {
+    removeCounter(id: $id)
+  }
+`;
+
+export default (
+  variables: RemoveCountersTypesMutationVariables,
+  callbacks?: MutationCallbacks<RemoveCountersTypesMutationResponse>,
+  updater?: SelectorStoreUpdater,
+) => {
+  const {onCompleted, onError} = callbacks ? callbacks : {};
+  commitMutation<RemoveCountersTypesMutation>(RelayEnvironment, {
+    mutation,
+    variables,
+    updater,
+    onCompleted,
+    onError,
+  });
+};

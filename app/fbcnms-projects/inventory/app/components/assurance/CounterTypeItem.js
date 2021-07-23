@@ -77,6 +77,9 @@ type Props = $ReadOnly<{|
   counterFamily: {
     name: string,
   },
+  vendorFk: {
+    name: string,
+  },
   edit: MouseEventHandler,
   handleRemove: void => void,
 |}>;
@@ -87,6 +90,7 @@ export default function CounterTypeItem(props: Props) {
     name,
     networkManagerSystem,
     counterFamily,
+    vendorFk,
     edit,
     handleRemove,
   } = props;
@@ -110,7 +114,7 @@ export default function CounterTypeItem(props: Props) {
           </Grid>
 
           <Grid xs={5} container justify="center" alignItems="center">
-            <Text className={classes.bold}>{'Erikson'}</Text>
+            <Text className={classes.bold}>{vendorFk.name}</Text>
           </Grid>
 
           <Grid xs={1} container justify="flex-end" alignItems="center">

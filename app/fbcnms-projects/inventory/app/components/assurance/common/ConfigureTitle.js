@@ -23,7 +23,7 @@ const ConfigureTitle = (props: Props) => {
   const {title, subtitle, classes, className} = props;
   return (
     <div className={className}>
-      <Text className={classes.title} variant="h6">
+      <Text className={classes.title} variant="h6" weight="medium">
         {title}
       </Text>
       <Text className={classes.subtitle} variant="subtitle2">

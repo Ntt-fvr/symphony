@@ -83,7 +83,6 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
     borderRadius: '4px',
     fontSize: '14px',
-    backgroundColor: '#FFFFFF',
   },
 }));
 
@@ -97,6 +96,7 @@ type Counters = {
     id: string,
     nms: string,
     family: string,
+    vendor: string,
   },
 };
 
@@ -105,7 +105,6 @@ export default function AddCounterItemForm(props: Props) {
   const classes = useStyles();
   const [counters, setCounters] = useState<Counters>({data: {}});
   const [showChecking, setShowChecking] = useState();
-  const [activate, setActivate] = useState('');
 
   const data = useLazyLoadQuery<AddCounterItemFormQuery>(AddCountersQuery, {});
 
@@ -120,11 +119,6 @@ export default function AddCounterItemForm(props: Props) {
         [target.name]: target.value,
       },
     });
-
-    const validateInputs = Object.values(counters.data);
-    validateInputs.map(item => item != null) &&
-      validateInputs.length === 4 &&
-      setActivate(validateInputs);
   }
 
   function handleClick() {
@@ -134,6 +128,7 @@ export default function AddCounterItemForm(props: Props) {
         externalID: counters.data.id,
         networkManagerSystem: counters.data.nms,
         counterFamily: counters.data.family,
+        vendorFk: counters.data.vendor,
       },
     };
 
@@ -169,6 +164,7 @@ export default function AddCounterItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="name"
+          autoComplete="off"
           type="string"
           onChange={handleChange}
         />
@@ -177,6 +173,7 @@ export default function AddCounterItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="id"
+          autoComplete="off"
           type="string"
           onChange={handleChange}
         />
@@ -214,6 +211,7 @@ export default function AddCounterItemForm(props: Props) {
         <TextInput
           className={classes.textInput}
           name="nms"
+          autoComplete="off"
           type="string"
           onChange={handleChange}
         />
@@ -222,7 +220,13 @@ export default function AddCounterItemForm(props: Props) {
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={!activate}>
+          disabled={
+            !(
+              Object.values(counters.data).length === 5 &&
+              !Object.values(counters.data).some(item => item === '') &&
+              !(inputFilter().length > 0)
+            )
+          }>
           Add Counter
         </Button>
       </FormField>

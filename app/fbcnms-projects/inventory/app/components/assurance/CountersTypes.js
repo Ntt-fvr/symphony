@@ -55,12 +55,12 @@ const CountersQuery = graphql`
           networkManagerSystem
           externalID
           counterFamily {
+            id
             name
           }
-          countervendorformula {
-            vendorFk {
-              name
-            }
+          vendorFk {
+            id
+            name
           }
         }
       }
@@ -76,6 +76,9 @@ type Counters = {
       externalID: string,
       networkManagerSystem: string,
       counterFamily: {
+        name: string,
+      },
+      vendorFk: {
         name: string,
       },
     },
