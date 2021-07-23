@@ -75,6 +75,7 @@ const TresholdTypes = () => {
   const classes = useStyles();
 
   const [DataTreshold, setDataTreshold] = useState({});
+  const [showEditCard, setShowEditCard] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 

@@ -17,8 +17,8 @@ import classNames from 'classnames';
 
 const useStyles = makeStyles(() => ({
   button: {
-    width: '90px',
-    height: '28px',
+    width: '111px',
+    height: '36px',
   },
   buttonActive: {
     border: '1px solid green',

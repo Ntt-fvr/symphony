@@ -11,15 +11,16 @@ import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
 import Button from '@symphony/design-system/components/Button';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useState} from 'react';
+import React, {useEffect,useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 import PowerSearchBar from '../power_search/PowerSearchBar';
-
 import fbt from 'fbt';
-
 import ConfigureTitle from './common/ConfigureTitle';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery} from 'relay-runtime';
+import {graphql} from 'react-relay';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,16 +36,66 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const AlarmFilteringQuery = graphql`
+  query AlarmFilteringTypesQuery {
+    AlarmFilters{
+      edges{
+        node{
+          id
+          name
+          networkResource
+          enable
+          beginTime
+          endTime
+          reason
+          user
+          creationTime
+          alarmStatus	{
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`
+type Alarms = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+      networkResource: string,
+      enable: boolean,
+      beginTime: string,
+      endTime: string,
+      reason: string,
+      user: string,
+      creationTime: string,
+      alarmStatus:  string
+    }
+  },
+};
+
 const AlarmFilteringTypes = () => {
   const classes = useStyles();
-
+  const [DataAlarms, setDataAlarms] = useState({});
+  const [showEditCard, setShowEditCard] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
   const [showForm, setShowForm] = useState(false);
+  
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
+      setDataAlarms(data);
+    });
+  }, []);
+
 
   function handleClick() {
     setShowForm(true);
   }
+  
   if (showForm) {
-    return <AlarmFilteringFormCreate />;
+    return <AlarmFilteringFormCreate returnTableAlarm={()=> setShowForm(false)} />;
   }
   return (
     <div className={classes.root}>
@@ -82,7 +133,11 @@ const AlarmFilteringTypes = () => {
           </FormField>
         </Grid>
         <Grid item xs={12}>
-          <AlarmFilteringTable />
+            <AlarmFilteringTable
+              dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+              // onChange={() => handleRemove(item.node.id)}
+              // edit={() => showEditKpiItemForm({item})}
+            />
         </Grid>
       </Grid>
     </div>
