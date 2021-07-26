@@ -7,6 +7,8 @@
  * @flow
  * @format
  */
+import React, {useContext} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 
 import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
@@ -15,9 +17,7 @@ import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
 import FaultManagement from './FaultManagement';
 import InventorySuspense from '../../common/InventorySuspense';
 import PerformanceCatalog from './PerformanceCatalog';
-import ServiceQualityMonitoring from './ServiceQualityMonitoring';
-import React, {useContext} from 'react';
-import RelayEnvironment from '../../common/RelayEnvironment';
+import ServiceQuality from './ServiceQuality';
 import {AssuranceNavListItems} from './AssuranceNavListItems';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {Redirect, Route, Switch} from 'react-router-dom';
@@ -65,8 +65,8 @@ function AssuranceMain() {
                   component={FaultManagement}
                 />
                 <Route
-                  path={relativeUrl('/service_quality_monitoring')}
-                  component={ServiceQualityMonitoring}
+                  path={relativeUrl('/service_quality')}
+                  component={ServiceQuality}
                 />
                 <Redirect
                   from="/assurance"

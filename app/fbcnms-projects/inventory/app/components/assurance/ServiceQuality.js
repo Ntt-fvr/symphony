@@ -9,7 +9,6 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
-import AlarmFilteringTypes from './AlarmFilteringTypes';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
 import React, {useEffect, useState} from 'react';
@@ -17,10 +16,11 @@ import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
+import KqiSourcesTypes from './KqiSourcesTypes';
+import KqiTypes from './KqiTypes';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -51,18 +51,25 @@ type RouteTab = {
   path: string,
 };
 
-export default function Catalog() {
+export default function ServiceQuality() {
   const relativeUrl = useRelativeUrl();
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
   const tabBars: Array<RouteTab> = [
     {
-      id: 'alarm_filtering',
+      id: 'kqi_sources',
       tab: {
-        label: fbt('ALARM FILTERING', ''),
+        label: fbt('KQI SOURCES', ''),
       },
-      path: 'alarm_filtering',
+      path: 'kqi_sources',
+    },
+    {
+      id: 'kqi',
+      tab: {
+        label: fbt('KQI', ''),
+      },
+      path: 'kqi',
     },
   ];
 
@@ -74,10 +81,11 @@ export default function Catalog() {
   );
 
   useEffect(() => {
-    ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED, {
+    /*ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-    history.push(`/assurance/fault_management/${tabBars[activeTabBar].path}`);
+     */
+    history.push(`/assurance/service_quality/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 
   return (
@@ -94,10 +102,14 @@ export default function Catalog() {
           <Switch>
             <Route
               exact
-              path={relativeUrl('/alarm_filtering')}
-              component={AlarmFilteringTypes}
+              path={relativeUrl('/kqi_sources')}
+              component={KqiSourcesTypes}
             />
-            <Redirect to={relativeUrl('/alarm_filtering')} />
+            <Route exact path={relativeUrl('/kqi')} component={KqiTypes} />
+            <Redirect
+              from={relativeUrl('/assurance/service_quality')}
+              to={relativeUrl('/kqi_sources')}
+            />
           </Switch>
         </InventorySuspense>
       </InventoryErrorBoundary>
