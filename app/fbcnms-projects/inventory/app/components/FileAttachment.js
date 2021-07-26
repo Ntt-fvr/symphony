@@ -29,7 +29,6 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {formatFileSize} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
-
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Select from '@symphony/design-system/components/Select/Select';
 import Strings from '../common/InventoryStrings';
@@ -138,10 +137,9 @@ class FileAttachment extends React.Component<Props, State> {
         }
       }
     });
-  }
+  };
 
   render() {
-
     const _setCategory = (value: string) => {
       if (this.state.selectValue === '') {
         if (this.props.onChecked)
@@ -167,6 +165,11 @@ class FileAttachment extends React.Component<Props, State> {
         {categoriesEnabled && (
           <TableCell padding="none" component="th" scope="row">
             {file.category}
+          </TableCell>
+        )}
+        {categoriesEnabled && (
+          <TableCell padding="none" component="th" scope="row">
+            {file.annotation}
           </TableCell>
         )}
         <TableCell padding="none" component="th" scope="row">
@@ -270,6 +273,7 @@ export default withStyles(styles)(
         fileType
         storeKey
         category
+        annotation
         ...ImageDialog_img
       }
     `,
