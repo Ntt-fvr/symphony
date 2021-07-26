@@ -49,8 +49,8 @@ type Counter func(*sql.Selector)
 // CounterFamily is the predicate function for counterfamily builders.
 type CounterFamily func(*sql.Selector)
 
-// CounterVendorFormula is the predicate function for countervendorformula builders.
-type CounterVendorFormula func(*sql.Selector)
+// CounterFormula is the predicate function for counterformula builders.
+type CounterFormula func(*sql.Selector)
 
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)

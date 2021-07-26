@@ -30,6 +30,8 @@ const (
 
 	// EdgeCounterfamily holds the string denoting the counterfamily edge name in mutations.
 	EdgeCounterfamily = "counterfamily"
+	// EdgeVendor holds the string denoting the vendor edge name in mutations.
+	EdgeVendor = "vendor"
 	// EdgeCounterFk holds the string denoting the counter_fk edge name in mutations.
 	EdgeCounterFk = "counter_fk"
 
@@ -42,11 +44,18 @@ const (
 	CounterfamilyInverseTable = "counter_families"
 	// CounterfamilyColumn is the table column denoting the counterfamily relation/edge.
 	CounterfamilyColumn = "counter_family_counterfamily"
+	// VendorTable is the table the holds the vendor relation/edge.
+	VendorTable = "counters"
+	// VendorInverseTable is the table name for the Vendor entity.
+	// It exists in this package in order to avoid circular dependency with the "vendor" package.
+	VendorInverseTable = "vendors"
+	// VendorColumn is the table column denoting the vendor relation/edge.
+	VendorColumn = "vendor_vendor_fk"
 	// CounterFkTable is the table the holds the counter_fk relation/edge.
-	CounterFkTable = "counter_vendor_formulas"
-	// CounterFkInverseTable is the table name for the CounterVendorFormula entity.
-	// It exists in this package in order to avoid circular dependency with the "countervendorformula" package.
-	CounterFkInverseTable = "counter_vendor_formulas"
+	CounterFkTable = "counter_formulas"
+	// CounterFkInverseTable is the table name for the CounterFormula entity.
+	// It exists in this package in order to avoid circular dependency with the "counterformula" package.
+	CounterFkInverseTable = "counter_formulas"
 	// CounterFkColumn is the table column denoting the counter_fk relation/edge.
 	CounterFkColumn = "counter_counter_fk"
 )
@@ -64,6 +73,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the Counter type.
 var ForeignKeys = []string{
 	"counter_family_counterfamily",
+	"vendor_vendor_fk",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

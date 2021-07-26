@@ -8,6 +8,7 @@
  * @format
  */
 
+import AppRegistrationIcon from '@material-ui/icons/AppRegistration';
 import ManageAccountsIcon from '@material-ui/icons/ManageAccounts';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import React from 'react';
@@ -20,7 +21,7 @@ export const AssuranceNavListItems = () => {
   return [
     <NavListItem
       key={1}
-      label="Performance Catalog"
+      label="Performance PerformanceCatalog"
       path={relativeUrl('/performance/counters_types')}
       icon={<SummarizeIcon />}
       onClick={() => {
@@ -35,6 +36,12 @@ export const AssuranceNavListItems = () => {
       onClick={() => {
         ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED);
       }}
+    />,
+    <NavListItem
+      key={3}
+      label="Service Quality"
+      path={relativeUrl('/service_quality/kqi_source')}
+      icon={<AppRegistrationIcon />}
     />,
   ];
 };

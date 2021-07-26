@@ -12,7 +12,7 @@ import React from 'react';
 import fbt from 'fbt';
 
 // COMPONENTS //
-import SwitchLabels from './Switch';
+import SwitchLabels from './common/Switch';
 import Table from './Table';
 import {useFormInput} from './common/useFormInput';
 
@@ -102,7 +102,7 @@ export const EditKpiItemForm = (props: Props) => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('KPI Catalog', ' ')}
+            title={fbt('KPI PerformanceCatalog', ' ')}
             subtitle={''}
           />
         </Grid>
@@ -111,9 +111,9 @@ export const EditKpiItemForm = (props: Props) => {
             <CardHeader>Edit Kpi detail</CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
-              <FormField className={classes.formField} label="Enabled" >
-                <SwitchLabels />
-              </FormField>
+                <FormField className={classes.formField} label="Enabled">
+                  <SwitchLabels />
+                </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={8} xl={8}>
                 <FormField className={classes.formField} label="Name" required>
@@ -150,8 +150,7 @@ export const EditKpiItemForm = (props: Props) => {
                     }}>
                     {kpi.map((kpidata, index) => (
                       <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {' '}
-                        {kpidata.domainFk.name}{' '}
+                        {kpidata.domainFk.name}
                       </MenuItem>
                     ))}
                   </Select>

@@ -11,7 +11,7 @@ title: Release Notes
 		* **[User Management]** **[Roles & Policies]** **[Property type]**	Advanced filters:	Admins are now able to grant users access to locations based on their types and to work orders and projects based on the templates they were created from 
 		* **[Search]**	Adding filter by "Location External ID":	Users have now the options to search by "Location External ID" across the platform.
 	* Inventory Management
-		* **[Catalog]**		"Default value" only for mandatory fields:	When adding a property type to an existing type, user is not required anymore to fill-in a "default value" for each property.  Only "mandatory" property will require a "default value".	
+		* **[PerformanceCatalog]**		"Default value" only for mandatory fields:	When adding a property type to an existing type, user is not required anymore to fill-in a "default value" for each property.  Only "mandatory" property will require a "default value".	
 		* **[Location Search]**		Location parent name visible in location search:	When using the location search, users are now able to see within brackets, the location parent's name. This functionality helps to remove confusions in case of locations with same name on different location types.
 		* **[Location Tree]**		Parent location GPS coords:	If a location does not have GPS coordinates, it will inherit them from the nearest ancestor that has them.
 	* Workforce management	

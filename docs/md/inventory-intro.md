@@ -17,7 +17,7 @@ Figure 1: Inventory Management Tabs
 - Search (1)
 - Locations (2)
 - Map (3)
-- Catalog (4)
+- PerformanceCatalog (4)
 - Services (5)
 
 ## Search Tab
@@ -98,7 +98,7 @@ The tab view can be switched between a map view to a satellite view (4).
 Figure 7: Map Tab
 </p>
 
-## Catalog Tab
+## PerformanceCatalog Tab
 
 (See Figure 8)
 
@@ -106,7 +106,7 @@ The Inventory management system is used to create the schema of the system.
 
 The system is used by many partners. Each partner is unique. For example, the usage of different equipment in a variety of different locations by each partner. When creating a system element such as equipment or location and adding their characteristics, a partner is not limited with the information that can be added due to the fact that the information is added as free text.
 
-The Catalog tab enables the user to add or edit the following elements:
+The PerformanceCatalog tab enables the user to add or edit the following elements:
 
 - EQUIPMENT (1) - add/edit equipment properties, positions and ports.
 - LOCATIONS (2) - add/edit location properties and survey templates.
@@ -115,7 +115,7 @@ The Catalog tab enables the user to add or edit the following elements:
 
 <p align="center">
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Inventory+management/Figure+8.png' width=1000> <br>
-Figure 8: Catalog Tab
+Figure 8: PerformanceCatalog Tab
 </p>
 
 ## Services Tab

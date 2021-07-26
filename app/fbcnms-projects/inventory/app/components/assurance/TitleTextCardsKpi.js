@@ -35,8 +35,7 @@ const useStyles = makeStyles(theme =>({
     paddingRight: '5rem',
   },
   domain: {
-    justifyContent: 'center',
-    paddingRight: '16rem',
+    justifyContent: 'flex-start',
   },
   edit: {
     justifyContent: 'flex-end',
@@ -63,7 +62,7 @@ function TitleTextCardsKpi() {
           KPI name
         </Text>
       </Grid>
-      <Grid xs={6}>
+      <Grid xs={2}>
         <Text
           className={classNames(
             classes.title,
@@ -74,7 +73,8 @@ function TitleTextCardsKpi() {
           Domain
         </Text>
       </Grid>
-      <Grid xs={1} >
+      <Grid xs={4} />
+      <Grid xs={1}>
         <Text
           className={classNames(
             classes.title,

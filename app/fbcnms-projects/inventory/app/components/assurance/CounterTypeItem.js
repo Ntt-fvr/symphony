@@ -11,6 +11,8 @@
 import React, {useState} from 'react';
 
 // DESING SYSTEM //
+import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
+
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -75,8 +77,11 @@ type Props = $ReadOnly<{|
   counterFamily: {
     name: string,
   },
-  edit: void,
-  handleRemove: void,
+  vendorFk: {
+    name: string,
+  },
+  edit: MouseEventHandler,
+  handleRemove: void => void,
 |}>;
 
 export default function CounterTypeItem(props: Props) {
@@ -85,6 +90,7 @@ export default function CounterTypeItem(props: Props) {
     name,
     networkManagerSystem,
     counterFamily,
+    vendorFk,
     edit,
     handleRemove,
   } = props;
@@ -108,18 +114,18 @@ export default function CounterTypeItem(props: Props) {
           </Grid>
 
           <Grid xs={5} container justify="center" alignItems="center">
-            <Text className={classes.bold}>{'Erikson'}</Text>
+            <Text className={classes.bold}>{vendorFk.name}</Text>
           </Grid>
 
           <Grid xs={1} container justify="flex-end" alignItems="center">
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={handleRemove}
+            />
             <IconButton
               className={classes.editIcon}
               icon={EditIcon}
               onClick={edit}
-            />
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={handleRemove}
             />
           </Grid>
         </AccordionSummary>

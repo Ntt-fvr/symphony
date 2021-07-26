@@ -41,7 +41,7 @@ type hooks struct {
 	Comparator                  []ent.Hook
 	Counter                     []ent.Hook
 	CounterFamily               []ent.Hook
-	CounterVendorFormula        []ent.Hook
+	CounterFormula              []ent.Hook
 	Customer                    []ent.Hook
 	Domain                      []ent.Hook
 	EntryPoint                  []ent.Hook

@@ -107,7 +107,7 @@ const AlarmFilteringTable = (props: Props) => {
                     <Switch />
                   </TableCell>
                   <TableCell>
-                    <Button 
+                    <Button
                       color="primary"
                       onClick={edit}
                     >

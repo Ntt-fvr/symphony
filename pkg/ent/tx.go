@@ -42,8 +42,8 @@ type Tx struct {
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
 	CounterFamily *CounterFamilyClient
-	// CounterVendorFormula is the client for interacting with the CounterVendorFormula builders.
-	CounterVendorFormula *CounterVendorFormulaClient
+	// CounterFormula is the client for interacting with the CounterFormula builders.
+	CounterFormula *CounterFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
 	// Domain is the client for interacting with the Domain builders.
@@ -312,7 +312,7 @@ func (tx *Tx) init() {
 	tx.Comparator = NewComparatorClient(tx.config)
 	tx.Counter = NewCounterClient(tx.config)
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
-	tx.CounterVendorFormula = NewCounterVendorFormulaClient(tx.config)
+	tx.CounterFormula = NewCounterFormulaClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
 	tx.Domain = NewDomainClient(tx.config)
 	tx.EntryPoint = NewEntryPointClient(tx.config)

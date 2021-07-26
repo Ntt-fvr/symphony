@@ -55,12 +55,12 @@ const CountersQuery = graphql`
           networkManagerSystem
           externalID
           counterFamily {
+            id
             name
           }
-          countervendorformula {
-            vendorFk {
-              name
-            }
+          vendorFk {
+            id
+            name
           }
         }
       }
@@ -76,6 +76,9 @@ type Counters = {
       externalID: string,
       networkManagerSystem: string,
       counterFamily: {
+        name: string,
+      },
+      vendorFk: {
         name: string,
       },
     },
@@ -111,9 +114,12 @@ const CountersTypes = () => {
     setShowEditCard(false);
   };
 
+  const counterNames = items.counters?.edges.map(item => item.node.name);
+
   if (showEditCard) {
     return (
       <EditCounterItemForm
+        counterNames={counterNames}
         formValues={dataEdit.item.node}
         hideEditCounterForm={hideEditCounterForm}
       />
@@ -125,7 +131,7 @@ const CountersTypes = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
-            title={fbt('Counters Catalog', 'Counters Title')}
+            title={fbt('Counters PerformanceCatalog', 'Counters Title')}
             subtitle={fbt(
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
                 'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
@@ -138,8 +144,8 @@ const CountersTypes = () => {
           <List disablePadding>
             {items.counters?.edges.map(item => (
               <CounterTypeItem
-                key={item.node.id}
-                handleRemove={() => handleRemove(item.node.id)}
+                key={item.node?.id}
+                handleRemove={() => handleRemove(item.node?.id)}
                 edit={() => showEditCounterItemForm({item})}
                 {...item.node}
               />
@@ -147,9 +153,7 @@ const CountersTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm
-            dataValues={items.counters?.edges.map(item => item.node.name)}
-          />
+          <AddCounterItemForm dataValues={counterNames} />
         </Grid>
       </Grid>
     </div>

@@ -13,7 +13,7 @@ import CountersTypes from './CountersTypes';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
 import KpiTypes from './KpiTypes';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import TresholdTypes from './TresholdTypes';
 import fbt from 'fbt';
@@ -53,7 +53,7 @@ type RouteTab = {
   path: string,
 };
 
-export default function Catalog() {
+export default function PerformanceCatalog() {
   const relativeUrl = useRelativeUrl();
   const history = useHistory();
   const location = useLocation();
@@ -90,10 +90,9 @@ export default function Catalog() {
   );
 
   useEffect(() => {
-    /*ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
+    ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-     */
     history.push(`/assurance/performance/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 

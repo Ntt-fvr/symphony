@@ -130,6 +130,8 @@ export const LogEvents = {
   // Assurance
   PERFORMANCE_TAB_NAVIGATION_CLICKED: 'performance_tab_navigation_clicked',
   KPI_TAB_NAVIGATION_CLICKED: 'kpi_tab_navigation_clicked',
+  SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED:
+    'service_quality_monitoring_tab_navigation_clicked',
   FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED:
     'fault_management_tab_navigation_clicked',
 };

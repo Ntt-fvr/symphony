@@ -14,8 +14,6 @@
 import React from 'react';
 
 // DESING SYSTEM //
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';

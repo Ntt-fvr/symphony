@@ -9,7 +9,7 @@
  */
 import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
-
+import AlarmFilteringTypes from './AlarmFilteringTypes';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
 import React, {useEffect, useState} from 'react';
@@ -17,9 +17,9 @@ import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
+import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
-import AlarmFilteringTypes from "./AlarmFilteringTypes";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,7 +64,7 @@ export default function Catalog() {
       },
       path: 'alarm_filtering',
     },
-  ]
+  ];
 
   const tabMatch = location.pathname.match(/([^\/]*)\/*$/);
   const tabIndex =
@@ -74,10 +74,9 @@ export default function Catalog() {
   );
 
   useEffect(() => {
-    /*ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
+    ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED, {
       id: tabBars[activeTabBar].id,
     });
-     */
     history.push(`/assurance/fault_management/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 

@@ -10,8 +10,8 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddButton from './AddButton';
-import SwitchLabels from './Switch';
+import AddButton from './common/AddButton';
+import SwitchLabels from './common/Switch';
 import Table from './Table';
 
 // DESING SYSTEM //
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
   },
   typeRed: {
-    marginLeft: '140px',
+    marginLeft: '60px',
     color: '#3984FF',
     fontWeight: 'bold',
   },
@@ -103,32 +103,33 @@ export default function KpiTypeItem(props: Props) {
             onFocus={event => event.stopPropagation()}
             control={<SwitchLabels />}
           />
-          <Grid className={classes.rootGrid}>
+          <Grid xs={3} container alignItems="center">
             <Text className={classes.nameKpi}>{name}</Text>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
+          <Grid
+            xs={3}
+            container
+            alignItems="center"
+            justifyContent="flex-start">
             <Button variant="text">
               <Text className={classes.typeRed}>{domainFk.name}</Text>
             </Button>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
-            <AddButton textButton={'Add formula'} />
+          <Grid xs={5} container justify="center" alignItems="center">
+            <AddButton textButton={'Add formula'} disabled={true} />
           </Grid>
 
-          <Grid>
+          <Grid xs={1} container justify="flex-end" alignItems="center">
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={onChange}
+            />
             <IconButton
               className={classes.editIcon}
               icon={EditIcon}
               onClick={edit}
-            />
-          </Grid>
-
-          <Grid>
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={onChange}
             />
           </Grid>
         </AccordionSummary>
@@ -138,7 +139,7 @@ export default function KpiTypeItem(props: Props) {
             <Grid item xs={6}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  Associated threshold: 
+                  Associated threshold:
                   <Button variant="text">
                     <Text className={classes.threshold}>DROP_THR</Text>
                   </Button>

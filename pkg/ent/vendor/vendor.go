@@ -30,10 +30,10 @@ const (
 	// Table holds the table name of the vendor in the database.
 	Table = "vendors"
 	// VendorFkTable is the table the holds the vendor_fk relation/edge.
-	VendorFkTable = "counter_vendor_formulas"
-	// VendorFkInverseTable is the table name for the CounterVendorFormula entity.
-	// It exists in this package in order to avoid circular dependency with the "countervendorformula" package.
-	VendorFkInverseTable = "counter_vendor_formulas"
+	VendorFkTable = "counters"
+	// VendorFkInverseTable is the table name for the Counter entity.
+	// It exists in this package in order to avoid circular dependency with the "counter" package.
+	VendorFkInverseTable = "counters"
 	// VendorFkColumn is the table column denoting the vendor_fk relation/edge.
 	VendorFkColumn = "vendor_vendor_fk"
 )

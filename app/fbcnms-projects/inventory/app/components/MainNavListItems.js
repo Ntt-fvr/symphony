@@ -52,7 +52,7 @@ export default function MainNavListItems() {
     />,
     <NavListItem
       key={4}
-      label="Catalog"
+      label="PerformanceCatalog"
       path={relativeUrl('/configure')}
       icon={<AssignmentIcon />}
       onClick={() => {

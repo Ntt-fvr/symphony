@@ -172,7 +172,7 @@ func (c *CounterQuery) collectField(ctx *graphql.OperationContext, field graphql
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "counter":
-			c = c.WithCounterFk(func(query *CounterVendorFormulaQuery) {
+			c = c.WithCounterFk(func(query *CounterFormulaQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -201,15 +201,15 @@ func (cf *CounterFamilyQuery) collectField(ctx *graphql.OperationContext, field 
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (cvf *CounterVendorFormulaQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterVendorFormulaQuery {
+func (cf *CounterFormulaQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterFormulaQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		cvf = cvf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+		cf = cf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
 	}
-	return cvf
+	return cf
 }
 
-func (cvf *CounterVendorFormulaQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CounterVendorFormulaQuery {
-	return cvf
+func (cf *CounterFormulaQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CounterFormulaQuery {
+	return cf
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -711,8 +711,8 @@ func (f *FormulaQuery) CollectFields(ctx context.Context, satisfies ...string) *
 func (f *FormulaQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FormulaQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "counter_vendor_formula":
-			f = f.WithCountervendorformula(func(query *CounterVendorFormulaQuery) {
+		case "counter_formula":
+			f = f.WithCounterformula(func(query *CounterFormulaQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -1276,7 +1276,7 @@ func (v *VendorQuery) collectField(ctx *graphql.OperationContext, field graphql.
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "vendor":
-			v = v.WithVendorFk(func(query *CounterVendorFormulaQuery) {
+			v = v.WithVendorFk(func(query *CounterQuery) {
 				query.collectField(ctx, field)
 			})
 		}

@@ -13,7 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
@@ -37,14 +37,14 @@ func (vu *VendorUpdate) SetName(s string) *VendorUpdate {
 	return vu
 }
 
-// AddVendorFkIDs adds the vendor_fk edge to CounterVendorFormula by ids.
+// AddVendorFkIDs adds the vendor_fk edge to Counter by ids.
 func (vu *VendorUpdate) AddVendorFkIDs(ids ...int) *VendorUpdate {
 	vu.mutation.AddVendorFkIDs(ids...)
 	return vu
 }
 
-// AddVendorFk adds the vendor_fk edges to CounterVendorFormula.
-func (vu *VendorUpdate) AddVendorFk(c ...*CounterVendorFormula) *VendorUpdate {
+// AddVendorFk adds the vendor_fk edges to Counter.
+func (vu *VendorUpdate) AddVendorFk(c ...*Counter) *VendorUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -57,20 +57,20 @@ func (vu *VendorUpdate) Mutation() *VendorMutation {
 	return vu.mutation
 }
 
-// ClearVendorFk clears all "vendor_fk" edges to type CounterVendorFormula.
+// ClearVendorFk clears all "vendor_fk" edges to type Counter.
 func (vu *VendorUpdate) ClearVendorFk() *VendorUpdate {
 	vu.mutation.ClearVendorFk()
 	return vu
 }
 
-// RemoveVendorFkIDs removes the vendor_fk edge to CounterVendorFormula by ids.
+// RemoveVendorFkIDs removes the vendor_fk edge to Counter by ids.
 func (vu *VendorUpdate) RemoveVendorFkIDs(ids ...int) *VendorUpdate {
 	vu.mutation.RemoveVendorFkIDs(ids...)
 	return vu
 }
 
-// RemoveVendorFk removes vendor_fk edges to CounterVendorFormula.
-func (vu *VendorUpdate) RemoveVendorFk(c ...*CounterVendorFormula) *VendorUpdate {
+// RemoveVendorFk removes vendor_fk edges to Counter.
+func (vu *VendorUpdate) RemoveVendorFk(c ...*Counter) *VendorUpdate {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -196,7 +196,7 @@ func (vu *VendorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}
@@ -212,7 +212,7 @@ func (vu *VendorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}
@@ -231,7 +231,7 @@ func (vu *VendorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}
@@ -264,14 +264,14 @@ func (vuo *VendorUpdateOne) SetName(s string) *VendorUpdateOne {
 	return vuo
 }
 
-// AddVendorFkIDs adds the vendor_fk edge to CounterVendorFormula by ids.
+// AddVendorFkIDs adds the vendor_fk edge to Counter by ids.
 func (vuo *VendorUpdateOne) AddVendorFkIDs(ids ...int) *VendorUpdateOne {
 	vuo.mutation.AddVendorFkIDs(ids...)
 	return vuo
 }
 
-// AddVendorFk adds the vendor_fk edges to CounterVendorFormula.
-func (vuo *VendorUpdateOne) AddVendorFk(c ...*CounterVendorFormula) *VendorUpdateOne {
+// AddVendorFk adds the vendor_fk edges to Counter.
+func (vuo *VendorUpdateOne) AddVendorFk(c ...*Counter) *VendorUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -284,20 +284,20 @@ func (vuo *VendorUpdateOne) Mutation() *VendorMutation {
 	return vuo.mutation
 }
 
-// ClearVendorFk clears all "vendor_fk" edges to type CounterVendorFormula.
+// ClearVendorFk clears all "vendor_fk" edges to type Counter.
 func (vuo *VendorUpdateOne) ClearVendorFk() *VendorUpdateOne {
 	vuo.mutation.ClearVendorFk()
 	return vuo
 }
 
-// RemoveVendorFkIDs removes the vendor_fk edge to CounterVendorFormula by ids.
+// RemoveVendorFkIDs removes the vendor_fk edge to Counter by ids.
 func (vuo *VendorUpdateOne) RemoveVendorFkIDs(ids ...int) *VendorUpdateOne {
 	vuo.mutation.RemoveVendorFkIDs(ids...)
 	return vuo
 }
 
-// RemoveVendorFk removes vendor_fk edges to CounterVendorFormula.
-func (vuo *VendorUpdateOne) RemoveVendorFk(c ...*CounterVendorFormula) *VendorUpdateOne {
+// RemoveVendorFk removes vendor_fk edges to Counter.
+func (vuo *VendorUpdateOne) RemoveVendorFk(c ...*Counter) *VendorUpdateOne {
 	ids := make([]int, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
@@ -421,7 +421,7 @@ func (vuo *VendorUpdateOne) sqlSave(ctx context.Context) (_node *Vendor, err err
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}
@@ -437,7 +437,7 @@ func (vuo *VendorUpdateOne) sqlSave(ctx context.Context) (_node *Vendor, err err
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}
@@ -456,7 +456,7 @@ func (vuo *VendorUpdateOne) sqlSave(ctx context.Context) (_node *Vendor, err err
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: countervendorformula.FieldID,
+					Column: counter.FieldID,
 				},
 			},
 		}

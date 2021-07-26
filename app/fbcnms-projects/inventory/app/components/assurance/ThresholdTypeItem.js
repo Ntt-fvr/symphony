@@ -11,8 +11,8 @@
 import React from 'react';
 
 // COMPONENTS //
-import AddButton from './AddButton';
-import SwitchLabels from './Switch';
+import AddButton from './common/AddButton';
+import SwitchLabels from './common/Switch';
 import Table from './Table';
 
 // DESING SYSTEM //
@@ -143,9 +143,7 @@ export default function ThresholdTypeItem(props: Props) {
             />
           </Grid>
           <Grid>
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-            />
+            <DeleteOutlinedIcon className={classes.deleteIcon} />
           </Grid>
         </AccordionSummary>
 

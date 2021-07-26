@@ -17,9 +17,18 @@ import (
 
 type counterResolver struct{}
 
-func (counterResolver) Countervendorformula(ctx context.Context, counter *ent.Counter) ([]*ent.CounterVendorFormula, error) {
-	var counterVendorFormula []*ent.CounterVendorFormula
-	return counterVendorFormula, nil
+func (counterResolver) Counterformula(ctx context.Context, counter *ent.Counter) ([]*ent.CounterFormula, error) {
+	var counterFormula []*ent.CounterFormula
+	return counterFormula, nil
+}
+
+func (counterResolver) VendorFk(ctx context.Context, counter *ent.Counter) (*ent.Vendor, error) {
+	variable, err := counter.Vendor(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+	} else {
+		return variable, nil
+	}
 }
 
 func (r mutationResolver) AddCounter(ctx context.Context, input models.AddCounterInput) (*ent.Counter, error) {
@@ -30,6 +39,7 @@ func (r mutationResolver) AddCounter(ctx context.Context, input models.AddCounte
 		SetExternalId(input.ExternalID).
 		SetNetworkManagerSystem(input.NetworkManagerSystem).
 		SetCounterfamilyID(input.CounterFamily).
+		SetVendorID(input.VendorFk).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -73,6 +83,7 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 			SetName(input.Name).
 			SetExternalId(input.ExternalID).
 			SetNetworkManagerSystem(input.NetworkManagerSystem).
+			SetVendorID(input.VendorFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)

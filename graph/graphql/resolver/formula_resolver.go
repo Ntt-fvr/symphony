@@ -35,8 +35,8 @@ func (formulaResolver) KpiFk(ctx context.Context, formula *ent.Formula) (*ent.Kp
 	}
 }
 
-func (formulaResolver) CountervendorformulaFk(ctx context.Context, formula *ent.Formula) ([]*ent.CounterVendorFormula, error) {
-	variable, err := formula.Countervendorformula(ctx)
+func (formulaResolver) CounterformulaFk(ctx context.Context, formula *ent.Formula) ([]*ent.CounterFormula, error) {
+	variable, err := formula.Counterformula(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
