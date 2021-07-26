@@ -11,6 +11,7 @@
 import ManageAccountsIcon from '@material-ui/icons/ManageAccounts';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import React from 'react';
+import RoomServiceIcon from '@material-ui/icons/RoomService';
 import SummarizeIcon from '@material-ui/icons/Summarize';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
@@ -35,6 +36,12 @@ export const AssuranceNavListItems = () => {
       onClick={() => {
         ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED);
       }}
+    />,
+    <NavListItem
+      key={3}
+      label="Service Quality"
+      path={relativeUrl('/service_quality/kqi_source')}
+      icon={<RoomServiceIcon />}
     />,
   ];
 };
