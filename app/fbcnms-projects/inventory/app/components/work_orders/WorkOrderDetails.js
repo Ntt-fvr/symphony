@@ -22,6 +22,7 @@ import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
+import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
 import AddImageMutation from '../../mutations/AddImageMutation';
@@ -71,9 +72,8 @@ import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
-
 import {useSnackbar} from 'notistack';
-
+import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
@@ -159,6 +159,7 @@ const WorkOrderDetails = ({
   onWorkOrderRemoved,
   onCancelClicked,
   confirm,
+  alert,
 }: Props) => {
   const classes = useStyles();
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
@@ -175,7 +176,7 @@ const WorkOrderDetails = ({
   const {enqueueSnackbar} = useSnackbar();
 
   const linkFiles = () => {
-    countDispatch({type: 'apply', value: '', file: null});
+    countDispatch({type: 'apply', value: '', file: null, link: null});
     enqueueSnackbar('Linking files');
     state.files.map(item => {
       linkFileToLocation(
@@ -478,8 +479,18 @@ const WorkOrderDetails = ({
             'Verification message details',
           ),
           confirmLabel: Strings.common.okButton,
-        }).then(confirmed => {
+        }).then(async confirmed => {
           if (confirmed) {
+            const items: Array<CheckListItem> = editingCategories.flatMap(
+              x => x.checkList || [],
+            );
+            const isNotDone = await verifyMandatoryItems(items);
+            if (isNotDone) {
+              alert(
+                `There are mandatory checklist items pending to be answered. Please complete them before closing the Work Order.`,
+              );
+              return;
+            }
             resolve();
           } else {
             reject();
@@ -488,11 +499,24 @@ const WorkOrderDetails = ({
       }
     });
 
-    verification.then(() => {
-      setWorkOrder({...workOrder, status: value});
-    });
+    verification
+      .then(() => {
+        setWorkOrder({...workOrder, status: value});
+      })
+      .catch(x => console.error('error', x));
   };
 
+  const verifyMandatoryItems = async (itemsArray: Array<CheckListItem>) => {
+    return itemsArray.some(value => {
+      const isMandatory = value.isMandatory;
+      if (!isMandatory) {
+        return false;
+      }
+      const isDone = isChecklistItemDone(value);
+
+      return !isDone;
+    });
+  };
   const _setWorkOrderDetail = (
     key:
       | 'name'
