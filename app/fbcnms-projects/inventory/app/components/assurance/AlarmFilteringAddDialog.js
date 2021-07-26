@@ -18,7 +18,7 @@ import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 
 import CloseIcon from '@material-ui/icons/Close';
-import Warning from './Warning';
+import Warning from './common/Warning';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

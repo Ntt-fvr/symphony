@@ -12,7 +12,7 @@ import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
-import Catalog from './assurance/Catalog';
+import PerformanceCatalog from './assurance/PerformanceCatalog';
 import Configure from '../pages/Configure';
 import EquipmentComparisonView from './comparison_view/EquipmentComparisonView';
 import ExpandButtonContext from './context/ExpandButtonContext';
@@ -70,7 +70,7 @@ function Index() {
       <AppContent>
         <Switch>
           <Route path={relativeUrl('/configure')} component={Configure} />
-          <Route path={relativeUrl('/assurance')} component={Catalog} />
+          <Route path={relativeUrl('/assurance')} component={PerformanceCatalog} />
           <Route path={relativeUrl('/inventory')} component={Inventory} />
           <Route path={relativeUrl('/map')} component={LocationsMap} />
           <Route

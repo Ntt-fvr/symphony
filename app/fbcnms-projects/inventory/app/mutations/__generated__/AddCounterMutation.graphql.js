@@ -18,15 +18,8 @@ export type AddCounterInput = {|
   name: string,
   externalID: string,
   networkManagerSystem: string,
-  countervendorformula?: ?$ReadOnlyArray<EditCounterVendorFormulaInput>,
   counterFamily: string,
-|};
-export type EditCounterVendorFormulaInput = {|
-  id: string,
-  mandatory: boolean,
   vendorFk: string,
-  counterFk: string,
-  formulaFk: string,
 |};
 export type AddCounterMutationVariables = {|
   input: AddCounterInput

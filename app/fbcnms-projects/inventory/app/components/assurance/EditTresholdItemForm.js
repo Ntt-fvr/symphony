@@ -12,7 +12,7 @@ import React from 'react';
 import fbt from 'fbt';
 
 // COMPONENTS //
-import SwitchLabels from './Switch';
+import SwitchLabels from './common/Switch';
 import Table from './Table';
 import {useFormInput} from './common/useFormInput';
 
@@ -105,7 +105,7 @@ export const EditTresholdItemForm = (props: Props) => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('KPI Catalog', ' ')}
+            title={fbt('KPI PerformanceCatalog', ' ')}
             subtitle={''}
           />
         </Grid>

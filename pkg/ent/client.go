@@ -26,7 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
@@ -124,8 +124,8 @@ type Client struct {
 	Counter *CounterClient
 	// CounterFamily is the client for interacting with the CounterFamily builders.
 	CounterFamily *CounterFamilyClient
-	// CounterVendorFormula is the client for interacting with the CounterVendorFormula builders.
-	CounterVendorFormula *CounterVendorFormulaClient
+	// CounterFormula is the client for interacting with the CounterFormula builders.
+	CounterFormula *CounterFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
 	// Domain is the client for interacting with the Domain builders.
@@ -274,7 +274,7 @@ func (c *Client) init() {
 	c.Comparator = NewComparatorClient(c.config)
 	c.Counter = NewCounterClient(c.config)
 	c.CounterFamily = NewCounterFamilyClient(c.config)
-	c.CounterVendorFormula = NewCounterVendorFormulaClient(c.config)
+	c.CounterFormula = NewCounterFormulaClient(c.config)
 	c.Customer = NewCustomerClient(c.config)
 	c.Domain = NewDomainClient(c.config)
 	c.EntryPoint = NewEntryPointClient(c.config)
@@ -380,7 +380,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Comparator:                  NewComparatorClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
-		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
+		CounterFormula:              NewCounterFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
 		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
@@ -469,7 +469,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Comparator:                  NewComparatorClient(cfg),
 		Counter:                     NewCounterClient(cfg),
 		CounterFamily:               NewCounterFamilyClient(cfg),
-		CounterVendorFormula:        NewCounterVendorFormulaClient(cfg),
+		CounterFormula:              NewCounterFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
 		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
@@ -571,7 +571,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Comparator.Use(hooks...)
 	c.Counter.Use(hooks...)
 	c.CounterFamily.Use(hooks...)
-	c.CounterVendorFormula.Use(hooks...)
+	c.CounterFormula.Use(hooks...)
 	c.Customer.Use(hooks...)
 	c.Domain.Use(hooks...)
 	c.EntryPoint.Use(hooks...)
@@ -2192,14 +2192,30 @@ func (c *CounterClient) QueryCounterfamily(co *Counter) *CounterFamilyQuery {
 	return query
 }
 
-// QueryCounterFk queries the counter_fk edge of a Counter.
-func (c *CounterClient) QueryCounterFk(co *Counter) *CounterVendorFormulaQuery {
-	query := &CounterVendorFormulaQuery{config: c.config}
+// QueryVendor queries the vendor edge of a Counter.
+func (c *CounterClient) QueryVendor(co *Counter) *VendorQuery {
+	query := &VendorQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := co.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(counter.Table, counter.FieldID, id),
-			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, counter.VendorTable, counter.VendorColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCounterFk queries the counter_fk edge of a Counter.
+func (c *CounterClient) QueryCounterFk(co *Counter) *CounterFormulaQuery {
+	query := &CounterFormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counter.Table, counter.FieldID, id),
+			sqlgraph.To(counterformula.Table, counterformula.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, counter.CounterFkTable, counter.CounterFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
@@ -2319,82 +2335,82 @@ func (c *CounterFamilyClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], counterfamily.Hooks[:]...)
 }
 
-// CounterVendorFormulaClient is a client for the CounterVendorFormula schema.
-type CounterVendorFormulaClient struct {
+// CounterFormulaClient is a client for the CounterFormula schema.
+type CounterFormulaClient struct {
 	config
 }
 
-// NewCounterVendorFormulaClient returns a client for the CounterVendorFormula from the given config.
-func NewCounterVendorFormulaClient(c config) *CounterVendorFormulaClient {
-	return &CounterVendorFormulaClient{config: c}
+// NewCounterFormulaClient returns a client for the CounterFormula from the given config.
+func NewCounterFormulaClient(c config) *CounterFormulaClient {
+	return &CounterFormulaClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `countervendorformula.Hooks(f(g(h())))`.
-func (c *CounterVendorFormulaClient) Use(hooks ...Hook) {
-	c.hooks.CounterVendorFormula = append(c.hooks.CounterVendorFormula, hooks...)
+// A call to `Use(f, g, h)` equals to `counterformula.Hooks(f(g(h())))`.
+func (c *CounterFormulaClient) Use(hooks ...Hook) {
+	c.hooks.CounterFormula = append(c.hooks.CounterFormula, hooks...)
 }
 
-// Create returns a create builder for CounterVendorFormula.
-func (c *CounterVendorFormulaClient) Create() *CounterVendorFormulaCreate {
-	mutation := newCounterVendorFormulaMutation(c.config, OpCreate)
-	return &CounterVendorFormulaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a create builder for CounterFormula.
+func (c *CounterFormulaClient) Create() *CounterFormulaCreate {
+	mutation := newCounterFormulaMutation(c.config, OpCreate)
+	return &CounterFormulaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of CounterVendorFormula entities.
-func (c *CounterVendorFormulaClient) CreateBulk(builders ...*CounterVendorFormulaCreate) *CounterVendorFormulaCreateBulk {
-	return &CounterVendorFormulaCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of CounterFormula entities.
+func (c *CounterFormulaClient) CreateBulk(builders ...*CounterFormulaCreate) *CounterFormulaCreateBulk {
+	return &CounterFormulaCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for CounterVendorFormula.
-func (c *CounterVendorFormulaClient) Update() *CounterVendorFormulaUpdate {
-	mutation := newCounterVendorFormulaMutation(c.config, OpUpdate)
-	return &CounterVendorFormulaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for CounterFormula.
+func (c *CounterFormulaClient) Update() *CounterFormulaUpdate {
+	mutation := newCounterFormulaMutation(c.config, OpUpdate)
+	return &CounterFormulaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *CounterVendorFormulaClient) UpdateOne(cvf *CounterVendorFormula) *CounterVendorFormulaUpdateOne {
-	mutation := newCounterVendorFormulaMutation(c.config, OpUpdateOne, withCounterVendorFormula(cvf))
-	return &CounterVendorFormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CounterFormulaClient) UpdateOne(cf *CounterFormula) *CounterFormulaUpdateOne {
+	mutation := newCounterFormulaMutation(c.config, OpUpdateOne, withCounterFormula(cf))
+	return &CounterFormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CounterVendorFormulaClient) UpdateOneID(id int) *CounterVendorFormulaUpdateOne {
-	mutation := newCounterVendorFormulaMutation(c.config, OpUpdateOne, withCounterVendorFormulaID(id))
-	return &CounterVendorFormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CounterFormulaClient) UpdateOneID(id int) *CounterFormulaUpdateOne {
+	mutation := newCounterFormulaMutation(c.config, OpUpdateOne, withCounterFormulaID(id))
+	return &CounterFormulaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for CounterVendorFormula.
-func (c *CounterVendorFormulaClient) Delete() *CounterVendorFormulaDelete {
-	mutation := newCounterVendorFormulaMutation(c.config, OpDelete)
-	return &CounterVendorFormulaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for CounterFormula.
+func (c *CounterFormulaClient) Delete() *CounterFormulaDelete {
+	mutation := newCounterFormulaMutation(c.config, OpDelete)
+	return &CounterFormulaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *CounterVendorFormulaClient) DeleteOne(cvf *CounterVendorFormula) *CounterVendorFormulaDeleteOne {
-	return c.DeleteOneID(cvf.ID)
+func (c *CounterFormulaClient) DeleteOne(cf *CounterFormula) *CounterFormulaDeleteOne {
+	return c.DeleteOneID(cf.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *CounterVendorFormulaClient) DeleteOneID(id int) *CounterVendorFormulaDeleteOne {
-	builder := c.Delete().Where(countervendorformula.ID(id))
+func (c *CounterFormulaClient) DeleteOneID(id int) *CounterFormulaDeleteOne {
+	builder := c.Delete().Where(counterformula.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &CounterVendorFormulaDeleteOne{builder}
+	return &CounterFormulaDeleteOne{builder}
 }
 
-// Query returns a query builder for CounterVendorFormula.
-func (c *CounterVendorFormulaClient) Query() *CounterVendorFormulaQuery {
-	return &CounterVendorFormulaQuery{config: c.config}
+// Query returns a query builder for CounterFormula.
+func (c *CounterFormulaClient) Query() *CounterFormulaQuery {
+	return &CounterFormulaQuery{config: c.config}
 }
 
-// Get returns a CounterVendorFormula entity by its id.
-func (c *CounterVendorFormulaClient) Get(ctx context.Context, id int) (*CounterVendorFormula, error) {
-	return c.Query().Where(countervendorformula.ID(id)).Only(ctx)
+// Get returns a CounterFormula entity by its id.
+func (c *CounterFormulaClient) Get(ctx context.Context, id int) (*CounterFormula, error) {
+	return c.Query().Where(counterformula.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CounterVendorFormulaClient) GetX(ctx context.Context, id int) *CounterVendorFormula {
+func (c *CounterFormulaClient) GetX(ctx context.Context, id int) *CounterFormula {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -2402,58 +2418,42 @@ func (c *CounterVendorFormulaClient) GetX(ctx context.Context, id int) *CounterV
 	return obj
 }
 
-// QueryFormula queries the formula edge of a CounterVendorFormula.
-func (c *CounterVendorFormulaClient) QueryFormula(cvf *CounterVendorFormula) *FormulaQuery {
+// QueryFormula queries the formula edge of a CounterFormula.
+func (c *CounterFormulaClient) QueryFormula(cf *CounterFormula) *FormulaQuery {
 	query := &FormulaQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := cvf.ID
+		id := cf.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(countervendorformula.Table, countervendorformula.FieldID, id),
+			sqlgraph.From(counterformula.Table, counterformula.FieldID, id),
 			sqlgraph.To(formula.Table, formula.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, countervendorformula.FormulaTable, countervendorformula.FormulaColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, counterformula.FormulaTable, counterformula.FormulaColumn),
 		)
-		fromV = sqlgraph.Neighbors(cvf.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(cf.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
-// QueryVendor queries the vendor edge of a CounterVendorFormula.
-func (c *CounterVendorFormulaClient) QueryVendor(cvf *CounterVendorFormula) *VendorQuery {
-	query := &VendorQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := cvf.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(countervendorformula.Table, countervendorformula.FieldID, id),
-			sqlgraph.To(vendor.Table, vendor.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, countervendorformula.VendorTable, countervendorformula.VendorColumn),
-		)
-		fromV = sqlgraph.Neighbors(cvf.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryCounter queries the counter edge of a CounterVendorFormula.
-func (c *CounterVendorFormulaClient) QueryCounter(cvf *CounterVendorFormula) *CounterQuery {
+// QueryCounter queries the counter edge of a CounterFormula.
+func (c *CounterFormulaClient) QueryCounter(cf *CounterFormula) *CounterQuery {
 	query := &CounterQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := cvf.ID
+		id := cf.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(countervendorformula.Table, countervendorformula.FieldID, id),
+			sqlgraph.From(counterformula.Table, counterformula.FieldID, id),
 			sqlgraph.To(counter.Table, counter.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, countervendorformula.CounterTable, countervendorformula.CounterColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, counterformula.CounterTable, counterformula.CounterColumn),
 		)
-		fromV = sqlgraph.Neighbors(cvf.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(cf.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *CounterVendorFormulaClient) Hooks() []Hook {
-	hooks := c.hooks.CounterVendorFormula
-	return append(hooks[:len(hooks):len(hooks)], countervendorformula.Hooks[:]...)
+func (c *CounterFormulaClient) Hooks() []Hook {
+	hooks := c.hooks.CounterFormula
+	return append(hooks[:len(hooks):len(hooks)], counterformula.Hooks[:]...)
 }
 
 // CustomerClient is a client for the Customer schema.
@@ -5795,15 +5795,15 @@ func (c *FormulaClient) QueryKpi(f *Formula) *KpiQuery {
 	return query
 }
 
-// QueryCountervendorformula queries the countervendorformula edge of a Formula.
-func (c *FormulaClient) QueryCountervendorformula(f *Formula) *CounterVendorFormulaQuery {
-	query := &CounterVendorFormulaQuery{config: c.config}
+// QueryCounterformula queries the counterformula edge of a Formula.
+func (c *FormulaClient) QueryCounterformula(f *Formula) *CounterFormulaQuery {
+	query := &CounterFormulaQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(formula.Table, formula.FieldID, id),
-			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, formula.CountervendorformulaTable, formula.CountervendorformulaColumn),
+			sqlgraph.To(counterformula.Table, counterformula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, formula.CounterformulaTable, formula.CounterformulaColumn),
 		)
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil
@@ -10402,13 +10402,13 @@ func (c *VendorClient) GetX(ctx context.Context, id int) *Vendor {
 }
 
 // QueryVendorFk queries the vendor_fk edge of a Vendor.
-func (c *VendorClient) QueryVendorFk(v *Vendor) *CounterVendorFormulaQuery {
-	query := &CounterVendorFormulaQuery{config: c.config}
+func (c *VendorClient) QueryVendorFk(v *Vendor) *CounterQuery {
+	query := &CounterQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := v.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(vendor.Table, vendor.FieldID, id),
-			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.To(counter.Table, counter.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorFkTable, vendor.VendorFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)

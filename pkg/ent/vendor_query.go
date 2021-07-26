@@ -16,7 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
@@ -30,7 +30,7 @@ type VendorQuery struct {
 	unique     []string
 	predicates []predicate.Vendor
 	// eager-loading edges.
-	withVendorFk *CounterVendorFormulaQuery
+	withVendorFk *CounterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -61,8 +61,8 @@ func (vq *VendorQuery) Order(o ...OrderFunc) *VendorQuery {
 }
 
 // QueryVendorFk chains the current query on the vendor_fk edge.
-func (vq *VendorQuery) QueryVendorFk() *CounterVendorFormulaQuery {
-	query := &CounterVendorFormulaQuery{config: vq.config}
+func (vq *VendorQuery) QueryVendorFk() *CounterQuery {
+	query := &CounterQuery{config: vq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := vq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -73,7 +73,7 @@ func (vq *VendorQuery) QueryVendorFk() *CounterVendorFormulaQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(vendor.Table, vendor.FieldID, selector),
-			sqlgraph.To(countervendorformula.Table, countervendorformula.FieldID),
+			sqlgraph.To(counter.Table, counter.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorFkTable, vendor.VendorFkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
@@ -267,8 +267,8 @@ func (vq *VendorQuery) Clone() *VendorQuery {
 
 //  WithVendorFk tells the query-builder to eager-loads the nodes that are connected to
 // the "vendor_fk" edge. The optional arguments used to configure the query builder of the edge.
-func (vq *VendorQuery) WithVendorFk(opts ...func(*CounterVendorFormulaQuery)) *VendorQuery {
-	query := &CounterVendorFormulaQuery{config: vq.config}
+func (vq *VendorQuery) WithVendorFk(opts ...func(*CounterQuery)) *VendorQuery {
+	query := &CounterQuery{config: vq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -376,10 +376,10 @@ func (vq *VendorQuery) sqlAll(ctx context.Context) ([]*Vendor, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.VendorFk = []*CounterVendorFormula{}
+			nodes[i].Edges.VendorFk = []*Counter{}
 		}
 		query.withFKs = true
-		query.Where(predicate.CounterVendorFormula(func(s *sql.Selector) {
+		query.Where(predicate.Counter(func(s *sql.Selector) {
 			s.Where(sql.InValues(vendor.VendorFkColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)

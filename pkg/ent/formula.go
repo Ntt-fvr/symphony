@@ -43,8 +43,8 @@ type FormulaEdges struct {
 	Tech *Tech
 	// Kpi holds the value of the kpi edge.
 	Kpi *Kpi
-	// Countervendorformula holds the value of the countervendorformula edge.
-	Countervendorformula []*CounterVendorFormula
+	// Counterformula holds the value of the counterformula edge.
+	Counterformula []*CounterFormula
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -78,13 +78,13 @@ func (e FormulaEdges) KpiOrErr() (*Kpi, error) {
 	return nil, &NotLoadedError{edge: "kpi"}
 }
 
-// CountervendorformulaOrErr returns the Countervendorformula value or an error if the edge
+// CounterformulaOrErr returns the Counterformula value or an error if the edge
 // was not loaded in eager-loading.
-func (e FormulaEdges) CountervendorformulaOrErr() ([]*CounterVendorFormula, error) {
+func (e FormulaEdges) CounterformulaOrErr() ([]*CounterFormula, error) {
 	if e.loadedTypes[2] {
-		return e.Countervendorformula, nil
+		return e.Counterformula, nil
 	}
-	return nil, &NotLoadedError{edge: "countervendorformula"}
+	return nil, &NotLoadedError{edge: "counterformula"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -166,9 +166,9 @@ func (f *Formula) QueryKpi() *KpiQuery {
 	return (&FormulaClient{config: f.config}).QueryKpi(f)
 }
 
-// QueryCountervendorformula queries the countervendorformula edge of the Formula.
-func (f *Formula) QueryCountervendorformula() *CounterVendorFormulaQuery {
-	return (&FormulaClient{config: f.config}).QueryCountervendorformula(f)
+// QueryCounterformula queries the counterformula edge of the Formula.
+func (f *Formula) QueryCounterformula() *CounterFormulaQuery {
+	return (&FormulaClient{config: f.config}).QueryCounterformula(f)
 }
 
 // Update returns a builder for updating this Formula.

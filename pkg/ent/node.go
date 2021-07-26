@@ -30,7 +30,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
@@ -1108,7 +1108,7 @@ func (c *Counter) Node(ctx context.Context) (node *Node, err error) {
 		ID:     c.ID,
 		Type:   "Counter",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(c.CreateTime); err != nil {
@@ -1162,11 +1162,21 @@ func (c *Counter) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "CounterVendorFormula",
+		Type: "Vendor",
+		Name: "vendor",
+	}
+	node.Edges[1].IDs, err = c.QueryVendor().
+		Select(vendor.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "CounterFormula",
 		Name: "counter_fk",
 	}
-	node.Edges[1].IDs, err = c.QueryCounterFk().
-		Select(countervendorformula.FieldID).
+	node.Edges[2].IDs, err = c.QueryCounterFk().
+		Select(counterformula.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -1219,15 +1229,15 @@ func (cf *CounterFamily) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err error) {
+func (cf *CounterFormula) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
-		ID:     cvf.ID,
-		Type:   "CounterVendorFormula",
+		ID:     cf.ID,
+		Type:   "CounterFormula",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(cvf.CreateTime); err != nil {
+	if buf, err = json.Marshal(cf.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
@@ -1235,7 +1245,7 @@ func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err erro
 		Name:  "create_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(cvf.UpdateTime); err != nil {
+	if buf, err = json.Marshal(cf.UpdateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[1] = &Field{
@@ -1243,7 +1253,7 @@ func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err erro
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(cvf.Mandatory); err != nil {
+	if buf, err = json.Marshal(cf.Mandatory); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
@@ -1255,27 +1265,17 @@ func (cvf *CounterVendorFormula) Node(ctx context.Context) (node *Node, err erro
 		Type: "Formula",
 		Name: "formula",
 	}
-	node.Edges[0].IDs, err = cvf.QueryFormula().
+	node.Edges[0].IDs, err = cf.QueryFormula().
 		Select(formula.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "Vendor",
-		Name: "vendor",
-	}
-	node.Edges[1].IDs, err = cvf.QueryVendor().
-		Select(vendor.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[2] = &Edge{
 		Type: "Counter",
 		Name: "counter",
 	}
-	node.Edges[2].IDs, err = cvf.QueryCounter().
+	node.Edges[1].IDs, err = cf.QueryCounter().
 		Select(counter.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -3201,11 +3201,11 @@ func (f *Formula) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "CounterVendorFormula",
-		Name: "countervendorformula",
+		Type: "CounterFormula",
+		Name: "counterformula",
 	}
-	node.Edges[2].IDs, err = f.QueryCountervendorformula().
-		Select(countervendorformula.FieldID).
+	node.Edges[2].IDs, err = f.QueryCounterformula().
+		Select(counterformula.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6493,11 +6493,11 @@ func (v *Vendor) Node(ctx context.Context) (node *Node, err error) {
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
-		Type: "CounterVendorFormula",
+		Type: "Counter",
 		Name: "vendor_fk",
 	}
 	node.Edges[0].IDs, err = v.QueryVendorFk().
-		Select(countervendorformula.FieldID).
+		Select(counter.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -7198,10 +7198,10 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
-	case countervendorformula.Table:
-		n, err := c.CounterVendorFormula.Query().
-			Where(countervendorformula.ID(id)).
-			CollectFields(ctx, "CounterVendorFormula").
+	case counterformula.Table:
+		n, err := c.CounterFormula.Query().
+			Where(counterformula.ID(id)).
+			CollectFields(ctx, "CounterFormula").
 			Only(ctx)
 		if err != nil {
 			return nil, err

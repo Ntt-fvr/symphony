@@ -480,28 +480,28 @@ func (f CounterFamilyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CounterFamilyMutation", m)
 }
 
-// The CounterVendorFormulaQueryRuleFunc type is an adapter to allow the use of ordinary
+// The CounterFormulaQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type CounterVendorFormulaQueryRuleFunc func(context.Context, *ent.CounterVendorFormulaQuery) error
+type CounterFormulaQueryRuleFunc func(context.Context, *ent.CounterFormulaQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f CounterVendorFormulaQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.CounterVendorFormulaQuery); ok {
+func (f CounterFormulaQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CounterFormulaQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CounterVendorFormulaQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CounterFormulaQuery", q)
 }
 
-// The CounterVendorFormulaMutationRuleFunc type is an adapter to allow the use of ordinary
+// The CounterFormulaMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type CounterVendorFormulaMutationRuleFunc func(context.Context, *ent.CounterVendorFormulaMutation) error
+type CounterFormulaMutationRuleFunc func(context.Context, *ent.CounterFormulaMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f CounterVendorFormulaMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.CounterVendorFormulaMutation); ok {
+func (f CounterFormulaMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CounterFormulaMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CounterVendorFormulaMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CounterFormulaMutation", m)
 }
 
 // The CustomerQueryRuleFunc type is an adapter to allow the use of ordinary

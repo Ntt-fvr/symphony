@@ -154,7 +154,7 @@ Clicking a policy from the list displayed on the Policies screen will display th
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+15.png' width=1000> <br>
 
-**Figure 15: Policy Details Screen - Inventory Catalog**
+**Figure 15: Policy Details Screen - Inventory PerformanceCatalog**
 
 **Table 3: Policy Details Screen - Inventory**
 
@@ -345,13 +345,13 @@ The **New Policy** screen appears:
 
 ###### 1) Enter the **Policy Details** (4).
 ###### 2) Set the Inventory data permissions and select all locations or specific locations (5).
-###### 3) Click the **Inventory Catalog** tab (6).
+###### 3) Click the **Inventory PerformanceCatalog** tab (6).
 
 _Result:_ The Inventory catalog permissions (7) appear:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+31.png' width=1000> <br>
 
-**Figure 31: Inventory Catalog Permissions**
+**Figure 31: Inventory PerformanceCatalog Permissions**
 
 ###### 1) Set the Inventory catalog permissions (7).
 ###### 2) Using the search field (8), enter the letters of the group to add.

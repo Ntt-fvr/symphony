@@ -12,6 +12,8 @@ import type {EditCounterMutationVariables} from '../../mutations/__generated__/E
 
 import EditCounterMutation from '../../mutations/EditCounterMutation';
 
+import type {EditCounterItemFormQuery} from './__generated__/EditCounterItemFormQuery.graphql';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -21,8 +23,24 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
+import {MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useFormInput} from './common/useFormInput';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const EditCountersQuery = graphql`
+  query EditCounterItemFormQuery {
+    vendors {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -43,6 +61,18 @@ const useStyles = makeStyles(() => ({
   title: {
     marginLeft: '10px',
   },
+  select: {
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
+    height: '36px',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -54,18 +84,42 @@ type Props = $ReadOnly<{|
     counterFamily: {
       name: string,
     },
+    vendorFk: {
+      name: string,
+    },
   },
   hideEditCounterForm: void => void,
+  counterNames: Array<string>,
 |}>;
 
 const EditCounterItemForm = (props: Props) => {
-  const {formValues, hideEditCounterForm} = props;
+  const {formValues, hideEditCounterForm, counterNames} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
   const counterID = useFormInput(formValues.externalID);
-  const familyName = useFormInput(formValues.counterFamily.name);
+  const counterFamily = useFormInput(formValues.counterFamily.name);
+  const vendor = useFormInput(formValues.vendorFk.name);
+
+  const data = useLazyLoadQuery<EditCounterItemFormQuery>(
+    EditCountersQuery,
+    {},
+  );
+
+  const inputFilter = () => {
+    return (
+      counterNames?.filter(
+        item => item === name.value && item !== formValues.name,
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Counter name existing'};
+    }
+  };
 
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
@@ -74,6 +128,7 @@ const EditCounterItemForm = (props: Props) => {
         name: name.value,
         externalID: counterID.value,
         networkManagerSystem: networkManagerSystem.value,
+        vendorFk: vendor.value,
       },
     };
 
@@ -86,7 +141,7 @@ const EditCounterItemForm = (props: Props) => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('Counters Catalog', ' ')}
+            title={fbt('Counters PerformanceCatalog', 'Counters PerformanceCatalog')}
             subtitle={''}
           />
         </Grid>
@@ -95,20 +150,30 @@ const EditCounterItemForm = (props: Props) => {
             <CardHeader>Edit container detail</CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={12} xl={12}>
-                <FormField className={classes.formField} label="Name" required>
+                <FormField
+                  className={classes.formField}
+                  label="Name"
+                  required
+                  {...validationName()}>
                   <TextInput
                     {...name}
                     className={classes.textInput}
                     name="name"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField
                   className={classes.formField}
-                  label="Vendor name"
-                  required>
-                  <TextInput className={classes.textInput} name="vendorName" />
+                  label="Counter Family"
+                  disabled>
+                  <TextInput
+                    {...counterFamily}
+                    className={classes.textInput}
+                    name="counterFamily"
+                    autoComplete="off"
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
@@ -120,6 +185,7 @@ const EditCounterItemForm = (props: Props) => {
                     {...networkManagerSystem}
                     className={classes.textInput}
                     name="NetworkManagerSystem"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
@@ -132,20 +198,24 @@ const EditCounterItemForm = (props: Props) => {
                     {...counterID}
                     className={classes.textInput}
                     name="CounterID"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
             </Grid>
             <Grid item xs={12} sm={12} lg={4} xl={4}>
-              <FormField
-                className={classes.formField}
-                label="Family name"
-                required>
-                <TextInput
-                  {...familyName}
-                  className={classes.textInput}
-                  name="FamilyName"
-                />
+              <FormField label="Vendor" className={classes.formField} required>
+                <Select
+                  {...vendor}
+                  className={classes.select}
+                  disableUnderline
+                  name="vendor">
+                  {data.vendors.edges.map((item, index) => (
+                    <MenuItem key={index} value={item.node?.id}>
+                      {item.node?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormField>
             </Grid>
             <Grid container justify="flex-end">

@@ -382,6 +382,7 @@ var (
 		{Name: "external_id", Type: field.TypeString},
 		{Name: "network_manager_system", Type: field.TypeString},
 		{Name: "counter_family_counterfamily", Type: field.TypeInt, Nullable: true},
+		{Name: "vendor_vendor_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// CountersTable holds the schema information for the "counters" table.
 	CountersTable = &schema.Table{
@@ -394,6 +395,13 @@ var (
 				Columns: []*schema.Column{CountersColumns[6]},
 
 				RefColumns: []*schema.Column{CounterFamiliesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "counters_vendors_vendor_fk",
+				Columns: []*schema.Column{CountersColumns[7]},
+
+				RefColumns: []*schema.Column{VendorsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -412,41 +420,33 @@ var (
 		PrimaryKey:  []*schema.Column{CounterFamiliesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
-	// CounterVendorFormulasColumns holds the columns for the "counter_vendor_formulas" table.
-	CounterVendorFormulasColumns = []*schema.Column{
+	// CounterFormulasColumns holds the columns for the "counter_formulas" table.
+	CounterFormulasColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "mandatory", Type: field.TypeBool},
 		{Name: "counter_counter_fk", Type: field.TypeInt, Nullable: true},
-		{Name: "formula_countervendorformula", Type: field.TypeInt, Nullable: true},
-		{Name: "vendor_vendor_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "formula_counterformula", Type: field.TypeInt, Nullable: true},
 	}
-	// CounterVendorFormulasTable holds the schema information for the "counter_vendor_formulas" table.
-	CounterVendorFormulasTable = &schema.Table{
-		Name:       "counter_vendor_formulas",
-		Columns:    CounterVendorFormulasColumns,
-		PrimaryKey: []*schema.Column{CounterVendorFormulasColumns[0]},
+	// CounterFormulasTable holds the schema information for the "counter_formulas" table.
+	CounterFormulasTable = &schema.Table{
+		Name:       "counter_formulas",
+		Columns:    CounterFormulasColumns,
+		PrimaryKey: []*schema.Column{CounterFormulasColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "counter_vendor_formulas_counters_counter_fk",
-				Columns: []*schema.Column{CounterVendorFormulasColumns[4]},
+				Symbol:  "counter_formulas_counters_counter_fk",
+				Columns: []*schema.Column{CounterFormulasColumns[4]},
 
 				RefColumns: []*schema.Column{CountersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "counter_vendor_formulas_formulas_countervendorformula",
-				Columns: []*schema.Column{CounterVendorFormulasColumns[5]},
+				Symbol:  "counter_formulas_formulas_counterformula",
+				Columns: []*schema.Column{CounterFormulasColumns[5]},
 
 				RefColumns: []*schema.Column{FormulasColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "counter_vendor_formulas_vendors_vendor_fk",
-				Columns: []*schema.Column{CounterVendorFormulasColumns[6]},
-
-				RefColumns: []*schema.Column{VendorsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -2827,7 +2827,7 @@ var (
 		ComparatorsTable,
 		CountersTable,
 		CounterFamiliesTable,
-		CounterVendorFormulasTable,
+		CounterFormulasTable,
 		CustomersTable,
 		DomainsTable,
 		EntryPointsTable,
@@ -2921,9 +2921,9 @@ func init() {
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
 	CountersTable.ForeignKeys[0].RefTable = CounterFamiliesTable
-	CounterVendorFormulasTable.ForeignKeys[0].RefTable = CountersTable
-	CounterVendorFormulasTable.ForeignKeys[1].RefTable = FormulasTable
-	CounterVendorFormulasTable.ForeignKeys[2].RefTable = VendorsTable
+	CountersTable.ForeignKeys[1].RefTable = VendorsTable
+	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable
+	CounterFormulasTable.ForeignKeys[1].RefTable = FormulasTable
 	EntryPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	EquipmentTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTable.ForeignKeys[1].RefTable = WorkOrdersTable

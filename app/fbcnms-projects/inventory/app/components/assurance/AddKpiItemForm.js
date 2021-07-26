@@ -17,14 +17,31 @@ import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpi
 
 import AddKpiMutation from '../../mutations/AddKpiMutation';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
+import type {AddKpiItemFormQuery} from './__generated__/AddKpiItemFormQuery.graphql';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const AddDomainsKpiQuery = graphql`
+  query AddKpiItemFormQuery {
+    domains {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,7 +62,10 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-end',
   },
   select: {
-    paddingTop: '10px',
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
     height: '36px',
     overflow: 'hidden',
     position: 'relative',
@@ -53,6 +73,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
     borderRadius: '4px',
     fontSize: '14px',
+    backgroundColor: '#FFFFFF',
   },
 }));
 
@@ -60,16 +81,14 @@ type Props = $ReadOnly<{|
   dataValues: Array<string>,
 |}>;
 
-
 type Kpis = {
   data: {
     id: string,
     name: string,
     status: boolean,
-    domainFk: string,
+    domain: string,
   },
 };
-
 
 export default function AddKpiItemForm(props: Props) {
   const {dataValues} = props;
@@ -79,10 +98,12 @@ export default function AddKpiItemForm(props: Props) {
   const [showChecking, setShowChecking] = useState(false);
   const [activate, setActivate] = useState('');
 
-  // const inputFilter = () => {
-  //   return dataValues?.filter(item => item === kpis.data.name) || [];
-  // };
-  
+  const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
+
+  const inputFilter = () => {
+    return dataValues?.filter(item => item === kpis.data.name) || [];
+  };
+
   function handleChange({target}) {
     setKpis({
       data: {
@@ -90,45 +111,49 @@ export default function AddKpiItemForm(props: Props) {
         [target.name]: target.value,
       },
     });
-    
-    // const validateInputs = Object.values(kpis.data);
-    // validateInputs.map(item => item != null) &&
-    // validateInputs.length === 5 &&
-    // setActivate(validateInputs);
 
+    const validateInputs = Object.values(kpis.data);
+    validateInputs.map(item => item != null) &&
+      validateInputs.length === 2 &&
+      setActivate(validateInputs);
   }
-  
 
   function handleClick() {
     const variables: AddKpiMutationVariables = {
       input: {
         name: kpis.data.name,
         status: true,
-        domainFk: kpis.data.domainFk,
+        domainFk: kpis.data.domain,
       },
     };
     setShowChecking(true);
     AddKpiMutation(variables);
   }
-  // const validationName = () => {
-  //   if (inputFilter().length > 0) {
-  //     return {hasError: true, errorText: 'Kpis existing'};
-  //   }
-  // };
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kpis existing'};
+    }
+  };
 
   if (showChecking) {
-    return <AddedSuccessfullyMessage data_entry="kpi" card_header="Add Kpi" title="Kpi" text_button="Add new Kpi"/>;
+    return (
+      <AddedSuccessfullyMessage
+        data_entry="kpi"
+        card_header="Add Kpi"
+        title="Kpi"
+        text_button="Add new Kpi"
+      />
+    );
   }
 
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add KPI</CardHeader>
-      <FormField 
-        className={classes.formField} 
-        label="Kpi name" 
+      <FormField
+        className={classes.formField}
+        label="Kpi name"
         required
-        // {...validationName()}
-        >
+        {...validationName()}>
         <TextInput
           className={classes.textInput}
           name="name"
@@ -146,22 +171,23 @@ export default function AddKpiItemForm(props: Props) {
       </FormField>
       <FormField label="Domain" className={classes.formField}>
         <Select
-          variant="outlined"
           className={classes.select}
-          onChange={handleChange}
-          inputProps={{
-            name: 'domainFk',
-          }}>
-          {dataValues?.map((kpidata, index) => (
-            <MenuItem key={index} value={kpidata.domainFk.id}>
-              {kpidata.domainFk.name}
+          disableUnderline
+          name="domain"
+          onChange={handleChange}>
+          {data.domains.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
             </MenuItem>
           ))}
         </Select>
       </FormField>
 
       <FormField>
-        <Button className={classes.addCounter} onClick={handleClick}>
+        <Button
+          className={classes.addCounter}
+          onClick={handleClick}
+          disabled={!activate}>
           Add KPI
         </Button>
       </FormField>

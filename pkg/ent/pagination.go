@@ -31,7 +31,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
-	"github.com/facebookincubator/symphony/pkg/ent/countervendorformula"
+	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
@@ -3371,126 +3371,126 @@ var DefaultCounterFamilyOrder = &CounterFamilyOrder{
 	},
 }
 
-// CounterVendorFormulaEdge is the edge representation of CounterVendorFormula.
-type CounterVendorFormulaEdge struct {
-	Node   *CounterVendorFormula `json:"node"`
-	Cursor Cursor                `json:"cursor"`
+// CounterFormulaEdge is the edge representation of CounterFormula.
+type CounterFormulaEdge struct {
+	Node   *CounterFormula `json:"node"`
+	Cursor Cursor          `json:"cursor"`
 }
 
-// CounterVendorFormulaConnection is the connection containing edges to CounterVendorFormula.
-type CounterVendorFormulaConnection struct {
-	Edges      []*CounterVendorFormulaEdge `json:"edges"`
-	PageInfo   PageInfo                    `json:"pageInfo"`
-	TotalCount int                         `json:"totalCount"`
+// CounterFormulaConnection is the connection containing edges to CounterFormula.
+type CounterFormulaConnection struct {
+	Edges      []*CounterFormulaEdge `json:"edges"`
+	PageInfo   PageInfo              `json:"pageInfo"`
+	TotalCount int                   `json:"totalCount"`
 }
 
-// CounterVendorFormulaPaginateOption enables pagination customization.
-type CounterVendorFormulaPaginateOption func(*counterVendorFormulaPager) error
+// CounterFormulaPaginateOption enables pagination customization.
+type CounterFormulaPaginateOption func(*counterFormulaPager) error
 
-// WithCounterVendorFormulaOrder configures pagination ordering.
-func WithCounterVendorFormulaOrder(order *CounterVendorFormulaOrder) CounterVendorFormulaPaginateOption {
+// WithCounterFormulaOrder configures pagination ordering.
+func WithCounterFormulaOrder(order *CounterFormulaOrder) CounterFormulaPaginateOption {
 	if order == nil {
-		order = DefaultCounterVendorFormulaOrder
+		order = DefaultCounterFormulaOrder
 	}
 	o := *order
-	return func(pager *counterVendorFormulaPager) error {
+	return func(pager *counterFormulaPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultCounterVendorFormulaOrder.Field
+			o.Field = DefaultCounterFormulaOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithCounterVendorFormulaFilter configures pagination filter.
-func WithCounterVendorFormulaFilter(filter func(*CounterVendorFormulaQuery) (*CounterVendorFormulaQuery, error)) CounterVendorFormulaPaginateOption {
-	return func(pager *counterVendorFormulaPager) error {
+// WithCounterFormulaFilter configures pagination filter.
+func WithCounterFormulaFilter(filter func(*CounterFormulaQuery) (*CounterFormulaQuery, error)) CounterFormulaPaginateOption {
+	return func(pager *counterFormulaPager) error {
 		if filter == nil {
-			return errors.New("CounterVendorFormulaQuery filter cannot be nil")
+			return errors.New("CounterFormulaQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type counterVendorFormulaPager struct {
-	order  *CounterVendorFormulaOrder
-	filter func(*CounterVendorFormulaQuery) (*CounterVendorFormulaQuery, error)
+type counterFormulaPager struct {
+	order  *CounterFormulaOrder
+	filter func(*CounterFormulaQuery) (*CounterFormulaQuery, error)
 }
 
-func newCounterVendorFormulaPager(opts []CounterVendorFormulaPaginateOption) (*counterVendorFormulaPager, error) {
-	pager := &counterVendorFormulaPager{}
+func newCounterFormulaPager(opts []CounterFormulaPaginateOption) (*counterFormulaPager, error) {
+	pager := &counterFormulaPager{}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultCounterVendorFormulaOrder
+		pager.order = DefaultCounterFormulaOrder
 	}
 	return pager, nil
 }
 
-func (p *counterVendorFormulaPager) applyFilter(query *CounterVendorFormulaQuery) (*CounterVendorFormulaQuery, error) {
+func (p *counterFormulaPager) applyFilter(query *CounterFormulaQuery) (*CounterFormulaQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *counterVendorFormulaPager) toCursor(cvf *CounterVendorFormula) Cursor {
-	return p.order.Field.toCursor(cvf)
+func (p *counterFormulaPager) toCursor(cf *CounterFormula) Cursor {
+	return p.order.Field.toCursor(cf)
 }
 
-func (p *counterVendorFormulaPager) applyCursors(query *CounterVendorFormulaQuery, after, before *Cursor) *CounterVendorFormulaQuery {
+func (p *counterFormulaPager) applyCursors(query *CounterFormulaQuery, after, before *Cursor) *CounterFormulaQuery {
 	for _, predicate := range cursorsToPredicates(
 		p.order.Direction, after, before,
-		p.order.Field.field, DefaultCounterVendorFormulaOrder.Field.field,
+		p.order.Field.field, DefaultCounterFormulaOrder.Field.field,
 	) {
 		query = query.Where(predicate)
 	}
 	return query
 }
 
-func (p *counterVendorFormulaPager) applyOrder(query *CounterVendorFormulaQuery, reverse bool) *CounterVendorFormulaQuery {
+func (p *counterFormulaPager) applyOrder(query *CounterFormulaQuery, reverse bool) *CounterFormulaQuery {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultCounterVendorFormulaOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultCounterVendorFormulaOrder.Field.field))
+	if p.order.Field != DefaultCounterFormulaOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultCounterFormulaOrder.Field.field))
 	}
 	return query
 }
 
-// Paginate executes the query and returns a relay based cursor connection to CounterVendorFormula.
-func (cvf *CounterVendorFormulaQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to CounterFormula.
+func (cf *CounterFormulaQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...CounterVendorFormulaPaginateOption,
-) (*CounterVendorFormulaConnection, error) {
+	before *Cursor, last *int, opts ...CounterFormulaPaginateOption,
+) (*CounterFormulaConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newCounterVendorFormulaPager(opts)
+	pager, err := newCounterFormulaPager(opts)
 	if err != nil {
 		return nil, err
 	}
 
-	if cvf, err = pager.applyFilter(cvf); err != nil {
+	if cf, err = pager.applyFilter(cf); err != nil {
 		return nil, err
 	}
 
-	conn := &CounterVendorFormulaConnection{Edges: []*CounterVendorFormulaEdge{}}
+	conn := &CounterFormulaConnection{Edges: []*CounterFormulaEdge{}}
 	if !hasCollectedField(ctx, edgesField) ||
 		first != nil && *first == 0 ||
 		last != nil && *last == 0 {
 		if hasCollectedField(ctx, totalCountField) ||
 			hasCollectedField(ctx, pageInfoField) {
-			count, err := cvf.Count(ctx)
+			count, err := cf.Count(ctx)
 			if err != nil {
 				return nil, err
 			}
@@ -3503,15 +3503,15 @@ func (cvf *CounterVendorFormulaQuery) Paginate(
 
 	if (after != nil || first != nil || before != nil || last != nil) &&
 		hasCollectedField(ctx, totalCountField) {
-		count, err := cvf.Clone().Count(ctx)
+		count, err := cf.Clone().Count(ctx)
 		if err != nil {
 			return nil, err
 		}
 		conn.TotalCount = count
 	}
 
-	cvf = pager.applyCursors(cvf, after, before)
-	cvf = pager.applyOrder(cvf, last != nil)
+	cf = pager.applyCursors(cf, after, before)
+	cf = pager.applyOrder(cf, last != nil)
 	var limit int
 	if first != nil {
 		limit = *first + 1
@@ -3519,14 +3519,14 @@ func (cvf *CounterVendorFormulaQuery) Paginate(
 		limit = *last + 1
 	}
 	if limit > 0 {
-		cvf = cvf.Limit(limit)
+		cf = cf.Limit(limit)
 	}
 
 	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
-		cvf = cvf.collectField(graphql.GetOperationContext(ctx), *field)
+		cf = cf.collectField(graphql.GetOperationContext(ctx), *field)
 	}
 
-	nodes, err := cvf.All(ctx)
+	nodes, err := cf.All(ctx)
 	if err != nil || len(nodes) == 0 {
 		return conn, err
 	}
@@ -3537,22 +3537,22 @@ func (cvf *CounterVendorFormulaQuery) Paginate(
 		nodes = nodes[:len(nodes)-1]
 	}
 
-	var nodeAt func(int) *CounterVendorFormula
+	var nodeAt func(int) *CounterFormula
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *CounterVendorFormula {
+		nodeAt = func(i int) *CounterFormula {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *CounterVendorFormula {
+		nodeAt = func(i int) *CounterFormula {
 			return nodes[i]
 		}
 	}
 
-	conn.Edges = make([]*CounterVendorFormulaEdge, len(nodes))
+	conn.Edges = make([]*CounterFormulaEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		conn.Edges[i] = &CounterVendorFormulaEdge{
+		conn.Edges[i] = &CounterFormulaEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -3567,25 +3567,25 @@ func (cvf *CounterVendorFormulaQuery) Paginate(
 	return conn, nil
 }
 
-// CounterVendorFormulaOrderField defines the ordering field of CounterVendorFormula.
-type CounterVendorFormulaOrderField struct {
+// CounterFormulaOrderField defines the ordering field of CounterFormula.
+type CounterFormulaOrderField struct {
 	field    string
-	toCursor func(*CounterVendorFormula) Cursor
+	toCursor func(*CounterFormula) Cursor
 }
 
-// CounterVendorFormulaOrder defines the ordering of CounterVendorFormula.
-type CounterVendorFormulaOrder struct {
-	Direction OrderDirection                  `json:"direction"`
-	Field     *CounterVendorFormulaOrderField `json:"field"`
+// CounterFormulaOrder defines the ordering of CounterFormula.
+type CounterFormulaOrder struct {
+	Direction OrderDirection            `json:"direction"`
+	Field     *CounterFormulaOrderField `json:"field"`
 }
 
-// DefaultCounterVendorFormulaOrder is the default ordering of CounterVendorFormula.
-var DefaultCounterVendorFormulaOrder = &CounterVendorFormulaOrder{
+// DefaultCounterFormulaOrder is the default ordering of CounterFormula.
+var DefaultCounterFormulaOrder = &CounterFormulaOrder{
 	Direction: OrderDirectionAsc,
-	Field: &CounterVendorFormulaOrderField{
-		field: countervendorformula.FieldID,
-		toCursor: func(cvf *CounterVendorFormula) Cursor {
-			return Cursor{ID: cvf.ID}
+	Field: &CounterFormulaOrderField{
+		field: counterformula.FieldID,
+		toCursor: func(cf *CounterFormula) Cursor {
+			return Cursor{ID: cf.ID}
 		},
 	},
 }
