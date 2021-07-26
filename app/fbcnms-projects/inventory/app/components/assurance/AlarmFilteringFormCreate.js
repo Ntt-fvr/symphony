@@ -11,6 +11,7 @@
 import React, {useState} from 'react';
 import fbt from 'fbt';
 
+import moment from 'moment';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import AlarmFilteringAddDialog from './AlarmFilteringAddDialog';
@@ -31,8 +32,12 @@ import Switch from './Switch';
 import {makeStyles} from '@material-ui/styles';
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
-
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
+
+import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
+import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
+
+import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -95,9 +100,15 @@ type AlarmFilter = {
   }
 }
 
+type Props = $ReadOnly<{|
+  titleForm: boolean,
+  returnTableAlarm: () => void,
+  dataValues: any,
+|}>;
+
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {dataValues, returnTableAlarm} = props;
+  const {returnTableAlarm, titleForm, dataValues} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -111,7 +122,13 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
-  
+    const handleRemove = id => {
+    // const removeItem =  setAlarmFilter(dataValues.filter(item => item.id !== id))
+    const variables: RemoveAlarmFilterMutationVariables = {
+      id: id,
+    };
+    RemoveAlarmFilterMutation(variables);
+  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -119,11 +136,11 @@ const AlarmFilteringFormCreate = (props: Props) => {
         name: AlarmFilter.data.name,
         networkResource: AlarmFilter.data.networkResource,
         enable: true,
-        beginTime: AlarmFilter.data.beginTime,
-        endTime: AlarmFilter.data.endTime,
+        beginTime: moment(AlarmFilter.data.beginTime).format(),
+        endTime: moment(AlarmFilter.data.endTime).format(),
         reason: AlarmFilter.data.reason,
         user: "user",
-        creationTime: "2021-07-21T00:00:00Z",
+        creationTime: moment(AlarmFilter.data.creationTime).format(),
         alarmStatus:  8589934592,
       },
     };
@@ -134,7 +151,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
   if (dialogOpen) {
     return (
         <>
-          <AlarmFilteringFormCreate />
+          {/* <AlarmFilteringFormCreate /> */}
           <AlarmFilteringAddDialog
             open={dialogOpen}
             onClose={() => setDialogOpen(false)}  
@@ -145,28 +162,23 @@ const AlarmFilteringFormCreate = (props: Props) => {
     );
   }
 
-  const handleRemove = () => {
-    console.log('REMOVE ALARM');
-  };
 
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid container className={classes.titleButtons}>
-          <Grid item xs={9}>
+          <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              {fbt('Create Alarm Filtering', ' ')}
+              { titleForm == true ? fbt('Create Alarm Filtering', ' ') : fbt('Edit Alarm Filtering', ' ')}
             </Text>
           </Grid>
-          <Grid item xs={1}>
-            <IconButton
+          <Grid xs={1}>
+            <DeleteOutlinedIcon
               className={classes.delete}
-              skin={'gray'}
-              icon={DeleteOutlinedIcon}
-              onClick={handleRemove}
+              // onClick={() => handleRemove()}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid xs={2}>
             <Grid container>
               <Grid xs={6}>
                 <FormField>
@@ -194,10 +206,10 @@ const AlarmFilteringFormCreate = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Card>
             <Grid container>
-              <Grid item xs={1}>
+              <Grid xs={1}>
                 <FormField label="Enabled">
                   <Switch
                     name="enable"
@@ -205,7 +217,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item xs={11}>
+              <Grid xs={11}>
                 <FormField className={classes.formField} label="Name">
                   <TextInput
                     className={classes.textInput}
@@ -214,7 +226,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <FormField
                   label="Network Resource"
                   className={classes.formField}>
@@ -225,7 +237,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <FormField className={classes.formField} label="Reason">
                   <TextInput
                     className={classes.textInput}
@@ -236,11 +248,11 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid className={classes.time} item xs={12}>
+              <Grid container xs={6}>
+                <Grid className={classes.time} xs={12}>
                   <Text variant="subtitle1">Exception period</Text>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
                       id="datetime-local"
@@ -248,32 +260,30 @@ const AlarmFilteringFormCreate = (props: Props) => {
                       defaultValue="2021-07-01T10:30"
                       name="beginTime"
                       onChange={handleChange}
-                      className={''}
                     />
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid xs={6}>
                   <FormField label="End" className={classes.formField}>
                     <TextField
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-07-01T11:30"
+                      defaultValue="2021-07-02T11:30"
                       name="endTime"
                       onChange={handleChange}
-                      className={''}
                     />
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={6} className={classes.status}>
-                <Grid item xs={3}>
+              <Grid container xs={6} className={classes.status}>
+                <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
                     <StatusActive className={classes.formFieldStatus} name="alarmStatus"/>
                   </FormField>
                 </Grid>
-                <Grid item xs={9}>
+                <Grid xs={9}>
                   <FormField label="ID" className={classes.formField}>
-                    <TextInput className={classes.textInput} disabled />
+                    <TextInput className={classes.textInput} name="id" disabled />
                   </FormField>
                 </Grid>
               </Grid>

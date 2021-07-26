@@ -79,7 +79,7 @@ type Alarms = {
 const AlarmFilteringTypes = () => {
   const classes = useStyles();
   const [DataAlarms, setDataAlarms] = useState({});
-  const [showEditCard, setShowEditCard] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const [showForm, setShowForm] = useState(false);
   
@@ -95,7 +95,12 @@ const AlarmFilteringTypes = () => {
   }
   
   if (showForm) {
-    return <AlarmFilteringFormCreate returnTableAlarm={()=> setShowForm(false)} />;
+    return (
+      <AlarmFilteringFormCreate  
+        dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)} 
+        returnTableAlarm={()=> setShowForm(false)} 
+      />
+    ) 
   }
   return (
     <div className={classes.root}>
@@ -135,8 +140,8 @@ const AlarmFilteringTypes = () => {
         <Grid item xs={12}>
             <AlarmFilteringTable
               dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+              edit={handleClick}
               // onChange={() => handleRemove(item.node.id)}
-              // edit={() => showEditKpiItemForm({item})}
             />
         </Grid>
       </Grid>

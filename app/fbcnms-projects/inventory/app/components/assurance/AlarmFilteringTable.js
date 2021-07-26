@@ -32,6 +32,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -61,8 +62,8 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
 
-  edit: void,
-  onChange: void,
+  edit: () => void,
+  onChange: () => void,
   dataValues: Array<string>,
 |}>;
 
@@ -71,7 +72,6 @@ const AlarmFilteringTable = (props: Props) => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [showEditForm, setShowEditForm] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -82,13 +82,6 @@ const AlarmFilteringTable = (props: Props) => {
     setPage(0);
   };
   
-  if (showEditForm) {
-    return (
-        
-          <AlarmFilteringFormCreate />
-        
-    );
-  }
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -116,18 +109,18 @@ const AlarmFilteringTable = (props: Props) => {
                   <TableCell>
                     <Button 
                       color="primary"
-                      onClick={() => setShowEditForm(true)}
+                      onClick={edit}
                     >
                       {Alarmdata.name}
                     </Button>
                   </TableCell>
-                  <TableCell>{Alarmdata.creationTime}</TableCell>
+                  <TableCell>{DateTimeFormat.dateTime(Alarmdata.creationTime)}</TableCell>
                   <TableCell>{Alarmdata.networkResource}</TableCell>
                   <TableCell>
                     <StatusPending />
                   </TableCell>
-                  <TableCell>{Alarmdata.beginTime}</TableCell>
-                  <TableCell>{Alarmdata.endTime}</TableCell>
+                  <TableCell>{DateTimeFormat.dateTime(Alarmdata.beginTime)}</TableCell>
+                  <TableCell>{DateTimeFormat.dateTime(Alarmdata.endTime)}</TableCell>
                   <TableCell>{Alarmdata.id}</TableCell>
                 </StyledTableRow>
               ))}
