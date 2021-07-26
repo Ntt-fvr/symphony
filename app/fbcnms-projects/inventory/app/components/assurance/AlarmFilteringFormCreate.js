@@ -26,7 +26,7 @@ import {StatusActive} from './AlarmFilteringStatus';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 
-import Switch from './Switch';
+import Switch from './common/Switch';
 
 import {makeStyles} from '@material-ui/styles';
 

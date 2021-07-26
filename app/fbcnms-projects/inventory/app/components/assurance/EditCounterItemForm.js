@@ -67,7 +67,6 @@ const useStyles = makeStyles(() => ({
     },
     border: '1px solid #D2DAE7',
     height: '36px',
-    overflow: 'hidden',
     position: 'relative',
     boxSizing: 'border-box',
     minHeight: '36px',
@@ -90,10 +89,11 @@ type Props = $ReadOnly<{|
     },
   },
   hideEditCounterForm: void => void,
+  counterNames: Array<string>,
 |}>;
 
 const EditCounterItemForm = (props: Props) => {
-  const {formValues, hideEditCounterForm} = props;
+  const {formValues, hideEditCounterForm, counterNames} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -106,6 +106,20 @@ const EditCounterItemForm = (props: Props) => {
     EditCountersQuery,
     {},
   );
+
+  const inputFilter = () => {
+    return (
+      counterNames?.filter(
+        item => item === name.value && item !== formValues.name,
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Counter name existing'};
+    }
+  };
 
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
@@ -127,7 +141,7 @@ const EditCounterItemForm = (props: Props) => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('Counters Catalog', ' ')}
+            title={fbt('Counters PerformanceCatalog', 'Counters PerformanceCatalog')}
             subtitle={''}
           />
         </Grid>
@@ -136,11 +150,16 @@ const EditCounterItemForm = (props: Props) => {
             <CardHeader>Edit container detail</CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={12} xl={12}>
-                <FormField className={classes.formField} label="Name" required>
+                <FormField
+                  className={classes.formField}
+                  label="Name"
+                  required
+                  {...validationName()}>
                   <TextInput
                     {...name}
                     className={classes.textInput}
                     name="name"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
@@ -153,6 +172,7 @@ const EditCounterItemForm = (props: Props) => {
                     {...counterFamily}
                     className={classes.textInput}
                     name="counterFamily"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
@@ -165,6 +185,7 @@ const EditCounterItemForm = (props: Props) => {
                     {...networkManagerSystem}
                     className={classes.textInput}
                     name="NetworkManagerSystem"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
@@ -177,15 +198,13 @@ const EditCounterItemForm = (props: Props) => {
                     {...counterID}
                     className={classes.textInput}
                     name="CounterID"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
             </Grid>
             <Grid item xs={12} sm={12} lg={4} xl={4}>
-              <FormField
-                label="Counter Family"
-                className={classes.formField}
-                required>
+              <FormField label="Vendor" className={classes.formField} required>
                 <Select
                   {...vendor}
                   className={classes.select}

@@ -10,8 +10,8 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddButton from './AddButton';
-import SwitchLabels from './Switch';
+import AddButton from './common/AddButton';
+import SwitchLabels from './common/Switch';
 import Table from './Table';
 
 // DESING SYSTEM //

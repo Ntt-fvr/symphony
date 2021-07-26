@@ -50,7 +50,7 @@ const EditCounterItemForm = () => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitle
             className={classes.title}
-            title={fbt('Threshold Catalog', ' ')}
+            title={fbt('Threshold PerformanceCatalog', ' ')}
             subtitle={''}
           />
         </Grid>

@@ -8,7 +8,7 @@
  * @format
  */
 
-import AddButton from './AddButton';
+import AddButton from './common/AddButton';
 import AddCounterItemForm from './AddCounterItemForm';
 import AddKpiItemForm from './AddKpiItemForm';
 import AddThresholdItemForm from './AddThresholdItemForm';

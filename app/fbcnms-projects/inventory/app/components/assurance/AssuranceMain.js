@@ -12,9 +12,10 @@ import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
-import Catalog from './Catalog';
 import FaultManagement from './FaultManagement';
 import InventorySuspense from '../../common/InventorySuspense';
+import PerformanceCatalog from './PerformanceCatalog';
+import ServiceQualityMonitoring from './ServiceQualityMonitoring';
 import React, {useContext} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import {AssuranceNavListItems} from './AssuranceNavListItems';
@@ -55,10 +56,17 @@ function AssuranceMain() {
           <AppContent>
             <RelayEnvironmentProvider environment={RelayEnvironment}>
               <Switch>
-                <Route path={relativeUrl('/performance')} component={Catalog} />
+                <Route
+                  path={relativeUrl('/performance')}
+                  component={PerformanceCatalog}
+                />
                 <Route
                   path={relativeUrl('/fault_management')}
                   component={FaultManagement}
+                />
+                <Route
+                  path={relativeUrl('/service_quality_monitoring')}
+                  component={ServiceQualityMonitoring}
                 />
                 <Redirect
                   from="/assurance"
