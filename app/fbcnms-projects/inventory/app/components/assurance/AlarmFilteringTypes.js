@@ -111,7 +111,8 @@ const AlarmFilteringTypes = () => {
   if(showEditForm){
     return (
       <EditAlarmFilteringItemForm
-        formValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+        closeEditForm={() => setShowEditForm(false)}
+        formValues={dataEdit}
       />
     )
   }

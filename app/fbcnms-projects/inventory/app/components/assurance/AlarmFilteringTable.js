@@ -64,7 +64,7 @@ type Props = $ReadOnly<{|
 
   edit: () => void,
   onChange: () => void,
-  dataValues: Array<string>,
+  dataValues: any,
 |}>;
 
 const AlarmFilteringTable = (props: Props) => {
@@ -101,7 +101,7 @@ const AlarmFilteringTable = (props: Props) => {
           <TableBody>
             {dataValues
               ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((Alarmdata, index) => (
+              .map((item, index) => (
                 <StyledTableRow tabIndex={-1} key={index}>
                   <TableCell>
                     <Switch />
@@ -109,19 +109,19 @@ const AlarmFilteringTable = (props: Props) => {
                   <TableCell>
                     <Button
                       color="primary"
-                      onClick={edit}
+                      onClick={() => edit({item})}
                     >
-                      {Alarmdata.name}
+                      {item.name}
                     </Button>
                   </TableCell>
-                  <TableCell>{DateTimeFormat.dateTime(Alarmdata.creationTime)}</TableCell>
-                  <TableCell>{Alarmdata.networkResource}</TableCell>
+                  <TableCell>{DateTimeFormat.dateTime(item.creationTime)}</TableCell>
+                  <TableCell>{item.networkResource}</TableCell>
                   <TableCell>
                     <StatusPending />
                   </TableCell>
-                  <TableCell>{DateTimeFormat.dateTime(Alarmdata.beginTime)}</TableCell>
-                  <TableCell>{DateTimeFormat.dateTime(Alarmdata.endTime)}</TableCell>
-                  <TableCell>{Alarmdata.id}</TableCell>
+                  <TableCell>{DateTimeFormat.dateTime(item.beginTime)}</TableCell>
+                  <TableCell>{DateTimeFormat.dateTime(item.endTime)}</TableCell>
+                  <TableCell>{item.id}</TableCell>
                 </StyledTableRow>
               ))}
           </TableBody>

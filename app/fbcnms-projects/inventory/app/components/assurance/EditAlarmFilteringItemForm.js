@@ -34,8 +34,6 @@ import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated
 
 import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 
-import DateTimeFormat from '../../common/DateTimeFormat.js';
-
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
@@ -81,62 +79,55 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  returnTableAlarm: () => void,
-  dataValues: any,
+  closeEditForm: () => void,
   formValues: {
-    id: string,
-    name: string,
-    networkResource: string,
-    enable: boolean,
-    beginTime: string,
-    endTime: string,
-    reason: string,
-    user: string,
-    creationTime: string,
-    alarmStatus: {
+    item:{
       id: string,
       name: string,
+      networkResource: string,
+      enable: boolean,
+      beginTime: string,
+      endTime: string,
+      reason: string,
+      user: string,
+      creationTime: string,
+      alarmStatus: {
+        id: string,
+        name: string,
+      }
     }
   }
 |}>;
 
 
 const EditAlarmFilteringItemForm = (props: Props) => {
-  const {returnTableAlarm, dataValues, formValues} = props;
+  const {closeEditForm, formValues} = props;
   const classes = useStyles();
-  const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
-  const [dialogOpen, setDialogOpen] = useState(false);
   
-  const id = useFormInput(formValues.id);
-  const name = useFormInput(formValues.name);
-  const networkResource = useFormInput(formValues.networkResource);
-  const beginTime = useFormInput(formValues.beginTime);
-  const endTime = useFormInput(formValues.endTime);
-  const reason = useFormInput(formValues.reason);
-  const creationTime = useFormInput(formValues.creationTime);
-  const user = useFormInput(formValues.user);
+  const id = useFormInput(formValues.item.id);
+  const name = useFormInput(formValues.item.name);
+  const networkResource = useFormInput(formValues.item.networkResource);
+  const beginTime = useFormInput(formValues.item.beginTime);
+  const endTime = useFormInput(formValues.item.endTime);
+  const reason = useFormInput(formValues.item.reason);
+  const creationTime = useFormInput(formValues.item.creationTime);
+  const user = useFormInput(formValues.item.user);
+  const alarmStatus = useFormInput(formValues.item.alarmStatus.name);
   
-  function handleChange({target}) {
-    setAlarmFilter({
-      data: {
-        ...AlarmFilter.data,
-        [target.name]: target.value,
-      },
-    });
-  }
 
     function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
       input: {
-        id: formValues.id,
+        id: id.value,
         name: name.value,
         networkResource: networkResource.value,
         enable: true,
         beginTime: beginTime.value,
         endTime: endTime.value,
         reason: reason.value,
-        user: user.value,
-        creationTime: creationTime.value,
+        alarmStatus: 8589934592,
+        // user: user.value,
+        // creationTime: creationTime.value,
       },
     };
     EditAlarmFilterMutation(variables);
@@ -165,7 +156,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={() => returnTableAlarm()}
+                    onClick={() => closeEditForm()}
                   >
                     Cancel
                   </Button>
@@ -174,7 +165,10 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               <Grid xs={6}>
                 <FormField>
                   <Button
-                    onClick={() => setDialogOpen(true)}
+                    onClick={() => {
+                      handleClickEdit();
+                      closeEditForm()
+                      }}
                     className={classes.option}
                     variant="contained"
                     color="primary">
@@ -192,7 +186,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 <FormField label="Enabled">
                   <Switch
                     name="enable"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -202,7 +195,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     {...name}
                     className={classes.textInput}
                     name="name"  
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -214,7 +206,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     {...networkResource}
                     className={classes.textInput}
                     name="networkResource"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -226,7 +217,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     type="multiline"
                     rows={4}
                     name="reason"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -242,7 +232,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                       type="datetime-local"
                       defaultValue="2021-07-01T10:30"
                       name="beginTime"
-                      onChange={handleChange}
                     />
                   </FormField>
                 </Grid>
@@ -254,7 +243,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                       type="datetime-local"
                       defaultValue="2021-07-02T11:30"
                       name="endTime"
-                      onChange={handleChange}
                     />
                   </FormField>
                 </Grid>
