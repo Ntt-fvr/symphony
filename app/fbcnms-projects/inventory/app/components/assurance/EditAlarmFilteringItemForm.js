@@ -81,7 +81,7 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   closeEditForm: () => void,
   formValues: {
-    item:{
+    item: {
       id: string,
       name: string,
       networkResource: string,
@@ -94,16 +94,15 @@ type Props = $ReadOnly<{|
       alarmStatus: {
         id: string,
         name: string,
-      }
-    }
-  }
+      },
+    },
+  },
 |}>;
-
 
 const EditAlarmFilteringItemForm = (props: Props) => {
   const {closeEditForm, formValues} = props;
   const classes = useStyles();
-  
+
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
   const networkResource = useFormInput(formValues.item.networkResource);
@@ -113,9 +112,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const creationTime = useFormInput(formValues.item.creationTime);
   const user = useFormInput(formValues.item.user);
   const alarmStatus = useFormInput(formValues.item.alarmStatus.name);
-  
 
-    function handleClickEdit() {
+  function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
       input: {
         id: id.value,
@@ -139,7 +137,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         <Grid container className={classes.titleButtons}>
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              { fbt('Edit Alarm Filtering', ' ')}
+              {fbt('Edit Alarm Filtering', ' ')}
             </Text>
           </Grid>
           <Grid xs={1}>
@@ -156,8 +154,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={() => closeEditForm()}
-                  >
+                    onClick={() => closeEditForm()}>
                     Cancel
                   </Button>
                 </FormField>
@@ -167,8 +164,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <Button
                     onClick={() => {
                       handleClickEdit();
-                      closeEditForm()
-                      }}
+                      closeEditForm();
+                    }}
                     className={classes.option}
                     variant="contained"
                     color="primary">
@@ -184,9 +181,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                  <Switch
-                    name="enable"
-                  />
+                  <Switch name="enable" />
                 </FormField>
               </Grid>
               <Grid xs={11}>
@@ -194,7 +189,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <TextInput
                     {...name}
                     className={classes.textInput}
-                    name="name"  
+                    name="name"
                   />
                 </FormField>
               </Grid>
@@ -250,12 +245,20 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    <StatusActive className={classes.formFieldStatus} name="alarmStatus" />
+                    <StatusActive
+                      className={classes.formFieldStatus}
+                      name="alarmStatus"
+                    />
                   </FormField>
                 </Grid>
                 <Grid xs={9}>
                   <FormField label="ID" className={classes.formField}>
-                    <TextInput className={classes.textInput} name="id" disabled {...id} />
+                    <TextInput
+                      className={classes.textInput}
+                      name="id"
+                      disabled
+                      {...id}
+                    />
                   </FormField>
                 </Grid>
               </Grid>

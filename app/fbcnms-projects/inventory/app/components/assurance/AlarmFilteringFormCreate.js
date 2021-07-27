@@ -83,7 +83,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-
 type AlarmFilter = {
   id: string,
   name: string,
@@ -97,21 +96,19 @@ type AlarmFilter = {
   alarmStatus: {
     id: string,
     name: string,
-  }
-}
+  },
+};
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   dataValues: any,
 |}>;
 
-
 const AlarmFilteringFormCreate = (props: Props) => {
   const {returnTableAlarm, dataValues} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
-
 
   function handleChange({target}) {
     setAlarmFilter({
@@ -121,7 +118,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
-    const handleRemove = id => {
+  const handleRemove = id => {
     // const removeItem =  setAlarmFilter(dataValues.filter(item => item.id !== id))
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
@@ -138,15 +135,15 @@ const AlarmFilteringFormCreate = (props: Props) => {
         beginTime: moment(AlarmFilter.data.beginTime).format(),
         endTime: moment(AlarmFilter.data.endTime).format(),
         reason: AlarmFilter.data.reason,
-        user: "user",
+        user: 'user',
         creationTime: moment(AlarmFilter.data.creationTime).format(),
-        alarmStatus:  8589934592,
+        alarmStatus: 8589934592,
       },
     };
-    returnTableAlarm()
+    returnTableAlarm();
     AddAlarmFilterMutation(variables);
   }
-  
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -164,8 +161,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={() => returnTableAlarm()}
-                  >
+                    onClick={() => returnTableAlarm()}>
                     Cancel
                   </Button>
                 </FormField>
@@ -189,17 +185,14 @@ const AlarmFilteringFormCreate = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                  <Switch
-                    name="enable"
-                    onChange={handleChange}
-                  />
+                  <Switch name="enable" onChange={handleChange} />
                 </FormField>
               </Grid>
               <Grid xs={11}>
                 <FormField className={classes.formField} label="Name">
                   <TextInput
                     className={classes.textInput}
-                    name="name"  
+                    name="name"
                     onChange={handleChange}
                   />
                 </FormField>
@@ -256,12 +249,19 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    <StatusActive className={classes.formFieldStatus} name="alarmStatus"/>
+                    <StatusActive
+                      className={classes.formFieldStatus}
+                      name="alarmStatus"
+                    />
                   </FormField>
                 </Grid>
                 <Grid xs={9}>
                   <FormField label="ID" className={classes.formField}>
-                    <TextInput className={classes.textInput} name="id" disabled />
+                    <TextInput
+                      className={classes.textInput}
+                      name="id"
+                      disabled
+                    />
                   </FormField>
                 </Grid>
               </Grid>
@@ -269,14 +269,14 @@ const AlarmFilteringFormCreate = (props: Props) => {
           </Card>
         </Grid>
       </Grid>
-      { dialogOpen && 
+      {dialogOpen && (
         <AlarmFilteringAddDialog
           open={dialogOpen}
-          onClose={() => setDialogOpen(false)}  
+          onClose={() => setDialogOpen(false)}
           onAlarmSelected={handleClick}
           onAlarmSelectedData={AlarmFilter.data}
         />
-      }
+      )}
     </div>
   );
 };

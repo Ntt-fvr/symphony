@@ -61,7 +61,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-
   edit: () => void,
   onChange: () => void,
   dataValues: any,
@@ -81,7 +80,7 @@ const AlarmFilteringTable = (props: Props) => {
     setRowsPerPage(event.target.value);
     setPage(0);
   };
-  
+
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -107,19 +106,20 @@ const AlarmFilteringTable = (props: Props) => {
                     <Switch />
                   </TableCell>
                   <TableCell>
-                    <Button
-                      color="primary"
-                      onClick={() => edit({item})}
-                    >
+                    <Button color="primary" onClick={() => edit({item})}>
                       {item.name}
                     </Button>
                   </TableCell>
-                  <TableCell>{DateTimeFormat.dateTime(item.creationTime)}</TableCell>
+                  <TableCell>
+                    {DateTimeFormat.dateTime(item.creationTime)}
+                  </TableCell>
                   <TableCell>{item.networkResource}</TableCell>
                   <TableCell>
                     <StatusPending />
                   </TableCell>
-                  <TableCell>{DateTimeFormat.dateTime(item.beginTime)}</TableCell>
+                  <TableCell>
+                    {DateTimeFormat.dateTime(item.beginTime)}
+                  </TableCell>
                   <TableCell>{DateTimeFormat.dateTime(item.endTime)}</TableCell>
                   <TableCell>{item.id}</TableCell>
                 </StyledTableRow>

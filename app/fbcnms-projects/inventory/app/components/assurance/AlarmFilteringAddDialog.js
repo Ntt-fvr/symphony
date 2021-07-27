@@ -59,7 +59,7 @@ type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   onAlarmSelected: () => void,
-  onAlarmSelectedData: string
+  onAlarmSelectedData: string,
 |}>;
 
 const AlarmFilteringAddDialog = (props: Props) => {
@@ -104,7 +104,11 @@ const AlarmFilteringAddDialog = (props: Props) => {
         </Grid>
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
-        <Button className={classes.option} variant="outlined" color="primary">
+        <Button
+          className={classes.option}
+          variant="outlined"
+          color="primary"
+          onClick={onClose}>
           Edit
         </Button>
         <Button
