@@ -4403,6 +4403,17 @@ type Mutation {
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
+  moveEquipmentToLocation(
+    """
+    ID of the location that will the destination
+    """
+    locationID: ID!
+    """
+    id of the equipment that will be moved
+    """
+    equipmentId: ID!
+
+  ): Equipment!
 }
 
 """
