@@ -3296,7 +3296,6 @@ func (r mutationResolver) DeleteReportFilter(ctx context.Context, id int) (_ boo
 func (r mutationResolver) MoveEquipmentToLocation(
 	ctx context.Context, locationID int, equipmentID int,
 ) (*ent.Equipment, error) {
-
 	var (
 		client = r.ClientFrom(ctx)
 		e      *ent.Equipment
