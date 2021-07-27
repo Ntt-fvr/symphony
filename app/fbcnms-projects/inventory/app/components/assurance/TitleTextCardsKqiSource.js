@@ -16,7 +16,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 9px 16px',
+    padding: '0 16px 16px',
   },
   title: {
     color: DARK.D300,
@@ -25,17 +25,14 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'center',
   },
-  network: {
-    paddingRight: '4rem',
-  },
-  vendor: {
-    paddingRight: '3rem',
+  iD: {
+    paddingRight: '20rem',
   },
   edit: {
     justifyContent: 'flex-end',
   },
   delete: {
-    paddingLeft: '1rem',
+    alignItems: 'center',
   },
 }));
 
@@ -53,7 +50,7 @@ export const TitleTextCardsKqiSource = () => {
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.network,
+            classes.iD,
           )}
           variant="subtitle2">
           ID
@@ -72,7 +69,11 @@ export const TitleTextCardsKqiSource = () => {
       </Grid>
       <Grid xs={1}>
         <Text
-          className={classNames(classes.title, classes.delete)}
+          className={classNames(
+            classes.title,
+            classes.globalCenter,
+            classes.delete,
+          )}
           variant="subtitle2">
           Delete
         </Text>
