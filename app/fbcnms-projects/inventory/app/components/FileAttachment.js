@@ -167,11 +167,9 @@ class FileAttachment extends React.Component<Props, State> {
             {file.category}
           </TableCell>
         )}
-        {categoriesEnabled && (
-          <TableCell padding="none" component="th" scope="row">
-            {file.annotation}
-          </TableCell>
-        )}
+        <TableCell padding="none" component="th" scope="row">
+          {file.annotation}
+        </TableCell>
         <TableCell padding="none" component="th" scope="row">
           <div className={classes.nameCell}>
             <div className={classes.thumbnail}>
