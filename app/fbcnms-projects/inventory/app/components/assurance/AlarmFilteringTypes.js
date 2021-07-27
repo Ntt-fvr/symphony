@@ -9,6 +9,7 @@
  */
 import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
+import EditAlarmFilteringItemForm from "./EditAlarmFilteringItemForm"
 import Button from '@symphony/design-system/components/Button';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useEffect,useState} from 'react';
@@ -90,10 +91,14 @@ const AlarmFilteringTypes = () => {
   }, []);
 
 
-  function handleClick() {
-    setShowForm(true);
+  const handleClickEdit = (alarm: Alarms) =>{
+    setShowEditForm(true);
+    setDataEdit(alarm)
   }
-  
+
+  const handleClickAdd = () =>{
+    setShowForm(true);
+  }  
   if (showForm) {
     return (
       <AlarmFilteringFormCreate  
@@ -101,6 +106,14 @@ const AlarmFilteringTypes = () => {
         returnTableAlarm={()=> setShowForm(false)} 
       />
     ) 
+  }
+
+  if(showEditForm){
+    return (
+      <EditAlarmFilteringItemForm
+        formValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+      />
+    )
   }
   return (
     <div className={classes.root}>
@@ -132,7 +145,7 @@ const AlarmFilteringTypes = () => {
         </Grid>
         <Grid className={classes.addButton} item xs={2}>
           <FormField>
-            <Button onClick={handleClick} className={classes.button}>
+            <Button onClick={handleClickAdd} className={classes.button}>
               Add Alarm Filtering
             </Button>
           </FormField>
@@ -140,7 +153,7 @@ const AlarmFilteringTypes = () => {
         <Grid item xs={12}>
             <AlarmFilteringTable
               dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
-              edit={handleClick}
+              edit={handleClickEdit}
               // onChange={() => handleRemove(item.node.id)}
             />
         </Grid>
