@@ -11,14 +11,15 @@
 import React, {useState} from 'react';
 import fbt from 'fbt';
 
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import moment from 'moment';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import AlarmFilteringAddDialog from './AlarmFilteringAddDialog';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
+import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {StatusActive} from './AlarmFilteringStatus';
@@ -27,16 +28,11 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 
 import Switch from './common/Switch';
-
+import {useFormInput} from './common/useFormInput';
 import {makeStyles} from '@material-ui/styles';
+import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
 
-import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
-
-import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
-
-import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
-
-import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
+import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 
@@ -84,34 +80,42 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type AlarmFilter = {
-  id: string,
-  name: string,
-  networkResource: string,
-  enable: boolean,
-  beginTime: string,
-  endTime: string,
-  reason: string,
-  user: string,
-  creationTime: string,
-  alarmStatus: {
-    id: string,
-    name: string,
-  },
-};
-
 type Props = $ReadOnly<{|
-  titleForm: boolean,
   returnTableAlarm: () => void,
   dataValues: any,
+  formValues: {
+    id: string,
+    name: string,
+    networkResource: string,
+    enable: boolean,
+    beginTime: string,
+    endTime: string,
+    reason: string,
+    user: string,
+    creationTime: string,
+    alarmStatus: {
+      id: string,
+      name: string,
+    }
+  }
 |}>;
 
-const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm, titleForm, dataValues} = props;
+
+const EditAlarmFilteringItemForm = (props: Props) => {
+  const {returnTableAlarm, dataValues, formValues} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  
+  const id = useFormInput(formValues.id);
+  const name = useFormInput(formValues.name);
+  const networkResource = useFormInput(formValues.networkResource);
+  const beginTime = useFormInput(formValues.beginTime);
+  const endTime = useFormInput(formValues.endTime);
+  const reason = useFormInput(formValues.reason);
+  const creationTime = useFormInput(formValues.creationTime);
+  const user = useFormInput(formValues.user);
+  
   function handleChange({target}) {
     setAlarmFilter({
       data: {
@@ -121,35 +125,21 @@ const AlarmFilteringFormCreate = (props: Props) => {
     });
   }
 
-  function handleClick() {
-    const variables: AddAlarmFilterMutationVariables = {
+    function handleClickEdit() {
+    const variables: EditAlarmFilterMutationVariables = {
       input: {
-        name: AlarmFilter.data.name,
-        networkResource: AlarmFilter.data.networkResource,
+        id: formValues.id,
+        name: name.value,
+        networkResource: networkResource.value,
         enable: true,
-        beginTime: moment(AlarmFilter.data.beginTime).format(),
-        endTime: moment(AlarmFilter.data.endTime).format(),
-        reason: AlarmFilter.data.reason,
-        user: 'user',
-        creationTime: moment(AlarmFilter.data.creationTime).format(),
-        alarmStatus: 8589934592,
+        beginTime: beginTime.value,
+        endTime: endTime.value,
+        reason: reason.value,
+        user: user.value,
+        creationTime: creationTime.value,
       },
     };
-    AddAlarmFilterMutation(variables);
-  }
-
-  if (dialogOpen) {
-    return (
-      <>
-        {/* <AlarmFilteringFormCreate /> */}
-        <AlarmFilteringAddDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onAlarmSelected={handleClick}
-          onAlarmSelectedData={AlarmFilter.data}
-        />
-      </>
-    );
+    EditAlarmFilterMutation(variables);
   }
 
   return (
@@ -158,9 +148,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
         <Grid container className={classes.titleButtons}>
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              {titleForm == true
-                ? fbt('Create Alarm Filtering', ' ')
-                : fbt('Edit Alarm Filtering', ' ')}
+              { fbt('Edit Alarm Filtering', ' ')}
             </Text>
           </Grid>
           <Grid xs={1}>
@@ -177,7 +165,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={() => returnTableAlarm()}>
+                    onClick={() => returnTableAlarm()}
+                  >
                     Cancel
                   </Button>
                 </FormField>
@@ -201,14 +190,18 @@ const AlarmFilteringFormCreate = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                  <Switch name="enable" onChange={handleChange} />
+                  <Switch
+                    name="enable"
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid xs={11}>
                 <FormField className={classes.formField} label="Name">
                   <TextInput
+                    {...name}
                     className={classes.textInput}
-                    name="name"
+                    name="name"  
                     onChange={handleChange}
                   />
                 </FormField>
@@ -218,6 +211,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   label="Network Resource"
                   className={classes.formField}>
                   <TextInput
+                    {...networkResource}
                     className={classes.textInput}
                     name="networkResource"
                     onChange={handleChange}
@@ -227,6 +221,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid xs={6}>
                 <FormField className={classes.formField} label="Reason">
                   <TextInput
+                    {...reason}
                     className={classes.textInput}
                     type="multiline"
                     rows={4}
@@ -242,6 +237,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 <Grid xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
+                      {...beginTime}
                       id="datetime-local"
                       type="datetime-local"
                       defaultValue="2021-07-01T10:30"
@@ -253,6 +249,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 <Grid xs={6}>
                   <FormField label="End" className={classes.formField}>
                     <TextField
+                      {...endTime}
                       id="datetime-local"
                       type="datetime-local"
                       defaultValue="2021-07-02T11:30"
@@ -265,19 +262,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    <StatusActive
-                      className={classes.formFieldStatus}
-                      name="alarmStatus"
-                    />
+                    <StatusActive className={classes.formFieldStatus} name="alarmStatus" />
                   </FormField>
                 </Grid>
                 <Grid xs={9}>
                   <FormField label="ID" className={classes.formField}>
-                    <TextInput
-                      className={classes.textInput}
-                      name="id"
-                      disabled
-                    />
+                    <TextInput className={classes.textInput} name="id" disabled {...id} />
                   </FormField>
                 </Grid>
               </Grid>
@@ -288,4 +278,4 @@ const AlarmFilteringFormCreate = (props: Props) => {
     </div>
   );
 };
-export default AlarmFilteringFormCreate;
+export default EditAlarmFilteringItemForm;

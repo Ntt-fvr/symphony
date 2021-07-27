@@ -9,6 +9,7 @@
  */
 import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
+import EditAlarmFilteringItemForm from "./EditAlarmFilteringItemForm"
 import Button from '@symphony/design-system/components/Button';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useEffect,useState} from 'react';
@@ -79,7 +80,7 @@ type Alarms = {
 const AlarmFilteringTypes = () => {
   const classes = useStyles();
   const [DataAlarms, setDataAlarms] = useState({});
-  const [showEditCard, setShowEditCard] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const [showForm, setShowForm] = useState(false);
   
@@ -90,12 +91,29 @@ const AlarmFilteringTypes = () => {
   }, []);
 
 
-  function handleClick() {
-    setShowForm(true);
+  const handleClickEdit = (alarm: Alarms) =>{
+    setShowEditForm(true);
+    setDataEdit(alarm)
   }
-  
+
+  const handleClickAdd = () =>{
+    setShowForm(true);
+  }  
   if (showForm) {
-    return <AlarmFilteringFormCreate returnTableAlarm={()=> setShowForm(false)} />;
+    return (
+      <AlarmFilteringFormCreate  
+        dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)} 
+        returnTableAlarm={()=> setShowForm(false)} 
+      />
+    ) 
+  }
+
+  if(showEditForm){
+    return (
+      <EditAlarmFilteringItemForm
+        formValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+      />
+    )
   }
   return (
     <div className={classes.root}>
@@ -127,7 +145,7 @@ const AlarmFilteringTypes = () => {
         </Grid>
         <Grid className={classes.addButton} item xs={2}>
           <FormField>
-            <Button onClick={handleClick} className={classes.button}>
+            <Button onClick={handleClickAdd} className={classes.button}>
               Add Alarm Filtering
             </Button>
           </FormField>
@@ -135,8 +153,8 @@ const AlarmFilteringTypes = () => {
         <Grid item xs={12}>
             <AlarmFilteringTable
               dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+              edit={handleClickEdit}
               // onChange={() => handleRemove(item.node.id)}
-              // edit={() => showEditKpiItemForm({item})}
             />
         </Grid>
       </Grid>
