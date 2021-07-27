@@ -192,9 +192,10 @@ type AddImageInput struct {
 }
 
 type AddKpiInput struct {
-	Name     string `json:"name"`
-	DomainFk int    `json:"domainFk"`
-	Status   bool   `json:"status"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	DomainFk    int    `json:"domainFk"`
+	Status      bool   `json:"status"`
 }
 
 type AddLinkInput struct {
@@ -613,10 +614,11 @@ type EditFormulaInput struct {
 }
 
 type EditKpiInput struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	DomainFk int    `json:"domainFk"`
-	Status   bool   `json:"status"`
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	DomainFk    int    `json:"domainFk"`
+	Status      bool   `json:"status"`
 }
 
 type EditLinkInput struct {

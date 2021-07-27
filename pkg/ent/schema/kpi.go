@@ -22,6 +22,7 @@ func (Kpi) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
+		field.String("description").NotEmpty(),
 		field.Bool("status"),
 	}
 }
