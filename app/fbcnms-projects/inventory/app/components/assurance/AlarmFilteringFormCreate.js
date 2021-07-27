@@ -18,7 +18,6 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {StatusActive} from './AlarmFilteringStatus';
@@ -78,7 +77,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-
 type AlarmFilter = {
   id: string,
   name: string,
@@ -92,16 +90,14 @@ type AlarmFilter = {
   alarmStatus: {
     id: string,
     name: string,
-  }
-}
-
+  },
+};
 
 const AlarmFilteringFormCreate = (props: Props) => {
   const {dataValues, returnTableAlarm} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
-
 
   function handleChange({target}) {
     setAlarmFilter({
@@ -111,7 +107,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
-  
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -122,26 +117,25 @@ const AlarmFilteringFormCreate = (props: Props) => {
         beginTime: AlarmFilter.data.beginTime,
         endTime: AlarmFilter.data.endTime,
         reason: AlarmFilter.data.reason,
-        user: "user",
-        creationTime: "2021-07-21T00:00:00Z",
-        alarmStatus:  8589934592,
+        user: 'user',
+        creationTime: '2021-07-21T00:00:00Z',
+        alarmStatus: 8589934592,
       },
     };
     AddAlarmFilterMutation(variables);
   }
-  
 
   if (dialogOpen) {
     return (
-        <>
-          <AlarmFilteringFormCreate />
-          <AlarmFilteringAddDialog
-            open={dialogOpen}
-            onClose={() => setDialogOpen(false)}  
-            onAlarmSelected={handleClick}
-            onAlarmSelectedData={AlarmFilter.data}
-          />
-        </>
+      <>
+        <AlarmFilteringFormCreate />
+        <AlarmFilteringAddDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onAlarmSelected={handleClick}
+          onAlarmSelectedData={AlarmFilter.data}
+        />
+      </>
     );
   }
 
@@ -174,8 +168,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={() => returnTableAlarm()}
-                  >
+                    onClick={() => returnTableAlarm()}>
                     Cancel
                   </Button>
                 </FormField>
@@ -199,17 +192,14 @@ const AlarmFilteringFormCreate = (props: Props) => {
             <Grid container>
               <Grid item xs={1}>
                 <FormField label="Enabled">
-                  <Switch
-                    name="enable"
-                    onChange={handleChange}
-                  />
+                  <Switch name="enable" onChange={handleChange} />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
                 <FormField className={classes.formField} label="Name">
                   <TextInput
                     className={classes.textInput}
-                    name="name"  
+                    name="name"
                     onChange={handleChange}
                   />
                 </FormField>
@@ -268,7 +258,10 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid container item xs={6} className={classes.status}>
                 <Grid item xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    <StatusActive className={classes.formFieldStatus} name="alarmStatus"/>
+                    <StatusActive
+                      className={classes.formFieldStatus}
+                      name="alarmStatus"
+                    />
                   </FormField>
                 </Grid>
                 <Grid item xs={9}>

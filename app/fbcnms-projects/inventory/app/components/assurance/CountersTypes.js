@@ -131,7 +131,7 @@ const CountersTypes = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={9} xl={9}>
           <ConfigureTitle
-            title={fbt('Counters PerformanceCatalog', 'Counters Title')}
+            title={fbt('Counters Catalog', 'Counters Title')}
             subtitle={fbt(
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
                 'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',

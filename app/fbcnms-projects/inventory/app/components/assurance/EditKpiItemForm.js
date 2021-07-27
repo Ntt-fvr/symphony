@@ -13,7 +13,6 @@ import fbt from 'fbt';
 
 // COMPONENTS //
 import SwitchLabels from './common/Switch';
-import Table from './Table';
 import {useFormInput} from './common/useFormInput';
 
 // MUTATIONS //
@@ -22,13 +21,13 @@ import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditK
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import {Grid, Switch, FormControl, InputLabel, MenuItem, Select, FormControlLabel} from '@material-ui/core';
+import {Grid, MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -37,10 +36,16 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 43px 22px 30px',
+  },
+  cardHeader: {
+    margin: '20px 43px 22px 30px',
   },
   textInput: {
     minHeight: '36px',
+  },
+  description: {
+    minHeight: '60px',
   },
   addKpi: {
     margin: '20px',
@@ -51,9 +56,11 @@ const useStyles = makeStyles(() => ({
     marginLeft: '10px',
   },
   select: {
-    paddingTop: '10px',
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
     height: '36px',
-    overflow: 'hidden',
     position: 'relative',
     boxSizing: 'border-box',
     minHeight: '36px',
@@ -68,12 +75,17 @@ type Props = $ReadOnly<{|
     name: string,
     domainFk: {
       id: string,
-      name : string,
+      name: string,
     },
     status: boolean,
   },
-  hideEditKpiForm: any,
-  kpi: object,
+  hideEditKpiForm: void => void,
+  kpi: {
+    domainFk: {
+      id: string,
+      name: string,
+    },
+  },
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
@@ -100,19 +112,20 @@ export const EditKpiItemForm = (props: Props) => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <ConfigureTitle
-            className={classes.title}
-            title={fbt('KPI PerformanceCatalog', ' ')}
-            subtitle={''}
+          <ConfigureTitleSubItem
+            title={fbt('KPI Catalog/', 'KPI Catalog')}
+            tag={` ${formValues.name}`}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
-            <CardHeader>Edit Kpi detail</CardHeader>
+            <CardHeader className={classes.cardHeader}>
+              Edit Kpi detail
+            </CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <SwitchLabels />
+                  <SwitchLabels status={formValues.status} />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={8} xl={8}>
@@ -143,14 +156,12 @@ export const EditKpiItemForm = (props: Props) => {
                   required>
                   <Select
                     {...domainFk}
-                    variant="outlined"
                     className={classes.select}
-                    inputProps={{
-                      name: 'Domain',
-                    }}>
-                    {kpi.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {kpidata.domainFk.name}
+                    disableUnderline
+                    name="domain">
+                    {kpi.map((item, index) => (
+                      <MenuItem key={index} value={item.domainFk.id}>
+                        {item.domainFk.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -163,15 +174,12 @@ export const EditKpiItemForm = (props: Props) => {
                   required>
                   <Select
                     {...domainFk}
-                    variant="outlined"
                     className={classes.select}
-                    inputProps={{
-                      name: 'treshold',
-                    }}>
-                    {kpi.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {' '}
-                        {kpidata.domainFk.name}{' '}
+                    disableUnderline
+                    name="treshold">
+                    {kpi.map((item, index) => (
+                      <MenuItem key={index} value={item.domainFk.id}>
+                        {item.domainFk.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -182,11 +190,7 @@ export const EditKpiItemForm = (props: Props) => {
                   className={classes.formField}
                   label="Description"
                   required>
-                  <TextInput
-                    className={classes.textInput}
-                    name="Description"
-                    type="string"
-                  />
+                  <TextInput type="multiline" name="description" rows={3} />
                 </FormField>
               </Grid>
             </Grid>
@@ -207,20 +211,15 @@ export const EditKpiItemForm = (props: Props) => {
                 <FormField>
                   <Button
                     className={classes.addKpi}
-                    onClick={hideEditKpiForm}
+                    onClick={() => {
+                      hideEditKpiForm();
+                    }}
                     skin="brightGray">
                     Cancel
                   </Button>
                 </FormField>
               </Grid>
             </Grid>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
-            <CardHeader>Formulas contained</CardHeader>
-            <Table />
           </Card>
         </Grid>
       </Grid>

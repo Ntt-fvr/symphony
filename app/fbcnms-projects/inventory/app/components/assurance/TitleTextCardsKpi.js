@@ -8,40 +8,37 @@
  * @format
  */
 import React from 'react';
-
-// DESING SYSTEM //
 import Text from '@symphony/design-system/components/Text';
-import {DARK} from '@symphony/design-system/theme/symphony';
-import Grid from '@material-ui/core/Grid';
-import {makeStyles} from '@material-ui/styles';
 import classNames from 'classnames';
+import {Grid} from '@material-ui/core';
+import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme =>({
+const useStyles = makeStyles(() => ({
   root: {
     padding: '0 9px 16px',
   },
   title: {
-    color: DARK.D300,
+    color: '#3984FF',
+  },
+  name: {
+    paddingLeft: '25px',
+    color: '#3984FF',
   },
   globalCenter: {
     display: 'flex',
     justifyContent: 'center',
   },
-  status: {
-    paddingRight: '2rem',
+  network: {
+    paddingRight: '4rem',
   },
-  kpiName: {
-    justifyContent: 'flex-start',
-    paddingRight: '5rem',
-  },
-  domain: {
-    justifyContent: 'flex-start',
-  },
-  edit: {
-    justifyContent: 'flex-end',
+  vendor: {
+    paddingRight: '3rem',
   },
   delete: {
-    paddingLeft: '1rem',
+    justifyContent: 'flex-end',
+  },
+  edit: {
+    paddingLeft: '2rem',
   },
 }));
 
@@ -49,47 +46,42 @@ function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={4}>
-        <Text
-          className={classNames(classes.title, classes.status)}
-          variant="subtitle2">
+      <Grid xs={2}>
+        <Text className={classes.title} variant="subtitle2">
           Status
         </Text>
-
-        <Text
-          className={classNames(classes.title, classes.kpiName)}
-          variant="subtitle2">
-          KPI name
+        <Text className={classes.name} variant="subtitle2">
+          Kpi name
         </Text>
       </Grid>
-      <Grid xs={2}>
+      <Grid xs={5}>
         <Text
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.domain,
+            classes.network,
           )}
           variant="subtitle2">
           Domain
         </Text>
       </Grid>
-      <Grid xs={4} />
+      <Grid xs={3} />
       <Grid xs={1}>
         <Text
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.edit,
+            classes.delete,
           )}
           variant="subtitle2">
-          Edit
+          Delete
         </Text>
       </Grid>
       <Grid xs={1}>
         <Text
-          className={classNames(classes.title, classes.delete)}
+          className={classNames(classes.title, classes.edit)}
           variant="subtitle2">
-          Delete
+          Edit
         </Text>
       </Grid>
     </Grid>

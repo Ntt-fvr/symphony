@@ -122,7 +122,7 @@ export default function AddKpiItemForm(props: Props) {
     const variables: AddKpiMutationVariables = {
       input: {
         name: kpis.data.name,
-        status: true,
+        status: kpis.data.status,
         domainFk: kpis.data.domain,
       },
     };
@@ -155,19 +155,22 @@ export default function AddKpiItemForm(props: Props) {
         required
         {...validationName()}>
         <TextInput
+          autoComplete="off"
           className={classes.textInput}
           name="name"
           type="string"
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="Status" required>
-        <TextInput
-          className={classes.textInput}
+      <FormField label="Status" className={classes.formField}>
+        <Select
+          className={classes.select}
+          disableUnderline
           name="status"
-          type="boolean"
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+          <MenuItem value={true}>Enabled</MenuItem>
+          <MenuItem value={false}>Disabled</MenuItem>
+        </Select>
       </FormField>
       <FormField label="Domain" className={classes.formField}>
         <Select

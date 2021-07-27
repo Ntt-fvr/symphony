@@ -113,7 +113,7 @@ export default function ThresholdTypeItem(props: Props) {
             label=""
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
-            control={<SwitchLabels />}
+            control={<SwitchLabels status={true} />}
           />
           <Grid className={classes.rootGrid}>
             <Text className={classes.nameThreshold}>{name}</Text>
@@ -127,7 +127,7 @@ export default function ThresholdTypeItem(props: Props) {
 
           <Grid className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpi.name}</Text>
+              <Text className={classes.typeRed}>{"hola"}</Text>
             </Button>
           </Grid>
 
@@ -155,9 +155,7 @@ export default function ThresholdTypeItem(props: Props) {
             xs={12}
             justify="center"
             alignItems="center">
-            <Grid xs={10}>
-              Description:<br/>{description}
-            </Grid>
+            <Grid xs={10}>Description:{description}</Grid>
             <Grid xs={10}>
               <Text
                 className={classes.rulesContained}

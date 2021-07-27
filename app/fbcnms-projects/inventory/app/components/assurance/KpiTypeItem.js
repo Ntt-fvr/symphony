@@ -12,7 +12,6 @@ import React, {useState} from 'react';
 // COMPONENTS //
 import AddButton from './common/AddButton';
 import SwitchLabels from './common/Switch';
-import Table from './Table';
 
 // DESING SYSTEM //
 import Accordion from '@material-ui/core/Accordion';
@@ -77,7 +76,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 type Props = $ReadOnly<{|
+  id: string,
   name: string,
+  status: boolean,
   domainFk: {
     name: string,
   },
@@ -86,7 +87,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 export default function KpiTypeItem(props: Props) {
-  const {name, domainFk, edit, onChange} = props;
+  const {id, name, status, domainFk, edit, onChange} = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -101,7 +102,7 @@ export default function KpiTypeItem(props: Props) {
             label=""
             onClick={event => event.stopPropagation()}
             onFocus={event => event.stopPropagation()}
-            control={<SwitchLabels />}
+            control={<SwitchLabels status={status} />}
           />
           <Grid xs={3} container alignItems="center">
             <Text className={classes.nameKpi}>{name}</Text>
@@ -136,26 +137,23 @@ export default function KpiTypeItem(props: Props) {
 
         <AccordionDetails>
           <Grid container spacing={1}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   Associated threshold:
                   <Button variant="text">
-                    <Text className={classes.threshold}>DROP_THR</Text>
+                    <Text className={classes.threshold}> DROP_THR</Text>
                   </Button>
                 </Grid>
-                <Grid item xs={12}>
-                  ID: Text
+                <Grid item xs={6}>
+                  {`ID: ${id}`}
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   Description: : Chips allow users to enter information, make
                   selections, filter content, or trigger actions. While buttons
                   are expected.
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={6}>
-              <Table item xs={12} />
             </Grid>
           </Grid>
         </AccordionDetails>
