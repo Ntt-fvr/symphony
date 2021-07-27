@@ -62,6 +62,7 @@ fragment FileAttachment_file on File {
   fileType
   storeKey
   category
+  annotation
   ...ImageDialog_img
 }
 
@@ -206,6 +207,13 @@ return {
             "kind": "ScalarField",
             "name": "storeKey",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "annotation",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -213,12 +221,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c44903246343c5753cddd22ad6b85d6c",
+    "cacheID": "7d52deaf7aa7a6dc64de131c356cec22",
     "id": null,
     "metadata": {},
     "name": "DeleteImageMutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteImageMutation(\n  $entityType: ImageEntity!\n  $entityId: ID!\n  $id: ID!\n) {\n  deleteImage(entityType: $entityType, entityId: $entityId, id: $id) {\n    ...DocumentTable_files\n    ...FileAttachment_file\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
+    "text": "mutation DeleteImageMutation(\n  $entityType: ImageEntity!\n  $entityId: ID!\n  $id: ID!\n) {\n  deleteImage(entityType: $entityType, entityId: $entityId, id: $id) {\n    ...DocumentTable_files\n    ...FileAttachment_file\n    id\n  }\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
   }
 };
 })();

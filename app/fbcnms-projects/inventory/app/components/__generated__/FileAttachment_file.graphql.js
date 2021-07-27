@@ -27,6 +27,7 @@ export type FileAttachment_file = {|
   +fileType: ?FileType,
   +storeKey: ?string,
   +category: ?string,
+  +annotation: ?string,
   +$fragmentRefs: ImageDialog_img$ref,
   +$refType: FileAttachment_file$ref,
 |};
@@ -95,6 +96,13 @@ const node/*: ReaderFragment*/ = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "annotation",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "ImageDialog_img"
@@ -104,6 +112,6 @@ const node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 // prettier-ignore
-(node/*: any*/).hash = '281b6befd7d441674861d38032feb4e5';
+(node/*: any*/).hash = '8395b83ef23cea08db66b4e2d8c09c9f';
 
 module.exports = node;

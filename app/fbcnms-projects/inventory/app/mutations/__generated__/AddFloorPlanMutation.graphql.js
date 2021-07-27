@@ -82,6 +82,7 @@ fragment FileAttachment_file on File {
   fileType
   storeKey
   category
+  annotation
   ...ImageDialog_img
 }
 
@@ -226,6 +227,13 @@ return {
                 "kind": "ScalarField",
                 "name": "category",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "annotation",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -236,12 +244,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "20c9038db8c71ef642d3159d6927a984",
+    "cacheID": "4361d48a743e04320d3993a5fd4bb567",
     "id": null,
     "metadata": {},
     "name": "AddFloorPlanMutation",
     "operationKind": "mutation",
-    "text": "mutation AddFloorPlanMutation(\n  $input: AddFloorPlanInput!\n) {\n  addFloorPlan(input: $input) {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
+    "text": "mutation AddFloorPlanMutation(\n  $input: AddFloorPlanInput!\n) {\n  addFloorPlan(input: $input) {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
   }
 };
 })();
