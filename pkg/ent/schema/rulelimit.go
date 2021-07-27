@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 // Counter defines the property type schema.
@@ -36,9 +37,14 @@ func (RuleLimit) Edges() []ent.Edge {
 
 // Policy returns entity policy.
 func (RuleLimit) Policy() ent.Policy {
-	return authz.NewPolicy(
+	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)*/
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
 		),
 	)
 }
