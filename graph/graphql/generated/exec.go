@@ -802,6 +802,7 @@ type ComplexityRoot struct {
 		ExecuteWorkOrder                         func(childComplexity int, id int) int
 		ImportFlowDraft                          func(childComplexity int, input models.ImportFlowDraftInput) int
 		MarkSiteSurveyNeeded                     func(childComplexity int, locationID int, needed bool) int
+		MoveEquipmentToLocation                  func(childComplexity int, locationID int, equipmentID int) int
 		MoveEquipmentToPosition                  func(childComplexity int, parentEquipmentID *int, positionDefinitionID *int, equipmentID int) int
 		MoveLocation                             func(childComplexity int, locationID int, parentLocationID *int) int
 		PublishFlow                              func(childComplexity int, input models.PublishFlowInput) int
@@ -1658,6 +1659,7 @@ type MutationResolver interface {
 	AddWorkerType(ctx context.Context, input models.AddWorkerTypeInput) (*ent.WorkerType, error)
 	EditWorkerType(ctx context.Context, input models.EditWorkerTypeInput) (*ent.WorkerType, error)
 	RemoveWorkerType(ctx context.Context, id int) (int, error)
+	MoveEquipmentToLocation(ctx context.Context, locationID int, equipmentID int) (*ent.Equipment, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -5329,6 +5331,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.MarkSiteSurveyNeeded(childComplexity, args["locationId"].(int), args["needed"].(bool)), true
+
+	case "Mutation.moveEquipmentToLocation":
+		if e.complexity.Mutation.MoveEquipmentToLocation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_moveEquipmentToLocation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.MoveEquipmentToLocation(childComplexity, args["locationID"].(int), args["equipmentId"].(int)), true
 
 	case "Mutation.moveEquipmentToPosition":
 		if e.complexity.Mutation.MoveEquipmentToPosition == nil {
@@ -13310,6 +13324,17 @@ type Mutation {
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
+  moveEquipmentToLocation(
+    """
+    ID of the location that will the destination
+    """
+    locationID: ID!
+    """
+    id of the equipment that will be moved
+    """
+    equipmentId: ID!
+
+  ): Equipment!
 }
 
 """
@@ -14989,6 +15014,30 @@ func (ec *executionContext) field_Mutation_markSiteSurveyNeeded_args(ctx context
 		}
 	}
 	args["needed"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_moveEquipmentToLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["locationID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locationID"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["locationID"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["equipmentId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("equipmentId"))
+		arg1, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["equipmentId"] = arg1
 	return args, nil
 }
 
@@ -34731,6 +34780,48 @@ func (ec *executionContext) _Mutation_removeWorkerType(ctx context.Context, fiel
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_moveEquipmentToLocation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_moveEquipmentToLocation_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().MoveEquipmentToLocation(rctx, args["locationID"].(int), args["equipmentId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Equipment)
+	fc.Result = res
+	return ec.marshalNEquipment2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipment(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
@@ -63239,6 +63330,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "removeWorkerType":
 			out.Values[i] = ec._Mutation_removeWorkerType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "moveEquipmentToLocation":
+			out.Values[i] = ec._Mutation_moveEquipmentToLocation(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

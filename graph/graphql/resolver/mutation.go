@@ -3292,3 +3292,29 @@ func (r mutationResolver) DeleteReportFilter(ctx context.Context, id int) (_ boo
 	}
 	return err == nil, err
 }
+
+func (r mutationResolver) MoveEquipmentToLocation(
+	ctx context.Context, locationID int, equipmentID int,
+) (*ent.Equipment, error) {
+
+	var (
+		client = r.ClientFrom(ctx)
+		e      *ent.Equipment
+		loc    *ent.Location
+		err    error
+	)
+	if e, err = client.Equipment.Get(ctx, equipmentID); err != nil {
+		return nil, fmt.Errorf("querying equipment %d: %w", equipmentID, err)
+	}
+	if loc, err = client.Location.Get(ctx, locationID); err != nil {
+		return nil, fmt.Errorf("querying location %d: %w", locationID, err)
+	}
+
+	if err := client.Equipment.
+		UpdateOne(e).
+		SetLocation(loc).
+		Exec(ctx); err != nil {
+		return nil, fmt.Errorf("moving equipment %d to location %d: %w", equipmentID, loc.ID, err)
+	}
+	return e, nil
+}
