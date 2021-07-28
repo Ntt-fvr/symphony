@@ -9,10 +9,10 @@
  */
 import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
-import EditAlarmFilteringItemForm from "./EditAlarmFilteringItemForm"
+import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
 import Button from '@symphony/design-system/components/Button';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import React, {useEffect,useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -39,9 +39,9 @@ const useStyles = makeStyles(() => ({
 
 const AlarmFilteringQuery = graphql`
   query AlarmFilteringTypesQuery {
-    AlarmFilters{
-      edges{
-        node{
+    AlarmFilters {
+      edges {
+        node {
           id
           name
           networkResource
@@ -51,7 +51,7 @@ const AlarmFilteringQuery = graphql`
           reason
           user
           creationTime
-          alarmStatus	{
+          alarmStatus {
             id
             name
           }
@@ -59,7 +59,7 @@ const AlarmFilteringQuery = graphql`
       }
     }
   }
-`
+`;
 type Alarms = {
   item: {
     node: {
@@ -72,8 +72,8 @@ type Alarms = {
       reason: string,
       user: string,
       creationTime: string,
-      alarmStatus:  string
-    }
+      alarmStatus: string,
+    },
   },
 };
 
@@ -83,37 +83,37 @@ const AlarmFilteringTypes = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const [showForm, setShowForm] = useState(false);
-  
+
   useEffect(() => {
     fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
       setDataAlarms(data);
     });
   }, []);
 
-
-  const handleClickEdit = (alarm: Alarms) =>{
+  const handleClickEdit = (alarm: Alarms) => {
     setShowEditForm(true);
-    setDataEdit(alarm)
-  }
+    setDataEdit(alarm);
+  };
 
-  const handleClickAdd = () =>{
+  const handleClickAdd = () => {
     setShowForm(true);
-  }  
+  };
   if (showForm) {
     return (
-      <AlarmFilteringFormCreate  
-        dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)} 
-        returnTableAlarm={()=> setShowForm(false)} 
+      <AlarmFilteringFormCreate
+        dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+        returnTableAlarm={() => setShowForm(false)}
       />
-    ) 
+    );
   }
 
-  if(showEditForm){
+  if (showEditForm) {
     return (
       <EditAlarmFilteringItemForm
-        formValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+        closeEditForm={() => setShowEditForm(false)}
+        formValues={dataEdit}
       />
-    )
+    );
   }
   return (
     <div className={classes.root}>
@@ -151,11 +151,11 @@ const AlarmFilteringTypes = () => {
           </FormField>
         </Grid>
         <Grid item xs={12}>
-            <AlarmFilteringTable
-              dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
-              edit={handleClickEdit}
-              // onChange={() => handleRemove(item.node.id)}
-            />
+          <AlarmFilteringTable
+            dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+            edit={handleClickEdit}
+            // onChange={() => handleRemove(item.node.id)}
+          />
         </Grid>
       </Grid>
     </div>

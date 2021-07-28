@@ -101,13 +101,12 @@ type AlarmFilter = {
 };
 
 type Props = $ReadOnly<{|
-  titleForm: boolean,
   returnTableAlarm: () => void,
   dataValues: any,
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm, titleForm, dataValues} = props;
+  const {returnTableAlarm, dataValues} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -120,6 +119,14 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
+
+  const handleRemove = id => {
+    // const removeItem =  setAlarmFilter(dataValues.filter(item => item.id !== id))
+    const variables: RemoveAlarmFilterMutationVariables = {
+      id: id,
+    };
+    RemoveAlarmFilterMutation(variables);
+  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -135,21 +142,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
         alarmStatus: 8589934592,
       },
     };
+    returnTableAlarm();
     AddAlarmFilterMutation(variables);
-  }
-
-  if (dialogOpen) {
-    return (
-      <>
-        {/* <AlarmFilteringFormCreate /> */}
-        <AlarmFilteringAddDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onAlarmSelected={handleClick}
-          onAlarmSelectedData={AlarmFilter.data}
-        />
-      </>
-    );
   }
 
   return (
@@ -158,16 +152,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
         <Grid container className={classes.titleButtons}>
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              {titleForm == true
-                ? fbt('Create Alarm Filtering', ' ')
-                : fbt('Edit Alarm Filtering', ' ')}
+              {fbt('Edit Alarm Filtering', ' ')}
             </Text>
-          </Grid>
-          <Grid xs={1}>
-            <DeleteOutlinedIcon
-              className={classes.delete}
-              // onClick={() => handleRemove()}
-            />
           </Grid>
           <Grid xs={2}>
             <Grid container>
@@ -285,6 +271,14 @@ const AlarmFilteringFormCreate = (props: Props) => {
           </Card>
         </Grid>
       </Grid>
+      {dialogOpen && (
+        <AlarmFilteringAddDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onAlarmSelected={handleClick}
+          onAlarmSelectedData={AlarmFilter.data}
+        />
+      )}
     </div>
   );
 };
