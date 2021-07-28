@@ -71,7 +71,7 @@ const AlarmFilteringTable = (props: Props) => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -106,7 +106,7 @@ const AlarmFilteringTable = (props: Props) => {
                     <Switch />
                   </TableCell>
                   <TableCell>
-                    <Button color="primary" onClick={() => edit({item})}>
+                    <Button color="primary" onChange={item.id} onClick={() => edit({item})}>
                       {item.name}
                     </Button>
                   </TableCell>
@@ -115,7 +115,10 @@ const AlarmFilteringTable = (props: Props) => {
                   </TableCell>
                   <TableCell>{item.networkResource}</TableCell>
                   <TableCell>
-                    <StatusPending />
+                  {
+                    item.alarmStatus.name
+                  }
+                    {/* <StatusPending /> */}
                   </TableCell>
                   <TableCell>
                     {DateTimeFormat.dateTime(item.beginTime)}

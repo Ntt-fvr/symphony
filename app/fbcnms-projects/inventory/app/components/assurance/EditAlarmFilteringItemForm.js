@@ -102,12 +102,11 @@ type Props = $ReadOnly<{|
 const EditAlarmFilteringItemForm = (props: Props) => {
   const {closeEditForm, formValues} = props;
   const classes = useStyles();
-
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
   const networkResource = useFormInput(formValues.item.networkResource);
-  const beginTime = useFormInput(formValues.item.beginTime);
-  const endTime = useFormInput(formValues.item.endTime);
+  const beginTime = useFormInput(moment(formValues.item.beginTime).format("YYYY-MM-DDThh:mm"));
+  const endTime = useFormInput(moment(formValues.item.endTime).format("YYYY-MM-DDThh:mm"));
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
   const user = useFormInput(formValues.item.user);
@@ -120,8 +119,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         name: name.value,
         networkResource: networkResource.value,
         enable: true,
-        beginTime: beginTime.value,
-        endTime: endTime.value,
+        beginTime: moment(beginTime.value).format(),
+        endTime: moment(endTime.value).format(),
         reason: reason.value,
         alarmStatus: 8589934592,
         // user: user.value,
@@ -225,7 +224,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                       {...beginTime}
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-07-01T10:30"
                       name="beginTime"
                     />
                   </FormField>
@@ -236,7 +234,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                       {...endTime}
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-07-02T11:30"
                       name="endTime"
                     />
                   </FormField>

@@ -12,6 +12,8 @@ import Button from '@material-ui/core/Button';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
+import {graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import classNames from 'classnames';
 
@@ -40,9 +42,23 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const AlarmStatusQuery = graphql`
+  query AlarmFilteringStatusQuery {
+    alarmStatuss{
+      edges{
+        node{
+          name
+          id
+        }
+      }
+    }
+  }
+`;
+
+
 export const StatusActive = () => {
   const classes = useStyles();
-
+  const dataStatus = useLazyLoadQuery<AlarmFilteringStatusQuery>(AlarmStatusQuery, {});
   return (
     <div>
       <Button

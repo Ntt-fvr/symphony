@@ -22,7 +22,7 @@ import Grid from '@material-ui/core/Grid';
 import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {StatusActive} from './AlarmFilteringStatus';
+import {StatusActive, StatusClosed, StatusPending} from './AlarmFilteringStatus';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -33,10 +33,6 @@ import {makeStyles} from '@material-ui/styles';
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
-
-import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
-import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
-
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const useStyles = makeStyles(() => ({
@@ -93,10 +89,7 @@ type AlarmFilter = {
   reason: string,
   user: string,
   creationTime: string,
-  alarmStatus: {
-    id: string,
-    name: string,
-  },
+  alarmStatus: string
 };
 
 type Props = $ReadOnly<{|
@@ -118,13 +111,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
-  const handleRemove = id => {
-    // const removeItem =  setAlarmFilter(dataValues.filter(item => item.id !== id))
-    const variables: RemoveAlarmFilterMutationVariables = {
-      id: id,
-    };
-    RemoveAlarmFilterMutation(variables);
-  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -137,13 +123,13 @@ const AlarmFilteringFormCreate = (props: Props) => {
         reason: AlarmFilter.data.reason,
         user: 'user',
         creationTime: moment(AlarmFilter.data.creationTime).format(),
-        alarmStatus: 8589934592,
+        alarmStatus: AlarmFilter.data.alarmStatus,
       },
     };
     returnTableAlarm();
     AddAlarmFilterMutation(variables);
   }
-
+  
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -228,7 +214,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     <TextField
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-07-01T10:30"
                       name="beginTime"
                       onChange={handleChange}
                     />
@@ -239,7 +224,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
                     <TextField
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-07-02T11:30"
                       name="endTime"
                       onChange={handleChange}
                     />
@@ -249,10 +233,28 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
+                  {
+                      (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.beginTime).format()) ||
+                      (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.endTime).format()) &&
                     <StatusActive
                       className={classes.formFieldStatus}
                       name="alarmStatus"
                     />
+                  }
+                  {
+                    moment(AlarmFilter.data.creationTime).format() > moment(AlarmFilter.data.endTime).format() &&
+                    <StatusClosed
+                      className={classes.formFieldStatus}
+                      name="alarmStatus"
+                    />
+                  }
+                  {
+                    moment(AlarmFilter.data.creationTime).format() < moment(AlarmFilter.data.beginTime).format() &&
+                    <StatusPending
+                      className={classes.formFieldStatus}
+                      name="alarmStatus"
+                    />
+                  }
                   </FormField>
                 </Grid>
                 <Grid xs={9}>
