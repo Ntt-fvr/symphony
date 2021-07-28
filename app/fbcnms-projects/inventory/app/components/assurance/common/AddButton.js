@@ -10,6 +10,8 @@
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Button from '@material-ui/core/Button';
+import classNames from 'classnames';
+
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
@@ -32,13 +34,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
+  className?: string,
   textButton: string,
   onClick?: void => void,
   disabled: boolean,
 |}>;
 
 function AddButton(props: Props) {
-  const {textButton, onClick, disabled} = props;
+  const {className, textButton, onClick, disabled} = props;
   const classes = useStyles();
 
   return (
@@ -49,7 +52,7 @@ function AddButton(props: Props) {
         weight="bold"
         disabled={disabled}
         onClick={onClick}
-        className={classes.button}
+        className={classNames(classes.button, className)}
         startIcon={<AddCircleOutlineIcon className={classes.icon} />}>
         <Text
           className={''}

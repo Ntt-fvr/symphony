@@ -22,6 +22,7 @@ import TextField from '@material-ui/core/TextField';
 import {StatusActive} from './AlarmFilteringStatus';
 
 import IconButton from '@symphony/design-system/components/IconButton';
+import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 
@@ -193,7 +194,9 @@ const KqiFormEdit = props => {
             </Grid>
           </Card>
         </Grid>
-        <Grid>tabla de Associated targets</Grid>
+        <Grid container>
+          <KqiTableAssociatedTarget />
+        </Grid>
       </Grid>
     </div>
   );
