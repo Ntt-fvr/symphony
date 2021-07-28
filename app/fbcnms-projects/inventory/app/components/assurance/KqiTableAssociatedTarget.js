@@ -161,6 +161,7 @@ const KqiTableAssociatedTarget = props => {
           </Grid>
           <Grid xs={2}>
             <AddButton
+              onClick={props.create}
               className={classes.plusButton}
               textButton={'Add targert'}
               disabled={false}
@@ -188,7 +189,7 @@ const KqiTableAssociatedTarget = props => {
                     <Switch />
                   </TableCell>
                   <TableCell>
-                    <Button onClick={props.viewFormEdit} variant="text">
+                    <Button onClick={props.edit} variant="text">
                       {column.targetName}
                     </Button>
                   </TableCell>

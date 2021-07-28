@@ -11,7 +11,10 @@
 import React, {useState} from 'react';
 import fbt from 'fbt';
 
+import IconButton from '@symphony/design-system/components/IconButton';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -20,13 +23,6 @@ import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {StatusActive} from './AlarmFilteringStatus';
-
-import IconButton from '@symphony/design-system/components/IconButton';
-import KqiFormCreateTarget from './KqiFormCreateTarget';
-import KqiFormEditTarget from './KqiFormEditTarget';
-import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
-
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 
 import Switch from './common/Switch';
 
@@ -75,34 +71,12 @@ const useStyles = makeStyles(() => ({
     marginBottom: '20px',
   },
 }));
-
 const handleRemove = () => {
   console.log('remove');
 };
 
-const KqiFormEdit = props => {
+const KqiFormEditTarget = props => {
   const classes = useStyles();
-  const [showCreateTarget, setShowCreateTarget] = useState(false);
-  const [showEditTarget, setShowEditTarget] = useState(false);
-
-  const showFormCreateTarget = () => {
-    setShowCreateTarget(true);
-  };
-
-  if (showCreateTarget) {
-    return (
-      <KqiFormCreateTarget returnFormEdit={() => setShowCreateTarget(false)} />
-    );
-  }
-  const showFormEditTarget = () => {
-    setShowEditTarget(true);
-  };
-
-  if (showEditTarget) {
-    return (
-      <KqiFormEditTarget returnFormEdit={() => setShowEditTarget(false)} />
-    );
-  }
 
   return (
     <div className={classes.root}>
@@ -110,7 +84,10 @@ const KqiFormEdit = props => {
         <Grid container className={classes.titleButtons}>
           <Grid item xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              {fbt('KQI catalog/ TINE Rentainability', ' ')}
+              {fbt(
+                'KQI Catalog / TINE Retainability /SLO TTLI Customer 1',
+                ' ',
+              )}
             </Text>
           </Grid>
           <Grid item xs={1}>
@@ -129,7 +106,7 @@ const KqiFormEdit = props => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={props.returnTableKqi}>
+                    onClick={props.returnFormEdit}>
                     Cancel
                   </Button>
                 </FormField>
@@ -137,7 +114,7 @@ const KqiFormEdit = props => {
               <Grid xs={6}>
                 <FormField>
                   <Button
-                    onClick={props.returnTableKqi}
+                    onClick={props.returnFormEdit}
                     className={classes.option}
                     variant="contained"
                     color="primary">
@@ -217,14 +194,8 @@ const KqiFormEdit = props => {
             </Grid>
           </Card>
         </Grid>
-        <Grid container>
-          <KqiTableAssociatedTarget
-            create={() => showFormCreateTarget()}
-            edit={() => showFormEditTarget()}
-          />
-        </Grid>
       </Grid>
     </div>
   );
 };
-export default KqiFormEdit;
+export default KqiFormEditTarget;
