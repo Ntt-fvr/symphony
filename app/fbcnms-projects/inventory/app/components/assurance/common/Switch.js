@@ -8,16 +8,17 @@
  * @format
  */
 
-
-/*[object Object]*/
-// eslint-disable-next-line header/header
-
 import React from 'react';
 import Switch from '@material-ui/core/Switch';
 
-function SwitchLabels() {
+type Props = $ReadOnly<{|
+  status: boolean,
+|}>;
+
+function SwitchLabels(props: Props) {
+  const {status} = props;
   const [state, setState] = React.useState({
-    checked: true,
+    checked: status,
   });
 
   const handleChange = event => {

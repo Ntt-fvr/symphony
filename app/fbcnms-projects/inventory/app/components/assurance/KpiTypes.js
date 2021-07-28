@@ -51,8 +51,19 @@ const KpiQuery = graphql`
           id
           name
           status
+          description
           domainFk {
             id
+            name
+          }
+        }
+      }
+    }
+    tresholds {
+      edges {
+        node {
+          name
+          kpi {
             name
           }
         }
@@ -71,6 +82,7 @@ type Kpis = {
         id: string,
         name: string,
       },
+      description: string,
     },
   },
 };
@@ -109,6 +121,7 @@ const KpiTypes = () => {
       <EditKpiItemForm
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
         formValues={dataEdit.item.node}
+        threshold={dataKpis.tresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
       />
     );
@@ -133,6 +146,7 @@ const KpiTypes = () => {
             {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
+                threshold={dataKpis.tresholds?.edges}
                 onChange={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
                 {...item.node}

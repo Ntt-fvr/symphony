@@ -17,7 +17,7 @@ import type {EditCounterItemFormQuery} from './__generated__/EditCounterItemForm
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
@@ -48,7 +48,10 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 43px 22px 30px',
+  },
+  cardHeader: {
+    margin: '20px 43px 22px 30px',
   },
   textInput: {
     minHeight: '36px',
@@ -59,7 +62,7 @@ const useStyles = makeStyles(() => ({
     alignSelf: 'flex-end',
   },
   title: {
-    marginLeft: '10px',
+    padding: '20px 0 0 30px',
   },
   select: {
     '& .MuiSelect-select': {
@@ -67,9 +70,6 @@ const useStyles = makeStyles(() => ({
     },
     border: '1px solid #D2DAE7',
     height: '36px',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
     borderRadius: '4px',
     fontSize: '14px',
   },
@@ -135,19 +135,24 @@ const EditCounterItemForm = (props: Props) => {
     EditCounterMutation(variables);
   };
 
+  /*
+
+   */
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <ConfigureTitle
-            className={classes.title}
-            title={fbt('Counters PerformanceCatalog', 'Counters PerformanceCatalog')}
-            subtitle={''}
+          <ConfigureTitleSubItem
+            title={fbt('Counters Catalog/', 'Counters Catalog')}
+            tag={` ${formValues.name}`}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
-            <CardHeader>Edit container detail</CardHeader>
+            <CardHeader className={classes.cardHeader}>
+              Edit container detail
+            </CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={12} xl={12}>
                 <FormField
@@ -208,8 +213,9 @@ const EditCounterItemForm = (props: Props) => {
                 <Select
                   {...vendor}
                   className={classes.select}
+                  name="vendor"
                   disableUnderline
-                  name="vendor">
+                  autoComplete="off">
                   {data.vendors.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}

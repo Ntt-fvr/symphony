@@ -39,6 +39,12 @@ func (ku *KpiUpdate) SetName(s string) *KpiUpdate {
 	return ku
 }
 
+// SetDescription sets the description field.
+func (ku *KpiUpdate) SetDescription(s string) *KpiUpdate {
+	ku.mutation.SetDescription(s)
+	return ku
+}
+
 // SetStatus sets the status field.
 func (ku *KpiUpdate) SetStatus(b bool) *KpiUpdate {
 	ku.mutation.SetStatus(b)
@@ -209,6 +215,11 @@ func (ku *KpiUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := ku.mutation.Description(); ok {
+		if err := kpi.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -242,6 +253,13 @@ func (ku *KpiUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: kpi.FieldName,
+		})
+	}
+	if value, ok := ku.mutation.Description(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: kpi.FieldDescription,
 		})
 	}
 	if value, ok := ku.mutation.Status(); ok {
@@ -396,6 +414,12 @@ type KpiUpdateOne struct {
 // SetName sets the name field.
 func (kuo *KpiUpdateOne) SetName(s string) *KpiUpdateOne {
 	kuo.mutation.SetName(s)
+	return kuo
+}
+
+// SetDescription sets the description field.
+func (kuo *KpiUpdateOne) SetDescription(s string) *KpiUpdateOne {
+	kuo.mutation.SetDescription(s)
 	return kuo
 }
 
@@ -569,6 +593,11 @@ func (kuo *KpiUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := kuo.mutation.Description(); ok {
+		if err := kpi.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -600,6 +629,13 @@ func (kuo *KpiUpdateOne) sqlSave(ctx context.Context) (_node *Kpi, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: kpi.FieldName,
+		})
+	}
+	if value, ok := kuo.mutation.Description(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: kpi.FieldDescription,
 		})
 	}
 	if value, ok := kuo.mutation.Status(); ok {

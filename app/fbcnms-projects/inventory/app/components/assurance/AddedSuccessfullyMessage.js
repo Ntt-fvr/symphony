@@ -54,7 +54,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
-  const {card_header, title, text_button, data_entry} = props
+  const {card_header, title, text_button, data_entry} = props;
   const classes = useStyles();
   const [returnForm, setReturnForm] = useState(false);
 
@@ -65,13 +65,13 @@ const AddedSuccessfullyMessage = (props: Props) => {
   if (returnForm) {
     return (
       <>
-        { 
-          data_entry == "kpi" && <AddKpiItemForm dataValues={[]} />  || 
-          data_entry == "threshold" && <AddThresholdItemForm dataValues={[]}/> || 
-          data_entry == "counter" && <AddCounterItemForm dataValues={[]}/>
-        }
+        {(data_entry === 'kpi' && <AddKpiItemForm dataValues={[]} />) ||
+          (data_entry === 'threshold' && (
+            <AddThresholdItemForm dataValues={[]} />
+          )) ||
+          (data_entry === 'counter' && <AddCounterItemForm dataValues={[]} />)}
       </>
-    )
+    );
   }
   return (
     <Card className={classes.root}>
@@ -93,7 +93,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
         </Grid>
         <Grid className={classes.addButton}>
           <Clickable onClick={handleClick}>
-            <AddButton textButton={text_button} />
+            <AddButton textButton={text_button} disabled={false} />
           </Clickable>
         </Grid>
       </Grid>

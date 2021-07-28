@@ -23,17 +23,21 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {MenuItem, Select} from '@material-ui/core';
 
-import {makeStyles} from '@material-ui/styles';
 import type {AddThresholdItemFormQuery} from './__generated__/AddThresholdItemFormQuery.graphql';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+
 import {graphql} from 'react-relay';
+import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
   },
+  header: {
+    margin: '20px 0 24px 20px',
+  },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 20px 22px 20px',
   },
   textInput: {
     minHeight: '36px',
@@ -44,17 +48,18 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-end',
   },
   select: {
-    paddingTop: '10px',
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
     height: '36px',
     overflow: 'hidden',
     position: 'relative',
-    boxSizing: 'border-box',
     minHeight: '36px',
     borderRadius: '4px',
     fontSize: '14px',
   },
 }));
-
 
 const KpiDataFormTresholdQuery = graphql`
   query AddThresholdItemFormQuery {
@@ -74,117 +79,107 @@ const KpiDataFormTresholdQuery = graphql`
   }
 `;
 
-
-type Props = $ReadOnly<{|
-  dataValues: Array<string>,
-|}>;
-
-
 type Thresholds = {
   data: {
     id: string,
     name: string,
     status: boolean,
     description: string,
-    kpi: string
+    kpi: string,
   },
 };
 
-export default function AddThresholdItemForm(props: Props) {
-  const {dataValues} = props;
+export default function AddThresholdItemForm() {
   const classes = useStyles();
 
-  const [tresholds, setTresholds] = useState<Thresholds>({data: {}});
+  const [thresholds, setThresholds] = useState<Thresholds>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-  const [activate, setActivate] = useState('');
-  const response = useLazyLoadQuery<AddThresholdItemFormQuery>(KpiDataFormTresholdQuery, {});
-  const kpiResponse = response.kpis?.edges.map(item => item.node)
+  const response = useLazyLoadQuery<AddThresholdItemFormQuery>(
+    KpiDataFormTresholdQuery,
+    {},
+  );
+  const kpiResponse = response.kpis?.edges.map(item => item.node);
 
-  // const inputFilter = () => {
-  //   return dataValues?.filter(item => item === kpis.data.name) || [];
-  // };
-  
   function handleChange({target}) {
-    setTresholds({
+    setThresholds({
       data: {
-        ...tresholds.data,
+        ...thresholds.data,
         [target.name]: target.value,
       },
     });
-    
-    // const validateInputs = Object.values(kpis.data);
-    // validateInputs.map(item => item != null) &&
-    // validateInputs.length === 5 &&
-    // setActivate(validateInputs);
-
   }
-  
 
   function handleClick() {
     const variables: AddTresholdMutationVariables = {
       input: {
-        name: tresholds.data.name,
+        name: thresholds.data.name,
         status: true,
-        description: tresholds.data.description,
-        kpi: tresholds.data.kpi,
+        description: thresholds.data.description,
+        kpi: thresholds.data.kpi,
       },
     };
     setShowChecking(true);
     AddTresholdMutation(variables);
   }
-  // const validationName = () => {
-  //   if (inputFilter().length > 0) {
-  //     return {hasError: true, errorText: 'Kpis existing'};
-  //   }
-  // };
 
   if (showChecking) {
-    return <AddedSuccessfullyMessage data_entry="threshold" card_header="Add Treshold" title="Treshold" text_button="Add new treshold"/>;
+    return (
+      <AddedSuccessfullyMessage
+        data_entry="threshold"
+        card_header="Add Threshold"
+        title="Threshold"
+        text_button="Add new threshold"
+      />
+    );
   }
 
   return (
     <Card className={classes.root}>
-      <CardHeader>Add Threshold</CardHeader>
+      <CardHeader className={classes.header}>Add Threshold</CardHeader>
       <FormField className={classes.formField} label="Threshold Name" required>
         <TextInput
           className={classes.textInput}
+          autoComplete="off"
           name="name"
           type="string"
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="ID" required>
-        <TextInput
-          className={classes.textInput}
-          type="string"
-          disabled
-        />
-      </FormField>
       <FormField label="Associated KPI" className={classes.formField}>
         <Select
-          variant="outlined"
           className={classes.select}
-          onChange={handleChange}
-          inputProps={{
-            name: 'kpi',
-          }}>
+          disableUnderline
+          name="kpi"
+          onChange={handleChange}>
           {kpiResponse.map((kpiDataResponse, index) => (
-            <MenuItem key={index} value={kpiDataResponse.id}>
-              {kpiDataResponse.name}
+            <MenuItem key={index} value={kpiDataResponse?.id}>
+              {kpiDataResponse?.name}
             </MenuItem>
           ))}
         </Select>
       </FormField>
       <FormField className={classes.formField} label="Description" required>
         <TextInput
+          autoComplete="off"
           className={classes.textInput}
           name="description"
-          type="string"
+          type="multiline"
+          rows={4}
           onChange={handleChange}
         />
       </FormField>
       <FormField>
-        <Button className={classes.addCounter} onClick={handleClick}>Add Threshold</Button>
+        <Button
+          className={classes.addCounter}
+          onClick={handleClick}
+          disabled={
+            !(
+              Object.values(thresholds.data).length === 3 &&
+              !Object.values(thresholds.data).some(item => item === '')
+            )
+          }>
+          Add Threshold
+        </Button>
       </FormField>
     </Card>
   );

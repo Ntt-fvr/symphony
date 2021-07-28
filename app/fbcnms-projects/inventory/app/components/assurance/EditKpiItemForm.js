@@ -13,7 +13,6 @@ import fbt from 'fbt';
 
 // COMPONENTS //
 import SwitchLabels from './common/Switch';
-import Table from './Table';
 import {useFormInput} from './common/useFormInput';
 
 // MUTATIONS //
@@ -22,14 +21,31 @@ import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditK
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
+import type {EditKpiItemFormQuery} from './__generated__/EditKpiItemFormQuery.graphql';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import {Grid, Switch, FormControl, InputLabel, MenuItem, Select, FormControlLabel} from '@material-ui/core';
+import {Grid, MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const EditKpiQuery = graphql`
+  query EditKpiItemFormQuery {
+    domains {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -37,10 +53,16 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 43px',
+    margin: '0 43px 22px 30px',
+  },
+  cardHeader: {
+    margin: '20px 43px 22px 30px',
   },
   textInput: {
     minHeight: '36px',
+  },
+  description: {
+    minHeight: '60px',
   },
   addKpi: {
     margin: '20px',
@@ -51,9 +73,11 @@ const useStyles = makeStyles(() => ({
     marginLeft: '10px',
   },
   select: {
-    paddingTop: '10px',
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #D2DAE7',
     height: '36px',
-    overflow: 'hidden',
     position: 'relative',
     boxSizing: 'border-box',
     minHeight: '36px',
@@ -62,27 +86,49 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type KpiThreshold = {
+  node: {
+    name: string,
+    kpi: {
+      name: string,
+    },
+  },
+};
+
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
     name: string,
     domainFk: {
       id: string,
-      name : string,
+      name: string,
     },
     status: boolean,
+    description: string,
   },
-  hideEditKpiForm: any,
-  kpi: object,
+  hideEditKpiForm: void => void,
+  kpi: {
+    domainFk: {
+      id: string,
+      name: string,
+    },
+  },
+  threshold: Array<KpiThreshold>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {formValues, kpi, hideEditKpiForm} = props;
+  const {formValues, hideEditKpiForm, threshold} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const domainFk = useFormInput(formValues.domainFk.id);
-  const id = useFormInput(formValues.id);
+  const description = useFormInput(formValues.description);
+
+  const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
+
+  const thresholdFromKpi = threshold.find(
+    ({node}) => node.kpi?.name === formValues.name,
+  );
 
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
@@ -91,6 +137,7 @@ export const EditKpiItemForm = (props: Props) => {
         name: name.value,
         domainFk: domainFk.value,
         status: true,
+        description: description.value,
       },
     };
     EditKpiMutation(variables);
@@ -100,19 +147,20 @@ export const EditKpiItemForm = (props: Props) => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <ConfigureTitle
-            className={classes.title}
-            title={fbt('KPI PerformanceCatalog', ' ')}
-            subtitle={''}
+          <ConfigureTitleSubItem
+            title={fbt('KPI Catalog/', 'KPI Catalog')}
+            tag={` ${formValues.name}`}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
-            <CardHeader>Edit Kpi detail</CardHeader>
+            <CardHeader className={classes.cardHeader}>
+              Edit Kpi detail
+            </CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <SwitchLabels />
+                  <SwitchLabels status={formValues.status} />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={8} xl={8}>
@@ -128,7 +176,7 @@ export const EditKpiItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField className={classes.formField} label="ID">
                   <TextInput
-                    {...id}
+                    value={formValues.id}
                     className={classes.textInput}
                     name="Id"
                     type="string"
@@ -143,14 +191,12 @@ export const EditKpiItemForm = (props: Props) => {
                   required>
                   <Select
                     {...domainFk}
-                    variant="outlined"
                     className={classes.select}
-                    inputProps={{
-                      name: 'Domain',
-                    }}>
-                    {kpi.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {kpidata.domainFk.name}
+                    disableUnderline
+                    name="domains">
+                    {data.domains.edges.map((item, index) => (
+                      <MenuItem key={index} value={item.node?.id}>
+                        {item.node?.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -158,23 +204,20 @@ export const EditKpiItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField
-                  label="Associated Treshold"
+                  label="Associated Threshold"
                   className={classes.formField}
                   required>
-                  <Select
-                    {...domainFk}
-                    variant="outlined"
-                    className={classes.select}
-                    inputProps={{
-                      name: 'treshold',
-                    }}>
-                    {kpi.map((kpidata, index) => (
-                      <MenuItem key={index} value={kpidata.domainFk.id}>
-                        {' '}
-                        {kpidata.domainFk.name}{' '}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <TextInput
+                    value={
+                      thresholdFromKpi === undefined
+                        ? 'none'
+                        : thresholdFromKpi.node.name
+                    }
+                    className={classes.textInput}
+                    name="threshold"
+                    type="string"
+                    disabled
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={6} xl={6}>
@@ -183,9 +226,10 @@ export const EditKpiItemForm = (props: Props) => {
                   label="Description"
                   required>
                   <TextInput
-                    className={classes.textInput}
-                    name="Description"
-                    type="string"
+                    {...description}
+                    type="multiline"
+                    name="description"
+                    rows={3}
                   />
                 </FormField>
               </Grid>
@@ -207,20 +251,15 @@ export const EditKpiItemForm = (props: Props) => {
                 <FormField>
                   <Button
                     className={classes.addKpi}
-                    onClick={hideEditKpiForm}
+                    onClick={() => {
+                      hideEditKpiForm();
+                    }}
                     skin="brightGray">
                     Cancel
                   </Button>
                 </FormField>
               </Grid>
             </Grid>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <Card>
-            <CardHeader>Formulas contained</CardHeader>
-            <Table />
           </Card>
         </Grid>
       </Grid>

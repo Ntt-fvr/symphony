@@ -22,14 +22,13 @@ import type {EditTresholdMutationVariables} from '../../mutations/__generated__/
 import EditTresholdMutation from '../../mutations/EditTresholdMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
-import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import {FormControl, InputLabel, MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -74,17 +73,15 @@ type Props = $ReadOnly<{|
       name: string,
     },
   },
-  hideEditTresholdForm: any,
+  hideEditThresholdForm: void => void,
 |}>;
 
-export const EditTresholdItemForm = (props: Props) => {
-  const {formValues, hideEditTresholdForm} = props;
+export const EditThresholdItemForm = (props: Props) => {
+  const {formValues, hideEditThresholdForm} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const description = useFormInput(formValues.description);
-  const id = useFormInput(formValues.id);
-  const kpi = useFormInput(formValues.kpi.name);
 
   const handleClick = () => {
     const variables: EditTresholdMutationVariables = {
@@ -93,7 +90,6 @@ export const EditTresholdItemForm = (props: Props) => {
         name: name.value,
         description: description.value,
         status: true,
-        
       },
     };
     EditTresholdMutation(variables);
@@ -103,10 +99,9 @@ export const EditTresholdItemForm = (props: Props) => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <ConfigureTitle
-            className={classes.title}
-            title={fbt('KPI PerformanceCatalog', ' ')}
-            subtitle={''}
+          <ConfigureTitleSubItem
+            title={fbt('Threshold Catalog/', 'Threshold Catalog')}
+            tag={` ${formValues.name}`}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
@@ -114,8 +109,8 @@ export const EditTresholdItemForm = (props: Props) => {
             <CardHeader>Edit container detail</CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
-                <FormField className={classes.formField} label="Enabled" >
-                  <SwitchLabels />
+                <FormField className={classes.formField} label="Enabled">
+                  <SwitchLabels status={formValues.status} />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
@@ -129,12 +124,9 @@ export const EditTresholdItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField
-                  className={classes.formField}
-                  label="ID"
-                  required>
+                <FormField className={classes.formField} label="ID" required>
                   <TextInput
-                    {...id}
+                    value={formValues.id}
                     className={classes.textInput}
                     name="id"
                     type="string"
@@ -143,11 +135,9 @@ export const EditTresholdItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <FormField
-                  className={classes.formField}
-                  label="Associated KPI">
+                <FormField className={classes.formField} label="Associated KPI">
                   <TextInput
-                    {...kpi}
+                    value={formValues.kpi.name}
                     className={classes.textInput}
                     name="kpi"
                     type="string"
@@ -163,12 +153,12 @@ export const EditTresholdItemForm = (props: Props) => {
                   <TextInput
                     {...description}
                     className={classes.textInput}
+                    type="multiline"
                     name="description"
-                    type="string"
+                    rows={3}
                   />
                 </FormField>
               </Grid>
-
             </Grid>
             <Grid container justify="flex-end">
               <Grid item xs={2} sm={2} lg={1} xl={1}>
@@ -177,7 +167,7 @@ export const EditTresholdItemForm = (props: Props) => {
                     className={classes.addKpi}
                     onClick={() => {
                       handleClick();
-                      hideEditTresholdForm();
+                      hideEditThresholdForm();
                     }}>
                     Save
                   </Button>
@@ -187,7 +177,9 @@ export const EditTresholdItemForm = (props: Props) => {
                 <FormField>
                   <Button
                     className={classes.addKpi}
-                    onClick={hideEditTresholdForm}
+                    onClick={() => {
+                      hideEditThresholdForm();
+                    }}
                     skin="brightGray">
                     Cancel
                   </Button>

@@ -5723,6 +5723,8 @@ input DomainFilterInput {
 type Kpi implements Node {
   id: ID!
   name: String!
+  description: String!
+  treshold: Treshold!
   status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
@@ -5730,6 +5732,7 @@ type Kpi implements Node {
 
 input AddKpiInput {
   name: String!
+  description: String!
   domainFk: ID!
   status: Boolean!
 }
@@ -5737,6 +5740,7 @@ input AddKpiInput {
 input EditKpiInput {
   id: ID!
   name: String!
+  description: String!
   domainFk: ID!
   status: Boolean!
 }

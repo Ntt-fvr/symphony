@@ -77,32 +77,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = $ReadOnly<{|
-  dataValues: Array<string>,
-|}>;
-
 type Kpis = {
   data: {
     id: string,
     name: string,
     status: boolean,
     domain: string,
+    description: string,
   },
 };
 
-export default function AddKpiItemForm(props: Props) {
-  const {dataValues} = props;
+export default function AddKpiItemForm() {
   const classes = useStyles();
 
   const [kpis, setKpis] = useState<Kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-  const [activate, setActivate] = useState('');
 
   const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
-
-  const inputFilter = () => {
-    return dataValues?.filter(item => item === kpis.data.name) || [];
-  };
 
   function handleChange({target}) {
     setKpis({
@@ -111,29 +102,20 @@ export default function AddKpiItemForm(props: Props) {
         [target.name]: target.value,
       },
     });
-
-    const validateInputs = Object.values(kpis.data);
-    validateInputs.map(item => item != null) &&
-      validateInputs.length === 2 &&
-      setActivate(validateInputs);
   }
 
   function handleClick() {
     const variables: AddKpiMutationVariables = {
       input: {
         name: kpis.data.name,
-        status: true,
+        status: kpis.data.status,
         domainFk: kpis.data.domain,
+        description: kpis.data.description,
       },
     };
     setShowChecking(true);
     AddKpiMutation(variables);
   }
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kpis existing'};
-    }
-  };
 
   if (showChecking) {
     return (
@@ -149,25 +131,24 @@ export default function AddKpiItemForm(props: Props) {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add KPI</CardHeader>
-      <FormField
-        className={classes.formField}
-        label="Kpi name"
-        required
-        {...validationName()}>
+      <FormField className={classes.formField} label="Kpi name" required>
         <TextInput
+          autoComplete="off"
           className={classes.textInput}
           name="name"
           type="string"
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="Status" required>
-        <TextInput
-          className={classes.textInput}
+      <FormField label="Status" className={classes.formField}>
+        <Select
+          className={classes.select}
+          disableUnderline
           name="status"
-          type="boolean"
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+          <MenuItem value={true}>Enabled</MenuItem>
+          <MenuItem value={false}>Disabled</MenuItem>
+        </Select>
       </FormField>
       <FormField label="Domain" className={classes.formField}>
         <Select
@@ -182,12 +163,26 @@ export default function AddKpiItemForm(props: Props) {
           ))}
         </Select>
       </FormField>
-
+      <FormField className={classes.formField} label="Description" required>
+        <TextInput
+          autoComplete="off"
+          className={classes.textInput}
+          name="description"
+          type="multiline"
+          rows={4}
+          onChange={handleChange}
+        />
+      </FormField>
       <FormField>
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={!activate}>
+          disabled={
+            !(
+              Object.values(kpis.data).length === 4 &&
+              !Object.values(kpis.data).some(item => item === '')
+            )
+          }>
           Add KPI
         </Button>
       </FormField>

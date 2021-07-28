@@ -14,9 +14,9 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type EditCounterItemFormQueryVariables = {||};
-export type EditCounterItemFormQueryResponse = {|
-  +vendors: {|
+export type EditKpiItemFormQueryVariables = {||};
+export type EditKpiItemFormQueryResponse = {|
+  +domains: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -25,16 +25,16 @@ export type EditCounterItemFormQueryResponse = {|
     |}>
   |}
 |};
-export type EditCounterItemFormQuery = {|
-  variables: EditCounterItemFormQueryVariables,
-  response: EditCounterItemFormQueryResponse,
+export type EditKpiItemFormQuery = {|
+  variables: EditKpiItemFormQueryVariables,
+  response: EditKpiItemFormQueryResponse,
 |};
 */
 
 
 /*
-query EditCounterItemFormQuery {
-  vendors {
+query EditKpiItemFormQuery {
+  domains {
     edges {
       node {
         id
@@ -50,15 +50,15 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "VendorConnection",
+    "concreteType": "DomainConnection",
     "kind": "LinkedField",
-    "name": "vendors",
+    "name": "domains",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "VendorEdge",
+        "concreteType": "DomainEdge",
         "kind": "LinkedField",
         "name": "edges",
         "plural": true,
@@ -66,7 +66,7 @@ var v0 = [
           {
             "alias": null,
             "args": null,
-            "concreteType": "Vendor",
+            "concreteType": "Domain",
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
@@ -100,7 +100,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditCounterItemFormQuery",
+    "name": "EditKpiItemFormQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -109,20 +109,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "EditCounterItemFormQuery",
+    "name": "EditKpiItemFormQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "ec8d85faa585259ccb29bac15d3ccc42",
+    "cacheID": "6206b743ace74e668c6ca31ab42f75f6",
     "id": null,
     "metadata": {},
-    "name": "EditCounterItemFormQuery",
+    "name": "EditKpiItemFormQuery",
     "operationKind": "query",
-    "text": "query EditCounterItemFormQuery {\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query EditKpiItemFormQuery {\n  domains {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8a100cc382883cf7a200b2ceab5dc39d';
+(node/*: any*/).hash = '99c348af63e35917743e3b1f9818cb27';
 
 module.exports = node;

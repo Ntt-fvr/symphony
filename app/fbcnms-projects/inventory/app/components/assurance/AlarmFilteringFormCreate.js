@@ -11,15 +11,14 @@
 import React, {useState} from 'react';
 import fbt from 'fbt';
 
-import moment from 'moment';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import moment from 'moment';
 
 import AlarmFilteringAddDialog from './AlarmFilteringAddDialog';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {StatusActive, StatusClosed, StatusPending} from './AlarmFilteringStatus';
@@ -32,6 +31,7 @@ import Switch from './common/Switch';
 import {makeStyles} from '@material-ui/styles';
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
+
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 
