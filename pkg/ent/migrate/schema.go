@@ -1219,6 +1219,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "domain_kpidomain", Type: field.TypeInt, Nullable: true},
 	}
@@ -1230,7 +1231,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "kpis_domains_kpidomain",
-				Columns: []*schema.Column{KpisColumns[5]},
+				Columns: []*schema.Column{KpisColumns[6]},
 
 				RefColumns: []*schema.Column{DomainsColumns[0]},
 				OnDelete:   schema.SetNull,

@@ -1159,6 +1159,10 @@ func init() {
 	kpiDescName := kpiFields[0].Descriptor()
 	// kpi.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	kpi.NameValidator = kpiDescName.Validators[0].(func(string) error)
+	// kpiDescDescription is the schema descriptor for description field.
+	kpiDescDescription := kpiFields[1].Descriptor()
+	// kpi.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	kpi.DescriptionValidator = kpiDescDescription.Validators[0].(func(string) error)
 	linkMixin := schema.Link{}.Mixin()
 	link.Policy = privacy.NewPolicies(schema.Link{})
 	link.Hooks[0] = func(next ent.Mutator) ent.Mutator {

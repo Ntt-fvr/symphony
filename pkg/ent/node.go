@@ -3298,7 +3298,7 @@ func (k *Kpi) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     k.ID,
 		Type:   "Kpi",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -3326,10 +3326,18 @@ func (k *Kpi) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(k.Status); err != nil {
+	if buf, err = json.Marshal(k.Description); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
 		Type:  "bool",
 		Name:  "status",
 		Value: string(buf),

@@ -51,6 +51,7 @@ func (r mutationResolver) AddKpi(ctx context.Context, input models.AddKpiInput) 
 		Kpi.Create().
 		SetName(input.Name).
 		SetStatus(input.Status).
+		SetDescription(input.Description).
 		SetDomainID(input.DomainFk).
 		Save(ctx)
 	if err != nil {
@@ -89,11 +90,12 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID || input.Status != et.Status {
+	if input.Name != et.Name || input.DomainFk != et.Edges.Domain.ID || input.Status != et.Status || input.Description != et.Description {
 		if et, err = client.Kpi.
 			UpdateOne(et).
 			SetName(input.Name).
 			SetStatus(input.Status).
+			SetDescription(input.Description).
 			SetDomainID(input.DomainFk).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {

@@ -38,7 +38,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'flex-end',
   },
   edit: {
-    paddingLeft: '2rem',
+    paddingLeft: '24px',
   },
 }));
 

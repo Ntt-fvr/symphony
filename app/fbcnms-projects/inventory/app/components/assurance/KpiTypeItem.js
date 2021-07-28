@@ -75,6 +75,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type KpiThreshold = {
+  node: {
+    name: string,
+    kpi: {
+      name: string,
+    },
+  },
+};
+
 type Props = $ReadOnly<{|
   id: string,
   name: string,
@@ -82,14 +91,27 @@ type Props = $ReadOnly<{|
   domainFk: {
     name: string,
   },
+  description: string,
+  threshold: Array<KpiThreshold>,
   edit: void,
   onChange: void,
 |}>;
 
 export default function KpiTypeItem(props: Props) {
-  const {id, name, status, domainFk, edit, onChange} = props;
+  const {
+    id,
+    name,
+    status,
+    domainFk,
+    description,
+    threshold,
+    edit,
+    onChange,
+  } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+
+  const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
 
   return (
     <div className={classes.root}>
@@ -139,19 +161,23 @@ export default function KpiTypeItem(props: Props) {
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  Associated threshold:
+                <Grid item xs={6}>
+                  {`Associated threshold: `}
                   <Button variant="text">
-                    <Text className={classes.threshold}> DROP_THR</Text>
+                    <Text className={classes.threshold}>
+                      {thresholdFromKpi === undefined
+                        ? 'none'
+                        : thresholdFromKpi.node.name}
+                    </Text>
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  {`ID: ${id}`}
+                  {`Description: ${
+                    description === '' ? 'No description' : description
+                  }`}
                 </Grid>
-                <Grid item xs={6}>
-                  Description: : Chips allow users to enter information, make
-                  selections, filter content, or trigger actions. While buttons
-                  are expected.
+                <Grid item xs={12}>
+                  {`ID: ${id}`}
                 </Grid>
               </Grid>
             </Grid>

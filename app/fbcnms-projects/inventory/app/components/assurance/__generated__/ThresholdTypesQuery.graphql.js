@@ -14,8 +14,8 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type TresholdTypesQueryVariables = {||};
-export type TresholdTypesQueryResponse = {|
+export type ThresholdTypesQueryVariables = {||};
+export type ThresholdTypesQueryResponse = {|
   +tresholds: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -31,15 +31,15 @@ export type TresholdTypesQueryResponse = {|
     |}>
   |}
 |};
-export type TresholdTypesQuery = {|
-  variables: TresholdTypesQueryVariables,
-  response: TresholdTypesQueryResponse,
+export type ThresholdTypesQuery = {|
+  variables: ThresholdTypesQueryVariables,
+  response: ThresholdTypesQueryResponse,
 |};
 */
 
 
 /*
-query TresholdTypesQuery {
+query ThresholdTypesQuery {
   tresholds {
     edges {
       node {
@@ -141,7 +141,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "TresholdTypesQuery",
+    "name": "ThresholdTypesQuery",
     "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -150,20 +150,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "TresholdTypesQuery",
+    "name": "ThresholdTypesQuery",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "6797c4e39e763c12d0d30986177e55fb",
+    "cacheID": "e75190e0a018f66b8fb9be3bb7ddaa22",
     "id": null,
     "metadata": {},
-    "name": "TresholdTypesQuery",
+    "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query TresholdTypesQuery {\n  tresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  tresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8414d26e89003a2a3b4b1c809908de13';
+(node/*: any*/).hash = '03155cdfb9704d4a52d8f938b02ce498';
 
 module.exports = node;

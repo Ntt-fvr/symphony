@@ -30647,6 +30647,7 @@ type KpiMutation struct {
 	create_time        *time.Time
 	update_time        *time.Time
 	name               *string
+	description        *string
 	status             *bool
 	clearedFields      map[string]struct{}
 	domain             *int
@@ -30851,6 +30852,43 @@ func (m *KpiMutation) ResetName() {
 	m.name = nil
 }
 
+// SetDescription sets the description field.
+func (m *KpiMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *KpiMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the Kpi.
+// If the Kpi object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *KpiMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *KpiMutation) ResetDescription() {
+	m.description = nil
+}
+
 // SetStatus sets the status field.
 func (m *KpiMutation) SetStatus(b bool) {
 	m.status = &b
@@ -31033,7 +31071,7 @@ func (m *KpiMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *KpiMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, kpi.FieldCreateTime)
 	}
@@ -31042,6 +31080,9 @@ func (m *KpiMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, kpi.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, kpi.FieldDescription)
 	}
 	if m.status != nil {
 		fields = append(fields, kpi.FieldStatus)
@@ -31060,6 +31101,8 @@ func (m *KpiMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case kpi.FieldName:
 		return m.Name()
+	case kpi.FieldDescription:
+		return m.Description()
 	case kpi.FieldStatus:
 		return m.Status()
 	}
@@ -31077,6 +31120,8 @@ func (m *KpiMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldUpdateTime(ctx)
 	case kpi.FieldName:
 		return m.OldName(ctx)
+	case kpi.FieldDescription:
+		return m.OldDescription(ctx)
 	case kpi.FieldStatus:
 		return m.OldStatus(ctx)
 	}
@@ -31108,6 +31153,13 @@ func (m *KpiMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case kpi.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
 		return nil
 	case kpi.FieldStatus:
 		v, ok := value.(bool)
@@ -31174,6 +31226,9 @@ func (m *KpiMutation) ResetField(name string) error {
 		return nil
 	case kpi.FieldName:
 		m.ResetName()
+		return nil
+	case kpi.FieldDescription:
+		m.ResetDescription()
 		return nil
 	case kpi.FieldStatus:
 		m.ResetStatus()

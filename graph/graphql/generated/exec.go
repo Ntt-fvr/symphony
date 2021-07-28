@@ -780,11 +780,13 @@ type ComplexityRoot struct {
 	}
 
 	Kpi struct {
-		DomainFk  func(childComplexity int) int
-		FormulaFk func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Name      func(childComplexity int) int
-		Status    func(childComplexity int) int
+		Description func(childComplexity int) int
+		DomainFk    func(childComplexity int) int
+		FormulaFk   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Treshold    func(childComplexity int) int
 	}
 
 	KpiConnection struct {
@@ -1891,6 +1893,8 @@ type FormulaResolver interface {
 	CounterformulaFk(ctx context.Context, obj *ent.Formula) ([]*ent.CounterFormula, error)
 }
 type KpiResolver interface {
+	Treshold(ctx context.Context, obj *ent.Kpi) (*ent.Treshold, error)
+
 	DomainFk(ctx context.Context, obj *ent.Kpi) (*ent.Domain, error)
 	FormulaFk(ctx context.Context, obj *ent.Kpi) ([]*ent.Formula, error)
 }
@@ -4884,6 +4888,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.InventoryPolicy.ServiceType(childComplexity), true
 
+	case "Kpi.description":
+		if e.complexity.Kpi.Description == nil {
+			break
+		}
+
+		return e.complexity.Kpi.Description(childComplexity), true
+
 	case "Kpi.domainFk":
 		if e.complexity.Kpi.DomainFk == nil {
 			break
@@ -4918,6 +4929,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Kpi.Status(childComplexity), true
+
+	case "Kpi.treshold":
+		if e.complexity.Kpi.Treshold == nil {
+			break
+		}
+
+		return e.complexity.Kpi.Treshold(childComplexity), true
 
 	case "KpiConnection.edges":
 		if e.complexity.KpiConnection.Edges == nil {
@@ -16673,6 +16691,8 @@ input DomainFilterInput {
 type Kpi implements Node {
   id: ID!
   name: String!
+  description: String!
+  treshold: Treshold!
   status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
@@ -16680,6 +16700,7 @@ type Kpi implements Node {
 
 input AddKpiInput {
   name: String!
+  description: String!
   domainFk: ID!
   status: Boolean!
 }
@@ -16687,6 +16708,7 @@ input AddKpiInput {
 input EditKpiInput {
   id: ID!
   name: String!
+  description: String!
   domainFk: ID!
   status: Boolean!
 }
@@ -36320,6 +36342,76 @@ func (ec *executionContext) _Kpi_name(ctx context.Context, field graphql.Collect
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Kpi_description(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Kpi",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Kpi_treshold(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Kpi",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Kpi().Treshold(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Treshold)
+	fc.Result = res
+	return ec.marshalNTreshold2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTreshold(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Kpi_status(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
@@ -64424,6 +64516,14 @@ func (ec *executionContext) unmarshalInputAddKpiInput(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "domainFk":
 			var err error
 
@@ -67625,6 +67725,14 @@ func (ec *executionContext) unmarshalInputEditKpiInput(ctx context.Context, obj 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -78017,6 +78125,25 @@ func (ec *executionContext) _Kpi(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "description":
+			out.Values[i] = ec._Kpi_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "treshold":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Kpi_treshold(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "status":
 			out.Values[i] = ec._Kpi_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

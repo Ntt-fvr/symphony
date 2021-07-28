@@ -22,13 +22,30 @@ import EditKpiMutation from '../../mutations/EditKpiMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 // DESIGN SYSTEM //
+import type {EditKpiItemFormQuery} from './__generated__/EditKpiItemFormQuery.graphql';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import {Grid, MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const EditKpiQuery = graphql`
+  query EditKpiItemFormQuery {
+    domains {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -69,6 +86,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type KpiThreshold = {
+  node: {
+    name: string,
+    kpi: {
+      name: string,
+    },
+  },
+};
+
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
@@ -78,6 +104,7 @@ type Props = $ReadOnly<{|
       name: string,
     },
     status: boolean,
+    description: string,
   },
   hideEditKpiForm: void => void,
   kpi: {
@@ -86,15 +113,22 @@ type Props = $ReadOnly<{|
       name: string,
     },
   },
+  threshold: Array<KpiThreshold>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {formValues, kpi, hideEditKpiForm} = props;
+  const {formValues, hideEditKpiForm, threshold} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const domainFk = useFormInput(formValues.domainFk.id);
-  const id = useFormInput(formValues.id);
+  const description = useFormInput(formValues.description);
+
+  const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
+
+  const thresholdFromKpi = threshold.find(
+    ({node}) => node.kpi?.name === formValues.name,
+  );
 
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
@@ -103,6 +137,7 @@ export const EditKpiItemForm = (props: Props) => {
         name: name.value,
         domainFk: domainFk.value,
         status: true,
+        description: description.value,
       },
     };
     EditKpiMutation(variables);
@@ -141,7 +176,7 @@ export const EditKpiItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField className={classes.formField} label="ID">
                   <TextInput
-                    {...id}
+                    value={formValues.id}
                     className={classes.textInput}
                     name="Id"
                     type="string"
@@ -158,10 +193,10 @@ export const EditKpiItemForm = (props: Props) => {
                     {...domainFk}
                     className={classes.select}
                     disableUnderline
-                    name="domain">
-                    {kpi.map((item, index) => (
-                      <MenuItem key={index} value={item.domainFk.id}>
-                        {item.domainFk.name}
+                    name="domains">
+                    {data.domains.edges.map((item, index) => (
+                      <MenuItem key={index} value={item.node?.id}>
+                        {item.node?.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -169,20 +204,20 @@ export const EditKpiItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField
-                  label="Associated Treshold"
+                  label="Associated Threshold"
                   className={classes.formField}
                   required>
-                  <Select
-                    {...domainFk}
-                    className={classes.select}
-                    disableUnderline
-                    name="treshold">
-                    {kpi.map((item, index) => (
-                      <MenuItem key={index} value={item.domainFk.id}>
-                        {item.domainFk.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <TextInput
+                    value={
+                      thresholdFromKpi === undefined
+                        ? 'none'
+                        : thresholdFromKpi.node.name
+                    }
+                    className={classes.textInput}
+                    name="threshold"
+                    type="string"
+                    disabled
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={6} xl={6}>
@@ -190,7 +225,12 @@ export const EditKpiItemForm = (props: Props) => {
                   className={classes.formField}
                   label="Description"
                   required>
-                  <TextInput type="multiline" name="description" rows={3} />
+                  <TextInput
+                    {...description}
+                    type="multiline"
+                    name="description"
+                    rows={3}
+                  />
                 </FormField>
               </Grid>
             </Grid>

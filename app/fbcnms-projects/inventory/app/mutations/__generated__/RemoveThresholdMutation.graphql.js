@@ -14,21 +14,21 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type RemoveTresholdMutationVariables = {|
+export type RemoveThresholdMutationVariables = {|
   id: string
 |};
-export type RemoveTresholdMutationResponse = {|
+export type RemoveThresholdMutationResponse = {|
   +removeTreshold: string
 |};
-export type RemoveTresholdMutation = {|
-  variables: RemoveTresholdMutationVariables,
-  response: RemoveTresholdMutationResponse,
+export type RemoveThresholdMutation = {|
+  variables: RemoveThresholdMutationVariables,
+  response: RemoveThresholdMutationResponse,
 |};
 */
 
 
 /*
-mutation RemoveTresholdMutation(
+mutation RemoveThresholdMutation(
   $id: ID!
 ) {
   removeTreshold(id: $id)
@@ -63,7 +63,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RemoveTresholdMutation",
+    "name": "RemoveThresholdMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -72,20 +72,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RemoveTresholdMutation",
+    "name": "RemoveThresholdMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "34a3e530f4c890008e74ffb9fd7e6911",
+    "cacheID": "c0dbd4f68a121f61bc54eafb68ccab16",
     "id": null,
     "metadata": {},
-    "name": "RemoveTresholdMutation",
+    "name": "RemoveThresholdMutation",
     "operationKind": "mutation",
-    "text": "mutation RemoveTresholdMutation(\n  $id: ID!\n) {\n  removeTreshold(id: $id)\n}\n"
+    "text": "mutation RemoveThresholdMutation(\n  $id: ID!\n) {\n  removeTreshold(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '37ae0a079b013f564fa89222b55cc6a8';
+(node/*: any*/).hash = 'bc921d03b1a31602b5251edcd665668f';
 
 module.exports = node;

@@ -10,6 +10,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 // Counter defines the property type schema.
@@ -22,6 +23,7 @@ func (Kpi) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
+		field.String("description").NotEmpty(),
 		field.Bool("status"),
 	}
 }
@@ -41,9 +43,14 @@ func (Kpi) Edges() []ent.Edge {
 
 // Policy returns entity policy.
 func (Kpi) Policy() ent.Policy {
-	return authz.NewPolicy(
+	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)*/
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
 		),
 	)
 }

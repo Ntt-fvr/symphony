@@ -21,7 +21,7 @@ export const AssuranceNavListItems = () => {
   return [
     <NavListItem
       key={1}
-      label="Performance PerformanceCatalog"
+      label="Performance Catalog"
       path={relativeUrl('/performance/counters_types')}
       icon={<SummarizeIcon />}
       onClick={() => {

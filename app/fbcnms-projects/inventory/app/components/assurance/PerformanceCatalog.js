@@ -15,7 +15,7 @@ import InventorySuspense from '../../common/InventorySuspense';
 import KpiTypes from './KpiTypes';
 import React, {useEffect, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
-import TresholdTypes from './TresholdTypes';
+import TresholdTypes from './ThresholdTypes';
 import fbt from 'fbt';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';

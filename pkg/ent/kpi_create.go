@@ -61,6 +61,12 @@ func (kc *KpiCreate) SetName(s string) *KpiCreate {
 	return kc
 }
 
+// SetDescription sets the description field.
+func (kc *KpiCreate) SetDescription(s string) *KpiCreate {
+	kc.mutation.SetDescription(s)
+	return kc
+}
+
 // SetStatus sets the status field.
 func (kc *KpiCreate) SetStatus(b bool) *KpiCreate {
 	kc.mutation.SetStatus(b)
@@ -198,6 +204,14 @@ func (kc *KpiCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := kc.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New("ent: missing required field \"description\"")}
+	}
+	if v, ok := kc.mutation.Description(); ok {
+		if err := kpi.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
 	if _, ok := kc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
@@ -251,6 +265,14 @@ func (kc *KpiCreate) createSpec() (*Kpi, *sqlgraph.CreateSpec) {
 			Column: kpi.FieldName,
 		})
 		_node.Name = value
+	}
+	if value, ok := kc.mutation.Description(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: kpi.FieldDescription,
+		})
+		_node.Description = value
 	}
 	if value, ok := kc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

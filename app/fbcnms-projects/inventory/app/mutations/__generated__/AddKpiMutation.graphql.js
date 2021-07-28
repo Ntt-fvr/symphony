@@ -16,6 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddKpiInput = {|
   name: string,
+  description: string,
   domainFk: string,
   status: boolean,
 |};

@@ -22,13 +22,24 @@ export type KpiTypesQueryResponse = {|
         +id: string,
         +name: string,
         +status: boolean,
+        +description: string,
         +domainFk: {|
           +id: string,
           +name: string,
         |},
       |}
     |}>
-  |}
+  |},
+  +tresholds: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +name: string,
+        +kpi: ?{|
+          +name: string
+        |},
+      |}
+    |}>
+  |},
 |};
 export type KpiTypesQuery = {|
   variables: KpiTypesQueryVariables,
@@ -45,10 +56,23 @@ query KpiTypesQuery {
         id
         name
         status
+        description
         domainFk {
           id
           name
         }
+      }
+    }
+  }
+  tresholds {
+    edges {
+      node {
+        name
+        kpi {
+          name
+          id
+        }
+        id
       }
     }
   }
@@ -70,50 +94,113 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "KpiConnection",
-    "kind": "LinkedField",
-    "name": "kpis",
-    "plural": false,
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "KpiConnection",
+  "kind": "LinkedField",
+  "name": "kpis",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "KpiEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Kpi",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/),
+            (v1/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "status",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "description",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "Domain",
+              "kind": "LinkedField",
+              "name": "domainFk",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                (v1/*: any*/)
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "KpiTypesQuery",
     "selections": [
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "KpiEdge",
+        "concreteType": "TresholdConnection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "tresholds",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "Kpi",
+            "concreteType": "TresholdEdge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
-              (v0/*: any*/),
-              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "status",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Domain",
+                "concreteType": "Treshold",
                 "kind": "LinkedField",
-                "name": "domainFk",
+                "name": "node",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/)
+                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Kpi",
+                    "kind": "LinkedField",
+                    "name": "kpi",
+                    "plural": false,
+                    "selections": [
+                      (v1/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -124,16 +211,6 @@ v2 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "KpiTypesQuery",
-    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -142,19 +219,69 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "KpiTypesQuery",
-    "selections": (v2/*: any*/)
+    "selections": [
+      (v2/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "TresholdConnection",
+        "kind": "LinkedField",
+        "name": "tresholds",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "TresholdEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Treshold",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Kpi",
+                    "kind": "LinkedField",
+                    "name": "kpi",
+                    "plural": false,
+                    "selections": [
+                      (v1/*: any*/),
+                      (v0/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
+                  (v0/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "ff540b32cb6af8d14a698df119473f93",
+    "cacheID": "d8f710554bfc91b72f53cb4e7a9ed4a4",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n  tresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8b1648a780e1cf3c526b8d464c857d09';
+(node/*: any*/).hash = '1d75790c74cf6f129f8cc6779391d9e4';
 
 module.exports = node;

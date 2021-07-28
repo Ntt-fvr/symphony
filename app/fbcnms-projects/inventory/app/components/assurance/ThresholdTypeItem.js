@@ -27,7 +27,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
+import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -63,7 +63,6 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
   },
   typeRed: {
-    marginLeft: '140px',
     color: '#3984FF',
     fontWeight: 'bold',
   },
@@ -93,10 +92,11 @@ type Props = $ReadOnly<{|
   },
   edit: void,
   addRule: void => void,
+  handleRemove: void => void,
 |}>;
 
 export default function ThresholdTypeItem(props: Props) {
-  const {name, description, id, kpi, edit, addRule} = props;
+  const {name, description, kpi, id, edit, addRule, handleRemove} = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   return (
@@ -115,35 +115,39 @@ export default function ThresholdTypeItem(props: Props) {
             onFocus={event => event.stopPropagation()}
             control={<SwitchLabels status={true} />}
           />
-          <Grid className={classes.rootGrid}>
+          <Grid xs={2} container alignItems="center">
             <Text className={classes.nameThreshold}>{name}</Text>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
+          <Grid xs={3} container alignItems="center">
             <Button variant="text">
               <Text>{id}</Text>
             </Button>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
+          <Grid xs={3} container className={classes.rootGrid}>
             <Button variant="text">
-              <Text className={classes.typeRed}>{"hola"}</Text>
+              <Text className={classes.typeRed}>{kpi?.name}</Text>
             </Button>
           </Grid>
 
-          <Grid className={classes.rootGrid}>
-            <AddButton textButton={'Add rule'} onClick={addRule} />
+          <Grid xs={3} container className={classes.rootGrid}>
+            <AddButton
+              disabled={false}
+              textButton={'Add rule'}
+              onClick={addRule}
+            />
           </Grid>
-
-          <Grid>
+          <Grid xs={1} container justify="flex-end" alignItems="center">
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={handleRemove}
+            />
             <IconButton
               className={classes.editIcon}
               icon={EditIcon}
               onClick={edit}
             />
-          </Grid>
-          <Grid>
-            <DeleteOutlinedIcon className={classes.deleteIcon} />
           </Grid>
         </AccordionSummary>
 
