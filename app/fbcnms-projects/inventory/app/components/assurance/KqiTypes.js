@@ -9,11 +9,15 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
+import KqiFormCreate from './KqiFormCreate';
+import KqiFormEdit from './KqiFormEdit';
+
 import Button from '@symphony/design-system/components/Button';
+import KqiTable from './KqiTable';
 import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({
@@ -23,7 +27,6 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
-    border: '1px solid blue',
   },
   addKpi: {
     display: 'flex',
@@ -31,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
   titulo: {
-    border: '1px solid red',
+    paddingTop: '2rem',
   },
   buttonAdd: {
     padding: '0 2rem',
@@ -40,6 +43,24 @@ const useStyles = makeStyles(theme => ({
 
 const KqiTypes = () => {
   const classes = useStyles();
+  const [showFormCreate, setShowFormCreate] = useState(false);
+  const [showFormEdit, setShowFormEdit] = useState(false);
+
+  function handleClick() {
+    setShowFormCreate(true);
+  }
+
+  if (showFormCreate) {
+    return <KqiFormCreate returnTableKqi={() => setShowFormCreate(false)} />;
+  }
+
+  function formEdit() {
+    setShowFormEdit(true);
+  }
+
+  if (showFormEdit) {
+    return <KqiFormEdit returnTableKqi={() => setShowFormEdit(false)} />;
+  }
 
   return (
     <div className={classes.root}>
@@ -54,12 +75,14 @@ const KqiTypes = () => {
           />
         </Grid>
         <Grid className={classes.addKpi} item xs={1}>
-          <Button className={classes.buttonAdd}>Add KQI</Button>
+          <Button onClick={handleClick} className={classes.buttonAdd}>
+            Add KQI
+          </Button>
         </Grid>
       </Grid>
       <Grid className={classes.titulo} container spacing={2}>
         <Grid className={classes.paper} item xs={12}>
-          <h1>TABLA</h1>
+          <KqiTable viewFormEdit={formEdit} />
         </Grid>
       </Grid>
     </div>
