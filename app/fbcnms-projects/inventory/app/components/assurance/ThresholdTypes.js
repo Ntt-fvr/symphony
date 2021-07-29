@@ -17,14 +17,13 @@ import RelayEnvironment from '../../common/RelayEnvironment';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
-import {EditTresholdItemForm} from './EditThresholdItemForm';
+import {EditThresholdItemForm} from './EditThresholdItemForm';
 import {Grid, List} from '@material-ui/core';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
 import AddRuleItemForm from './AddRuleItemForm';
-import EditCounterItemForm from './EditCounterItemForm';
 import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
 const useStyles = makeStyles(theme => ({
@@ -50,11 +49,26 @@ const ThresholdQuery = graphql`
             id
             name
           }
+          rule {
+            id
+            name
+            ruleType {
+              name
+            }
+          }
         }
       }
     }
   }
 `;
+
+type Rule = {
+  id: string,
+  name: string,
+  ruleType: {
+    name: string,
+  },
+};
 
 type Thresholds = {
   item: {
@@ -67,6 +81,7 @@ type Thresholds = {
         id: string,
         name: string,
       },
+      rule: Array<Rule>,
     },
   },
 };
@@ -76,7 +91,7 @@ const ThresholdTypes = () => {
 
   const [dataThreshold, setDataThreshold] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
-  //const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 
   useEffect(() => {
@@ -103,21 +118,20 @@ const ThresholdTypes = () => {
 
   if (showEditCard) {
     return (
-      <EditTresholdItemForm
+      <EditThresholdItemForm
         formValues={dataEdit.item.node}
         hideEditThresholdForm={hideEditThresholdForm}
       />
     );
   }
 
-  /*const showAddRuleItemForm = () => {
+  const showAddRuleItemForm = () => {
     setShowAddForm(true);
   };
 
   if (showAddForm) {
     return <AddRuleItemForm />;
   }
-   */
 
   return (
     <div className={classes.root}>
@@ -141,6 +155,7 @@ const ThresholdTypes = () => {
                 key={index}
                 handleRemove={() => handleRemove(item.node.id)}
                 edit={() => showEditThresholdItemForm({item})}
+                addRule={() => showAddRuleItemForm()}
                 {...item.node}
               />
             ))}

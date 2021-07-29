@@ -39,6 +39,9 @@ const useStyles = makeStyles(() => ({
   formField: {
     margin: '0 43px 22px 43px',
   },
+  cardHeader: {
+    margin: '20px 43px 22px 40px',
+  },
   textInput: {
     minHeight: '36px',
   },
@@ -62,6 +65,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type Rule = {
+  id: string,
+  name: string,
+  ruleType: {
+    name: string,
+  },
+};
+
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
@@ -72,6 +83,7 @@ type Props = $ReadOnly<{|
       id: string,
       name: string,
     },
+    rule: Array<Rule>,
   },
   hideEditThresholdForm: void => void,
 |}>;
@@ -106,7 +118,9 @@ export const EditThresholdItemForm = (props: Props) => {
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
-            <CardHeader>Edit container detail</CardHeader>
+            <CardHeader className={classes.cardHeader}>
+              Edit container detail
+            </CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
@@ -126,7 +140,7 @@ export const EditThresholdItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField className={classes.formField} label="ID" required>
                   <TextInput
-                    value={formValues.id}
+                    value={formValues?.id}
                     className={classes.textInput}
                     name="id"
                     type="string"
@@ -137,7 +151,7 @@ export const EditThresholdItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField className={classes.formField} label="Associated KPI">
                   <TextInput
-                    value={formValues.kpi.name}
+                    value={formValues.kpi?.name}
                     className={classes.textInput}
                     name="kpi"
                     type="string"
@@ -145,14 +159,13 @@ export const EditThresholdItemForm = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid item xs={12} sm={12} lg={3} xl={3}>
+              <Grid item xs={12} sm={12} lg={6} xl={6}>
                 <FormField
                   className={classes.formField}
                   label="Description"
                   required>
                   <TextInput
                     {...description}
-                    className={classes.textInput}
                     type="multiline"
                     name="description"
                     rows={3}
@@ -188,11 +201,10 @@ export const EditThresholdItemForm = (props: Props) => {
             </Grid>
           </Card>
         </Grid>
-
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
             <CardHeader>Formulas contained</CardHeader>
-            <Table />
+            <Table rule={formValues.rule} />
           </Card>
         </Grid>
       </Grid>

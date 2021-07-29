@@ -27,6 +27,13 @@ export type ThresholdTypesQueryResponse = {|
           +id: string,
           +name: string,
         |},
+        +rule: ?$ReadOnlyArray<{|
+          +id: string,
+          +name: string,
+          +ruleType: {|
+            +name: string
+          |},
+        |}>,
       |}
     |}>
   |}
@@ -51,6 +58,14 @@ query ThresholdTypesQuery {
           id
           name
         }
+        rule {
+          id
+          name
+          ruleType {
+            name
+            id
+          }
+        }
       }
     }
   }
@@ -72,57 +87,94 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "TresholdConnection",
-    "kind": "LinkedField",
-    "name": "tresholds",
-    "plural": false,
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "description",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Kpi",
+  "kind": "LinkedField",
+  "name": "kpi",
+  "plural": false,
+  "selections": [
+    (v0/*: any*/),
+    (v1/*: any*/)
+  ],
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ThresholdTypesQuery",
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdEdge",
+        "concreteType": "TresholdConnection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "tresholds",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "Treshold",
+            "concreteType": "TresholdEdge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
-              (v0/*: any*/),
-              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "description",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "status",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Kpi",
+                "concreteType": "Treshold",
                 "kind": "LinkedField",
-                "name": "kpi",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
-                  (v1/*: any*/)
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Rule",
+                    "kind": "LinkedField",
+                    "name": "rule",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "RuleType",
+                        "kind": "LinkedField",
+                        "name": "ruleType",
+                        "plural": false,
+                        "selections": [
+                          (v1/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -133,16 +185,6 @@ v2 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
-  }
-];
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "ThresholdTypesQuery",
-    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -151,19 +193,84 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ThresholdTypesQuery",
-    "selections": (v2/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "TresholdConnection",
+        "kind": "LinkedField",
+        "name": "tresholds",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "TresholdEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Treshold",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/),
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Rule",
+                    "kind": "LinkedField",
+                    "name": "rule",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "RuleType",
+                        "kind": "LinkedField",
+                        "name": "ruleType",
+                        "plural": false,
+                        "selections": [
+                          (v1/*: any*/),
+                          (v0/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "e75190e0a018f66b8fb9be3bb7ddaa22",
+    "cacheID": "f02e77f0edf92ca6a77c23646c1420cf",
     "id": null,
     "metadata": {},
     "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query ThresholdTypesQuery {\n  tresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  tresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          ruleType {\n            name\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '03155cdfb9704d4a52d8f938b02ce498';
+(node/*: any*/).hash = 'b2c14162d37ee6ca66835430d73b3c61';
 
 module.exports = node;
