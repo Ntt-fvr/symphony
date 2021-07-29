@@ -12,20 +12,15 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 
-import KqiFormEdit from './KqiFormEdit';
-
-import React, {useState} from 'react';
+import React from 'react';
 
 import AddButton from './common/AddButton';
-import Indicator from './KqiIndicator';
 import Switch from './common/Switch';
 import {withStyles} from '@material-ui/core/styles';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Text from '@symphony/design-system/components/Text';
 
-import CardContent from '@material-ui/core/CardContent';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeStyles} from '@material-ui/styles';
 
 import Grid from '@material-ui/core/Grid';
@@ -147,6 +142,10 @@ const data = [
   ),
 ];
 
+const handleClick = () => {
+  console.log('delete row');
+};
+
 const KqiTableAssociatedTarget = props => {
   const classes = useStyles();
 
@@ -203,6 +202,7 @@ const KqiTableAssociatedTarget = props => {
                       variant="text"
                       skin={'gray'}
                       icon={DeleteOutlinedIcon}
+                      onClick={handleClick}
                     />
                   </TableCell>
                 </StyledTableRow>
