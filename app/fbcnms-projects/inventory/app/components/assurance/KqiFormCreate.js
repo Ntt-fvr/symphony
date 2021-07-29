@@ -23,10 +23,6 @@ import {MenuItem, Select} from '@material-ui/core';
 import Text from '@symphony/design-system/components/Text';
 
 import TextField from '@material-ui/core/TextField';
-import {StatusActive} from './AlarmFilteringStatus';
-
-import Switch from './common/Switch';
-
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -243,7 +239,7 @@ const KqiFormCreate = props => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid className={classes.prueba} container item xs={6}>
+                <Grid container item xs={6}>
                   <FormField
                     label="Temporal frequency"
                     className={classes.formField}>
