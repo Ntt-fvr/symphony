@@ -20,7 +20,7 @@ type RuleLimit struct {
 // Counter returns property type counter.
 func (RuleLimit) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.Int("number"),
 		field.String("limitType").NotEmpty(),
 	}
 }

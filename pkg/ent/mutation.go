@@ -44436,7 +44436,8 @@ type RuleLimitMutation struct {
 	id                *int
 	create_time       *time.Time
 	update_time       *time.Time
-	name              *string
+	number            *int
+	addnumber         *int
 	limitType         *string
 	clearedFields     map[string]struct{}
 	comparator        *int
@@ -44601,41 +44602,61 @@ func (m *RuleLimitMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
-// SetName sets the name field.
-func (m *RuleLimitMutation) SetName(s string) {
-	m.name = &s
+// SetNumber sets the number field.
+func (m *RuleLimitMutation) SetNumber(i int) {
+	m.number = &i
+	m.addnumber = nil
 }
 
-// Name returns the name value in the mutation.
-func (m *RuleLimitMutation) Name() (r string, exists bool) {
-	v := m.name
+// Number returns the number value in the mutation.
+func (m *RuleLimitMutation) Number() (r int, exists bool) {
+	v := m.number
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldName returns the old name value of the RuleLimit.
+// OldNumber returns the old number value of the RuleLimit.
 // If the RuleLimit object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *RuleLimitMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *RuleLimitMutation) OldNumber(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldNumber is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+		return v, fmt.Errorf("OldNumber requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
+		return v, fmt.Errorf("querying old value for OldNumber: %w", err)
 	}
-	return oldValue.Name, nil
+	return oldValue.Number, nil
 }
 
-// ResetName reset all changes of the "name" field.
-func (m *RuleLimitMutation) ResetName() {
-	m.name = nil
+// AddNumber adds i to number.
+func (m *RuleLimitMutation) AddNumber(i int) {
+	if m.addnumber != nil {
+		*m.addnumber += i
+	} else {
+		m.addnumber = &i
+	}
+}
+
+// AddedNumber returns the value that was added to the number field in this mutation.
+func (m *RuleLimitMutation) AddedNumber() (r int, exists bool) {
+	v := m.addnumber
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetNumber reset all changes of the "number" field.
+func (m *RuleLimitMutation) ResetNumber() {
+	m.number = nil
+	m.addnumber = nil
 }
 
 // SetLimitType sets the limitType field.
@@ -44774,8 +44795,8 @@ func (m *RuleLimitMutation) Fields() []string {
 	if m.update_time != nil {
 		fields = append(fields, rulelimit.FieldUpdateTime)
 	}
-	if m.name != nil {
-		fields = append(fields, rulelimit.FieldName)
+	if m.number != nil {
+		fields = append(fields, rulelimit.FieldNumber)
 	}
 	if m.limitType != nil {
 		fields = append(fields, rulelimit.FieldLimitType)
@@ -44792,8 +44813,8 @@ func (m *RuleLimitMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case rulelimit.FieldUpdateTime:
 		return m.UpdateTime()
-	case rulelimit.FieldName:
-		return m.Name()
+	case rulelimit.FieldNumber:
+		return m.Number()
 	case rulelimit.FieldLimitType:
 		return m.LimitType()
 	}
@@ -44809,8 +44830,8 @@ func (m *RuleLimitMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldCreateTime(ctx)
 	case rulelimit.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case rulelimit.FieldName:
-		return m.OldName(ctx)
+	case rulelimit.FieldNumber:
+		return m.OldNumber(ctx)
 	case rulelimit.FieldLimitType:
 		return m.OldLimitType(ctx)
 	}
@@ -44836,12 +44857,12 @@ func (m *RuleLimitMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateTime(v)
 		return nil
-	case rulelimit.FieldName:
-		v, ok := value.(string)
+	case rulelimit.FieldNumber:
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetName(v)
+		m.SetNumber(v)
 		return nil
 	case rulelimit.FieldLimitType:
 		v, ok := value.(string)
@@ -44857,13 +44878,21 @@ func (m *RuleLimitMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *RuleLimitMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addnumber != nil {
+		fields = append(fields, rulelimit.FieldNumber)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *RuleLimitMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case rulelimit.FieldNumber:
+		return m.AddedNumber()
+	}
 	return nil, false
 }
 
@@ -44872,6 +44901,13 @@ func (m *RuleLimitMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *RuleLimitMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case rulelimit.FieldNumber:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddNumber(v)
+		return nil
 	}
 	return fmt.Errorf("unknown RuleLimit numeric field %s", name)
 }
@@ -44906,8 +44942,8 @@ func (m *RuleLimitMutation) ResetField(name string) error {
 	case rulelimit.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
-	case rulelimit.FieldName:
-		m.ResetName()
+	case rulelimit.FieldNumber:
+		m.ResetNumber()
 		return nil
 	case rulelimit.FieldLimitType:
 		m.ResetLimitType()

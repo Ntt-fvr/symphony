@@ -1847,7 +1847,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "number", Type: field.TypeInt},
 		{Name: "limit_type", Type: field.TypeString},
 		{Name: "comparator_comparatorrulelimit", Type: field.TypeInt, Nullable: true},
 		{Name: "rule_rulelimitrule", Type: field.TypeInt, Nullable: true},

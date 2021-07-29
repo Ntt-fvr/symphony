@@ -268,7 +268,7 @@ type AddRuleInput struct {
 }
 
 type AddRuleLimitInput struct {
-	Name       string `json:"name"`
+	Number     int    `json:"number"`
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`
@@ -700,7 +700,7 @@ type EditRuleInput struct {
 
 type EditRuleLimitInput struct {
 	ID         int    `json:"id"`
-	Name       string `json:"name"`
+	Number     int    `json:"number"`
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`
@@ -1003,7 +1003,7 @@ type RuleInput struct {
 }
 
 type RuleLimitInput struct {
-	Name       string `json:"name"`
+	Number     int    `json:"number"`
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`

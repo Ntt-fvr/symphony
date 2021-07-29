@@ -4822,12 +4822,12 @@ func (rl *RuleLimit) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(rl.Name); err != nil {
+	if buf, err = json.Marshal(rl.Number); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
+		Type:  "int",
+		Name:  "number",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(rl.LimitType); err != nil {

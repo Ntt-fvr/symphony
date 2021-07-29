@@ -1522,10 +1522,6 @@ func init() {
 	rulelimit.DefaultUpdateTime = rulelimitDescUpdateTime.Default.(func() time.Time)
 	// rulelimit.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	rulelimit.UpdateDefaultUpdateTime = rulelimitDescUpdateTime.UpdateDefault.(func() time.Time)
-	// rulelimitDescName is the schema descriptor for name field.
-	rulelimitDescName := rulelimitFields[0].Descriptor()
-	// rulelimit.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	rulelimit.NameValidator = rulelimitDescName.Validators[0].(func(string) error)
 	// rulelimitDescLimitType is the schema descriptor for limitType field.
 	rulelimitDescLimitType := rulelimitFields[1].Descriptor()
 	// rulelimit.LimitTypeValidator is a validator for the "limitType" field. It is called by the builders before save.

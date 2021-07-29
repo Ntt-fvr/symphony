@@ -5807,21 +5807,21 @@ input RuleTypeFilterInput {
 
 type RuleLimit implements Node {
   id: ID!
-  name: String!
+  number: Int!
   limitType: String!
   comparator: Comparator!
   rule: Rule
 }
 
 input RuleLimitInput {
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
 }
 
 input AddRuleLimitInput {
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
@@ -5829,7 +5829,7 @@ input AddRuleLimitInput {
 
 input EditRuleLimitInput {
   id: ID!
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!

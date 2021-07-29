@@ -111,10 +111,10 @@ func UpdateTime(v time.Time) predicate.RuleLimit {
 	})
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.RuleLimit {
+// Number applies equality check predicate on the "number" field. It's identical to NumberEQ.
+func Number(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldName), v))
+		s.Where(sql.EQ(s.C(FieldNumber), v))
 	})
 }
 
@@ -277,22 +277,22 @@ func UpdateTimeLTE(v time.Time) predicate.RuleLimit {
 	})
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.RuleLimit {
+// NumberEQ applies the EQ predicate on the "number" field.
+func NumberEQ(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldName), v))
+		s.Where(sql.EQ(s.C(FieldNumber), v))
 	})
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.RuleLimit {
+// NumberNEQ applies the NEQ predicate on the "number" field.
+func NumberNEQ(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldName), v))
+		s.Where(sql.NEQ(s.C(FieldNumber), v))
 	})
 }
 
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.RuleLimit {
+// NumberIn applies the In predicate on the "number" field.
+func NumberIn(vs ...int) predicate.RuleLimit {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -304,12 +304,12 @@ func NameIn(vs ...string) predicate.RuleLimit {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldName), v...))
+		s.Where(sql.In(s.C(FieldNumber), v...))
 	})
 }
 
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.RuleLimit {
+// NumberNotIn applies the NotIn predicate on the "number" field.
+func NumberNotIn(vs ...int) predicate.RuleLimit {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -321,70 +321,35 @@ func NameNotIn(vs ...string) predicate.RuleLimit {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldName), v...))
+		s.Where(sql.NotIn(s.C(FieldNumber), v...))
 	})
 }
 
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.RuleLimit {
+// NumberGT applies the GT predicate on the "number" field.
+func NumberGT(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldName), v))
+		s.Where(sql.GT(s.C(FieldNumber), v))
 	})
 }
 
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.RuleLimit {
+// NumberGTE applies the GTE predicate on the "number" field.
+func NumberGTE(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldName), v))
+		s.Where(sql.GTE(s.C(FieldNumber), v))
 	})
 }
 
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.RuleLimit {
+// NumberLT applies the LT predicate on the "number" field.
+func NumberLT(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldName), v))
+		s.Where(sql.LT(s.C(FieldNumber), v))
 	})
 }
 
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.RuleLimit {
+// NumberLTE applies the LTE predicate on the "number" field.
+func NumberLTE(v int) predicate.RuleLimit {
 	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldName), v))
-	})
-}
-
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.RuleLimit {
-	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldName), v))
-	})
-}
-
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.RuleLimit {
-	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldName), v))
-	})
-}
-
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.RuleLimit {
-	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldName), v))
-	})
-}
-
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.RuleLimit {
-	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldName), v))
-	})
-}
-
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.RuleLimit {
-	return predicate.RuleLimit(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldName), v))
+		s.Where(sql.LTE(s.C(FieldNumber), v))
 	})
 }
 

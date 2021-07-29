@@ -54,9 +54,9 @@ func (rlc *RuleLimitCreate) SetNillableUpdateTime(t *time.Time) *RuleLimitCreate
 	return rlc
 }
 
-// SetName sets the name field.
-func (rlc *RuleLimitCreate) SetName(s string) *RuleLimitCreate {
-	rlc.mutation.SetName(s)
+// SetNumber sets the number field.
+func (rlc *RuleLimitCreate) SetNumber(i int) *RuleLimitCreate {
+	rlc.mutation.SetNumber(i)
 	return rlc
 }
 
@@ -174,13 +174,8 @@ func (rlc *RuleLimitCreate) check() error {
 	if _, ok := rlc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
-	if _, ok := rlc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := rlc.mutation.Name(); ok {
-		if err := rulelimit.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
+	if _, ok := rlc.mutation.Number(); !ok {
+		return &ValidationError{Name: "number", err: errors.New("ent: missing required field \"number\"")}
 	}
 	if _, ok := rlc.mutation.LimitType(); !ok {
 		return &ValidationError{Name: "limitType", err: errors.New("ent: missing required field \"limitType\"")}
@@ -233,13 +228,13 @@ func (rlc *RuleLimitCreate) createSpec() (*RuleLimit, *sqlgraph.CreateSpec) {
 		})
 		_node.UpdateTime = value
 	}
-	if value, ok := rlc.mutation.Name(); ok {
+	if value, ok := rlc.mutation.Number(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: rulelimit.FieldName,
+			Column: rulelimit.FieldNumber,
 		})
-		_node.Name = value
+		_node.Number = value
 	}
 	if value, ok := rlc.mutation.LimitType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
