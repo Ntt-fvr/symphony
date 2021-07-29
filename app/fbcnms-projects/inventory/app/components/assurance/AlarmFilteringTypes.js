@@ -22,6 +22,8 @@ import ConfigureTitle from './common/ConfigureTitle';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
+import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
+import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -89,6 +91,7 @@ const AlarmFilteringTypes = () => {
       setDataAlarms(data);
     });
   }, []);
+    
 
   const handleClickEdit = (alarm: Alarms) => {
     setShowEditForm(true);
@@ -98,6 +101,8 @@ const AlarmFilteringTypes = () => {
   const handleClickAdd = () => {
     setShowForm(true);
   };
+
+
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
@@ -112,6 +117,7 @@ const AlarmFilteringTypes = () => {
       <EditAlarmFilteringItemForm
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
+        // onChangeDelete={}
       />
     );
   }
@@ -154,7 +160,7 @@ const AlarmFilteringTypes = () => {
           <AlarmFilteringTable
             dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
             edit={handleClickEdit}
-            // onChange={() => handleRemove(item.node.id)}
+            // onChange={handleRemove}
           />
         </Grid>
       </Grid>
