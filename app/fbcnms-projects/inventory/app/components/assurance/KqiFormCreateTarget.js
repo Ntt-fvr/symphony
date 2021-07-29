@@ -8,21 +8,21 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import classNames from 'classnames';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import Text from '@symphony/design-system/components/Text';
-import TextField from '@material-ui/core/TextField';
-import {StatusActive} from './AlarmFilteringStatus';
+import {MenuItem, Select} from '@material-ui/core';
 
 import Switch from './common/Switch';
 
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -30,14 +30,64 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     margin: '40px',
   },
-  formField: {
-    margin: '0 43px 22px 0',
+  select: {
+    '& .MuiSelect-select': {
+      padding: '0 0 0 9px',
+    },
+    border: '1px solid #D2DAE7',
+    height: '36px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px',
   },
-  formFieldStatus: {
-    marginTop: '1rem',
+  selectWarningComparator: {
+    width: '25%',
+    margin: '0 2rem 0 0',
+  },
+  formField: {
+    width: 'auto',
+    margin: '0 1rem 1rem 1rem',
+  },
+  formFieldHours: {
+    margin: '0 1rem 1rem 10rem',
+  },
+  warningComparator: {
+    width: 'auto',
+    height: 'auto',
+    display: 'flex',
+    margin: '0 1rem 1rem 0',
+  },
+  contPeriods: {
+    width: '90px',
+  },
+  periods: {
+    width: '100%',
+    '&.makeStyles-root': {
+      width: '100%',
+    },
+  },
+  hours: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: '0 1rem 1rem 0',
+  },
+  activeHours: {
+    width: '74px',
+  },
+  from: {
+    margin: '0 0.5rem 0 0',
+  },
+  to: {
+    margin: '0 0.5rem 0 0.5rem',
   },
   textInput: {
     minHeight: '36px',
+  },
+  textIndicator: {
+    width: '25%',
   },
   option: {
     width: '111px',
@@ -48,131 +98,172 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  title: {
-    marginLeft: '10px',
-  },
   textTitle: {
-    paddingLeft: '2rem',
+    paddingLeft: '3rem',
   },
-  titleButtons: {
-    padding: '1rem 1rem 0 1rem',
-    alignItems: 'center',
-  },
-  reason: {
-    minHeight: '100px',
-  },
-  status: {
-    paddingTop: '40px',
-  },
-  time: {
-    marginBottom: '20px',
+  sectionSelects: {
+    display: 'flex',
   },
 }));
-
+const data = {
+  counters: {
+    edges: [
+      {
+        node: {
+          id: '244813135872',
+          name: 'contador_family_7',
+          networkManagerSystem: 'hola bebe',
+          externalID: '123456789',
+        },
+      },
+      {
+        node: {
+          id: '244813135873',
+          name: 'contador_family_8',
+          networkManagerSystem: 'hola sergio',
+          externalID: '987654321',
+        },
+      },
+    ],
+  },
+};
 const KqiFormCreateTarget = props => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons}>
-          <Grid item xs={10}>
-            <Text className={classes.textTitle} variant="h6">
-              {fbt('Create Target', ' ')}
-            </Text>
-          </Grid>
-          <Grid item xs={2}>
-            <Grid container>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    className={classes.option}
-                    variant="outlined"
-                    color="primary"
-                    onClick={props.returnFormEdit}>
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    onClick={props.returnFormEdit}
-                    className={classes.option}
-                    variant="contained"
-                    color="primary">
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
+      <Grid container spacing={1}>
+        <Grid item xs={10}>
+          <Text className={classes.textTitle} variant="h6">
+            {fbt('Create target', ' ')}
+          </Text>
+        </Grid>
+        <Grid item xs={2}>
+          <Grid container>
+            <Grid xs={6}>
+              <FormField>
+                <Button
+                  className={classes.option}
+                  variant="outlined"
+                  color="primary"
+                  onClick={props.returnFormEdit}>
+                  Cancel
+                </Button>
+              </FormField>
+            </Grid>
+            <Grid xs={6}>
+              <FormField>
+                <Button
+                  onClick={props.returnFormEdit}
+                  className={classes.option}
+                  variant="contained"
+                  color="primary">
+                  Save
+                </Button>
+              </FormField>
             </Grid>
           </Grid>
         </Grid>
+
         <Grid item xs={12}>
           <Card>
-            <Grid container>
+            <Grid container spacing={1}>
               <Grid item xs={1}>
-                <FormField label="Enabled">
+                <FormField className={classes.formField} label="Enabled">
                   <Switch />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField className={classes.formField} label="Name">
+                <FormField className={classes.formField} label="ID">
                   <TextInput className={classes.textInput} />
-                </FormField>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField
-                  label="Network Resource"
-                  className={classes.formField}>
-                  <TextInput className={classes.textInput} />
-                </FormField>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField className={classes.formField} label="Reason">
-                  <TextInput
-                    className={classes.textInput}
-                    type="multiline"
-                    rows={4}
-                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid className={classes.time} item xs={12}>
-                  <Text variant="subtitle1">Exception period</Text>
-                </Grid>
                 <Grid item xs={6}>
-                  <FormField label="Start" className={classes.formField}>
-                    <TextField
-                      id="datetime-local"
-                      type="datetime-local"
-                      defaultValue="2017-05-24T10:30"
-                      className={''}
-                    />
+                  <FormField label="Comparator" className={classes.formField}>
+                    <div className={classes.warningComparator}>
+                      <Select
+                        className={classNames(
+                          classes.select,
+                          classes.selectWarningComparator,
+                        )}
+                        disableUnderline
+                        name="family">
+                        {data.counters.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <TextInput
+                        placeholder="Number"
+                        className={classes.textIndicator}
+                      />
+                    </div>
                   </FormField>
                 </Grid>
                 <Grid item xs={6}>
-                  <FormField label="End" className={classes.formField}>
-                    <TextField
-                      id="datetime-local"
-                      type="datetime-local"
-                      defaultValue="2017-05-24T10:30"
-                      className={''}
-                    />
+                  <FormField
+                    label="Warning comparator"
+                    className={classes.formField}>
+                    <div className={classes.warningComparator}>
+                      <Select
+                        className={classNames(
+                          classes.select,
+                          classes.selectWarningComparator,
+                        )}
+                        disableUnderline
+                        name="family">
+                        {data.counters.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <TextInput
+                        placeholder="Number"
+                        className={classes.textIndicator}
+                      />
+                    </div>
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container item xs={6} className={classes.status}>
-                <Grid item xs={3}>
-                  <FormField label="Status" className={classes.formField}>
-                    <StatusActive className={classes.formFieldStatus} />
-                  </FormField>
-                </Grid>
-                <Grid item xs={9}>
-                  <FormField label="ID" className={classes.formField}>
-                    <TextInput className={classes.textInput} />
-                  </FormField>
-                </Grid>
+              <Grid item xs={6}>
+                <FormField className={classes.formField} label="Description">
+                  <TextInput
+                    className={classes.textInput}
+                    type="multiline"
+                    rows={3}
+                  />
+                </FormField>
+              </Grid>
+              <Grid className={classes.sectionSelects} container item xs={6}>
+                <FormField className={classes.formField} label="Periods">
+                  <div className={classes.contPeriods}>
+                    <TextInput className={classes.periods} type="number" />
+                  </div>
+                </FormField>
+
+                <FormField
+                  className={classes.formField}
+                  label="Allowed Varation">
+                  <div className={classes.contPeriods}>
+                    <TextInput className={classes.periods} type="number" />
+                  </div>
+                </FormField>
+
+                <FormField
+                  className={classes.formFieldHours}
+                  label="Active Hours">
+                  <div className={classes.hours}>
+                    <Text className={classes.from}>From</Text>
+
+                    <TextInput suffix={'hrs'} className={classes.activeHours} />
+                    <Text className={classes.to}>to</Text>
+
+                    <TextInput suffix={'hrs'} className={classes.activeHours} />
+                  </div>
+                </FormField>
               </Grid>
             </Grid>
           </Card>

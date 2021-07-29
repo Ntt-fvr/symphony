@@ -18,6 +18,7 @@ import KqiFormEdit from './KqiFormEdit';
 
 import Button from '@symphony/design-system/components/Button';
 import KqiTable from './KqiTable';
+import Periods from './Periods';
 import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({

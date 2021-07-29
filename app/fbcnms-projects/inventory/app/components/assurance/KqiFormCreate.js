@@ -189,6 +189,11 @@ const KqiFormCreate = props => {
                     </Select>
                   </FormField>
                 </Grid>
+                <Grid className={classes.time} item xs={12}>
+                  <Text className={classes.titleTime} variant="subtitle1">
+                    Activation period
+                  </Text>
+                </Grid>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Description">
@@ -200,11 +205,6 @@ const KqiFormCreate = props => {
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid className={classes.time} item xs={12}>
-                  <Text className={classes.titleTime} variant="subtitle1">
-                    Activation period
-                  </Text>
-                </Grid>
                 <Grid item xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
