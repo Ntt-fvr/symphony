@@ -4671,7 +4671,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     r.ID,
 		Type:   "Rule",
-		Fields: make([]*Field, 9),
+		Fields: make([]*Field, 10),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -4723,10 +4723,18 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "endDateTime",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(r.EventTypeName); err != nil {
+	if buf, err = json.Marshal(r.Status); err != nil {
 		return nil, err
 	}
 	node.Fields[6] = &Field{
+		Type:  "bool",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(r.EventTypeName); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
 		Type:  "string",
 		Name:  "eventTypeName",
 		Value: string(buf),
@@ -4734,7 +4742,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(r.SpecificProblem); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "string",
 		Name:  "specificProblem",
 		Value: string(buf),
@@ -4742,7 +4750,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(r.AdditionalInfo); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "string",
 		Name:  "additionalInfo",
 		Value: string(buf),

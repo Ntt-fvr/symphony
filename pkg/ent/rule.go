@@ -35,6 +35,8 @@ type Rule struct {
 	StartDateTime time.Time `json:"startDateTime,omitempty"`
 	// EndDateTime holds the value of the "endDateTime" field.
 	EndDateTime time.Time `json:"endDateTime,omitempty"`
+	// Status holds the value of the "status" field.
+	Status bool `json:"status,omitempty"`
 	// EventTypeName holds the value of the "eventTypeName" field.
 	EventTypeName *string `json:"eventTypeName,omitempty"`
 	// SpecificProblem holds the value of the "specificProblem" field.
@@ -125,6 +127,7 @@ func (*Rule) scanValues() []interface{} {
 		&sql.NullInt64{},  // gracePeriod
 		&sql.NullTime{},   // startDateTime
 		&sql.NullTime{},   // endDateTime
+		&sql.NullBool{},   // status
 		&sql.NullString{}, // eventTypeName
 		&sql.NullString{}, // specificProblem
 		&sql.NullString{}, // additionalInfo
@@ -182,25 +185,30 @@ func (r *Rule) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		r.EndDateTime = value.Time
 	}
-	if value, ok := values[6].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field eventTypeName", values[6])
+	if value, ok := values[6].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[6])
+	} else if value.Valid {
+		r.Status = value.Bool
+	}
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field eventTypeName", values[7])
 	} else if value.Valid {
 		r.EventTypeName = new(string)
 		*r.EventTypeName = value.String
 	}
-	if value, ok := values[7].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field specificProblem", values[7])
+	if value, ok := values[8].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field specificProblem", values[8])
 	} else if value.Valid {
 		r.SpecificProblem = new(string)
 		*r.SpecificProblem = value.String
 	}
-	if value, ok := values[8].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field additionalInfo", values[8])
+	if value, ok := values[9].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field additionalInfo", values[9])
 	} else if value.Valid {
 		r.AdditionalInfo = new(string)
 		*r.AdditionalInfo = value.String
 	}
-	values = values[9:]
+	values = values[10:]
 	if len(values) == len(rule.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field event_severity_eventseverityrule", value)
@@ -279,6 +287,8 @@ func (r *Rule) String() string {
 	builder.WriteString(r.StartDateTime.Format(time.ANSIC))
 	builder.WriteString(", endDateTime=")
 	builder.WriteString(r.EndDateTime.Format(time.ANSIC))
+	builder.WriteString(", status=")
+	builder.WriteString(fmt.Sprintf("%v", r.Status))
 	if v := r.EventTypeName; v != nil {
 		builder.WriteString(", eventTypeName=")
 		builder.WriteString(*v)

@@ -1805,6 +1805,7 @@ var (
 		{Name: "grace_period", Type: field.TypeInt},
 		{Name: "start_date_time", Type: field.TypeTime},
 		{Name: "end_date_time", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeBool},
 		{Name: "event_type_name", Type: field.TypeString, Nullable: true},
 		{Name: "specific_problem", Type: field.TypeString, Nullable: true},
 		{Name: "additional_info", Type: field.TypeString, Nullable: true},
@@ -1820,21 +1821,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "rules_event_severities_eventseverityrule",
-				Columns: []*schema.Column{RulesColumns[10]},
+				Columns: []*schema.Column{RulesColumns[11]},
 
 				RefColumns: []*schema.Column{EventSeveritiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "rules_rule_types_ruletyperule",
-				Columns: []*schema.Column{RulesColumns[11]},
+				Columns: []*schema.Column{RulesColumns[12]},
 
 				RefColumns: []*schema.Column{RuleTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "rules_tresholds_ruletreshold",
-				Columns: []*schema.Column{RulesColumns[12]},
+				Columns: []*schema.Column{RulesColumns[13]},
 
 				RefColumns: []*schema.Column{TresholdsColumns[0]},
 				OnDelete:   schema.SetNull,

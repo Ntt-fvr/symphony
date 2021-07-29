@@ -43287,6 +43287,7 @@ type RuleMutation struct {
 	addgracePeriod       *int
 	startDateTime        *time.Time
 	endDateTime          *time.Time
+	status               *bool
 	eventTypeName        *string
 	specificProblem      *string
 	additionalInfo       *string
@@ -43626,6 +43627,43 @@ func (m *RuleMutation) ResetEndDateTime() {
 	m.endDateTime = nil
 }
 
+// SetStatus sets the status field.
+func (m *RuleMutation) SetStatus(b bool) {
+	m.status = &b
+}
+
+// Status returns the status value in the mutation.
+func (m *RuleMutation) Status() (r bool, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the Rule.
+// If the Rule object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RuleMutation) OldStatus(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *RuleMutation) ResetStatus() {
+	m.status = nil
+}
+
 // SetEventTypeName sets the eventTypeName field.
 func (m *RuleMutation) SetEventTypeName(s string) {
 	m.eventTypeName = &s
@@ -43960,7 +43998,7 @@ func (m *RuleMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *RuleMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.create_time != nil {
 		fields = append(fields, rule.FieldCreateTime)
 	}
@@ -43978,6 +44016,9 @@ func (m *RuleMutation) Fields() []string {
 	}
 	if m.endDateTime != nil {
 		fields = append(fields, rule.FieldEndDateTime)
+	}
+	if m.status != nil {
+		fields = append(fields, rule.FieldStatus)
 	}
 	if m.eventTypeName != nil {
 		fields = append(fields, rule.FieldEventTypeName)
@@ -44008,6 +44049,8 @@ func (m *RuleMutation) Field(name string) (ent.Value, bool) {
 		return m.StartDateTime()
 	case rule.FieldEndDateTime:
 		return m.EndDateTime()
+	case rule.FieldStatus:
+		return m.Status()
 	case rule.FieldEventTypeName:
 		return m.EventTypeName()
 	case rule.FieldSpecificProblem:
@@ -44035,6 +44078,8 @@ func (m *RuleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldStartDateTime(ctx)
 	case rule.FieldEndDateTime:
 		return m.OldEndDateTime(ctx)
+	case rule.FieldStatus:
+		return m.OldStatus(ctx)
 	case rule.FieldEventTypeName:
 		return m.OldEventTypeName(ctx)
 	case rule.FieldSpecificProblem:
@@ -44091,6 +44136,13 @@ func (m *RuleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEndDateTime(v)
+		return nil
+	case rule.FieldStatus:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	case rule.FieldEventTypeName:
 		v, ok := value.(string)
@@ -44216,6 +44268,9 @@ func (m *RuleMutation) ResetField(name string) error {
 		return nil
 	case rule.FieldEndDateTime:
 		m.ResetEndDateTime()
+		return nil
+	case rule.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case rule.FieldEventTypeName:
 		m.ResetEventTypeName()

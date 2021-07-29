@@ -5846,6 +5846,7 @@ type Rule implements Node {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: EventSeverity!
   treshold: Treshold!
 }
@@ -5858,6 +5859,7 @@ input RuleInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
+  status: Boolean!
   ruleLimit: [RuleLimitInput!]
 }
 
@@ -5870,6 +5872,7 @@ input AddRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }
@@ -5884,6 +5887,7 @@ input EditRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }

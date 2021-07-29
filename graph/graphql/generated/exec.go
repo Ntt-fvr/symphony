@@ -1243,6 +1243,7 @@ type ComplexityRoot struct {
 		Ruletype        func(childComplexity int) int
 		SpecificProblem func(childComplexity int) int
 		StartDateTime   func(childComplexity int) int
+		Status          func(childComplexity int) int
 		Treshold        func(childComplexity int) int
 	}
 
@@ -8335,6 +8336,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Rule.StartDateTime(childComplexity), true
+
+	case "Rule.status":
+		if e.complexity.Rule.Status == nil {
+			break
+		}
+
+		return e.complexity.Rule.Status(childComplexity), true
 
 	case "Rule.treshold":
 		if e.complexity.Rule.Treshold == nil {
@@ -16578,6 +16586,7 @@ type Rule implements Node {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: EventSeverity!
   treshold: Treshold!
 }
@@ -16590,6 +16599,7 @@ input RuleInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
+  status: Boolean!
   ruleLimit: [RuleLimitInput!]
 }
 
@@ -16602,6 +16612,7 @@ input AddRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }
@@ -16616,6 +16627,7 @@ input EditRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }
@@ -49688,6 +49700,41 @@ func (ec *executionContext) _Rule_additionalInfo(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Rule_status(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Rule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Rule_eventSeverity(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -63726,6 +63773,14 @@ func (ec *executionContext) unmarshalInputAddRuleInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "eventSeverity":
 			var err error
 
@@ -66876,6 +66931,14 @@ func (ec *executionContext) unmarshalInputEditRuleInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "eventSeverity":
 			var err error
 
@@ -69341,6 +69404,14 @@ func (ec *executionContext) unmarshalInputRuleInput(ctx context.Context, obj int
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("additionalInfo"))
 			it.AdditionalInfo, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -79829,6 +79900,11 @@ func (ec *executionContext) _Rule(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Rule_specificProblem(ctx, field, obj)
 		case "additionalInfo":
 			out.Values[i] = ec._Rule_additionalInfo(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._Rule_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "eventSeverity":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

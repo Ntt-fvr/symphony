@@ -139,6 +139,13 @@ func EndDateTime(v time.Time) predicate.Rule {
 	})
 }
 
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v bool) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
 // EventTypeName applies equality check predicate on the "eventTypeName" field. It's identical to EventTypeNameEQ.
 func EventTypeName(v string) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
@@ -648,6 +655,20 @@ func EndDateTimeLT(v time.Time) predicate.Rule {
 func EndDateTimeLTE(v time.Time) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldEndDateTime), v))
+	})
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v bool) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v bool) predicate.Rule {
+	return predicate.Rule(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStatus), v))
 	})
 }
 

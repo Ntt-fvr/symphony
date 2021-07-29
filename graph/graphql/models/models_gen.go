@@ -262,6 +262,7 @@ type AddRuleInput struct {
 	EventTypeName   *string   `json:"eventTypeName"`
 	SpecificProblem *string   `json:"specificProblem"`
 	AdditionalInfo  *string   `json:"additionalInfo"`
+	Status          bool      `json:"status"`
 	EventSeverity   int       `json:"eventSeverity"`
 	Treshold        int       `json:"treshold"`
 }
@@ -692,6 +693,7 @@ type EditRuleInput struct {
 	EventTypeName   *string    `json:"eventTypeName"`
 	SpecificProblem *string    `json:"specificProblem"`
 	AdditionalInfo  *string    `json:"additionalInfo"`
+	Status          bool       `json:"status"`
 	EventSeverity   int        `json:"eventSeverity"`
 	Treshold        int        `json:"treshold"`
 }
@@ -996,6 +998,7 @@ type RuleInput struct {
 	EventTypeName   string            `json:"eventTypeName"`
 	SpecificProblem string            `json:"specificProblem"`
 	AdditionalInfo  string            `json:"additionalInfo"`
+	Status          bool              `json:"status"`
 	RuleLimit       []*RuleLimitInput `json:"ruleLimit"`
 }
 
