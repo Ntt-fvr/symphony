@@ -1,0 +1,290 @@
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow strict-local
+ * @format
+ */
+
+import React, {useState} from 'react';
+import fbt from 'fbt';
+
+import IconButton from '@symphony/design-system/components/IconButton';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+
+import Button from '@material-ui/core/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import Grid from '@material-ui/core/Grid';
+import Text from '@symphony/design-system/components/Text';
+import {MenuItem, Select} from '@material-ui/core';
+
+import classNames from 'classnames';
+
+import Switch from './common/Switch';
+
+import {makeStyles} from '@material-ui/styles';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+    margin: '40px',
+  },
+  select: {
+    '& .MuiSelect-select': {
+      padding: '0 0 0 9px',
+    },
+    border: '1px solid #D2DAE7',
+    height: '36px',
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box',
+    minHeight: '36px',
+    borderRadius: '4px',
+    fontSize: '14px',
+  },
+  selectWarningComparator: {
+    width: '25%',
+    margin: '0 2rem 0 0',
+  },
+  formField: {
+    width: 'auto',
+    margin: '0 1rem 1rem 1rem',
+  },
+  formFieldHours: {
+    margin: '0 1rem 1rem 10rem',
+  },
+  warningComparator: {
+    width: 'auto',
+    height: 'auto',
+    display: 'flex',
+    margin: '0 1rem 1rem 0',
+  },
+  contPeriods: {
+    width: '90px',
+  },
+  periods: {
+    width: '100%',
+    '&.makeStyles-root': {
+      width: '100%',
+    },
+  },
+  hours: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: '0 1rem 1rem 0',
+  },
+  activeHours: {
+    width: '74px',
+  },
+  from: {
+    margin: '0 0.5rem 0 0',
+  },
+  to: {
+    margin: '0 0.5rem 0 0.5rem',
+  },
+  textInput: {
+    minHeight: '36px',
+  },
+  textIndicator: {
+    width: '25%',
+  },
+  option: {
+    width: '111px',
+    height: '36px',
+    alignSelf: 'flex-end',
+  },
+  delete: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  textTitle: {
+    paddingLeft: '3rem',
+  },
+  sectionSelects: {
+    display: 'flex',
+  },
+}));
+const handleRemove = () => {
+  console.log('remove');
+};
+const data = {
+  counters: {
+    edges: [
+      {
+        node: {
+          id: '244813135872',
+          name: 'contador_family_7',
+          networkManagerSystem: 'hola bebe',
+          externalID: '123456789',
+        },
+      },
+      {
+        node: {
+          id: '244813135873',
+          name: 'contador_family_8',
+          networkManagerSystem: 'hola sergio',
+          externalID: '987654321',
+        },
+      },
+    ],
+  },
+};
+const KqiFormEditTarget = props => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={1}>
+        <Grid item xs={9}>
+          <Text className={classes.textTitle} variant="h6">
+            {fbt('KQI Catalog / TINE Retainability /SLO TTLI Customer 1', ' ')}
+          </Text>
+        </Grid>
+        <Grid item xs={1}>
+          <IconButton
+            className={classes.delete}
+            skin={'gray'}
+            icon={DeleteOutlinedIcon}
+            onClick={handleRemove}
+          />
+        </Grid>
+        <Grid item xs={2}>
+          <Grid container>
+            <Grid xs={6}>
+              <FormField>
+                <Button
+                  className={classes.option}
+                  variant="outlined"
+                  color="primary"
+                  onClick={props.returnFormEdit}>
+                  Cancel
+                </Button>
+              </FormField>
+            </Grid>
+            <Grid xs={6}>
+              <FormField>
+                <Button
+                  onClick={props.returnFormEdit}
+                  className={classes.option}
+                  variant="contained"
+                  color="primary">
+                  Save
+                </Button>
+              </FormField>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Card>
+            <Grid container spacing={1}>
+              <Grid item xs={1}>
+                <FormField className={classes.formField} label="Enabled">
+                  <Switch />
+                </FormField>
+              </Grid>
+              <Grid item xs={11}>
+                <FormField className={classes.formField} label="ID">
+                  <TextInput className={classes.textInput} />
+                </FormField>
+              </Grid>
+              <Grid container item xs={6}>
+                <Grid item xs={6}>
+                  <FormField label="Comparator" className={classes.formField}>
+                    <div className={classes.warningComparator}>
+                      <Select
+                        className={classNames(
+                          classes.select,
+                          classes.selectWarningComparator,
+                        )}
+                        disableUnderline
+                        name="family">
+                        {data.counters.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <TextInput
+                        placeholder="Number"
+                        className={classes.textIndicator}
+                      />
+                    </div>
+                  </FormField>
+                </Grid>
+                <Grid item xs={6}>
+                  <FormField
+                    label="Warning comparator"
+                    className={classes.formField}>
+                    <div className={classes.warningComparator}>
+                      <Select
+                        className={classNames(
+                          classes.select,
+                          classes.selectWarningComparator,
+                        )}
+                        disableUnderline
+                        name="family">
+                        {data.counters.edges.map((item, index) => (
+                          <MenuItem key={index} value={item.node?.id}>
+                            {item.node?.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <TextInput
+                        placeholder="Number"
+                        className={classes.textIndicator}
+                      />
+                    </div>
+                  </FormField>
+                </Grid>
+              </Grid>
+              <Grid item xs={6}>
+                <FormField className={classes.formField} label="Description">
+                  <TextInput
+                    className={classes.textInput}
+                    type="multiline"
+                    rows={3}
+                  />
+                </FormField>
+              </Grid>
+              <Grid className={classes.sectionSelects} container item xs={6}>
+                <FormField className={classes.formField} label="Periods">
+                  <div className={classes.contPeriods}>
+                    <TextInput className={classes.periods} type="number" />
+                  </div>
+                </FormField>
+
+                <FormField
+                  className={classes.formField}
+                  label="Allowed Varation">
+                  <div className={classes.contPeriods}>
+                    <TextInput className={classes.periods} type="number" />
+                  </div>
+                </FormField>
+
+                <FormField
+                  className={classes.formFieldHours}
+                  label="Active Hours">
+                  <div className={classes.hours}>
+                    <Text className={classes.from}>From</Text>
+
+                    <TextInput suffix={'hrs'} className={classes.activeHours} />
+                    <Text className={classes.to}>to</Text>
+
+                    <TextInput suffix={'hrs'} className={classes.activeHours} />
+                  </div>
+                </FormField>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
+export default KqiFormEditTarget;

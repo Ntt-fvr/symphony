@@ -11,7 +11,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import KqiSourceAddedSuccessfully from './KqiSourceAddedSuccessfully';
 
 // MUTATIONS //
 
@@ -94,11 +94,11 @@ export const KqiAddItemForm = (props: Props) => {
 
   if (showChecking) {
     return (
-      <AddedSuccessfullyMessage
-        data_entry="counter"
-        card_header="Add Counter"
-        title="Counter"
-        text_button="Add new counter"
+      <KqiSourceAddedSuccessfully
+        data_entry="KQI Source"
+        card_header="Add KQI Source"
+        title="KQI Source"
+        text_button="Add new KQI Source"
       />
     );
   }
@@ -118,7 +118,7 @@ export const KqiAddItemForm = (props: Props) => {
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="ID" required>
+      <FormField className={classes.formField} label="ID">
         <TextInput
           className={classes.textInput}
           name="id"
