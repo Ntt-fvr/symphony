@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
+
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -450,4 +452,56 @@ func (h Flower) VerifyBlockInstanceOutputsHook() ent.Hook {
 			hook.HasOp(ent.OpUpdateOne),
 			hook.HasFields(blockinstance.FieldStatus),
 		))
+}
+
+// UpdateFlowInstanceStatus if the blockInstance status is failed or if is the endBlockInstance is completed
+func UpdateFlowInstanceStatus() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.BlockInstanceFunc(func(ctx context.Context, mutation *ent.BlockInstanceMutation) (ent.Value, error) {
+			var (
+				flowInstanceID int
+				err            error
+				blockID        int
+			)
+			status, _ := mutation.Status()
+			if mutation.Op().Is(ent.OpCreate) {
+				flowInstanceID, _ = mutation.FlowInstanceID()
+				blockID, _ = mutation.BlockID()
+			} else {
+				id, exists := mutation.ID()
+				if !exists {
+					return nil, fmt.Errorf("blockinstance has no id")
+				}
+				flowInstanceID, _ = mutation.Client().BlockInstance.Query().
+					Where(blockinstance.ID(id)).
+					QueryFlowInstance().
+					OnlyID(ctx)
+				blockID, _ = mutation.Client().BlockInstance.Query().
+					Where(blockinstance.ID(id)).
+					QueryBlock().
+					OnlyID(ctx)
+			}
+
+			b := mutation.Client().Block.Query().
+				Where(block.ID(blockID)).
+				OnlyX(ctx)
+
+			if flowInstanceID != 0 && status == blockinstance.StatusFailed {
+				if err = mutation.Client().FlowInstance.UpdateOneID(flowInstanceID).
+					SetStatus(flowinstance.StatusFailed).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update flow instance: %w", err)
+				}
+			} else if flowInstanceID != 0 && status == blockinstance.StatusCompleted && block.TypeEnd == b.Type {
+				if err = mutation.Client().FlowInstance.UpdateOneID(flowInstanceID).
+					SetStatus(flowinstance.StatusCompleted).
+					Exec(ctx); err != nil {
+					return nil, fmt.Errorf("failed to update flow instance: %w", err)
+				}
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
 }

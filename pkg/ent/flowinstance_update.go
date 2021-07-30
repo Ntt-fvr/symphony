@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
@@ -78,6 +79,58 @@ func (fiu *FlowInstanceUpdate) SetNillableIncompletionReason(s *string) *FlowIns
 // ClearIncompletionReason clears the value of incompletion_reason.
 func (fiu *FlowInstanceUpdate) ClearIncompletionReason() *FlowInstanceUpdate {
 	fiu.mutation.ClearIncompletionReason()
+	return fiu
+}
+
+// SetBssCode sets the bss_code field.
+func (fiu *FlowInstanceUpdate) SetBssCode(s string) *FlowInstanceUpdate {
+	fiu.mutation.SetBssCode(s)
+	return fiu
+}
+
+// SetServiceInstanceCode sets the service_instance_code field.
+func (fiu *FlowInstanceUpdate) SetServiceInstanceCode(s string) *FlowInstanceUpdate {
+	fiu.mutation.SetServiceInstanceCode(s)
+	return fiu
+}
+
+// SetNillableServiceInstanceCode sets the service_instance_code field if the given value is not nil.
+func (fiu *FlowInstanceUpdate) SetNillableServiceInstanceCode(s *string) *FlowInstanceUpdate {
+	if s != nil {
+		fiu.SetServiceInstanceCode(*s)
+	}
+	return fiu
+}
+
+// ClearServiceInstanceCode clears the value of service_instance_code.
+func (fiu *FlowInstanceUpdate) ClearServiceInstanceCode() *FlowInstanceUpdate {
+	fiu.mutation.ClearServiceInstanceCode()
+	return fiu
+}
+
+// SetStartDate sets the start_date field.
+func (fiu *FlowInstanceUpdate) SetStartDate(t time.Time) *FlowInstanceUpdate {
+	fiu.mutation.SetStartDate(t)
+	return fiu
+}
+
+// SetEndDate sets the end_date field.
+func (fiu *FlowInstanceUpdate) SetEndDate(t time.Time) *FlowInstanceUpdate {
+	fiu.mutation.SetEndDate(t)
+	return fiu
+}
+
+// SetNillableEndDate sets the end_date field if the given value is not nil.
+func (fiu *FlowInstanceUpdate) SetNillableEndDate(t *time.Time) *FlowInstanceUpdate {
+	if t != nil {
+		fiu.SetEndDate(*t)
+	}
+	return fiu
+}
+
+// ClearEndDate clears the value of end_date.
+func (fiu *FlowInstanceUpdate) ClearEndDate() *FlowInstanceUpdate {
+	fiu.mutation.ClearEndDate()
 	return fiu
 }
 
@@ -326,6 +379,46 @@ func (fiu *FlowInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: flowinstance.FieldIncompletionReason,
 		})
 	}
+	if value, ok := fiu.mutation.BssCode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: flowinstance.FieldBssCode,
+		})
+	}
+	if value, ok := fiu.mutation.ServiceInstanceCode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: flowinstance.FieldServiceInstanceCode,
+		})
+	}
+	if fiu.mutation.ServiceInstanceCodeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: flowinstance.FieldServiceInstanceCode,
+		})
+	}
+	if value, ok := fiu.mutation.StartDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowinstance.FieldStartDate,
+		})
+	}
+	if value, ok := fiu.mutation.EndDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowinstance.FieldEndDate,
+		})
+	}
+	if fiu.mutation.EndDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: flowinstance.FieldEndDate,
+		})
+	}
 	if fiu.mutation.FlowCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -546,6 +639,58 @@ func (fiuo *FlowInstanceUpdateOne) SetNillableIncompletionReason(s *string) *Flo
 // ClearIncompletionReason clears the value of incompletion_reason.
 func (fiuo *FlowInstanceUpdateOne) ClearIncompletionReason() *FlowInstanceUpdateOne {
 	fiuo.mutation.ClearIncompletionReason()
+	return fiuo
+}
+
+// SetBssCode sets the bss_code field.
+func (fiuo *FlowInstanceUpdateOne) SetBssCode(s string) *FlowInstanceUpdateOne {
+	fiuo.mutation.SetBssCode(s)
+	return fiuo
+}
+
+// SetServiceInstanceCode sets the service_instance_code field.
+func (fiuo *FlowInstanceUpdateOne) SetServiceInstanceCode(s string) *FlowInstanceUpdateOne {
+	fiuo.mutation.SetServiceInstanceCode(s)
+	return fiuo
+}
+
+// SetNillableServiceInstanceCode sets the service_instance_code field if the given value is not nil.
+func (fiuo *FlowInstanceUpdateOne) SetNillableServiceInstanceCode(s *string) *FlowInstanceUpdateOne {
+	if s != nil {
+		fiuo.SetServiceInstanceCode(*s)
+	}
+	return fiuo
+}
+
+// ClearServiceInstanceCode clears the value of service_instance_code.
+func (fiuo *FlowInstanceUpdateOne) ClearServiceInstanceCode() *FlowInstanceUpdateOne {
+	fiuo.mutation.ClearServiceInstanceCode()
+	return fiuo
+}
+
+// SetStartDate sets the start_date field.
+func (fiuo *FlowInstanceUpdateOne) SetStartDate(t time.Time) *FlowInstanceUpdateOne {
+	fiuo.mutation.SetStartDate(t)
+	return fiuo
+}
+
+// SetEndDate sets the end_date field.
+func (fiuo *FlowInstanceUpdateOne) SetEndDate(t time.Time) *FlowInstanceUpdateOne {
+	fiuo.mutation.SetEndDate(t)
+	return fiuo
+}
+
+// SetNillableEndDate sets the end_date field if the given value is not nil.
+func (fiuo *FlowInstanceUpdateOne) SetNillableEndDate(t *time.Time) *FlowInstanceUpdateOne {
+	if t != nil {
+		fiuo.SetEndDate(*t)
+	}
+	return fiuo
+}
+
+// ClearEndDate clears the value of end_date.
+func (fiuo *FlowInstanceUpdateOne) ClearEndDate() *FlowInstanceUpdateOne {
+	fiuo.mutation.ClearEndDate()
 	return fiuo
 }
 
@@ -790,6 +935,46 @@ func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (_node *FlowInst
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: flowinstance.FieldIncompletionReason,
+		})
+	}
+	if value, ok := fiuo.mutation.BssCode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: flowinstance.FieldBssCode,
+		})
+	}
+	if value, ok := fiuo.mutation.ServiceInstanceCode(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: flowinstance.FieldServiceInstanceCode,
+		})
+	}
+	if fiuo.mutation.ServiceInstanceCodeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: flowinstance.FieldServiceInstanceCode,
+		})
+	}
+	if value, ok := fiuo.mutation.StartDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowinstance.FieldStartDate,
+		})
+	}
+	if value, ok := fiuo.mutation.EndDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowinstance.FieldEndDate,
+		})
+	}
+	if fiuo.mutation.EndDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: flowinstance.FieldEndDate,
 		})
 	}
 	if fiuo.mutation.FlowCleared() {

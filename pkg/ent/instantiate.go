@@ -37,6 +37,12 @@ func (c *BlockInstanceClient) Instantiate(bi *BlockInstance) *BlockInstance {
 }
 
 // Instantiate entity configuration.
+func (c *CategoryClient) Instantiate(ca *Category) *Category {
+	ca.config = c.config
+	return ca
+}
+
+// Instantiate entity configuration.
 func (c *CheckListCategoryClient) Instantiate(clc *CheckListCategory) *CheckListCategory {
 	clc.config = c.config
 	return clc
@@ -253,6 +259,24 @@ func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
 }
 
 // Instantiate entity configuration.
+func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
+	k.config = c.config
+	return k
+}
+
+// Instantiate entity configuration.
+func (c *KqiSourceClient) Instantiate(ks *KqiSource) *KqiSource {
+	ks.config = c.config
+	return ks
+}
+
+// Instantiate entity configuration.
+func (c *KqiTargetClient) Instantiate(kt *KqiTarget) *KqiTarget {
+	kt.config = c.config
+	return kt
+}
+
+// Instantiate entity configuration.
 func (c *LinkClient) Instantiate(l *Link) *Link {
 	l.config = c.config
 	return l
@@ -274,6 +298,12 @@ func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
 	pp.config = c.config
 	return pp
+}
+
+// Instantiate entity configuration.
+func (c *PerspectiveClient) Instantiate(pe *Perspective) *Perspective {
+	pe.config = c.config
+	return pe
 }
 
 // Instantiate entity configuration.
@@ -394,6 +424,12 @@ func (c *SurveyWiFiScanClient) Instantiate(swfs *SurveyWiFiScan) *SurveyWiFiScan
 func (c *TechClient) Instantiate(t *Tech) *Tech {
 	t.config = c.config
 	return t
+}
+
+// Instantiate entity configuration.
+func (c *TemporalFrecuencyClient) Instantiate(tf *TemporalFrecuency) *TemporalFrecuency {
+	tf.config = c.config
+	return tf
 }
 
 // Instantiate entity configuration.

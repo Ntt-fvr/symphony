@@ -9,6 +9,8 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebook/ent/schema/index"
+	"github.com/facebook/ent/schema/mixin"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -136,6 +138,27 @@ func (BlockInstance) Fields() []ent.Field {
 			Optional(),
 		field.Int("block_instance_counter").
 			Optional(),
+		field.Time("start_date").
+			Annotations(
+				entgql.OrderField("START_AT"),
+			),
+		field.Time("end_date").
+			Optional().
+			Nillable().
+			Annotations(
+				entgql.OrderField("END_AT"),
+			),
+	}
+}
+
+// Mixin returns flow instance mixins.
+func (BlockInstance) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.CreateTime{},
+		mixin.AnnotateFields(
+			mixin.UpdateTime{},
+			entgql.OrderField("UPDATED_AT"),
+		),
 	}
 }
 
@@ -161,4 +184,10 @@ func (BlockInstance) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),
 		),
 	)
+}
+
+func (BlockInstance) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.UpdateFlowInstanceStatus(),
+	}
 }

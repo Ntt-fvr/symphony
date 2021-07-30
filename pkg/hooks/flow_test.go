@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -175,17 +176,6 @@ func TestEndParamDefinitionsVerifications(t *testing.T) {
 			},
 			expectFail: false,
 		},
-		{
-			name: "with_default_wrong_type",
-			inputs: []*flowschema.VariableDefinition{
-				{
-					Key:          "param",
-					Type:         enum.VariableTypeString,
-					DefaultValue: pointer.ToString("22"),
-				},
-			},
-			expectFail: true,
-		},
 	}
 
 	for i, tc := range tests {
@@ -342,7 +332,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 				{
 					BlockID:               blk.ID,
 					VariableDefinitionKey: "mandatory_end_param",
-					Expression:            "\"\"",
+					Expression:            "",
 				},
 			}).
 			Exec(ctx)
@@ -678,6 +668,8 @@ func TestFlowInstanceCreation(t *testing.T) {
 
 	_, err = client.FlowInstance.Create().
 		SetFlow(flw).
+		SetStartDate(time.Now()).
+		SetBssCode("CODE1").
 		Save(ctx)
 	require.Error(t, err)
 	err = client.Flow.UpdateOne(flw).
@@ -687,6 +679,8 @@ func TestFlowInstanceCreation(t *testing.T) {
 	require.NoError(t, err)
 	flowInstance, err := client.FlowInstance.Create().
 		SetFlow(flw).
+		SetStartDate(time.Now()).
+		SetBssCode("CODE2").
 		Save(ctx)
 	require.NoError(t, err)
 	template, err := flowInstance.QueryTemplate().

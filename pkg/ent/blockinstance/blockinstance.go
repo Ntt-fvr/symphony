@@ -34,6 +34,10 @@ const (
 	FieldFailureReason = "failure_reason"
 	// FieldBlockInstanceCounter holds the string denoting the block_instance_counter field in the database.
 	FieldBlockInstanceCounter = "block_instance_counter"
+	// FieldStartDate holds the string denoting the start_date field in the database.
+	FieldStartDate = "start_date"
+	// FieldEndDate holds the string denoting the end_date field in the database.
+	FieldEndDate = "end_date"
 
 	// EdgeFlowInstance holds the string denoting the flow_instance edge name in mutations.
 	EdgeFlowInstance = "flow_instance"
@@ -77,6 +81,8 @@ var Columns = []string{
 	FieldOutputs,
 	FieldFailureReason,
 	FieldBlockInstanceCounter,
+	FieldStartDate,
+	FieldEndDate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the BlockInstance type.
@@ -107,7 +113,7 @@ func ValidColumn(column string) bool {
 //	import _ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 //
 var (
-	Hooks  [1]ent.Hook
+	Hooks  [2]ent.Hook
 	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the create_time field.
 	DefaultCreateTime func() time.Time

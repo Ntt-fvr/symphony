@@ -109,6 +109,26 @@ func (bic *BlockInstanceCreate) SetNillableBlockInstanceCounter(i *int) *BlockIn
 	return bic
 }
 
+// SetStartDate sets the start_date field.
+func (bic *BlockInstanceCreate) SetStartDate(t time.Time) *BlockInstanceCreate {
+	bic.mutation.SetStartDate(t)
+	return bic
+}
+
+// SetEndDate sets the end_date field.
+func (bic *BlockInstanceCreate) SetEndDate(t time.Time) *BlockInstanceCreate {
+	bic.mutation.SetEndDate(t)
+	return bic
+}
+
+// SetNillableEndDate sets the end_date field if the given value is not nil.
+func (bic *BlockInstanceCreate) SetNillableEndDate(t *time.Time) *BlockInstanceCreate {
+	if t != nil {
+		bic.SetEndDate(*t)
+	}
+	return bic
+}
+
 // SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
 func (bic *BlockInstanceCreate) SetFlowInstanceID(id int) *BlockInstanceCreate {
 	bic.mutation.SetFlowInstanceID(id)
@@ -232,6 +252,9 @@ func (bic *BlockInstanceCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
 	}
+	if _, ok := bic.mutation.StartDate(); !ok {
+		return &ValidationError{Name: "start_date", err: errors.New("ent: missing required field \"start_date\"")}
+	}
 	if _, ok := bic.mutation.FlowInstanceID(); !ok {
 		return &ValidationError{Name: "flow_instance", err: errors.New("ent: missing required edge \"flow_instance\"")}
 	}
@@ -320,6 +343,22 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Column: blockinstance.FieldBlockInstanceCounter,
 		})
 		_node.BlockInstanceCounter = value
+	}
+	if value, ok := bic.mutation.StartDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: blockinstance.FieldStartDate,
+		})
+		_node.StartDate = value
+	}
+	if value, ok := bic.mutation.EndDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: blockinstance.FieldEndDate,
+		})
+		_node.EndDate = &value
 	}
 	if nodes := bic.mutation.FlowInstanceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

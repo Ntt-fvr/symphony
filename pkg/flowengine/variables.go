@@ -46,17 +46,13 @@ func parseIntVariable(ctx context.Context, value int, variableType enum.Variable
 
 func parseSingleVariable(ctx context.Context, value string, variableType enum.VariableType) (values []interface{}, err error) {
 	var (
-		stringVal string
 		intVal    int
 		parsedVal interface{}
 	)
 	byteVal := []byte(value)
 	switch variableType {
 	case enum.VariableTypeString:
-		if err = json.Unmarshal(byteVal, &stringVal); err != nil {
-			return
-		}
-		values = append(values, stringVal)
+		values = append(values, value)
 	case enum.VariableTypeDate,
 		enum.VariableTypeInt,
 		enum.VariableTypeWorkOrder,
@@ -192,7 +188,14 @@ func verifyVariableValue(ctx context.Context, definition *flowschema.VariableDef
 	}
 	if definition.Choices != nil {
 		var multipleChoiceValues []interface{}
-		for _, choice := range definition.Choices {
+		for i := range definition.Choices {
+			choice := definition.Choices[i]
+			if definition.Type == enum.VariableTypeString {
+				byteVal := []byte(choice)
+				if err = json.Unmarshal(byteVal, &choice); err != nil {
+					return err
+				}
+			}
 			choiceValue, err := parseSingleVariable(ctx, choice, definition.Type)
 			if err != nil {
 				return fmt.Errorf("failed to validate variable type: %w", err)
@@ -237,7 +240,7 @@ func verifyVariableValue(ctx context.Context, definition *flowschema.VariableDef
 		}
 		for _, value := range values {
 			if !checkInChoices(value) {
-				return fmt.Errorf("value not found in choices, key=%s", definition.Key)
+				return fmt.Errorf("value %s not found in choices, key=%s", value, definition.Key)
 			}
 		}
 	}
