@@ -8,14 +8,31 @@
  * @format
  */
 
+import type {LimitRangeQuery} from './__generated__/LimitRangeQuery.graphql';
+
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import React from 'react';
+import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const ComparatorQuery = graphql`
+  query LimitRangeQuery {
+    comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -76,8 +93,31 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type Limit = {
+  data: {
+    upperTarget: string,
+    upperLimit: string,
+    lowerTarget: number,
+    lowerLimit: string,
+  },
+};
+
 const LimitRange = () => {
   const classes = useStyles();
+
+  const [limit, setLimit] = useState<Limit>({data: {}});
+  const data = useLazyLoadQuery<LimitRangeQuery>(ComparatorQuery, {});
+
+  function handleChange({target}) {
+    setLimit({
+      data: {
+        ...limit.data,
+        [target.name]: target.value,
+      },
+    });
+  }
+
+  console.log(limit);
 
   return (
     <div>
@@ -95,8 +135,13 @@ const LimitRange = () => {
               <Select
                 className={classes.selectUpper}
                 disableUnderline
-                name="upperTarget">
-                <MenuItem value={true}>NEQ</MenuItem>
+                name="upperTarget"
+                onChange={handleChange}>
+                {data.comparators.edges.map((item, index) => (
+                  <MenuItem key={index} value={item.node?.id}>
+                    {item.node?.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormField>
           </Grid>
@@ -107,6 +152,7 @@ const LimitRange = () => {
                 placeholder="Number"
                 className={`${classes.textInput} ${classes.green}`}
                 name="upperLimit"
+                onChange={handleChange}
               />
             </FormField>
           </Grid>
@@ -117,8 +163,13 @@ const LimitRange = () => {
               <Select
                 className={classes.selectLower}
                 disableUnderline
-                name="lowerTarget">
-                <MenuItem value={true}>NEQ</MenuItem>
+                name="lowerTarget"
+                onChange={handleChange}>
+                {data.comparators.edges.map((item, index) => (
+                  <MenuItem key={index} value={item.node?.id}>
+                    {item.node?.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormField>
           </Grid>
@@ -129,6 +180,7 @@ const LimitRange = () => {
                 placeholder="Number"
                 className={`${classes.textInput} ${classes.red}`}
                 name="lowerLimit"
+                onChange={handleChange}
               />
             </FormField>
           </Grid>

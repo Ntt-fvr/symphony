@@ -46,15 +46,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type Node = {
+  node: {
+    name: string,
+  },
+};
+
 type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
   data_entry: string,
+  names: Array<Node>,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
-  const {card_header, title, text_button, data_entry} = props;
+  const {card_header, title, text_button, data_entry, names} = props;
   const classes = useStyles();
   const [returnForm, setReturnForm] = useState(false);
 
@@ -69,7 +76,9 @@ const AddedSuccessfullyMessage = (props: Props) => {
           (data_entry === 'threshold' && (
             <AddThresholdItemForm dataValues={[]} />
           )) ||
-          (data_entry === 'counter' && <AddCounterItemForm dataValues={[]} />)}
+          (data_entry === 'counter' && (
+            <AddCounterItemForm counterNames={names} />
+          ))}
       </>
     );
   }

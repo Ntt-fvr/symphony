@@ -79,6 +79,7 @@ type Counters = {
         name: string,
       },
       vendorFk: {
+        id: string,
         name: string,
       },
     },
@@ -90,7 +91,7 @@ const CountersTypes = () => {
 
   const [items, setItems] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
+  const [dataEdit, setDataEdit] = useState<Counters>({});
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, CountersQuery, {}).then(data => {
@@ -153,7 +154,7 @@ const CountersTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm dataValues={counterNames} />
+          <AddCounterItemForm counterNames={items.counters?.edges} />
         </Grid>
       </Grid>
     </div>

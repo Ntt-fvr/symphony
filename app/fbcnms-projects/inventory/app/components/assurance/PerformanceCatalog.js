@@ -81,7 +81,7 @@ export default function PerformanceCatalog() {
       },
       path: 'threshold_types',
     },
-  ]
+  ];
 
   const tabMatch = location.pathname.match(/([^\/]*)\/*$/);
   const tabIndex =

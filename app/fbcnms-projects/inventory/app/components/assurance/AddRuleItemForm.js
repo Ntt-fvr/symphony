@@ -8,6 +8,16 @@
  * @format
  */
 
+import type {AddRuleLimitMutationVariables} from '../../mutations/__generated__/AddRuleLimitMutation.graphql';
+import type {AddRuleMutationResponse} from '../../mutations/__generated__/AddRuleMutation.graphql';
+import type {AddRuleMutationVariables} from '../../mutations/__generated__/AddRuleMutation.graphql';
+
+import type {AddRuleItemFormQuery} from './__generated__/AddRuleItemFormQuery.graphql';
+
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
+
+import AddRuleLimitMutation from '../../mutations/AddRuleLimitMutation';
+import AddRuleMutation from '../../mutations/AddRuleMutation';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -15,14 +25,39 @@ import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import LimitRange from './LimitRange';
-import React from 'react';
+import Paper from '@material-ui/core/Paper';
+import React, {useState} from 'react';
 import SwitchLabels from './common/Switch';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
+import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+
+const AddRuleQuery = graphql`
+  query AddRuleItemFormQuery {
+    eventSeveritys {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -56,12 +91,137 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     backgroundColor: '#556072',
   },
+  paper: {
+    height: '240px',
+    margin: '0 43px 22px 43px',
+    backgroundColor: '#F5F7FC',
+  },
+  selectUpper: {
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #00AF5B',
+    fontWeight: '700',
+    borderRadius: '4px',
+    backgroundColor: 'white',
+  },
+  selectLower: {
+    '& .MuiSelect-select': {
+      padding: '9px 0 0 10px',
+    },
+    border: '1px solid #FA383E',
+    fontWeight: '700',
+    borderRadius: '4px',
+    backgroundColor: 'white',
+  },
+  limitRange: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
+  },
+  limitRangeInputs: {
+    margin: '26px 26px 20px 0',
+  },
+  limitRangeSelect: {
+    margin: '0 20px 20px 26px',
+  },
+  red: {
+    border: '1px solid #FA383E',
+    borderRadius: '4px',
+  },
+  green: {
+    border: '1px solid #00AF5B',
+    borderRadius: '4px',
+  },
   icon: {
     fill: 'white',
   },
 }));
 
-const AddRuleItemForm = () => {
+type Props = $ReadOnly<{|
+  threshold: {
+    id: string,
+    name: string,
+  },
+  hideAddRuleForm: void => void,
+|}>;
+
+type Rule = {
+  data: {
+    id: string,
+    name: string,
+    gracePeriod: number,
+    specificProblem: string,
+    additionalInfo: string,
+    alarmSeverities: string,
+    alarmType: string,
+    upperTarget: string,
+    upperLimit: string,
+    lowerTarget: string,
+    lowerLimit: string,
+    startTime: string,
+    endTime: string,
+  },
+};
+
+const AddRuleItemForm = (props: Props) => {
+  const {threshold, hideAddRuleForm} = props;
+
+  const [rule, setRule] = useState<Rule>({data: {}});
+  const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
+
+  function handleChange({target}) {
+    setRule({
+      data: {
+        ...rule.data,
+        [target.name]: target.value,
+      },
+    });
+  }
+
+  function handleClick() {
+    const variables: AddRuleMutationVariables = {
+      input: {
+        name: rule.data.name,
+        gracePeriod: rule.data.gracePeriod,
+        startDateTime: moment(rule.data.startTime).format(),
+        endDateTime: moment(rule.data.endTime).format(),
+        ruleType: '223338299392',
+        eventTypeName: rule.data.alarmType,
+        specificProblem: rule.data.specificProblem,
+        additionalInfo: rule.data.additionalInfo,
+        eventSeverity: rule.data.alarmSeverities,
+        treshold: threshold.id,
+      },
+    };
+
+    const response: MutationCallbacks<AddRuleMutationResponse> = {
+      onCompleted: response => {
+        const variablesUpper: AddRuleLimitMutationVariables = {
+          input: {
+            name: rule.data.upperLimit,
+            limitType: 'UPPER',
+            comparator: rule.data.upperTarget,
+            rule: response.addRule.id,
+          },
+        };
+        const variablesLower: AddRuleLimitMutationVariables = {
+          input: {
+            name: rule.data.lowerLimit,
+            limitType: 'LOWER',
+            comparator: rule.data.lowerTarget,
+            rule: response.addRule.id,
+          },
+        };
+        AddRuleLimitMutation(variablesUpper);
+        AddRuleLimitMutation(variablesLower);
+      },
+    };
+
+    AddRuleMutation(variables, response);
+  }
+
   const classes = useStyles();
 
   return (
@@ -70,7 +230,7 @@ const AddRuleItemForm = () => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <ConfigureTitleSubItem
             title={fbt('Threshold Catalog/', 'Threshold Catalog')}
-            tag={''}
+            tag={` ${threshold.name}`}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
@@ -88,9 +248,11 @@ const AddRuleItemForm = () => {
                   label="Rule Name"
                   required>
                   <TextInput
-                    type="number"
+                    type="string"
+                    autoComplete="off"
                     className={classes.textInput}
                     name="name"
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -108,6 +270,7 @@ const AddRuleItemForm = () => {
                     className={classes.textInput}
                     type="number"
                     name="gracePeriod"
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -117,6 +280,7 @@ const AddRuleItemForm = () => {
                   label="Type of Rule"
                   required>
                   <TextInput
+                    value="Simple"
                     className={classes.textInput}
                     name="TypeOfRule"
                     disabled
@@ -134,9 +298,13 @@ const AddRuleItemForm = () => {
                         icon: classes.icon,
                       },
                     }}
-                    name="status">
-                    <MenuItem value={true}>Indeterminate</MenuItem>
-                    <MenuItem value={false}>Determinate</MenuItem>
+                    name="alarmSeverities"
+                    onChange={handleChange}>
+                    {data.eventSeveritys.edges.map((item, index) => (
+                      <MenuItem key={index} value={item.node?.id}>
+                        {item.node?.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormField>
               </Grid>
@@ -145,14 +313,82 @@ const AddRuleItemForm = () => {
                   className={classes.formField}
                   label="Alarm type name"
                   required>
-                  <TextInput className={classes.textInput} name="alarmType" />
+                  <TextInput
+                    className={classes.textInput}
+                    name="alarmType"
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
             </Grid>
 
             <Grid container>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <LimitRange />
+                <Paper elevation={0} className={classes.paper}>
+                  <Grid container>
+                    <Grid className={classes.limitRange} item xs={12} sm={12}>
+                      <Text weight="bold" variant="h6">
+                        Limits Range
+                      </Text>
+                    </Grid>
+                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                      <FormField
+                        className={classes.limitRangeSelect}
+                        label="Upper Target">
+                        <Select
+                          className={classes.selectUpper}
+                          disableUnderline
+                          name="upperTarget"
+                          onChange={handleChange}>
+                          {data.comparators.edges.map((item, index) => (
+                            <MenuItem key={index} value={item.node?.id}>
+                              {item.node?.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                      <FormField className={classes.limitRangeInputs}>
+                        <TextInput
+                          type="string"
+                          placeholder="Number"
+                          className={`${classes.textInput} ${classes.green}`}
+                          name="upperLimit"
+                          onChange={handleChange}
+                        />
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                      <FormField
+                        className={classes.limitRangeSelect}
+                        label="Lower Target">
+                        <Select
+                          className={classes.selectLower}
+                          disableUnderline
+                          name="lowerTarget"
+                          onChange={handleChange}>
+                          {data.comparators.edges.map((item, index) => (
+                            <MenuItem key={index} value={item.node?.id}>
+                              {item.node?.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                      <FormField className={classes.limitRangeInputs}>
+                        <TextInput
+                          type="string"
+                          placeholder="Number"
+                          className={`${classes.textInput} ${classes.red}`}
+                          name="lowerLimit"
+                          onChange={handleChange}
+                        />
+                      </FormField>
+                    </Grid>
+                  </Grid>
+                </Paper>
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField className={classes.formField}>
@@ -163,8 +399,8 @@ const AddRuleItemForm = () => {
                     variant="outlined"
                     id="datetime-local"
                     type="datetime-local"
-                    defaultValue="2021-07-02T11:30"
                     name="startTime"
+                    onChange={handleChange}
                   />
                 </FormField>
                 <FormField label="End" className={classes.formField}>
@@ -172,8 +408,8 @@ const AddRuleItemForm = () => {
                     variant="outlined"
                     id="datetime-local"
                     type="datetime-local"
-                    defaultValue="2021-07-02T11:30"
                     name="endTime"
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -186,6 +422,7 @@ const AddRuleItemForm = () => {
                     type="multiline"
                     rows={3}
                     name="specificProblem"
+                    onChange={handleChange}
                   />
                 </FormField>
                 <FormField
@@ -196,18 +433,31 @@ const AddRuleItemForm = () => {
                     type="multiline"
                     rows={3}
                     name="additionalInfo"
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
               <Grid container justify="flex-end">
                 <Grid item xs={2} sm={2} lg={1} xl={1}>
                   <FormField>
-                    <Button className={classes.addRule}>Save</Button>
+                    <Button
+                      className={classes.addRule}
+                      onClick={() => {
+                        handleClick();
+                        hideAddRuleForm();
+                      }}>
+                      Save
+                    </Button>
                   </FormField>
                 </Grid>
                 <Grid item xs={2} sm={2} lg={1} xl={1}>
                   <FormField>
-                    <Button className={classes.addRule} skin="brightGray">
+                    <Button
+                      className={classes.addRule}
+                      onClick={() => {
+                        hideAddRuleForm();
+                      }}
+                      skin="brightGray">
                       Cancel
                     </Button>
                   </FormField>

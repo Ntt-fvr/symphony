@@ -84,6 +84,9 @@ const useStyles = makeStyles(theme => ({
   description: {
     marginBottom: '20px',
   },
+  table: {
+    marginBottom: '30px',
+  },
 }));
 
 type Rule = {
@@ -103,12 +106,23 @@ type Props = $ReadOnly<{|
   },
   edit: void,
   addRule: void => void,
+  editRule: void => void,
   handleRemove: void => void,
   rule: Array<Rule>,
 |}>;
 
 export default function ThresholdTypeItem(props: Props) {
-  const {name, description, kpi, id, edit, addRule, rule, handleRemove} = props;
+  const {
+    name,
+    description,
+    kpi,
+    id,
+    edit,
+    addRule,
+    editRule,
+    rule,
+    handleRemove,
+  } = props;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   return (
@@ -174,14 +188,14 @@ export default function ThresholdTypeItem(props: Props) {
             <Grid xs={10} className={classes.description}>
               Description:{description}
             </Grid>
-            <Grid xs={10}>
+            <Grid className={classes.table} xs={10}>
               <Text
                 className={classes.rulesContained}
                 weight="bold"
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <Table rule={rule} />
+              <Table rule={rule} editRule={editRule} />
             </Grid>
           </Grid>
         </AccordionDetails>

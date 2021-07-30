@@ -85,6 +85,7 @@ type Props = $ReadOnly<{|
       name: string,
     },
     vendorFk: {
+      id: string,
       name: string,
     },
   },
@@ -100,7 +101,7 @@ const EditCounterItemForm = (props: Props) => {
   const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
   const counterID = useFormInput(formValues.externalID);
   const counterFamily = useFormInput(formValues.counterFamily.name);
-  const vendor = useFormInput(formValues.vendorFk.name);
+  const vendor = useFormInput(formValues.vendorFk.id);
 
   const data = useLazyLoadQuery<EditCounterItemFormQuery>(
     EditCountersQuery,
@@ -205,13 +206,12 @@ const EditCounterItemForm = (props: Props) => {
               </Grid>
             </Grid>
             <Grid item xs={12} sm={12} lg={4} xl={4}>
-              <FormField label="Vendor" className={classes.formField} required>
+              <FormField label="Domain" className={classes.formField}>
                 <Select
                   {...vendor}
                   className={classes.select}
-                  name="vendor"
                   disableUnderline
-                  autoComplete="off">
+                  name="vendor">
                   {data.vendors.edges.map((item, index) => (
                     <MenuItem key={index} value={item.node?.id}>
                       {item.node?.name}
