@@ -77,7 +77,15 @@ func (r mutationResolver) EditCounter(ctx context.Context, input models.EditCoun
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	if input.Name != et.Name {
+	var vendorid int
+	var vendor, err1 = et.Vendor(ctx)
+	if err1 != nil {
+		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
+	} else if vendor != nil {
+		vendorid = vendor.ID
+	}
+	if input.Name != et.Name || input.ExternalID != et.ExternalId || input.NetworkManagerSystem != et.NetworkManagerSystem ||
+		input.VendorFk != vendorid {
 		if et, err = client.Counter.
 			UpdateOne(et).
 			SetName(input.Name).
