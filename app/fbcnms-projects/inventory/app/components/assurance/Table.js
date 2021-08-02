@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 
 // DESIGN SYSTEM //
 import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/RemoveRuleMutation.graphql';
@@ -18,7 +18,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Paper from '@material-ui/core/Paper';
 import RemoveRuleMutation from '../../mutations/RemoveRuleMutation';
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -28,6 +28,21 @@ import TableRow from '@material-ui/core/TableRow';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+import {withStyles} from '@material-ui/core/styles';
+
+const StyledTableCell = withStyles(() => ({
+  head: {
+    color: '#3984FF',
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles(() => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#EDF0F9',
+    },
+  },
+}))(TableRow);
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -50,6 +65,7 @@ type Rule = {
   ruleType: {
     name: string,
   },
+  status: boolean,
 };
 
 type Props = $ReadOnly<{|
@@ -60,6 +76,7 @@ type Props = $ReadOnly<{|
 export default function DenseTable(props: Props) {
   const {rule, editRule} = props;
   const classes = useStyles();
+  const [checked, setChecked] = useState();
 
   const handleRemove = id => {
     const variables: RemoveRuleMutationVariables = {
@@ -71,22 +88,26 @@ export default function DenseTable(props: Props) {
   return (
     <Paper variant="outlined">
       <TableContainer className={classes.root}>
-        <Table className={classes.table} size="small" aria-label="sticky table">
+        <Table stickyHeader className={classes.table} size="small">
           <TableHead>
             <TableRow>
-              <TableCell className={classes.title}>Enable</TableCell>
-              <TableCell className={classes.title}>Rule Name</TableCell>
-              <TableCell className={classes.title}>ID</TableCell>
-              <TableCell className={classes.title}>Type of Rule</TableCell>
-              <TableCell className={classes.title}>Delete</TableCell>
-              <TableCell className={classes.title}>Edit</TableCell>
+              <StyledTableCell>Enable</StyledTableCell>
+              <StyledTableCell>Rule Name</StyledTableCell>
+              <StyledTableCell>ID</StyledTableCell>
+              <StyledTableCell>Type of Rule</StyledTableCell>
+              <StyledTableCell>Delete</StyledTableCell>
+              <StyledTableCell>Edit</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rule.map(row => (
-              <TableRow key={row.id}>
+              <StyledTableRow key={row.id}>
                 <TableCell component="th" scope="row">
-                  <Switch status={true} />
+                  <Switch
+                    title={''}
+                    checked={row.status}
+                    onChange={setChecked}
+                  />
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {row.name}
@@ -111,7 +132,7 @@ export default function DenseTable(props: Props) {
                     }}
                   />
                 </TableCell>
-              </TableRow>
+              </StyledTableRow>
             ))}
           </TableBody>
         </Table>

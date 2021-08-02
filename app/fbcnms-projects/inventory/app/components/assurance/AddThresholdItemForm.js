@@ -68,16 +68,25 @@ const KpiDataFormTresholdQuery = graphql`
         node {
           id
           name
-          status
-          domainFk {
-            id
-            name
-          }
         }
       }
     }
   }
 `;
+
+type Node = {
+  node: {
+    name: string,
+    kpi: {
+      name: string,
+      id: string,
+    },
+  },
+};
+
+type Props = $ReadOnly<{|
+  thresholdNames?: Array<Node>,
+|}>;
 
 type Thresholds = {
   data: {
@@ -89,7 +98,8 @@ type Thresholds = {
   },
 };
 
-export default function AddThresholdItemForm() {
+export default function AddThresholdItemForm(props: Props) {
+  const {thresholdNames} = props;
   const classes = useStyles();
 
   const [thresholds, setThresholds] = useState<Thresholds>({data: {}});
@@ -99,6 +109,11 @@ export default function AddThresholdItemForm() {
     {},
   );
   const kpiResponse = response.kpis?.edges.map(item => item.node);
+  const names = thresholdNames?.map(item => item.node.name);
+  const kpiExisting = thresholdNames?.map(item => item.node.kpi);
+  const kpiSelect = kpiResponse.filter(
+    item => !kpiExisting?.map(kpi => kpi?.name).includes(item?.name),
+  );
 
   function handleChange({target}) {
     setThresholds({
@@ -129,6 +144,7 @@ export default function AddThresholdItemForm() {
         card_header="Add Threshold"
         title="Threshold"
         text_button="Add new threshold"
+        thresholdNames={thresholdNames}
       />
     );
   }
@@ -136,7 +152,16 @@ export default function AddThresholdItemForm() {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Threshold</CardHeader>
-      <FormField className={classes.formField} label="Threshold Name" required>
+      <FormField
+        className={classes.formField}
+        label="Threshold Name"
+        hasError={names?.some(item => item === thresholds.data.name)}
+        errorText={
+          names?.some(item => item === thresholds.data.name)
+            ? 'Threshold name existing'
+            : ''
+        }
+        required>
         <TextInput
           className={classes.textInput}
           autoComplete="off"
@@ -151,7 +176,7 @@ export default function AddThresholdItemForm() {
           disableUnderline
           name="kpi"
           onChange={handleChange}>
-          {kpiResponse.map((kpiDataResponse, index) => (
+          {kpiSelect.map((kpiDataResponse, index) => (
             <MenuItem key={index} value={kpiDataResponse?.id}>
               {kpiDataResponse?.name}
             </MenuItem>
@@ -175,7 +200,8 @@ export default function AddThresholdItemForm() {
           disabled={
             !(
               Object.values(thresholds.data).length === 3 &&
-              !Object.values(thresholds.data).some(item => item === '')
+              !Object.values(thresholds.data).some(item => item === '') &&
+              !names?.some(item => item === thresholds.data.name)
             )
           }>
           Add Threshold

@@ -21,7 +21,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import AddCounterMutation from '../../mutations/AddCounterMutation';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -93,7 +93,7 @@ type Node = {
 };
 
 type Props = $ReadOnly<{|
-  counterNames: Array<Node>,
+  counterNames?: Array<Node>,
 |}>;
 
 type Counters = {

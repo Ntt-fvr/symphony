@@ -125,6 +125,20 @@ func BlockInstanceCounter(v int) predicate.BlockInstance {
 	})
 }
 
+// StartDate applies equality check predicate on the "start_date" field. It's identical to StartDateEQ.
+func StartDate(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartDate), v))
+	})
+}
+
+// EndDate applies equality check predicate on the "end_date" field. It's identical to EndDateEQ.
+func EndDate(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEndDate), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.BlockInstance {
 	return predicate.BlockInstance(func(s *sql.Selector) {
@@ -565,6 +579,172 @@ func BlockInstanceCounterIsNil() predicate.BlockInstance {
 func BlockInstanceCounterNotNil() predicate.BlockInstance {
 	return predicate.BlockInstance(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldBlockInstanceCounter)))
+	})
+}
+
+// StartDateEQ applies the EQ predicate on the "start_date" field.
+func StartDateEQ(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartDate), v))
+	})
+}
+
+// StartDateNEQ applies the NEQ predicate on the "start_date" field.
+func StartDateNEQ(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStartDate), v))
+	})
+}
+
+// StartDateIn applies the In predicate on the "start_date" field.
+func StartDateIn(vs ...time.Time) predicate.BlockInstance {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldStartDate), v...))
+	})
+}
+
+// StartDateNotIn applies the NotIn predicate on the "start_date" field.
+func StartDateNotIn(vs ...time.Time) predicate.BlockInstance {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldStartDate), v...))
+	})
+}
+
+// StartDateGT applies the GT predicate on the "start_date" field.
+func StartDateGT(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStartDate), v))
+	})
+}
+
+// StartDateGTE applies the GTE predicate on the "start_date" field.
+func StartDateGTE(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStartDate), v))
+	})
+}
+
+// StartDateLT applies the LT predicate on the "start_date" field.
+func StartDateLT(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStartDate), v))
+	})
+}
+
+// StartDateLTE applies the LTE predicate on the "start_date" field.
+func StartDateLTE(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStartDate), v))
+	})
+}
+
+// EndDateEQ applies the EQ predicate on the "end_date" field.
+func EndDateEQ(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEndDate), v))
+	})
+}
+
+// EndDateNEQ applies the NEQ predicate on the "end_date" field.
+func EndDateNEQ(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEndDate), v))
+	})
+}
+
+// EndDateIn applies the In predicate on the "end_date" field.
+func EndDateIn(vs ...time.Time) predicate.BlockInstance {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldEndDate), v...))
+	})
+}
+
+// EndDateNotIn applies the NotIn predicate on the "end_date" field.
+func EndDateNotIn(vs ...time.Time) predicate.BlockInstance {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldEndDate), v...))
+	})
+}
+
+// EndDateGT applies the GT predicate on the "end_date" field.
+func EndDateGT(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEndDate), v))
+	})
+}
+
+// EndDateGTE applies the GTE predicate on the "end_date" field.
+func EndDateGTE(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEndDate), v))
+	})
+}
+
+// EndDateLT applies the LT predicate on the "end_date" field.
+func EndDateLT(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEndDate), v))
+	})
+}
+
+// EndDateLTE applies the LTE predicate on the "end_date" field.
+func EndDateLTE(v time.Time) predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEndDate), v))
+	})
+}
+
+// EndDateIsNil applies the IsNil predicate on the "end_date" field.
+func EndDateIsNil() predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEndDate)))
+	})
+}
+
+// EndDateNotNil applies the NotNil predicate on the "end_date" field.
+func EndDateNotNil() predicate.BlockInstance {
+	return predicate.BlockInstance(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEndDate)))
 	})
 }
 

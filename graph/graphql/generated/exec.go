@@ -1279,6 +1279,7 @@ type ComplexityRoot struct {
 		Ruletype        func(childComplexity int) int
 		SpecificProblem func(childComplexity int) int
 		StartDateTime   func(childComplexity int) int
+		Status          func(childComplexity int) int
 		Treshold        func(childComplexity int) int
 	}
 
@@ -1286,7 +1287,7 @@ type ComplexityRoot struct {
 		Comparator func(childComplexity int) int
 		ID         func(childComplexity int) int
 		LimitType  func(childComplexity int) int
-		Name       func(childComplexity int) int
+		Number     func(childComplexity int) int
 		Rule       func(childComplexity int) int
 	}
 
@@ -8558,6 +8559,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Rule.StartDateTime(childComplexity), true
 
+	case "Rule.status":
+		if e.complexity.Rule.Status == nil {
+			break
+		}
+
+		return e.complexity.Rule.Status(childComplexity), true
+
 	case "Rule.treshold":
 		if e.complexity.Rule.Treshold == nil {
 			break
@@ -8586,12 +8594,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RuleLimit.LimitType(childComplexity), true
 
-	case "RuleLimit.name":
-		if e.complexity.RuleLimit.Name == nil {
+	case "RuleLimit.number":
+		if e.complexity.RuleLimit.Number == nil {
 			break
 		}
 
-		return e.complexity.RuleLimit.Name(childComplexity), true
+		return e.complexity.RuleLimit.Number(childComplexity), true
 
 	case "RuleLimit.rule":
 		if e.complexity.RuleLimit.Rule == nil {
@@ -16877,21 +16885,21 @@ input RuleTypeFilterInput {
 
 type RuleLimit implements Node {
   id: ID!
-  name: String!
+  number: Int!
   limitType: String!
   comparator: Comparator!
   rule: Rule
 }
 
 input RuleLimitInput {
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
 }
 
 input AddRuleLimitInput {
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
@@ -16899,7 +16907,7 @@ input AddRuleLimitInput {
 
 input EditRuleLimitInput {
   id: ID!
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
@@ -16916,6 +16924,7 @@ type Rule implements Node {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: EventSeverity!
   treshold: Treshold!
 }
@@ -16928,6 +16937,7 @@ input RuleInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
+  status: Boolean!
   ruleLimit: [RuleLimitInput!]
 }
 
@@ -16940,6 +16950,7 @@ input AddRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }
@@ -16954,6 +16965,7 @@ input EditRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }
@@ -50946,6 +50958,41 @@ func (ec *executionContext) _Rule_additionalInfo(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Rule_status(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Rule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Rule_eventSeverity(ctx context.Context, field graphql.CollectedField, obj *ent.Rule) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -51051,7 +51098,7 @@ func (ec *executionContext) _RuleLimit_id(ctx context.Context, field graphql.Col
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RuleLimit_name(ctx context.Context, field graphql.CollectedField, obj *ent.RuleLimit) (ret graphql.Marshaler) {
+func (ec *executionContext) _RuleLimit_number(ctx context.Context, field graphql.CollectedField, obj *ent.RuleLimit) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -51069,7 +51116,7 @@ func (ec *executionContext) _RuleLimit_name(ctx context.Context, field graphql.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.Number, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -51081,9 +51128,9 @@ func (ec *executionContext) _RuleLimit_name(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _RuleLimit_limitType(ctx context.Context, field graphql.CollectedField, obj *ent.RuleLimit) (ret graphql.Marshaler) {
@@ -65098,6 +65145,14 @@ func (ec *executionContext) unmarshalInputAddRuleInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "eventSeverity":
 			var err error
 
@@ -65126,11 +65181,11 @@ func (ec *executionContext) unmarshalInputAddRuleLimitInput(ctx context.Context,
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
+		case "number":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("number"))
+			it.Number, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -68328,6 +68383,14 @@ func (ec *executionContext) unmarshalInputEditRuleInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "eventSeverity":
 			var err error
 
@@ -68364,11 +68427,11 @@ func (ec *executionContext) unmarshalInputEditRuleLimitInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "name":
+		case "number":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("number"))
+			it.Number, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -70796,6 +70859,14 @@ func (ec *executionContext) unmarshalInputRuleInput(ctx context.Context, obj int
 			if err != nil {
 				return it, err
 			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "ruleLimit":
 			var err error
 
@@ -70816,11 +70887,11 @@ func (ec *executionContext) unmarshalInputRuleLimitInput(ctx context.Context, ob
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
+		case "number":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("number"))
+			it.Number, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -81531,6 +81602,11 @@ func (ec *executionContext) _Rule(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Rule_specificProblem(ctx, field, obj)
 		case "additionalInfo":
 			out.Values[i] = ec._Rule_additionalInfo(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._Rule_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "eventSeverity":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -81586,8 +81662,8 @@ func (ec *executionContext) _RuleLimit(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "name":
-			out.Values[i] = ec._RuleLimit_name(ctx, field, obj)
+		case "number":
+			out.Values[i] = ec._RuleLimit_number(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}

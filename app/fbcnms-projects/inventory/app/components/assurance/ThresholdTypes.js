@@ -121,9 +121,14 @@ const ThresholdTypes = () => {
     setShowEditCard(false);
   };
 
+  const thresholdNames = dataThreshold.tresholds?.edges.map(
+    item => item.node.name,
+  );
+
   if (showEditCard) {
     return (
       <EditThresholdItemForm
+        thresholdNames={thresholdNames}
         formValues={dataEdit.item.node}
         hideEditThresholdForm={hideEditThresholdForm}
       />
@@ -196,7 +201,7 @@ const ThresholdTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddThresholdItemForm
-            dataValues={dataThreshold.tresholds?.edges.map(item => item.node)}
+            thresholdNames={dataThreshold.tresholds?.edges}
           />
         </Grid>
       </Grid>

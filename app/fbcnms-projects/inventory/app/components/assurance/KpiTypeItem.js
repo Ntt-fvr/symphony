@@ -125,7 +125,7 @@ export default function KpiTypeItem(props: Props) {
         id: id,
         name: name,
         domainFk: domainFk.id,
-        status: checked,
+        status: !checked,
         description: description,
       },
     };
@@ -143,7 +143,7 @@ export default function KpiTypeItem(props: Props) {
             <FormField label="">
               <Switch
                 title={''}
-                checked={checked}
+                checked={status}
                 onChange={setChecked}
                 onClick={handleClick}
               />

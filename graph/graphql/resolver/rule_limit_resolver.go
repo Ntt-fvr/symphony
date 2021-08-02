@@ -41,7 +41,7 @@ func (r mutationResolver) AddRuleLimit(ctx context.Context, input models.AddRule
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		RuleLimit.Create().
-		SetName(input.Name).
+		SetNumber(input.Number).
 		SetLimitType(input.LimitType).
 		SetComparatorID(input.Comparator).
 		SetRuleID(input.Rule).
@@ -83,7 +83,7 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 
-	var name, limit = et.Name, et.LimitType
+	var number, limit = et.Number, et.LimitType
 	var comparator2, erro = et.Comparator(ctx)
 	var comparator int
 	if erro == nil && comparator2 != nil {
@@ -101,8 +101,8 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	}
 
 	var change = false
-	if name != input.Name {
-		name = input.Name
+	if number != input.Number {
+		number = input.Number
 		change = true
 	}
 	if limit != input.LimitType {
@@ -122,7 +122,7 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 
 		if et, err = client.RuleLimit.
 			UpdateOne(et).
-			SetName(name).
+			SetNumber(number).
 			SetLimitType(limit).
 			SetComparatorID(comparator).
 			SetRuleID(rule).

@@ -23,7 +23,7 @@ const mutation = graphql`
   mutation AddRuleLimitMutation($input: AddRuleLimitInput!) {
     addRuleLimit(input: $input) {
       id
-      name
+      number
     }
   }
 `;

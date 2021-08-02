@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -667,6 +668,8 @@ func TestFlowInstanceCreation(t *testing.T) {
 
 	_, err = client.FlowInstance.Create().
 		SetFlow(flw).
+		SetStartDate(time.Now()).
+		SetBssCode("CODE1").
 		Save(ctx)
 	require.Error(t, err)
 	err = client.Flow.UpdateOne(flw).
@@ -676,6 +679,8 @@ func TestFlowInstanceCreation(t *testing.T) {
 	require.NoError(t, err)
 	flowInstance, err := client.FlowInstance.Create().
 		SetFlow(flw).
+		SetStartDate(time.Now()).
+		SetBssCode("CODE2").
 		Save(ctx)
 	require.NoError(t, err)
 	template, err := flowInstance.QueryTemplate().

@@ -80,6 +80,12 @@ func (rc *RuleCreate) SetEndDateTime(t time.Time) *RuleCreate {
 	return rc
 }
 
+// SetStatus sets the status field.
+func (rc *RuleCreate) SetStatus(b bool) *RuleCreate {
+	rc.mutation.SetStatus(b)
+	return rc
+}
+
 // SetEventTypeName sets the eventTypeName field.
 func (rc *RuleCreate) SetEventTypeName(s string) *RuleCreate {
 	rc.mutation.SetEventTypeName(s)
@@ -281,6 +287,9 @@ func (rc *RuleCreate) check() error {
 	if _, ok := rc.mutation.EndDateTime(); !ok {
 		return &ValidationError{Name: "endDateTime", err: errors.New("ent: missing required field \"endDateTime\"")}
 	}
+	if _, ok := rc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
+	}
 	return nil
 }
 
@@ -355,6 +364,14 @@ func (rc *RuleCreate) createSpec() (*Rule, *sqlgraph.CreateSpec) {
 			Column: rule.FieldEndDateTime,
 		})
 		_node.EndDateTime = value
+	}
+	if value, ok := rc.mutation.Status(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: rule.FieldStatus,
+		})
+		_node.Status = value
 	}
 	if value, ok := rc.mutation.EventTypeName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

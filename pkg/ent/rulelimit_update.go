@@ -32,9 +32,16 @@ func (rlu *RuleLimitUpdate) Where(ps ...predicate.RuleLimit) *RuleLimitUpdate {
 	return rlu
 }
 
-// SetName sets the name field.
-func (rlu *RuleLimitUpdate) SetName(s string) *RuleLimitUpdate {
-	rlu.mutation.SetName(s)
+// SetNumber sets the number field.
+func (rlu *RuleLimitUpdate) SetNumber(i int) *RuleLimitUpdate {
+	rlu.mutation.ResetNumber()
+	rlu.mutation.SetNumber(i)
+	return rlu
+}
+
+// AddNumber adds i to number.
+func (rlu *RuleLimitUpdate) AddNumber(i int) *RuleLimitUpdate {
+	rlu.mutation.AddNumber(i)
 	return rlu
 }
 
@@ -167,11 +174,6 @@ func (rlu *RuleLimitUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (rlu *RuleLimitUpdate) check() error {
-	if v, ok := rlu.mutation.Name(); ok {
-		if err := rulelimit.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if v, ok := rlu.mutation.LimitType(); ok {
 		if err := rulelimit.LimitTypeValidator(v); err != nil {
 			return &ValidationError{Name: "limitType", err: fmt.Errorf("ent: validator failed for field \"limitType\": %w", err)}
@@ -205,11 +207,18 @@ func (rlu *RuleLimitUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: rulelimit.FieldUpdateTime,
 		})
 	}
-	if value, ok := rlu.mutation.Name(); ok {
+	if value, ok := rlu.mutation.Number(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: rulelimit.FieldName,
+			Column: rulelimit.FieldNumber,
+		})
+	}
+	if value, ok := rlu.mutation.AddedNumber(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: rulelimit.FieldNumber,
 		})
 	}
 	if value, ok := rlu.mutation.LimitType(); ok {
@@ -307,9 +316,16 @@ type RuleLimitUpdateOne struct {
 	mutation *RuleLimitMutation
 }
 
-// SetName sets the name field.
-func (rluo *RuleLimitUpdateOne) SetName(s string) *RuleLimitUpdateOne {
-	rluo.mutation.SetName(s)
+// SetNumber sets the number field.
+func (rluo *RuleLimitUpdateOne) SetNumber(i int) *RuleLimitUpdateOne {
+	rluo.mutation.ResetNumber()
+	rluo.mutation.SetNumber(i)
+	return rluo
+}
+
+// AddNumber adds i to number.
+func (rluo *RuleLimitUpdateOne) AddNumber(i int) *RuleLimitUpdateOne {
+	rluo.mutation.AddNumber(i)
 	return rluo
 }
 
@@ -442,11 +458,6 @@ func (rluo *RuleLimitUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (rluo *RuleLimitUpdateOne) check() error {
-	if v, ok := rluo.mutation.Name(); ok {
-		if err := rulelimit.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if v, ok := rluo.mutation.LimitType(); ok {
 		if err := rulelimit.LimitTypeValidator(v); err != nil {
 			return &ValidationError{Name: "limitType", err: fmt.Errorf("ent: validator failed for field \"limitType\": %w", err)}
@@ -478,11 +489,18 @@ func (rluo *RuleLimitUpdateOne) sqlSave(ctx context.Context) (_node *RuleLimit, 
 			Column: rulelimit.FieldUpdateTime,
 		})
 	}
-	if value, ok := rluo.mutation.Name(); ok {
+	if value, ok := rluo.mutation.Number(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: rulelimit.FieldName,
+			Column: rulelimit.FieldNumber,
+		})
+	}
+	if value, ok := rluo.mutation.AddedNumber(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: rulelimit.FieldNumber,
 		})
 	}
 	if value, ok := rluo.mutation.LimitType(); ok {

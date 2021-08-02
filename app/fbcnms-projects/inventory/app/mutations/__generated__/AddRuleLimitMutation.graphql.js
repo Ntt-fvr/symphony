@@ -15,7 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddRuleLimitInput = {|
-  name: string,
+  number: number,
   limitType: string,
   comparator: string,
   rule: string,
@@ -26,7 +26,7 @@ export type AddRuleLimitMutationVariables = {|
 export type AddRuleLimitMutationResponse = {|
   +addRuleLimit: {|
     +id: string,
-    +name: string,
+    +number: number,
   |}
 |};
 export type AddRuleLimitMutation = {|
@@ -42,7 +42,7 @@ mutation AddRuleLimitMutation(
 ) {
   addRuleLimit(input: $input) {
     id
-    name
+    number
   }
 }
 */
@@ -81,7 +81,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "name",
+        "name": "number",
         "storageKey": null
       }
     ],
@@ -106,16 +106,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4b66713bb7e00db349e7203ce7c9de22",
+    "cacheID": "a2f34e6b1cc70a06b652f3bb908b17ea",
     "id": null,
     "metadata": {},
     "name": "AddRuleLimitMutation",
     "operationKind": "mutation",
-    "text": "mutation AddRuleLimitMutation(\n  $input: AddRuleLimitInput!\n) {\n  addRuleLimit(input: $input) {\n    id\n    name\n  }\n}\n"
+    "text": "mutation AddRuleLimitMutation(\n  $input: AddRuleLimitInput!\n) {\n  addRuleLimit(input: $input) {\n    id\n    number\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c89595014cc04c3063c34cb3861ddae8';
+(node/*: any*/).hash = '5a9b1f468709be5c2eb18ed461498d5e';
 
 module.exports = node;

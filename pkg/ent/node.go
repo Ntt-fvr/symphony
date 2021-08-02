@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/category"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -58,10 +59,14 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
+	"github.com/facebookincubator/symphony/pkg/ent/perspective"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
@@ -82,6 +87,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatequestion"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
+	"github.com/facebookincubator/symphony/pkg/ent/temporalfrecuency"
 	"github.com/facebookincubator/symphony/pkg/ent/treshold"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
@@ -532,7 +538,7 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     bi.ID,
 		Type:   "BlockInstance",
-		Fields: make([]*Field, 7),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -592,6 +598,22 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "block_instance_counter",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(bi.StartDate); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "start_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.EndDate); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "time.Time",
+		Name:  "end_date",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "FlowInstance",
 		Name: "flow_instance",
@@ -618,6 +640,51 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = bi.QuerySubflowInstance().
 		Select(flowinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (c *Category) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     c.ID,
+		Type:   "Category",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(c.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(c.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Kqi",
+		Name: "categoryFk",
+	}
+	node.Edges[0].IDs, err = c.QueryCategoryFk().
+		Select(kqi.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3053,7 +3120,7 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fi.ID,
 		Type:   "FlowInstance",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -3095,6 +3162,38 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "string",
 		Name:  "incompletion_reason",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.BssCode); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "string",
+		Name:  "bss_code",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.ServiceInstanceCode); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "service_instance_code",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.StartDate); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "start_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.EndDate); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "time.Time",
+		Name:  "end_date",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -3368,6 +3467,277 @@ func (k *Kpi) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = k.QueryTresholdkpi().
 		Select(treshold.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (k *Kqi) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     k.ID,
+		Type:   "Kqi",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 5),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(k.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.StartDateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "time.Time",
+		Name:  "startDateTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.EndDateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "time.Time",
+		Name:  "endDateTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(k.Formula); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "string",
+		Name:  "formula",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Category",
+		Name: "categoryFk",
+	}
+	node.Edges[0].IDs, err = k.QueryCategoryFk().
+		Select(category.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "Perspective",
+		Name: "perspectiveFk",
+	}
+	node.Edges[1].IDs, err = k.QueryPerspectiveFk().
+		Select(perspective.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "KqiSource",
+		Name: "kqiSourceFk",
+	}
+	node.Edges[2].IDs, err = k.QueryKqiSourceFk().
+		Select(kqisource.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "TemporalFrecuency",
+		Name: "temporalFrecuencyFk",
+	}
+	node.Edges[3].IDs, err = k.QueryTemporalFrecuencyFk().
+		Select(temporalfrecuency.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "KqiTarget",
+		Name: "kqiTargetFk",
+	}
+	node.Edges[4].IDs, err = k.QueryKqiTargetFk().
+		Select(kqitarget.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (ks *KqiSource) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     ks.ID,
+		Type:   "KqiSource",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(ks.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ks.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(ks.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Kqi",
+		Name: "kqiSourceFk",
+	}
+	node.Edges[0].IDs, err = ks.QueryKqiSourceFk().
+		Select(kqi.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     kt.ID,
+		Type:   "KqiTarget",
+		Fields: make([]*Field, 11),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(kt.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.Comparator); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "float64",
+		Name:  "comparator",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.ReferenceValue); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "float64",
+		Name:  "referenceValue",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.WarningComparator); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "warningComparator",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.Frame); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "frame",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.AlowedValidation); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "float64",
+		Name:  "alowedValidation",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.InitTime); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "time.Time",
+		Name:  "initTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.EndTime); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "time.Time",
+		Name:  "endTime",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.Impact); err != nil {
+		return nil, err
+	}
+	node.Fields[9] = &Field{
+		Type:  "string",
+		Name:  "impact",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.Active); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "bool",
+		Name:  "active",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Kqi",
+		Name: "kqiTargetFk",
+	}
+	node.Edges[0].IDs, err = kt.QueryKqiTargetFk().
+		Select(kqi.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3830,6 +4200,51 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = pp.QueryGroups().
 		Select(usersgroup.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (pe *Perspective) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     pe.ID,
+		Type:   "Perspective",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(pe.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pe.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pe.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Kqi",
+		Name: "perspectiveFk",
+	}
+	node.Edges[0].IDs, err = pe.QueryPerspectiveFk().
+		Select(kqi.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -4671,7 +5086,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     r.ID,
 		Type:   "Rule",
-		Fields: make([]*Field, 9),
+		Fields: make([]*Field, 10),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -4723,10 +5138,18 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "endDateTime",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(r.EventTypeName); err != nil {
+	if buf, err = json.Marshal(r.Status); err != nil {
 		return nil, err
 	}
 	node.Fields[6] = &Field{
+		Type:  "bool",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(r.EventTypeName); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
 		Type:  "string",
 		Name:  "eventTypeName",
 		Value: string(buf),
@@ -4734,7 +5157,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(r.SpecificProblem); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "string",
 		Name:  "specificProblem",
 		Value: string(buf),
@@ -4742,7 +5165,7 @@ func (r *Rule) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(r.AdditionalInfo); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "string",
 		Name:  "additionalInfo",
 		Value: string(buf),
@@ -4814,12 +5237,12 @@ func (rl *RuleLimit) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(rl.Name); err != nil {
+	if buf, err = json.Marshal(rl.Number); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
+		Type:  "int",
+		Name:  "number",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(rl.LimitType); err != nil {
@@ -6173,6 +6596,51 @@ func (t *Tech) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (tf *TemporalFrecuency) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     tf.ID,
+		Type:   "TemporalFrecuency",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(tf.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tf.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(tf.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Kqi",
+		Name: "temporalFrecuencyFk",
+	}
+	node.Edges[0].IDs, err = tf.QueryTemporalFrecuencyFk().
+		Select(kqi.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (t *Treshold) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     t.ID,
@@ -7134,6 +7602,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case category.Table:
+		n, err := c.Category.Query().
+			Where(category.ID(id)).
+			CollectFields(ctx, "Category").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case checklistcategory.Table:
 		n, err := c.CheckListCategory.Query().
 			Where(checklistcategory.ID(id)).
@@ -7458,6 +7935,33 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case kqi.Table:
+		n, err := c.Kqi.Query().
+			Where(kqi.ID(id)).
+			CollectFields(ctx, "Kqi").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case kqisource.Table:
+		n, err := c.KqiSource.Query().
+			Where(kqisource.ID(id)).
+			CollectFields(ctx, "KqiSource").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case kqitarget.Table:
+		n, err := c.KqiTarget.Query().
+			Where(kqitarget.ID(id)).
+			CollectFields(ctx, "KqiTarget").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case link.Table:
 		n, err := c.Link.Query().
 			Where(link.ID(id)).
@@ -7489,6 +7993,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.PermissionsPolicy.Query().
 			Where(permissionspolicy.ID(id)).
 			CollectFields(ctx, "PermissionsPolicy").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case perspective.Table:
+		n, err := c.Perspective.Query().
+			Where(perspective.ID(id)).
+			CollectFields(ctx, "Perspective").
 			Only(ctx)
 		if err != nil {
 			return nil, err
@@ -7669,6 +8182,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Tech.Query().
 			Where(tech.ID(id)).
 			CollectFields(ctx, "Tech").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case temporalfrecuency.Table:
+		n, err := c.TemporalFrecuency.Query().
+			Where(temporalfrecuency.ID(id)).
+			CollectFields(ctx, "TemporalFrecuency").
 			Only(ctx)
 		if err != nil {
 			return nil, err

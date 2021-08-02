@@ -56,6 +56,7 @@ func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput
 		SetEndDateTime(input.EndDateTime).
 		SetTresholdID(input.Treshold).
 		SetRuletypeID(input.RuleType).
+		SetStatus(input.Status).
 		SetNillableEventTypeName(input.EventTypeName).
 		SetNillableSpecificProblem(input.SpecificProblem).
 		SetNillableAdditionalInfo(input.AdditionalInfo).
@@ -98,8 +99,8 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	var eventSeverityid, rtypeid, tresholdid int
-	var name, start, end, grace, tpe, problem, info = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod,
-		et.EventTypeName, et.SpecificProblem, et.AdditionalInfo
+	var name, start, end, grace, tpe, problem, info, status = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod,
+		et.EventTypeName, et.SpecificProblem, et.AdditionalInfo, et.Status
 	var event, err1 = et.Eventseverity(ctx)
 	if err1 != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
@@ -148,6 +149,10 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		tresholdid = input.Treshold
 		change = true
 	}
+	if input.Status != status {
+		status = input.Status
+		change = true
+	}
 	if input.EventTypeName != nil && ((tpe != nil && *tpe != *input.EventTypeName) || tpe == nil) {
 		*tpe = *input.EventTypeName
 		change = true
@@ -171,6 +176,7 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			SetEndDateTime(end).
 			SetTresholdID(tresholdid).
 			SetRuletypeID(rtypeid).
+			SetStatus(input.Status).
 			SetNillableEventTypeName(tpe).
 			SetNillableSpecificProblem(problem).
 			SetNillableAdditionalInfo(info).

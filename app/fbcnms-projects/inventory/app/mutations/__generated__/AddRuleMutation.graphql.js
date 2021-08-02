@@ -23,6 +23,7 @@ export type AddRuleInput = {|
   eventTypeName?: ?string,
   specificProblem?: ?string,
   additionalInfo?: ?string,
+  status: boolean,
   eventSeverity: string,
   treshold: string,
 |};

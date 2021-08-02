@@ -15,7 +15,6 @@ import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import LimitRange from './LimitRange';
 import React from 'react';
 import SwitchLabels from './common/Switch';
 import TextField from '@material-ui/core/TextField';
@@ -159,7 +158,7 @@ const EditRuleItemForm = (props: Props) => {
 
             <Grid container>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
-                <LimitRange />
+
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField className={classes.formField}>

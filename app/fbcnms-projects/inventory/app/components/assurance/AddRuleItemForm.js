@@ -27,7 +27,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import React, {useState} from 'react';
-import SwitchLabels from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -151,6 +151,7 @@ type Rule = {
   data: {
     id: string,
     name: string,
+    status: boolean,
     gracePeriod: number,
     specificProblem: string,
     additionalInfo: string,
@@ -169,6 +170,8 @@ const AddRuleItemForm = (props: Props) => {
   const {threshold, hideAddRuleForm} = props;
 
   const [rule, setRule] = useState<Rule>({data: {}});
+  const [checked, setChecked] = useState(true);
+  const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
 
   function handleChange({target}) {
@@ -184,6 +187,7 @@ const AddRuleItemForm = (props: Props) => {
     const variables: AddRuleMutationVariables = {
       input: {
         name: rule.data.name,
+        status: checked,
         gracePeriod: rule.data.gracePeriod,
         startDateTime: moment(rule.data.startTime).format(),
         endDateTime: moment(rule.data.endTime).format(),
@@ -200,7 +204,7 @@ const AddRuleItemForm = (props: Props) => {
       onCompleted: response => {
         const variablesUpper: AddRuleLimitMutationVariables = {
           input: {
-            name: rule.data.upperLimit,
+            number: Number(rule.data.upperLimit),
             limitType: 'UPPER',
             comparator: rule.data.upperTarget,
             rule: response.addRule.id,
@@ -208,7 +212,7 @@ const AddRuleItemForm = (props: Props) => {
         };
         const variablesLower: AddRuleLimitMutationVariables = {
           input: {
-            name: rule.data.lowerLimit,
+            number: Number(rule.data.lowerLimit),
             limitType: 'LOWER',
             comparator: rule.data.lowerTarget,
             rule: response.addRule.id,
@@ -239,7 +243,12 @@ const AddRuleItemForm = (props: Props) => {
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <SwitchLabels status={true} />
+                  <Switch
+                    title={''}
+                    checked={checked}
+                    onChange={setChecked}
+                    onClick={handleClick}
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
@@ -351,7 +360,7 @@ const AddRuleItemForm = (props: Props) => {
                     <Grid item xs={6} sm={6} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
-                          type="string"
+                          type="number"
                           placeholder="Number"
                           className={`${classes.textInput} ${classes.green}`}
                           name="upperLimit"
@@ -379,7 +388,7 @@ const AddRuleItemForm = (props: Props) => {
                     <Grid item xs={6} sm={6} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
-                          type="string"
+                          type="number"
                           placeholder="Number"
                           className={`${classes.textInput} ${classes.red}`}
                           name="lowerLimit"
@@ -392,7 +401,13 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <FormField className={classes.formField}>
-                  <Checkbox checked={true} title="Definite time period" />
+                  <Checkbox
+                    checked={checkedCheckbox}
+                    title="Definite time period"
+                    onChange={selection =>
+                      setCheckedCheckbox(selection === 'checked')
+                    }
+                  />
                 </FormField>
                 <FormField label="Start" className={classes.formField}>
                   <TextField
@@ -400,6 +415,7 @@ const AddRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="startTime"
+                    disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />
                 </FormField>
@@ -409,6 +425,7 @@ const AddRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="endTime"
+                    disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />
                 </FormField>

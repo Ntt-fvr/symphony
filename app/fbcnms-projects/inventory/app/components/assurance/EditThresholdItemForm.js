@@ -8,11 +8,10 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 // COMPONENTS //
-import SwitchLabels from './common/Switch';
 import Table from './Table';
 import {useFormInput} from './common/useFormInput';
 
@@ -29,6 +28,7 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -85,15 +85,17 @@ type Props = $ReadOnly<{|
     },
     rule: Array<Rule>,
   },
+  thresholdNames: Array<string>,
   hideEditThresholdForm: void => void,
 |}>;
 
 export const EditThresholdItemForm = (props: Props) => {
-  const {formValues, hideEditThresholdForm} = props;
+  const {thresholdNames, formValues, hideEditThresholdForm} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const description = useFormInput(formValues.description);
+  const [checked, setChecked] = useState(formValues.status);
 
   const handleClick = () => {
     const variables: EditTresholdMutationVariables = {
@@ -101,7 +103,7 @@ export const EditThresholdItemForm = (props: Props) => {
         id: formValues.id,
         name: name.value,
         description: description.value,
-        status: true,
+        status: checked,
       },
     };
     EditTresholdMutation(variables);
@@ -124,11 +126,24 @@ export const EditThresholdItemForm = (props: Props) => {
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <SwitchLabels status={formValues.status} />
+                  <Switch title={''} checked={checked} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
-                <FormField className={classes.formField} label="Name" required>
+                <FormField
+                  className={classes.formField}
+                  label="Name"
+                  hasError={thresholdNames?.some(
+                    item => item === name.value && item !== formValues.name,
+                  )}
+                  errorText={
+                    thresholdNames?.some(
+                      item => item === name.value && item !== formValues.name,
+                    )
+                      ? 'Threshold name existing'
+                      : ''
+                  }
+                  required>
                   <TextInput
                     {...name}
                     className={classes.textInput}

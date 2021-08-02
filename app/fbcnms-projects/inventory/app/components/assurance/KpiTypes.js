@@ -155,9 +155,7 @@ const KpiTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddKpiItemForm
-            dataValues={dataKpis.kpis?.edges.map(item => item.node)}
-          />
+          <AddKpiItemForm kpiNames={dataKpis.kpis?.edges} />
         </Grid>
       </Grid>
     </div>

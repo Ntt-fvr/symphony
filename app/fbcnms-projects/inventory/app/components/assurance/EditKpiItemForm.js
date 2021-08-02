@@ -8,11 +8,10 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 // COMPONENTS //
-import SwitchLabels from './common/Switch';
 import {useFormInput} from './common/useFormInput';
 
 // MUTATIONS //
@@ -29,6 +28,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import {Grid, MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -95,6 +95,14 @@ type KpiThreshold = {
   },
 };
 
+type Kpi = {
+  name: string,
+  domainFk: {
+    id: string,
+    name: string,
+  },
+};
+
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
@@ -107,22 +115,18 @@ type Props = $ReadOnly<{|
     description: string,
   },
   hideEditKpiForm: void => void,
-  kpi: {
-    domainFk: {
-      id: string,
-      name: string,
-    },
-  },
+  kpi: Array<Kpi>,
   threshold: Array<KpiThreshold>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {formValues, hideEditKpiForm, threshold} = props;
+  const {kpi, formValues, hideEditKpiForm, threshold} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const domainFk = useFormInput(formValues.domainFk.id);
   const description = useFormInput(formValues.description);
+  const [checked, setChecked] = useState(formValues.status);
 
   const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
 
@@ -130,13 +134,15 @@ export const EditKpiItemForm = (props: Props) => {
     ({node}) => node.kpi?.name === formValues.name,
   );
 
+  const kpiNames = kpi?.map(item => item.name);
+
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
       input: {
         id: formValues.id,
         name: name.value,
         domainFk: domainFk.value,
-        status: true,
+        status: checked,
         description: description.value,
       },
     };
@@ -160,11 +166,24 @@ export const EditKpiItemForm = (props: Props) => {
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <SwitchLabels status={formValues.status} />
+                  <Switch title={''} checked={checked} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={8} xl={8}>
-                <FormField className={classes.formField} label="Name" required>
+                <FormField
+                  className={classes.formField}
+                  label="Name"
+                  hasError={kpiNames?.some(
+                    item => item === name.value && item !== formValues.name,
+                  )}
+                  errorText={
+                    kpiNames?.some(
+                      item => item === name.value && item !== formValues.name,
+                    )
+                      ? 'Kpi name existing'
+                      : ''
+                  }
+                  required>
                   <TextInput
                     {...name}
                     className={classes.textInput}
