@@ -90,7 +90,7 @@ const AlarmFilteringTypes = () => {
     fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
       setDataAlarms(data);
     });
-  }, []);
+  }, [DataAlarms]);
     
 
   const handleClickEdit = (alarm: Alarms) => {
