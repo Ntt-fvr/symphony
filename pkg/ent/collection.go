@@ -937,6 +937,30 @@ func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...string) *OrganizationQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		o = o.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return o
+}
+
+func (o *OrganizationQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *OrganizationQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			o = o.WithUserFk(func(query *UserQuery) {
+				query.collectField(ctx, field)
+			})
+		case "workorder":
+			o = o.WithWorkOrderFk(func(query *WorkOrderQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return o
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pp *PermissionsPolicyQuery) CollectFields(ctx context.Context, satisfies ...string) *PermissionsPolicyQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		pp = pp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

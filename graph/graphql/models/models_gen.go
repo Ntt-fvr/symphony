@@ -268,6 +268,11 @@ type AddLocationTypeInput struct {
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
 }
 
+type AddOrganizationInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type AddPermissionsPolicyInput struct {
 	Name            string                         `json:"name"`
 	Description     *string                        `json:"description"`
@@ -371,6 +376,7 @@ type AddWorkOrderInput struct {
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	AssigneeID          *int                      `json:"assigneeId"`
 	Index               *int                      `json:"index"`
+	OrganizationFk      *int                      `json:"organizationFk"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
 }
@@ -751,6 +757,12 @@ type EditLocationTypeInput struct {
 	Properties         []*models.PropertyTypeInput     `json:"properties"`
 }
 
+type EditOrganizationInput struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type EditPermissionsPolicyInput struct {
 	ID              int                            `json:"id"`
 	Name            *string                        `json:"name"`
@@ -839,12 +851,13 @@ type EditTresholdInput struct {
 }
 
 type EditUserInput struct {
-	ID           int                `json:"id"`
-	FirstName    *string            `json:"firstName"`
-	LastName     *string            `json:"lastName"`
-	Status       *user.Status       `json:"status"`
-	Role         *user.Role         `json:"role"`
-	DistanceUnit *user.DistanceUnit `json:"distanceUnit"`
+	ID             int                `json:"id"`
+	FirstName      *string            `json:"firstName"`
+	LastName       *string            `json:"lastName"`
+	Status         *user.Status       `json:"status"`
+	Role           *user.Role         `json:"role"`
+	DistanceUnit   *user.DistanceUnit `json:"distanceUnit"`
+	OrganizationFk *int               `json:"organizationFk"`
 }
 
 type EditUsersGroupInput struct {
@@ -869,6 +882,7 @@ type EditWorkOrderInput struct {
 	InstallDate         *time.Time                `json:"installDate"`
 	AssigneeID          *int                      `json:"assigneeId"`
 	Index               *int                      `json:"index"`
+	OrganizationFk      *int                      `json:"organizationFk"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
 	ProjectID           *int                      `json:"projectId"`

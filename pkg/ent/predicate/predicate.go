@@ -154,6 +154,9 @@ type Location func(*sql.Selector)
 // LocationType is the predicate function for locationtype builders.
 type LocationType func(*sql.Selector)
 
+// Organization is the predicate function for organization builders.
+type Organization func(*sql.Selector)
+
 // PermissionsPolicy is the predicate function for permissionspolicy builders.
 type PermissionsPolicy func(*sql.Selector)
 

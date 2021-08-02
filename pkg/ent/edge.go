@@ -1136,6 +1136,22 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	return result, err
 }
 
+func (o *Organization) UserFk(ctx context.Context) ([]*User, error) {
+	result, err := o.Edges.UserFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryUserFk().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) WorkOrderFk(ctx context.Context) ([]*WorkOrder, error) {
+	result, err := o.Edges.WorkOrderFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryWorkOrderFk().All(ctx)
+	}
+	return result, err
+}
+
 func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
@@ -1848,6 +1864,14 @@ func (u *User) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	return result, err
 }
 
+func (u *User) Organization(ctx context.Context) (*Organization, error) {
+	result, err := u.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) OwnedWorkOrders(ctx context.Context) ([]*WorkOrder, error) {
 	result, err := u.Edges.OwnedWorkOrdersOrErr()
 	if IsNotLoaded(err) {
@@ -1942,6 +1966,14 @@ func (wo *WorkOrder) Links(ctx context.Context) ([]*Link, error) {
 		result, err = wo.QueryLinks().All(ctx)
 	}
 	return result, err
+}
+
+func (wo *WorkOrder) Organization(ctx context.Context) (*Organization, error) {
+	result, err := wo.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (wo *WorkOrder) Files(ctx context.Context) ([]*File, error) {

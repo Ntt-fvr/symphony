@@ -70,6 +70,7 @@ func (c *Client) ReadOnly() *Client {
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
+		Organization:                NewOrganizationClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Perspective:                 NewPerspectiveClient(cfg),
 		Project:                     NewProjectClient(cfg),

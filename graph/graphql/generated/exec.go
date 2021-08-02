@@ -1006,6 +1006,7 @@ type ComplexityRoot struct {
 		AddLink                                  func(childComplexity int, input models.AddLinkInput) int
 		AddLocation                              func(childComplexity int, input models.AddLocationInput) int
 		AddLocationType                          func(childComplexity int, input models.AddLocationTypeInput) int
+		AddOrganization                          func(childComplexity int, input models.AddOrganizationInput) int
 		AddPermissionsPolicy                     func(childComplexity int, input models.AddPermissionsPolicyInput) int
 		AddPerspective                           func(childComplexity int, input models.AddPerspectiveInput) int
 		AddReportFilter                          func(childComplexity int, input models.ReportFilterInput) int
@@ -1070,6 +1071,7 @@ type ComplexityRoot struct {
 		EditLocationType                         func(childComplexity int, input models.EditLocationTypeInput) int
 		EditLocationTypeSurveyTemplateCategories func(childComplexity int, id int, surveyTemplateCategories []*models.SurveyTemplateCategoryInput) int
 		EditLocationTypesIndex                   func(childComplexity int, locationTypesIndex []*models.LocationTypeIndex) int
+		EditOrganization                         func(childComplexity int, input models.EditOrganizationInput) int
 		EditPermissionsPolicy                    func(childComplexity int, input models.EditPermissionsPolicyInput) int
 		EditPerspective                          func(childComplexity int, input models.EditPerspectiveInput) int
 		EditProject                              func(childComplexity int, input models.EditProjectInput) int
@@ -1117,6 +1119,7 @@ type ComplexityRoot struct {
 		RemoveLink                               func(childComplexity int, id int, workOrderID *int) int
 		RemoveLocation                           func(childComplexity int, id int) int
 		RemoveLocationType                       func(childComplexity int, id int) int
+		RemoveOrganization                       func(childComplexity int, id int) int
 		RemovePerspective                        func(childComplexity int, id int) int
 		RemoveRule                               func(childComplexity int, id int) int
 		RemoveRuleLimit                          func(childComplexity int, id int) int
@@ -1144,6 +1147,12 @@ type ComplexityRoot struct {
 	NetworkTopology struct {
 		Links func(childComplexity int) int
 		Nodes func(childComplexity int) int
+	}
+
+	Organization struct {
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -1665,17 +1674,18 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		AuthID       func(childComplexity int) int
-		DistanceUnit func(childComplexity int) int
-		Email        func(childComplexity int) int
-		FirstName    func(childComplexity int) int
-		Groups       func(childComplexity int) int
-		ID           func(childComplexity int) int
-		LastName     func(childComplexity int) int
-		Name         func(childComplexity int) int
-		ProfilePhoto func(childComplexity int) int
-		Role         func(childComplexity int) int
-		Status       func(childComplexity int) int
+		AuthID         func(childComplexity int) int
+		DistanceUnit   func(childComplexity int) int
+		Email          func(childComplexity int) int
+		FirstName      func(childComplexity int) int
+		Groups         func(childComplexity int) int
+		ID             func(childComplexity int) int
+		LastName       func(childComplexity int) int
+		Name           func(childComplexity int) int
+		OrganizationFk func(childComplexity int) int
+		ProfilePhoto   func(childComplexity int) int
+		Role           func(childComplexity int) int
+		Status         func(childComplexity int) int
 	}
 
 	UserConnection struct {
@@ -1793,6 +1803,7 @@ type ComplexityRoot struct {
 		LinksToRemove       func(childComplexity int) int
 		Location            func(childComplexity int) int
 		Name                func(childComplexity int) int
+		OrganizationFk      func(childComplexity int) int
 		Owner               func(childComplexity int) int
 		Priority            func(childComplexity int) int
 		Project             func(childComplexity int) int
@@ -2177,6 +2188,9 @@ type MutationResolver interface {
 	AddAlarmStatus(ctx context.Context, input models.AddAlarmStatusInput) (*ent.AlarmStatus, error)
 	EditAlarmStatus(ctx context.Context, input models.EditAlarmStatusInput) (*ent.AlarmStatus, error)
 	RemoveAlarmStatus(ctx context.Context, id int) (int, error)
+	AddOrganization(ctx context.Context, input models.AddOrganizationInput) (*ent.Organization, error)
+	EditOrganization(ctx context.Context, input models.EditOrganizationInput) (*ent.Organization, error)
+	RemoveOrganization(ctx context.Context, id int) (int, error)
 	AddKqi(ctx context.Context, input models.AddKqiInput) (*ent.Kqi, error)
 	EditKqi(ctx context.Context, input models.EditKqiInput) (*ent.Kqi, error)
 	RemoveKqi(ctx context.Context, id int) (int, error)
@@ -2327,6 +2341,8 @@ type TresholdResolver interface {
 }
 type UserResolver interface {
 	Name(ctx context.Context, obj *ent.User) (string, error)
+
+	OrganizationFk(ctx context.Context, obj *ent.User) (*ent.Organization, error)
 }
 type VariableDefinitionResolver interface {
 	NestedVariables(ctx context.Context, obj *flowschema.VariableDefinition, value string) ([]*flowschema.VariableDefinition, error)
@@ -2348,6 +2364,8 @@ type WorkOrderResolver interface {
 	Files(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error)
 
 	Activities(ctx context.Context, obj *ent.WorkOrder, filter *models.ActivityFilterInput) ([]*ent.Activity, error)
+
+	OrganizationFk(ctx context.Context, obj *ent.WorkOrder) (*ent.Organization, error)
 }
 type WorkOrderTypeResolver interface {
 	NumberOfWorkOrders(ctx context.Context, obj *ent.WorkOrderType) (int, error)
@@ -6268,6 +6286,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddLocationType(childComplexity, args["input"].(models.AddLocationTypeInput)), true
 
+	case "Mutation.addOrganization":
+		if e.complexity.Mutation.AddOrganization == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addOrganization_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddOrganization(childComplexity, args["input"].(models.AddOrganizationInput)), true
+
 	case "Mutation.addPermissionsPolicy":
 		if e.complexity.Mutation.AddPermissionsPolicy == nil {
 			break
@@ -7036,6 +7066,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditLocationTypesIndex(childComplexity, args["locationTypesIndex"].([]*models.LocationTypeIndex)), true
 
+	case "Mutation.editOrganization":
+		if e.complexity.Mutation.EditOrganization == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editOrganization_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditOrganization(childComplexity, args["input"].(models.EditOrganizationInput)), true
+
 	case "Mutation.editPermissionsPolicy":
 		if e.complexity.Mutation.EditPermissionsPolicy == nil {
 			break
@@ -7600,6 +7642,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RemoveLocationType(childComplexity, args["id"].(int)), true
 
+	case "Mutation.removeOrganization":
+		if e.complexity.Mutation.RemoveOrganization == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeOrganization_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveOrganization(childComplexity, args["id"].(int)), true
+
 	case "Mutation.removePerspective":
 		if e.complexity.Mutation.RemovePerspective == nil {
 			break
@@ -7877,6 +7931,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NetworkTopology.Nodes(childComplexity), true
+
+	case "Organization.description":
+		if e.complexity.Organization.Description == nil {
+			break
+		}
+
+		return e.complexity.Organization.Description(childComplexity), true
+
+	case "Organization.id":
+		if e.complexity.Organization.ID == nil {
+			break
+		}
+
+		return e.complexity.Organization.ID(childComplexity), true
+
+	case "Organization.name":
+		if e.complexity.Organization.Name == nil {
+			break
+		}
+
+		return e.complexity.Organization.Name(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -10625,6 +10700,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
+	case "User.organizationFk":
+		if e.complexity.User.OrganizationFk == nil {
+			break
+		}
+
+		return e.complexity.User.OrganizationFk(childComplexity), true
+
 	case "User.profilePhoto":
 		if e.complexity.User.ProfilePhoto == nil {
 			break
@@ -11138,6 +11220,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkOrder.Name(childComplexity), true
+
+	case "WorkOrder.organizationFk":
+		if e.complexity.WorkOrder.OrganizationFk == nil {
+			break
+		}
+
+		return e.complexity.WorkOrder.OrganizationFk(childComplexity), true
 
 	case "WorkOrder.owner":
 		if e.complexity.WorkOrder.Owner == nil {
@@ -11720,6 +11809,7 @@ type User implements Node & NamedNode {
   profilePhoto: File
   groups: [UsersGroup]!
   distanceUnit: DistanceUnit
+  organizationFk: Organization
 }
 
 enum UsersGroupStatus
@@ -12077,6 +12167,7 @@ input EditUserInput {
   status: UserStatus
   role: UserRole
   distanceUnit: DistanceUnit
+  organizationFk:ID
 }
 
 input UpdateUserGroupsInput {
@@ -12435,6 +12526,7 @@ input AddWorkOrderInput {
   checkListCategories: [CheckListCategoryInput!]
   assigneeId: ID
   index: Int
+  organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
 }
@@ -12447,6 +12539,7 @@ input EditWorkOrderInput {
   installDate: Time
   assigneeId: ID
   index: Int
+  organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
   projectId: ID
@@ -13624,6 +13717,7 @@ type WorkOrder implements Node & NamedNode {
   checkListCategories: [CheckListCategory!]!
   hyperlinks: [Hyperlink!]!
   closeDate: Time
+  organizationFk: Organization
 }
 
 """
@@ -13643,6 +13737,27 @@ type UserConnection {
   """
   pageInfo: PageInfo!
 }
+
+type Organization implements Node {
+  id: ID!
+  name: String!
+  description: String!  
+  
+}
+
+input AddOrganizationInput {  
+  name: String!
+  description: String!  
+  
+}
+
+input EditOrganizationInput {
+  id: ID!
+  name: String!
+  description: String!  
+  
+}
+
 
 """
 A connection to a list of permissions policies.
@@ -17410,6 +17525,9 @@ type Mutation {
   addAlarmStatus(input: AddAlarmStatusInput!):AlarmStatus!
   editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus!
   removeAlarmStatus(id: ID!): ID!
+  addOrganization(input: AddOrganizationInput!):Organization!
+  editOrganization(input: EditOrganizationInput!): Organization!
+  removeOrganization(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!
@@ -19037,6 +19155,21 @@ func (ec *executionContext) field_Mutation_addLocation_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddOrganizationInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddOrganizationInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddOrganizationInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addPermissionsPolicy_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -20096,6 +20229,21 @@ func (ec *executionContext) field_Mutation_editLocation_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditOrganizationInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditOrganizationInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditOrganizationInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editPermissionsPolicy_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -20850,6 +20998,21 @@ func (ec *executionContext) field_Mutation_removeLocationType_args(ctx context.C
 }
 
 func (ec *executionContext) field_Mutation_removeLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -48016,6 +48179,132 @@ func (ec *executionContext) _Mutation_removeAlarmStatus(ctx context.Context, fie
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addOrganization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addOrganization_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddOrganization(rctx, args["input"].(models.AddOrganizationInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Organization)
+	fc.Result = res
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editOrganization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editOrganization_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditOrganization(rctx, args["input"].(models.EditOrganizationInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Organization)
+	fc.Result = res
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeOrganization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeOrganization_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveOrganization(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addKqi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -48840,6 +49129,111 @@ func (ec *executionContext) _NetworkTopology_links(ctx context.Context, field gr
 	res := resTmp.([]*models.TopologyLink)
 	fc.Result = res
 	return ec.marshalNTopologyLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTopologyLinkᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_id(ctx context.Context, field graphql.CollectedField, obj *ent.Organization) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_name(ctx context.Context, field graphql.CollectedField, obj *ent.Organization) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_description(ctx context.Context, field graphql.CollectedField, obj *ent.Organization) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *ent.PageInfo) (ret graphql.Marshaler) {
@@ -61676,6 +62070,38 @@ func (ec *executionContext) _User_distanceUnit(ctx context.Context, field graphq
 	return ec.marshalODistanceUnit2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_organizationFk(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().OrganizationFk(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Organization)
+	fc.Result = res
+	return ec.marshalOOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _UserConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.UserConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -64297,6 +64723,38 @@ func (ec *executionContext) _WorkOrder_closeDate(ctx context.Context, field grap
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrder_organizationFk(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrder) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkOrder",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.WorkOrder().OrganizationFk(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Organization)
+	fc.Result = res
+	return ec.marshalOOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkOrderConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderConnection) (ret graphql.Marshaler) {
@@ -68880,6 +69338,34 @@ func (ec *executionContext) unmarshalInputAddLocationTypeInput(ctx context.Conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddOrganizationInput(ctx context.Context, obj interface{}) (models.AddOrganizationInput, error) {
+	var it models.AddOrganizationInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddPermissionsPolicyInput(ctx context.Context, obj interface{}) (models.AddPermissionsPolicyInput, error) {
 	var it models.AddPermissionsPolicyInput
 	var asMap = obj.(map[string]interface{})
@@ -69605,6 +70091,14 @@ func (ec *executionContext) unmarshalInputAddWorkOrderInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
 			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationFk"))
+			it.OrganizationFk, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -72370,6 +72864,42 @@ func (ec *executionContext) unmarshalInputEditLocationTypeInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditOrganizationInput(ctx context.Context, obj interface{}) (models.EditOrganizationInput, error) {
+	var it models.EditOrganizationInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditPermissionsPolicyInput(ctx context.Context, obj interface{}) (models.EditPermissionsPolicyInput, error) {
 	var it models.EditPermissionsPolicyInput
 	var asMap = obj.(map[string]interface{})
@@ -73050,6 +73580,14 @@ func (ec *executionContext) unmarshalInputEditUserInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "organizationFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationFk"))
+			it.OrganizationFk, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -73203,6 +73741,14 @@ func (ec *executionContext) unmarshalInputEditWorkOrderInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
 			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationFk":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationFk"))
+			it.OrganizationFk, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -78167,6 +78713,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._WorkOrder(ctx, sel, obj)
+	case *ent.Organization:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Organization(ctx, sel, obj)
 	case *ent.ProjectType:
 		if obj == nil {
 			return graphql.Null
@@ -84941,6 +85492,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addOrganization":
+			out.Values[i] = ec._Mutation_addOrganization(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editOrganization":
+			out.Values[i] = ec._Mutation_editOrganization(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeOrganization":
+			out.Values[i] = ec._Mutation_removeOrganization(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addKqi":
 			out.Values[i] = ec._Mutation_addKqi(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -85060,6 +85626,43 @@ func (ec *executionContext) _NetworkTopology(ctx context.Context, sel ast.Select
 			}
 		case "links":
 			out.Values[i] = ec._NetworkTopology_links(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var organizationImplementors = []string{"Organization", "Node"}
+
+func (ec *executionContext) _Organization(ctx context.Context, sel ast.SelectionSet, obj *ent.Organization) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Organization")
+		case "id":
+			out.Values[i] = ec._Organization_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Organization_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._Organization_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -88770,6 +89373,17 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			})
 		case "distanceUnit":
 			out.Values[i] = ec._User_distanceUnit(ctx, field, obj)
+		case "organizationFk":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_organizationFk(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -89667,6 +90281,17 @@ func (ec *executionContext) _WorkOrder(ctx context.Context, sel ast.SelectionSet
 			})
 		case "closeDate":
 			out.Values[i] = ec._WorkOrder_closeDate(ctx, field, obj)
+		case "organizationFk":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._WorkOrder_organizationFk(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -90801,6 +91426,11 @@ func (ec *executionContext) unmarshalNAddLocationInput2githubᚗcomᚋfacebookin
 
 func (ec *executionContext) unmarshalNAddLocationTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddLocationTypeInput(ctx context.Context, v interface{}) (models.AddLocationTypeInput, error) {
 	res, err := ec.unmarshalInputAddLocationTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddOrganizationInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddOrganizationInput(ctx context.Context, v interface{}) (models.AddOrganizationInput, error) {
+	res, err := ec.unmarshalInputAddOrganizationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -92395,6 +93025,11 @@ func (ec *executionContext) unmarshalNEditLocationInput2githubᚗcomᚋfacebooki
 
 func (ec *executionContext) unmarshalNEditLocationTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditLocationTypeInput(ctx context.Context, v interface{}) (models.EditLocationTypeInput, error) {
 	res, err := ec.unmarshalInputEditLocationTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditOrganizationInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditOrganizationInput(ctx context.Context, v interface{}) (models.EditOrganizationInput, error) {
+	res, err := ec.unmarshalInputEditOrganizationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -94751,6 +95386,20 @@ func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋfacebookincu
 
 func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v ent.OrderDirection) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNOrganization2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx context.Context, sel ast.SelectionSet, v ent.Organization) graphql.Marshaler {
+	return ec._Organization(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx context.Context, sel ast.SelectionSet, v *ent.Organization) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Organization(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v ent.PageInfo) graphql.Marshaler {
@@ -100329,6 +100978,13 @@ func (ec *executionContext) marshalONode2githubᚗcomᚋfacebookincubatorᚋsymp
 		return graphql.Null
 	}
 	return ec._Node(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx context.Context, sel ast.SelectionSet, v *ent.Organization) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Organization(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPermissionsPolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPermissionsPolicy(ctx context.Context, sel ast.SelectionSet, v *ent.PermissionsPolicy) graphql.Marshaler {

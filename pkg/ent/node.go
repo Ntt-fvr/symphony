@@ -65,6 +65,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/perspective"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -4114,6 +4115,69 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (o *Organization) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     o.ID,
+		Type:   "Organization",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(o.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(o.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "User",
+		Name: "user_fk",
+	}
+	node.Edges[0].IDs, err = o.QueryUserFk().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "WorkOrder",
+		Name: "work_order_fk",
+	}
+	node.Edges[1].IDs, err = o.QueryWorkOrderFk().
+		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
 func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
@@ -6717,7 +6781,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 6),
+		Edges:  make([]*Edge, 7),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -6813,40 +6877,50 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
-		Type: "WorkOrder",
-		Name: "owned_work_orders",
+		Type: "Organization",
+		Name: "organization",
 	}
-	node.Edges[2].IDs, err = u.QueryOwnedWorkOrders().
-		Select(workorder.FieldID).
+	node.Edges[2].IDs, err = u.QueryOrganization().
+		Select(organization.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
 		Type: "WorkOrder",
-		Name: "assigned_work_orders",
+		Name: "owned_work_orders",
 	}
-	node.Edges[3].IDs, err = u.QueryAssignedWorkOrders().
+	node.Edges[3].IDs, err = u.QueryOwnedWorkOrders().
 		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		Type: "Project",
-		Name: "created_projects",
+		Type: "WorkOrder",
+		Name: "assigned_work_orders",
 	}
-	node.Edges[4].IDs, err = u.QueryCreatedProjects().
-		Select(project.FieldID).
+	node.Edges[4].IDs, err = u.QueryAssignedWorkOrders().
+		Select(workorder.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
+		Type: "Project",
+		Name: "created_projects",
+	}
+	node.Edges[5].IDs, err = u.QueryCreatedProjects().
+		Select(project.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[6] = &Edge{
 		Type: "Feature",
 		Name: "features",
 	}
-	node.Edges[5].IDs, err = u.QueryFeatures().
+	node.Edges[6].IDs, err = u.QueryFeatures().
 		Select(feature.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -6986,7 +7060,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		ID:     wo.ID,
 		Type:   "WorkOrder",
 		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 14),
+		Edges:  make([]*Edge, 15),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wo.CreateTime); err != nil {
@@ -7110,100 +7184,110 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[4] = &Edge{
-		Type: "File",
-		Name: "files",
+		Type: "Organization",
+		Name: "organization",
 	}
-	node.Edges[4].IDs, err = wo.QueryFiles().
-		Select(file.FieldID).
+	node.Edges[4].IDs, err = wo.QueryOrganization().
+		Select(organization.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[5] = &Edge{
-		Type: "Hyperlink",
-		Name: "hyperlinks",
+		Type: "File",
+		Name: "files",
 	}
-	node.Edges[5].IDs, err = wo.QueryHyperlinks().
-		Select(hyperlink.FieldID).
+	node.Edges[5].IDs, err = wo.QueryFiles().
+		Select(file.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[6] = &Edge{
-		Type: "Location",
-		Name: "location",
+		Type: "Hyperlink",
+		Name: "hyperlinks",
 	}
-	node.Edges[6].IDs, err = wo.QueryLocation().
-		Select(location.FieldID).
+	node.Edges[6].IDs, err = wo.QueryHyperlinks().
+		Select(hyperlink.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[7] = &Edge{
-		Type: "Comment",
-		Name: "comments",
+		Type: "Location",
+		Name: "location",
 	}
-	node.Edges[7].IDs, err = wo.QueryComments().
-		Select(comment.FieldID).
+	node.Edges[7].IDs, err = wo.QueryLocation().
+		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[8] = &Edge{
-		Type: "Activity",
-		Name: "activities",
+		Type: "Comment",
+		Name: "comments",
 	}
-	node.Edges[8].IDs, err = wo.QueryActivities().
-		Select(activity.FieldID).
+	node.Edges[8].IDs, err = wo.QueryComments().
+		Select(comment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[9] = &Edge{
-		Type: "Property",
-		Name: "properties",
+		Type: "Activity",
+		Name: "activities",
 	}
-	node.Edges[9].IDs, err = wo.QueryProperties().
-		Select(property.FieldID).
+	node.Edges[9].IDs, err = wo.QueryActivities().
+		Select(activity.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[10] = &Edge{
-		Type: "CheckListCategory",
-		Name: "check_list_categories",
+		Type: "Property",
+		Name: "properties",
 	}
-	node.Edges[10].IDs, err = wo.QueryCheckListCategories().
-		Select(checklistcategory.FieldID).
+	node.Edges[10].IDs, err = wo.QueryProperties().
+		Select(property.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[11] = &Edge{
-		Type: "Project",
-		Name: "project",
+		Type: "CheckListCategory",
+		Name: "check_list_categories",
 	}
-	node.Edges[11].IDs, err = wo.QueryProject().
-		Select(project.FieldID).
+	node.Edges[11].IDs, err = wo.QueryCheckListCategories().
+		Select(checklistcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[12] = &Edge{
-		Type: "User",
-		Name: "owner",
+		Type: "Project",
+		Name: "project",
 	}
-	node.Edges[12].IDs, err = wo.QueryOwner().
-		Select(user.FieldID).
+	node.Edges[12].IDs, err = wo.QueryProject().
+		Select(project.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[13] = &Edge{
 		Type: "User",
+		Name: "owner",
+	}
+	node.Edges[13].IDs, err = wo.QueryOwner().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[14] = &Edge{
+		Type: "User",
 		Name: "assignee",
 	}
-	node.Edges[13].IDs, err = wo.QueryAssignee().
+	node.Edges[14].IDs, err = wo.QueryAssignee().
 		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -7984,6 +8068,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.LocationType.Query().
 			Where(locationtype.ID(id)).
 			CollectFields(ctx, "LocationType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case organization.Table:
+		n, err := c.Organization.Query().
+			Where(organization.ID(id)).
+			CollectFields(ctx, "Organization").
 			Only(ctx)
 		if err != nil {
 			return nil, err

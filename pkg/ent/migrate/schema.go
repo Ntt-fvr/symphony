@@ -1437,6 +1437,21 @@ var (
 		PrimaryKey:  []*schema.Column{LocationTypesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// OrganizationsColumns holds the columns for the "organizations" table.
+	OrganizationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+	}
+	// OrganizationsTable holds the schema information for the "organizations" table.
+	OrganizationsTable = &schema.Table{
+		Name:        "organizations",
+		Columns:     OrganizationsColumns,
+		PrimaryKey:  []*schema.Column{OrganizationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// PermissionsPoliciesColumns holds the columns for the "permissions_policies" table.
 	PermissionsPoliciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2456,13 +2471,22 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
 		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
+		{Name: "organization_user_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
-		Name:        "users",
-		Columns:     UsersColumns,
-		PrimaryKey:  []*schema.Column{UsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "users",
+		Columns:    UsersColumns,
+		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "users_organizations_user_fk",
+				Columns: []*schema.Column{UsersColumns[10]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// UsersGroupsColumns holds the columns for the "users_groups" table.
 	UsersGroupsColumns = []*schema.Column{
@@ -2507,6 +2531,7 @@ var (
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "close_date", Type: field.TypeTime, Nullable: true},
+		{Name: "organization_work_order_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "project_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template", Type: field.TypeInt, Nullable: true},
@@ -2521,43 +2546,50 @@ var (
 		PrimaryKey: []*schema.Column{WorkOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "work_orders_projects_work_orders",
+				Symbol:  "work_orders_organizations_work_order_fk",
 				Columns: []*schema.Column{WorkOrdersColumns[11]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "work_orders_projects_work_orders",
+				Columns: []*schema.Column{WorkOrdersColumns[12]},
 
 				RefColumns: []*schema.Column{ProjectsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_types_type",
-				Columns: []*schema.Column{WorkOrdersColumns[12]},
+				Columns: []*schema.Column{WorkOrdersColumns[13]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_templates_template",
-				Columns: []*schema.Column{WorkOrdersColumns[13]},
+				Columns: []*schema.Column{WorkOrdersColumns[14]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_locations_location",
-				Columns: []*schema.Column{WorkOrdersColumns[14]},
+				Columns: []*schema.Column{WorkOrdersColumns[15]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_owner",
-				Columns: []*schema.Column{WorkOrdersColumns[15]},
+				Columns: []*schema.Column{WorkOrdersColumns[16]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_assignee",
-				Columns: []*schema.Column{WorkOrdersColumns[16]},
+				Columns: []*schema.Column{WorkOrdersColumns[17]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3008,6 +3040,7 @@ var (
 		LinksTable,
 		LocationsTable,
 		LocationTypesTable,
+		OrganizationsTable,
 		PermissionsPoliciesTable,
 		PerspectivesTable,
 		ProjectsTable,
@@ -3175,12 +3208,14 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
 	TresholdsTable.ForeignKeys[0].RefTable = KpisTable
-	WorkOrdersTable.ForeignKeys[0].RefTable = ProjectsTable
-	WorkOrdersTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
-	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTemplatesTable
-	WorkOrdersTable.ForeignKeys[3].RefTable = LocationsTable
-	WorkOrdersTable.ForeignKeys[4].RefTable = UsersTable
+	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable
+	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
+	WorkOrdersTable.ForeignKeys[3].RefTable = WorkOrderTemplatesTable
+	WorkOrdersTable.ForeignKeys[4].RefTable = LocationsTable
 	WorkOrdersTable.ForeignKeys[5].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[6].RefTable = UsersTable
 	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable

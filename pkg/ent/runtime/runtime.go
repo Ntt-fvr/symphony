@@ -58,6 +58,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/perspective"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -1376,6 +1377,33 @@ func init() {
 	locationtypeDescIndex := locationtypeFields[4].Descriptor()
 	// locationtype.DefaultIndex holds the default value on creation for the index field.
 	locationtype.DefaultIndex = locationtypeDescIndex.Default.(int)
+	organizationMixin := schema.Organization{}.Mixin()
+	organization.Policy = privacy.NewPolicies(schema.Organization{})
+	organization.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := organization.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	organizationMixinFields0 := organizationMixin[0].Fields()
+	organizationFields := schema.Organization{}.Fields()
+	_ = organizationFields
+	// organizationDescCreateTime is the schema descriptor for create_time field.
+	organizationDescCreateTime := organizationMixinFields0[0].Descriptor()
+	// organization.DefaultCreateTime holds the default value on creation for the create_time field.
+	organization.DefaultCreateTime = organizationDescCreateTime.Default.(func() time.Time)
+	// organizationDescUpdateTime is the schema descriptor for update_time field.
+	organizationDescUpdateTime := organizationMixinFields0[1].Descriptor()
+	// organization.DefaultUpdateTime holds the default value on creation for the update_time field.
+	organization.DefaultUpdateTime = organizationDescUpdateTime.Default.(func() time.Time)
+	// organization.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	organization.UpdateDefaultUpdateTime = organizationDescUpdateTime.UpdateDefault.(func() time.Time)
+	// organizationDescName is the schema descriptor for name field.
+	organizationDescName := organizationFields[0].Descriptor()
+	// organization.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	organization.NameValidator = organizationDescName.Validators[0].(func(string) error)
 	permissionspolicyMixin := schema.PermissionsPolicy{}.Mixin()
 	permissionspolicy.Policy = privacy.NewPolicies(schema.PermissionsPolicy{})
 	permissionspolicy.Hooks[0] = func(next ent.Mutator) ent.Mutator {

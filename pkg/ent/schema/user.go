@@ -66,6 +66,8 @@ func (User) Edges() []ent.Edge {
 			Unique(),
 		edge.From("groups", UsersGroup.Type).
 			Ref("members"),
+			edge.From("organization", Organization.Type).
+			Ref("user_fk").Unique(),
 		edge.From("owned_work_orders", WorkOrder.Type).
 			Ref("owner"),
 		edge.From("assigned_work_orders", WorkOrder.Type).

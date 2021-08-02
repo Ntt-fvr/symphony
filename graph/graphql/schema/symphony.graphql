@@ -57,6 +57,7 @@ type User implements Node & NamedNode {
   profilePhoto: File
   groups: [UsersGroup]!
   distanceUnit: DistanceUnit
+  organizationFk: Organization
 }
 
 enum UsersGroupStatus
@@ -414,6 +415,7 @@ input EditUserInput {
   status: UserStatus
   role: UserRole
   distanceUnit: DistanceUnit
+  organizationFk:ID
 }
 
 input UpdateUserGroupsInput {
@@ -772,6 +774,7 @@ input AddWorkOrderInput {
   checkListCategories: [CheckListCategoryInput!]
   assigneeId: ID
   index: Int
+  organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
 }
@@ -784,6 +787,7 @@ input EditWorkOrderInput {
   installDate: Time
   assigneeId: ID
   index: Int
+  organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
   projectId: ID
@@ -1961,6 +1965,7 @@ type WorkOrder implements Node & NamedNode {
   checkListCategories: [CheckListCategory!]!
   hyperlinks: [Hyperlink!]!
   closeDate: Time
+  organizationFk: Organization
 }
 
 """
@@ -1980,6 +1985,27 @@ type UserConnection {
   """
   pageInfo: PageInfo!
 }
+
+type Organization implements Node {
+  id: ID!
+  name: String!
+  description: String!  
+  
+}
+
+input AddOrganizationInput {  
+  name: String!
+  description: String!  
+  
+}
+
+input EditOrganizationInput {
+  id: ID!
+  name: String!
+  description: String!  
+  
+}
+
 
 """
 A connection to a list of permissions policies.
@@ -5747,6 +5773,9 @@ type Mutation {
   addAlarmStatus(input: AddAlarmStatusInput!):AlarmStatus!
   editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus!
   removeAlarmStatus(id: ID!): ID!
+  addOrganization(input: AddOrganizationInput!):Organization!
+  editOrganization(input: EditOrganizationInput!): Organization!
+  removeOrganization(id: ID!): ID!
   addKqi(input: AddKqiInput!):Kqi!
   editKqi(input: EditKqiInput!): Kqi!
   removeKqi(id: ID!): ID!

@@ -295,6 +295,12 @@ func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 }
 
 // Instantiate entity configuration.
+func (c *OrganizationClient) Instantiate(o *Organization) *Organization {
+	o.config = c.config
+	return o
+}
+
+// Instantiate entity configuration.
 func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
 	pp.config = c.config
 	return pp
