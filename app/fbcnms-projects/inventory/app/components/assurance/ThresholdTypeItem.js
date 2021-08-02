@@ -99,6 +99,7 @@ type Rule = {
   ruleType: {
     name: string,
   },
+  status: boolean,
 };
 
 type Props = $ReadOnly<{|

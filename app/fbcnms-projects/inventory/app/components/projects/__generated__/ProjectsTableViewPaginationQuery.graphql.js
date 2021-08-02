@@ -59,6 +59,8 @@ export type ProjectsTableViewPaginationQueryVariables = {|
   filterBy?: ?$ReadOnlyArray<ProjectFilterInput>,
   first?: ?number,
   orderBy?: ?ProjectOrder,
+  propertyOrder?: ?string,
+  propertyValue?: ?string,
 |};
 export type ProjectsTableViewPaginationQueryResponse = {|
   +$fragmentRefs: ProjectsTableView_query$ref
@@ -76,12 +78,14 @@ query ProjectsTableViewPaginationQuery(
   $filterBy: [ProjectFilterInput!]
   $first: Int
   $orderBy: ProjectOrder
+  $propertyOrder: String
+  $propertyValue: String
 ) {
-  ...ProjectsTableView_query_1O5gLD
+  ...ProjectsTableView_query_dTUb0
 }
 
-fragment ProjectsTableView_query_1O5gLD on Query {
-  projects(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {
+fragment ProjectsTableView_query_dTUb0 on Query {
+  projects(after: $cursor, first: $first, orderBy: $orderBy, propertyValue: $propertyValue, propertyOrder: $propertyOrder, filterBy: $filterBy) {
     totalCount
     edges {
       node {
@@ -168,6 +172,16 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "orderBy"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "propertyOrder"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "propertyValue"
   }
 ],
 v1 = {
@@ -185,7 +199,17 @@ v3 = {
   "name": "orderBy",
   "variableName": "orderBy"
 },
-v4 = [
+v4 = {
+  "kind": "Variable",
+  "name": "propertyOrder",
+  "variableName": "propertyOrder"
+},
+v5 = {
+  "kind": "Variable",
+  "name": "propertyValue",
+  "variableName": "propertyValue"
+},
+v6 = [
   {
     "kind": "Variable",
     "name": "after",
@@ -193,83 +217,85 @@ v4 = [
   },
   (v1/*: any*/),
   (v2/*: any*/),
-  (v3/*: any*/)
+  (v3/*: any*/),
+  (v4/*: any*/),
+  (v5/*: any*/)
 ],
-v5 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v6 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v7 = [
-  (v5/*: any*/),
-  (v6/*: any*/)
+v9 = [
+  (v7/*: any*/),
+  (v8/*: any*/)
 ],
-v8 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "stringValue",
   "storageKey": null
 },
-v9 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "intValue",
   "storageKey": null
 },
-v10 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "floatValue",
   "storageKey": null
 },
-v11 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "booleanValue",
   "storageKey": null
 },
-v12 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "latitudeValue",
   "storageKey": null
 },
-v13 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "longitudeValue",
   "storageKey": null
 },
-v14 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rangeFromValue",
   "storageKey": null
 },
-v15 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rangeToValue",
   "storageKey": null
 },
-v16 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -292,7 +318,9 @@ return {
           },
           (v1/*: any*/),
           (v2/*: any*/),
-          (v3/*: any*/)
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/)
         ],
         "kind": "FragmentSpread",
         "name": "ProjectsTableView_query"
@@ -309,7 +337,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "ProjectConnection",
         "kind": "LinkedField",
         "name": "projects",
@@ -338,7 +366,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -346,7 +374,7 @@ return {
                     "name": "createTime",
                     "storageKey": null
                   },
-                  (v6/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -362,7 +390,7 @@ return {
                         "name": "email",
                         "storageKey": null
                       },
-                      (v5/*: any*/)
+                      (v7/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -373,7 +401,7 @@ return {
                     "kind": "LinkedField",
                     "name": "location",
                     "plural": false,
-                    "selections": (v7/*: any*/),
+                    "selections": (v9/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -383,7 +411,7 @@ return {
                     "kind": "LinkedField",
                     "name": "type",
                     "plural": false,
-                    "selections": (v7/*: any*/),
+                    "selections": (v9/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -401,15 +429,15 @@ return {
                     "name": "properties",
                     "plural": true,
                     "selections": [
-                      (v5/*: any*/),
-                      (v8/*: any*/),
-                      (v9/*: any*/),
+                      (v7/*: any*/),
                       (v10/*: any*/),
                       (v11/*: any*/),
                       (v12/*: any*/),
                       (v13/*: any*/),
                       (v14/*: any*/),
                       (v15/*: any*/),
+                      (v16/*: any*/),
+                      (v17/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -418,9 +446,9 @@ return {
                         "name": "nodeValue",
                         "plural": false,
                         "selections": [
-                          (v16/*: any*/),
-                          (v5/*: any*/),
-                          (v6/*: any*/)
+                          (v18/*: any*/),
+                          (v7/*: any*/),
+                          (v8/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -432,8 +460,8 @@ return {
                         "name": "propertyType",
                         "plural": false,
                         "selections": [
-                          (v5/*: any*/),
-                          (v6/*: any*/),
+                          (v7/*: any*/),
+                          (v8/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -469,14 +497,14 @@ return {
                             "name": "isInstanceProperty",
                             "storageKey": null
                           },
-                          (v8/*: any*/),
-                          (v9/*: any*/),
                           (v10/*: any*/),
                           (v11/*: any*/),
                           (v12/*: any*/),
                           (v13/*: any*/),
                           (v14/*: any*/),
-                          (v15/*: any*/)
+                          (v15/*: any*/),
+                          (v16/*: any*/),
+                          (v17/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -490,7 +518,7 @@ return {
                     "name": "numberOfWorkOrders",
                     "storageKey": null
                   },
-                  (v16/*: any*/)
+                  (v18/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -534,9 +562,11 @@ return {
       },
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v6/*: any*/),
         "filters": [
           "orderBy",
+          "propertyValue",
+          "propertyOrder",
           "filterBy"
         ],
         "handle": "connection",
@@ -547,16 +577,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a935a89c5917a0c14d80fbd4bb0bc819",
+    "cacheID": "37f2f05b8d920744f2062971d4be7a5b",
     "id": null,
     "metadata": {},
     "name": "ProjectsTableViewPaginationQuery",
     "operationKind": "query",
-    "text": "query ProjectsTableViewPaginationQuery(\n  $cursor: Cursor\n  $filterBy: [ProjectFilterInput!]\n  $first: Int\n  $orderBy: ProjectOrder\n) {\n  ...ProjectsTableView_query_1O5gLD\n}\n\nfragment ProjectsTableView_query_1O5gLD on Query {\n  projects(after: $cursor, first: $first, orderBy: $orderBy, filterBy: $filterBy) {\n    totalCount\n    edges {\n      node {\n        id\n        createTime\n        name\n        createdBy {\n          email\n          id\n        }\n        location {\n          id\n          name\n        }\n        type {\n          id\n          name\n        }\n        priority\n        properties {\n          id\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          nodeValue {\n            __typename\n            id\n            name\n          }\n          propertyType {\n            id\n            name\n            type\n            nodeType\n            isEditable\n            isMandatory\n            isInstanceProperty\n            stringValue\n            intValue\n            floatValue\n            booleanValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n          }\n        }\n        numberOfWorkOrders\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query ProjectsTableViewPaginationQuery(\n  $cursor: Cursor\n  $filterBy: [ProjectFilterInput!]\n  $first: Int\n  $orderBy: ProjectOrder\n  $propertyOrder: String\n  $propertyValue: String\n) {\n  ...ProjectsTableView_query_dTUb0\n}\n\nfragment ProjectsTableView_query_dTUb0 on Query {\n  projects(after: $cursor, first: $first, orderBy: $orderBy, propertyValue: $propertyValue, propertyOrder: $propertyOrder, filterBy: $filterBy) {\n    totalCount\n    edges {\n      node {\n        id\n        createTime\n        name\n        createdBy {\n          email\n          id\n        }\n        location {\n          id\n          name\n        }\n        type {\n          id\n          name\n        }\n        priority\n        properties {\n          id\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          nodeValue {\n            __typename\n            id\n            name\n          }\n          propertyType {\n            id\n            name\n            type\n            nodeType\n            isEditable\n            isMandatory\n            isInstanceProperty\n            stringValue\n            intValue\n            floatValue\n            booleanValue\n            latitudeValue\n            longitudeValue\n            rangeFromValue\n            rangeToValue\n          }\n        }\n        numberOfWorkOrders\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e8c11af9de7c51b252233eb2281c1530';
+(node/*: any*/).hash = 'a367392d6a8fed0ca337cc8f4ad0d464';
 
 module.exports = node;
