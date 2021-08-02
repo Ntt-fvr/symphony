@@ -139,7 +139,7 @@ export default function ThresholdTypeItem(props: Props) {
       input: {
         id: id,
         name: name,
-        status: checked,
+        status: !checked,
         description: description,
       },
     };

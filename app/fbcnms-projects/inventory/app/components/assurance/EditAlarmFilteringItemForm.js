@@ -22,12 +22,12 @@ import Grid from '@material-ui/core/Grid';
 import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {StatusActive} from './AlarmFilteringStatus';
+import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import {useFormInput} from './common/useFormInput';
 import {makeStyles} from '@material-ui/styles';
 import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
@@ -111,6 +111,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const creationTime = useFormInput(formValues.item.creationTime);
   const user = useFormInput(formValues.item.user);
   const alarmStatus = useFormInput(formValues.item.alarmStatus.name);
+  const [checked, setChecked] = useState(formValues.item.enable);
 
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
@@ -118,13 +119,11 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         id: id.value,
         name: name.value,
         networkResource: networkResource.value,
-        enable: true,
+        enable: checked,
         beginTime: moment(beginTime.value).format(),
         endTime: moment(endTime.value).format(),
         reason: reason.value,
-        alarmStatus: 8589934592,
-        // user: user.value,
-        // creationTime: creationTime.value,
+        alarmStatus: "8589934592",
       },
     };
     EditAlarmFilterMutation(variables);
@@ -180,7 +179,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                  <Switch name="enable" />
+                  <Switch title={''} checked={checked} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid xs={11}>
@@ -242,7 +241,9 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    <StatusActive
+                    <AlarmFilteringStatus
+                      {...alarmStatus}
+                      buttonName={formValues.item.alarmStatus.name}
                       className={classes.formFieldStatus}
                       name="alarmStatus"
                     />
