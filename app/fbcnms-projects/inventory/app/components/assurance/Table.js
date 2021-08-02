@@ -78,6 +78,10 @@ export default function DenseTable(props: Props) {
   const classes = useStyles();
   const [checked, setChecked] = useState();
 
+  const handleClick = () => {
+    console.log(checked);
+  };
+
   const handleRemove = id => {
     const variables: RemoveRuleMutationVariables = {
       id: id,
@@ -106,7 +110,12 @@ export default function DenseTable(props: Props) {
                   <Switch
                     title={''}
                     checked={row.status}
-                    onChange={setChecked}
+                    onChange={() => {
+                      setChecked();
+                    }}
+                    onClick={() => {
+                      handleClick();
+                    }}
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">

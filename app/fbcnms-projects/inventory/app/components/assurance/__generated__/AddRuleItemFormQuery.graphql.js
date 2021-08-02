@@ -32,6 +32,14 @@ export type AddRuleItemFormQueryResponse = {|
       |}
     |}>
   |},
+  +ruleTypes: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type AddRuleItemFormQuery = {|
   variables: AddRuleItemFormQueryVariables,
@@ -51,6 +59,14 @@ query AddRuleItemFormQuery {
     }
   }
   comparators {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  ruleTypes {
     edges {
       node {
         id
@@ -142,6 +158,38 @@ v1 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "RuleTypeConnection",
+    "kind": "LinkedField",
+    "name": "ruleTypes",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "RuleTypeEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "RuleType",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v0/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -162,16 +210,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "dacbdf1d1fd0e5adc7e572a15ab9446f",
+    "cacheID": "d898ce49f2444b063d740400e5918dbc",
     "id": null,
     "metadata": {},
     "name": "AddRuleItemFormQuery",
     "operationKind": "query",
-    "text": "query AddRuleItemFormQuery {\n  eventSeveritys {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddRuleItemFormQuery {\n  eventSeveritys {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  ruleTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bb5aa2bf5cf61d1be21331bd2806682b';
+(node/*: any*/).hash = 'b49f4740f316a5d49746cd69af133808';
 
 module.exports = node;

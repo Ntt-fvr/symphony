@@ -185,6 +185,16 @@ return {
       "defaultValue": null,
       "kind": "LocalArgument",
       "name": "orderBy"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "propertyOrder"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "propertyValue"
     }
   ],
   "kind": "Fragment",
@@ -224,6 +234,16 @@ return {
           "kind": "Variable",
           "name": "orderBy",
           "variableName": "orderBy"
+        },
+        {
+          "kind": "Variable",
+          "name": "propertyOrder",
+          "variableName": "propertyOrder"
+        },
+        {
+          "kind": "Variable",
+          "name": "propertyValue",
+          "variableName": "propertyValue"
         }
       ],
       "concreteType": "ProjectConnection",
@@ -455,6 +475,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e8c11af9de7c51b252233eb2281c1530';
+(node/*: any*/).hash = 'a367392d6a8fed0ca337cc8f4ad0d464';
 
 module.exports = node;

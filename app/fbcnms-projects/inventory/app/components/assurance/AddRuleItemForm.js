@@ -56,6 +56,14 @@ const AddRuleQuery = graphql`
         }
       }
     }
+    ruleTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -173,6 +181,7 @@ const AddRuleItemForm = (props: Props) => {
   const [checked, setChecked] = useState(true);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
+  const ruleTypeId = data.ruleTypes?.edges[0].node.id;
 
   function handleChange({target}) {
     setRule({
@@ -191,7 +200,7 @@ const AddRuleItemForm = (props: Props) => {
         gracePeriod: rule.data.gracePeriod,
         startDateTime: moment(rule.data.startTime).format(),
         endDateTime: moment(rule.data.endTime).format(),
-        ruleType: '223338299392',
+        ruleType: ruleTypeId,
         eventTypeName: rule.data.alarmType,
         specificProblem: rule.data.specificProblem,
         additionalInfo: rule.data.additionalInfo,
