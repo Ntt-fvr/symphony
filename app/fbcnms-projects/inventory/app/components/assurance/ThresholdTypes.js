@@ -24,7 +24,6 @@ import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
 import AddRuleItemForm from './AddRuleItemForm';
-import EditRuleItemForm from './EditRuleItemForm';
 import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
 const useStyles = makeStyles(theme => ({
@@ -56,6 +55,7 @@ const ThresholdQuery = graphql`
             ruleType {
               name
             }
+            status
           }
         }
       }
@@ -93,9 +93,7 @@ const ThresholdTypes = () => {
   const [dataThreshold, setDataThreshold] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showEditRule, setShowEditRule] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  const [dataEditRule, setDataEditRule] = useState([]);
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, ThresholdQuery, {}).then(data => {
@@ -155,21 +153,6 @@ const ThresholdTypes = () => {
     );
   }
 
-  // render Edit Rule
-
-  const hideEditCounterForm = () => {
-    setShowEditRule(false);
-  };
-
-  const showEditRuleItemForm = rule => {
-    setDataEditRule(rule);
-    setShowEditRule(true);
-  };
-
-  if (showEditRule) {
-    return <EditRuleItemForm hideAddRuleForm={hideEditCounterForm} />;
-  }
-
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -193,7 +176,7 @@ const ThresholdTypes = () => {
                 handleRemove={() => handleRemove(item.node.id)}
                 edit={() => showEditThresholdItemForm({item})}
                 addRule={() => showAddRuleItemForm({item})}
-                editRule={() => showEditRuleItemForm(item.node?.rule)}
+                editRule={() => showAddRuleItemForm({item})}
                 {...item.node}
               />
             ))}
