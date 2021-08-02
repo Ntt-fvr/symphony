@@ -28,20 +28,5 @@ export const AssuranceNavListItems = () => {
         ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED);
       }}
     />,
-    <NavListItem
-      key={2}
-      label="Fault Management"
-      path={relativeUrl('/fault_management/alarm_filtering')}
-      icon={<ManageAccountsIcon />}
-      onClick={() => {
-        ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED);
-      }}
-    />,
-    <NavListItem
-      key={3}
-      label="Service Quality"
-      path={relativeUrl('/service_quality/kqi_source')}
-      icon={<AppRegistrationIcon />}
-    />,
   ];
 };
