@@ -21,12 +21,12 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {StatusActive, StatusClosed, StatusPending} from './AlarmFilteringStatus';
+import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -102,7 +102,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const [checked, setChecked] = useState(true);
+  
   function handleChange({target}) {
     setAlarmFilter({
       data: {
@@ -117,17 +118,17 @@ const AlarmFilteringFormCreate = (props: Props) => {
       input: {
         name: AlarmFilter.data.name,
         networkResource: AlarmFilter.data.networkResource,
-        enable: true,
+        enable: checked,
         beginTime: moment(AlarmFilter.data.beginTime).format(),
         endTime: moment(AlarmFilter.data.endTime).format(),
         reason: AlarmFilter.data.reason,
         user: 'user',
         creationTime: moment(AlarmFilter.data.creationTime).format(),
-        alarmStatus: AlarmFilter.data.alarmStatus,
+        alarmStatus: "8589934592",
       },
     };
-    returnTableAlarm();
     AddAlarmFilterMutation(variables);
+    console.log("Hola soy variables", variables);
   }
   
   return (
@@ -171,7 +172,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                  <Switch name="enable" onChange={handleChange} />
+                <Switch
+                  title={''}
+                  checked={checked}
+                  onChange={setChecked}
+                  onClick={handleClick}
+                />
                 </FormField>
               </Grid>
               <Grid xs={11}>
@@ -236,21 +242,25 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   {
                       (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.beginTime).format()) ||
                       (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.endTime).format()) &&
-                    <StatusActive
+                    <AlarmFilteringStatus
+                      buttonName="Active"
                       className={classes.formFieldStatus}
                       name="alarmStatus"
                     />
+                    
                   }
                   {
-                    moment(AlarmFilter.data.creationTime).format() > moment(AlarmFilter.data.endTime).format() &&
-                    <StatusClosed
+                    moment(AlarmFilter.data.creationTime).format() > moment(AlarmFilter.data.endTime).format()  &&
+                    <AlarmFilteringStatus
+                      buttonName='Closed'
                       className={classes.formFieldStatus}
                       name="alarmStatus"
                     />
                   }
                   {
                     moment(AlarmFilter.data.creationTime).format() < moment(AlarmFilter.data.beginTime).format() &&
-                    <StatusPending
+                    <AlarmFilteringStatus
+                      buttonName='Pending'
                       className={classes.formFieldStatus}
                       name="alarmStatus"
                     />
