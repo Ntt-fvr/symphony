@@ -264,3 +264,24 @@ func AlarmStatusFilter(query *ent.AlarmStatusQuery, filters []*models.AlarmStatu
 	}
 	return query, nil
 }
+
+func FlowInstanceFilter(query *ent.FlowInstanceQuery, filters []*models.FlowInstanceFilterInput) (*ent.FlowInstanceQuery, error) {
+	var err error
+	for _, f := range filters {
+		if strings.HasPrefix(f.FilterType.String(), "FLOW_INSTANCE_") {
+			if query, err = handleFlowInstanceFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

@@ -180,7 +180,6 @@ const TableHeader = <T>({
   const handleSortChange = useCallback(
     newSortingColumnKey => {
       const newSortingOrder: TableSortOrders =
-        sort?.columnKey === newSortingColumnKey &&
         sort?.order === TABLE_SORT_ORDER.ascending
           ? 'descending'
           : TABLE_SORT_ORDER.ascending;

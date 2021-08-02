@@ -79,16 +79,21 @@ type AddAlarmStatusInput struct {
 }
 
 type AddBlockInstanceInput struct {
-	Status  *blockinstance.Status       `json:"status"`
-	Inputs  []*flowschema.VariableValue `json:"inputs"`
-	Outputs []*flowschema.VariableValue `json:"outputs"`
-	BlockID int                         `json:"blockId"`
+	Status    *blockinstance.Status       `json:"status"`
+	Inputs    []*flowschema.VariableValue `json:"inputs"`
+	Outputs   []*flowschema.VariableValue `json:"outputs"`
+	BlockID   int                         `json:"blockId"`
+	StartDate time.Time                   `json:"startDate"`
 }
 
 type AddBulkServiceLinksAndPortsInput struct {
 	ID      int   `json:"id"`
 	PortIds []int `json:"portIds"`
 	LinkIds []int `json:"linkIds"`
+}
+
+type AddCategoryInput struct {
+	Name string `json:"name"`
 }
 
 type AddComparatorInput struct {
@@ -207,6 +212,35 @@ type AddKpiInput struct {
 	Status      bool   `json:"status"`
 }
 
+type AddKqiInput struct {
+	Name              string    `json:"name"`
+	Description       string    `json:"description"`
+	Formula           string    `json:"formula"`
+	StartDateTime     time.Time `json:"startDateTime"`
+	EndDateTime       time.Time `json:"endDateTime"`
+	Category          int       `json:"category"`
+	Perspective       int       `json:"perspective"`
+	KqiSource         int       `json:"kqiSource"`
+	TemporalFrecuency int       `json:"temporalFrecuency"`
+}
+
+type AddKqiSourceInput struct {
+	Name string `json:"name"`
+}
+
+type AddKqiTargetInput struct {
+	Impact            string    `json:"impact"`
+	Comparator        float64   `json:"comparator"`
+	ReferenceValue    float64   `json:"referenceValue"`
+	WarningComparator float64   `json:"warningComparator"`
+	Frame             float64   `json:"frame"`
+	AlowedValidation  float64   `json:"alowedValidation"`
+	InitTime          time.Time `json:"initTime"`
+	EndTime           time.Time `json:"endTime"`
+	Active            bool      `json:"active"`
+	Kqi               int       `json:"kqi"`
+}
+
 type AddLinkInput struct {
 	Sides      []*LinkSide      `json:"sides"`
 	WorkOrder  *int             `json:"workOrder"`
@@ -243,6 +277,10 @@ type AddPermissionsPolicyInput struct {
 	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
 	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
 	Groups          []int                          `json:"groups"`
+}
+
+type AddPerspectiveInput struct {
+	Name string `json:"name"`
 }
 
 type AddProjectInput struct {
@@ -297,6 +335,10 @@ type AddServiceEndpointInput struct {
 type AddTechInput struct {
 	Name     string `json:"name"`
 	DomainFk int    `json:"domainFk"`
+}
+
+type AddTemporalFrecuencyInput struct {
+	Name string `json:"name"`
 }
 
 type AddTresholdInput struct {
@@ -557,6 +599,12 @@ type EditBlockInstanceInput struct {
 	Inputs        []*flowschema.VariableValue `json:"inputs"`
 	Outputs       []*flowschema.VariableValue `json:"outputs"`
 	FailureReason *string                     `json:"failure_reason"`
+	EndDate       *time.Time                  `json:"endDate"`
+}
+
+type EditCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditComparatorInput struct {
@@ -624,8 +672,10 @@ type EditEventSeverityInput struct {
 }
 
 type EditFlowInstanceInput struct {
-	ID     int                 `json:"id"`
-	Status flowinstance.Status `json:"status"`
+	ID                  int                  `json:"id"`
+	ServiceInstanceCode *string              `json:"serviceInstanceCode"`
+	Status              *flowinstance.Status `json:"status"`
+	EndDate             *time.Time           `json:"endDate"`
 }
 
 type EditFormulaInput struct {
@@ -642,6 +692,38 @@ type EditKpiInput struct {
 	Description string `json:"description"`
 	DomainFk    int    `json:"domainFk"`
 	Status      bool   `json:"status"`
+}
+
+type EditKqiInput struct {
+	ID                int       `json:"id"`
+	Name              string    `json:"name"`
+	Description       string    `json:"description"`
+	Formula           string    `json:"formula"`
+	StartDateTime     time.Time `json:"startDateTime"`
+	EndDateTime       time.Time `json:"endDateTime"`
+	Category          int       `json:"category"`
+	Perspective       int       `json:"perspective"`
+	KqiSource         int       `json:"kqiSource"`
+	TemporalFrecuency int       `json:"temporalFrecuency"`
+}
+
+type EditKqiSourceInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type EditKqiTargetInput struct {
+	ID                int       `json:"id"`
+	Impact            string    `json:"impact"`
+	Comparator        float64   `json:"comparator"`
+	ReferenceValue    float64   `json:"referenceValue"`
+	WarningComparator float64   `json:"warningComparator"`
+	Frame             float64   `json:"frame"`
+	AlowedValidation  float64   `json:"alowedValidation"`
+	InitTime          time.Time `json:"initTime"`
+	EndTime           time.Time `json:"endTime"`
+	Active            bool      `json:"active"`
+	Kqi               int       `json:"kqi"`
 }
 
 type EditLinkInput struct {
@@ -679,6 +761,11 @@ type EditPermissionsPolicyInput struct {
 	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
 	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
 	Groups          []int                          `json:"groups"`
+}
+
+type EditPerspectiveInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditProjectInput struct {
@@ -737,6 +824,11 @@ type EditTechInput struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	DomainFk int    `json:"domainFk"`
+}
+
+type EditTemporalFrecuencyInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditTresholdInput struct {
@@ -876,6 +968,17 @@ type FileInput struct {
 	Annotation       *string    `json:"annotation"`
 }
 
+type FlowInstanceFilterInput struct {
+	FilterType    FlowInstanceFilterType    `json:"filterType"`
+	Operator      enum.FilterOperator       `json:"operator"`
+	StringValue   *string                   `json:"stringValue"`
+	IDSet         []int                     `json:"idSet"`
+	StringSet     []string                  `json:"stringSet"`
+	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
+	TimeValue     *time.Time                `json:"timeValue"`
+	MaxDepth      *int                      `json:"maxDepth"`
+}
+
 type GeneralFilter struct {
 	FilterType    string              `json:"filterType"`
 	Key           string              `json:"key"`
@@ -929,6 +1032,15 @@ type ImportFlowDraftInput struct {
 
 type KpiFilterInput struct {
 	FilterType  KpiFilterType       `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiFilterInput struct {
+	FilterType  KqiFilterType       `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
 	StringValue *string             `json:"stringValue"`
 	IDSet       []int               `json:"idSet"`
@@ -1124,8 +1236,10 @@ type StartBlockInput struct {
 }
 
 type StartFlowInput struct {
-	FlowID int                         `json:"flowID"`
-	Params []*flowschema.VariableValue `json:"params"`
+	FlowID    int                         `json:"flowID"`
+	BssCode   string                      `json:"bssCode"`
+	StartDate time.Time                   `json:"startDate"`
+	Params    []*flowschema.VariableValue `json:"params"`
 }
 
 type SubflowBlock struct {
@@ -1746,6 +1860,52 @@ func (e FilterEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+// what filters should we apply on flow instances
+type FlowInstanceFilterType string
+
+const (
+	FlowInstanceFilterTypeFlowInstanceStatus              FlowInstanceFilterType = "FLOW_INSTANCE_STATUS"
+	FlowInstanceFilterTypeFlowInstanceType                FlowInstanceFilterType = "FLOW_INSTANCE_TYPE"
+	FlowInstanceFilterTypeFlowInstanceBssCode             FlowInstanceFilterType = "FLOW_INSTANCE_BSS_CODE"
+	FlowInstanceFilterTypeFlowInstanceServiceInstanceCode FlowInstanceFilterType = "FLOW_INSTANCE_SERVICE_INSTANCE_CODE"
+)
+
+var AllFlowInstanceFilterType = []FlowInstanceFilterType{
+	FlowInstanceFilterTypeFlowInstanceStatus,
+	FlowInstanceFilterTypeFlowInstanceType,
+	FlowInstanceFilterTypeFlowInstanceBssCode,
+	FlowInstanceFilterTypeFlowInstanceServiceInstanceCode,
+}
+
+func (e FlowInstanceFilterType) IsValid() bool {
+	switch e {
+	case FlowInstanceFilterTypeFlowInstanceStatus, FlowInstanceFilterTypeFlowInstanceType, FlowInstanceFilterTypeFlowInstanceBssCode, FlowInstanceFilterTypeFlowInstanceServiceInstanceCode:
+		return true
+	}
+	return false
+}
+
+func (e FlowInstanceFilterType) String() string {
+	return string(e)
+}
+
+func (e *FlowInstanceFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FlowInstanceFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FlowInstanceFilterType", str)
+	}
+	return nil
+}
+
+func (e FlowInstanceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type ImageEntity string
 
 const (
@@ -1831,6 +1991,45 @@ func (e *KpiFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e KpiFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiFilterType string
+
+const (
+	KqiFilterTypeName KqiFilterType = "NAME"
+)
+
+var AllKqiFilterType = []KqiFilterType{
+	KqiFilterTypeName,
+}
+
+func (e KqiFilterType) IsValid() bool {
+	switch e {
+	case KqiFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

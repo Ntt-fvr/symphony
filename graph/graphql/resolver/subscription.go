@@ -194,6 +194,14 @@ func (r subscriptionResolver) ProjectAdded(ctx context.Context) (<-chan *ent.Pro
 	return events.(chan *ent.Project), nil
 }
 
+func (r subscriptionResolver) AddImage(ctx context.Context) (<-chan *ent.File, error) {
+	events, err := r.subscribe(ctx, event.AddImage, &ent.File{})
+	if err != nil {
+		return nil, err
+	}
+	return events.(chan *ent.File), nil
+}
+
 func (r subscriptionResolver) ProjectChanged(ctx context.Context) (<-chan *ent.Project, error) {
 	events, err := r.subscribe(ctx, event.ProjectChanged, &ent.Project{})
 	if err != nil {
