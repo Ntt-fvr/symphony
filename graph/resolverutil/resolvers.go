@@ -158,6 +158,113 @@ func ProjectFilter(query *ent.ProjectQuery, filters []*models.ProjectFilterInput
 	return query, nil
 }
 
+func CounterFilter(query *ent.CounterQuery, filters []*models.CounterFilterInput) (*ent.CounterQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleCounterFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKpiFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func TresholdFilter(query *ent.TresholdQuery, filters []*models.TresholdFilterInput) (*ent.TresholdQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleTresholdFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func AlarmFilterFilter(query *ent.AlarmFilterQuery, filters []*models.AlarmFilterFilterInput) (*ent.AlarmFilterQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleAlarmFilterFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func DomainFilter(query *ent.DomainQuery, filters []*models.DomainFilterInput) (*ent.DomainQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleDomainFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func VendorFilter(query *ent.VendorQuery, filters []*models.VendorFilterInput) (*ent.VendorQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleVendorFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func CounterFamilyFilter(query *ent.CounterFamilyQuery, filters []*models.CounterFamilyFilterInput) (*ent.CounterFamilyQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleCounterFamilyFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func RuleTypeFilter(query *ent.RuleTypeQuery, filters []*models.RuleTypeFilterInput) (*ent.RuleTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRuleTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func EventSeverityFilter(query *ent.EventSeverityQuery, filters []*models.EventSeverityFilterInput) (*ent.EventSeverityQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleEventSeverityFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ComparatorFilter(query *ent.ComparatorQuery, filters []*models.ComparatorFilterInput) (*ent.ComparatorQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleComparatorFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func AlarmStatusFilter(query *ent.AlarmStatusQuery, filters []*models.AlarmStatusFilterInput) (*ent.AlarmStatusQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleAlarmStatusFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
 func FlowInstanceFilter(query *ent.FlowInstanceQuery, filters []*models.FlowInstanceFilterInput) (*ent.FlowInstanceQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -165,6 +272,15 @@ func FlowInstanceFilter(query *ent.FlowInstanceQuery, filters []*models.FlowInst
 			if query, err = handleFlowInstanceFilter(query, f); err != nil {
 				return nil, err
 			}
+		}
+	}
+	return query, nil
+}
+func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiFilter(query, f); err != nil {
+			return nil, err
 		}
 	}
 	return query, nil

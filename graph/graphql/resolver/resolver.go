@@ -138,6 +138,10 @@ func (r resolver) Property() generated.PropertyResolver {
 	return propertyResolver{}
 }
 
+func (r resolver) FileCategoryType() generated.FileCategoryTypeResolver {
+	return fileCategoryTypeResolver{}
+}
+
 func (resolver) Service() generated.ServiceResolver {
 	return serviceResolver{}
 }
@@ -201,3 +205,92 @@ func (r resolver) VariableExpression() generated.VariableExpressionResolver {
 func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
+
+/*func (r resolver) Domain() generated.DomainResolver {
+	return domainResolver{}
+}
+
+func (r resolver) CounterFamily() generated.CounterFamilyResolver {
+	return counterFamilyResolver{}
+}*/
+
+/*func (r resolver) Vendor() generated.VendorResolver {
+	return vendorResolver{}
+}*/
+
+func (r resolver) Tech() generated.TechResolver {
+	return techResolver{}
+}
+
+func (r resolver) Kpi() generated.KpiResolver {
+	return kpiResolver{}
+}
+
+func (r resolver) CounterFormula() generated.CounterFormulaResolver {
+	return counterFormulaResolver{}
+}
+
+func (r resolver) Counter() generated.CounterResolver {
+	return counterResolver{}
+}
+
+func (r resolver) Formula() generated.FormulaResolver {
+	return formulaResolver{}
+}
+
+func (r resolver) AlarmFilter() generated.AlarmFilterResolver {
+	return alarmFilterResolver{}
+}
+func (r resolver) AlarmStatus() generated.AlarmStatusResolver {
+	return alarmStatusResolver{}
+}
+
+/************************* mis tablas desde aqui********************************************************************/
+func (r resolver) Comparator() generated.ComparatorResolver {
+	return comparatorResolver{}
+}
+
+func (r resolver) Treshold() generated.TresholdResolver {
+	return tresholdResolver{}
+}
+
+func (r resolver) Rule() generated.RuleResolver {
+	return ruleResolver{}
+}
+
+func (r resolver) RuleType() generated.RuleTypeResolver {
+	return ruleTypeResolver{}
+}
+
+/*
+func (r resolver) RuleLimit() generated.RuleLimitResolver {
+	return ruleLimitResolver{}
+}*/
+func (r resolver) EventSeverity() generated.EventSeverityResolver {
+	return eventSeverityResolver{}
+}
+
+/************************* KQI ********************************************************************/
+func (r resolver) Category() generated.CategoryResolver {
+	return categoryResolver{}
+}
+
+func (r resolver) Perspective() generated.PerspectiveResolver {
+	return perspectiveResolver{}
+}
+func (r resolver) TemporalFrecuency() generated.TemporalFrecuencyResolver {
+	return temporalFrecuencyResolver{}
+}
+
+func (r resolver) KqiSource() generated.KqiSourceResolver {
+	return kqiSourceResolver{}
+}
+
+func (r resolver) Kqi() generated.KqiResolver {
+	return kqiResolver{}
+}
+func (r resolver) KqiTarget() generated.KqiTargetResolver {
+	return kqiTargetResolver{}
+}
+
+/**************************************************************************************************/

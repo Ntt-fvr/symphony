@@ -29,14 +29,22 @@ type config struct {
 // hooks per client, for fast access.
 type hooks struct {
 	Activity                    []ent.Hook
+	AlarmFilter                 []ent.Hook
+	AlarmStatus                 []ent.Hook
 	Block                       []ent.Hook
 	BlockInstance               []ent.Hook
+	Category                    []ent.Hook
 	CheckListCategory           []ent.Hook
 	CheckListCategoryDefinition []ent.Hook
 	CheckListItem               []ent.Hook
 	CheckListItemDefinition     []ent.Hook
 	Comment                     []ent.Hook
+	Comparator                  []ent.Hook
+	Counter                     []ent.Hook
+	CounterFamily               []ent.Hook
+	CounterFormula              []ent.Hook
 	Customer                    []ent.Hook
+	Domain                      []ent.Hook
 	EntryPoint                  []ent.Hook
 	Equipment                   []ent.Hook
 	EquipmentCategory           []ent.Hook
@@ -46,10 +54,12 @@ type hooks struct {
 	EquipmentPosition           []ent.Hook
 	EquipmentPositionDefinition []ent.Hook
 	EquipmentType               []ent.Hook
+	EventSeverity               []ent.Hook
 	ExitPoint                   []ent.Hook
 	ExportTask                  []ent.Hook
 	Feature                     []ent.Hook
 	File                        []ent.Hook
+	FileCategoryType            []ent.Hook
 	FloorPlan                   []ent.Hook
 	FloorPlanReferencePoint     []ent.Hook
 	FloorPlanScale              []ent.Hook
@@ -57,17 +67,26 @@ type hooks struct {
 	FlowDraft                   []ent.Hook
 	FlowExecutionTemplate       []ent.Hook
 	FlowInstance                []ent.Hook
+	Formula                     []ent.Hook
 	Hyperlink                   []ent.Hook
+	Kpi                         []ent.Hook
+	Kqi                         []ent.Hook
+	KqiSource                   []ent.Hook
+	KqiTarget                   []ent.Hook
 	Link                        []ent.Hook
 	Location                    []ent.Hook
 	LocationType                []ent.Hook
 	PermissionsPolicy           []ent.Hook
+	Perspective                 []ent.Hook
 	Project                     []ent.Hook
 	ProjectTemplate             []ent.Hook
 	ProjectType                 []ent.Hook
 	Property                    []ent.Hook
 	PropertyType                []ent.Hook
 	ReportFilter                []ent.Hook
+	Rule                        []ent.Hook
+	RuleLimit                   []ent.Hook
+	RuleType                    []ent.Hook
 	Service                     []ent.Hook
 	ServiceEndpoint             []ent.Hook
 	ServiceEndpointDefinition   []ent.Hook
@@ -78,8 +97,12 @@ type hooks struct {
 	SurveyTemplateCategory      []ent.Hook
 	SurveyTemplateQuestion      []ent.Hook
 	SurveyWiFiScan              []ent.Hook
+	Tech                        []ent.Hook
+	TemporalFrecuency           []ent.Hook
+	Treshold                    []ent.Hook
 	User                        []ent.Hook
 	UsersGroup                  []ent.Hook
+	Vendor                      []ent.Hook
 	WorkOrder                   []ent.Hook
 	WorkOrderDefinition         []ent.Hook
 	WorkOrderTemplate           []ent.Hook

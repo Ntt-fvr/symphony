@@ -60,8 +60,13 @@ override.tf.json
 
 # .idea
 .idea/
+.flowconfig
+
+# yarn
+yarn.lock
 
 ## Python
 __pycache__
 
 # End of https://www.gitignore.io/api/git,terraform,mercurial
+/.metadata/

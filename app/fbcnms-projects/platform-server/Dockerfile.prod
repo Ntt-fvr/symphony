@@ -16,7 +16,7 @@ COPY @fbcnms @fbcnms
 
 # build static files to /app/fbcnms-projects/inventory/static
 WORKDIR /app/fbcnms-projects/inventory
-RUN yarn install --frozen-lockfile --network-timeout 600000
+RUN yarn install --network-timeout 600000
 RUN yarn build
 
 ##################
@@ -38,7 +38,7 @@ COPY fbcnms-projects/platform-server .
 COPY @fbcnms /app/@fbcnms
 
 # Install server dependencies
-RUN yarn install --production=true --frozen-lockfile --network-timeout 600000 && yarn cache clean
+RUN yarn install --production=true --network-timeout 600000 && yarn cache clean
 
 # Copy compiled UI components
 COPY --from=ui /app/fbcnms-projects/inventory/static/dist /app/fbcnms-projects/platform-server/static/dist

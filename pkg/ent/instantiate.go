@@ -13,6 +13,18 @@ func (c *ActivityClient) Instantiate(a *Activity) *Activity {
 }
 
 // Instantiate entity configuration.
+func (c *AlarmFilterClient) Instantiate(af *AlarmFilter) *AlarmFilter {
+	af.config = c.config
+	return af
+}
+
+// Instantiate entity configuration.
+func (c *AlarmStatusClient) Instantiate(as *AlarmStatus) *AlarmStatus {
+	as.config = c.config
+	return as
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b
@@ -22,6 +34,12 @@ func (c *BlockClient) Instantiate(b *Block) *Block {
 func (c *BlockInstanceClient) Instantiate(bi *BlockInstance) *BlockInstance {
 	bi.config = c.config
 	return bi
+}
+
+// Instantiate entity configuration.
+func (c *CategoryClient) Instantiate(ca *Category) *Category {
+	ca.config = c.config
+	return ca
 }
 
 // Instantiate entity configuration.
@@ -55,9 +73,39 @@ func (c *CommentClient) Instantiate(co *Comment) *Comment {
 }
 
 // Instantiate entity configuration.
+func (c *ComparatorClient) Instantiate(co *Comparator) *Comparator {
+	co.config = c.config
+	return co
+}
+
+// Instantiate entity configuration.
+func (c *CounterClient) Instantiate(co *Counter) *Counter {
+	co.config = c.config
+	return co
+}
+
+// Instantiate entity configuration.
+func (c *CounterFamilyClient) Instantiate(cf *CounterFamily) *CounterFamily {
+	cf.config = c.config
+	return cf
+}
+
+// Instantiate entity configuration.
+func (c *CounterFormulaClient) Instantiate(cf *CounterFormula) *CounterFormula {
+	cf.config = c.config
+	return cf
+}
+
+// Instantiate entity configuration.
 func (c *CustomerClient) Instantiate(cu *Customer) *Customer {
 	cu.config = c.config
 	return cu
+}
+
+// Instantiate entity configuration.
+func (c *DomainClient) Instantiate(d *Domain) *Domain {
+	d.config = c.config
+	return d
 }
 
 // Instantiate entity configuration.
@@ -115,6 +163,12 @@ func (c *EquipmentTypeClient) Instantiate(et *EquipmentType) *EquipmentType {
 }
 
 // Instantiate entity configuration.
+func (c *EventSeverityClient) Instantiate(es *EventSeverity) *EventSeverity {
+	es.config = c.config
+	return es
+}
+
+// Instantiate entity configuration.
 func (c *ExitPointClient) Instantiate(ep *ExitPoint) *ExitPoint {
 	ep.config = c.config
 	return ep
@@ -136,6 +190,12 @@ func (c *FeatureClient) Instantiate(f *Feature) *Feature {
 func (c *FileClient) Instantiate(f *File) *File {
 	f.config = c.config
 	return f
+}
+
+// Instantiate entity configuration.
+func (c *FileCategoryTypeClient) Instantiate(fct *FileCategoryType) *FileCategoryType {
+	fct.config = c.config
+	return fct
 }
 
 // Instantiate entity configuration.
@@ -181,9 +241,39 @@ func (c *FlowInstanceClient) Instantiate(fi *FlowInstance) *FlowInstance {
 }
 
 // Instantiate entity configuration.
+func (c *FormulaClient) Instantiate(f *Formula) *Formula {
+	f.config = c.config
+	return f
+}
+
+// Instantiate entity configuration.
 func (c *HyperlinkClient) Instantiate(h *Hyperlink) *Hyperlink {
 	h.config = c.config
 	return h
+}
+
+// Instantiate entity configuration.
+func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
+	k.config = c.config
+	return k
+}
+
+// Instantiate entity configuration.
+func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
+	k.config = c.config
+	return k
+}
+
+// Instantiate entity configuration.
+func (c *KqiSourceClient) Instantiate(ks *KqiSource) *KqiSource {
+	ks.config = c.config
+	return ks
+}
+
+// Instantiate entity configuration.
+func (c *KqiTargetClient) Instantiate(kt *KqiTarget) *KqiTarget {
+	kt.config = c.config
+	return kt
 }
 
 // Instantiate entity configuration.
@@ -208,6 +298,12 @@ func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
 	pp.config = c.config
 	return pp
+}
+
+// Instantiate entity configuration.
+func (c *PerspectiveClient) Instantiate(pe *Perspective) *Perspective {
+	pe.config = c.config
+	return pe
 }
 
 // Instantiate entity configuration.
@@ -244,6 +340,24 @@ func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf
+}
+
+// Instantiate entity configuration.
+func (c *RuleClient) Instantiate(r *Rule) *Rule {
+	r.config = c.config
+	return r
+}
+
+// Instantiate entity configuration.
+func (c *RuleLimitClient) Instantiate(rl *RuleLimit) *RuleLimit {
+	rl.config = c.config
+	return rl
+}
+
+// Instantiate entity configuration.
+func (c *RuleTypeClient) Instantiate(rt *RuleType) *RuleType {
+	rt.config = c.config
+	return rt
 }
 
 // Instantiate entity configuration.
@@ -307,6 +421,24 @@ func (c *SurveyWiFiScanClient) Instantiate(swfs *SurveyWiFiScan) *SurveyWiFiScan
 }
 
 // Instantiate entity configuration.
+func (c *TechClient) Instantiate(t *Tech) *Tech {
+	t.config = c.config
+	return t
+}
+
+// Instantiate entity configuration.
+func (c *TemporalFrecuencyClient) Instantiate(tf *TemporalFrecuency) *TemporalFrecuency {
+	tf.config = c.config
+	return tf
+}
+
+// Instantiate entity configuration.
+func (c *TresholdClient) Instantiate(t *Treshold) *Treshold {
+	t.config = c.config
+	return t
+}
+
+// Instantiate entity configuration.
 func (c *UserClient) Instantiate(u *User) *User {
 	u.config = c.config
 	return u
@@ -316,6 +448,12 @@ func (c *UserClient) Instantiate(u *User) *User {
 func (c *UsersGroupClient) Instantiate(ug *UsersGroup) *UsersGroup {
 	ug.config = c.config
 	return ug
+}
+
+// Instantiate entity configuration.
+func (c *VendorClient) Instantiate(v *Vendor) *Vendor {
+	v.config = c.config
+	return v
 }
 
 // Instantiate entity configuration.

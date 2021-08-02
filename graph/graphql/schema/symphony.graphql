@@ -84,6 +84,7 @@ type PermissionSettings
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
   automationPolicy: AutomationPolicy!
+  assurancePolicy: AssurancePolicy!
 }
 
 enum PermissionValue
@@ -202,6 +203,22 @@ input AutomationPolicyInput
   templates: BasicCUDInput
 }
 
+type AssurancePolicy
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AssurancePolicy"
+  ) {
+  read: BasicPermissionRule!
+  templates: CUD!
+}
+
+input AssurancePolicyInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/authz/models.AssurancePolicyInput"
+  ) {
+  read: BasicPermissionRuleInput
+  templates: BasicCUDInput
+}
+
 type InventoryPolicy
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.InventoryPolicy"
@@ -275,6 +292,7 @@ union SystemPolicy
     InventoryPolicy
   | WorkforcePolicy
   | AutomationPolicy
+  | AssurancePolicy
 
 type PermissionsPolicy implements Node {
   id: ID!
@@ -292,6 +310,7 @@ input AddPermissionsPolicyInput {
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
+  assuranceInput: AssurancePolicyInput
   groups: [ID!]
 }
 
@@ -303,6 +322,7 @@ input EditPermissionsPolicyInput {
   inventoryInput: InventoryPolicyInput
   workforceInput: WorkforcePolicyInput
   automationInput: AutomationPolicyInput
+  assuranceInput: AssurancePolicyInput
   groups: [ID!]
 }
 
@@ -446,6 +466,7 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
+  fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
@@ -457,6 +478,7 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
+  fileCategoriesType: [FileCategoryTypeInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
@@ -468,6 +490,7 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
+  fileCategoriesType: [FileCategoryTypeInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
 }
@@ -1473,6 +1496,20 @@ enum PropertyKind
   node
 }
 
+type FileCategoryType implements Node {
+  id: ID!
+  name: String!
+  rawValue: String
+}
+
+input FileCategoryTypeInput
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
+  ) {
+  id: ID
+  name: String!
+}
+
 type PropertyType implements Node {
   id: ID!
   externalId: String
@@ -2418,6 +2455,822 @@ input ProjectOrder {
   field: ProjectOrderField
 }
 
+"""
+Properties by which counters connections can be ordered.
+"""
+enum CounterOrderField {
+  """
+  Order counters by name.
+  """
+  NAME
+
+  """
+  Order counters by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order counters by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for counters connections.
+"""
+input CounterOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order counters by.
+  """
+  field: CounterOrderField
+}
+
+"""
+A connection to a list of counters.
+"""
+type CounterConnection {
+  """
+  Total counters of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of counters edges.
+  """
+  edges: [CounterEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A counters edge in a connection.
+"""
+type CounterEdge {
+  """
+  The counters at the end of the edge.
+  """
+  node: Counter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which kpi's connections can be ordered.
+"""
+enum KpiOrderField {
+  """
+  Order kpi's by name.
+  """
+  NAME
+
+  """
+  Order kpi's by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kpi's by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kpi's connections.
+"""
+input KpiOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kpi's by.
+  """
+  field: KpiOrderField
+}
+
+"""
+A connection to a list of kpi's.
+"""
+type KpiConnection {
+  """
+  Total kpi's of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kpi's edges.
+  """
+  edges: [KpiEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kpi's edge in a connection.
+"""
+type KpiEdge {
+  """
+  The kpi's at the end of the edge.
+  """
+  node: Kpi
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection treshold ###############################################
+"""
+Properties by which Treshold connections can be ordered.
+"""
+enum TresholdOrderField {
+  """
+  Order Treshold by name.
+  """
+  NAME
+
+  """
+  Order Treshold by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Treshold by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Treshold connections.
+"""
+input TresholdOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Treshold by.
+  """
+  field: TresholdOrderField
+}
+
+"""
+A connection to a list of Treshold.
+"""
+type TresholdConnection {
+  """
+  Total Treshold of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Treshold edges.
+  """
+  edges: [TresholdEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Treshold edge in a connection.
+"""
+type TresholdEdge {
+  """
+  The Treshold at the end of the edge.
+  """
+  node: Treshold
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection Alarm filter ###############################################
+"""
+Properties by which AlarmFilter connections can be ordered.
+"""
+enum AlarmFilterOrderField {
+  """
+  Order AlarmFilter by name.
+  """
+  NAME
+
+  """
+  Order AlarmFilter by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order AlarmFilter by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for AlarmFilter connections.
+"""
+input AlarmFilterOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order AlarmFilter by.
+  """
+  field: AlarmFilterOrderField
+}
+
+"""
+A connection to a list of AlarmFilter.
+"""
+type AlarmFilterConnection {
+  """
+  Total AlarmFilter of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of AlarmFilter edges.
+  """
+  edges: [AlarmFilterEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A AlarmFilter edge in a connection.
+"""
+type AlarmFilterEdge {
+  """
+  The AlarmFilter at the end of the edge.
+  """
+  node: AlarmFilter
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection Domains ###############################################
+
+"""
+Properties by which domains connections can be ordered.
+"""
+enum DomainOrderField {
+  """
+  Order domains by name.
+  """
+  NAME
+
+  """
+  Order domains by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order domains by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for domains connections.
+"""
+input DomainOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order domains by.
+  """
+  field: DomainOrderField
+}
+
+"""
+A connection to a list of domains.
+"""
+type DomainConnection {
+  """
+  Total domains of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of domains edges.
+  """
+  edges: [DomainEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A domains edge in a connection.
+"""
+type DomainEdge {
+  """
+  The domains at the end of the edge.
+  """
+  node: Domain
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection Vendors ###############################################
+
+"""
+Properties by which vendors connections can be ordered.
+"""
+enum VendorOrderField {
+  """
+  Order vendors by name.
+  """
+  NAME
+
+  """
+  Order vendors by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order vendors by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for vendors connections.
+"""
+input VendorOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order vendors by.
+  """
+  field: VendorOrderField
+}
+
+"""
+A connection to a list of vendors.
+"""
+type VendorConnection {
+  """
+  Total vendors of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of vendors edges.
+  """
+  edges: [VendorEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A vendors edge in a connection.
+"""
+type VendorEdge {
+  """
+  The vendors at the end of the edge.
+  """
+  node: Vendor
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection CounterFamilys ###############################################
+
+"""
+Properties by which counterFamilys connections can be ordered.
+"""
+enum CounterFamilyOrderField {
+  """
+  Order counterFamilys by name.
+  """
+  NAME
+
+  """
+  Order counterFamilys by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order counterFamilys by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for counterFamilys connections.
+"""
+input CounterFamilyOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order counterFamilys by.
+  """
+  field: CounterFamilyOrderField
+}
+
+"""
+A connection to a list of counterFamilys.
+"""
+type CounterFamilyConnection {
+  """
+  Total counterFamilys of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of counterFamilys edges.
+  """
+  edges: [CounterFamilyEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A counterFamilys edge in a connection.
+"""
+type CounterFamilyEdge {
+  """
+  The counterFamilys at the end of the edge.
+  """
+  node: CounterFamily
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection RuleTypes ###############################################
+
+"""
+Properties by which ruleTypes connections can be ordered.
+"""
+enum RuleTypeOrderField {
+  """
+  Order ruleTypes by name.
+  """
+  NAME
+
+  """
+  Order ruleTypes by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order ruleTypes by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for ruleTypes connections.
+"""
+input RuleTypeOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order ruleTypes by.
+  """
+  field: RuleTypeOrderField
+}
+
+"""
+A connection to a list of ruleTypes.
+"""
+type RuleTypeConnection {
+  """
+  Total ruleTypes of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of ruleTypes edges.
+  """
+  edges: [RuleTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A ruleTypes edge in a connection.
+"""
+type RuleTypeEdge {
+  """
+  The ruleTypes at the end of the edge.
+  """
+  node: RuleType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection EventSeveritys ###############################################
+
+"""
+Properties by which eventSeveritys connections can be ordered.
+"""
+enum EventSeverityOrderField {
+  """
+  Order eventSeveritys by name.
+  """
+  NAME
+
+  """
+  Order eventSeveritys by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order eventSeveritys by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for eventSeveritys connections.
+"""
+input EventSeverityOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order eventSeveritys by.
+  """
+  field: EventSeverityOrderField
+}
+
+"""
+A connection to a list of eventSeveritys.
+"""
+type EventSeverityConnection {
+  """
+  Total eventSeveritys of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of eventSeveritys edges.
+  """
+  edges: [EventSeverityEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A eventSeveritys edge in a connection.
+"""
+type EventSeverityEdge {
+  """
+  The eventSeveritys at the end of the edge.
+  """
+  node: EventSeverity
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection Comparator ###############################################
+
+"""
+Properties by which comparator connections can be ordered.
+"""
+enum ComparatorOrderField {
+  """
+  Order comparator by name.
+  """
+  NAME
+
+  """
+  Order comparator by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order comparator by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for comparator connections.
+"""
+input ComparatorOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order comparator by.
+  """
+  field: ComparatorOrderField
+}
+
+"""
+A connection to a list of comparator.
+"""
+type ComparatorConnection {
+  """
+  Total comparator of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of comparator edges.
+  """
+  edges: [ComparatorEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A comparator edge in a connection.
+"""
+type ComparatorEdge {
+  """
+  The comparator at the end of the edge.
+  """
+  node: Comparator
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+################################ conection AlarmStatus ###############################################
+
+"""
+Properties by which alarmStatus connections can be ordered.
+"""
+enum AlarmStatusOrderField {
+  """
+  Order alarmStatus by name.
+  """
+  NAME
+
+  """
+  Order alarmStatus by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order alarmStatus by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for alarmStatus connections.
+"""
+input AlarmStatusOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order alarmStatus by.
+  """
+  field: AlarmStatusOrderField
+}
+
+"""
+A connection to a list of alarmStatus.
+"""
+type AlarmStatusConnection {
+  """
+  Total alarmStatus of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of alarmStatus edges.
+  """
+  edges: [AlarmStatusEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A alarmStatus edge in a connection.
+"""
+type AlarmStatusEdge {
+  """
+  The alarmStatus at the end of the edge.
+  """
+  node: AlarmStatus
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection kqi ###############################################
+"""
+Properties by which Kqi connections can be ordered.
+"""
+enum KqiOrderField {
+  """
+  Order Kqi by name.
+  """
+  NAME
+
+  """
+  Order Kqi by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Kqi by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Kqi connections.
+"""
+input KqiOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Kqi by.
+  """
+  field: KqiOrderField
+}
+
+"""
+A connection to a list of Kqi.
+"""
+type KqiConnection {
+  """
+  Total Kqi of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Kqi edges.
+  """
+  edges: [KqiEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Kqi edge in a connection.
+"""
+type KqiEdge {
+  """
+  The Kqi at the end of the edge.
+  """
+  node: Kqi
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -2784,6 +3637,33 @@ input ProjectFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   propertyValue: PropertyTypeInput
+}
+
+enum CounterFilterType {
+  NAME
+}
+
+input CounterFilterInput {
+  filterType: CounterFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  propertyValue: CounterFamilyInput
+}
+
+enum KpiFilterType {
+  NAME
+}
+
+input KpiFilterInput {
+  filterType: KpiFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 """
@@ -3676,33 +4556,6 @@ enum FlowInstanceStatus
   CANCELED
 }
 
-type FlowExecutionTemplate implements Node {
-  id: ID!
-  name: String!
-  description: String
-  blocks: [Block!]!
-  connectors: [Connector!]!
-}
-
-enum BlockInstanceStatus
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
-  ) {
-  PENDING
-  IN_PROGRESS
-  FAILED
-  COMPLETED
-  WAITING
-}
-
-type VariableValue
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
-  ) {
-  variableDefinitionKey: String!
-  value: String!
-}
-
 type BlockInstance implements Node {
   id: ID!
   status: BlockInstanceStatus!
@@ -3729,6 +4582,33 @@ input EditBlockInstanceInput {
   outputs: [VariableValueInput!]
   failure_reason: String
   endDate: Time
+}
+
+type FlowExecutionTemplate implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+  connectors: [Connector!]!
+}
+
+enum BlockInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
+  ) {
+  PENDING
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  WAITING
+}
+
+type VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
+  variableDefinitionKey: String!
+  value: String!
 }
 
 type FlowInstance implements Node {
@@ -4184,6 +5064,429 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): WorkerTypeConnection!
+  
+  """
+  A list of counters.
+  """
+  counters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: CounterOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [CounterFilterInput!]
+  ): CounterConnection!
+  
+  """
+  A list of kpis.
+  """
+  kpis(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kpis.
+    """
+    orderBy: KpiOrder
+
+    
+    #Filtering options for the returned kpis.
+    
+    filterBy: [KpiFilterInput!]
+  ): KpiConnection!
+
+  """
+  A list of tresholds.
+  """
+  tresholds(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: TresholdOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [TresholdFilterInput!]
+  ): TresholdConnection!
+  
+  """
+  A list of AlarmFilter.
+  """
+  AlarmFilters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: AlarmFilterOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [AlarmFilterFilterInput!]
+  ): AlarmFilterConnection!
+
+  
+  """
+  A list of domains.
+  """
+  domains(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned domains.
+    """
+    orderBy: DomainOrder
+
+    
+    #Filtering options for the returned domains.
+    
+    filterBy: [DomainFilterInput!]
+  ): DomainConnection!
+
+  """
+  A list of vendors.
+  """
+  vendors(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned vendors.
+    """
+    orderBy: VendorOrder
+
+    
+    #Filtering options for the returned vendors.
+    
+    filterBy: [VendorFilterInput!]
+  ): VendorConnection!
+
+  """
+  A list of counterFamilys.
+  """
+  counterFamilys(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counterFamilys.
+    """
+    orderBy: CounterFamilyOrder
+
+    
+    #Filtering options for the returned counterFamilys.
+    
+    filterBy: [CounterFamilyFilterInput!]
+  ): CounterFamilyConnection!
+
+  
+  """
+  A list of ruleTypes.
+  """
+  ruleTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned ruleTypes.
+    """
+    orderBy: RuleTypeOrder
+
+    
+    #Filtering options for the returned ruleTypes.
+    
+    filterBy: [RuleTypeFilterInput!]
+  ): RuleTypeConnection!
+
+  """
+  A list of eventSeveritys.
+  """
+  eventSeveritys(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned eventSeveritys.
+    """
+    orderBy: EventSeverityOrder
+
+    
+    #Filtering options for the returned eventSeveritys.
+    
+    filterBy: [EventSeverityFilterInput!]
+  ): EventSeverityConnection!
+  
+  """
+  A list of comparator.
+  """
+  
+  comparators(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned comparator.
+    """
+    orderBy: ComparatorOrder
+
+    
+    #Filtering options for the returned comparator.
+    
+    filterBy: [ComparatorFilterInput!]
+  ): ComparatorConnection!
+
+  """
+  A list of alarmStatus.
+  """
+  
+  alarmStatuss(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned alarmStatus.
+    """
+    orderBy: AlarmStatusOrder
+
+    
+    #Filtering options for the returned alarmStatus.
+    
+    filterBy: [AlarmStatusFilterInput!]
+  ): AlarmStatusConnection!
+  """
+  A list of Kqi.
+  """
+  Kqis(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: KqiOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [KqiFilterInput!]
+  ): KqiConnection!
 }
 
 type Mutation {
@@ -4403,17 +5706,72 @@ type Mutation {
   addWorkerType(input: AddWorkerTypeInput!): WorkerType!
   editWorkerType(input: EditWorkerTypeInput!): WorkerType!
   removeWorkerType(id: ID!): ID!
-  moveEquipmentToLocation(
-    """
-    ID of the location that will the destination
-    """
-    locationID: ID!
-    """
-    id of the equipment that will be moved
-    """
-    equipmentId: ID!
-
-  ): Equipment!
+  addCounter(input: AddCounterInput!):Counter!
+  editCounter(input: EditCounterInput!): Counter!
+  removeCounter(id: ID!): ID!
+  addCounterFamily(input: AddCounterFamilyInput!):CounterFamily!
+  editCounterFamily(input: EditCounterFamilyInput!): CounterFamily!
+  removeCounterFamily(id: ID!): ID!
+  addVendor(input: AddVendorInput!):Vendor!
+  editVendor(input: EditVendorInput!): Vendor!
+  removeVendor(id: ID!): ID!
+  addFormula(input: AddFormulaInput!):Formula!
+  editFormula(input: EditFormulaInput!): Formula!
+  removeFormula(id: ID!): ID!
+  addKpi(input: AddKpiInput!):Kpi!
+  editKpi(input: EditKpiInput!): Kpi!
+  removeKpi(id: ID!): ID!
+  addDomain(input: AddDomainInput!):Domain!
+  editDomain(input: EditDomainInput!): Domain!
+  removeDomain(id: ID!): ID!
+  addTech(input: AddTechInput!):Tech!
+  editTech(input: EditTechInput!): Tech!
+  removeTech(id: ID!): ID!
+  addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
+  editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
+  removeCounterFormula(id: ID!): ID!
+  addTreshold(input: AddTresholdInput!):Treshold!
+  editTreshold(input: EditTresholdInput!): Treshold!
+  removeTreshold(id: ID!): ID!
+  addComparator(input: AddComparatorInput!):Comparator!
+  editComparator(input: EditComparatorInput!): Comparator!
+  removeComparator(id: ID!): ID!
+  addEventSeverity(input: AddEventSeverityInput!):EventSeverity!
+  editEventSeverity(input: EditEventSeverityInput!): EventSeverity!
+  removeEventSeverity(id: ID!): ID!
+  addRule(input: AddRuleInput!):Rule!
+  editRule(input: EditRuleInput!): Rule!
+  removeRule(id: ID!): ID!
+  addRuleLimit(input: AddRuleLimitInput!):RuleLimit!
+  editRuleLimit(input: EditRuleLimitInput!): RuleLimit!
+  removeRuleLimit(id: ID!): ID!
+  addRuleType(input: AddRuleTypeInput!):RuleType!
+  editRuleType(input: EditRuleTypeInput!): RuleType!
+  removeRuleType(id: ID!): ID!
+  addAlarmFilter(input: AddAlarmFilterInput!):AlarmFilter!
+  editAlarmFilter(input: EditAlarmFilterInput!): AlarmFilter!
+  removeAlarmFilter(id: ID!): ID!
+  addAlarmStatus(input: AddAlarmStatusInput!):AlarmStatus!
+  editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus!
+  removeAlarmStatus(id: ID!): ID!
+  addKqi(input: AddKqiInput!):Kqi!
+  editKqi(input: EditKqiInput!): Kqi!
+  removeKqi(id: ID!): ID!
+  addCategory(input: AddCategoryInput!):Category!
+  editCategory(input: EditCategoryInput!): Category!
+  removeCategory(id: ID!): ID!
+  addPerspective(input: AddPerspectiveInput!):Perspective!
+  editPerspective(input: EditPerspectiveInput!): Perspective!
+  removePerspective(id: ID!): ID!
+  addTemporalFrecuency(input: AddTemporalFrecuencyInput!):TemporalFrecuency!
+  editTemporalFrecuency(input: EditTemporalFrecuencyInput!): TemporalFrecuency!
+  removeTemporalFrecuency(id: ID!): ID!
+  addKqiSource(input: AddKqiSourceInput!):KqiSource!
+  editKqiSource(input: EditKqiSourceInput!): KqiSource!
+  removeKqiSource(id: ID!): ID!
+  addKqiTarget(input: AddKqiTargetInput!):KqiTarget!
+  editKqiTarget(input: EditKqiTargetInput!): KqiTarget!
+  removeKqiTarget(id: ID!): ID!
 }
 
 """
@@ -4449,4 +5807,670 @@ type Subscription {
   locationAdded: Location
   locationChanged: Location
   AddImage: File
+}
+
+type Counter implements Node {
+  id: ID!
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  counterformula: [CounterFormula]!
+  counterFamily: CounterFamily
+  vendorFk: Vendor!
+}
+
+input AddCounterInput {
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  counterFamily: ID!
+  vendorFk: ID!
+}
+
+input EditCounterInput {
+  id: ID!
+  name: String!
+  externalID: String!
+  networkManagerSystem: String!
+  vendorFk: ID!
+}
+
+type CounterFamily implements Node {
+  id: ID!
+  name: String!
+  
+}
+
+input CounterFamilyInput {
+  name: String!
+  
+}
+
+input AddCounterFamilyInput {
+  name: String!
+  
+}
+
+input EditCounterFamilyInput {
+  id: ID!
+  name: String!
+  
+}
+
+enum CounterFamilyFilterType {
+  NAME
+}
+
+input CounterFamilyFilterInput {
+  filterType: CounterFamilyFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+
+type Vendor implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddVendorInput {
+  name: String!
+}
+
+input EditVendorInput {
+  id: ID!
+  name: String!
+}
+enum VendorFilterType {
+  NAME
+}
+
+input VendorFilterInput {
+  filterType: VendorFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type Domain implements Node {
+  id: ID!
+  name: String!
+}
+
+input DomainInput {
+  id: ID!
+  name: String!
+}
+
+input AddDomainInput {
+  name: String!
+}
+
+input EditDomainInput {
+  id: ID!
+  name: String!
+}
+enum DomainFilterType {
+  NAME
+}
+
+input DomainFilterInput {
+  filterType: DomainFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type Kpi implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  treshold: Treshold!
+  status: Boolean!
+  domainFk: Domain!
+  formulaFk: [Formula]
+}
+
+input AddKpiInput {
+  name: String!
+  description: String!
+  domainFk: ID!
+  status: Boolean!
+}
+
+input EditKpiInput {
+  id: ID!
+  name: String!
+  description: String!
+  domainFk: ID!
+  status: Boolean!
+}
+
+type Tech implements Node {
+  id: ID!
+  name: String!
+  domainFk: Domain!
+}
+
+input AddTechInput {
+  name: String!
+  domainFk: ID!
+}
+
+input EditTechInput {
+  id: ID!
+  name: String!
+  domainFk: ID!
+}
+
+type Formula implements Node {
+  id: ID!
+  name: String!
+  active: Boolean!
+  techFk: Tech!
+  kpiFk: Kpi!
+  counterformulaFk: [CounterFormula]
+}
+
+input AddFormulaInput {
+  name: String!
+  active: Boolean!
+  techFk: ID!
+  kpiFk: ID!
+}
+
+input EditFormulaInput {
+  id: ID!
+  name: String!
+  active: Boolean!
+  techFk: ID!
+  kpiFk: ID!
+}
+
+type CounterFormula implements Node {
+  id: ID!
+  mandatory: Boolean!
+  counterFk: Counter!
+  formulaFk: Formula!
+}
+
+input AddCounterFormulaInput {
+  mandatory: Boolean!
+  counterFk: ID!
+  formulaFk: ID!
+}
+
+input EditCounterFormulaInput {
+  id: ID!
+  mandatory: Boolean!
+  counterFk: ID!
+  formulaFk: ID!
+}
+############################ mis tablas aqui ##################################
+type Treshold implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  status: Boolean!
+  rule: [Rule!]
+  kpi: Kpi
+  
+}
+
+input AddTresholdInput {
+  name: String!
+  description: String!
+  status: Boolean!
+  kpi: ID!
+  
+}
+
+input TresholdInput {
+  name: String!
+  description: String!
+  status: Boolean!
+  rule: [RuleInput!]
+  kpi: ID!
+  
+}
+
+input EditTresholdInput {
+  id: ID!
+  name: String!
+  description: String!
+  status: Boolean!
+}
+
+enum TresholdFilterType {
+  NAME
+}
+
+input TresholdFilterInput {
+  filterType: TresholdFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+type Comparator implements Node {
+  id: ID!
+  name: String!
+  ruleLimit: [RuleLimit!]
+}
+
+input AddComparatorInput {
+  name: String!
+}
+
+input EditComparatorInput {
+  id: ID!
+  name: String!
+}
+enum ComparatorFilterType {
+  NAME
+}
+
+input ComparatorFilterInput {
+  filterType: ComparatorFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RuleType implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddRuleTypeInput {
+  name: String!
+}
+
+input EditRuleTypeInput {
+  id: ID!
+  name: String!
+}
+enum RuleTypeFilterType {
+  NAME
+}
+
+input RuleTypeFilterInput {
+  filterType: RuleTypeFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+
+type RuleLimit implements Node {
+  id: ID!
+  number: Int!
+  limitType: String!
+  comparator: Comparator!
+  rule: Rule
+}
+
+input RuleLimitInput {
+  number: Int!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input AddRuleLimitInput {
+  number: Int!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+input EditRuleLimitInput {
+  id: ID!
+  number: Int!
+  limitType: String!
+  comparator: ID!
+  rule: ID!
+}
+
+type Rule implements Node {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleLimit: [RuleLimit!]
+  ruleType: RuleType!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  status: Boolean!
+  eventSeverity: EventSeverity!
+  treshold: Treshold!
+}
+
+input RuleInput {
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  eventTypeName: String!
+  specificProblem: String!
+  additionalInfo: String!
+  status: Boolean!
+  ruleLimit: [RuleLimitInput!]
+}
+
+input AddRuleInput {
+  name: String!
+  gracePeriod: Int!
+  startDateTime: Time!
+  endDateTime: Time!
+  ruleType: ID!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  status: Boolean!
+  eventSeverity: ID!
+  treshold: ID!
+}
+
+input EditRuleInput {
+  id: ID!
+  name: String!
+  gracePeriod: Int
+  startDateTime: Time
+  endDateTime: Time
+  ruleType: ID!
+  eventTypeName: String
+  specificProblem: String
+  additionalInfo: String
+  status: Boolean!
+  eventSeverity: ID!
+  treshold: ID!
+}
+
+type EventSeverity implements Node {
+  id: ID!
+  name: String!
+  rule: [Rule!]
+}
+
+input AddEventSeverityInput {
+  name: String!
+}
+
+input EditEventSeverityInput {
+  id: ID!
+  name: String!
+}
+enum EventSeverityFilterType {
+  NAME
+}
+
+input EventSeverityFilterInput {
+  filterType: EventSeverityFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+############################ alarm filter ##################################
+
+type AlarmFilter implements Node {
+  id: ID!
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time! 
+  alarmStatus: AlarmStatus
+}
+
+input AddAlarmFilterInput {
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time!  
+  alarmStatus: ID!
+}
+
+input AlarmFilterInput {
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String!
+  user: String!
+  creationTime: Time!
+}
+
+input EditAlarmFilterInput {
+  id: ID!
+  name: String!
+  networkResource: String!
+  enable: Boolean!
+  beginTime: Time!
+  endTime: Time!
+  reason: String! 
+  alarmStatus: ID!
+}
+
+enum AlarmFilterFilterType {
+  NAME
+}
+
+input AlarmFilterFilterInput {
+  filterType: AlarmFilterFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type AlarmStatus implements Node {
+  id: ID!
+  name: String!
+  AlarmFilter: [AlarmFilter!]
+}
+
+input AlarmStatusInput {
+  id: ID!
+  name: String!
+}
+
+input AddAlarmStatusInput {
+  name: String!
+}
+
+input EditAlarmStatusInput {
+  id: ID!
+  name: String!
+}
+enum AlarmStatusFilterType {
+  NAME
+}
+
+input AlarmStatusFilterInput {
+  filterType: AlarmStatusFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+##################### KQI #######################
+
+type Kqi implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  formula: String!
+  startDateTime: Time!
+  endDateTime: Time!
+  category: Category!
+  perspective: Perspective!
+  kqiSource: KqiSource!
+  temporalFrecuency: TemporalFrecuency!
+  kqiTarget: [KqiTarget!]
+}
+
+input AddKqiInput {
+  name: String!
+  description: String!
+  formula: String!
+  startDateTime: Time!
+  endDateTime: Time!
+  category: ID!
+  perspective: ID!
+  kqiSource: ID!
+  temporalFrecuency: ID!
+}
+
+input EditKqiInput {
+  id: ID!
+  name: String!
+  description: String!
+  formula: String!
+  startDateTime: Time!
+  endDateTime: Time!
+  category: ID!
+  perspective: ID!
+  kqiSource: ID!
+  temporalFrecuency: ID!
+}
+######################## filter ###################
+enum KqiFilterType {
+  NAME
+}
+
+input KqiFilterInput {
+  filterType: KqiFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+###################################################
+type Category implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddCategoryInput {
+  name: String!
+}
+
+input EditCategoryInput {
+  id: ID!
+  name: String!
+}
+type Perspective implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddPerspectiveInput {
+  name: String!
+}
+
+input EditPerspectiveInput {
+  id: ID!
+  name: String!
+}
+type KqiSource implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddKqiSourceInput {
+  name: String!
+}
+
+input EditKqiSourceInput {
+  id: ID!
+  name: String!
+}
+type TemporalFrecuency implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddTemporalFrecuencyInput {
+  name: String!
+}
+
+input EditTemporalFrecuencyInput {
+  id: ID!
+  name: String!
+}
+type KqiTarget implements Node {
+  id: ID!
+  impact: String!
+  comparator: Float!
+  referenceValue: Float!
+  warningComparator: Float!
+  frame: Float!
+  alowedValidation: Float!
+  initTime: Time!
+  endTime: Time!
+  active: Boolean!
+  kqi: Kqi!
+}
+
+input AddKqiTargetInput {
+  impact: String!
+  comparator: Float!
+  referenceValue: Float!
+  warningComparator: Float!
+  frame: Float!
+  alowedValidation: Float!
+  initTime: Time!
+  endTime: Time!
+  active: Boolean!
+  kqi: ID!
+}
+
+input EditKqiTargetInput {
+  id: ID!
+  impact: String!
+  comparator: Float!
+  referenceValue: Float!
+  warningComparator: Float!
+  frame: Float!
+  alowedValidation: Float!
+  initTime: Time!
+  endTime: Time!
+  active: Boolean!
+  kqi: ID!
 }

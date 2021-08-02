@@ -23,7 +23,12 @@ export type EditLocationTypeInput = {|
   mapType?: ?string,
   mapZoomLevel?: ?number,
   isSite?: ?boolean,
+  fileCategoriesType?: ?$ReadOnlyArray<FileCategoryTypeInput>,
   properties?: ?$ReadOnlyArray<PropertyTypeInput>,
+|};
+export type FileCategoryTypeInput = {|
+  id?: ?string,
+  name: string,
 |};
 export type PropertyTypeInput = {|
   id?: ?string,

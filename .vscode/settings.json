@@ -10,5 +10,8 @@
     "editor.definitionLinkOpensInPeek": true,
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
+    "javascript.format.enable": false,
+    "typescript.validate.enable": false,
 }

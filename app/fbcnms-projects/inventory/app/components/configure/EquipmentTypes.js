@@ -15,7 +15,7 @@ import type {
 
 import AddEditEquipmentTypeCard from './AddEditEquipmentTypeCard';
 import Button from '@symphony/design-system/components/Button';
-import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
+import ConfigureTitle from '@fbcnms/ui/components/ConfigureTitle';
 import EquipmentTypeItem from './EquipmentTypeItem';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import React, {useState} from 'react';
@@ -154,7 +154,7 @@ const EquipmentTypes = () => {
       }}>
       <div className={classes.typesList}>
         <div className={classes.firstRow}>
-          <ConfigueTitle
+          <ConfigureTitle
             className={classes.title}
             title={fbt('Equipment Types', 'Equipment Types header')}
             subtitle={fbt(

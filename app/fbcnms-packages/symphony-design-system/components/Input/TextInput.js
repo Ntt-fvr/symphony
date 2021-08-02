@@ -44,7 +44,7 @@ const useStyles = makeStyles(() => ({
     border: `1px solid ${symphony.palette.D100}`,
     borderRadius: '4px',
     display: 'flex',
-    minHeight: '32px',
+    minHeight: '36px',
     boxSizing: 'border-box',
     backgroundColor: symphony.palette.white,
     '&$hasFocus': {
@@ -143,6 +143,7 @@ type FocusEventFn<T: HTMLElement> = (FocusEvent<T>) => void;
 
 type Props = $ReadOnly<{|
   /** Input type. See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types */
+  autoComplete?: string,
   type?: string,
   name?: string,
   value?: string | number,
@@ -168,6 +169,7 @@ type Props = $ReadOnly<{|
 
 function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
   const {
+    autoComplete = 'on',
     autoFocus = false,
     className,
     containerClassName,
@@ -282,6 +284,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
                 {...rest}
                 type={type}
                 className={classes.input}
+                autoComplete={autoComplete}
                 disabled={disabled}
                 onFocus={onInputFocused}
                 onBlur={onInputBlurred}
