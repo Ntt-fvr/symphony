@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 
@@ -49,6 +50,8 @@ func TestWorkflowCreated(t *testing.T) {
 	require.NoError(t, err)
 	flwInstance, err := entClient.FlowInstance.Create().
 		SetFlow(flw).
+		SetBssCode("CODE123").
+		SetStartDate(time.Now()).
 		Save(ctx)
 	require.NoError(t, err)
 	require.Equal(t, worker.RunFlowWorkflowName, workflowName)

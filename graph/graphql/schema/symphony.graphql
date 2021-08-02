@@ -1020,6 +1020,41 @@ type FlowInstanceConnection {
 }
 
 """
+Ordering options for flow instance connections.
+"""
+input FlowInstanceOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order work orders by.
+  """
+  field: FlowInstanceOrderField
+}
+
+"""
+Properties by which flow instances connections can be ordered.
+"""
+enum FlowInstanceOrderField {
+  """
+  Order flow instances by start time.
+  """
+  START_AT
+
+  """
+  Order flow instances by end time.
+  """
+  END_AT
+
+  """
+  Order flow instances by update time.
+  """
+  UPDATED_AT
+}
+
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -1588,6 +1623,7 @@ enum WorkOrderStatus
     )
   BLOCKED
   CANCELED
+  SUSPENDED
 }
 
 enum ServiceStatus
@@ -3160,6 +3196,74 @@ type AlarmStatusEdge {
   cursor: Cursor!
 }
 
+################################ conection kqi ###############################################
+"""
+Properties by which Kqi connections can be ordered.
+"""
+enum KqiOrderField {
+  """
+  Order Kqi by name.
+  """
+  NAME
+
+  """
+  Order Kqi by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Kqi by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Kqi connections.
+"""
+input KqiOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Kqi by.
+  """
+  field: KqiOrderField
+}
+
+"""
+A connection to a list of Kqi.
+"""
+type KqiConnection {
+  """
+  Total Kqi of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Kqi edges.
+  """
+  edges: [KqiEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Kqi edge in a connection.
+"""
+type KqiEdge {
+  """
+  The Kqi at the end of the edge.
+  """
+  node: Kqi
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -4414,6 +4518,27 @@ type FlowDraft implements Node {
   sameAsFlow: Boolean!
 }
 
+"""
+what filters should we apply on flow instances
+"""
+enum FlowInstanceFilterType {
+  FLOW_INSTANCE_STATUS
+  FLOW_INSTANCE_TYPE
+  FLOW_INSTANCE_BSS_CODE
+  FLOW_INSTANCE_SERVICE_INSTANCE_CODE
+}
+
+input FlowInstanceFilterInput {
+  filterType: FlowInstanceFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  stringSet: [String!]
+  propertyValue: PropertyTypeInput
+  timeValue: Time
+  maxDepth: Int = 5
+}
+
 enum FlowInstanceStatus
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status"
@@ -4421,7 +4546,35 @@ enum FlowInstanceStatus
   IN_PROGRESS
   FAILED
   COMPLETED
-  CANCELLED
+  CANCELED
+}
+
+type BlockInstance implements Node {
+  id: ID!
+  status: BlockInstanceStatus!
+  inputs: [VariableValue!]!
+  outputs: [VariableValue!]!
+  failure_reason: String
+  block: Block!
+  startDate: Time!
+  endDate: Time
+}
+
+input AddBlockInstanceInput {
+  status: BlockInstanceStatus
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  blockId: ID!
+  startDate: Time!
+}
+
+input EditBlockInstanceInput {
+  id: ID!
+  status: BlockInstanceStatus
+  inputs: [VariableValueInput!]
+  outputs: [VariableValueInput!]
+  failure_reason: String
+  endDate: Time
 }
 
 type FlowExecutionTemplate implements Node {
@@ -4451,40 +4604,22 @@ type VariableValue
   value: String!
 }
 
-type BlockInstance implements Node {
-  id: ID!
-  status: BlockInstanceStatus!
-  inputs: [VariableValue!]!
-  outputs: [VariableValue!]!
-  failure_reason: String
-  block: Block!
-}
-
-input AddBlockInstanceInput {
-  status: BlockInstanceStatus
-  inputs: [VariableValueInput!]
-  outputs: [VariableValueInput!]
-  blockId: ID!
-}
-
-input EditBlockInstanceInput {
-  id: ID!
-  status: BlockInstanceStatus
-  inputs: [VariableValueInput!]
-  outputs: [VariableValueInput!]
-  failure_reason: String
-}
-
 type FlowInstance implements Node {
   id: ID!
+  bssCode: String!
+  serviceInstanceCode: String
   status: FlowInstanceStatus!
   template: FlowExecutionTemplate!
   blocks: [BlockInstance!]!
+  startDate: Time!
+  endDate: Time
 }
 
 input EditFlowInstanceInput {
   id: ID!
-  status: FlowInstanceStatus!
+  serviceInstanceCode: String
+  status: FlowInstanceStatus
+  endDate: Time
 }
 
 input AddFlowDraftInput {
@@ -4509,6 +4644,8 @@ input VariableValueInput
 
 input StartFlowInput {
   flowID: ID!
+  bssCode: String!
+  startDate: Time!
   params: [VariableValueInput]!
 }
 
@@ -4868,6 +5005,16 @@ type Query {
     Filtering options for the returned projects.
     """
     filterBy: [ProjectFilterInput!]
+
+    """
+    Property value for ordering projects.
+    """
+    propertyValue: String,
+
+    """
+    Property direction for ordering projects.
+    """
+    propertyOrder: String
   ): ProjectConnection!
   customers(
     after: Cursor
@@ -4901,6 +5048,8 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    orderBy: FlowInstanceOrder
+    filterBy: [FlowInstanceFilterInput!]
   ): FlowInstanceConnection!
   workerTypes(
     after: Cursor
@@ -5297,7 +5446,40 @@ type Query {
     
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
-  
+  """
+  A list of Kqi.
+  """
+  Kqis(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: KqiOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [KqiFilterInput!]
+  ): KqiConnection!
 }
 
 type Mutation {
@@ -5565,6 +5747,24 @@ type Mutation {
   addAlarmStatus(input: AddAlarmStatusInput!):AlarmStatus!
   editAlarmStatus(input: EditAlarmStatusInput!): AlarmStatus!
   removeAlarmStatus(id: ID!): ID!
+  addKqi(input: AddKqiInput!):Kqi!
+  editKqi(input: EditKqiInput!): Kqi!
+  removeKqi(id: ID!): ID!
+  addCategory(input: AddCategoryInput!):Category!
+  editCategory(input: EditCategoryInput!): Category!
+  removeCategory(id: ID!): ID!
+  addPerspective(input: AddPerspectiveInput!):Perspective!
+  editPerspective(input: EditPerspectiveInput!): Perspective!
+  removePerspective(id: ID!): ID!
+  addTemporalFrecuency(input: AddTemporalFrecuencyInput!):TemporalFrecuency!
+  editTemporalFrecuency(input: EditTemporalFrecuencyInput!): TemporalFrecuency!
+  removeTemporalFrecuency(id: ID!): ID!
+  addKqiSource(input: AddKqiSourceInput!):KqiSource!
+  editKqiSource(input: EditKqiSourceInput!): KqiSource!
+  removeKqiSource(id: ID!): ID!
+  addKqiTarget(input: AddKqiTargetInput!):KqiTarget!
+  editKqiTarget(input: EditKqiTargetInput!): KqiTarget!
+  removeKqiTarget(id: ID!): ID!
 }
 
 """
@@ -5599,6 +5799,7 @@ type Subscription {
   projectChanged: Project
   locationAdded: Location
   locationChanged: Location
+  AddImage: File
 }
 
 type Counter implements Node {
@@ -6113,4 +6314,156 @@ input AlarmStatusFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+}
+
+##################### KQI #######################
+
+type Kqi implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  formula: String!
+  startDateTime: Time!
+  endDateTime: Time!
+  category: Category!
+  perspective: Perspective!
+  kqiSource: KqiSource!
+  temporalFrecuency: TemporalFrecuency!
+  kqiTarget: [KqiTarget!]
+}
+
+input AddKqiInput {
+  name: String!
+  description: String!
+  formula: String!
+  startDateTime: Time!
+  endDateTime: Time!
+  category: ID!
+  perspective: ID!
+  kqiSource: ID!
+  temporalFrecuency: ID!
+}
+
+input EditKqiInput {
+  id: ID!
+  name: String!
+  description: String!
+  formula: String!
+  startDateTime: Time!
+  endDateTime: Time!
+  category: ID!
+  perspective: ID!
+  kqiSource: ID!
+  temporalFrecuency: ID!
+}
+######################## filter ###################
+enum KqiFilterType {
+  NAME
+}
+
+input KqiFilterInput {
+  filterType: KqiFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+###################################################
+type Category implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddCategoryInput {
+  name: String!
+}
+
+input EditCategoryInput {
+  id: ID!
+  name: String!
+}
+type Perspective implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddPerspectiveInput {
+  name: String!
+}
+
+input EditPerspectiveInput {
+  id: ID!
+  name: String!
+}
+type KqiSource implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddKqiSourceInput {
+  name: String!
+}
+
+input EditKqiSourceInput {
+  id: ID!
+  name: String!
+}
+type TemporalFrecuency implements Node {
+  id: ID!
+  name: String! 
+  kqi: [Kqi!]
+}
+
+input AddTemporalFrecuencyInput {
+  name: String!
+}
+
+input EditTemporalFrecuencyInput {
+  id: ID!
+  name: String!
+}
+type KqiTarget implements Node {
+  id: ID!
+  impact: String!
+  comparator: Float!
+  referenceValue: Float!
+  warningComparator: Float!
+  frame: Float!
+  alowedValidation: Float!
+  initTime: Time!
+  endTime: Time!
+  active: Boolean!
+  kqi: Kqi!
+}
+
+input AddKqiTargetInput {
+  impact: String!
+  comparator: Float!
+  referenceValue: Float!
+  warningComparator: Float!
+  frame: Float!
+  alowedValidation: Float!
+  initTime: Time!
+  endTime: Time!
+  active: Boolean!
+  kqi: ID!
+}
+
+input EditKqiTargetInput {
+  id: ID!
+  impact: String!
+  comparator: Float!
+  referenceValue: Float!
+  warningComparator: Float!
+  frame: Float!
+  alowedValidation: Float!
+  initTime: Time!
+  endTime: Time!
+  active: Boolean!
+  kqi: ID!
 }

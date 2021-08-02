@@ -230,7 +230,26 @@ func (r queryResolver) Projects(
 	before *ent.Cursor, last *int,
 	orderBy *ent.ProjectOrder,
 	filterBy []*models.ProjectFilterInput,
+	propertyValue *string,
+	propertyOrder *string,
 ) (*ent.ProjectConnection, error) {
+	if propertyValue != nil && len(*propertyValue) > 0 {
+		var direction string
+		if propertyOrder != nil {
+			direction = *propertyOrder
+		} else {
+			direction = ent.OrderDirectionAsc.String()
+		}
+
+		var limit int
+		if first != nil {
+			limit = *first
+		} else {
+			limit = 1
+		}
+
+		return CustomPaginateProjects(ctx, r.ClientFrom(ctx), after, limit, direction, filterBy, *propertyValue)
+	}
 	return r.ClientFrom(ctx).
 		Project.
 		Query().
@@ -779,4 +798,24 @@ func (r queryResolver) getNextConnectedPortWithLink(ctx context.Context, port *e
 func (r queryResolver) WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error) {
 	return r.ClientFrom(ctx).WorkerType.Query().
 		Paginate(ctx, after, first, before, last)
+}
+
+func (r queryResolver) Kqis(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KqiOrder,
+	filterBy []*models.KqiFilterInput,
+) (*ent.KqiConnection, error) {
+	return r.ClientFrom(ctx).
+		Kqi.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKqiOrder(orderBy),
+			ent.WithKqiFilter(
+				func(query *ent.KqiQuery) (*ent.KqiQuery, error) {
+					return resolverutil.KqiFilter(query, filterBy)
+				},
+			),
+		)
 }
