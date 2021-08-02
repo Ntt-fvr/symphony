@@ -10,7 +10,6 @@
 
 import Button from '@material-ui/core/Button';
 import React from 'react';
-import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
