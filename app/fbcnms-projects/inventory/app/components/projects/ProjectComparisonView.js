@@ -65,6 +65,11 @@ const ProjectComparisonView = () => {
     field: 'UPDATED_AT',
   });
 
+  //orderPropertyType
+  const [orderPropertyType, setOrderPropertyType] = useState('');
+  const [orderPropertyTypeDirection, setOrderPropertyTypeDirection] =
+    useState('');
+
   const [visibleColumns, setVisibleColumns] = useState(
     Object.values(defaultVisibleColumnsKeys).map(columnKey =>
       String(columnKey),
@@ -83,9 +88,8 @@ const ProjectComparisonView = () => {
 
   const locationTypesFilterConfigs = useLocationTypes();
   const possibleProperties = usePropertyFilters('project');
-  const projectPropertiesFilterConfigs = buildPropertyFilterConfigs(
-    possibleProperties,
-  );
+  const projectPropertiesFilterConfigs =
+    buildPropertyFilterConfigs(possibleProperties);
 
   const filterConfigs = useMemo(
     () =>
@@ -121,6 +125,14 @@ const ProjectComparisonView = () => {
     [history, match.url],
   );
 
+  const projectPropertyNames = useMemo(() => {
+    if (possibleProperties === null) {
+      return null;
+    }
+
+    return possibleProperties.flatMap(prop => [prop.name]);
+  }, [possibleProperties]);
+
   const createProjectButton = (
     <FormActionWithPermissions
       permissions={{
@@ -140,7 +152,9 @@ const ProjectComparisonView = () => {
   );
 
   const shouldRenderTable =
-    selectedProjectCardId == null && selectedProjectTypeId == null;
+    selectedProjectCardId == null &&
+    selectedProjectTypeId == null &&
+    projectPropertyNames !== null;
 
   const projectTable = useMemo(
     () =>
@@ -150,6 +164,10 @@ const ProjectComparisonView = () => {
           filters={filters}
           orderBy={orderBy}
           onOrderChanged={setOrderBy}
+          orderPropertyType={orderPropertyType}
+          orderPropertyDirection={orderPropertyTypeDirection}
+          onOrderPropertyChanged={setOrderPropertyType}
+          onOrderDirectionChanged={setOrderPropertyTypeDirection}
           onProjectSelected={selectedProjectCardId =>
             navigateToProject(selectedProjectCardId)
           }
@@ -161,6 +179,7 @@ const ProjectComparisonView = () => {
           createProjectButton={createProjectButton}
           visibleColumns={visibleColumns}
           setVisibleColumns={setVisibleColumns}
+          propertyNames={projectPropertyNames}
         />
       ),
     [
@@ -172,6 +191,7 @@ const ProjectComparisonView = () => {
       shouldRenderTable,
       visibleColumns,
       setVisibleColumns,
+      projectPropertyNames,
     ],
   );
 
@@ -212,8 +232,8 @@ const ProjectComparisonView = () => {
           onFiltersChanged={filters => {
             return setFilters(filters);
           }}
-		      exportPath={'/projects'}
-          entity={'PROJECT'}						  
+          exportPath={'/projects'}
+          entity={'PROJECT'}
         />
       </div>
     ),

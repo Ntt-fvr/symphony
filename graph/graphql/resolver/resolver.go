@@ -7,11 +7,12 @@ package resolver
 import (
 	"context"
 
-	"github.com/facebookincubator/symphony/graph/graphql/generated"
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+
+	"github.com/facebookincubator/symphony/graph/graphql/generated"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
 
@@ -185,6 +186,10 @@ func (r resolver) FlowDraft() generated.FlowDraftResolver {
 	return flowDraftResolver{}
 }
 
+func (r resolver) FlowExecutionTemplate() generated.FlowExecutionTemplateResolver {
+	return flowExecutionTemplate{}
+}
+
 func (r resolver) Block() generated.BlockResolver {
 	return blockResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
@@ -264,3 +269,28 @@ func (r resolver) RuleLimit() generated.RuleLimitResolver {
 func (r resolver) EventSeverity() generated.EventSeverityResolver {
 	return eventSeverityResolver{}
 }
+
+/************************* KQI ********************************************************************/
+func (r resolver) Category() generated.CategoryResolver {
+	return categoryResolver{}
+}
+
+func (r resolver) Perspective() generated.PerspectiveResolver {
+	return perspectiveResolver{}
+}
+func (r resolver) TemporalFrecuency() generated.TemporalFrecuencyResolver {
+	return temporalFrecuencyResolver{}
+}
+
+func (r resolver) KqiSource() generated.KqiSourceResolver {
+	return kqiSourceResolver{}
+}
+
+func (r resolver) Kqi() generated.KqiResolver {
+	return kqiResolver{}
+}
+func (r resolver) KqiTarget() generated.KqiTargetResolver {
+	return kqiTargetResolver{}
+}
+
+/**************************************************************************************************/

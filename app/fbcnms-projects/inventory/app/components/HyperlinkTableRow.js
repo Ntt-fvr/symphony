@@ -24,6 +24,10 @@ import symphony from '@symphony/design-system/theme/symphony';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import Select from '@symphony/design-system/components/Select/Select';
+import Strings from '../common/InventoryStrings';
+
 const styles = () => ({
   cell: {
     height: '48px',
@@ -54,17 +58,104 @@ const styles = () => ({
 type Props = {|
   entityId: string,
   hyperlink: HyperlinkTableRow_hyperlink,
+  onChecked: any,
+  linkToLocationOptions?: boolean,
 |} & WithStyles<typeof styles>;
 
 type State = {
   isImageDialogOpen: boolean,
+  isChecked: boolean,
+  selectValue: string,
 };
 
 class HyperlinkTableRow extends React.Component<Props, State> {
   static contextType = AppContext;
   context: AppContextType;
 
+  /**TODO: Desde properties de Files */
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isImageDialogOpen: false,
+      isChecked: false,
+      selectValue: '',
+    };
+  }
+
+  /**TODO - modularizar funciones */
+  // handleDelete = () => {
+  //   this.props.onDocumentDeleted(this.props.file);
+  // };
+
+  handleInputChangeLink = () => {
+    // this.setState({isChecked: !this.state.isChecked}, () => {
+    //   if (this.state.isChecked) {
+    //     if (this.props.onChecked)
+    //       this.props.onChecked({type: 'checkIncrement'});
+
+    //     if (this.state.selectValue !== '') {
+    //       if (this.props.onChecked)
+    //         this.props.onChecked({
+    //           type: 'valueIncrement',
+    //           file: this.props.hyperlink,
+    //           value: this.state.selectValue,
+    //         });
+    //     }
+    //   } else {
+    //     if (this.props.onChecked)
+    //       this.props.onChecked({type: 'checkDecrement'});
+    //     if (this.state.selectValue !== '') {
+    //       if (this.props.onChecked)
+    //         this.props.onChecked({
+    //           type: 'valueDecrement',
+    //           file: this.props.hyperlink,
+    //           value: this.state.selectValue,
+    //         });
+    //     }
+    //   }
+    // });
+    this.setState({isChecked: !this.state.isChecked}, () => {
+      if (this.state.isChecked) {
+        // despues de dar click al check = estado'activo'
+        if (this.props.onChecked)
+          this.props.onChecked({type: 'checkIncrement'});
+        if (this.state.selectValue !== '') {
+          console.log('ya entre');
+          if (this.props.onChecked)
+            this.props.onChecked({
+              type: 'valueIncrement',
+              link: this.props.hyperlink,
+              value: this.state.selectValue,
+            });
+        }
+      } else {
+        if (this.props.onChecked)
+          this.props.onChecked({type: 'checkDecrement'});
+        if (this.state.selectValue !== '') {
+          if (this.props.onChecked)
+            this.props.onChecked({
+              type: 'valueDecrement',
+              link: this.props.hyperlink,
+              value: this.state.selectValue,
+            });
+        }
+      }
+    });
+  };
+
   render() {
+    const _setCategory = (value: string) => {
+      if (this.state.selectValue === '') {
+        if (this.props.onChecked)
+          this.props.onChecked({
+            type: 'valueIncrement',
+            link: this.props.hyperlink,
+            value: value,
+          });
+      }
+      this.setState({selectValue: value});
+      return;
+    };
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
     const {classes, hyperlink, entityId} = this.props;
     if (hyperlink === null) {
@@ -103,6 +194,36 @@ class HyperlinkTableRow extends React.Component<Props, State> {
           {hyperlink.createTime &&
             DateTimeFormat.dateTime(hyperlink.createTime)}
         </TableCell>
+        {this.props.linkToLocationOptions && (
+          <TableCell
+            padding="none"
+            className={classNames(classes.cell, classes.secondaryCell)}
+            component="th"
+            scope="row">
+            <input type="checkbox" onChange={this.handleInputChangeLink} />
+          </TableCell>
+        )}
+        {this.props.linkToLocationOptions && (
+          <TableCell
+            padding="none"
+            className={classNames(classes.cell, classes.secondaryCell)}
+            component="th"
+            scope="row">
+            <FormField label="" disabled={!this.state.isChecked}>
+              <Select
+                options={Strings.documents.categories.map(x => ({
+                  key: x,
+                  value: x,
+                  label: x,
+                }))}
+                onChange={value => {
+                  _setCategory(value ? value : '');
+                }}
+                selectedValue={this.state.isChecked && this.state.selectValue}
+              />
+            </FormField>
+          </TableCell>
+        )}
         <TableCell
           padding="none"
           className={classes.cell}

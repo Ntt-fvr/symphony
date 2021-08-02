@@ -76,7 +76,7 @@ func TestFetchProjects(t *testing.T) {
 	_ = prepareProjectData(ctx, r, "project")
 
 	qr := r.Query()
-	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, nil)
+	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, res.Edges, 2)
 	require.Equal(t, res.TotalCount, 2)
@@ -103,12 +103,12 @@ func TestSearchProjectsByName(t *testing.T) {
 		StringValue: pointer.ToString("zzzz"),
 	}
 
-	res1, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter1})
+	res1, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter1}, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, res1.Edges, 2)
 	require.Equal(t, res1.TotalCount, 2)
 
-	res2, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter2})
+	res2, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter2}, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, res2.Edges, 0)
 }
@@ -127,7 +127,7 @@ func TestSearchProjectsByType(t *testing.T) {
 		IDSet:      []int{projectData.typ.ID},
 	}
 
-	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter})
+	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter}, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, res.Edges, 1)
 }
@@ -147,7 +147,7 @@ func TestSearchProjectsByLocation(t *testing.T) {
 		MaxDepth:   pointer.ToInt(1),
 	}
 
-	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter})
+	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter}, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, res.Edges, 2)
 }
@@ -167,7 +167,7 @@ func TestSearchProjectsByOwner(t *testing.T) {
 		MaxDepth:   pointer.ToInt(1),
 	}
 
-	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter})
+	res, err := qr.Projects(ctx, nil, nil, nil, nil, nil, []*models.ProjectFilterInput{&filter}, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, res.Edges, 1)
 }

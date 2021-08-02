@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
+import type {FlowInstanceStatus as GraphQLStatusFlowType} from '../components/automation/__generated__/FlowInstancesView_query.graphql';
 
 import fbt from 'fbt';
 
@@ -50,46 +50,22 @@ export const prioritySortingValues = {
   NONE: 4,
 };
 
-export const doneStatus = {
-  key: 'done',
-  value: 'DONE',
-  label: 'Done',
-};
-
-export const closedStatus = {
-  key: 'closed',
-  value: 'CLOSED',
-  label: `${fbt('Closed', '')}`,
-};
-
-export const plannedStatus = {
-  key: 'planned',
-  value: 'PLANNED',
-  label: `${fbt('Planned', '')}`,
-};
-
-export const pendingStatus = {
-  key: 'pending',
-  value: 'PENDING',
-  label: 'Pending',
-};
-
 export const inProgressStatus = {
   key: 'in_progress',
   value: 'IN_PROGRESS',
   label: `${fbt('In Progress', '')}`,
 };
 
-export const submittedStatus = {
-  key: 'submitted',
-  value: 'SUBMITTED',
-  label: `${fbt('Submitted', '')}`,
+export const failedStatus = {
+  key: 'Failed',
+  value: 'FAILED',
+  label: `${fbt('Failed', '')}`,
 };
 
-export const blockedStatus = {
-  key: 'blocked',
-  value: 'BLOCKED',
-  label: `${fbt('Blocked', '')}`,
+export const completedStatus = {
+  key: 'Completed',
+  value: 'COMPLETED',
+  label: `${fbt('Completed', '')}`,
 };
 
 export const canceledStatus = {
@@ -98,26 +74,17 @@ export const canceledStatus = {
   label: `${fbt('Canceled', '')}`,
 };
 
-export const suspendedStatus = {
-  key: 'Suspended',
-  value: 'SUSPENDED',
-  label: `${fbt('Suspended', '')}`,
-};
-
 const statusValues: Array<{|
   key: string,
-  value: GraphQLStatusType,
+  value: GraphQLStatusFlowType,
   label: string,
 |}> = [
-  plannedStatus,
   inProgressStatus,
-  submittedStatus,
-  closedStatus,
-  blockedStatus,
+  failedStatus,
   canceledStatus,
-  suspendedStatus,
+  completedStatus,
 ];
 
 export function useStatusValues() {
-  return {statusValues, closedStatus, canceledStatus};
+  return {statusValues, completedStatus};
 }

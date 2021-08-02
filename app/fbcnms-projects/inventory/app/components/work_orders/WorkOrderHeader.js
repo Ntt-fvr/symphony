@@ -27,7 +27,7 @@ import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {
   blockedStatus,
-  cancelledStatus,
+  canceledStatus,
   closedStatus,
   doneStatus,
   inProgressStatus,
@@ -35,6 +35,7 @@ import {
   plannedStatus,
   priorityValues,
   submittedStatus,
+  suspendedStatus,
   useStatusValues,
 } from '../../common/FilterTypes.js';
 import {makeStyles} from '@material-ui/styles';
@@ -192,7 +193,9 @@ const getSkinFromStatus = status => {
       return 'red';
     case closedStatus.value:
       return 'brightGray';
-    case cancelledStatus.value:
+    case canceledStatus.value:
+      return 'brightGray';
+    case suspendedStatus.value:
       return 'brightGray';
     default:
       return 'regular';
