@@ -136,6 +136,14 @@ func (bi *BlockInstance) SubflowInstance(ctx context.Context) (*FlowInstance, er
 	return result, MaskNotFound(err)
 }
 
+func (c *Category) CategoryFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := c.Edges.CategoryFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryCategoryFk().All(ctx)
+	}
+	return result, err
+}
+
 func (clc *CheckListCategory) CheckListItems(ctx context.Context) ([]*CheckListItem, error) {
 	result, err := clc.Edges.CheckListItemsOrErr()
 	if IsNotLoaded(err) {
@@ -912,6 +920,62 @@ func (k *Kpi) Tresholdkpi(ctx context.Context) (*Treshold, error) {
 	return result, MaskNotFound(err)
 }
 
+func (k *Kqi) CategoryFk(ctx context.Context) (*Category, error) {
+	result, err := k.Edges.CategoryFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryCategoryFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) PerspectiveFk(ctx context.Context) (*Perspective, error) {
+	result, err := k.Edges.PerspectiveFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryPerspectiveFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiSourceFk(ctx context.Context) (*KqiSource, error) {
+	result, err := k.Edges.KqiSourceFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiSourceFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) TemporalFrecuencyFk(ctx context.Context) (*TemporalFrecuency, error) {
+	result, err := k.Edges.TemporalFrecuencyFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryTemporalFrecuencyFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiTargetFk(ctx context.Context) ([]*KqiTarget, error) {
+	result, err := k.Edges.KqiTargetFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiTargetFk().All(ctx)
+	}
+	return result, err
+}
+
+func (ks *KqiSource) KqiSourceFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := ks.Edges.KqiSourceFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = ks.QueryKqiSourceFk().All(ctx)
+	}
+	return result, err
+}
+
+func (kt *KqiTarget) KqiTargetFk(ctx context.Context) (*Kqi, error) {
+	result, err := kt.Edges.KqiTargetFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kt.QueryKqiTargetFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (l *Link) Ports(ctx context.Context) ([]*EquipmentPort, error) {
 	result, err := l.Edges.PortsOrErr()
 	if IsNotLoaded(err) {
@@ -1076,6 +1140,14 @@ func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) 
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
 		result, err = pp.QueryGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (pe *Perspective) PerspectiveFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := pe.Edges.PerspectiveFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = pe.QueryPerspectiveFk().All(ctx)
 	}
 	return result, err
 }
@@ -1732,6 +1804,14 @@ func (t *Tech) Formulatech(ctx context.Context) ([]*Formula, error) {
 	result, err := t.Edges.FormulatechOrErr()
 	if IsNotLoaded(err) {
 		result, err = t.QueryFormulatech().All(ctx)
+	}
+	return result, err
+}
+
+func (tf *TemporalFrecuency) TemporalFrecuencyFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := tf.Edges.TemporalFrecuencyFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = tf.QueryTemporalFrecuencyFk().All(ctx)
 	}
 	return result, err
 }

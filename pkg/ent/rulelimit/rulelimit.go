@@ -21,8 +21,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
+	// FieldNumber holds the string denoting the number field in the database.
+	FieldNumber = "number"
 	// FieldLimitType holds the string denoting the limittype field in the database.
 	FieldLimitType = "limit_type"
 
@@ -54,7 +54,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
-	FieldName,
+	FieldNumber,
 	FieldLimitType,
 }
 
@@ -94,8 +94,6 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	UpdateDefaultUpdateTime func() time.Time
-	// NameValidator is a validator for the "name" field. It is called by the builders before save.
-	NameValidator func(string) error
 	// LimitTypeValidator is a validator for the "limitType" field. It is called by the builders before save.
 	LimitTypeValidator func(string) error
 )

@@ -77,6 +77,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type Node = {
+  node: {
+    name: string,
+  },
+};
+
+type Props = $ReadOnly<{|
+  kpiNames?: Array<Node>,
+|}>;
+
 type Kpis = {
   data: {
     id: string,
@@ -87,11 +97,13 @@ type Kpis = {
   },
 };
 
-export default function AddKpiItemForm() {
+export default function AddKpiItemForm(props: Props) {
+  const {kpiNames} = props;
   const classes = useStyles();
 
   const [kpis, setKpis] = useState<Kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
+  const names = kpiNames?.map(item => item.node.name);
 
   const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
 
@@ -124,6 +136,7 @@ export default function AddKpiItemForm() {
         card_header="Add Kpi"
         title="Kpi"
         text_button="Add new Kpi"
+        names={kpiNames}
       />
     );
   }
@@ -131,7 +144,16 @@ export default function AddKpiItemForm() {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add KPI</CardHeader>
-      <FormField className={classes.formField} label="Kpi name" required>
+      <FormField
+        className={classes.formField}
+        label="Kpi name"
+        hasError={names?.some(item => item === kpis.data.name)}
+        errorText={
+          names?.some(item => item === kpis.data.name)
+            ? 'KPI name existing'
+            : ''
+        }
+        required>
         <TextInput
           autoComplete="off"
           className={classes.textInput}
@@ -180,7 +202,8 @@ export default function AddKpiItemForm() {
           disabled={
             !(
               Object.values(kpis.data).length === 4 &&
-              !Object.values(kpis.data).some(item => item === '')
+              !Object.values(kpis.data).some(item => item === '') &&
+              !names?.some(item => item === kpis.data.name)
             )
           }>
           Add KPI

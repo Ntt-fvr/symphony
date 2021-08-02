@@ -46,15 +46,40 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type Node = {
+  node: {
+    name: string,
+  },
+};
+
+type Kpi = {
+  node: {
+    name: string,
+    kpi: {
+      name: string,
+      id: string,
+    },
+  },
+};
+
 type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
   data_entry: string,
+  names?: Array<Node>,
+  thresholdNames?: Array<Kpi>,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
-  const {card_header, title, text_button, data_entry} = props;
+  const {
+    card_header,
+    title,
+    text_button,
+    data_entry,
+    names,
+    thresholdNames,
+  } = props;
   const classes = useStyles();
   const [returnForm, setReturnForm] = useState(false);
 
@@ -65,11 +90,13 @@ const AddedSuccessfullyMessage = (props: Props) => {
   if (returnForm) {
     return (
       <>
-        {(data_entry === 'kpi' && <AddKpiItemForm dataValues={[]} />) ||
+        {(data_entry === 'kpi' && <AddKpiItemForm kpiNames={names} />) ||
           (data_entry === 'threshold' && (
-            <AddThresholdItemForm dataValues={[]} />
+            <AddThresholdItemForm thresholdNames={thresholdNames} />
           )) ||
-          (data_entry === 'counter' && <AddCounterItemForm dataValues={[]} />)}
+          (data_entry === 'counter' && (
+            <AddCounterItemForm counterNames={names} />
+          ))}
       </>
     );
   }

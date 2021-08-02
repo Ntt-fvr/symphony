@@ -24,6 +24,7 @@ import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
 import AddRuleItemForm from './AddRuleItemForm';
+import EditRuleItemForm from './EditRuleItemForm';
 import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
 const useStyles = makeStyles(theme => ({
@@ -92,7 +93,9 @@ const ThresholdTypes = () => {
   const [dataThreshold, setDataThreshold] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditRule, setShowEditRule] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
+  const [dataEditRule, setDataEditRule] = useState([]);
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, ThresholdQuery, {}).then(data => {
@@ -107,6 +110,8 @@ const ThresholdTypes = () => {
     RemoveThresholdMutation(variables);
   };
 
+  // render Edit Threshold
+
   const showEditThresholdItemForm = (thresholds: Thresholds) => {
     setShowEditCard(true);
     setDataEdit(thresholds);
@@ -116,21 +121,53 @@ const ThresholdTypes = () => {
     setShowEditCard(false);
   };
 
+  const thresholdNames = dataThreshold.tresholds?.edges.map(
+    item => item.node.name,
+  );
+
   if (showEditCard) {
     return (
       <EditThresholdItemForm
+        thresholdNames={thresholdNames}
         formValues={dataEdit.item.node}
         hideEditThresholdForm={hideEditThresholdForm}
       />
     );
   }
 
-  const showAddRuleItemForm = () => {
+  // render Add Rule
+
+  const showAddRuleItemForm = (thresholds: Thresholds) => {
+    setDataEdit(thresholds);
     setShowAddForm(true);
   };
 
+  const hideAddRuleForm = () => {
+    setShowAddForm(false);
+  };
+
   if (showAddForm) {
-    return <AddRuleItemForm />;
+    return (
+      <AddRuleItemForm
+        threshold={dataEdit.item.node}
+        hideAddRuleForm={hideAddRuleForm}
+      />
+    );
+  }
+
+  // render Edit Rule
+
+  const hideEditCounterForm = () => {
+    setShowEditRule(false);
+  };
+
+  const showEditRuleItemForm = rule => {
+    setDataEditRule(rule);
+    setShowEditRule(true);
+  };
+
+  if (showEditRule) {
+    return <EditRuleItemForm hideAddRuleForm={hideEditCounterForm} />;
   }
 
   return (
@@ -155,7 +192,8 @@ const ThresholdTypes = () => {
                 key={index}
                 handleRemove={() => handleRemove(item.node.id)}
                 edit={() => showEditThresholdItemForm({item})}
-                addRule={() => showAddRuleItemForm()}
+                addRule={() => showAddRuleItemForm({item})}
+                editRule={() => showEditRuleItemForm(item.node?.rule)}
                 {...item.node}
               />
             ))}
@@ -163,7 +201,7 @@ const ThresholdTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddThresholdItemForm
-            dataValues={dataThreshold.tresholds?.edges.map(item => item.node)}
+            thresholdNames={dataThreshold.tresholds?.edges}
           />
         </Grid>
       </Grid>

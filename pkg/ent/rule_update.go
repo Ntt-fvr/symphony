@@ -66,6 +66,12 @@ func (ru *RuleUpdate) SetEndDateTime(t time.Time) *RuleUpdate {
 	return ru
 }
 
+// SetStatus sets the status field.
+func (ru *RuleUpdate) SetStatus(b bool) *RuleUpdate {
+	ru.mutation.SetStatus(b)
+	return ru
+}
+
 // SetEventTypeName sets the eventTypeName field.
 func (ru *RuleUpdate) SetEventTypeName(s string) *RuleUpdate {
 	ru.mutation.SetEventTypeName(s)
@@ -378,6 +384,13 @@ func (ru *RuleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: rule.FieldEndDateTime,
 		})
 	}
+	if value, ok := ru.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: rule.FieldStatus,
+		})
+	}
 	if value, ok := ru.mutation.EventTypeName(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -622,6 +635,12 @@ func (ruo *RuleUpdateOne) SetStartDateTime(t time.Time) *RuleUpdateOne {
 // SetEndDateTime sets the endDateTime field.
 func (ruo *RuleUpdateOne) SetEndDateTime(t time.Time) *RuleUpdateOne {
 	ruo.mutation.SetEndDateTime(t)
+	return ruo
+}
+
+// SetStatus sets the status field.
+func (ruo *RuleUpdateOne) SetStatus(b bool) *RuleUpdateOne {
+	ruo.mutation.SetStatus(b)
 	return ruo
 }
 
@@ -933,6 +952,13 @@ func (ruo *RuleUpdateOne) sqlSave(ctx context.Context) (_node *Rule, err error) 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: rule.FieldEndDateTime,
+		})
+	}
+	if value, ok := ruo.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: rule.FieldStatus,
 		})
 	}
 	if value, ok := ruo.mutation.EventTypeName(); ok {

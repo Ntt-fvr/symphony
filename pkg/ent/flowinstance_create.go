@@ -90,6 +90,46 @@ func (fic *FlowInstanceCreate) SetNillableIncompletionReason(s *string) *FlowIns
 	return fic
 }
 
+// SetBssCode sets the bss_code field.
+func (fic *FlowInstanceCreate) SetBssCode(s string) *FlowInstanceCreate {
+	fic.mutation.SetBssCode(s)
+	return fic
+}
+
+// SetServiceInstanceCode sets the service_instance_code field.
+func (fic *FlowInstanceCreate) SetServiceInstanceCode(s string) *FlowInstanceCreate {
+	fic.mutation.SetServiceInstanceCode(s)
+	return fic
+}
+
+// SetNillableServiceInstanceCode sets the service_instance_code field if the given value is not nil.
+func (fic *FlowInstanceCreate) SetNillableServiceInstanceCode(s *string) *FlowInstanceCreate {
+	if s != nil {
+		fic.SetServiceInstanceCode(*s)
+	}
+	return fic
+}
+
+// SetStartDate sets the start_date field.
+func (fic *FlowInstanceCreate) SetStartDate(t time.Time) *FlowInstanceCreate {
+	fic.mutation.SetStartDate(t)
+	return fic
+}
+
+// SetEndDate sets the end_date field.
+func (fic *FlowInstanceCreate) SetEndDate(t time.Time) *FlowInstanceCreate {
+	fic.mutation.SetEndDate(t)
+	return fic
+}
+
+// SetNillableEndDate sets the end_date field if the given value is not nil.
+func (fic *FlowInstanceCreate) SetNillableEndDate(t *time.Time) *FlowInstanceCreate {
+	if t != nil {
+		fic.SetEndDate(*t)
+	}
+	return fic
+}
+
 // SetFlowID sets the flow edge to Flow by id.
 func (fic *FlowInstanceCreate) SetFlowID(id int) *FlowInstanceCreate {
 	fic.mutation.SetFlowID(id)
@@ -236,6 +276,12 @@ func (fic *FlowInstanceCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
 	}
+	if _, ok := fic.mutation.BssCode(); !ok {
+		return &ValidationError{Name: "bss_code", err: errors.New("ent: missing required field \"bss_code\"")}
+	}
+	if _, ok := fic.mutation.StartDate(); !ok {
+		return &ValidationError{Name: "start_date", err: errors.New("ent: missing required field \"start_date\"")}
+	}
 	if _, ok := fic.mutation.TemplateID(); !ok {
 		return &ValidationError{Name: "template", err: errors.New("ent: missing required edge \"template\"")}
 	}
@@ -305,6 +351,38 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Column: flowinstance.FieldIncompletionReason,
 		})
 		_node.IncompletionReason = value
+	}
+	if value, ok := fic.mutation.BssCode(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: flowinstance.FieldBssCode,
+		})
+		_node.BssCode = value
+	}
+	if value, ok := fic.mutation.ServiceInstanceCode(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: flowinstance.FieldServiceInstanceCode,
+		})
+		_node.ServiceInstanceCode = value
+	}
+	if value, ok := fic.mutation.StartDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowinstance.FieldStartDate,
+		})
+		_node.StartDate = value
+	}
+	if value, ok := fic.mutation.EndDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowinstance.FieldEndDate,
+		})
+		_node.EndDate = &value
 	}
 	if nodes := fic.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

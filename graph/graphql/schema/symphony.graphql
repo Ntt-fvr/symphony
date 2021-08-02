@@ -5909,21 +5909,21 @@ input RuleTypeFilterInput {
 
 type RuleLimit implements Node {
   id: ID!
-  name: String!
+  number: Int!
   limitType: String!
   comparator: Comparator!
   rule: Rule
 }
 
 input RuleLimitInput {
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
 }
 
 input AddRuleLimitInput {
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
@@ -5931,7 +5931,7 @@ input AddRuleLimitInput {
 
 input EditRuleLimitInput {
   id: ID!
-  name: String!
+  number: Int!
   limitType: String!
   comparator: ID!
   rule: ID!
@@ -5948,6 +5948,7 @@ type Rule implements Node {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: EventSeverity!
   treshold: Treshold!
 }
@@ -5960,6 +5961,7 @@ input RuleInput {
   eventTypeName: String!
   specificProblem: String!
   additionalInfo: String!
+  status: Boolean!
   ruleLimit: [RuleLimitInput!]
 }
 
@@ -5972,6 +5974,7 @@ input AddRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }
@@ -5986,6 +5989,7 @@ input EditRuleInput {
   eventTypeName: String
   specificProblem: String
   additionalInfo: String
+  status: Boolean!
   eventSeverity: ID!
   treshold: ID!
 }

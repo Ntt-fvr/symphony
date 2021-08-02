@@ -271,12 +271,13 @@ type AddRuleInput struct {
 	EventTypeName   *string   `json:"eventTypeName"`
 	SpecificProblem *string   `json:"specificProblem"`
 	AdditionalInfo  *string   `json:"additionalInfo"`
+	Status          bool      `json:"status"`
 	EventSeverity   int       `json:"eventSeverity"`
 	Treshold        int       `json:"treshold"`
 }
 
 type AddRuleLimitInput struct {
-	Name       string `json:"name"`
+	Number     int    `json:"number"`
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`
@@ -714,13 +715,14 @@ type EditRuleInput struct {
 	EventTypeName   *string    `json:"eventTypeName"`
 	SpecificProblem *string    `json:"specificProblem"`
 	AdditionalInfo  *string    `json:"additionalInfo"`
+	Status          bool       `json:"status"`
 	EventSeverity   int        `json:"eventSeverity"`
 	Treshold        int        `json:"treshold"`
 }
 
 type EditRuleLimitInput struct {
 	ID         int    `json:"id"`
-	Name       string `json:"name"`
+	Number     int    `json:"number"`
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`
@@ -1018,11 +1020,12 @@ type RuleInput struct {
 	EventTypeName   string            `json:"eventTypeName"`
 	SpecificProblem string            `json:"specificProblem"`
 	AdditionalInfo  string            `json:"additionalInfo"`
+	Status          bool              `json:"status"`
 	RuleLimit       []*RuleLimitInput `json:"ruleLimit"`
 }
 
 type RuleLimitInput struct {
-	Name       string `json:"name"`
+	Number     int    `json:"number"`
 	LimitType  string `json:"limitType"`
 	Comparator int    `json:"comparator"`
 	Rule       int    `json:"rule"`

@@ -21,7 +21,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import AddCounterMutation from '../../mutations/AddCounterMutation';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -86,8 +86,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type Node = {
+  node: {
+    name: string,
+  },
+};
+
 type Props = $ReadOnly<{|
-  dataValues: Array<string>,
+  counterNames?: Array<Node>,
 |}>;
 
 type Counters = {
@@ -101,16 +107,13 @@ type Counters = {
 };
 
 export default function AddCounterItemForm(props: Props) {
-  const {dataValues} = props;
+  const {counterNames} = props;
   const classes = useStyles();
   const [counters, setCounters] = useState<Counters>({data: {}});
   const [showChecking, setShowChecking] = useState();
 
   const data = useLazyLoadQuery<AddCounterItemFormQuery>(AddCountersQuery, {});
-
-  const inputFilter = () => {
-    return dataValues?.filter(item => item === counters.data.name) || [];
-  };
+  const names = counterNames?.map(item => item.node.name);
 
   function handleChange({target}) {
     setCounters({
@@ -136,12 +139,6 @@ export default function AddCounterItemForm(props: Props) {
     AddCounterMutation(variables);
   }
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Counter name existing'};
-    }
-  };
-
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
@@ -149,6 +146,7 @@ export default function AddCounterItemForm(props: Props) {
         card_header="Add Counter"
         title="Counter"
         text_button="Add new counter"
+        names={counterNames}
       />
     );
   }
@@ -160,7 +158,12 @@ export default function AddCounterItemForm(props: Props) {
         className={classes.formField}
         label="Counter name"
         required
-        {...validationName()}>
+        hasError={names?.some(item => item === counters.data.name)}
+        errorText={
+          names?.some(item => item === counters.data.name)
+            ? 'Counter name existing'
+            : ''
+        }>
         <TextInput
           className={classes.textInput}
           name="name"
@@ -224,7 +227,7 @@ export default function AddCounterItemForm(props: Props) {
             !(
               Object.values(counters.data).length === 5 &&
               !Object.values(counters.data).some(item => item === '') &&
-              !(inputFilter().length > 0)
+              !names?.some(item => item === counters.data.name)
             )
           }>
           Add Counter

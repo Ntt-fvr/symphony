@@ -26,6 +26,8 @@ type Tx struct {
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
 	BlockInstance *BlockInstanceClient
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
 	// CheckListCategory is the client for interacting with the CheckListCategory builders.
 	CheckListCategory *CheckListCategoryClient
 	// CheckListCategoryDefinition is the client for interacting with the CheckListCategoryDefinition builders.
@@ -98,6 +100,12 @@ type Tx struct {
 	Hyperlink *HyperlinkClient
 	// Kpi is the client for interacting with the Kpi builders.
 	Kpi *KpiClient
+	// Kqi is the client for interacting with the Kqi builders.
+	Kqi *KqiClient
+	// KqiSource is the client for interacting with the KqiSource builders.
+	KqiSource *KqiSourceClient
+	// KqiTarget is the client for interacting with the KqiTarget builders.
+	KqiTarget *KqiTargetClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
@@ -106,6 +114,8 @@ type Tx struct {
 	LocationType *LocationTypeClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
+	// Perspective is the client for interacting with the Perspective builders.
+	Perspective *PerspectiveClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectTemplate is the client for interacting with the ProjectTemplate builders.
@@ -146,6 +156,8 @@ type Tx struct {
 	SurveyWiFiScan *SurveyWiFiScanClient
 	// Tech is the client for interacting with the Tech builders.
 	Tech *TechClient
+	// TemporalFrecuency is the client for interacting with the TemporalFrecuency builders.
+	TemporalFrecuency *TemporalFrecuencyClient
 	// Treshold is the client for interacting with the Treshold builders.
 	Treshold *TresholdClient
 	// User is the client for interacting with the User builders.
@@ -304,6 +316,7 @@ func (tx *Tx) init() {
 	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
+	tx.Category = NewCategoryClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)
 	tx.CheckListCategoryDefinition = NewCheckListCategoryDefinitionClient(tx.config)
 	tx.CheckListItem = NewCheckListItemClient(tx.config)
@@ -340,10 +353,14 @@ func (tx *Tx) init() {
 	tx.Formula = NewFormulaClient(tx.config)
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
 	tx.Kpi = NewKpiClient(tx.config)
+	tx.Kqi = NewKqiClient(tx.config)
+	tx.KqiSource = NewKqiSourceClient(tx.config)
+	tx.KqiTarget = NewKqiTargetClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.LocationType = NewLocationTypeClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
+	tx.Perspective = NewPerspectiveClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectTemplate = NewProjectTemplateClient(tx.config)
 	tx.ProjectType = NewProjectTypeClient(tx.config)
@@ -364,6 +381,7 @@ func (tx *Tx) init() {
 	tx.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(tx.config)
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
 	tx.Tech = NewTechClient(tx.config)
+	tx.TemporalFrecuency = NewTemporalFrecuencyClient(tx.config)
 	tx.Treshold = NewTresholdClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)

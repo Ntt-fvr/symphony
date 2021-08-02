@@ -130,6 +130,7 @@ func (WorkOrder) Fields() []ent.Field {
 				"Done", "DONE",
 				"Blocked", "BLOCKED",
 				"Canceled", "CANCELED",
+				"Suspended", "SUSPENDED",
 			).
 			Default("PLANNED"),
 		field.Enum("priority").

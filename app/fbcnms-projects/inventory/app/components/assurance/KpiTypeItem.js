@@ -11,18 +11,21 @@ import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddButton from './common/AddButton';
-import SwitchLabels from './common/Switch';
 
-// DESING SYSTEM //
+// DESIGN SYSTEM //
+import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
+
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import EditKpiMutation from '../../mutations/EditKpiMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
@@ -51,6 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
   nameKpi: {
     fontWeight: 'bold',
+    paddingLeft: '15px',
   },
   threshold: {
     color: '#3984FF',
@@ -89,6 +93,7 @@ type Props = $ReadOnly<{|
   name: string,
   status: boolean,
   domainFk: {
+    id: string,
     name: string,
   },
   description: string,
@@ -110,8 +115,22 @@ export default function KpiTypeItem(props: Props) {
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(status);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
+
+  const handleClick = () => {
+    const variables: EditKpiMutationVariables = {
+      input: {
+        id: id,
+        name: name,
+        domainFk: domainFk.id,
+        status: !checked,
+        description: description,
+      },
+    };
+    EditKpiMutation(variables);
+  };
 
   return (
     <div className={classes.root}>
@@ -120,13 +139,15 @@ export default function KpiTypeItem(props: Props) {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <FormControlLabel
-            label=""
-            onClick={event => event.stopPropagation()}
-            onFocus={event => event.stopPropagation()}
-            control={<SwitchLabels status={status} />}
-          />
           <Grid xs={3} container alignItems="center">
+            <FormField label="">
+              <Switch
+                title={''}
+                checked={status}
+                onChange={setChecked}
+                onClick={handleClick}
+              />
+            </FormField>
             <Text className={classes.nameKpi}>{name}</Text>
           </Grid>
 

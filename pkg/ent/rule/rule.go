@@ -29,6 +29,8 @@ const (
 	FieldStartDateTime = "start_date_time"
 	// FieldEndDateTime holds the string denoting the enddatetime field in the database.
 	FieldEndDateTime = "end_date_time"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldEventTypeName holds the string denoting the eventtypename field in the database.
 	FieldEventTypeName = "event_type_name"
 	// FieldSpecificProblem holds the string denoting the specificproblem field in the database.
@@ -86,6 +88,7 @@ var Columns = []string{
 	FieldGracePeriod,
 	FieldStartDateTime,
 	FieldEndDateTime,
+	FieldStatus,
 	FieldEventTypeName,
 	FieldSpecificProblem,
 	FieldAdditionalInfo,

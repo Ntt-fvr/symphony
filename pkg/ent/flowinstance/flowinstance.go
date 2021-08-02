@@ -30,6 +30,14 @@ const (
 	FieldOutputParams = "output_params"
 	// FieldIncompletionReason holds the string denoting the incompletion_reason field in the database.
 	FieldIncompletionReason = "incompletion_reason"
+	// FieldBssCode holds the string denoting the bss_code field in the database.
+	FieldBssCode = "bss_code"
+	// FieldServiceInstanceCode holds the string denoting the service_instance_code field in the database.
+	FieldServiceInstanceCode = "service_instance_code"
+	// FieldStartDate holds the string denoting the start_date field in the database.
+	FieldStartDate = "start_date"
+	// FieldEndDate holds the string denoting the end_date field in the database.
+	FieldEndDate = "end_date"
 
 	// EdgeFlow holds the string denoting the flow edge name in mutations.
 	EdgeFlow = "flow"
@@ -80,6 +88,10 @@ var Columns = []string{
 	FieldStatus,
 	FieldOutputParams,
 	FieldIncompletionReason,
+	FieldBssCode,
+	FieldServiceInstanceCode,
+	FieldStartDate,
+	FieldEndDate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the FlowInstance type.
@@ -132,7 +144,7 @@ const (
 	StatusInProgress Status = "IN_PROGRESS"
 	StatusFailed     Status = "FAILED"
 	StatusCompleted  Status = "COMPLETED"
-	StatusCancelled  Status = "CANCELLED"
+	StatusCancelled  Status = "CANCELED"
 )
 
 func (s Status) String() string {

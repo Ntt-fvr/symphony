@@ -21,11 +21,6 @@ export type AddThresholdItemFormQueryResponse = {|
       +node: ?{|
         +id: string,
         +name: string,
-        +status: boolean,
-        +domainFk: {|
-          +id: string,
-          +name: string,
-        |},
       |}
     |}>
   |}
@@ -44,11 +39,6 @@ query AddThresholdItemFormQuery {
       node {
         id
         name
-        status
-        domainFk {
-          id
-          name
-        }
       }
     }
   }
@@ -56,21 +46,7 @@ query AddThresholdItemFormQuery {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v2 = [
+var v0 = [
   {
     "alias": null,
     "args": null,
@@ -95,26 +71,18 @@ v2 = [
             "name": "node",
             "plural": false,
             "selections": [
-              (v0/*: any*/),
-              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "status",
+                "name": "id",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Domain",
-                "kind": "LinkedField",
-                "name": "domainFk",
-                "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/)
-                ],
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               }
             ],
@@ -133,7 +101,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddThresholdItemFormQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -142,19 +110,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AddThresholdItemFormQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "8029a744513e8eb5425351a6cc4eca46",
+    "cacheID": "5df6ae5d09808fba3b500e50e3898348",
     "id": null,
     "metadata": {},
     "name": "AddThresholdItemFormQuery",
     "operationKind": "query",
-    "text": "query AddThresholdItemFormQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AddThresholdItemFormQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '51e91ee066b6dd3e955bb1a634a8c864';
+(node/*: any*/).hash = 'ddec98e7f7695cb7526c0b586fe52e17';
 
 module.exports = node;

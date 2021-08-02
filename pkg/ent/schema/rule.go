@@ -25,6 +25,7 @@ func (Rule) Fields() []ent.Field {
 		field.Int("gracePeriod"),
 		field.Time("startDateTime"),
 		field.Time("endDateTime"),
+		field.Bool("status"),
 		field.String("eventTypeName").Optional().Nillable(),
 		field.String("specificProblem").Optional().Nillable(),
 		field.String("additionalInfo").Optional().Nillable(),

@@ -8,23 +8,26 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddButton from './common/AddButton';
-import SwitchLabels from './common/Switch';
 import Table from './Table';
 
 // DESING SYSTEM //
+import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
+
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import EditTresholdMutation from '../../mutations/EditTresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
@@ -57,6 +60,7 @@ const useStyles = makeStyles(theme => ({
   },
   nameThreshold: {
     fontWeight: 'bold',
+    paddingLeft: '15px',
   },
   thr: {
     color: '#3984FF',
@@ -84,6 +88,9 @@ const useStyles = makeStyles(theme => ({
   description: {
     marginBottom: '20px',
   },
+  table: {
+    marginBottom: '30px',
+  },
 }));
 
 type Rule = {
@@ -102,15 +109,42 @@ type Props = $ReadOnly<{|
     name: string,
   },
   edit: void,
+  status: boolean,
   addRule: void => void,
+  editRule: void => void,
   handleRemove: void => void,
   rule: Array<Rule>,
 |}>;
 
 export default function ThresholdTypeItem(props: Props) {
-  const {name, description, kpi, id, edit, addRule, rule, handleRemove} = props;
+  const {
+    name,
+    description,
+    kpi,
+    id,
+    edit,
+    status,
+    addRule,
+    editRule,
+    rule,
+    handleRemove,
+  } = props;
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(status);
+
+  const handleClick = () => {
+    const variables: EditTresholdMutationVariables = {
+      input: {
+        id: id,
+        name: name,
+        status: checked,
+        description: description,
+      },
+    };
+    EditTresholdMutation(variables);
+  };
+
   return (
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
@@ -121,13 +155,15 @@ export default function ThresholdTypeItem(props: Props) {
           }}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <FormControlLabel
-            label=""
-            onClick={event => event.stopPropagation()}
-            onFocus={event => event.stopPropagation()}
-            control={<SwitchLabels status={true} />}
-          />
-          <Grid xs={2} container alignItems="center">
+          <Grid xs={3} container alignItems="center">
+            <FormField label="">
+              <Switch
+                title={''}
+                checked={status}
+                onChange={setChecked}
+                onClick={handleClick}
+              />
+            </FormField>
             <Text className={classes.nameThreshold}>{name}</Text>
           </Grid>
 
@@ -172,16 +208,16 @@ export default function ThresholdTypeItem(props: Props) {
             justify="center"
             alignItems="center">
             <Grid xs={10} className={classes.description}>
-              Description:{description}
+              Description: {description}
             </Grid>
-            <Grid xs={10}>
+            <Grid className={classes.table} xs={10}>
               <Text
                 className={classes.rulesContained}
                 weight="bold"
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <Table rule={rule} />
+              <Table rule={rule} editRule={editRule} />
             </Grid>
           </Grid>
         </AccordionDetails>

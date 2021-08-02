@@ -26,8 +26,8 @@ type RuleLimit struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	// Number holds the value of the "number" field.
+	Number int `json:"number,omitempty"`
 	// LimitType holds the value of the "limitType" field.
 	LimitType string `json:"limitType,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -82,7 +82,7 @@ func (*RuleLimit) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
+		&sql.NullInt64{},  // number
 		&sql.NullString{}, // limitType
 	}
 }
@@ -117,10 +117,10 @@ func (rl *RuleLimit) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rl.UpdateTime = value.Time
 	}
-	if value, ok := values[2].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field name", values[2])
+	if value, ok := values[2].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field number", values[2])
 	} else if value.Valid {
-		rl.Name = value.String
+		rl.Number = int(value.Int64)
 	}
 	if value, ok := values[3].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field limitType", values[3])
@@ -182,8 +182,8 @@ func (rl *RuleLimit) String() string {
 	builder.WriteString(rl.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(rl.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", name=")
-	builder.WriteString(rl.Name)
+	builder.WriteString(", number=")
+	builder.WriteString(fmt.Sprintf("%v", rl.Number))
 	builder.WriteString(", limitType=")
 	builder.WriteString(rl.LimitType)
 	builder.WriteByte(')')

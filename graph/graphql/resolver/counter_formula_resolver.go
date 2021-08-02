@@ -61,8 +61,23 @@ func (r mutationResolver) EditCounterFormula(ctx context.Context, input models.E
 		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
 	}
 
-	if input.FormulaFk != et.Edges.Formula.ID ||
-		input.CounterFk != et.Edges.Counter.ID {
+	var formulaid, counterid int
+	var formula, err1 = et.Formula(ctx)
+	if err1 != nil {
+		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
+	} else if formula != nil {
+		formulaid = formula.ID
+	}
+	var counter, err2 = et.Counter(ctx)
+	if err1 != nil {
+		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
+	} else if counter != nil {
+		counterid = counter.ID
+	}
+
+	if input.FormulaFk != formulaid ||
+		input.CounterFk != counterid ||
+		input.Mandatory != et.Mandatory {
 		if et, err = client.CounterFormula.
 			UpdateOne(et).
 			SetCounterID(input.CounterFk).

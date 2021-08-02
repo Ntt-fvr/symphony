@@ -30,11 +30,11 @@ const useStyles = makeStyles(() => ({
   },
   id: {
     justifyContent: 'flex-start',
-    paddingLeft: '49px',
+    paddingLeft: '70px',
   },
   associatedKPI: {
     justifyContent: 'flex-start',
-    paddingLeft: '19px',
+    paddingLeft: '34px',
   },
   delete: {
     justifyContent: 'flex-end',
