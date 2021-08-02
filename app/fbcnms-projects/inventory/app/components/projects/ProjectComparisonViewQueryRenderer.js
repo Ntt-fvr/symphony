@@ -68,11 +68,16 @@ type Props = $ReadOnly<{|
   filters: Array<any>,
   orderBy: ProjectOrder,
   onOrderChanged: (newOrderSettings: ProjectOrder) => void,
+  orderPropertyType?: string, //propertyValue
+  orderPropertyDirection?: string,
+  onOrderPropertyChanged: (newPropertyTypeValue: string) => void, //set string values
+  onOrderDirectionChanged: (newPropertyTypeDirection: string) => void,
   displayMode?: DisplayOptionTypes,
   onProjectSelected: (projectID: string) => void,
   createProjectButton: React.Node,
   visibleColumns: string[],
   setVisibleColumns: (string[]) => void,
+  propertyNames: string[],
 |}>;
 
 const projectSearchQuery = graphql`
@@ -80,10 +85,24 @@ const projectSearchQuery = graphql`
     $limit: Int
     $filters: [ProjectFilterInput!]!
     $orderBy: ProjectOrder
+    $propertyValue: String
+    $propertyOrder: String
   ) {
     ...ProjectsTableView_query
-      @arguments(first: $limit, orderBy: $orderBy, filterBy: $filters)
-    projectsMap: projects(first: 100, orderBy: $orderBy, filterBy: $filters) {
+      @arguments(
+        first: $limit
+        orderBy: $orderBy
+        filterBy: $filters
+        propertyValue: $propertyValue
+        propertyOrder: $propertyOrder
+      )
+    projectsMap: projects(
+      first: 100
+      orderBy: $orderBy
+      filterBy: $filters
+      propertyValue: $propertyValue
+      propertyOrder: $propertyOrder
+    ) {
       totalCount
       edges {
         node {
@@ -97,6 +116,7 @@ const projectSearchQuery = graphql`
 const ProjectComparisonViewQueryRenderer = (props: Props) => {
   const classes = useStyles();
   const [tableKey, setTableKey] = useState(0);
+
   const {
     filters,
     orderBy,
@@ -106,6 +126,11 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
     onOrderChanged,
     visibleColumns,
     setVisibleColumns,
+    orderPropertyType,
+    orderPropertyDirection,
+    onOrderPropertyChanged,
+    onOrderDirectionChanged,
+    propertyNames,
     // createProjectButton,
   } = props;
 
@@ -123,14 +148,17 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
   );
   useEffect(() => setTableKey(key => key + 1), [filtersVariable, orderBy]);
 
-  const response = useLazyLoadQuery<ProjectComparisonViewQueryRendererSearchQuery>(
-    projectSearchQuery,
-    {
-      limit: PROJECTS_PAGE_SIZE,
-      filters: filtersVariable,
-      orderBy,
-    },
-  );
+  const response =
+    useLazyLoadQuery<ProjectComparisonViewQueryRendererSearchQuery>(
+      projectSearchQuery,
+      {
+        limit: PROJECTS_PAGE_SIZE,
+        filters: filtersVariable,
+        orderBy,
+        propertyValue: orderPropertyType,
+        propertyOrder: orderPropertyDirection,
+      },
+    );
 
   if (response == null || response.projectsMap == null) {
     return null;
@@ -158,8 +186,11 @@ const ProjectComparisonViewQueryRenderer = (props: Props) => {
           projects={response}
           onProjectSelected={onProjectSelected}
           onOrderChanged={onOrderChanged}
+          onOrderPropertyChanged={onOrderPropertyChanged}
+          onOrderDirectionChanged={onOrderDirectionChanged}
           visibleColumns={visibleColumns}
           setVisibleColumns={setVisibleColumns}
+          propertyNames={propertyNames}
         />
       )}
     </div>

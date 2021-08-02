@@ -8,6 +8,9 @@ import (
 	"context"
 	"strconv"
 	"testing"
+	"time"
+
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 
@@ -347,8 +350,10 @@ func TestStartFlow(t *testing.T) {
 		},
 	}
 	instance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID: flw.ID,
-		Params: inputParams,
+		FlowID:    flw.ID,
+		BssCode:   "CODE123",
+		StartDate: time.Now(),
+		Params:    inputParams,
 	})
 	require.NoError(t, err)
 	startBlock, err := instance.QueryBlocks().
@@ -375,8 +380,10 @@ func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 		},
 	}
 	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
-		FlowID: flw.ID,
-		Params: inputParams,
+		FlowID:    flw.ID,
+		BssCode:   "CODE123",
+		StartDate: time.Now(),
+		Params:    inputParams,
 	})
 	require.NoError(t, err)
 	startBlock, err := flowInstance.QueryBlocks().
@@ -393,7 +400,8 @@ func TestAddBlockInstancesOfFlowInstance(t *testing.T) {
 		Only(ctx)
 	require.NoError(t, err)
 	bi, err := mr.AddBlockInstance(ctx, flowInstance.ID, models.AddBlockInstanceInput{
-		BlockID: endBlock.ID,
+		BlockID:   endBlock.ID,
+		StartDate: time.Now(),
 	})
 	require.NoError(t, err)
 	require.Equal(t, blockinstance.StatusPending, bi.Status)

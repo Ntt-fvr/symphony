@@ -7,6 +7,7 @@ package worker_test
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -62,6 +63,8 @@ func (s *FlowTestSuite) prepareFlow() *ent.Flow {
 func (s *FlowTestSuite) prepareFlowInstance(flw *ent.Flow) *ent.FlowInstance {
 	flowInstance := s.entClient.FlowInstance.Create().
 		SetFlow(flw).
+		SetBssCode("CODE123").
+		SetStartDate(time.Now()).
 		SaveX(s.ctx)
 	blockTemplate := flowInstance.QueryTemplate().
 		QueryBlocks().
@@ -70,6 +73,7 @@ func (s *FlowTestSuite) prepareFlowInstance(flw *ent.Flow) *ent.FlowInstance {
 	s.entClient.BlockInstance.Create().
 		SetBlock(blockTemplate).
 		SetFlowInstance(flowInstance).
+		SetStartDate(time.Now()).
 		SaveX(s.ctx)
 	return flowInstance
 }
@@ -114,6 +118,8 @@ func (s *FlowTestSuite) TestRunIncompleteFlow() {
 	flw := s.prepareFlow()
 	flowInstance := s.entClient.FlowInstance.Create().
 		SetFlow(flw).
+		SetStartDate(time.Now()).
+		SetBssCode("CODE123").
 		SaveX(s.ctx)
 	s.env.ExecuteWorkflow(s.factory.RunFlowWorkflow, worker.RunFlowInput{
 		FlowInstanceID: flowInstance.ID,
