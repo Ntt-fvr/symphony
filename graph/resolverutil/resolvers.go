@@ -178,10 +178,10 @@ func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQ
 	return query, nil
 }
 
-func TresholdFilter(query *ent.TresholdQuery, filters []*models.TresholdFilterInput) (*ent.TresholdQuery, error) {
+func ThresholdFilter(query *ent.ThresholdQuery, filters []*models.ThresholdFilterInput) (*ent.ThresholdQuery, error) {
 	var err error
 	for _, f := range filters {
-		if query, err = handleTresholdFilter(query, f); err != nil {
+		if query, err = handleThresholdFilter(query, f); err != nil {
 			return nil, err
 		}
 	}

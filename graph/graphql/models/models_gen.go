@@ -92,10 +92,6 @@ type AddBulkServiceLinksAndPortsInput struct {
 	LinkIds []int `json:"linkIds"`
 }
 
-type AddCategoryInput struct {
-	Name string `json:"name"`
-}
-
 type AddComparatorInput struct {
 	Name string `json:"name"`
 }
@@ -180,7 +176,7 @@ type AddFlowDraftInput struct {
 
 type AddFormulaInput struct {
 	Name   string `json:"name"`
-	Active bool   `json:"active"`
+	Status bool   `json:"status"`
 	TechFk int    `json:"techFk"`
 	KpiFk  int    `json:"kpiFk"`
 }
@@ -212,16 +208,31 @@ type AddKpiInput struct {
 	Status      bool   `json:"status"`
 }
 
+type AddKqiCategoryInput struct {
+	Name string `json:"name"`
+}
+
+type AddKqiComparatorInput struct {
+	KqiTargetFk    int     `json:"kqiTargetFk"`
+	ComparatorFk   int     `json:"comparatorFk"`
+	Number         float64 `json:"number"`
+	ComparatorType string  `json:"comparatorType"`
+}
+
 type AddKqiInput struct {
-	Name              string    `json:"name"`
-	Description       string    `json:"description"`
-	Formula           string    `json:"formula"`
-	StartDateTime     time.Time `json:"startDateTime"`
-	EndDateTime       time.Time `json:"endDateTime"`
-	Category          int       `json:"category"`
-	Perspective       int       `json:"perspective"`
-	KqiSource         int       `json:"kqiSource"`
-	TemporalFrecuency int       `json:"temporalFrecuency"`
+	Name                 string    `json:"name"`
+	Description          string    `json:"description"`
+	Formula              string    `json:"formula"`
+	StartDateTime        time.Time `json:"startDateTime"`
+	EndDateTime          time.Time `json:"endDateTime"`
+	KqiCategory          int       `json:"kqiCategory"`
+	KqiPerspective       int       `json:"kqiPerspective"`
+	KqiSource            int       `json:"kqiSource"`
+	KqiTemporalFrecuency int       `json:"kqiTemporalFrecuency"`
+}
+
+type AddKqiPerspectiveInput struct {
+	Name string `json:"name"`
 }
 
 type AddKqiSourceInput struct {
@@ -229,16 +240,17 @@ type AddKqiSourceInput struct {
 }
 
 type AddKqiTargetInput struct {
-	Impact            string    `json:"impact"`
-	Comparator        float64   `json:"comparator"`
-	ReferenceValue    float64   `json:"referenceValue"`
-	WarningComparator float64   `json:"warningComparator"`
-	Frame             float64   `json:"frame"`
-	AlowedValidation  float64   `json:"alowedValidation"`
-	InitTime          time.Time `json:"initTime"`
-	EndTime           time.Time `json:"endTime"`
-	Active            bool      `json:"active"`
-	Kqi               int       `json:"kqi"`
+	Impact           string    `json:"impact"`
+	Frame            float64   `json:"frame"`
+	AlowedValidation float64   `json:"alowedValidation"`
+	InitTime         time.Time `json:"initTime"`
+	EndTime          time.Time `json:"endTime"`
+	Status           bool      `json:"status"`
+	Kqi              int       `json:"kqi"`
+}
+
+type AddKqiTemporalFrecuencyInput struct {
+	Name string `json:"name"`
 }
 
 type AddLinkInput struct {
@@ -284,10 +296,6 @@ type AddPermissionsPolicyInput struct {
 	Groups          []int                          `json:"groups"`
 }
 
-type AddPerspectiveInput struct {
-	Name string `json:"name"`
-}
-
 type AddProjectInput struct {
 	Name        string            `json:"name"`
 	Description *string           `json:"description"`
@@ -316,7 +324,7 @@ type AddRuleInput struct {
 	AdditionalInfo  *string   `json:"additionalInfo"`
 	Status          bool      `json:"status"`
 	EventSeverity   int       `json:"eventSeverity"`
-	Treshold        int       `json:"treshold"`
+	Threshold       int       `json:"threshold"`
 }
 
 type AddRuleLimitInput struct {
@@ -342,11 +350,7 @@ type AddTechInput struct {
 	DomainFk int    `json:"domainFk"`
 }
 
-type AddTemporalFrecuencyInput struct {
-	Name string `json:"name"`
-}
-
-type AddTresholdInput struct {
+type AddThresholdInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      bool   `json:"status"`
@@ -608,11 +612,6 @@ type EditBlockInstanceInput struct {
 	EndDate       *time.Time                  `json:"endDate"`
 }
 
-type EditCategoryInput struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
 type EditComparatorInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -687,7 +686,7 @@ type EditFlowInstanceInput struct {
 type EditFormulaInput struct {
 	ID     int    `json:"id"`
 	Name   string `json:"name"`
-	Active bool   `json:"active"`
+	Status bool   `json:"status"`
 	TechFk int    `json:"techFk"`
 	KpiFk  int    `json:"kpiFk"`
 }
@@ -700,17 +699,35 @@ type EditKpiInput struct {
 	Status      bool   `json:"status"`
 }
 
+type EditKqiCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type EditKqiComparatorInput struct {
+	ID             int     `json:"id"`
+	KqiTargetFk    int     `json:"kqiTargetFk"`
+	ComparatorFk   int     `json:"comparatorFk"`
+	Number         float64 `json:"number"`
+	ComparatorType string  `json:"comparatorType"`
+}
+
 type EditKqiInput struct {
-	ID                int       `json:"id"`
-	Name              string    `json:"name"`
-	Description       string    `json:"description"`
-	Formula           string    `json:"formula"`
-	StartDateTime     time.Time `json:"startDateTime"`
-	EndDateTime       time.Time `json:"endDateTime"`
-	Category          int       `json:"category"`
-	Perspective       int       `json:"perspective"`
-	KqiSource         int       `json:"kqiSource"`
-	TemporalFrecuency int       `json:"temporalFrecuency"`
+	ID                   int       `json:"id"`
+	Name                 string    `json:"name"`
+	Description          string    `json:"description"`
+	Formula              string    `json:"formula"`
+	StartDateTime        time.Time `json:"startDateTime"`
+	EndDateTime          time.Time `json:"endDateTime"`
+	KqiCategory          int       `json:"kqiCategory"`
+	KqiPerspective       int       `json:"kqiPerspective"`
+	KqiSource            int       `json:"kqiSource"`
+	KqiTemporalFrecuency int       `json:"kqiTemporalFrecuency"`
+}
+
+type EditKqiPerspectiveInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditKqiSourceInput struct {
@@ -719,17 +736,19 @@ type EditKqiSourceInput struct {
 }
 
 type EditKqiTargetInput struct {
-	ID                int       `json:"id"`
-	Impact            string    `json:"impact"`
-	Comparator        float64   `json:"comparator"`
-	ReferenceValue    float64   `json:"referenceValue"`
-	WarningComparator float64   `json:"warningComparator"`
-	Frame             float64   `json:"frame"`
-	AlowedValidation  float64   `json:"alowedValidation"`
-	InitTime          time.Time `json:"initTime"`
-	EndTime           time.Time `json:"endTime"`
-	Active            bool      `json:"active"`
-	Kqi               int       `json:"kqi"`
+	ID               int       `json:"id"`
+	Impact           string    `json:"impact"`
+	Frame            float64   `json:"frame"`
+	AlowedValidation float64   `json:"alowedValidation"`
+	InitTime         time.Time `json:"initTime"`
+	EndTime          time.Time `json:"endTime"`
+	Status           bool      `json:"status"`
+	Kqi              int       `json:"kqi"`
+}
+
+type EditKqiTemporalFrecuencyInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditLinkInput struct {
@@ -775,11 +794,6 @@ type EditPermissionsPolicyInput struct {
 	Groups          []int                          `json:"groups"`
 }
 
-type EditPerspectiveInput struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
 type EditProjectInput struct {
 	ID          int               `json:"id"`
 	Name        string            `json:"name"`
@@ -816,7 +830,7 @@ type EditRuleInput struct {
 	AdditionalInfo  *string    `json:"additionalInfo"`
 	Status          bool       `json:"status"`
 	EventSeverity   int        `json:"eventSeverity"`
-	Treshold        int        `json:"treshold"`
+	Threshold       int        `json:"threshold"`
 }
 
 type EditRuleLimitInput struct {
@@ -838,12 +852,7 @@ type EditTechInput struct {
 	DomainFk int    `json:"domainFk"`
 }
 
-type EditTemporalFrecuencyInput struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-type EditTresholdInput struct {
+type EditThresholdInput struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -1394,14 +1403,8 @@ type TechnicianWorkOrderUploadInput struct {
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 }
 
-type TopologyLink struct {
-	Type   TopologyLinkType `json:"type"`
-	Source ent.Noder        `json:"source"`
-	Target ent.Noder        `json:"target"`
-}
-
-type TresholdFilterInput struct {
-	FilterType  TresholdFilterType  `json:"filterType"`
+type ThresholdFilterInput struct {
+	FilterType  ThresholdFilterType `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
 	StringValue *string             `json:"stringValue"`
 	IDSet       []int               `json:"idSet"`
@@ -1409,12 +1412,18 @@ type TresholdFilterInput struct {
 	StringSet   []string            `json:"stringSet"`
 }
 
-type TresholdInput struct {
+type ThresholdInput struct {
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	Status      bool         `json:"status"`
 	Rule        []*RuleInput `json:"rule"`
 	Kpi         int          `json:"kpi"`
+}
+
+type TopologyLink struct {
+	Type   TopologyLinkType `json:"type"`
+	Source ent.Noder        `json:"source"`
+	Target ent.Noder        `json:"target"`
 }
 
 type TriggerBlock struct {
@@ -2279,6 +2288,45 @@ func (e SurveyStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ThresholdFilterType string
+
+const (
+	ThresholdFilterTypeName ThresholdFilterType = "NAME"
+)
+
+var AllThresholdFilterType = []ThresholdFilterType{
+	ThresholdFilterTypeName,
+}
+
+func (e ThresholdFilterType) IsValid() bool {
+	switch e {
+	case ThresholdFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ThresholdFilterType) String() string {
+	return string(e)
+}
+
+func (e *ThresholdFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ThresholdFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ThresholdFilterType", str)
+	}
+	return nil
+}
+
+func (e ThresholdFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type TopologyLinkType string
 
 const (
@@ -2315,45 +2363,6 @@ func (e *TopologyLinkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TopologyLinkType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type TresholdFilterType string
-
-const (
-	TresholdFilterTypeName TresholdFilterType = "NAME"
-)
-
-var AllTresholdFilterType = []TresholdFilterType{
-	TresholdFilterTypeName,
-}
-
-func (e TresholdFilterType) IsValid() bool {
-	switch e {
-	case TresholdFilterTypeName:
-		return true
-	}
-	return false
-}
-
-func (e TresholdFilterType) String() string {
-	return string(e)
-}
-
-func (e *TresholdFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = TresholdFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid TresholdFilterType", str)
-	}
-	return nil
-}
-
-func (e TresholdFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

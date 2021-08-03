@@ -81,26 +81,6 @@ func (bi *BlockInstanceQuery) collectField(ctx *graphql.OperationContext, field 
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (c *CategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *CategoryQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return c
-}
-
-func (c *CategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CategoryQuery {
-	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
-		switch field.Name {
-		case "kqi":
-			c = c.WithCategoryFk(func(query *KqiQuery) {
-				query.collectField(ctx, field)
-			})
-		}
-	}
-	return c
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (clc *CheckListCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *CheckListCategoryQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		clc = clc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -171,6 +151,10 @@ func (c *ComparatorQuery) CollectFields(ctx context.Context, satisfies ...string
 func (c *ComparatorQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ComparatorQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
+		case "kqicomparator":
+			c = c.WithComparatorkqitargetfk(func(query *KqiComparatorQuery) {
+				query.collectField(ctx, field)
+			})
 		case "rulelimit":
 			c = c.WithComparatorrulelimit(func(query *RuleLimitQuery) {
 				query.collectField(ctx, field)
@@ -767,8 +751,8 @@ func (k *KpiQuery) collectField(ctx *graphql.OperationContext, field graphql.Col
 			k = k.WithFormulakpi(func(query *FormulaQuery) {
 				query.collectField(ctx, field)
 			})
-		case "treshold":
-			k = k.WithTresholdkpi(func(query *TresholdQuery) {
+		case "threshold":
+			k = k.WithThresholdkpi(func(query *ThresholdQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -794,6 +778,58 @@ func (k *KqiQuery) collectField(ctx *graphql.OperationContext, field graphql.Col
 		}
 	}
 	return k
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kc *KqiCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kc = kc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kc
+}
+
+func (kc *KqiCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			kc = kc.WithKqiCategoryFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return kc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kc *KqiComparatorQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiComparatorQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kc = kc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kc
+}
+
+func (kc *KqiComparatorQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiComparatorQuery {
+	return kc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kp *KqiPerspectiveQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiPerspectiveQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kp = kp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kp
+}
+
+func (kp *KqiPerspectiveQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiPerspectiveQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			kp = kp.WithKqiPerspectiveFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return kp
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -825,7 +861,35 @@ func (kt *KqiTargetQuery) CollectFields(ctx context.Context, satisfies ...string
 }
 
 func (kt *KqiTargetQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTargetQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqicomparator":
+			kt = kt.WithKqitargetcomparatorfk(func(query *KqiComparatorQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return kt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ktf *KqiTemporalFrecuencyQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTemporalFrecuencyQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ktf = ktf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ktf
+}
+
+func (ktf *KqiTemporalFrecuencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTemporalFrecuencyQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			ktf = ktf.WithKqiTemporalFrecuencyFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return ktf
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -970,26 +1034,6 @@ func (pp *PermissionsPolicyQuery) CollectFields(ctx context.Context, satisfies .
 
 func (pp *PermissionsPolicyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PermissionsPolicyQuery {
 	return pp
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (pe *PerspectiveQuery) CollectFields(ctx context.Context, satisfies ...string) *PerspectiveQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		pe = pe.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return pe
-}
-
-func (pe *PerspectiveQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *PerspectiveQuery {
-	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
-		switch field.Name {
-		case "kqi":
-			pe = pe.WithPerspectiveFk(func(query *KqiQuery) {
-				query.collectField(ctx, field)
-			})
-		}
-	}
-	return pe
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -1337,38 +1381,18 @@ func (t *TechQuery) collectField(ctx *graphql.OperationContext, field graphql.Co
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (tf *TemporalFrecuencyQuery) CollectFields(ctx context.Context, satisfies ...string) *TemporalFrecuencyQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		tf = tf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return tf
-}
-
-func (tf *TemporalFrecuencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *TemporalFrecuencyQuery {
-	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
-		switch field.Name {
-		case "kqi":
-			tf = tf.WithTemporalFrecuencyFk(func(query *KqiQuery) {
-				query.collectField(ctx, field)
-			})
-		}
-	}
-	return tf
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (t *TresholdQuery) CollectFields(ctx context.Context, satisfies ...string) *TresholdQuery {
+func (t *ThresholdQuery) CollectFields(ctx context.Context, satisfies ...string) *ThresholdQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		t = t.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
 	}
 	return t
 }
 
-func (t *TresholdQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *TresholdQuery {
+func (t *ThresholdQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ThresholdQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "rule":
-			t = t.WithRuletreshold(func(query *RuleQuery) {
+			t = t.WithRulethreshold(func(query *RuleQuery) {
 				query.collectField(ctx, field)
 			})
 		}

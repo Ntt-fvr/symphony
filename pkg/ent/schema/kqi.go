@@ -30,14 +30,14 @@ func (Kqi) Fields() []ent.Field {
 // Edges returns property type edges.
 func (Kqi) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("categoryFk", Category.Type).
-			Ref("categoryFk").Unique(),
-		edge.From("perspectiveFk", Perspective.Type).
-			Ref("perspectiveFk").Unique(),
+		edge.From("kqiCategoryFk", KqiCategory.Type).
+			Ref("kqiCategoryFk").Unique(),
+		edge.From("kqiPerspectiveFk", KqiPerspective.Type).
+			Ref("kqiPerspectiveFk").Unique(),
 		edge.From("kqiSourceFk", KqiSource.Type).
 			Ref("kqiSourceFk").Unique(),
-		edge.From("temporalFrecuencyFk", TemporalFrecuency.Type).
-			Ref("temporalFrecuencyFk").Unique(),
+		edge.From("kqiTemporalFrecuencyFk", KqiTemporalFrecuency.Type).
+			Ref("kqiTemporalFrecuencyFk").Unique(),
 		edge.To("kqiTargetFk", KqiTarget.Type).
 			Annotations(entgql.MapsTo("kqiTarget")),
 	}

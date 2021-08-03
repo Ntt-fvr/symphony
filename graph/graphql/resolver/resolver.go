@@ -241,17 +241,17 @@ func (r resolver) Formula() generated.FormulaResolver {
 func (r resolver) AlarmFilter() generated.AlarmFilterResolver {
 	return alarmFilterResolver{}
 }
+
 func (r resolver) AlarmStatus() generated.AlarmStatusResolver {
 	return alarmStatusResolver{}
 }
 
-/************************* mis tablas desde aqui********************************************************************/
 func (r resolver) Comparator() generated.ComparatorResolver {
 	return comparatorResolver{}
 }
 
-func (r resolver) Treshold() generated.TresholdResolver {
-	return tresholdResolver{}
+func (r resolver) Threshold() generated.ThresholdResolver {
+	return thresholdResolver{}
 }
 
 func (r resolver) Rule() generated.RuleResolver {
@@ -270,16 +270,15 @@ func (r resolver) EventSeverity() generated.EventSeverityResolver {
 	return eventSeverityResolver{}
 }
 
-/************************* KQI ********************************************************************/
-func (r resolver) Category() generated.CategoryResolver {
-	return categoryResolver{}
+func (r resolver) KqiCategory() generated.KqiCategoryResolver {
+	return kqiCategoryResolver{}
 }
 
-func (r resolver) Perspective() generated.PerspectiveResolver {
-	return perspectiveResolver{}
+func (r resolver) KqiPerspective() generated.KqiPerspectiveResolver {
+	return kqiPerspectiveResolver{}
 }
-func (r resolver) TemporalFrecuency() generated.TemporalFrecuencyResolver {
-	return temporalFrecuencyResolver{}
+func (r resolver) KqiTemporalFrecuency() generated.KqiTemporalFrecuencyResolver {
+	return kqiTemporalFrecuencyResolver{}
 }
 
 func (r resolver) KqiSource() generated.KqiSourceResolver {
@@ -293,4 +292,6 @@ func (r resolver) KqiTarget() generated.KqiTargetResolver {
 	return kqiTargetResolver{}
 }
 
-/**************************************************************************************************/
+func (r resolver) KqiComparator() generated.KqiComparatorResolver {
+	return kqiComparatorResolver{}
+}

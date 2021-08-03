@@ -21,12 +21,6 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldComparator holds the string denoting the comparator field in the database.
-	FieldComparator = "comparator"
-	// FieldReferenceValue holds the string denoting the referencevalue field in the database.
-	FieldReferenceValue = "reference_value"
-	// FieldWarningComparator holds the string denoting the warningcomparator field in the database.
-	FieldWarningComparator = "warning_comparator"
 	// FieldFrame holds the string denoting the frame field in the database.
 	FieldFrame = "frame"
 	// FieldAlowedValidation holds the string denoting the alowedvalidation field in the database.
@@ -37,11 +31,13 @@ const (
 	FieldEndTime = "end_time"
 	// FieldImpact holds the string denoting the impact field in the database.
 	FieldImpact = "impact"
-	// FieldActive holds the string denoting the active field in the database.
-	FieldActive = "active"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 
 	// EdgeKqiTargetFk holds the string denoting the kqitargetfk edge name in mutations.
 	EdgeKqiTargetFk = "kqiTargetFk"
+	// EdgeKqitargetcomparatorfk holds the string denoting the kqitargetcomparatorfk edge name in mutations.
+	EdgeKqitargetcomparatorfk = "kqitargetcomparatorfk"
 
 	// Table holds the table name of the kqitarget in the database.
 	Table = "kqi_targets"
@@ -52,6 +48,13 @@ const (
 	KqiTargetFkInverseTable = "kqis"
 	// KqiTargetFkColumn is the table column denoting the kqiTargetFk relation/edge.
 	KqiTargetFkColumn = "kqi_kqi_target_fk"
+	// KqitargetcomparatorfkTable is the table the holds the kqitargetcomparatorfk relation/edge.
+	KqitargetcomparatorfkTable = "kqi_comparators"
+	// KqitargetcomparatorfkInverseTable is the table name for the KqiComparator entity.
+	// It exists in this package in order to avoid circular dependency with the "kqicomparator" package.
+	KqitargetcomparatorfkInverseTable = "kqi_comparators"
+	// KqitargetcomparatorfkColumn is the table column denoting the kqitargetcomparatorfk relation/edge.
+	KqitargetcomparatorfkColumn = "kqi_target_kqitargetcomparatorfk"
 )
 
 // Columns holds all SQL columns for kqitarget fields.
@@ -59,15 +62,12 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
-	FieldComparator,
-	FieldReferenceValue,
-	FieldWarningComparator,
 	FieldFrame,
 	FieldAlowedValidation,
 	FieldInitTime,
 	FieldEndTime,
 	FieldImpact,
-	FieldActive,
+	FieldStatus,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the KqiTarget type.

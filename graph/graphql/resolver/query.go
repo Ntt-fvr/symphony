@@ -302,21 +302,22 @@ func (r queryResolver) Kpis(
 			),
 		)
 }
-func (r queryResolver) Tresholds(
+
+func (r queryResolver) Thresholds(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *ent.TresholdOrder,
-	filterBy []*models.TresholdFilterInput,
-) (*ent.TresholdConnection, error) {
+	orderBy *ent.ThresholdOrder,
+	filterBy []*models.ThresholdFilterInput,
+) (*ent.ThresholdConnection, error) {
 	return r.ClientFrom(ctx).
-		Treshold.
+		Threshold.
 		Query().
 		Paginate(ctx, after, first, before, last,
-			ent.WithTresholdOrder(orderBy),
-			ent.WithTresholdFilter(
-				func(query *ent.TresholdQuery) (*ent.TresholdQuery, error) {
-					return resolverutil.TresholdFilter(query, filterBy)
+			ent.WithThresholdOrder(orderBy),
+			ent.WithThresholdFilter(
+				func(query *ent.ThresholdQuery) (*ent.ThresholdQuery, error) {
+					return resolverutil.ThresholdFilter(query, filterBy)
 				},
 			),
 		)
@@ -382,7 +383,7 @@ func (r queryResolver) Vendors(
 		)
 }
 
-func (r queryResolver) CounterFamilys(
+func (r queryResolver) CounterFamilies(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -420,7 +421,7 @@ func (r queryResolver) RuleTypes(
 			),
 		)
 }
-func (r queryResolver) EventSeveritys(
+func (r queryResolver) EventSeverities(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -460,7 +461,7 @@ func (r queryResolver) Comparators(
 		)
 }
 
-func (r queryResolver) AlarmStatuss(
+func (r queryResolver) AlarmStatus(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,

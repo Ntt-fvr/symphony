@@ -111,27 +111,6 @@ func UpdateTime(v time.Time) predicate.KqiTarget {
 	})
 }
 
-// Comparator applies equality check predicate on the "comparator" field. It's identical to ComparatorEQ.
-func Comparator(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldComparator), v))
-	})
-}
-
-// ReferenceValue applies equality check predicate on the "referenceValue" field. It's identical to ReferenceValueEQ.
-func ReferenceValue(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldReferenceValue), v))
-	})
-}
-
-// WarningComparator applies equality check predicate on the "warningComparator" field. It's identical to WarningComparatorEQ.
-func WarningComparator(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldWarningComparator), v))
-	})
-}
-
 // Frame applies equality check predicate on the "frame" field. It's identical to FrameEQ.
 func Frame(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
@@ -167,10 +146,10 @@ func Impact(v string) predicate.KqiTarget {
 	})
 }
 
-// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
-func Active(v bool) predicate.KqiTarget {
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v bool) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldActive), v))
+		s.Where(sql.EQ(s.C(FieldStatus), v))
 	})
 }
 
@@ -323,234 +302,6 @@ func UpdateTimeLT(v time.Time) predicate.KqiTarget {
 func UpdateTimeLTE(v time.Time) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpdateTime), v))
-	})
-}
-
-// ComparatorEQ applies the EQ predicate on the "comparator" field.
-func ComparatorEQ(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldComparator), v))
-	})
-}
-
-// ComparatorNEQ applies the NEQ predicate on the "comparator" field.
-func ComparatorNEQ(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldComparator), v))
-	})
-}
-
-// ComparatorIn applies the In predicate on the "comparator" field.
-func ComparatorIn(vs ...float64) predicate.KqiTarget {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldComparator), v...))
-	})
-}
-
-// ComparatorNotIn applies the NotIn predicate on the "comparator" field.
-func ComparatorNotIn(vs ...float64) predicate.KqiTarget {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldComparator), v...))
-	})
-}
-
-// ComparatorGT applies the GT predicate on the "comparator" field.
-func ComparatorGT(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldComparator), v))
-	})
-}
-
-// ComparatorGTE applies the GTE predicate on the "comparator" field.
-func ComparatorGTE(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldComparator), v))
-	})
-}
-
-// ComparatorLT applies the LT predicate on the "comparator" field.
-func ComparatorLT(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldComparator), v))
-	})
-}
-
-// ComparatorLTE applies the LTE predicate on the "comparator" field.
-func ComparatorLTE(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldComparator), v))
-	})
-}
-
-// ReferenceValueEQ applies the EQ predicate on the "referenceValue" field.
-func ReferenceValueEQ(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldReferenceValue), v))
-	})
-}
-
-// ReferenceValueNEQ applies the NEQ predicate on the "referenceValue" field.
-func ReferenceValueNEQ(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldReferenceValue), v))
-	})
-}
-
-// ReferenceValueIn applies the In predicate on the "referenceValue" field.
-func ReferenceValueIn(vs ...float64) predicate.KqiTarget {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldReferenceValue), v...))
-	})
-}
-
-// ReferenceValueNotIn applies the NotIn predicate on the "referenceValue" field.
-func ReferenceValueNotIn(vs ...float64) predicate.KqiTarget {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldReferenceValue), v...))
-	})
-}
-
-// ReferenceValueGT applies the GT predicate on the "referenceValue" field.
-func ReferenceValueGT(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldReferenceValue), v))
-	})
-}
-
-// ReferenceValueGTE applies the GTE predicate on the "referenceValue" field.
-func ReferenceValueGTE(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldReferenceValue), v))
-	})
-}
-
-// ReferenceValueLT applies the LT predicate on the "referenceValue" field.
-func ReferenceValueLT(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldReferenceValue), v))
-	})
-}
-
-// ReferenceValueLTE applies the LTE predicate on the "referenceValue" field.
-func ReferenceValueLTE(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldReferenceValue), v))
-	})
-}
-
-// WarningComparatorEQ applies the EQ predicate on the "warningComparator" field.
-func WarningComparatorEQ(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldWarningComparator), v))
-	})
-}
-
-// WarningComparatorNEQ applies the NEQ predicate on the "warningComparator" field.
-func WarningComparatorNEQ(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldWarningComparator), v))
-	})
-}
-
-// WarningComparatorIn applies the In predicate on the "warningComparator" field.
-func WarningComparatorIn(vs ...float64) predicate.KqiTarget {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldWarningComparator), v...))
-	})
-}
-
-// WarningComparatorNotIn applies the NotIn predicate on the "warningComparator" field.
-func WarningComparatorNotIn(vs ...float64) predicate.KqiTarget {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldWarningComparator), v...))
-	})
-}
-
-// WarningComparatorGT applies the GT predicate on the "warningComparator" field.
-func WarningComparatorGT(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldWarningComparator), v))
-	})
-}
-
-// WarningComparatorGTE applies the GTE predicate on the "warningComparator" field.
-func WarningComparatorGTE(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldWarningComparator), v))
-	})
-}
-
-// WarningComparatorLT applies the LT predicate on the "warningComparator" field.
-func WarningComparatorLT(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldWarningComparator), v))
-	})
-}
-
-// WarningComparatorLTE applies the LTE predicate on the "warningComparator" field.
-func WarningComparatorLTE(v float64) predicate.KqiTarget {
-	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldWarningComparator), v))
 	})
 }
 
@@ -969,17 +720,17 @@ func ImpactContainsFold(v string) predicate.KqiTarget {
 	})
 }
 
-// ActiveEQ applies the EQ predicate on the "active" field.
-func ActiveEQ(v bool) predicate.KqiTarget {
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v bool) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldActive), v))
+		s.Where(sql.EQ(s.C(FieldStatus), v))
 	})
 }
 
-// ActiveNEQ applies the NEQ predicate on the "active" field.
-func ActiveNEQ(v bool) predicate.KqiTarget {
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v bool) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldActive), v))
+		s.Where(sql.NEQ(s.C(FieldStatus), v))
 	})
 }
 
@@ -1002,6 +753,34 @@ func HasKqiTargetFkWith(preds ...predicate.Kqi) predicate.KqiTarget {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(KqiTargetFkInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, KqiTargetFkTable, KqiTargetFkColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasKqitargetcomparatorfk applies the HasEdge predicate on the "kqitargetcomparatorfk" edge.
+func HasKqitargetcomparatorfk() predicate.KqiTarget {
+	return predicate.KqiTarget(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(KqitargetcomparatorfkTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, KqitargetcomparatorfkTable, KqitargetcomparatorfkColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasKqitargetcomparatorfkWith applies the HasEdge predicate on the "kqitargetcomparatorfk" edge with a given conditions (other predicates).
+func HasKqitargetcomparatorfkWith(preds ...predicate.KqiComparator) predicate.KqiTarget {
+	return predicate.KqiTarget(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(KqitargetcomparatorfkInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, KqitargetcomparatorfkTable, KqitargetcomparatorfkColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

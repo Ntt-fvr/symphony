@@ -25,9 +25,6 @@ type Block func(*sql.Selector)
 // BlockInstance is the predicate function for blockinstance builders.
 type BlockInstance func(*sql.Selector)
 
-// Category is the predicate function for category builders.
-type Category func(*sql.Selector)
-
 // CheckListCategory is the predicate function for checklistcategory builders.
 type CheckListCategory func(*sql.Selector)
 
@@ -139,11 +136,23 @@ type Kpi func(*sql.Selector)
 // Kqi is the predicate function for kqi builders.
 type Kqi func(*sql.Selector)
 
+// KqiCategory is the predicate function for kqicategory builders.
+type KqiCategory func(*sql.Selector)
+
+// KqiComparator is the predicate function for kqicomparator builders.
+type KqiComparator func(*sql.Selector)
+
+// KqiPerspective is the predicate function for kqiperspective builders.
+type KqiPerspective func(*sql.Selector)
+
 // KqiSource is the predicate function for kqisource builders.
 type KqiSource func(*sql.Selector)
 
 // KqiTarget is the predicate function for kqitarget builders.
 type KqiTarget func(*sql.Selector)
+
+// KqiTemporalFrecuency is the predicate function for kqitemporalfrecuency builders.
+type KqiTemporalFrecuency func(*sql.Selector)
 
 // Link is the predicate function for link builders.
 type Link func(*sql.Selector)
@@ -159,9 +168,6 @@ type Organization func(*sql.Selector)
 
 // PermissionsPolicy is the predicate function for permissionspolicy builders.
 type PermissionsPolicy func(*sql.Selector)
-
-// Perspective is the predicate function for perspective builders.
-type Perspective func(*sql.Selector)
 
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
@@ -223,11 +229,8 @@ type SurveyWiFiScan func(*sql.Selector)
 // Tech is the predicate function for tech builders.
 type Tech func(*sql.Selector)
 
-// TemporalFrecuency is the predicate function for temporalfrecuency builders.
-type TemporalFrecuency func(*sql.Selector)
-
-// Treshold is the predicate function for treshold builders.
-type Treshold func(*sql.Selector)
+// Threshold is the predicate function for threshold builders.
+type Threshold func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
