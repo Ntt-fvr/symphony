@@ -32,15 +32,12 @@ func (r mutationResolver) AddKqiTarget(ctx context.Context, input models.AddKqiT
 
 	typ, err := client.
 		KqiTarget.Create().
-		SetComparator(input.Comparator).
-		SetReferenceValue(input.ReferenceValue).
-		SetWarningComparator(input.WarningComparator).
 		SetFrame(input.Frame).
 		SetAlowedValidation(input.AlowedValidation).
 		SetInitTime(input.InitTime).
 		SetEndTime(input.EndTime).
 		SetImpact(input.Impact).
-		SetActive(input.Active).
+		SetStatus(input.Status).
 		SetKqiTargetFkID(input.Kqi).
 		Save(ctx)
 	if err != nil {
@@ -80,8 +77,7 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
 	var kqiId int
-	var comparator, init, end, refval, warningComparator, frame, allowed, active, impact = et.Comparator, et.InitTime, et.EndTime, et.ReferenceValue,
-		et.WarningComparator, et.Frame, et.AlowedValidation, et.Active, et.Impact
+	var init, end, frame, allowed, status, impact = et.InitTime, et.EndTime, et.Frame, et.AlowedValidation, et.Status, et.Impact
 	var kqi, err1 = et.KqiTargetFk(ctx)
 	if err1 != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
@@ -90,25 +86,12 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 	}
 
 	var change = false
-	if comparator != input.Comparator {
-		comparator = input.Comparator
-		change = true
-	}
 	if init != input.InitTime {
 		init = input.InitTime
 		change = true
 	}
 	if end != input.EndTime {
 		end = input.EndTime
-		change = true
-	}
-	if refval != input.ReferenceValue {
-		refval = input.ReferenceValue
-		change = true
-	}
-
-	if warningComparator != input.WarningComparator {
-		warningComparator = input.WarningComparator
 		change = true
 	}
 	if frame != input.Frame {
@@ -121,8 +104,8 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		change = true
 	}
 
-	if active != input.Active {
-		active = input.Active
+	if status != input.Status {
+		status = input.Status
 		change = true
 	}
 	if impact != input.Impact {
@@ -138,14 +121,11 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 
 		if et, err = client.KqiTarget.
 			UpdateOne(et).
-			SetComparator(comparator).
-			SetReferenceValue(refval).
-			SetWarningComparator(warningComparator).
 			SetInitTime(init).
 			SetEndTime(end).
 			SetFrame(frame).
 			SetAlowedValidation(allowed).
-			SetActive(active).
+			SetStatus(status).
 			SetImpact(impact).
 			SetKqiTargetFkID(kqiId).
 			Save(ctx); err != nil {

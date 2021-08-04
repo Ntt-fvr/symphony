@@ -17,7 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // KpiCreate is the builder for creating a Kpi entity.
@@ -107,23 +107,23 @@ func (kc *KpiCreate) AddFormulakpi(f ...*Formula) *KpiCreate {
 	return kc.AddFormulakpiIDs(ids...)
 }
 
-// SetTresholdkpiID sets the tresholdkpi edge to Treshold by id.
-func (kc *KpiCreate) SetTresholdkpiID(id int) *KpiCreate {
-	kc.mutation.SetTresholdkpiID(id)
+// SetThresholdkpiID sets the thresholdkpi edge to Threshold by id.
+func (kc *KpiCreate) SetThresholdkpiID(id int) *KpiCreate {
+	kc.mutation.SetThresholdkpiID(id)
 	return kc
 }
 
-// SetNillableTresholdkpiID sets the tresholdkpi edge to Treshold by id if the given value is not nil.
-func (kc *KpiCreate) SetNillableTresholdkpiID(id *int) *KpiCreate {
+// SetNillableThresholdkpiID sets the thresholdkpi edge to Threshold by id if the given value is not nil.
+func (kc *KpiCreate) SetNillableThresholdkpiID(id *int) *KpiCreate {
 	if id != nil {
-		kc = kc.SetTresholdkpiID(*id)
+		kc = kc.SetThresholdkpiID(*id)
 	}
 	return kc
 }
 
-// SetTresholdkpi sets the tresholdkpi edge to Treshold.
-func (kc *KpiCreate) SetTresholdkpi(t *Treshold) *KpiCreate {
-	return kc.SetTresholdkpiID(t.ID)
+// SetThresholdkpi sets the thresholdkpi edge to Threshold.
+func (kc *KpiCreate) SetThresholdkpi(t *Threshold) *KpiCreate {
+	return kc.SetThresholdkpiID(t.ID)
 }
 
 // Mutation returns the KpiMutation object of the builder.
@@ -320,17 +320,17 @@ func (kc *KpiCreate) createSpec() (*Kpi, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := kc.mutation.TresholdkpiIDs(); len(nodes) > 0 {
+	if nodes := kc.mutation.ThresholdkpiIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   kpi.TresholdkpiTable,
-			Columns: []string{kpi.TresholdkpiColumn},
+			Table:   kpi.ThresholdkpiTable,
+			Columns: []string{kpi.ThresholdkpiColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: treshold.FieldID,
+					Column: threshold.FieldID,
 				},
 			},
 		}

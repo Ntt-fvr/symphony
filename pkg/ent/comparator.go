@@ -35,9 +35,11 @@ type Comparator struct {
 type ComparatorEdges struct {
 	// Comparatorrulelimit holds the value of the comparatorrulelimit edge.
 	Comparatorrulelimit []*RuleLimit
+	// Comparatorkqitargetfk holds the value of the comparatorkqitargetfk edge.
+	Comparatorkqitargetfk []*KqiComparator
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // ComparatorrulelimitOrErr returns the Comparatorrulelimit value or an error if the edge
@@ -47,6 +49,15 @@ func (e ComparatorEdges) ComparatorrulelimitOrErr() ([]*RuleLimit, error) {
 		return e.Comparatorrulelimit, nil
 	}
 	return nil, &NotLoadedError{edge: "comparatorrulelimit"}
+}
+
+// ComparatorkqitargetfkOrErr returns the Comparatorkqitargetfk value or an error if the edge
+// was not loaded in eager-loading.
+func (e ComparatorEdges) ComparatorkqitargetfkOrErr() ([]*KqiComparator, error) {
+	if e.loadedTypes[1] {
+		return e.Comparatorkqitargetfk, nil
+	}
+	return nil, &NotLoadedError{edge: "comparatorkqitargetfk"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -92,6 +103,11 @@ func (c *Comparator) assignValues(values ...interface{}) error {
 // QueryComparatorrulelimit queries the comparatorrulelimit edge of the Comparator.
 func (c *Comparator) QueryComparatorrulelimit() *RuleLimitQuery {
 	return (&ComparatorClient{config: c.config}).QueryComparatorrulelimit(c)
+}
+
+// QueryComparatorkqitargetfk queries the comparatorkqitargetfk edge of the Comparator.
+func (c *Comparator) QueryComparatorkqitargetfk() *KqiComparatorQuery {
+	return (&ComparatorClient{config: c.config}).QueryComparatorkqitargetfk(c)
 }
 
 // Update returns a builder for updating this Comparator.

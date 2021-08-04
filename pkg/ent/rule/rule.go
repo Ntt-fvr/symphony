@@ -42,8 +42,8 @@ const (
 	EdgeRuletype = "ruletype"
 	// EdgeEventseverity holds the string denoting the eventseverity edge name in mutations.
 	EdgeEventseverity = "eventseverity"
-	// EdgeTreshold holds the string denoting the treshold edge name in mutations.
-	EdgeTreshold = "treshold"
+	// EdgeThreshold holds the string denoting the threshold edge name in mutations.
+	EdgeThreshold = "threshold"
 	// EdgeRulelimitrule holds the string denoting the rulelimitrule edge name in mutations.
 	EdgeRulelimitrule = "rulelimitrule"
 
@@ -63,13 +63,13 @@ const (
 	EventseverityInverseTable = "event_severities"
 	// EventseverityColumn is the table column denoting the eventseverity relation/edge.
 	EventseverityColumn = "event_severity_eventseverityrule"
-	// TresholdTable is the table the holds the treshold relation/edge.
-	TresholdTable = "rules"
-	// TresholdInverseTable is the table name for the Treshold entity.
-	// It exists in this package in order to avoid circular dependency with the "treshold" package.
-	TresholdInverseTable = "tresholds"
-	// TresholdColumn is the table column denoting the treshold relation/edge.
-	TresholdColumn = "treshold_ruletreshold"
+	// ThresholdTable is the table the holds the threshold relation/edge.
+	ThresholdTable = "rules"
+	// ThresholdInverseTable is the table name for the Threshold entity.
+	// It exists in this package in order to avoid circular dependency with the "threshold" package.
+	ThresholdInverseTable = "thresholds"
+	// ThresholdColumn is the table column denoting the threshold relation/edge.
+	ThresholdColumn = "threshold_rulethreshold"
 	// RulelimitruleTable is the table the holds the rulelimitrule relation/edge.
 	RulelimitruleTable = "rule_limits"
 	// RulelimitruleInverseTable is the table name for the RuleLimit entity.
@@ -98,7 +98,7 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"event_severity_eventseverityrule",
 	"rule_type_ruletyperule",
-	"treshold_ruletreshold",
+	"threshold_rulethreshold",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

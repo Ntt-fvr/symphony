@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -227,6 +228,25 @@ func (woc *WorkOrderCreate) AddLinks(l ...*Link) *WorkOrderCreate {
 		ids[i] = l[i].ID
 	}
 	return woc.AddLinkIDs(ids...)
+}
+
+// SetOrganizationID sets the organization edge to Organization by id.
+func (woc *WorkOrderCreate) SetOrganizationID(id int) *WorkOrderCreate {
+	woc.mutation.SetOrganizationID(id)
+	return woc
+}
+
+// SetNillableOrganizationID sets the organization edge to Organization by id if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableOrganizationID(id *int) *WorkOrderCreate {
+	if id != nil {
+		woc = woc.SetOrganizationID(*id)
+	}
+	return woc
+}
+
+// SetOrganization sets the organization edge to Organization.
+func (woc *WorkOrderCreate) SetOrganization(o *Organization) *WorkOrderCreate {
+	return woc.SetOrganizationID(o.ID)
 }
 
 // AddFileIDs adds the files edge to File by ids.
@@ -670,6 +690,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: link.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.OrganizationTable,
+			Columns: []string{workorder.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

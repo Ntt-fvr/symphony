@@ -26,6 +26,8 @@ const (
 
 	// EdgeComparatorrulelimit holds the string denoting the comparatorrulelimit edge name in mutations.
 	EdgeComparatorrulelimit = "comparatorrulelimit"
+	// EdgeComparatorkqitargetfk holds the string denoting the comparatorkqitargetfk edge name in mutations.
+	EdgeComparatorkqitargetfk = "comparatorkqitargetfk"
 
 	// Table holds the table name of the comparator in the database.
 	Table = "comparators"
@@ -36,6 +38,13 @@ const (
 	ComparatorrulelimitInverseTable = "rule_limits"
 	// ComparatorrulelimitColumn is the table column denoting the comparatorrulelimit relation/edge.
 	ComparatorrulelimitColumn = "comparator_comparatorrulelimit"
+	// ComparatorkqitargetfkTable is the table the holds the comparatorkqitargetfk relation/edge.
+	ComparatorkqitargetfkTable = "kqi_comparators"
+	// ComparatorkqitargetfkInverseTable is the table name for the KqiComparator entity.
+	// It exists in this package in order to avoid circular dependency with the "kqicomparator" package.
+	ComparatorkqitargetfkInverseTable = "kqi_comparators"
+	// ComparatorkqitargetfkColumn is the table column denoting the comparatorkqitargetfk relation/edge.
+	ComparatorkqitargetfkColumn = "comparator_comparatorkqitargetfk"
 )
 
 // Columns holds all SQL columns for comparator fields.

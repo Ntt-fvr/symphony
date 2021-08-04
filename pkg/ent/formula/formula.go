@@ -23,8 +23,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldActive holds the string denoting the active field in the database.
-	FieldActive = "active"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 
 	// EdgeTech holds the string denoting the tech edge name in mutations.
 	EdgeTech = "tech"
@@ -64,7 +64,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
-	FieldActive,
+	FieldStatus,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Formula type.

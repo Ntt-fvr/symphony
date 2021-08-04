@@ -13,12 +13,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-// Counter defines the property type schema.
 type Comparator struct {
 	schema
 }
 
-// Counter returns property type counter.
 func (Comparator) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
@@ -26,11 +24,12 @@ func (Comparator) Fields() []ent.Field {
 	}
 }
 
-// Edges returns property type edges.
 func (Comparator) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("comparatorrulelimit", RuleLimit.Type).
 			Annotations(entgql.MapsTo("rulelimit")),
+		edge.To("comparatorkqitargetfk", KqiComparator.Type).
+			Annotations(entgql.MapsTo("kqicomparator")),
 	}
 }
 

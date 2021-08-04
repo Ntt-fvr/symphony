@@ -23,7 +23,7 @@ func (Formula) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
-		field.Bool("active"),
+		field.Bool("status"),
 	}
 }
 
