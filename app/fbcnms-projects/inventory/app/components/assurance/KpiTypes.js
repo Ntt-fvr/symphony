@@ -134,8 +134,7 @@ const KpiTypes = () => {
           <ConfigureTitle
             title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
             subtitle={fbt(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
-                'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
+              'Indicators and formulas to be defined by users and calculated by performance management processes.',
               'Kpi description',
             )}
           />

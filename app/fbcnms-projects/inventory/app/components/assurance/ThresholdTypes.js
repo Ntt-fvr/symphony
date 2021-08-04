@@ -14,6 +14,7 @@ import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
+import ThresholdContext from './ThresholdContext';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
@@ -24,6 +25,7 @@ import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
 import AddRuleItemForm from './AddRuleItemForm';
+import EditRuleItemForm from './EditRuleItemForm';
 import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 
 const useStyles = makeStyles(theme => ({
@@ -93,6 +95,7 @@ const ThresholdTypes = () => {
   const [dataThreshold, setDataThreshold] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditRuleForm, setShowEditRuleForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 
   useEffect(() => {
@@ -107,31 +110,6 @@ const ThresholdTypes = () => {
     };
     RemoveThresholdMutation(variables);
   };
-
-  // render Edit Threshold
-
-  const showEditThresholdItemForm = (thresholds: Thresholds) => {
-    setShowEditCard(true);
-    setDataEdit(thresholds);
-  };
-
-  const hideEditThresholdForm = () => {
-    setShowEditCard(false);
-  };
-
-  const thresholdNames = dataThreshold.tresholds?.edges.map(
-    item => item.node.name,
-  );
-
-  if (showEditCard) {
-    return (
-      <EditThresholdItemForm
-        thresholdNames={thresholdNames}
-        formValues={dataEdit.item.node}
-        hideEditThresholdForm={hideEditThresholdForm}
-      />
-    );
-  }
 
   // render Add Rule
 
@@ -153,42 +131,95 @@ const ThresholdTypes = () => {
     );
   }
 
-  return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={9} xl={9}>
-          <ConfigureTitle
-            title={fbt('Thresholds', 'Threshold Title')}
-            subtitle={fbt(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
-                'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
-              'Threshold description',
-            )}
-          />
-        </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
-          <TitleTextCardsThresholds />
+  // render edit rule
 
-          <List disablePadding>
-            {dataThreshold.tresholds?.edges.map((item, index) => (
-              <ThresholdTypeItem
-                key={index}
-                handleRemove={() => handleRemove(item.node.id)}
-                edit={() => showEditThresholdItemForm({item})}
-                addRule={() => showAddRuleItemForm({item})}
-                editRule={() => showAddRuleItemForm({item})}
-                {...item.node}
-              />
-            ))}
-          </List>
+  const showEditRuleItemForm = (thresholds: Thresholds) => {
+    setDataEdit(thresholds);
+    setShowEditRuleForm(true);
+  };
+
+  const hideEditRuleForm = () => {
+    setShowEditRuleForm(false);
+  };
+
+  if (showEditRuleForm) {
+    return (
+      <ThresholdContext.Provider value={'red'}>
+        <EditRuleItemForm
+          threshold={dataEdit.item.node}
+          hideAddRuleForm={hideEditRuleForm}
+        />
+      </ThresholdContext.Provider>
+    );
+  }
+
+  // render Edit Threshold
+
+  const showEditThresholdItemForm = (thresholds: Thresholds) => {
+    setShowEditCard(true);
+    setDataEdit(thresholds);
+  };
+
+  const hideEditThresholdForm = () => {
+    setShowEditCard(false);
+  };
+
+  const thresholdNames = dataThreshold.tresholds?.edges.map(
+    item => item.node.name,
+  );
+
+  if (showEditCard) {
+    return (
+      <ThresholdContext.Provider value={'red'}>
+        <EditThresholdItemForm
+          thresholdNames={thresholdNames}
+          formValues={dataEdit.item.node}
+          hideEditThresholdForm={hideEditThresholdForm}
+          editRule={() => {
+            showEditRuleItemForm(dataEdit);
+          }}
+        />
+      </ThresholdContext.Provider>
+    );
+  }
+
+  return (
+    <ThresholdContext.Provider value={'red'}>
+      <div className={classes.root}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={12} lg={9} xl={9}>
+            <ConfigureTitle
+              title={fbt('Thresholds', 'Threshold Title')}
+              subtitle={fbt(
+                'Thresholds definition for alarm generation',
+                'Threshold description',
+              )}
+            />
+          </Grid>
+          <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+            <TitleTextCardsThresholds />
+
+            <List disablePadding>
+              {dataThreshold.tresholds?.edges.map((item, index) => (
+                <ThresholdTypeItem
+                  key={index}
+                  handleRemove={() => handleRemove(item.node.id)}
+                  edit={() => showEditThresholdItemForm({item})}
+                  addRule={() => showAddRuleItemForm({item})}
+                  editRule={() => showEditRuleItemForm({item})}
+                  {...item.node}
+                />
+              ))}
+            </List>
+          </Grid>
+          <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+            <AddThresholdItemForm
+              thresholdNames={dataThreshold.tresholds?.edges}
+            />
+          </Grid>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddThresholdItemForm
-            thresholdNames={dataThreshold.tresholds?.edges}
-          />
-        </Grid>
-      </Grid>
-    </div>
+      </div>
+    </ThresholdContext.Provider>
   );
 };
 

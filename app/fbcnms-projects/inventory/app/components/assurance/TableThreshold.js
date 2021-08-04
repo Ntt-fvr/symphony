@@ -85,6 +85,10 @@ export default function DenseTable(props: Props) {
     RemoveRuleMutation(variables);
   };
 
+  const handleClick = row => {
+    editRule();
+  };
+
   return (
     <Paper variant="outlined">
       <TableContainer className={classes.root}>
@@ -130,7 +134,7 @@ export default function DenseTable(props: Props) {
                   <IconButton
                     icon={EditIcon}
                     onClick={() => {
-                      editRule();
+                      handleClick(row);
                     }}
                   />
                 </TableCell>

@@ -12,7 +12,7 @@ import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddButton from './common/AddButton';
-import Table from './Table';
+import TableThreshold from './TableThreshold';
 
 // DESING SYSTEM //
 import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
@@ -218,7 +218,7 @@ export default function ThresholdTypeItem(props: Props) {
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <Table rule={rule} editRule={editRule} />
+              <TableThreshold rule={rule} editRule={editRule} />
             </Grid>
           </Grid>
         </AccordionDetails>

@@ -47,8 +47,8 @@ const KqiSourcesTypes = () => {
           <ConfigureTitle
             title={fbt('KQI Sources', 'Counters Title')}
             subtitle={fbt(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
-              'Counters description',
+              'Data sources for quality indicators',
+              'KQI sources description',
             )}
           />
         </Grid>
