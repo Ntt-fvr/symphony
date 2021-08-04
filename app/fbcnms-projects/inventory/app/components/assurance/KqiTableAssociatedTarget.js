@@ -8,7 +8,7 @@
  * @format
  */
 import Button from '@symphony/design-system/components/Button';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 
@@ -36,7 +36,7 @@ import TableRow from '@material-ui/core/TableRow';
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
-    color: DARK.D300,
+    color: BLUE.B600,
   },
 }))(TableCell);
 
@@ -206,7 +206,12 @@ const KqiTableAssociatedTarget = props => {
                   </TableCell>
                   <TableCell>
                     <Button onClick={props.edit} variant="text">
-                      {column.targetName}
+                      <Text
+                        variant={'subtitle1'}
+                        weight={'medium'}
+                        color={'primary'}>
+                        {column.targetName}
+                      </Text>
                     </Button>
                   </TableCell>
                   <TableCell>{column.comparator}</TableCell>

@@ -82,7 +82,7 @@ const KqiSourcesTypeItem = props => {
               onClick={props.edit}
               variant="text"
               className={classes.bold}>
-              <Text weight={'bold'} color={'primary'}>
+              <Text weight={'medium'} color={'primary'}>
                 TLLI Availability
               </Text>
             </Button>

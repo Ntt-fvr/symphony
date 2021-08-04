@@ -8,7 +8,7 @@
  * @format
  */
 import Button from '@symphony/design-system/components/Button';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import Text from '@symphony/design-system/components/Text';
 
@@ -31,7 +31,7 @@ import TableRow from '@material-ui/core/TableRow';
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
-    color: DARK.D300,
+    color: BLUE.B600,
   },
 }))(TableCell);
 
@@ -165,7 +165,7 @@ const KqiTable = props => {
                     <Button onClick={props.viewFormEdit} variant="text">
                       <Text
                         variant={'subtitle1'}
-                        weight={'bold'}
+                        weight={'medium'}
                         color={'primary'}>
                         {column.name}
                       </Text>
