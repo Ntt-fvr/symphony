@@ -11,13 +11,13 @@
 import React from 'react';
 import fbt from 'fbt';
 
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
+import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     margin: '40px',
   },
   formField: {
-    margin: '0 43px 22px 0',
+    margin: '0 18px 22px 18px',
   },
   formFieldStatus: {
     marginTop: '1rem',
@@ -48,10 +48,10 @@ const useStyles = makeStyles(() => ({
     marginLeft: '10px',
   },
   textTitle: {
-    paddingLeft: '2rem',
+    paddingLeft: '2.5rem',
   },
   titleButtons: {
-    padding: '1rem 1rem 0 1rem',
+    padding: '1rem 1rem 0 4rem',
     alignItems: 'center',
   },
   reason: {
@@ -81,11 +81,8 @@ const KqiSourceFormEdit = props => {
       <Grid container spacing={3}>
         <Grid container className={classes.titleButtons}>
           <Grid item xs={10}>
-            <Text className={classes.textTitle} variant="h6">
-              {fbt('Edit KQI Source', ' ')}
-            </Text>
+            <ConfigureTitle title={fbt('Edit KQI Source', ' ')} subtitle={''} />
           </Grid>
-
           <Grid item xs={2}>
             <Grid container>
               <Grid xs={6}>

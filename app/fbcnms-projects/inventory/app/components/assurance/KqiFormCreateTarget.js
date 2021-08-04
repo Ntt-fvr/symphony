@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -20,7 +20,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import {MenuItem, Select} from '@material-ui/core';
 
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
@@ -48,7 +48,6 @@ const useStyles = makeStyles(() => ({
     margin: '0 2rem 0 0',
   },
   formField: {
-    width: 'auto',
     margin: '0 1rem 1rem 1rem',
   },
   formFieldHours: {
@@ -61,13 +60,16 @@ const useStyles = makeStyles(() => ({
     margin: '0 1rem 1rem 0',
   },
   contPeriods: {
-    width: '90px',
+    width: '97px',
   },
   periods: {
     width: '100%',
-    '&.makeStyles-root': {
-      width: '100%',
+    '& .clickable': {
+      width: '25px',
     },
+  },
+  contHours: {
+    width: '60px',
   },
   hours: {
     display: 'flex',
@@ -75,7 +77,13 @@ const useStyles = makeStyles(() => ({
     margin: '0 1rem 1rem 0',
   },
   activeHours: {
-    width: '74px',
+    width: '100%',
+    '& .clickable': {
+      width: '25px',
+    },
+    '& .inputContainer': {
+      padding: '0px 7px',
+    },
   },
   from: {
     margin: '0 0.5rem 0 0',
@@ -93,6 +101,7 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
+    marginRight: '3px',
   },
   delete: {
     display: 'flex',
@@ -127,14 +136,16 @@ const data = {
     ],
   },
 };
+
 const KqiFormCreateTarget = props => {
   const classes = useStyles();
+  const [checked, setChecked] = useState(true);
 
   return (
     <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid item xs={10}>
-          <Text className={classes.textTitle} variant="h6">
+          <Text className={classes.textTitle} variant="h6" weight={'bold'}>
             {fbt('Create target', ' ')}
           </Text>
         </Grid>
@@ -170,7 +181,7 @@ const KqiFormCreateTarget = props => {
             <Grid container spacing={1}>
               <Grid item xs={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <Switch />
+                  <Switch checked={checked} title={''} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
@@ -256,12 +267,24 @@ const KqiFormCreateTarget = props => {
                   className={classes.formFieldHours}
                   label="Active Hours">
                   <div className={classes.hours}>
-                    <Text className={classes.from}>From</Text>
-
-                    <TextInput suffix={'hrs'} className={classes.activeHours} />
-                    <Text className={classes.to}>to</Text>
-
-                    <TextInput suffix={'hrs'} className={classes.activeHours} />
+                    <Text variant="caption" className={classes.from}>
+                      From
+                    </Text>
+                    <div className={classes.contHours}>
+                      <TextInput
+                        suffix={'hrs'}
+                        className={classes.activeHours}
+                      />
+                    </div>
+                    <Text variant="caption" className={classes.to}>
+                      to
+                    </Text>
+                    <div className={classes.contHours}>
+                      <TextInput
+                        suffix={'hrs'}
+                        className={classes.activeHours}
+                      />
+                    </div>
                   </div>
                 </FormField>
               </Grid>

@@ -8,14 +8,14 @@
  * @format
  */
 import Button from '@symphony/design-system/components/Button';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 
-import React from 'react';
+import React, {useState} from 'react';
 
 import AddButton from './common/AddButton';
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import {withStyles} from '@material-ui/core/styles';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
@@ -36,7 +36,7 @@ import TableRow from '@material-ui/core/TableRow';
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
-    color: DARK.D300,
+    color: BLUE.B600,
   },
 }))(TableCell);
 
@@ -62,6 +62,9 @@ const useStyles = makeStyles(() => ({
     padding: '0',
     margin: '0',
     borderBottom: '2px solid #F5F7FC',
+  },
+  insideCenter: {
+    textAlign: 'center',
   },
   title: {
     marginLeft: '2rem',
@@ -97,46 +100,46 @@ function createData(
 
 const data = [
   createData(
-    '123',
+    123,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
   createData(
-    '456',
+    456,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
   createData(
-    '789',
+    789,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
   createData(
-    '098',
+    998,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
@@ -148,7 +151,7 @@ const handleClick = () => {
 
 const KqiTableAssociatedTarget = props => {
   const classes = useStyles();
-
+  const [checked, setChecked] = useState(true);
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -173,11 +176,21 @@ const KqiTableAssociatedTarget = props => {
               <StyledTableCell>Enable</StyledTableCell>
               <StyledTableCell>Target name</StyledTableCell>
               <StyledTableCell>Comparator</StyledTableCell>
-              <StyledTableCell>Warning comparator</StyledTableCell>
-              <StyledTableCell>Periods</StyledTableCell>
-              <StyledTableCell>Allowed Variation</StyledTableCell>
-              <StyledTableCell>Active Hours</StyledTableCell>
-              <StyledTableCell className={classes.id}>Delete</StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Warning comparator
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Periods
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Allowed Variation
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Active Hours
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Delete
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -185,19 +198,36 @@ const KqiTableAssociatedTarget = props => {
               return (
                 <StyledTableRow key={column.id}>
                   <TableCell>
-                    <Switch />
+                    <Switch
+                      checked={checked}
+                      title={''}
+                      onChange={setChecked}
+                    />
                   </TableCell>
                   <TableCell>
                     <Button onClick={props.edit} variant="text">
-                      {column.targetName}
+                      <Text
+                        variant={'subtitle1'}
+                        weight={'medium'}
+                        color={'primary'}>
+                        {column.targetName}
+                      </Text>
                     </Button>
                   </TableCell>
                   <TableCell>{column.comparator}</TableCell>
-                  <TableCell>{column.warningComparator}</TableCell>
-                  <TableCell>{column.periods}</TableCell>
-                  <TableCell>{column.allowedVariation}</TableCell>
-                  <TableCell>{column.activeHours}</TableCell>
-                  <TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.warningComparator}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.periods}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.allowedVariation}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.activeHours}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
                     <IconButton
                       variant="text"
                       skin={'gray'}

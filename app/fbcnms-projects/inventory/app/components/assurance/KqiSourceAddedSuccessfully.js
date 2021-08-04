@@ -24,7 +24,6 @@ const useStyles = makeStyles(theme => ({
     width: '400px',
     height: '360px',
     padding: theme.spacing(0),
-    border: '1px solid red',
   },
   header: {
     margin: '20px 0 24px 20px',

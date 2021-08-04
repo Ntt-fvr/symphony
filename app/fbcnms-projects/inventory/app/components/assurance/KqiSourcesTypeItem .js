@@ -14,6 +14,7 @@ import React from 'react';
 
 import Accordion from '@material-ui/core/Accordion';
 import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
@@ -28,10 +29,11 @@ const useStyles = makeStyles(() => ({
     marginBottom: '7px',
   },
   container: {
-    padding: '0 1rem',
-    minHeight: '58px',
     display: 'flex',
     alignItems: 'center',
+  },
+  insideContainer: {
+    padding: '9px 15px',
   },
   bold: {
     fontWeight: 'bold',
@@ -73,14 +75,16 @@ const KqiSourcesTypeItem = props => {
 
   return (
     <div className={classes.root}>
-      <Accordion className={classNames(classes.container)}>
-        <Grid container>
+      <Card margins={'none'} className={classes.container}>
+        <Grid container className={classes.insideContainer}>
           <Grid xs={3} className={classNames(classes.inside, classes.kqiName)}>
             <Button
               onClick={props.edit}
               variant="text"
               className={classes.bold}>
-              TLLI Availability
+              <Text weight={'medium'} color={'primary'}>
+                TLLI Availability
+              </Text>
             </Button>
           </Grid>
 
@@ -103,7 +107,7 @@ const KqiSourcesTypeItem = props => {
             />
           </Grid>
         </Grid>
-      </Accordion>
+      </Card>
     </div>
   );
 };

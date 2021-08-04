@@ -15,14 +15,14 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   contPeriods: {
-    width: '90px',
-    border: '1px solid red',
+    width: 74,
+    border: '3px solid red',
   },
   periods: {
     width: '100%',
     border: '1px solid blue',
-    '&.makeStyles-root': {
-      width: '100%',
+    '& .clickable': {
+      width: '25px',
     },
   },
 }));
