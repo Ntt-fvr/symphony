@@ -64,10 +64,12 @@ const useStyles = makeStyles(() => ({
   },
   periods: {
     width: '100%',
-    border: '1px solid blue',
     '& .clickable': {
       width: '25px',
     },
+  },
+  contHours: {
+    width: '60px',
   },
   hours: {
     display: 'flex',
@@ -76,9 +78,11 @@ const useStyles = makeStyles(() => ({
   },
   activeHours: {
     width: '100%',
-    border: '1px solid blue',
     '& .clickable': {
       width: '25px',
+    },
+    '& .inputContainer': {
+      padding: '0px 7px',
     },
   },
   from: {
@@ -260,12 +264,24 @@ const KqiFormCreateTarget = props => {
                   className={classes.formFieldHours}
                   label="Active Hours">
                   <div className={classes.hours}>
-                    <Text className={classes.from}>From</Text>
-
-                    <TextInput suffix={'hrs'} className={classes.activeHours} />
-                    <Text className={classes.to}>to</Text>
-
-                    <TextInput suffix={'hrs'} className={classes.activeHours} />
+                    <Text variant="caption" className={classes.from}>
+                      From
+                    </Text>
+                    <div className={classes.contHours}>
+                      <TextInput
+                        suffix={'hrs'}
+                        className={classes.activeHours}
+                      />
+                    </div>
+                    <Text variant="caption" className={classes.to}>
+                      to
+                    </Text>
+                    <div className={classes.contHours}>
+                      <TextInput
+                        suffix={'hrs'}
+                        className={classes.activeHours}
+                      />
+                    </div>
                   </div>
                 </FormField>
               </Grid>

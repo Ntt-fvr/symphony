@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
   inputContainer: {
     position: 'relative',
     overflow: 'hidden',
-    padding: '0px 3px',
+    padding: '0px 8px',
     border: `1px solid ${symphony.palette.D100}`,
     borderRadius: '4px',
     display: 'flex',
@@ -251,7 +251,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
     <div className={classNames(classes.root, className)}>
       <div
         className={classNames(
-          classes.inputContainer,
+          `${classes.inputContainer} inputContainer`,
           {
             [classes.multilineInputContainer]: isMultiline,
             [classes.hasFocus]: hasFocus,
