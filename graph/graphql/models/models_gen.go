@@ -1091,6 +1091,15 @@ type NetworkTopology struct {
 	Links []*TopologyLink `json:"links"`
 }
 
+type OrganizationFilterInput struct {
+	FilterType  OrganizationFilterType `json:"filterType"`
+	Operator    enum.FilterOperator    `json:"operator"`
+	StringValue *string                `json:"stringValue"`
+	IDSet       []int                  `json:"idSet"`
+	MaxDepth    *int                   `json:"maxDepth"`
+	StringSet   []string               `json:"stringSet"`
+}
+
 type PermissionsPolicyFilterInput struct {
 	FilterType  PermissionsPolicyFilterType `json:"filterType"`
 	Operator    enum.FilterOperator         `json:"operator"`
@@ -2053,6 +2062,45 @@ func (e *KqiFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e KqiFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type OrganizationFilterType string
+
+const (
+	OrganizationFilterTypeName OrganizationFilterType = "NAME"
+)
+
+var AllOrganizationFilterType = []OrganizationFilterType{
+	OrganizationFilterTypeName,
+}
+
+func (e OrganizationFilterType) IsValid() bool {
+	switch e {
+	case OrganizationFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e OrganizationFilterType) String() string {
+	return string(e)
+}
+
+func (e *OrganizationFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrganizationFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrganizationFilterType", str)
+	}
+	return nil
+}
+
+func (e OrganizationFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

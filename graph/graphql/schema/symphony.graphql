@@ -3279,6 +3279,73 @@ type KqiEdge {
   """
   cursor: Cursor!
 }
+################################ conection Organization ###############################################
+"""
+Properties by which Organization connections can be ordered.
+"""
+enum OrganizationOrderField {
+  """
+  Order Organization by name.
+  """
+  NAME
+
+  """
+  Order Organization by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Organization by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Organization connections.
+"""
+input OrganizationOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Organization by.
+  """
+  field: OrganizationOrderField
+}
+
+"""
+A connection to a list of Organization.
+"""
+type OrganizationConnection {
+  """
+  Total Organization of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Organization edges.
+  """
+  edges: [OrganizationEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Organization edge in a connection.
+"""
+type OrganizationEdge {
+  """
+  The Organization at the end of the edge.
+  """
+  node: Organization
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -5496,6 +5563,43 @@ type Query {
     
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
+  
+
+  """
+  A list of organization.
+  """
+  
+  organizations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned organization.
+    """
+    orderBy: OrganizationOrder
+
+    
+    #Filtering options for the returned organization.
+    
+    filterBy: [OrganizationFilterInput!]
+  ): OrganizationConnection!
 }
 
 type Mutation {
@@ -6381,6 +6485,19 @@ enum KqiFilterType {
 
 input KqiFilterInput {
   filterType: KqiFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+enum OrganizationFilterType {
+  NAME
+}
+
+input OrganizationFilterInput {
+  filterType: OrganizationFilterType!
   operator: FilterOperator!
   stringValue: String
   idSet: [ID!]

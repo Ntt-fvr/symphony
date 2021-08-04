@@ -480,6 +480,25 @@ func (r queryResolver) AlarmStatus(
 			),
 		)
 }
+func (r queryResolver) Organizations(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.OrganizationOrder,
+	filterBy []*models.OrganizationFilterInput,
+) (*ent.OrganizationConnection, error) {
+	return r.ClientFrom(ctx).
+		Organization.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithOrganizationOrder(orderBy),
+			ent.WithOrganizationFilter(
+				func(query *ent.OrganizationQuery) (*ent.OrganizationQuery, error) {
+					return resolverutil.OrganizationFilter(query, filterBy)
+				},
+			),
+		)
+}
 
 func (r queryResolver) Services(
 	ctx context.Context,
