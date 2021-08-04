@@ -81,6 +81,7 @@ const KqiTypes = () => {
           </Button>
         </Grid>
       </Grid>
+      <Periods />
       <Grid className={classes.titulo} container spacing={2}>
         <Grid className={classes.paper} item xs={12}>
           <KqiTable viewFormEdit={formEdit} />

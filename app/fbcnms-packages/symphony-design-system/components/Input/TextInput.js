@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
   inputContainer: {
     position: 'relative',
     overflow: 'hidden',
-    padding: '0px 8px',
+    padding: '0px 3px',
     border: `1px solid ${symphony.palette.D100}`,
     borderRadius: '4px',
     display: 'flex',
@@ -84,11 +84,11 @@ const useStyles = makeStyles(() => ({
     border: 0,
     outline: 0,
     background: 'transparent',
-    minWidth: '48px',
-    flexBasis: '48px',
+    minWidth: '20px',
+    flexBasis: '20px',
     flexGrow: 1,
     flexShrink: 1,
-    padding: '5px 8px',
+    padding: '5px 2px',
     ...symphony.typography.body2,
     '&::placeholder': {
       color: symphony.palette.D400,
@@ -107,7 +107,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     marginRight: '-2px',
-    marginLeft: '8px',
+    marginLeft: '2px',
   },
   processingIndicator: {
     position: 'absolute',
@@ -263,7 +263,8 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
         <InputContext.Provider value={{disabled, value: value ?? ''}}>
           {prefix}
           <Clickable
-            className={classes.clickable}
+            className={`${classes.clickable} clickable`}
+            // className={classes.clickable}
             onClick={onClick}
             onMouseDown={onMouseDown}
             disabled={disabled}>

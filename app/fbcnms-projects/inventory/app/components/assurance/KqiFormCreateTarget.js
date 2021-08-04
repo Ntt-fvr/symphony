@@ -48,7 +48,6 @@ const useStyles = makeStyles(() => ({
     margin: '0 2rem 0 0',
   },
   formField: {
-    width: 'auto',
     margin: '0 1rem 1rem 1rem',
   },
   formFieldHours: {
@@ -61,12 +60,13 @@ const useStyles = makeStyles(() => ({
     margin: '0 1rem 1rem 0',
   },
   contPeriods: {
-    width: '90px',
+    width: '97px',
   },
   periods: {
     width: '100%',
-    '&.makeStyles-root': {
-      width: '100%',
+    border: '1px solid blue',
+    '& .clickable': {
+      width: '25px',
     },
   },
   hours: {
@@ -75,7 +75,11 @@ const useStyles = makeStyles(() => ({
     margin: '0 1rem 1rem 0',
   },
   activeHours: {
-    width: '74px',
+    width: '100%',
+    border: '1px solid blue',
+    '& .clickable': {
+      width: '25px',
+    },
   },
   from: {
     margin: '0 0.5rem 0 0',
