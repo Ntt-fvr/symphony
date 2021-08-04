@@ -531,6 +531,7 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
+  workorder: WorkOrder
 }
 
 type Hyperlink implements Node {
@@ -2457,7 +2458,13 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
+
+  """
+  Order projects by property type.
+  """
+  PROPERTY
 }
+
 
 """
 Ordering options for project connections.

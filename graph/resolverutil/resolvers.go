@@ -285,6 +285,7 @@ func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQ
 	}
 	return query, nil
 }
+
 func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -294,3 +295,4 @@ func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.Organiza
 	}
 	return query, nil
 }
+
