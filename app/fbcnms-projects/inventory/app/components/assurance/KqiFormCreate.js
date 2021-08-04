@@ -44,8 +44,11 @@ const useStyles = makeStyles(() => ({
     fontSize: '14px',
   },
   selectRepeatEvery: {
-    width: '67%',
+    width: '75%',
     marginLeft: '1rem',
+  },
+  insideContainer: {
+    paddingTop: '12px',
   },
   formField: {
     margin: '0 1rem 1rem 1rem',
@@ -86,6 +89,19 @@ const useStyles = makeStyles(() => ({
   titleTime: {
     marginLeft: '1rem',
   },
+  calendar: {
+    '& .MuiOutlinedInput-input': {
+      height: '17px',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'rgba(157, 169, 190, 0.49)',
+      },
+      '&:hover fieldset': {
+        borderColor: 'rgba(157, 169, 190, 0.49)',
+      },
+    },
+  },
 }));
 const data = {
   counters: {
@@ -116,7 +132,7 @@ const KqiFormCreate = props => {
     <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid item xs={10}>
-          <Text className={classes.textTitle} variant="h6">
+          <Text className={classes.textTitle} variant="h6" weight={'bold'}>
             {fbt('Create KQI', ' ')}
           </Text>
         </Grid>
@@ -149,7 +165,7 @@ const KqiFormCreate = props => {
 
         <Grid item xs={12}>
           <Card>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} className={classes.insideContainer}>
               <Grid item xs={6}>
                 <FormField label="Name" className={classes.formField}>
                   <TextInput className={classes.textInput} />
@@ -208,20 +224,22 @@ const KqiFormCreate = props => {
                 <Grid item xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
+                      variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2017-05-24T10:30"
-                      className={''}
+                      defaultValue="2021-05-24T10:30"
+                      className={classes.calendar}
                     />
                   </FormField>
                 </Grid>
                 <Grid item xs={6}>
                   <FormField label="End" className={classes.formField}>
                     <TextField
+                      variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2017-05-24T10:30"
-                      className={''}
+                      defaultValue="2021-05-24T10:30"
+                      className={classes.calendar}
                     />
                   </FormField>
                 </Grid>
@@ -244,7 +262,7 @@ const KqiFormCreate = props => {
                     label="Temporal frequency"
                     className={classes.formField}>
                     <div className={classes.formFieldTf}>
-                      <Text>Repeat every</Text>
+                      <Text variant={'caption'}>Repeat every</Text>
 
                       <Select
                         className={classNames(

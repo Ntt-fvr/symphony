@@ -20,8 +20,8 @@ const useStyles = makeStyles(() => ({
   },
   shape: {
     backgroundColor: BLUE.B600,
-    width: '27px',
-    height: '29px',
+    width: '30px',
+    height: '32px',
     borderRadius: '10px',
     margin: '0 auto',
     display: 'flex',

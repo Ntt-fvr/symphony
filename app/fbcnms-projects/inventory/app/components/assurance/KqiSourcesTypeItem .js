@@ -75,7 +75,7 @@ const KqiSourcesTypeItem = props => {
 
   return (
     <div className={classes.root}>
-      <Card margins={'none'} className={classNames(classes.container)}>
+      <Card margins={'none'} className={classes.container}>
         <Grid container className={classes.insideContainer}>
           <Grid xs={3} className={classNames(classes.inside, classes.kqiName)}>
             <Button

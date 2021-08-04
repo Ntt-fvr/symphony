@@ -10,7 +10,7 @@
 import Button from '@symphony/design-system/components/Button';
 import {DARK} from '@symphony/design-system/theme/symphony';
 
-import KqiFormEdit from './KqiFormEdit';
+import Text from '@symphony/design-system/components/Text';
 
 import React, {useState} from 'react';
 
@@ -51,6 +51,9 @@ const useStyles = makeStyles(() => ({
     maxHeight: '100%',
   },
   id: {},
+  asTarget: {
+    textAlign: 'center',
+  },
 }));
 
 function createData(
@@ -81,51 +84,51 @@ function createData(
 
 const data = [
   createData(
-    '123',
+    123,
     'TINE Retainability',
     'Technology',
-    '2',
+    2,
     'Aggregated',
-    '1526735162',
+    1526735162,
     '27/05/21     12:50',
     '24/06/21     17:23',
-    '1526735162',
+    1526735162,
     '',
   ),
   createData(
-    '456',
+    456,
     'TINE Retainability',
     'Technology',
-    '20',
+    20,
     'Aggregated',
     '1526735162',
     '27/05/21     12:50',
     '24/06/21     17:23',
-    '1526735162',
+    1526735162,
     '',
   ),
   createData(
-    '789',
+    789,
     'TINE Retainability',
     'Technology',
-    '5',
+    5,
     'Aggregated',
-    '1526735162',
+    1526735162,
     '27/05/21     12:50',
     '24/06/21     17:23',
-    '1526735162',
+    1526735162,
     '',
   ),
   createData(
-    '098',
+    998,
     'TINE Retainability',
     'Technology',
-    '5',
+    5,
     'Aggregated',
-    '1526735162',
+    1526735162,
     '27/05/21     12:50',
     '24/06/21     17:23',
-    '1526735162',
+    1526735162,
     '',
   ),
 ];
@@ -141,7 +144,9 @@ const KqiTable = props => {
             <TableRow>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Category</StyledTableCell>
-              <StyledTableCell>Associated target</StyledTableCell>
+              <StyledTableCell className={classes.asTarget}>
+                Associated target
+              </StyledTableCell>
               <StyledTableCell>Perspective</StyledTableCell>
               <StyledTableCell>Source</StyledTableCell>
               <StyledTableCell>Begin Time</StyledTableCell>
@@ -158,7 +163,12 @@ const KqiTable = props => {
                 <StyledTableRow key={column.id}>
                   <TableCell>
                     <Button onClick={props.viewFormEdit} variant="text">
-                      {column.name}
+                      <Text
+                        variant={'subtitle1'}
+                        weight={'bold'}
+                        color={'primary'}>
+                        {column.name}
+                      </Text>
                     </Button>
                   </TableCell>
                   <TableCell>{column.category}</TableCell>
