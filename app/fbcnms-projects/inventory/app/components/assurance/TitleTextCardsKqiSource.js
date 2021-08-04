@@ -10,16 +10,16 @@
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE} from '@symphony/design-system/theme/symphony';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 16px 16px',
+    padding: '0 20px',
   },
   title: {
-    color: DARK.D300,
+    color: BLUE.B600,
   },
   globalCenter: {
     display: 'flex',

@@ -29,17 +29,17 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   formField: {
-    margin: '0 20px 22px 20px',
+    margin: '0 20px 30px 20px',
   },
   textInput: {
     minHeight: '36px',
   },
   header: {
-    margin: '20px 0 24px 20px',
+    margin: '20px 0 30px 20px',
   },
   addCounter: {
     margin: '20px',
-    width: '111px',
+    width: '135px',
     alignSelf: 'flex-end',
   },
 }));
@@ -118,15 +118,6 @@ export const KqiAddItemForm = (props: Props) => {
           onChange={handleChange}
         />
       </FormField>
-      <FormField className={classes.formField} label="ID">
-        <TextInput
-          className={classes.textInput}
-          name="id"
-          type="string"
-          disabled
-        />
-      </FormField>
-
       <FormField>
         <Button
           className={classes.addCounter}
