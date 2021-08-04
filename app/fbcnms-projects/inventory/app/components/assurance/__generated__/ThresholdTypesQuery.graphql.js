@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ThresholdTypesQueryVariables = {||};
 export type ThresholdTypesQueryResponse = {|
-  +tresholds: {|
+  +thresholds: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -48,7 +48,7 @@ export type ThresholdTypesQuery = {|
 
 /*
 query ThresholdTypesQuery {
-  tresholds {
+  thresholds {
     edges {
       node {
         id
@@ -126,15 +126,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdConnection",
+        "concreteType": "ThresholdConnection",
         "kind": "LinkedField",
-        "name": "tresholds",
+        "name": "thresholds",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TresholdEdge",
+            "concreteType": "ThresholdEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -142,7 +142,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Treshold",
+                "concreteType": "Threshold",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -200,15 +200,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdConnection",
+        "concreteType": "ThresholdConnection",
         "kind": "LinkedField",
-        "name": "tresholds",
+        "name": "thresholds",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TresholdEdge",
+            "concreteType": "ThresholdEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -216,7 +216,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Treshold",
+                "concreteType": "Threshold",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -265,16 +265,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3cfa514c3411cd9a25ccf0542fae493c",
+    "cacheID": "46f87783caabe2cefc5dc531052dd494",
     "id": null,
     "metadata": {},
     "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query ThresholdTypesQuery {\n  tresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          ruleType {\n            name\n            id\n          }\n          status\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          ruleType {\n            name\n            id\n          }\n          status\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '21d3018340de9d7f0a0d483dc551780e';
+(node/*: any*/).hash = 'b74cb59c532224a8488d114cdc774e1f';
 
 module.exports = node;

@@ -40,7 +40,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const AddRuleQuery = graphql`
   query AddRuleItemFormQuery {
-    eventSeveritys {
+    eventSeverities {
       edges {
         node {
           id

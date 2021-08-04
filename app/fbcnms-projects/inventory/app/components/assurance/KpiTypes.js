@@ -59,7 +59,7 @@ const KpiQuery = graphql`
         }
       }
     }
-    tresholds {
+    thresholds {
       edges {
         node {
           name

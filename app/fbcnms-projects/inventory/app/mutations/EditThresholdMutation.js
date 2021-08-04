@@ -9,10 +9,10 @@
  */
 
 import type {
-  AddTresholdMutation,
-  AddTresholdMutationResponse,
-  AddTresholdMutationVariables,
-} from './__generated__/AddTresholdMutation.graphql';
+  EditThresholdMutation,
+  EditThresholdMutationResponse,
+  EditThresholdMutationVariables,
+} from './__generated__/EditThresholdMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
@@ -20,13 +20,13 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddTresholdMutation($input: AddTresholdInput!) {
-    addTreshold(input: $input) {
+  mutation EditThresholdMutation($input: EditThresholdInput!) {
+    editThreshold(input: $input) {
       id
       name
       description
       status
-      kpi{
+      kpi {
         id
         name
       }
@@ -35,12 +35,12 @@ const mutation = graphql`
 `;
 
 export default (
-  variables: AddTresholdMutationVariables,
-  callbacks?: MutationCallbacks<AddTresholdMutationResponse>,
+  variables: EditThresholdMutationVariables,
+  callbacks?: MutationCallbacks<EditThresholdMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddTresholdMutation>(RelayEnvironment, {
+  commitMutation<EditThresholdMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

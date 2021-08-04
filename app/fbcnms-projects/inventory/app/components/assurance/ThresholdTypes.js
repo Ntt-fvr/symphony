@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 
 const ThresholdQuery = graphql`
   query ThresholdTypesQuery {
-    tresholds {
+    thresholds {
       edges {
         node {
           id

@@ -34,7 +34,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const AddCountersQuery = graphql`
   query AddCounterItemFormQuery {
-    counterFamilys {
+    counterFamilies {
       edges {
         node {
           id

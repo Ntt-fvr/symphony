@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
 
 const AlarmStatusQuery = graphql`
   query AlarmFilteringStatusQuery {
-    alarmStatuss {
+    alarmStatus {
       edges {
         node {
           name

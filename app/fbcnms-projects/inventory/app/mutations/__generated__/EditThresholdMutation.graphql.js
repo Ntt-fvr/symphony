@@ -14,17 +14,17 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type EditTresholdInput = {|
+export type EditThresholdInput = {|
   id: string,
   name: string,
   description: string,
   status: boolean,
 |};
-export type EditTresholdMutationVariables = {|
-  input: EditTresholdInput
+export type EditThresholdMutationVariables = {|
+  input: EditThresholdInput
 |};
-export type EditTresholdMutationResponse = {|
-  +editTreshold: {|
+export type EditThresholdMutationResponse = {|
+  +editThreshold: {|
     +id: string,
     +name: string,
     +description: string,
@@ -35,18 +35,18 @@ export type EditTresholdMutationResponse = {|
     |},
   |}
 |};
-export type EditTresholdMutation = {|
-  variables: EditTresholdMutationVariables,
-  response: EditTresholdMutationResponse,
+export type EditThresholdMutation = {|
+  variables: EditThresholdMutationVariables,
+  response: EditThresholdMutationResponse,
 |};
 */
 
 
 /*
-mutation EditTresholdMutation(
-  $input: EditTresholdInput!
+mutation EditThresholdMutation(
+  $input: EditThresholdInput!
 ) {
-  editTreshold(input: $input) {
+  editThreshold(input: $input) {
     id
     name
     description
@@ -91,9 +91,9 @@ v3 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "Treshold",
+    "concreteType": "Threshold",
     "kind": "LinkedField",
-    "name": "editTreshold",
+    "name": "editThreshold",
     "plural": false,
     "selections": [
       (v1/*: any*/),
@@ -134,7 +134,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditTresholdMutation",
+    "name": "EditThresholdMutation",
     "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -143,20 +143,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EditTresholdMutation",
+    "name": "EditThresholdMutation",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "4a462a6e5c539f76e023738d3bb841fc",
+    "cacheID": "5349774be317eb7e50ac03cd49a801b3",
     "id": null,
     "metadata": {},
-    "name": "EditTresholdMutation",
+    "name": "EditThresholdMutation",
     "operationKind": "mutation",
-    "text": "mutation EditTresholdMutation(\n  $input: EditTresholdInput!\n) {\n  editTreshold(input: $input) {\n    id\n    name\n    description\n    status\n    kpi {\n      id\n      name\n    }\n  }\n}\n"
+    "text": "mutation EditThresholdMutation(\n  $input: EditThresholdInput!\n) {\n  editThreshold(input: $input) {\n    id\n    name\n    description\n    status\n    kpi {\n      id\n      name\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '02ffcbd2fa07d8ac01c6b54db801963a';
+(node/*: any*/).hash = '183dcd24d2f824d040b92b5a51f55222';
 
 module.exports = node;

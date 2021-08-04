@@ -22,7 +22,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import EditTresholdMutation from '../../mutations/EditTresholdMutation';
+import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';

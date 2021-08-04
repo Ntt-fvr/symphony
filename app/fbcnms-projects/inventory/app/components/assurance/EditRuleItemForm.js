@@ -26,22 +26,22 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import React, {useState, useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import ThresholdContext from "./ThresholdContext";
 import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import ThresholdContext from "./ThresholdContext";
 
 const EditRuleQuery = graphql`
   query EditRuleItemFormQuery {
-    eventSeveritys {
+    eventSeverities {
       edges {
         node {
           id

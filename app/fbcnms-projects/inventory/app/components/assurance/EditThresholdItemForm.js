@@ -18,7 +18,7 @@ import {useFormInput} from './common/useFormInput';
 // MUTATIONS //
 import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
 
-import EditTresholdMutation from '../../mutations/EditTresholdMutation';
+import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 // DESIGN SYSTEM //

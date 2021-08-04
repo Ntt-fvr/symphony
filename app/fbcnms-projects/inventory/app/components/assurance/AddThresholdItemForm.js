@@ -14,7 +14,7 @@ import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
 
 import type {AddTresholdMutationVariables} from '../../mutations/__generated__/AddTresholdMutation.graphql';
 
-import AddTresholdMutation from '../../mutations/AddTresholdMutation';
+import AddTresholdMutation from '../../mutations/AddThresholdMutation';
 
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
