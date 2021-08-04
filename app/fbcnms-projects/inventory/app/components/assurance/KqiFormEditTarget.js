@@ -11,6 +11,7 @@
 import React, {useState} from 'react';
 import fbt from 'fbt';
 
+import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import IconButton from '@symphony/design-system/components/IconButton';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
@@ -110,6 +111,7 @@ const useStyles = makeStyles(() => ({
   delete: {
     display: 'flex',
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   textTitle: {
     paddingLeft: '3rem',
@@ -151,13 +153,14 @@ const KqiFormEditTarget = props => {
     <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid item xs={9}>
-          <Text className={classes.textTitle} variant="h6">
-            {fbt('KQI Catalog / TINE Retainability /SLO TTLI Customer 1', ' ')}
-          </Text>
+          <ConfigureTitleSubItem
+            title={fbt('KQI Catalog / TINE Retainability /', '')}
+            tag={''}
+            className={classes.textTitle}
+          />
         </Grid>
-        <Grid item xs={1}>
+        <Grid className={classes.delete} item xs={1}>
           <IconButton
-            className={classes.delete}
             skin={'gray'}
             icon={DeleteOutlinedIcon}
             onClick={handleRemove}

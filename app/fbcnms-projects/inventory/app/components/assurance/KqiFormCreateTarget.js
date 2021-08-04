@@ -101,6 +101,7 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
+    marginRight: '3px',
   },
   delete: {
     display: 'flex',
@@ -144,7 +145,7 @@ const KqiFormCreateTarget = props => {
     <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid item xs={10}>
-          <Text className={classes.textTitle} variant="h6">
+          <Text className={classes.textTitle} variant="h6" weight={'bold'}>
             {fbt('Create target', ' ')}
           </Text>
         </Grid>
