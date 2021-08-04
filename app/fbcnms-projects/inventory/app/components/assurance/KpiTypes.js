@@ -121,7 +121,7 @@ const KpiTypes = () => {
       <EditKpiItemForm
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
         formValues={dataEdit.item.node}
-        threshold={dataKpis.tresholds?.edges}
+        threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
       />
     );
@@ -145,7 +145,7 @@ const KpiTypes = () => {
             {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
-                threshold={dataKpis.tresholds?.edges}
+                threshold={dataKpis.thresholds?.edges}
                 onChange={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
                 {...item.node}

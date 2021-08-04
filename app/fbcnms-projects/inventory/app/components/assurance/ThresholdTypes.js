@@ -164,7 +164,7 @@ const ThresholdTypes = () => {
     setShowEditCard(false);
   };
 
-  const thresholdNames = dataThreshold.tresholds?.edges.map(
+  const thresholdNames = dataThreshold.thresholds?.edges.map(
     item => item.node.name,
   );
 
@@ -200,7 +200,7 @@ const ThresholdTypes = () => {
             <TitleTextCardsThresholds />
 
             <List disablePadding>
-              {dataThreshold.tresholds?.edges.map((item, index) => (
+              {dataThreshold.thresholds?.edges.map((item, index) => (
                 <ThresholdTypeItem
                   key={index}
                   handleRemove={() => handleRemove(item.node.id)}
@@ -214,7 +214,7 @@ const ThresholdTypes = () => {
           </Grid>
           <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
             <AddThresholdItemForm
-              thresholdNames={dataThreshold.tresholds?.edges}
+              thresholdNames={dataThreshold.thresholds?.edges}
             />
           </Grid>
         </Grid>
