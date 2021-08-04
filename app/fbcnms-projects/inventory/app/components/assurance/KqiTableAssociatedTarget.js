@@ -63,6 +63,9 @@ const useStyles = makeStyles(() => ({
     margin: '0',
     borderBottom: '2px solid #F5F7FC',
   },
+  insideCenter: {
+    textAlign: 'center',
+  },
   title: {
     marginLeft: '2rem',
   },
@@ -173,11 +176,21 @@ const KqiTableAssociatedTarget = props => {
               <StyledTableCell>Enable</StyledTableCell>
               <StyledTableCell>Target name</StyledTableCell>
               <StyledTableCell>Comparator</StyledTableCell>
-              <StyledTableCell>Warning comparator</StyledTableCell>
-              <StyledTableCell>Periods</StyledTableCell>
-              <StyledTableCell>Allowed Variation</StyledTableCell>
-              <StyledTableCell>Active Hours</StyledTableCell>
-              <StyledTableCell className={classes.id}>Delete</StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Warning comparator
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Periods
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Allowed Variation
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Active Hours
+              </StyledTableCell>
+              <StyledTableCell className={classes.insideCenter}>
+                Delete
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -197,11 +210,19 @@ const KqiTableAssociatedTarget = props => {
                     </Button>
                   </TableCell>
                   <TableCell>{column.comparator}</TableCell>
-                  <TableCell>{column.warningComparator}</TableCell>
-                  <TableCell>{column.periods}</TableCell>
-                  <TableCell>{column.allowedVariation}</TableCell>
-                  <TableCell>{column.activeHours}</TableCell>
-                  <TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.warningComparator}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.periods}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.allowedVariation}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
+                    {column.activeHours}
+                  </TableCell>
+                  <TableCell className={classes.insideCenter}>
                     <IconButton
                       variant="text"
                       skin={'gray'}
