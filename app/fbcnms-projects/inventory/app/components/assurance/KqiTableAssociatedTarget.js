@@ -12,10 +12,10 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 
-import React from 'react';
+import React, {useState} from 'react';
 
 import AddButton from './common/AddButton';
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import {withStyles} from '@material-ui/core/styles';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
@@ -97,46 +97,46 @@ function createData(
 
 const data = [
   createData(
-    '123',
+    123,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
   createData(
-    '456',
+    456,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
   createData(
-    '789',
+    789,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
   createData(
-    '098',
+    998,
     '',
     'SLO TTLI Customer 1',
     'NQE 0.04',
-    '0.3',
-    '1',
-    '0.01',
+    0.3,
+    1,
+    0.01,
     '06-18',
     '',
   ),
@@ -148,7 +148,7 @@ const handleClick = () => {
 
 const KqiTableAssociatedTarget = props => {
   const classes = useStyles();
-
+  const [checked, setChecked] = useState(true);
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -185,7 +185,11 @@ const KqiTableAssociatedTarget = props => {
               return (
                 <StyledTableRow key={column.id}>
                   <TableCell>
-                    <Switch />
+                    <Switch
+                      checked={checked}
+                      title={''}
+                      onChange={setChecked}
+                    />
                   </TableCell>
                   <TableCell>
                     <Button onClick={props.edit} variant="text">

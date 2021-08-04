@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -20,7 +20,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import {MenuItem, Select} from '@material-ui/core';
 
-import Switch from './common/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
@@ -135,8 +135,10 @@ const data = {
     ],
   },
 };
+
 const KqiFormCreateTarget = props => {
   const classes = useStyles();
+  const [checked, setChecked] = useState(true);
 
   return (
     <div className={classes.root}>
@@ -178,7 +180,7 @@ const KqiFormCreateTarget = props => {
             <Grid container spacing={1}>
               <Grid item xs={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <Switch />
+                  <Switch checked={checked} title={''} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={11}>

@@ -18,7 +18,6 @@ import KqiFormEdit from './KqiFormEdit';
 
 import Button from '@symphony/design-system/components/Button';
 import KqiTable from './KqiTable';
-import Periods from './Periods';
 import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({
@@ -81,7 +80,6 @@ const KqiTypes = () => {
           </Button>
         </Grid>
       </Grid>
-      <Periods />
       <Grid className={classes.titulo} container spacing={2}>
         <Grid className={classes.paper} item xs={12}>
           <KqiTable viewFormEdit={formEdit} />
