@@ -70,8 +70,8 @@ const KqiTypes = () => {
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
             subtitle={fbt(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
-              'Counters description',
+              'Quality indicators and targets to be defined by users and used by service quality management processes',
+              'KQI description',
             )}
           />
         </Grid>

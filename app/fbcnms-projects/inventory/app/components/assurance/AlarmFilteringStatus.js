@@ -10,7 +10,6 @@
 
 import Button from '@material-ui/core/Button';
 import React from 'react';
-import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -23,30 +22,27 @@ const useStyles = makeStyles(() => ({
     height: '36px',
   },
   buttonActive: {
-    border: '1px solid green',
+    border: '1px solid #00AF5B',
+    color: '#00AF5B',
+    fontSize: '14px',
   },
   buttonPendig: {
-    border: '1px solid orange',
+    border: '1px solid #FFB63E',
+    color: '#FFB63E',
+    fontSize: '14px',
   },
   buttonClose: {
-    border: '1px solid gray',
-  },
-  textActive: {
-    color: 'green',
-  },
-  textPending: {
-    color: 'orange',
-  },
-  textClosed: {
-    color: 'gray',
+    border: '1px solid #8895AD',
+    color: '#8895AD',
+    fontSize: '14px',
   },
 }));
 
 const AlarmStatusQuery = graphql`
   query AlarmFilteringStatusQuery {
-    alarmStatuss{
-      edges{
-        node{
+    alarmStatus {
+      edges {
+        node {
           name
           id
         }
@@ -55,54 +51,58 @@ const AlarmStatusQuery = graphql`
   }
 `;
 
+type Props = $ReadOnly<{|
+  buttonName: string,
+|}>;
 
-export const StatusActive = () => {
+export const AlarmFilteringStatus = (props: Props) => {
+  const {buttonName} = props;
   const classes = useStyles();
-  const dataStatus = useLazyLoadQuery<AlarmFilteringStatusQuery>(AlarmStatusQuery, {});
-  return (
-    <div>
-      <Button
-        variant="outlined"
-        weight="bold"
-        className={classNames(classes.button, classes.buttonActive)}>
-        <Text className={classes.textActive} variant="subtitle2">
-          Active
-        </Text>
-      </Button>
-    </div>
+  const dataStatus = useLazyLoadQuery<AlarmFilteringStatusQuery>(
+    AlarmStatusQuery,
+    {},
   );
-};
-
-export const StatusPending = () => {
-  const classes = useStyles();
-
+  
+  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node).filter(item => item.name == buttonName)
   return (
-    <div>
-      <Button
-        variant="outlined"
-        weight="bold"
-        className={classNames(classes.button, classes.buttonPendig)}>
-        <Text className={classes.textPending} variant="subtitle2">
-          Pending
-        </Text>
-      </Button>
-    </div>
-  );
-};
-
-export const StatusClosed = () => {
-  const classes = useStyles();
-
-  return (
-    <div>
-      <Button
-        variant="outlined"
-        weight="bold"
-        className={classNames(classes.button, classes.buttonClose)}>
-        <Text className={classes.textClosed} variant="subtitle2">
-          Closed
-        </Text>
-      </Button>
-    </div>
+    <>
+      {dataStatusResponse.map((item, index) => {
+        switch (buttonName) {
+          case 'Active':
+            return (
+              <Button
+                key={item.id}
+                value={item.id}
+                variant="outlined"
+                weight="bold"
+                className={classNames(classes.button, classes.buttonActive)}>
+                Active
+              </Button>
+            );
+          case 'Pending':
+            return (
+              <Button
+                key={item.id}
+                value={item.id}
+                variant="outlined"
+                weight="bold"
+                className={classNames(classes.button, classes.buttonPendig)}>
+                Pending
+              </Button>
+            );
+          case 'Closed':
+            return (
+              <Button
+                key={item.id}
+                value={item.id}
+                variant="outlined"
+                weight="bold"
+                className={classNames(classes.button, classes.buttonClose)}>
+                Closed
+              </Button>
+            );
+          }
+      })}
+    </>
   );
 };

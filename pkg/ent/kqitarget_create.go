@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
 )
 
@@ -53,24 +54,6 @@ func (ktc *KqiTargetCreate) SetNillableUpdateTime(t *time.Time) *KqiTargetCreate
 	return ktc
 }
 
-// SetComparator sets the comparator field.
-func (ktc *KqiTargetCreate) SetComparator(f float64) *KqiTargetCreate {
-	ktc.mutation.SetComparator(f)
-	return ktc
-}
-
-// SetReferenceValue sets the referenceValue field.
-func (ktc *KqiTargetCreate) SetReferenceValue(f float64) *KqiTargetCreate {
-	ktc.mutation.SetReferenceValue(f)
-	return ktc
-}
-
-// SetWarningComparator sets the warningComparator field.
-func (ktc *KqiTargetCreate) SetWarningComparator(f float64) *KqiTargetCreate {
-	ktc.mutation.SetWarningComparator(f)
-	return ktc
-}
-
 // SetFrame sets the frame field.
 func (ktc *KqiTargetCreate) SetFrame(f float64) *KqiTargetCreate {
 	ktc.mutation.SetFrame(f)
@@ -101,9 +84,9 @@ func (ktc *KqiTargetCreate) SetImpact(s string) *KqiTargetCreate {
 	return ktc
 }
 
-// SetActive sets the active field.
-func (ktc *KqiTargetCreate) SetActive(b bool) *KqiTargetCreate {
-	ktc.mutation.SetActive(b)
+// SetStatus sets the status field.
+func (ktc *KqiTargetCreate) SetStatus(b bool) *KqiTargetCreate {
+	ktc.mutation.SetStatus(b)
 	return ktc
 }
 
@@ -124,6 +107,21 @@ func (ktc *KqiTargetCreate) SetNillableKqiTargetFkID(id *int) *KqiTargetCreate {
 // SetKqiTargetFk sets the kqiTargetFk edge to Kqi.
 func (ktc *KqiTargetCreate) SetKqiTargetFk(k *Kqi) *KqiTargetCreate {
 	return ktc.SetKqiTargetFkID(k.ID)
+}
+
+// AddKqitargetcomparatorfkIDs adds the kqitargetcomparatorfk edge to KqiComparator by ids.
+func (ktc *KqiTargetCreate) AddKqitargetcomparatorfkIDs(ids ...int) *KqiTargetCreate {
+	ktc.mutation.AddKqitargetcomparatorfkIDs(ids...)
+	return ktc
+}
+
+// AddKqitargetcomparatorfk adds the kqitargetcomparatorfk edges to KqiComparator.
+func (ktc *KqiTargetCreate) AddKqitargetcomparatorfk(k ...*KqiComparator) *KqiTargetCreate {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return ktc.AddKqitargetcomparatorfkIDs(ids...)
 }
 
 // Mutation returns the KqiTargetMutation object of the builder.
@@ -196,15 +194,6 @@ func (ktc *KqiTargetCreate) check() error {
 	if _, ok := ktc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
-	if _, ok := ktc.mutation.Comparator(); !ok {
-		return &ValidationError{Name: "comparator", err: errors.New("ent: missing required field \"comparator\"")}
-	}
-	if _, ok := ktc.mutation.ReferenceValue(); !ok {
-		return &ValidationError{Name: "referenceValue", err: errors.New("ent: missing required field \"referenceValue\"")}
-	}
-	if _, ok := ktc.mutation.WarningComparator(); !ok {
-		return &ValidationError{Name: "warningComparator", err: errors.New("ent: missing required field \"warningComparator\"")}
-	}
 	if _, ok := ktc.mutation.Frame(); !ok {
 		return &ValidationError{Name: "frame", err: errors.New("ent: missing required field \"frame\"")}
 	}
@@ -220,8 +209,8 @@ func (ktc *KqiTargetCreate) check() error {
 	if _, ok := ktc.mutation.Impact(); !ok {
 		return &ValidationError{Name: "impact", err: errors.New("ent: missing required field \"impact\"")}
 	}
-	if _, ok := ktc.mutation.Active(); !ok {
-		return &ValidationError{Name: "active", err: errors.New("ent: missing required field \"active\"")}
+	if _, ok := ktc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
 	return nil
 }
@@ -266,30 +255,6 @@ func (ktc *KqiTargetCreate) createSpec() (*KqiTarget, *sqlgraph.CreateSpec) {
 		})
 		_node.UpdateTime = value
 	}
-	if value, ok := ktc.mutation.Comparator(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldComparator,
-		})
-		_node.Comparator = value
-	}
-	if value, ok := ktc.mutation.ReferenceValue(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldReferenceValue,
-		})
-		_node.ReferenceValue = value
-	}
-	if value, ok := ktc.mutation.WarningComparator(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldWarningComparator,
-		})
-		_node.WarningComparator = value
-	}
 	if value, ok := ktc.mutation.Frame(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
@@ -330,13 +295,13 @@ func (ktc *KqiTargetCreate) createSpec() (*KqiTarget, *sqlgraph.CreateSpec) {
 		})
 		_node.Impact = value
 	}
-	if value, ok := ktc.mutation.Active(); ok {
+	if value, ok := ktc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: kqitarget.FieldActive,
+			Column: kqitarget.FieldStatus,
 		})
-		_node.Active = value
+		_node.Status = value
 	}
 	if nodes := ktc.mutation.KqiTargetFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -349,6 +314,25 @@ func (ktc *KqiTargetCreate) createSpec() (*KqiTarget, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: kqi.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ktc.mutation.KqitargetcomparatorfkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
 				},
 			},
 		}

@@ -40,7 +40,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const AddRuleQuery = graphql`
   query AddRuleItemFormQuery {
-    eventSeveritys {
+    eventSeverities {
       edges {
         node {
           id
@@ -49,6 +49,14 @@ const AddRuleQuery = graphql`
       }
     }
     comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    ruleTypes {
       edges {
         node {
           id
@@ -173,6 +181,7 @@ const AddRuleItemForm = (props: Props) => {
   const [checked, setChecked] = useState(true);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
+  const ruleTypeId = data.ruleTypes?.edges[0].node.id;
 
   function handleChange({target}) {
     setRule({
@@ -191,12 +200,12 @@ const AddRuleItemForm = (props: Props) => {
         gracePeriod: rule.data.gracePeriod,
         startDateTime: moment(rule.data.startTime).format(),
         endDateTime: moment(rule.data.endTime).format(),
-        ruleType: '223338299392',
+        ruleType: ruleTypeId,
         eventTypeName: rule.data.alarmType,
         specificProblem: rule.data.specificProblem,
         additionalInfo: rule.data.additionalInfo,
         eventSeverity: rule.data.alarmSeverities,
-        treshold: threshold.id,
+        threshold: threshold.id,
       },
     };
 
@@ -309,7 +318,7 @@ const AddRuleItemForm = (props: Props) => {
                     }}
                     name="alarmSeverities"
                     onChange={handleChange}>
-                    {data.eventSeveritys.edges.map((item, index) => (
+                    {data.eventSeverities.edges.map((item, index) => (
                       <MenuItem key={index} value={item.node?.id}>
                         {item.node?.name}
                       </MenuItem>

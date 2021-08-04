@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
   },
   network: {
-    paddingRight: '4rem',
+    paddingLeft: '51px',
   },
   vendor: {
     paddingRight: '3rem',
@@ -46,7 +46,7 @@ function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={2}>
+      <Grid xs={3}>
         <Text className={classes.title} variant="subtitle2">
           Status
         </Text>
@@ -54,13 +54,9 @@ function TitleTextCardsKpi() {
           Kpi name
         </Text>
       </Grid>
-      <Grid xs={5}>
+      <Grid xs={4}>
         <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.network,
-          )}
+          className={classNames(classes.title, classes.network)}
           variant="subtitle2">
           Domain
         </Text>

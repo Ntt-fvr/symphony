@@ -54,7 +54,7 @@ func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput
 		SetGracePeriod(input.GracePeriod).
 		SetStartDateTime(input.StartDateTime).
 		SetEndDateTime(input.EndDateTime).
-		SetTresholdID(input.Treshold).
+		SetThresholdID(input.Threshold).
 		SetRuletypeID(input.RuleType).
 		SetStatus(input.Status).
 		SetNillableEventTypeName(input.EventTypeName).
@@ -98,7 +98,7 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	var eventSeverityid, rtypeid, tresholdid int
+	var eventSeverityid, rtypeid, thresholdid int
 	var name, start, end, grace, tpe, problem, info, status = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod,
 		et.EventTypeName, et.SpecificProblem, et.AdditionalInfo, et.Status
 	var event, err1 = et.Eventseverity(ctx)
@@ -113,11 +113,11 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 	} else if rtype != nil {
 		rtypeid = rtype.ID
 	}
-	var treshold, err3 = et.Treshold(ctx)
+	var threshold, err3 = et.Threshold(ctx)
 	if err3 != nil {
 		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
-	} else if treshold != nil {
-		tresholdid = treshold.ID
+	} else if threshold != nil {
+		thresholdid = threshold.ID
 	}
 
 	var change = false
@@ -145,8 +145,8 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 		rtypeid = input.RuleType
 		change = true
 	}
-	if (treshold != nil && treshold.ID != input.Treshold) || treshold == nil {
-		tresholdid = input.Treshold
+	if (threshold != nil && threshold.ID != input.Threshold) || threshold == nil {
+		thresholdid = input.Threshold
 		change = true
 	}
 	if input.Status != status {
@@ -174,7 +174,7 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			SetGracePeriod(grace).
 			SetStartDateTime(start).
 			SetEndDateTime(end).
-			SetTresholdID(tresholdid).
+			SetThresholdID(thresholdid).
 			SetRuletypeID(rtypeid).
 			SetStatus(input.Status).
 			SetNillableEventTypeName(tpe).

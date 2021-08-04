@@ -61,9 +61,9 @@ func (fc *FormulaCreate) SetName(s string) *FormulaCreate {
 	return fc
 }
 
-// SetActive sets the active field.
-func (fc *FormulaCreate) SetActive(b bool) *FormulaCreate {
-	fc.mutation.SetActive(b)
+// SetStatus sets the status field.
+func (fc *FormulaCreate) SetStatus(b bool) *FormulaCreate {
+	fc.mutation.SetStatus(b)
 	return fc
 }
 
@@ -198,8 +198,8 @@ func (fc *FormulaCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
-	if _, ok := fc.mutation.Active(); !ok {
-		return &ValidationError{Name: "active", err: errors.New("ent: missing required field \"active\"")}
+	if _, ok := fc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
 	return nil
 }
@@ -252,13 +252,13 @@ func (fc *FormulaCreate) createSpec() (*Formula, *sqlgraph.CreateSpec) {
 		})
 		_node.Name = value
 	}
-	if value, ok := fc.mutation.Active(); ok {
+	if value, ok := fc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: formula.FieldActive,
+			Column: formula.FieldStatus,
 		})
-		_node.Active = value
+		_node.Status = value
 	}
 	if nodes := fc.mutation.TechIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

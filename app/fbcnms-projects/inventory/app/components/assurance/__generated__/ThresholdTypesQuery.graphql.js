@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type ThresholdTypesQueryVariables = {||};
 export type ThresholdTypesQueryResponse = {|
-  +tresholds: {|
+  +thresholds: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -33,6 +33,7 @@ export type ThresholdTypesQueryResponse = {|
           +ruleType: {|
             +name: string
           |},
+          +status: boolean,
         |}>,
       |}
     |}>
@@ -47,7 +48,7 @@ export type ThresholdTypesQuery = {|
 
 /*
 query ThresholdTypesQuery {
-  tresholds {
+  thresholds {
     edges {
       node {
         id
@@ -65,6 +66,7 @@ query ThresholdTypesQuery {
             name
             id
           }
+          status
         }
       }
     }
@@ -124,15 +126,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdConnection",
+        "concreteType": "ThresholdConnection",
         "kind": "LinkedField",
-        "name": "tresholds",
+        "name": "thresholds",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TresholdEdge",
+            "concreteType": "ThresholdEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -140,7 +142,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Treshold",
+                "concreteType": "Threshold",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -171,7 +173,8 @@ return {
                           (v1/*: any*/)
                         ],
                         "storageKey": null
-                      }
+                      },
+                      (v3/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -197,15 +200,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdConnection",
+        "concreteType": "ThresholdConnection",
         "kind": "LinkedField",
-        "name": "tresholds",
+        "name": "thresholds",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TresholdEdge",
+            "concreteType": "ThresholdEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -213,7 +216,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Treshold",
+                "concreteType": "Threshold",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -245,7 +248,8 @@ return {
                           (v0/*: any*/)
                         ],
                         "storageKey": null
-                      }
+                      },
+                      (v3/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -261,16 +265,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f02e77f0edf92ca6a77c23646c1420cf",
+    "cacheID": "46f87783caabe2cefc5dc531052dd494",
     "id": null,
     "metadata": {},
     "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query ThresholdTypesQuery {\n  tresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          ruleType {\n            name\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          ruleType {\n            name\n            id\n          }\n          status\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b2c14162d37ee6ca66835430d73b3c61';
+(node/*: any*/).hash = 'b74cb59c532224a8488d114cdc774e1f';
 
 module.exports = node;

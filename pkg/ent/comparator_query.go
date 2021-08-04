@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 )
@@ -30,7 +31,8 @@ type ComparatorQuery struct {
 	unique     []string
 	predicates []predicate.Comparator
 	// eager-loading edges.
-	withComparatorrulelimit *RuleLimitQuery
+	withComparatorrulelimit   *RuleLimitQuery
+	withComparatorkqitargetfk *KqiComparatorQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (cq *ComparatorQuery) QueryComparatorrulelimit() *RuleLimitQuery {
 			sqlgraph.From(comparator.Table, comparator.FieldID, selector),
 			sqlgraph.To(rulelimit.Table, rulelimit.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, comparator.ComparatorrulelimitTable, comparator.ComparatorrulelimitColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryComparatorkqitargetfk chains the current query on the comparatorkqitargetfk edge.
+func (cq *ComparatorQuery) QueryComparatorkqitargetfk() *KqiComparatorQuery {
+	query := &KqiComparatorQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(comparator.Table, comparator.FieldID, selector),
+			sqlgraph.To(kqicomparator.Table, kqicomparator.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, comparator.ComparatorkqitargetfkTable, comparator.ComparatorkqitargetfkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -252,13 +276,14 @@ func (cq *ComparatorQuery) Clone() *ComparatorQuery {
 		return nil
 	}
 	return &ComparatorQuery{
-		config:                  cq.config,
-		limit:                   cq.limit,
-		offset:                  cq.offset,
-		order:                   append([]OrderFunc{}, cq.order...),
-		unique:                  append([]string{}, cq.unique...),
-		predicates:              append([]predicate.Comparator{}, cq.predicates...),
-		withComparatorrulelimit: cq.withComparatorrulelimit.Clone(),
+		config:                    cq.config,
+		limit:                     cq.limit,
+		offset:                    cq.offset,
+		order:                     append([]OrderFunc{}, cq.order...),
+		unique:                    append([]string{}, cq.unique...),
+		predicates:                append([]predicate.Comparator{}, cq.predicates...),
+		withComparatorrulelimit:   cq.withComparatorrulelimit.Clone(),
+		withComparatorkqitargetfk: cq.withComparatorkqitargetfk.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,
@@ -273,6 +298,17 @@ func (cq *ComparatorQuery) WithComparatorrulelimit(opts ...func(*RuleLimitQuery)
 		opt(query)
 	}
 	cq.withComparatorrulelimit = query
+	return cq
+}
+
+//  WithComparatorkqitargetfk tells the query-builder to eager-loads the nodes that are connected to
+// the "comparatorkqitargetfk" edge. The optional arguments used to configure the query builder of the edge.
+func (cq *ComparatorQuery) WithComparatorkqitargetfk(opts ...func(*KqiComparatorQuery)) *ComparatorQuery {
+	query := &KqiComparatorQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withComparatorkqitargetfk = query
 	return cq
 }
 
@@ -345,8 +381,9 @@ func (cq *ComparatorQuery) sqlAll(ctx context.Context) ([]*Comparator, error) {
 	var (
 		nodes       = []*Comparator{}
 		_spec       = cq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			cq.withComparatorrulelimit != nil,
+			cq.withComparatorkqitargetfk != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -396,6 +433,35 @@ func (cq *ComparatorQuery) sqlAll(ctx context.Context) ([]*Comparator, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "comparator_comparatorrulelimit" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Comparatorrulelimit = append(node.Edges.Comparatorrulelimit, n)
+		}
+	}
+
+	if query := cq.withComparatorkqitargetfk; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Comparator)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Comparatorkqitargetfk = []*KqiComparator{}
+		}
+		query.withFKs = true
+		query.Where(predicate.KqiComparator(func(s *sql.Selector) {
+			s.Where(sql.InValues(comparator.ComparatorkqitargetfkColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.comparator_comparatorkqitargetfk
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "comparator_comparatorkqitargetfk" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "comparator_comparatorkqitargetfk" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Comparatorkqitargetfk = append(node.Edges.Comparatorkqitargetfk, n)
 		}
 	}
 

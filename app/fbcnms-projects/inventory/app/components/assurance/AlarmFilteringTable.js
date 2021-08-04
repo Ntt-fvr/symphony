@@ -14,9 +14,7 @@ import React, {useState} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 
 import {
-  StatusActive,
-  StatusClosed,
-  StatusPending,
+AlarmFilteringStatus
 } from './AlarmFilteringStatus';
 import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 
@@ -33,6 +31,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
+import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
+
+import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -71,7 +72,8 @@ const AlarmFilteringTable = (props: Props) => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  
+  const [checked, setChecked] = useState();
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -103,10 +105,14 @@ const AlarmFilteringTable = (props: Props) => {
               .map((item, index) => (
                 <StyledTableRow tabIndex={-1} key={index}>
                   <TableCell>
-                    <Switch />
+                    <Switch
+                    title={''}
+                    checked={item.enable}
+                    onChange={setChecked}
+                  />
                   </TableCell>
                   <TableCell>
-                    <Button color="primary" onChange={item.id} onClick={() => edit({item})}>
+                    <Button color="primary" onClick={() => edit({item})}>
                       {item.name}
                     </Button>
                   </TableCell>
@@ -115,10 +121,7 @@ const AlarmFilteringTable = (props: Props) => {
                   </TableCell>
                   <TableCell>{item.networkResource}</TableCell>
                   <TableCell>
-                  {
-                    item.alarmStatus.name
-                  }
-                    {/* <StatusPending /> */}
+                    <AlarmFilteringStatus buttonName={item.alarmStatus.name}/>
                   </TableCell>
                   <TableCell>
                     {DateTimeFormat.dateTime(item.beginTime)}

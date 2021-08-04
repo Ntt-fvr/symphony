@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 )
@@ -52,6 +53,21 @@ func (cu *ComparatorUpdate) AddComparatorrulelimit(r ...*RuleLimit) *ComparatorU
 	return cu.AddComparatorrulelimitIDs(ids...)
 }
 
+// AddComparatorkqitargetfkIDs adds the comparatorkqitargetfk edge to KqiComparator by ids.
+func (cu *ComparatorUpdate) AddComparatorkqitargetfkIDs(ids ...int) *ComparatorUpdate {
+	cu.mutation.AddComparatorkqitargetfkIDs(ids...)
+	return cu
+}
+
+// AddComparatorkqitargetfk adds the comparatorkqitargetfk edges to KqiComparator.
+func (cu *ComparatorUpdate) AddComparatorkqitargetfk(k ...*KqiComparator) *ComparatorUpdate {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return cu.AddComparatorkqitargetfkIDs(ids...)
+}
+
 // Mutation returns the ComparatorMutation object of the builder.
 func (cu *ComparatorUpdate) Mutation() *ComparatorMutation {
 	return cu.mutation
@@ -76,6 +92,27 @@ func (cu *ComparatorUpdate) RemoveComparatorrulelimit(r ...*RuleLimit) *Comparat
 		ids[i] = r[i].ID
 	}
 	return cu.RemoveComparatorrulelimitIDs(ids...)
+}
+
+// ClearComparatorkqitargetfk clears all "comparatorkqitargetfk" edges to type KqiComparator.
+func (cu *ComparatorUpdate) ClearComparatorkqitargetfk() *ComparatorUpdate {
+	cu.mutation.ClearComparatorkqitargetfk()
+	return cu
+}
+
+// RemoveComparatorkqitargetfkIDs removes the comparatorkqitargetfk edge to KqiComparator by ids.
+func (cu *ComparatorUpdate) RemoveComparatorkqitargetfkIDs(ids ...int) *ComparatorUpdate {
+	cu.mutation.RemoveComparatorkqitargetfkIDs(ids...)
+	return cu
+}
+
+// RemoveComparatorkqitargetfk removes comparatorkqitargetfk edges to KqiComparator.
+func (cu *ComparatorUpdate) RemoveComparatorkqitargetfk(k ...*KqiComparator) *ComparatorUpdate {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return cu.RemoveComparatorkqitargetfkIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -240,6 +277,60 @@ func (cu *ComparatorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if cu.mutation.ComparatorkqitargetfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedComparatorkqitargetfkIDs(); len(nodes) > 0 && !cu.mutation.ComparatorkqitargetfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.ComparatorkqitargetfkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{comparator.Label}
@@ -279,6 +370,21 @@ func (cuo *ComparatorUpdateOne) AddComparatorrulelimit(r ...*RuleLimit) *Compara
 	return cuo.AddComparatorrulelimitIDs(ids...)
 }
 
+// AddComparatorkqitargetfkIDs adds the comparatorkqitargetfk edge to KqiComparator by ids.
+func (cuo *ComparatorUpdateOne) AddComparatorkqitargetfkIDs(ids ...int) *ComparatorUpdateOne {
+	cuo.mutation.AddComparatorkqitargetfkIDs(ids...)
+	return cuo
+}
+
+// AddComparatorkqitargetfk adds the comparatorkqitargetfk edges to KqiComparator.
+func (cuo *ComparatorUpdateOne) AddComparatorkqitargetfk(k ...*KqiComparator) *ComparatorUpdateOne {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return cuo.AddComparatorkqitargetfkIDs(ids...)
+}
+
 // Mutation returns the ComparatorMutation object of the builder.
 func (cuo *ComparatorUpdateOne) Mutation() *ComparatorMutation {
 	return cuo.mutation
@@ -303,6 +409,27 @@ func (cuo *ComparatorUpdateOne) RemoveComparatorrulelimit(r ...*RuleLimit) *Comp
 		ids[i] = r[i].ID
 	}
 	return cuo.RemoveComparatorrulelimitIDs(ids...)
+}
+
+// ClearComparatorkqitargetfk clears all "comparatorkqitargetfk" edges to type KqiComparator.
+func (cuo *ComparatorUpdateOne) ClearComparatorkqitargetfk() *ComparatorUpdateOne {
+	cuo.mutation.ClearComparatorkqitargetfk()
+	return cuo
+}
+
+// RemoveComparatorkqitargetfkIDs removes the comparatorkqitargetfk edge to KqiComparator by ids.
+func (cuo *ComparatorUpdateOne) RemoveComparatorkqitargetfkIDs(ids ...int) *ComparatorUpdateOne {
+	cuo.mutation.RemoveComparatorkqitargetfkIDs(ids...)
+	return cuo
+}
+
+// RemoveComparatorkqitargetfk removes comparatorkqitargetfk edges to KqiComparator.
+func (cuo *ComparatorUpdateOne) RemoveComparatorkqitargetfk(k ...*KqiComparator) *ComparatorUpdateOne {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return cuo.RemoveComparatorkqitargetfkIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -457,6 +584,60 @@ func (cuo *ComparatorUpdateOne) sqlSave(ctx context.Context) (_node *Comparator,
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: rulelimit.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cuo.mutation.ComparatorkqitargetfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedComparatorkqitargetfkIDs(); len(nodes) > 0 && !cuo.mutation.ComparatorkqitargetfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.ComparatorkqitargetfkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
 				},
 			},
 		}

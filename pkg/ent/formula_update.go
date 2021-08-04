@@ -39,9 +39,9 @@ func (fu *FormulaUpdate) SetName(s string) *FormulaUpdate {
 	return fu
 }
 
-// SetActive sets the active field.
-func (fu *FormulaUpdate) SetActive(b bool) *FormulaUpdate {
-	fu.mutation.SetActive(b)
+// SetStatus sets the status field.
+func (fu *FormulaUpdate) SetStatus(b bool) *FormulaUpdate {
+	fu.mutation.SetStatus(b)
 	return fu
 }
 
@@ -244,11 +244,11 @@ func (fu *FormulaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: formula.FieldName,
 		})
 	}
-	if value, ok := fu.mutation.Active(); ok {
+	if value, ok := fu.mutation.Status(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: formula.FieldActive,
+			Column: formula.FieldStatus,
 		})
 	}
 	if fu.mutation.TechCleared() {
@@ -399,9 +399,9 @@ func (fuo *FormulaUpdateOne) SetName(s string) *FormulaUpdateOne {
 	return fuo
 }
 
-// SetActive sets the active field.
-func (fuo *FormulaUpdateOne) SetActive(b bool) *FormulaUpdateOne {
-	fuo.mutation.SetActive(b)
+// SetStatus sets the status field.
+func (fuo *FormulaUpdateOne) SetStatus(b bool) *FormulaUpdateOne {
+	fuo.mutation.SetStatus(b)
 	return fuo
 }
 
@@ -602,11 +602,11 @@ func (fuo *FormulaUpdateOne) sqlSave(ctx context.Context) (_node *Formula, err e
 			Column: formula.FieldName,
 		})
 	}
-	if value, ok := fuo.mutation.Active(); ok {
+	if value, ok := fuo.mutation.Status(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: formula.FieldActive,
+			Column: formula.FieldStatus,
 		})
 	}
 	if fuo.mutation.TechCleared() {

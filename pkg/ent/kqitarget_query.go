@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -16,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
@@ -29,8 +31,9 @@ type KqiTargetQuery struct {
 	unique     []string
 	predicates []predicate.KqiTarget
 	// eager-loading edges.
-	withKqiTargetFk *KqiQuery
-	withFKs         bool
+	withKqiTargetFk           *KqiQuery
+	withKqitargetcomparatorfk *KqiComparatorQuery
+	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +78,28 @@ func (ktq *KqiTargetQuery) QueryKqiTargetFk() *KqiQuery {
 			sqlgraph.From(kqitarget.Table, kqitarget.FieldID, selector),
 			sqlgraph.To(kqi.Table, kqi.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, kqitarget.KqiTargetFkTable, kqitarget.KqiTargetFkColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ktq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryKqitargetcomparatorfk chains the current query on the kqitargetcomparatorfk edge.
+func (ktq *KqiTargetQuery) QueryKqitargetcomparatorfk() *KqiComparatorQuery {
+	query := &KqiComparatorQuery{config: ktq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ktq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ktq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqitarget.Table, kqitarget.FieldID, selector),
+			sqlgraph.To(kqicomparator.Table, kqicomparator.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqitarget.KqitargetcomparatorfkTable, kqitarget.KqitargetcomparatorfkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ktq.driver.Dialect(), step)
 		return fromU, nil
@@ -252,13 +277,14 @@ func (ktq *KqiTargetQuery) Clone() *KqiTargetQuery {
 		return nil
 	}
 	return &KqiTargetQuery{
-		config:          ktq.config,
-		limit:           ktq.limit,
-		offset:          ktq.offset,
-		order:           append([]OrderFunc{}, ktq.order...),
-		unique:          append([]string{}, ktq.unique...),
-		predicates:      append([]predicate.KqiTarget{}, ktq.predicates...),
-		withKqiTargetFk: ktq.withKqiTargetFk.Clone(),
+		config:                    ktq.config,
+		limit:                     ktq.limit,
+		offset:                    ktq.offset,
+		order:                     append([]OrderFunc{}, ktq.order...),
+		unique:                    append([]string{}, ktq.unique...),
+		predicates:                append([]predicate.KqiTarget{}, ktq.predicates...),
+		withKqiTargetFk:           ktq.withKqiTargetFk.Clone(),
+		withKqitargetcomparatorfk: ktq.withKqitargetcomparatorfk.Clone(),
 		// clone intermediate query.
 		sql:  ktq.sql.Clone(),
 		path: ktq.path,
@@ -273,6 +299,17 @@ func (ktq *KqiTargetQuery) WithKqiTargetFk(opts ...func(*KqiQuery)) *KqiTargetQu
 		opt(query)
 	}
 	ktq.withKqiTargetFk = query
+	return ktq
+}
+
+//  WithKqitargetcomparatorfk tells the query-builder to eager-loads the nodes that are connected to
+// the "kqitargetcomparatorfk" edge. The optional arguments used to configure the query builder of the edge.
+func (ktq *KqiTargetQuery) WithKqitargetcomparatorfk(opts ...func(*KqiComparatorQuery)) *KqiTargetQuery {
+	query := &KqiComparatorQuery{config: ktq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ktq.withKqitargetcomparatorfk = query
 	return ktq
 }
 
@@ -346,8 +383,9 @@ func (ktq *KqiTargetQuery) sqlAll(ctx context.Context) ([]*KqiTarget, error) {
 		nodes       = []*KqiTarget{}
 		withFKs     = ktq.withFKs
 		_spec       = ktq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			ktq.withKqiTargetFk != nil,
+			ktq.withKqitargetcomparatorfk != nil,
 		}
 	)
 	if ktq.withKqiTargetFk != nil {
@@ -402,6 +440,35 @@ func (ktq *KqiTargetQuery) sqlAll(ctx context.Context) ([]*KqiTarget, error) {
 			for i := range nodes {
 				nodes[i].Edges.KqiTargetFk = n
 			}
+		}
+	}
+
+	if query := ktq.withKqitargetcomparatorfk; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*KqiTarget)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Kqitargetcomparatorfk = []*KqiComparator{}
+		}
+		query.withFKs = true
+		query.Where(predicate.KqiComparator(func(s *sql.Selector) {
+			s.Where(sql.InValues(kqitarget.KqitargetcomparatorfkColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.kqi_target_kqitargetcomparatorfk
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "kqi_target_kqitargetcomparatorfk" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "kqi_target_kqitargetcomparatorfk" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Kqitargetcomparatorfk = append(node.Edges.Kqitargetcomparatorfk, n)
 		}
 	}
 

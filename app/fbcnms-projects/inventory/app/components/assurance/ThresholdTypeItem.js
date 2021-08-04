@@ -12,7 +12,7 @@ import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddButton from './common/AddButton';
-import Table from './Table';
+import TableThreshold from './TableThreshold';
 
 // DESING SYSTEM //
 import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
@@ -22,7 +22,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import EditTresholdMutation from '../../mutations/EditTresholdMutation';
+import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
@@ -99,6 +99,7 @@ type Rule = {
   ruleType: {
     name: string,
   },
+  status: boolean,
 };
 
 type Props = $ReadOnly<{|
@@ -138,7 +139,7 @@ export default function ThresholdTypeItem(props: Props) {
       input: {
         id: id,
         name: name,
-        status: checked,
+        status: !checked,
         description: description,
       },
     };
@@ -217,7 +218,7 @@ export default function ThresholdTypeItem(props: Props) {
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <Table rule={rule} editRule={editRule} />
+              <TableThreshold rule={rule} editRule={editRule} />
             </Grid>
           </Grid>
         </AccordionDetails>

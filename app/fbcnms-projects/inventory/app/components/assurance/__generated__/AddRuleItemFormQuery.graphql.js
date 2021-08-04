@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddRuleItemFormQueryVariables = {||};
 export type AddRuleItemFormQueryResponse = {|
-  +eventSeveritys: {|
+  +eventSeverities: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -25,6 +25,14 @@ export type AddRuleItemFormQueryResponse = {|
     |}>
   |},
   +comparators: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
+  +ruleTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -42,7 +50,7 @@ export type AddRuleItemFormQuery = {|
 
 /*
 query AddRuleItemFormQuery {
-  eventSeveritys {
+  eventSeverities {
     edges {
       node {
         id
@@ -51,6 +59,14 @@ query AddRuleItemFormQuery {
     }
   }
   comparators {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  ruleTypes {
     edges {
       node {
         id
@@ -84,7 +100,7 @@ v1 = [
     "args": null,
     "concreteType": "EventSeverityConnection",
     "kind": "LinkedField",
-    "name": "eventSeveritys",
+    "name": "eventSeverities",
     "plural": false,
     "selections": [
       {
@@ -142,6 +158,38 @@ v1 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "RuleTypeConnection",
+    "kind": "LinkedField",
+    "name": "ruleTypes",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "RuleTypeEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "RuleType",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v0/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -162,16 +210,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "dacbdf1d1fd0e5adc7e572a15ab9446f",
+    "cacheID": "87713f41602da8e7b3b60a945c89e2fd",
     "id": null,
     "metadata": {},
     "name": "AddRuleItemFormQuery",
     "operationKind": "query",
-    "text": "query AddRuleItemFormQuery {\n  eventSeveritys {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddRuleItemFormQuery {\n  eventSeverities {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  ruleTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bb5aa2bf5cf61d1be21331bd2806682b';
+(node/*: any*/).hash = '10ccdaae7cb934622ec9af64dd160b5b';
 
 module.exports = node;

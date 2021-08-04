@@ -14,7 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // Kpi is the model entity for the Kpi schema.
@@ -44,8 +44,8 @@ type KpiEdges struct {
 	Domain *Domain
 	// Formulakpi holds the value of the formulakpi edge.
 	Formulakpi []*Formula
-	// Tresholdkpi holds the value of the tresholdkpi edge.
-	Tresholdkpi *Treshold
+	// Thresholdkpi holds the value of the thresholdkpi edge.
+	Thresholdkpi *Threshold
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -74,18 +74,18 @@ func (e KpiEdges) FormulakpiOrErr() ([]*Formula, error) {
 	return nil, &NotLoadedError{edge: "formulakpi"}
 }
 
-// TresholdkpiOrErr returns the Tresholdkpi value or an error if the edge
+// ThresholdkpiOrErr returns the Thresholdkpi value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e KpiEdges) TresholdkpiOrErr() (*Treshold, error) {
+func (e KpiEdges) ThresholdkpiOrErr() (*Threshold, error) {
 	if e.loadedTypes[2] {
-		if e.Tresholdkpi == nil {
-			// The edge tresholdkpi was loaded in eager-loading,
+		if e.Thresholdkpi == nil {
+			// The edge thresholdkpi was loaded in eager-loading,
 			// but was not found.
-			return nil, &NotFoundError{label: treshold.Label}
+			return nil, &NotFoundError{label: threshold.Label}
 		}
-		return e.Tresholdkpi, nil
+		return e.Thresholdkpi, nil
 	}
-	return nil, &NotLoadedError{edge: "tresholdkpi"}
+	return nil, &NotLoadedError{edge: "thresholdkpi"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -166,9 +166,9 @@ func (k *Kpi) QueryFormulakpi() *FormulaQuery {
 	return (&KpiClient{config: k.config}).QueryFormulakpi(k)
 }
 
-// QueryTresholdkpi queries the tresholdkpi edge of the Kpi.
-func (k *Kpi) QueryTresholdkpi() *TresholdQuery {
-	return (&KpiClient{config: k.config}).QueryTresholdkpi(k)
+// QueryThresholdkpi queries the thresholdkpi edge of the Kpi.
+func (k *Kpi) QueryThresholdkpi() *ThresholdQuery {
+	return (&KpiClient{config: k.config}).QueryThresholdkpi(k)
 }
 
 // Update returns a builder for updating this Kpi.

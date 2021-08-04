@@ -409,6 +409,34 @@ func HasComparatorrulelimitWith(preds ...predicate.RuleLimit) predicate.Comparat
 	})
 }
 
+// HasComparatorkqitargetfk applies the HasEdge predicate on the "comparatorkqitargetfk" edge.
+func HasComparatorkqitargetfk() predicate.Comparator {
+	return predicate.Comparator(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ComparatorkqitargetfkTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ComparatorkqitargetfkTable, ComparatorkqitargetfkColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasComparatorkqitargetfkWith applies the HasEdge predicate on the "comparatorkqitargetfk" edge with a given conditions (other predicates).
+func HasComparatorkqitargetfkWith(preds ...predicate.KqiComparator) predicate.Comparator {
+	return predicate.Comparator(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ComparatorkqitargetfkInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ComparatorkqitargetfkTable, ComparatorkqitargetfkColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Comparator) predicate.Comparator {
 	return predicate.Comparator(func(s *sql.Selector) {

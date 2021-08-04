@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AlarmFilteringStatusQueryVariables = {||};
 export type AlarmFilteringStatusQueryResponse = {|
-  +alarmStatuss: {|
+  +alarmStatus: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +name: string,
@@ -34,7 +34,7 @@ export type AlarmFilteringStatusQuery = {|
 
 /*
 query AlarmFilteringStatusQuery {
-  alarmStatuss {
+  alarmStatus {
     edges {
       node {
         name
@@ -52,7 +52,7 @@ var v0 = [
     "args": null,
     "concreteType": "AlarmStatusConnection",
     "kind": "LinkedField",
-    "name": "alarmStatuss",
+    "name": "alarmStatus",
     "plural": false,
     "selections": [
       {
@@ -113,16 +113,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "ec4ef88f56858f87383b7244b4531f95",
+    "cacheID": "b7a987a42a42395be53d9c7cc2316b09",
     "id": null,
     "metadata": {},
     "name": "AlarmFilteringStatusQuery",
     "operationKind": "query",
-    "text": "query AlarmFilteringStatusQuery {\n  alarmStatuss {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query AlarmFilteringStatusQuery {\n  alarmStatus {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7a74b83306e71aa291698ec3c2a64cd1';
+(node/*: any*/).hash = '6083dba65261c08d7397653dcf41cefb';
 
 module.exports = node;

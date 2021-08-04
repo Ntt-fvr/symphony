@@ -16,13 +16,13 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/category"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
+	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/perspective"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/temporalfrecuency"
 )
 
 // KqiQuery is the builder for querying Kqi entities.
@@ -34,12 +34,12 @@ type KqiQuery struct {
 	unique     []string
 	predicates []predicate.Kqi
 	// eager-loading edges.
-	withCategoryFk          *CategoryQuery
-	withPerspectiveFk       *PerspectiveQuery
-	withKqiSourceFk         *KqiSourceQuery
-	withTemporalFrecuencyFk *TemporalFrecuencyQuery
-	withKqiTargetFk         *KqiTargetQuery
-	withFKs                 bool
+	withKqiCategoryFk          *KqiCategoryQuery
+	withKqiPerspectiveFk       *KqiPerspectiveQuery
+	withKqiSourceFk            *KqiSourceQuery
+	withKqiTemporalFrecuencyFk *KqiTemporalFrecuencyQuery
+	withKqiTargetFk            *KqiTargetQuery
+	withFKs                    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -69,9 +69,9 @@ func (kq *KqiQuery) Order(o ...OrderFunc) *KqiQuery {
 	return kq
 }
 
-// QueryCategoryFk chains the current query on the categoryFk edge.
-func (kq *KqiQuery) QueryCategoryFk() *CategoryQuery {
-	query := &CategoryQuery{config: kq.config}
+// QueryKqiCategoryFk chains the current query on the kqiCategoryFk edge.
+func (kq *KqiQuery) QueryKqiCategoryFk() *KqiCategoryQuery {
+	query := &KqiCategoryQuery{config: kq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := kq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -82,8 +82,8 @@ func (kq *KqiQuery) QueryCategoryFk() *CategoryQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, selector),
-			sqlgraph.To(category.Table, category.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.CategoryFkTable, kqi.CategoryFkColumn),
+			sqlgraph.To(kqicategory.Table, kqicategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiCategoryFkTable, kqi.KqiCategoryFkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(kq.driver.Dialect(), step)
 		return fromU, nil
@@ -91,9 +91,9 @@ func (kq *KqiQuery) QueryCategoryFk() *CategoryQuery {
 	return query
 }
 
-// QueryPerspectiveFk chains the current query on the perspectiveFk edge.
-func (kq *KqiQuery) QueryPerspectiveFk() *PerspectiveQuery {
-	query := &PerspectiveQuery{config: kq.config}
+// QueryKqiPerspectiveFk chains the current query on the kqiPerspectiveFk edge.
+func (kq *KqiQuery) QueryKqiPerspectiveFk() *KqiPerspectiveQuery {
+	query := &KqiPerspectiveQuery{config: kq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := kq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -104,8 +104,8 @@ func (kq *KqiQuery) QueryPerspectiveFk() *PerspectiveQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, selector),
-			sqlgraph.To(perspective.Table, perspective.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.PerspectiveFkTable, kqi.PerspectiveFkColumn),
+			sqlgraph.To(kqiperspective.Table, kqiperspective.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiPerspectiveFkTable, kqi.KqiPerspectiveFkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(kq.driver.Dialect(), step)
 		return fromU, nil
@@ -135,9 +135,9 @@ func (kq *KqiQuery) QueryKqiSourceFk() *KqiSourceQuery {
 	return query
 }
 
-// QueryTemporalFrecuencyFk chains the current query on the temporalFrecuencyFk edge.
-func (kq *KqiQuery) QueryTemporalFrecuencyFk() *TemporalFrecuencyQuery {
-	query := &TemporalFrecuencyQuery{config: kq.config}
+// QueryKqiTemporalFrecuencyFk chains the current query on the kqiTemporalFrecuencyFk edge.
+func (kq *KqiQuery) QueryKqiTemporalFrecuencyFk() *KqiTemporalFrecuencyQuery {
+	query := &KqiTemporalFrecuencyQuery{config: kq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := kq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -148,8 +148,8 @@ func (kq *KqiQuery) QueryTemporalFrecuencyFk() *TemporalFrecuencyQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, selector),
-			sqlgraph.To(temporalfrecuency.Table, temporalfrecuency.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.TemporalFrecuencyFkTable, kqi.TemporalFrecuencyFkColumn),
+			sqlgraph.To(kqitemporalfrecuency.Table, kqitemporalfrecuency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiTemporalFrecuencyFkTable, kqi.KqiTemporalFrecuencyFkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(kq.driver.Dialect(), step)
 		return fromU, nil
@@ -349,42 +349,42 @@ func (kq *KqiQuery) Clone() *KqiQuery {
 		return nil
 	}
 	return &KqiQuery{
-		config:                  kq.config,
-		limit:                   kq.limit,
-		offset:                  kq.offset,
-		order:                   append([]OrderFunc{}, kq.order...),
-		unique:                  append([]string{}, kq.unique...),
-		predicates:              append([]predicate.Kqi{}, kq.predicates...),
-		withCategoryFk:          kq.withCategoryFk.Clone(),
-		withPerspectiveFk:       kq.withPerspectiveFk.Clone(),
-		withKqiSourceFk:         kq.withKqiSourceFk.Clone(),
-		withTemporalFrecuencyFk: kq.withTemporalFrecuencyFk.Clone(),
-		withKqiTargetFk:         kq.withKqiTargetFk.Clone(),
+		config:                     kq.config,
+		limit:                      kq.limit,
+		offset:                     kq.offset,
+		order:                      append([]OrderFunc{}, kq.order...),
+		unique:                     append([]string{}, kq.unique...),
+		predicates:                 append([]predicate.Kqi{}, kq.predicates...),
+		withKqiCategoryFk:          kq.withKqiCategoryFk.Clone(),
+		withKqiPerspectiveFk:       kq.withKqiPerspectiveFk.Clone(),
+		withKqiSourceFk:            kq.withKqiSourceFk.Clone(),
+		withKqiTemporalFrecuencyFk: kq.withKqiTemporalFrecuencyFk.Clone(),
+		withKqiTargetFk:            kq.withKqiTargetFk.Clone(),
 		// clone intermediate query.
 		sql:  kq.sql.Clone(),
 		path: kq.path,
 	}
 }
 
-//  WithCategoryFk tells the query-builder to eager-loads the nodes that are connected to
-// the "categoryFk" edge. The optional arguments used to configure the query builder of the edge.
-func (kq *KqiQuery) WithCategoryFk(opts ...func(*CategoryQuery)) *KqiQuery {
-	query := &CategoryQuery{config: kq.config}
+//  WithKqiCategoryFk tells the query-builder to eager-loads the nodes that are connected to
+// the "kqiCategoryFk" edge. The optional arguments used to configure the query builder of the edge.
+func (kq *KqiQuery) WithKqiCategoryFk(opts ...func(*KqiCategoryQuery)) *KqiQuery {
+	query := &KqiCategoryQuery{config: kq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	kq.withCategoryFk = query
+	kq.withKqiCategoryFk = query
 	return kq
 }
 
-//  WithPerspectiveFk tells the query-builder to eager-loads the nodes that are connected to
-// the "perspectiveFk" edge. The optional arguments used to configure the query builder of the edge.
-func (kq *KqiQuery) WithPerspectiveFk(opts ...func(*PerspectiveQuery)) *KqiQuery {
-	query := &PerspectiveQuery{config: kq.config}
+//  WithKqiPerspectiveFk tells the query-builder to eager-loads the nodes that are connected to
+// the "kqiPerspectiveFk" edge. The optional arguments used to configure the query builder of the edge.
+func (kq *KqiQuery) WithKqiPerspectiveFk(opts ...func(*KqiPerspectiveQuery)) *KqiQuery {
+	query := &KqiPerspectiveQuery{config: kq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	kq.withPerspectiveFk = query
+	kq.withKqiPerspectiveFk = query
 	return kq
 }
 
@@ -399,14 +399,14 @@ func (kq *KqiQuery) WithKqiSourceFk(opts ...func(*KqiSourceQuery)) *KqiQuery {
 	return kq
 }
 
-//  WithTemporalFrecuencyFk tells the query-builder to eager-loads the nodes that are connected to
-// the "temporalFrecuencyFk" edge. The optional arguments used to configure the query builder of the edge.
-func (kq *KqiQuery) WithTemporalFrecuencyFk(opts ...func(*TemporalFrecuencyQuery)) *KqiQuery {
-	query := &TemporalFrecuencyQuery{config: kq.config}
+//  WithKqiTemporalFrecuencyFk tells the query-builder to eager-loads the nodes that are connected to
+// the "kqiTemporalFrecuencyFk" edge. The optional arguments used to configure the query builder of the edge.
+func (kq *KqiQuery) WithKqiTemporalFrecuencyFk(opts ...func(*KqiTemporalFrecuencyQuery)) *KqiQuery {
+	query := &KqiTemporalFrecuencyQuery{config: kq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	kq.withTemporalFrecuencyFk = query
+	kq.withKqiTemporalFrecuencyFk = query
 	return kq
 }
 
@@ -492,14 +492,14 @@ func (kq *KqiQuery) sqlAll(ctx context.Context) ([]*Kqi, error) {
 		withFKs     = kq.withFKs
 		_spec       = kq.querySpec()
 		loadedTypes = [5]bool{
-			kq.withCategoryFk != nil,
-			kq.withPerspectiveFk != nil,
+			kq.withKqiCategoryFk != nil,
+			kq.withKqiPerspectiveFk != nil,
 			kq.withKqiSourceFk != nil,
-			kq.withTemporalFrecuencyFk != nil,
+			kq.withKqiTemporalFrecuencyFk != nil,
 			kq.withKqiTargetFk != nil,
 		}
 	)
-	if kq.withCategoryFk != nil || kq.withPerspectiveFk != nil || kq.withKqiSourceFk != nil || kq.withTemporalFrecuencyFk != nil {
+	if kq.withKqiCategoryFk != nil || kq.withKqiPerspectiveFk != nil || kq.withKqiSourceFk != nil || kq.withKqiTemporalFrecuencyFk != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -529,16 +529,16 @@ func (kq *KqiQuery) sqlAll(ctx context.Context) ([]*Kqi, error) {
 		return nodes, nil
 	}
 
-	if query := kq.withCategoryFk; query != nil {
+	if query := kq.withKqiCategoryFk; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Kqi)
 		for i := range nodes {
-			if fk := nodes[i].category_category_fk; fk != nil {
+			if fk := nodes[i].kqi_category_kqi_category_fk; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(category.IDIn(ids...))
+		query.Where(kqicategory.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -546,24 +546,24 @@ func (kq *KqiQuery) sqlAll(ctx context.Context) ([]*Kqi, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "category_category_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "kqi_category_kqi_category_fk" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.CategoryFk = n
+				nodes[i].Edges.KqiCategoryFk = n
 			}
 		}
 	}
 
-	if query := kq.withPerspectiveFk; query != nil {
+	if query := kq.withKqiPerspectiveFk; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Kqi)
 		for i := range nodes {
-			if fk := nodes[i].perspective_perspective_fk; fk != nil {
+			if fk := nodes[i].kqi_perspective_kqi_perspective_fk; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(perspective.IDIn(ids...))
+		query.Where(kqiperspective.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -571,10 +571,10 @@ func (kq *KqiQuery) sqlAll(ctx context.Context) ([]*Kqi, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "perspective_perspective_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "kqi_perspective_kqi_perspective_fk" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.PerspectiveFk = n
+				nodes[i].Edges.KqiPerspectiveFk = n
 			}
 		}
 	}
@@ -604,16 +604,16 @@ func (kq *KqiQuery) sqlAll(ctx context.Context) ([]*Kqi, error) {
 		}
 	}
 
-	if query := kq.withTemporalFrecuencyFk; query != nil {
+	if query := kq.withKqiTemporalFrecuencyFk; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Kqi)
 		for i := range nodes {
-			if fk := nodes[i].temporal_frecuency_temporal_frecuency_fk; fk != nil {
+			if fk := nodes[i].kqi_temporal_frecuency_kqi_temporal_frecuency_fk; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(temporalfrecuency.IDIn(ids...))
+		query.Where(kqitemporalfrecuency.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -621,10 +621,10 @@ func (kq *KqiQuery) sqlAll(ctx context.Context) ([]*Kqi, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "temporal_frecuency_temporal_frecuency_fk" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "kqi_temporal_frecuency_kqi_temporal_frecuency_fk" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.TemporalFrecuencyFk = n
+				nodes[i].Edges.KqiTemporalFrecuencyFk = n
 			}
 		}
 	}
