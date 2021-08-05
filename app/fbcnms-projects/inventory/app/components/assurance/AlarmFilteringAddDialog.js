@@ -20,6 +20,7 @@ import Text from '@symphony/design-system/components/Text';
 import CloseIcon from '@material-ui/icons/Close';
 import Warning from './common/Warning';
 import {makeStyles} from '@material-ui/styles';
+import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -96,10 +97,10 @@ const AlarmFilteringAddDialog = (props: Props) => {
             <Text>During the period:</Text>
           </Grid>
           <Grid item xs={6}>
-            <Text weight="bold">Start: {onAlarmSelectedData.beginTime}</Text>
+            <Text weight="bold">Start: DateTimeFormat.dateTime(onAlarmSelectedData.beginTime)</Text>
           </Grid>
           <Grid item xs={6}>
-            <Text weight="bold">End: {onAlarmSelectedData.endTime} </Text>
+            <Text weight="bold">End: DateTimeFormat.dateTime(onAlarmSelectedData.endTime) </Text>
           </Grid>
         </Grid>
       </DialogContent>

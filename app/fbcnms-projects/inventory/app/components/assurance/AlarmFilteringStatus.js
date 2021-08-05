@@ -64,7 +64,7 @@ export const AlarmFilteringStatus = (props: Props) => {
     {},
   );
   
-  const dataStatusResponse = dataStatus.alarmStatuss?.edges.map((item, index) => item.node).filter(item => item.name == buttonName)
+  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node).filter(item => item.name == buttonName)
 
   return (
     <>

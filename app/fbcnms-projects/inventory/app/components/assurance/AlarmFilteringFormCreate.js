@@ -33,7 +33,7 @@ import {makeStyles} from '@material-ui/styles';
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
-import type {AlarmFilteringStatusQuery} from './__generated__/AlarmFilteringStatusQuery.graphql'
+import type {AlarmFilteringFormCreateQuery} from './__generated__/AlarmFilteringFormCreateQuery.graphql'
 
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 import {useFormInput} from './common/useFormInput';
@@ -109,8 +109,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 const AlarmStatusQuery = graphql`
-  query AlarmFilteringStatusQuery {
-    alarmStatuss {
+  query AlarmFilteringFormCreateQuery {
+    alarmStatus {
       edges {
         node {
           name
@@ -145,8 +145,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
-  const dataStatus = useLazyLoadQuery<AlarmFilteringStatusQuery>( AlarmStatusQuery, {} );
-  const dataStatusResponse = dataStatus.alarmStatuss?.edges.map((item, index) => item.node)
+  const dataStatus = useLazyLoadQuery<AlarmFilteringFormCreateQuery>( AlarmStatusQuery, {} );
+  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node)
   const valueId = useRef('')
 
   function handleChange({target}) {
