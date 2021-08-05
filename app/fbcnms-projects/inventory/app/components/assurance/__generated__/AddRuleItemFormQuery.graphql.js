@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddRuleItemFormQueryVariables = {||};
 export type AddRuleItemFormQueryResponse = {|
-  +eventSeveritys: {|
+  +eventSeverities: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -50,7 +50,7 @@ export type AddRuleItemFormQuery = {|
 
 /*
 query AddRuleItemFormQuery {
-  eventSeveritys {
+  eventSeverities {
     edges {
       node {
         id
@@ -100,7 +100,7 @@ v1 = [
     "args": null,
     "concreteType": "EventSeverityConnection",
     "kind": "LinkedField",
-    "name": "eventSeveritys",
+    "name": "eventSeverities",
     "plural": false,
     "selections": [
       {
@@ -210,16 +210,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d898ce49f2444b063d740400e5918dbc",
+    "cacheID": "87713f41602da8e7b3b60a945c89e2fd",
     "id": null,
     "metadata": {},
     "name": "AddRuleItemFormQuery",
     "operationKind": "query",
-    "text": "query AddRuleItemFormQuery {\n  eventSeveritys {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  ruleTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddRuleItemFormQuery {\n  eventSeverities {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  ruleTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b49f4740f316a5d49746cd69af133808';
+(node/*: any*/).hash = '10ccdaae7cb934622ec9af64dd160b5b';
 
 module.exports = node;

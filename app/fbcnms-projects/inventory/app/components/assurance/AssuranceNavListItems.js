@@ -42,6 +42,11 @@ export const AssuranceNavListItems = () => {
       label="Service Quality"
       path={relativeUrl('/service_quality/kqi_source')}
       icon={<AppRegistrationIcon />}
+      onClick={() => {
+        ServerLogger.info(
+          LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED,
+        );
+      }}
     />,
   ];
 };

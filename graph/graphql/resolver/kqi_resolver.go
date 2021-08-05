@@ -17,8 +17,8 @@ import (
 
 type kqiResolver struct{}
 
-func (kqiResolver) Category(ctx context.Context, kqi *ent.Kqi) (*ent.Category, error) {
-	variable, err := kqi.CategoryFk(ctx)
+func (kqiResolver) KqiCategory(ctx context.Context, kqi *ent.Kqi) (*ent.KqiCategory, error) {
+	variable, err := kqi.KqiCategoryFk(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
@@ -27,8 +27,8 @@ func (kqiResolver) Category(ctx context.Context, kqi *ent.Kqi) (*ent.Category, e
 	}
 }
 
-func (kqiResolver) Perspective(ctx context.Context, kqi *ent.Kqi) (*ent.Perspective, error) {
-	variable, err := kqi.PerspectiveFk(ctx)
+func (kqiResolver) KqiPerspective(ctx context.Context, kqi *ent.Kqi) (*ent.KqiPerspective, error) {
+	variable, err := kqi.KqiPerspectiveFk(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
@@ -47,8 +47,8 @@ func (kqiResolver) KqiSource(ctx context.Context, kqi *ent.Kqi) (*ent.KqiSource,
 	}
 }
 
-func (kqiResolver) TemporalFrecuency(ctx context.Context, kqi *ent.Kqi) (*ent.TemporalFrecuency, error) {
-	variable, err := kqi.TemporalFrecuencyFk(ctx)
+func (kqiResolver) KqiTemporalFrecuency(ctx context.Context, kqi *ent.Kqi) (*ent.KqiTemporalFrecuency, error) {
+	variable, err := kqi.KqiTemporalFrecuencyFk(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
@@ -76,10 +76,10 @@ func (r mutationResolver) AddKqi(ctx context.Context, input models.AddKqiInput) 
 		SetFormula(input.Formula).
 		SetStartDateTime(input.StartDateTime).
 		SetEndDateTime(input.EndDateTime).
-		SetCategoryFkID(input.Category).
-		SetPerspectiveFkID(input.Perspective).
+		SetKqiCategoryFkID(input.KqiCategory).
+		SetKqiPerspectiveFkID(input.KqiPerspective).
 		SetKqiSourceFkID(input.KqiSource).
-		SetTemporalFrecuencyFkID(input.TemporalFrecuency).
+		SetKqiTemporalFrecuencyFkID(input.KqiTemporalFrecuency).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -120,19 +120,19 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 	var categoryid, perspectiveid, temporalFrecuencyid, kqiSourceId int
 	var name, start, end, formula, description = et.Name, et.StartDateTime, et.EndDateTime, et.Formula, et.Description
 
-	var category, err1 = et.CategoryFk(ctx)
+	var category, err1 = et.KqiCategoryFk(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if category != nil {
 		categoryid = category.ID
 	}
-	var perspective, err2 = et.PerspectiveFk(ctx)
+	var perspective, err2 = et.KqiPerspectiveFk(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
 	} else if perspective != nil {
 		perspectiveid = perspective.ID
 	}
-	var temporal, err3 = et.TemporalFrecuencyFk(ctx)
+	var temporal, err3 = et.KqiTemporalFrecuencyFk(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
 	} else if temporal != nil {
@@ -167,16 +167,16 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 		description = input.Description
 		change = true
 	}
-	if (category != nil && category.ID != input.Category) || category == nil {
-		categoryid = input.Category
+	if (category != nil && category.ID != input.KqiCategory) || category == nil {
+		categoryid = input.KqiCategory
 		change = true
 	}
-	if (perspective != nil && perspective.ID != input.Perspective) || perspective == nil {
-		perspectiveid = input.Perspective
+	if (perspective != nil && perspective.ID != input.KqiPerspective) || perspective == nil {
+		perspectiveid = input.KqiPerspective
 		change = true
 	}
-	if (temporal != nil && temporal.ID != input.TemporalFrecuency) || temporal == nil {
-		temporalFrecuencyid = input.TemporalFrecuency
+	if (temporal != nil && temporal.ID != input.KqiTemporalFrecuency) || temporal == nil {
+		temporalFrecuencyid = input.KqiTemporalFrecuency
 		change = true
 	}
 	if (source != nil && source.ID != input.KqiSource) || source == nil {
@@ -193,10 +193,10 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 			SetDescription(description).
 			SetStartDateTime(start).
 			SetEndDateTime(end).
-			SetCategoryFkID(categoryid).
-			SetPerspectiveFkID(perspectiveid).
+			SetKqiCategoryFkID(categoryid).
+			SetKqiPerspectiveFkID(perspectiveid).
 			SetKqiSourceFkID(kqiSourceId).
-			SetTemporalFrecuencyFkID(temporalFrecuencyid).
+			SetKqiTemporalFrecuencyFkID(temporalFrecuencyid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)

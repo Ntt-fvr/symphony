@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AddCounterItemFormQueryVariables = {||};
 export type AddCounterItemFormQueryResponse = {|
-  +counterFamilys: {|
+  +counterFamilies: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -42,7 +42,7 @@ export type AddCounterItemFormQuery = {|
 
 /*
 query AddCounterItemFormQuery {
-  counterFamilys {
+  counterFamilies {
     edges {
       node {
         id
@@ -84,7 +84,7 @@ v1 = [
     "args": null,
     "concreteType": "CounterFamilyConnection",
     "kind": "LinkedField",
-    "name": "counterFamilys",
+    "name": "counterFamilies",
     "plural": false,
     "selections": [
       {
@@ -162,16 +162,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5b36490d2205a53d12e29e897786fad2",
+    "cacheID": "3a093187b9eebd13e28df55ff06bc84b",
     "id": null,
     "metadata": {},
     "name": "AddCounterItemFormQuery",
     "operationKind": "query",
-    "text": "query AddCounterItemFormQuery {\n  counterFamilys {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddCounterItemFormQuery {\n  counterFamilies {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '872e763c51d99cb793775fd0ca3fb706';
+(node/*: any*/).hash = '604a6fea0a9c6a72f33a8301c60b3fb4';
 
 module.exports = node;

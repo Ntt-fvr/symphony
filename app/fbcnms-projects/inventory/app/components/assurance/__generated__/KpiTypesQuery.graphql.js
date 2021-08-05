@@ -30,7 +30,7 @@ export type KpiTypesQueryResponse = {|
       |}
     |}>
   |},
-  +tresholds: {|
+  +thresholds: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +name: string,
@@ -64,7 +64,7 @@ query KpiTypesQuery {
       }
     }
   }
-  tresholds {
+  thresholds {
     edges {
       node {
         name
@@ -167,15 +167,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdConnection",
+        "concreteType": "ThresholdConnection",
         "kind": "LinkedField",
-        "name": "tresholds",
+        "name": "thresholds",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TresholdEdge",
+            "concreteType": "ThresholdEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -183,7 +183,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Treshold",
+                "concreteType": "Threshold",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -224,15 +224,15 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "TresholdConnection",
+        "concreteType": "ThresholdConnection",
         "kind": "LinkedField",
-        "name": "tresholds",
+        "name": "thresholds",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TresholdEdge",
+            "concreteType": "ThresholdEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -240,7 +240,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Treshold",
+                "concreteType": "Threshold",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -272,16 +272,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d8f710554bfc91b72f53cb4e7a9ed4a4",
+    "cacheID": "963450c9755d0914921eb2632798c3b5",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n  tresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '1d75790c74cf6f129f8cc6779391d9e4';
+(node/*: any*/).hash = '9d1ee7ce2c4d6000395ae042b098a4a6';
 
 module.exports = node;

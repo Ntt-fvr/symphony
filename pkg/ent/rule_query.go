@@ -21,7 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // RuleQuery is the builder for querying Rule entities.
@@ -35,7 +35,7 @@ type RuleQuery struct {
 	// eager-loading edges.
 	withRuletype      *RuleTypeQuery
 	withEventseverity *EventSeverityQuery
-	withTreshold      *TresholdQuery
+	withThreshold     *ThresholdQuery
 	withRulelimitrule *RuleLimitQuery
 	withFKs           bool
 	// intermediate query (i.e. traversal path).
@@ -111,9 +111,9 @@ func (rq *RuleQuery) QueryEventseverity() *EventSeverityQuery {
 	return query
 }
 
-// QueryTreshold chains the current query on the treshold edge.
-func (rq *RuleQuery) QueryTreshold() *TresholdQuery {
-	query := &TresholdQuery{config: rq.config}
+// QueryThreshold chains the current query on the threshold edge.
+func (rq *RuleQuery) QueryThreshold() *ThresholdQuery {
+	query := &ThresholdQuery{config: rq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := rq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -124,8 +124,8 @@ func (rq *RuleQuery) QueryTreshold() *TresholdQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(rule.Table, rule.FieldID, selector),
-			sqlgraph.To(treshold.Table, treshold.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, rule.TresholdTable, rule.TresholdColumn),
+			sqlgraph.To(threshold.Table, threshold.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.ThresholdTable, rule.ThresholdColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -333,7 +333,7 @@ func (rq *RuleQuery) Clone() *RuleQuery {
 		predicates:        append([]predicate.Rule{}, rq.predicates...),
 		withRuletype:      rq.withRuletype.Clone(),
 		withEventseverity: rq.withEventseverity.Clone(),
-		withTreshold:      rq.withTreshold.Clone(),
+		withThreshold:     rq.withThreshold.Clone(),
 		withRulelimitrule: rq.withRulelimitrule.Clone(),
 		// clone intermediate query.
 		sql:  rq.sql.Clone(),
@@ -363,14 +363,14 @@ func (rq *RuleQuery) WithEventseverity(opts ...func(*EventSeverityQuery)) *RuleQ
 	return rq
 }
 
-//  WithTreshold tells the query-builder to eager-loads the nodes that are connected to
-// the "treshold" edge. The optional arguments used to configure the query builder of the edge.
-func (rq *RuleQuery) WithTreshold(opts ...func(*TresholdQuery)) *RuleQuery {
-	query := &TresholdQuery{config: rq.config}
+//  WithThreshold tells the query-builder to eager-loads the nodes that are connected to
+// the "threshold" edge. The optional arguments used to configure the query builder of the edge.
+func (rq *RuleQuery) WithThreshold(opts ...func(*ThresholdQuery)) *RuleQuery {
+	query := &ThresholdQuery{config: rq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	rq.withTreshold = query
+	rq.withThreshold = query
 	return rq
 }
 
@@ -458,11 +458,11 @@ func (rq *RuleQuery) sqlAll(ctx context.Context) ([]*Rule, error) {
 		loadedTypes = [4]bool{
 			rq.withRuletype != nil,
 			rq.withEventseverity != nil,
-			rq.withTreshold != nil,
+			rq.withThreshold != nil,
 			rq.withRulelimitrule != nil,
 		}
 	)
-	if rq.withRuletype != nil || rq.withEventseverity != nil || rq.withTreshold != nil {
+	if rq.withRuletype != nil || rq.withEventseverity != nil || rq.withThreshold != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -542,16 +542,16 @@ func (rq *RuleQuery) sqlAll(ctx context.Context) ([]*Rule, error) {
 		}
 	}
 
-	if query := rq.withTreshold; query != nil {
+	if query := rq.withThreshold; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Rule)
 		for i := range nodes {
-			if fk := nodes[i].treshold_ruletreshold; fk != nil {
+			if fk := nodes[i].threshold_rulethreshold; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
 		}
-		query.Where(treshold.IDIn(ids...))
+		query.Where(threshold.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
@@ -559,10 +559,10 @@ func (rq *RuleQuery) sqlAll(ctx context.Context) ([]*Rule, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "treshold_ruletreshold" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "threshold_rulethreshold" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Treshold = n
+				nodes[i].Edges.Threshold = n
 			}
 		}
 	}

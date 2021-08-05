@@ -25,7 +25,7 @@ export type AddRuleInput = {|
   additionalInfo?: ?string,
   status: boolean,
   eventSeverity: string,
-  treshold: string,
+  threshold: string,
 |};
 export type AddRuleMutationVariables = {|
   input: AddRuleInput

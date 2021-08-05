@@ -12,13 +12,13 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 // COMPONENTS //
-import Table from './Table';
+import TableThreshold from './TableThreshold';
 import {useFormInput} from './common/useFormInput';
 
 // MUTATIONS //
 import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
 
-import EditTresholdMutation from '../../mutations/EditTresholdMutation';
+import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 // DESIGN SYSTEM //
@@ -87,10 +87,11 @@ type Props = $ReadOnly<{|
   },
   thresholdNames: Array<string>,
   hideEditThresholdForm: void => void,
+  editRule: void => void,
 |}>;
 
 export const EditThresholdItemForm = (props: Props) => {
-  const {thresholdNames, formValues, hideEditThresholdForm} = props;
+  const {thresholdNames, formValues, hideEditThresholdForm, editRule} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -219,7 +220,7 @@ export const EditThresholdItemForm = (props: Props) => {
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
             <CardHeader>Formulas contained</CardHeader>
-            <Table rule={formValues.rule} />
+            <TableThreshold rule={formValues.rule} editRule={editRule} />
           </Card>
         </Grid>
       </Grid>

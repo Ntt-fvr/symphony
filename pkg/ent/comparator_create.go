@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/comparator"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 )
 
@@ -72,6 +73,21 @@ func (cc *ComparatorCreate) AddComparatorrulelimit(r ...*RuleLimit) *ComparatorC
 		ids[i] = r[i].ID
 	}
 	return cc.AddComparatorrulelimitIDs(ids...)
+}
+
+// AddComparatorkqitargetfkIDs adds the comparatorkqitargetfk edge to KqiComparator by ids.
+func (cc *ComparatorCreate) AddComparatorkqitargetfkIDs(ids ...int) *ComparatorCreate {
+	cc.mutation.AddComparatorkqitargetfkIDs(ids...)
+	return cc
+}
+
+// AddComparatorkqitargetfk adds the comparatorkqitargetfk edges to KqiComparator.
+func (cc *ComparatorCreate) AddComparatorkqitargetfk(k ...*KqiComparator) *ComparatorCreate {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return cc.AddComparatorkqitargetfkIDs(ids...)
 }
 
 // Mutation returns the ComparatorMutation object of the builder.
@@ -214,6 +230,25 @@ func (cc *ComparatorCreate) createSpec() (*Comparator, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: rulelimit.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cc.mutation.ComparatorkqitargetfkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   comparator.ComparatorkqitargetfkTable,
+			Columns: []string{comparator.ComparatorkqitargetfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
 				},
 			},
 		}

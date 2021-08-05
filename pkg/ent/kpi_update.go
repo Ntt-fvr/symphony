@@ -17,7 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // KpiUpdate is the builder for updating Kpi entities.
@@ -85,23 +85,23 @@ func (ku *KpiUpdate) AddFormulakpi(f ...*Formula) *KpiUpdate {
 	return ku.AddFormulakpiIDs(ids...)
 }
 
-// SetTresholdkpiID sets the tresholdkpi edge to Treshold by id.
-func (ku *KpiUpdate) SetTresholdkpiID(id int) *KpiUpdate {
-	ku.mutation.SetTresholdkpiID(id)
+// SetThresholdkpiID sets the thresholdkpi edge to Threshold by id.
+func (ku *KpiUpdate) SetThresholdkpiID(id int) *KpiUpdate {
+	ku.mutation.SetThresholdkpiID(id)
 	return ku
 }
 
-// SetNillableTresholdkpiID sets the tresholdkpi edge to Treshold by id if the given value is not nil.
-func (ku *KpiUpdate) SetNillableTresholdkpiID(id *int) *KpiUpdate {
+// SetNillableThresholdkpiID sets the thresholdkpi edge to Threshold by id if the given value is not nil.
+func (ku *KpiUpdate) SetNillableThresholdkpiID(id *int) *KpiUpdate {
 	if id != nil {
-		ku = ku.SetTresholdkpiID(*id)
+		ku = ku.SetThresholdkpiID(*id)
 	}
 	return ku
 }
 
-// SetTresholdkpi sets the tresholdkpi edge to Treshold.
-func (ku *KpiUpdate) SetTresholdkpi(t *Treshold) *KpiUpdate {
-	return ku.SetTresholdkpiID(t.ID)
+// SetThresholdkpi sets the thresholdkpi edge to Threshold.
+func (ku *KpiUpdate) SetThresholdkpi(t *Threshold) *KpiUpdate {
+	return ku.SetThresholdkpiID(t.ID)
 }
 
 // Mutation returns the KpiMutation object of the builder.
@@ -136,9 +136,9 @@ func (ku *KpiUpdate) RemoveFormulakpi(f ...*Formula) *KpiUpdate {
 	return ku.RemoveFormulakpiIDs(ids...)
 }
 
-// ClearTresholdkpi clears the "tresholdkpi" edge to type Treshold.
-func (ku *KpiUpdate) ClearTresholdkpi() *KpiUpdate {
-	ku.mutation.ClearTresholdkpi()
+// ClearThresholdkpi clears the "thresholdkpi" edge to type Threshold.
+func (ku *KpiUpdate) ClearThresholdkpi() *KpiUpdate {
+	ku.mutation.ClearThresholdkpi()
 	return ku
 }
 
@@ -358,33 +358,33 @@ func (ku *KpiUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ku.mutation.TresholdkpiCleared() {
+	if ku.mutation.ThresholdkpiCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   kpi.TresholdkpiTable,
-			Columns: []string{kpi.TresholdkpiColumn},
+			Table:   kpi.ThresholdkpiTable,
+			Columns: []string{kpi.ThresholdkpiColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: treshold.FieldID,
+					Column: threshold.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ku.mutation.TresholdkpiIDs(); len(nodes) > 0 {
+	if nodes := ku.mutation.ThresholdkpiIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   kpi.TresholdkpiTable,
-			Columns: []string{kpi.TresholdkpiColumn},
+			Table:   kpi.ThresholdkpiTable,
+			Columns: []string{kpi.ThresholdkpiColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: treshold.FieldID,
+					Column: threshold.FieldID,
 				},
 			},
 		}
@@ -463,23 +463,23 @@ func (kuo *KpiUpdateOne) AddFormulakpi(f ...*Formula) *KpiUpdateOne {
 	return kuo.AddFormulakpiIDs(ids...)
 }
 
-// SetTresholdkpiID sets the tresholdkpi edge to Treshold by id.
-func (kuo *KpiUpdateOne) SetTresholdkpiID(id int) *KpiUpdateOne {
-	kuo.mutation.SetTresholdkpiID(id)
+// SetThresholdkpiID sets the thresholdkpi edge to Threshold by id.
+func (kuo *KpiUpdateOne) SetThresholdkpiID(id int) *KpiUpdateOne {
+	kuo.mutation.SetThresholdkpiID(id)
 	return kuo
 }
 
-// SetNillableTresholdkpiID sets the tresholdkpi edge to Treshold by id if the given value is not nil.
-func (kuo *KpiUpdateOne) SetNillableTresholdkpiID(id *int) *KpiUpdateOne {
+// SetNillableThresholdkpiID sets the thresholdkpi edge to Threshold by id if the given value is not nil.
+func (kuo *KpiUpdateOne) SetNillableThresholdkpiID(id *int) *KpiUpdateOne {
 	if id != nil {
-		kuo = kuo.SetTresholdkpiID(*id)
+		kuo = kuo.SetThresholdkpiID(*id)
 	}
 	return kuo
 }
 
-// SetTresholdkpi sets the tresholdkpi edge to Treshold.
-func (kuo *KpiUpdateOne) SetTresholdkpi(t *Treshold) *KpiUpdateOne {
-	return kuo.SetTresholdkpiID(t.ID)
+// SetThresholdkpi sets the thresholdkpi edge to Threshold.
+func (kuo *KpiUpdateOne) SetThresholdkpi(t *Threshold) *KpiUpdateOne {
+	return kuo.SetThresholdkpiID(t.ID)
 }
 
 // Mutation returns the KpiMutation object of the builder.
@@ -514,9 +514,9 @@ func (kuo *KpiUpdateOne) RemoveFormulakpi(f ...*Formula) *KpiUpdateOne {
 	return kuo.RemoveFormulakpiIDs(ids...)
 }
 
-// ClearTresholdkpi clears the "tresholdkpi" edge to type Treshold.
-func (kuo *KpiUpdateOne) ClearTresholdkpi() *KpiUpdateOne {
-	kuo.mutation.ClearTresholdkpi()
+// ClearThresholdkpi clears the "thresholdkpi" edge to type Threshold.
+func (kuo *KpiUpdateOne) ClearThresholdkpi() *KpiUpdateOne {
+	kuo.mutation.ClearThresholdkpi()
 	return kuo
 }
 
@@ -734,33 +734,33 @@ func (kuo *KpiUpdateOne) sqlSave(ctx context.Context) (_node *Kpi, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if kuo.mutation.TresholdkpiCleared() {
+	if kuo.mutation.ThresholdkpiCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   kpi.TresholdkpiTable,
-			Columns: []string{kpi.TresholdkpiColumn},
+			Table:   kpi.ThresholdkpiTable,
+			Columns: []string{kpi.ThresholdkpiColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: treshold.FieldID,
+					Column: threshold.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := kuo.mutation.TresholdkpiIDs(); len(nodes) > 0 {
+	if nodes := kuo.mutation.ThresholdkpiIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   kpi.TresholdkpiTable,
-			Columns: []string{kpi.TresholdkpiColumn},
+			Table:   kpi.ThresholdkpiTable,
+			Columns: []string{kpi.ThresholdkpiColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: treshold.FieldID,
+					Column: threshold.FieldID,
 				},
 			},
 		}

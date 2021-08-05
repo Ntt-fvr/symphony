@@ -33,6 +33,7 @@ export type AddWorkOrderInput = {|
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryInput>,
   assigneeId?: ?string,
   index?: ?number,
+  organizationFk?: ?string,
   status?: ?WorkOrderStatus,
   priority?: ?WorkOrderPriority,
 |};

@@ -33,7 +33,6 @@ type hooks struct {
 	AlarmStatus                 []ent.Hook
 	Block                       []ent.Hook
 	BlockInstance               []ent.Hook
-	Category                    []ent.Hook
 	CheckListCategory           []ent.Hook
 	CheckListCategoryDefinition []ent.Hook
 	CheckListItem               []ent.Hook
@@ -71,13 +70,17 @@ type hooks struct {
 	Hyperlink                   []ent.Hook
 	Kpi                         []ent.Hook
 	Kqi                         []ent.Hook
+	KqiCategory                 []ent.Hook
+	KqiComparator               []ent.Hook
+	KqiPerspective              []ent.Hook
 	KqiSource                   []ent.Hook
 	KqiTarget                   []ent.Hook
+	KqiTemporalFrecuency        []ent.Hook
 	Link                        []ent.Hook
 	Location                    []ent.Hook
 	LocationType                []ent.Hook
+	Organization                []ent.Hook
 	PermissionsPolicy           []ent.Hook
-	Perspective                 []ent.Hook
 	Project                     []ent.Hook
 	ProjectTemplate             []ent.Hook
 	ProjectType                 []ent.Hook
@@ -98,8 +101,7 @@ type hooks struct {
 	SurveyTemplateQuestion      []ent.Hook
 	SurveyWiFiScan              []ent.Hook
 	Tech                        []ent.Hook
-	TemporalFrecuency           []ent.Hook
-	Treshold                    []ent.Hook
+	Threshold                   []ent.Hook
 	User                        []ent.Hook
 	UsersGroup                  []ent.Hook
 	Vendor                      []ent.Hook

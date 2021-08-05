@@ -8,33 +8,45 @@ import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-// Alarm defines the property type schema.
 type KqiTarget struct {
 	schema
 }
 
-// Alarm returns property type alarm.
 func (KqiTarget) Fields() []ent.Field {
 	return []ent.Field{
-		field.Float("comparator"),
-		field.Float("referenceValue"),
-		field.Float("warningComparator"),
 		field.Float("frame"),
 		field.Float("alowedValidation"),
 		field.Time("initTime"),
 		field.Time("endTime"),
 		field.String("impact"),
-		field.Bool("active"),
+		field.Bool("status"),
 	}
 }
 
-// Edges returns property type edges.
 func (KqiTarget) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("kqiTargetFk", Kqi.Type).
 			Ref("kqiTargetFk").
 			Unique(),
+		edge.To("kqitargetcomparatorfk", KqiComparator.Type).
+			Annotations(entgql.MapsTo("kqicomparator")),
 	}
+}
+
+func (KqiTarget) Policy() ent.Policy {
+	/*return authz.NewPolicy(
+		authz.WithMutationRules(
+			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)*/
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
 }

@@ -178,10 +178,10 @@ func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQ
 	return query, nil
 }
 
-func TresholdFilter(query *ent.TresholdQuery, filters []*models.TresholdFilterInput) (*ent.TresholdQuery, error) {
+func ThresholdFilter(query *ent.ThresholdQuery, filters []*models.ThresholdFilterInput) (*ent.ThresholdQuery, error) {
 	var err error
 	for _, f := range filters {
-		if query, err = handleTresholdFilter(query, f); err != nil {
+		if query, err = handleThresholdFilter(query, f); err != nil {
 			return nil, err
 		}
 	}
@@ -285,3 +285,14 @@ func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQ
 	}
 	return query, nil
 }
+
+func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleOrganizationFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+

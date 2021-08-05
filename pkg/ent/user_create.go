@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
@@ -179,6 +180,25 @@ func (uc *UserCreate) AddGroups(u ...*UsersGroup) *UserCreate {
 		ids[i] = u[i].ID
 	}
 	return uc.AddGroupIDs(ids...)
+}
+
+// SetOrganizationID sets the organization edge to Organization by id.
+func (uc *UserCreate) SetOrganizationID(id int) *UserCreate {
+	uc.mutation.SetOrganizationID(id)
+	return uc
+}
+
+// SetNillableOrganizationID sets the organization edge to Organization by id if the given value is not nil.
+func (uc *UserCreate) SetNillableOrganizationID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetOrganizationID(*id)
+	}
+	return uc
+}
+
+// SetOrganization sets the organization edge to Organization.
+func (uc *UserCreate) SetOrganization(o *Organization) *UserCreate {
+	return uc.SetOrganizationID(o.ID)
 }
 
 // AddOwnedWorkOrderIDs adds the owned_work_orders edge to WorkOrder by ids.
@@ -499,6 +519,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganizationTable,
+			Columns: []string{user.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

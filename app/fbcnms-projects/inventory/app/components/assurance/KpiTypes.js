@@ -59,7 +59,7 @@ const KpiQuery = graphql`
         }
       }
     }
-    tresholds {
+    thresholds {
       edges {
         node {
           name
@@ -121,7 +121,7 @@ const KpiTypes = () => {
       <EditKpiItemForm
         kpi={dataKpis.kpis?.edges.map(item => item.node)}
         formValues={dataEdit.item.node}
-        threshold={dataKpis.tresholds?.edges}
+        threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
       />
     );
@@ -134,8 +134,7 @@ const KpiTypes = () => {
           <ConfigureTitle
             title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
             subtitle={fbt(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
-                'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
+              'Indicators and formulas to be defined by users and calculated by performance management processes.',
               'Kpi description',
             )}
           />
@@ -146,7 +145,7 @@ const KpiTypes = () => {
             {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
-                threshold={dataKpis.tresholds?.edges}
+                threshold={dataKpis.thresholds?.edges}
                 onChange={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
                 {...item.node}

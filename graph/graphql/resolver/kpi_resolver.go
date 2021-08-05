@@ -36,8 +36,8 @@ func (kpiResolver) FormulaFk(ctx context.Context, kpi *ent.Kpi) ([]*ent.Formula,
 	}
 }
 
-func (kpiResolver) Treshold(ctx context.Context, kpi *ent.Kpi) (*ent.Treshold, error) {
-	variable, err := kpi.Tresholdkpi(ctx)
+func (kpiResolver) Threshold(ctx context.Context, kpi *ent.Kpi) (*ent.Threshold, error) {
+	variable, err := kpi.Thresholdkpi(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {

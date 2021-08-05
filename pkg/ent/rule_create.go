@@ -18,7 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // RuleCreate is the builder for creating a Rule entity.
@@ -166,23 +166,23 @@ func (rc *RuleCreate) SetEventseverity(e *EventSeverity) *RuleCreate {
 	return rc.SetEventseverityID(e.ID)
 }
 
-// SetTresholdID sets the treshold edge to Treshold by id.
-func (rc *RuleCreate) SetTresholdID(id int) *RuleCreate {
-	rc.mutation.SetTresholdID(id)
+// SetThresholdID sets the threshold edge to Threshold by id.
+func (rc *RuleCreate) SetThresholdID(id int) *RuleCreate {
+	rc.mutation.SetThresholdID(id)
 	return rc
 }
 
-// SetNillableTresholdID sets the treshold edge to Treshold by id if the given value is not nil.
-func (rc *RuleCreate) SetNillableTresholdID(id *int) *RuleCreate {
+// SetNillableThresholdID sets the threshold edge to Threshold by id if the given value is not nil.
+func (rc *RuleCreate) SetNillableThresholdID(id *int) *RuleCreate {
 	if id != nil {
-		rc = rc.SetTresholdID(*id)
+		rc = rc.SetThresholdID(*id)
 	}
 	return rc
 }
 
-// SetTreshold sets the treshold edge to Treshold.
-func (rc *RuleCreate) SetTreshold(t *Treshold) *RuleCreate {
-	return rc.SetTresholdID(t.ID)
+// SetThreshold sets the threshold edge to Threshold.
+func (rc *RuleCreate) SetThreshold(t *Threshold) *RuleCreate {
+	return rc.SetThresholdID(t.ID)
 }
 
 // AddRulelimitruleIDs adds the rulelimitrule edge to RuleLimit by ids.
@@ -435,17 +435,17 @@ func (rc *RuleCreate) createSpec() (*Rule, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := rc.mutation.TresholdIDs(); len(nodes) > 0 {
+	if nodes := rc.mutation.ThresholdIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   rule.TresholdTable,
-			Columns: []string{rule.TresholdColumn},
+			Table:   rule.ThresholdTable,
+			Columns: []string{rule.ThresholdColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: treshold.FieldID,
+					Column: threshold.FieldID,
 				},
 			},
 		}

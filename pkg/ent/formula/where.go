@@ -118,10 +118,10 @@ func Name(v string) predicate.Formula {
 	})
 }
 
-// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
-func Active(v bool) predicate.Formula {
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v bool) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldActive), v))
+		s.Where(sql.EQ(s.C(FieldStatus), v))
 	})
 }
 
@@ -388,17 +388,17 @@ func NameContainsFold(v string) predicate.Formula {
 	})
 }
 
-// ActiveEQ applies the EQ predicate on the "active" field.
-func ActiveEQ(v bool) predicate.Formula {
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v bool) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldActive), v))
+		s.Where(sql.EQ(s.C(FieldStatus), v))
 	})
 }
 
-// ActiveNEQ applies the NEQ predicate on the "active" field.
-func ActiveNEQ(v bool) predicate.Formula {
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v bool) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldActive), v))
+		s.Where(sql.NEQ(s.C(FieldStatus), v))
 	})
 }
 

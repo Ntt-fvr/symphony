@@ -21,7 +21,7 @@ import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation RemoveThresholdMutation($id: ID!) {
-    removeTreshold(id: $id)
+    removeThreshold(id: $id)
   }
 `;
 
