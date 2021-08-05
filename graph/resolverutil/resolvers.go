@@ -286,10 +286,6 @@ func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQ
 	}
 	return query, nil
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -328,7 +324,6 @@ func RecommendationsCategoryFilter(query *ent.RecommendationsCategoryQuery, filt
 	}
 	return query, nil
 }
-<<<<<<< HEAD
 
 func KqiCategoryFilter(query *ent.KqiCategoryQuery, filters []*models.KqiCategoryFilterInput) (*ent.KqiCategoryQuery, error) {
 	var err error
@@ -379,5 +374,3 @@ func KqiTargetFilter(query *ent.KqiTargetQuery, filters []*models.KqiTargetFilte
 	}
 	return query, nil
 }
-=======
->>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe

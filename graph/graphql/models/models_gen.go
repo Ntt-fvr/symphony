@@ -2234,7 +2234,6 @@ func (e KqiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-<<<<<<< HEAD
 type KqiPerspectiveFilterType string
 
 const (
@@ -2391,8 +2390,6 @@ func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-=======
->>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 type OrganizationFilterType string
 
 const (

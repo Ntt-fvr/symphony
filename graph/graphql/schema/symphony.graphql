@@ -3551,276 +3551,6 @@ type RecommendationsCategoryEdge {
   cursor: Cursor!
 }
 
-################################ conection Organization ###############################################
-"""
-Properties by which Organization connections can be ordered.
-"""
-enum OrganizationOrderField {
-  """
-  Order Organization by name.
-  """
-  NAME
-
-  """
-  Order Organization by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order Organization by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for Organization connections.
-"""
-input OrganizationOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order Organization by.
-  """
-  field: OrganizationOrderField
-}
-
-"""
-A connection to a list of Organization.
-"""
-type OrganizationConnection {
-  """
-  Total Organization of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of Organization edges.
-  """
-  edges: [OrganizationEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A Organization edge in a connection.
-"""
-type OrganizationEdge {
-  """
-  The Organization at the end of the edge.
-  """
-  node: Organization
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-################################ conection recommendations ###############################################
-"""
-Properties by which Recommendations connections can be ordered.
-"""
-enum RecommendationsOrderField {
-  """
-  Order Recommendations by name.
-  """
-  NAME
-
-  """
-  Order Recommendations by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order Recommendations by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for Recommendations connections.
-"""
-input RecommendationsOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order Recommendations by.
-  """
-  field: RecommendationsOrderField
-}
-
-"""
-A connection to a list of Recommendations.
-"""
-type RecommendationsConnection {
-  """
-  Total Recommendations of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of Recommendations edges.
-  """
-  edges: [RecommendationsEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A Recommendations edge in a connection.
-"""
-type RecommendationsEdge {
-  """
-  The Recommendations at the end of the edge.
-  """
-  node: Recommendations
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-################################ conection recommendationsSources ###############################################
-"""
-Properties by which RecommendationsSources connections can be ordered.
-"""
-enum RecommendationsSourcesOrderField {
-  """
-  Order RecommendationsSources by name.
-  """
-  NAME
-
-  """
-  Order RecommendationsSources by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order RecommendationsSources by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for RecommendationsSources connections.
-"""
-input RecommendationsSourcesOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order RecommendationsSources by.
-  """
-  field: RecommendationsSourcesOrderField
-}
-
-"""
-A connection to a list of RecommendationsSources.
-"""
-type RecommendationsSourcesConnection {
-  """
-  Total RecommendationsSources of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of RecommendationsSources edges.
-  """
-  edges: [RecommendationsSourcesEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A RecommendationsSources edge in a connection.
-"""
-type RecommendationsSourcesEdge {
-  """
-  The RecommendationsSources at the end of the edge.
-  """
-  node: RecommendationsSources
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-
-"""
-Properties by which RecommendationsCategory connections can be ordered.
-"""
-enum RecommendationsCategoryOrderField {
-  """
-  Order RecommendationsCategory by name.
-  """
-  NAME
-
-  """
-  Order RecommendationsCategory by creation time.
-  """
-  CREATED_AT
-
-  """
-  Order RecommendationsCategory by update time.
-  """
-  UPDATED_AT
-}
-
-"""
-Ordering options for RecommendationsCategory connections.
-"""
-input RecommendationsCategoryOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection!
-
-  """
-  The field to order RecommendationsCategory by.
-  """
-  field: RecommendationsCategoryOrderField
-}
-
-"""
-A connection to a list of RecommendationsCategory.
-"""
-type RecommendationsCategoryConnection {
-  """
-  Total RecommendationsCategory of projects in all pages.
-  """
-  totalCount: Int!
-  """
-  A list of RecommendationsCategory edges.
-  """
-  edges: [RecommendationsCategoryEdge!]!
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-}
-
-"""
-A RecommendationsCategory edge in a connection.
-"""
-type RecommendationsCategoryEdge {
-  """
-  The RecommendationsCategory at the end of the edge.
-  """
-  node: RecommendationsCategory
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
 """
 Properties by which kqi category connections can be ordered.
 """ 
@@ -6338,7 +6068,7 @@ type Query {
     
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
-  
+
   """
   A list of Kqi.
   """
@@ -6374,146 +6104,6 @@ type Query {
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
   
-  """
-  A list of organization.
-  """
-  
-  organizations(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned organization.
-    """
-    orderBy: OrganizationOrder
-
-    
-    #Filtering options for the returned organization.
-    
-    filterBy: [OrganizationFilterInput!]
-  ): OrganizationConnection!
-  """
-  A list of Recommendations.
-  """
-  Recommendations(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned counters.
-    """
-    orderBy: RecommendationsOrder
-
-    
-    #Filtering options for the returned counters.
-    
-    filterBy: [RecommendationsFilterInput!]
-  ): RecommendationsConnection!
-  
-  """
-  A list of RecommendationsSources.
-  """
-  RecommendationsSources(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned counters.
-    """
-    orderBy: RecommendationsSourcesOrder
-
-    
-    #Filtering options for the returned counters.
-    
-    filterBy: [RecommendationsSourcesFilterInput!]
-  ): RecommendationsSourcesConnection!
-  
-  """
-  A list of RecommendationsCategories.
-  """
-  RecommendationsCategories(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int @numberValue(min: 0)
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int @numberValue(min: 0)
-
-    """
-    Ordering options for the returned counters.
-    """
-    orderBy: RecommendationsCategoryOrder
-
-    
-    #Filtering options for the returned counters.
-    
-    filterBy: [RecommendationsCategoryFilterInput!]
-  ): RecommendationsCategoryConnection!
-
   """
   A list of kqiCategories.
   """
@@ -6685,14 +6275,8 @@ type Query {
 
     
     #Filtering options for the returned kqiTarget.
-    
-<<<<<<< HEAD
     filterBy: [KqiTargetFilterInput!]
   ): KqiTargetConnection!
-=======
-    filterBy: [KqiFilterInput!]
-  ): KqiConnection!
-  
 
   """
   A list of organization.
@@ -6831,7 +6415,6 @@ type Query {
     
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
->>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 }
 
 type Mutation {
@@ -7931,11 +7514,8 @@ input EditKqiComparatorInput {
   comparatorType: String!
 }
 
-<<<<<<< HEAD
-=======
 ##################### RECOMMENDATIONS #######################
 
->>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 type Recommendations implements Node {
   id: ID!
   externalID: String!
@@ -7990,11 +7570,7 @@ input EditRecommendationsInput {
   userApprobed: ID
   vendor: ID!
 }
-<<<<<<< HEAD
-
-=======
 ######################## filter ###################
->>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 enum RecommendationsFilterType {
   EXTERNALID
   RESOURCE
