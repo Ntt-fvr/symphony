@@ -355,6 +355,24 @@ func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 }
 
 // Instantiate entity configuration.
+func (c *RecommendationsClient) Instantiate(r *Recommendations) *Recommendations {
+	r.config = c.config
+	return r
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsCategoryClient) Instantiate(rc *RecommendationsCategory) *RecommendationsCategory {
+	rc.config = c.config
+	return rc
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *RecommendationsSources {
+	rs.config = c.config
+	return rs
+}
+
+// Instantiate entity configuration.
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf

@@ -68,6 +68,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -1666,6 +1669,83 @@ func init() {
 	propertytypeDescDeleted := propertytypeFields[16].Descriptor()
 	// propertytype.DefaultDeleted holds the default value on creation for the deleted field.
 	propertytype.DefaultDeleted = propertytypeDescDeleted.Default.(bool)
+	recommendationsMixin := schema.Recommendations{}.Mixin()
+	recommendations.Policy = privacy.NewPolicies(schema.Recommendations{})
+	recommendations.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := recommendations.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	recommendationsMixinFields0 := recommendationsMixin[0].Fields()
+	recommendationsFields := schema.Recommendations{}.Fields()
+	_ = recommendationsFields
+	// recommendationsDescCreateTime is the schema descriptor for create_time field.
+	recommendationsDescCreateTime := recommendationsMixinFields0[0].Descriptor()
+	// recommendations.DefaultCreateTime holds the default value on creation for the create_time field.
+	recommendations.DefaultCreateTime = recommendationsDescCreateTime.Default.(func() time.Time)
+	// recommendationsDescUpdateTime is the schema descriptor for update_time field.
+	recommendationsDescUpdateTime := recommendationsMixinFields0[1].Descriptor()
+	// recommendations.DefaultUpdateTime holds the default value on creation for the update_time field.
+	recommendations.DefaultUpdateTime = recommendationsDescUpdateTime.Default.(func() time.Time)
+	// recommendations.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	recommendations.UpdateDefaultUpdateTime = recommendationsDescUpdateTime.UpdateDefault.(func() time.Time)
+	recommendationscategoryMixin := schema.RecommendationsCategory{}.Mixin()
+	recommendationscategory.Policy = privacy.NewPolicies(schema.RecommendationsCategory{})
+	recommendationscategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := recommendationscategory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	recommendationscategoryMixinFields0 := recommendationscategoryMixin[0].Fields()
+	recommendationscategoryFields := schema.RecommendationsCategory{}.Fields()
+	_ = recommendationscategoryFields
+	// recommendationscategoryDescCreateTime is the schema descriptor for create_time field.
+	recommendationscategoryDescCreateTime := recommendationscategoryMixinFields0[0].Descriptor()
+	// recommendationscategory.DefaultCreateTime holds the default value on creation for the create_time field.
+	recommendationscategory.DefaultCreateTime = recommendationscategoryDescCreateTime.Default.(func() time.Time)
+	// recommendationscategoryDescUpdateTime is the schema descriptor for update_time field.
+	recommendationscategoryDescUpdateTime := recommendationscategoryMixinFields0[1].Descriptor()
+	// recommendationscategory.DefaultUpdateTime holds the default value on creation for the update_time field.
+	recommendationscategory.DefaultUpdateTime = recommendationscategoryDescUpdateTime.Default.(func() time.Time)
+	// recommendationscategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	recommendationscategory.UpdateDefaultUpdateTime = recommendationscategoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// recommendationscategoryDescName is the schema descriptor for name field.
+	recommendationscategoryDescName := recommendationscategoryFields[0].Descriptor()
+	// recommendationscategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	recommendationscategory.NameValidator = recommendationscategoryDescName.Validators[0].(func(string) error)
+	recommendationssourcesMixin := schema.RecommendationsSources{}.Mixin()
+	recommendationssources.Policy = privacy.NewPolicies(schema.RecommendationsSources{})
+	recommendationssources.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := recommendationssources.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	recommendationssourcesMixinFields0 := recommendationssourcesMixin[0].Fields()
+	recommendationssourcesFields := schema.RecommendationsSources{}.Fields()
+	_ = recommendationssourcesFields
+	// recommendationssourcesDescCreateTime is the schema descriptor for create_time field.
+	recommendationssourcesDescCreateTime := recommendationssourcesMixinFields0[0].Descriptor()
+	// recommendationssources.DefaultCreateTime holds the default value on creation for the create_time field.
+	recommendationssources.DefaultCreateTime = recommendationssourcesDescCreateTime.Default.(func() time.Time)
+	// recommendationssourcesDescUpdateTime is the schema descriptor for update_time field.
+	recommendationssourcesDescUpdateTime := recommendationssourcesMixinFields0[1].Descriptor()
+	// recommendationssources.DefaultUpdateTime holds the default value on creation for the update_time field.
+	recommendationssources.DefaultUpdateTime = recommendationssourcesDescUpdateTime.Default.(func() time.Time)
+	// recommendationssources.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	recommendationssources.UpdateDefaultUpdateTime = recommendationssourcesDescUpdateTime.UpdateDefault.(func() time.Time)
+	// recommendationssourcesDescName is the schema descriptor for name field.
+	recommendationssourcesDescName := recommendationssourcesFields[0].Descriptor()
+	// recommendationssources.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	recommendationssources.NameValidator = recommendationssourcesDescName.Validators[0].(func(string) error)
 	reportfilterMixin := schema.ReportFilter{}.Mixin()
 	reportfilter.Policy = privacy.NewPolicies(schema.ReportFilter{})
 	reportfilter.Hooks[0] = func(next ent.Mutator) ent.Mutator {

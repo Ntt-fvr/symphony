@@ -50,6 +50,10 @@ type User struct {
 type UserEdges struct {
 	// ProfilePhoto holds the value of the profile_photo edge.
 	ProfilePhoto *File
+	// UserCreate holds the value of the User_create edge.
+	UserCreate []*Recommendations
+	// UserApproved holds the value of the User_approved edge.
+	UserApproved []*Recommendations
 	// Groups holds the value of the groups edge.
 	Groups []*UsersGroup
 	// Organization holds the value of the organization edge.
@@ -64,7 +68,7 @@ type UserEdges struct {
 	Features []*Feature
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [9]bool
 }
 
 // ProfilePhotoOrErr returns the ProfilePhoto value or an error if the edge
@@ -81,10 +85,28 @@ func (e UserEdges) ProfilePhotoOrErr() (*File, error) {
 	return nil, &NotLoadedError{edge: "profile_photo"}
 }
 
+// UserCreateOrErr returns the UserCreate value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserCreateOrErr() ([]*Recommendations, error) {
+	if e.loadedTypes[1] {
+		return e.UserCreate, nil
+	}
+	return nil, &NotLoadedError{edge: "User_create"}
+}
+
+// UserApprovedOrErr returns the UserApproved value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserApprovedOrErr() ([]*Recommendations, error) {
+	if e.loadedTypes[2] {
+		return e.UserApproved, nil
+	}
+	return nil, &NotLoadedError{edge: "User_approved"}
+}
+
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupsOrErr() ([]*UsersGroup, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[3] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -93,7 +115,7 @@ func (e UserEdges) GroupsOrErr() ([]*UsersGroup, error) {
 // OrganizationOrErr returns the Organization value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) OrganizationOrErr() (*Organization, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[4] {
 		if e.Organization == nil {
 			// The edge organization was loaded in eager-loading,
 			// but was not found.
@@ -107,7 +129,7 @@ func (e UserEdges) OrganizationOrErr() (*Organization, error) {
 // OwnedWorkOrdersOrErr returns the OwnedWorkOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OwnedWorkOrdersOrErr() ([]*WorkOrder, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[5] {
 		return e.OwnedWorkOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "owned_work_orders"}
@@ -116,7 +138,7 @@ func (e UserEdges) OwnedWorkOrdersOrErr() ([]*WorkOrder, error) {
 // AssignedWorkOrdersOrErr returns the AssignedWorkOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) AssignedWorkOrdersOrErr() ([]*WorkOrder, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[6] {
 		return e.AssignedWorkOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "assigned_work_orders"}
@@ -125,7 +147,7 @@ func (e UserEdges) AssignedWorkOrdersOrErr() ([]*WorkOrder, error) {
 // CreatedProjectsOrErr returns the CreatedProjects value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CreatedProjectsOrErr() ([]*Project, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[7] {
 		return e.CreatedProjects, nil
 	}
 	return nil, &NotLoadedError{edge: "created_projects"}
@@ -134,7 +156,7 @@ func (e UserEdges) CreatedProjectsOrErr() ([]*Project, error) {
 // FeaturesOrErr returns the Features value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[8] {
 		return e.Features, nil
 	}
 	return nil, &NotLoadedError{edge: "features"}
@@ -235,6 +257,16 @@ func (u *User) assignValues(values ...interface{}) error {
 // QueryProfilePhoto queries the profile_photo edge of the User.
 func (u *User) QueryProfilePhoto() *FileQuery {
 	return (&UserClient{config: u.config}).QueryProfilePhoto(u)
+}
+
+// QueryUserCreate queries the User_create edge of the User.
+func (u *User) QueryUserCreate() *RecommendationsQuery {
+	return (&UserClient{config: u.config}).QueryUserCreate(u)
+}
+
+// QueryUserApproved queries the User_approved edge of the User.
+func (u *User) QueryUserApproved() *RecommendationsQuery {
+	return (&UserClient{config: u.config}).QueryUserApproved(u)
 }
 
 // QueryGroups queries the groups edge of the User.

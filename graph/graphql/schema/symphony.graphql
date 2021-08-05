@@ -3347,6 +3347,210 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
+################################ conection recommendations ###############################################
+"""
+Properties by which Recommendations connections can be ordered.
+"""
+enum RecommendationsOrderField {
+  """
+  Order Recommendations by name.
+  """
+  NAME
+
+  """
+  Order Recommendations by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Recommendations by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Recommendations connections.
+"""
+input RecommendationsOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Recommendations by.
+  """
+  field: RecommendationsOrderField
+}
+
+"""
+A connection to a list of Recommendations.
+"""
+type RecommendationsConnection {
+  """
+  Total Recommendations of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Recommendations edges.
+  """
+  edges: [RecommendationsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Recommendations edge in a connection.
+"""
+type RecommendationsEdge {
+  """
+  The Recommendations at the end of the edge.
+  """
+  node: Recommendations
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection recommendationsSources ###############################################
+"""
+Properties by which RecommendationsSources connections can be ordered.
+"""
+enum RecommendationsSourcesOrderField {
+  """
+  Order RecommendationsSources by name.
+  """
+  NAME
+
+  """
+  Order RecommendationsSources by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order RecommendationsSources by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for RecommendationsSources connections.
+"""
+input RecommendationsSourcesOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order RecommendationsSources by.
+  """
+  field: RecommendationsSourcesOrderField
+}
+
+"""
+A connection to a list of RecommendationsSources.
+"""
+type RecommendationsSourcesConnection {
+  """
+  Total RecommendationsSources of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of RecommendationsSources edges.
+  """
+  edges: [RecommendationsSourcesEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A RecommendationsSources edge in a connection.
+"""
+type RecommendationsSourcesEdge {
+  """
+  The RecommendationsSources at the end of the edge.
+  """
+  node: RecommendationsSources
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection recommendationsCategory ###############################################
+"""
+Properties by which RecommendationsCategory connections can be ordered.
+"""
+enum RecommendationsCategoryOrderField {
+  """
+  Order RecommendationsCategory by name.
+  """
+  NAME
+
+  """
+  Order RecommendationsCategory by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order RecommendationsCategory by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for RecommendationsCategory connections.
+"""
+input RecommendationsCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order RecommendationsCategory by.
+  """
+  field: RecommendationsCategoryOrderField
+}
+
+"""
+A connection to a list of RecommendationsCategory.
+"""
+type RecommendationsCategoryConnection {
+  """
+  Total RecommendationsCategory of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of RecommendationsCategory edges.
+  """
+  edges: [RecommendationsCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A RecommendationsCategory edge in a connection.
+"""
+type RecommendationsCategoryEdge {
+  """
+  The RecommendationsCategory at the end of the edge.
+  """
+  node: RecommendationsCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -5600,6 +5804,108 @@ type Query {
     
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
+  """
+  A list of Recommendations.
+  """
+  Recommendations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsFilterInput!]
+  ): RecommendationsConnection!
+  """
+  A list of RecommendationsSources.
+  """
+  RecommendationsSources(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsSourcesOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsSourcesFilterInput!]
+  ): RecommendationsSourcesConnection!
+  """
+  A list of RecommendationsCategories.
+  """
+  RecommendationsCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsCategoryOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsCategoryFilterInput!]
+  ): RecommendationsCategoryConnection!
 }
 
 type Mutation {
@@ -5891,6 +6197,15 @@ type Mutation {
   addKqiComparator(input: AddKqiComparatorInput!):KqiComparator!
   editKqiComparator(input: EditKqiComparatorInput!): KqiComparator!
   removeKqiComparator(id: ID!): ID!
+  addRecommendations(input: AddRecommendationsInput!):Recommendations!
+  editRecommendations(input: EditRecommendationsInput!): Recommendations!
+  removeRecommendations(id: ID!): ID!
+  addRecommendationsSources(input: AddRecommendationsSourcesInput!):RecommendationsSources!
+  editRecommendationsSources(input: EditRecommendationsSourcesInput!): RecommendationsSources!
+  removeRecommendationsSources(id: ID!): ID!
+  addRecommendationsCategory(input: AddRecommendationsCategoryInput!):RecommendationsCategory!
+  editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory!
+  removeRecommendationsCategory(id: ID!): ID!
 }
 
 """
@@ -5993,6 +6308,7 @@ input CounterFamilyFilterInput {
 type Vendor implements Node {
   id: ID!
   name: String!
+  vendorRecommendations: [Recommendations!]
 }
 
 input AddVendorInput {
@@ -6616,4 +6932,141 @@ input EditKqiComparatorInput {
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
+}
+
+##################### RECOMMENDATIONS #######################
+
+type Recommendations implements Node {
+  id: ID!
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: RecommendationsSources!
+  recommendationsCategory: RecommendationsCategory!
+  userApprobed: User
+  userCreate: User!
+  vendor: Vendor!
+}
+
+input AddRecommendationsInput {
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: ID!
+  recommendationsCategory: ID!
+  userApprobed: ID
+  userCreate: ID!
+  vendor: ID!
+}
+
+input EditRecommendationsInput {
+  id: ID!
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: ID!
+  recommendationsCategory: ID!
+  userApprobed: ID
+  vendor: ID!
+}
+######################## filter ###################
+enum RecommendationsFilterType {
+  EXTERNALID
+  RESOURCE
+  ALARMTYPE
+  SHORTDESCRIPTION
+  LONGDESCRIPTION
+  COMMAND
+  PRIORITY
+  STATUS
+  USED
+  RUNBOOK
+}
+
+input RecommendationsFilterInput {
+  filterType: RecommendationsFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  boolValue: Boolean
+  intValue: Int
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RecommendationsSources implements Node {
+  id: ID!
+  name: String! 
+  recommendations: [Recommendations!]
+}
+
+input AddRecommendationsSourcesInput {
+  name: String!
+}
+
+input EditRecommendationsSourcesInput {
+  id: ID!
+  name: String!
+}
+
+enum RecommendationsSourcesFilterType {
+  NAME
+}
+
+input RecommendationsSourcesFilterInput {
+  filterType: RecommendationsSourcesFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RecommendationsCategory implements Node {
+  id: ID!
+  name: String! 
+  recommendations: [Recommendations!]
+}
+
+input AddRecommendationsCategoryInput {
+  name: String!
+}
+
+input EditRecommendationsCategoryInput {
+  id: ID!
+  name: String!
+}
+
+enum RecommendationsCategoryFilterType {
+  NAME
+}
+
+input RecommendationsCategoryFilterInput {
+  filterType: RecommendationsCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }

@@ -72,6 +72,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -169,6 +172,9 @@ const (
 	TypeProjectType                 = "ProjectType"
 	TypeProperty                    = "Property"
 	TypePropertyType                = "PropertyType"
+	TypeRecommendations             = "Recommendations"
+	TypeRecommendationsCategory     = "RecommendationsCategory"
+	TypeRecommendationsSources      = "RecommendationsSources"
 	TypeReportFilter                = "ReportFilter"
 	TypeRule                        = "Rule"
 	TypeRuleLimit                   = "RuleLimit"
@@ -48335,6 +48341,2313 @@ func (m *PropertyTypeMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PropertyType edge %s", name)
 }
 
+// RecommendationsMutation represents an operation that mutate the RecommendationsSlice
+// nodes in the graph.
+type RecommendationsMutation struct {
+	config
+	op                            Op
+	typ                           string
+	id                            *int
+	create_time                   *time.Time
+	update_time                   *time.Time
+	externalId                    *string
+	resource                      *string
+	alarmType                     *string
+	shortDescription              *string
+	longDescription               *string
+	command                       *string
+	priority                      *int
+	addpriority                   *int
+	status                        *bool
+	used                          *int
+	addused                       *int
+	runbook                       *string
+	clearedFields                 map[string]struct{}
+	recomendation_sources         *int
+	clearedrecomendation_sources  bool
+	recomendation_category        *int
+	clearedrecomendation_category bool
+	_UserCreate                   *int
+	cleared_UserCreate            bool
+	_UserApprobed                 *int
+	cleared_UserApprobed          bool
+	vendors_recomendations        *int
+	clearedvendors_recomendations bool
+	done                          bool
+	oldValue                      func(context.Context) (*Recommendations, error)
+	predicates                    []predicate.Recommendations
+}
+
+var _ ent.Mutation = (*RecommendationsMutation)(nil)
+
+// recommendationsOption allows to manage the mutation configuration using functional options.
+type recommendationsOption func(*RecommendationsMutation)
+
+// newRecommendationsMutation creates new mutation for Recommendations.
+func newRecommendationsMutation(c config, op Op, opts ...recommendationsOption) *RecommendationsMutation {
+	m := &RecommendationsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRecommendations,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRecommendationsID sets the id field of the mutation.
+func withRecommendationsID(id int) recommendationsOption {
+	return func(m *RecommendationsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Recommendations
+		)
+		m.oldValue = func(ctx context.Context) (*Recommendations, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Recommendations.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRecommendations sets the old Recommendations of the mutation.
+func withRecommendations(node *Recommendations) recommendationsOption {
+	return func(m *RecommendationsMutation) {
+		m.oldValue = func(context.Context) (*Recommendations, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RecommendationsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RecommendationsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *RecommendationsMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *RecommendationsMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *RecommendationsMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *RecommendationsMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *RecommendationsMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *RecommendationsMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *RecommendationsMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetExternalId sets the externalId field.
+func (m *RecommendationsMutation) SetExternalId(s string) {
+	m.externalId = &s
+}
+
+// ExternalId returns the externalId value in the mutation.
+func (m *RecommendationsMutation) ExternalId() (r string, exists bool) {
+	v := m.externalId
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalId returns the old externalId value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldExternalId(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldExternalId is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldExternalId requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalId: %w", err)
+	}
+	return oldValue.ExternalId, nil
+}
+
+// ResetExternalId reset all changes of the "externalId" field.
+func (m *RecommendationsMutation) ResetExternalId() {
+	m.externalId = nil
+}
+
+// SetResource sets the resource field.
+func (m *RecommendationsMutation) SetResource(s string) {
+	m.resource = &s
+}
+
+// Resource returns the resource value in the mutation.
+func (m *RecommendationsMutation) Resource() (r string, exists bool) {
+	v := m.resource
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResource returns the old resource value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldResource(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldResource is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldResource requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResource: %w", err)
+	}
+	return oldValue.Resource, nil
+}
+
+// ResetResource reset all changes of the "resource" field.
+func (m *RecommendationsMutation) ResetResource() {
+	m.resource = nil
+}
+
+// SetAlarmType sets the alarmType field.
+func (m *RecommendationsMutation) SetAlarmType(s string) {
+	m.alarmType = &s
+}
+
+// AlarmType returns the alarmType value in the mutation.
+func (m *RecommendationsMutation) AlarmType() (r string, exists bool) {
+	v := m.alarmType
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlarmType returns the old alarmType value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldAlarmType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAlarmType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAlarmType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlarmType: %w", err)
+	}
+	return oldValue.AlarmType, nil
+}
+
+// ResetAlarmType reset all changes of the "alarmType" field.
+func (m *RecommendationsMutation) ResetAlarmType() {
+	m.alarmType = nil
+}
+
+// SetShortDescription sets the shortDescription field.
+func (m *RecommendationsMutation) SetShortDescription(s string) {
+	m.shortDescription = &s
+}
+
+// ShortDescription returns the shortDescription value in the mutation.
+func (m *RecommendationsMutation) ShortDescription() (r string, exists bool) {
+	v := m.shortDescription
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldShortDescription returns the old shortDescription value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldShortDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldShortDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldShortDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldShortDescription: %w", err)
+	}
+	return oldValue.ShortDescription, nil
+}
+
+// ResetShortDescription reset all changes of the "shortDescription" field.
+func (m *RecommendationsMutation) ResetShortDescription() {
+	m.shortDescription = nil
+}
+
+// SetLongDescription sets the longDescription field.
+func (m *RecommendationsMutation) SetLongDescription(s string) {
+	m.longDescription = &s
+}
+
+// LongDescription returns the longDescription value in the mutation.
+func (m *RecommendationsMutation) LongDescription() (r string, exists bool) {
+	v := m.longDescription
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLongDescription returns the old longDescription value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldLongDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLongDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLongDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLongDescription: %w", err)
+	}
+	return oldValue.LongDescription, nil
+}
+
+// ResetLongDescription reset all changes of the "longDescription" field.
+func (m *RecommendationsMutation) ResetLongDescription() {
+	m.longDescription = nil
+}
+
+// SetCommand sets the command field.
+func (m *RecommendationsMutation) SetCommand(s string) {
+	m.command = &s
+}
+
+// Command returns the command value in the mutation.
+func (m *RecommendationsMutation) Command() (r string, exists bool) {
+	v := m.command
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommand returns the old command value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldCommand(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCommand is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCommand requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommand: %w", err)
+	}
+	return oldValue.Command, nil
+}
+
+// ResetCommand reset all changes of the "command" field.
+func (m *RecommendationsMutation) ResetCommand() {
+	m.command = nil
+}
+
+// SetPriority sets the priority field.
+func (m *RecommendationsMutation) SetPriority(i int) {
+	m.priority = &i
+	m.addpriority = nil
+}
+
+// Priority returns the priority value in the mutation.
+func (m *RecommendationsMutation) Priority() (r int, exists bool) {
+	v := m.priority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPriority returns the old priority value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldPriority(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPriority is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPriority requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPriority: %w", err)
+	}
+	return oldValue.Priority, nil
+}
+
+// AddPriority adds i to priority.
+func (m *RecommendationsMutation) AddPriority(i int) {
+	if m.addpriority != nil {
+		*m.addpriority += i
+	} else {
+		m.addpriority = &i
+	}
+}
+
+// AddedPriority returns the value that was added to the priority field in this mutation.
+func (m *RecommendationsMutation) AddedPriority() (r int, exists bool) {
+	v := m.addpriority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPriority reset all changes of the "priority" field.
+func (m *RecommendationsMutation) ResetPriority() {
+	m.priority = nil
+	m.addpriority = nil
+}
+
+// SetStatus sets the status field.
+func (m *RecommendationsMutation) SetStatus(b bool) {
+	m.status = &b
+}
+
+// Status returns the status value in the mutation.
+func (m *RecommendationsMutation) Status() (r bool, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldStatus(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *RecommendationsMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetUsed sets the used field.
+func (m *RecommendationsMutation) SetUsed(i int) {
+	m.used = &i
+	m.addused = nil
+}
+
+// Used returns the used value in the mutation.
+func (m *RecommendationsMutation) Used() (r int, exists bool) {
+	v := m.used
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsed returns the old used value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldUsed(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUsed is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUsed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsed: %w", err)
+	}
+	return oldValue.Used, nil
+}
+
+// AddUsed adds i to used.
+func (m *RecommendationsMutation) AddUsed(i int) {
+	if m.addused != nil {
+		*m.addused += i
+	} else {
+		m.addused = &i
+	}
+}
+
+// AddedUsed returns the value that was added to the used field in this mutation.
+func (m *RecommendationsMutation) AddedUsed() (r int, exists bool) {
+	v := m.addused
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUsed clears the value of used.
+func (m *RecommendationsMutation) ClearUsed() {
+	m.used = nil
+	m.addused = nil
+	m.clearedFields[recommendations.FieldUsed] = struct{}{}
+}
+
+// UsedCleared returns if the field used was cleared in this mutation.
+func (m *RecommendationsMutation) UsedCleared() bool {
+	_, ok := m.clearedFields[recommendations.FieldUsed]
+	return ok
+}
+
+// ResetUsed reset all changes of the "used" field.
+func (m *RecommendationsMutation) ResetUsed() {
+	m.used = nil
+	m.addused = nil
+	delete(m.clearedFields, recommendations.FieldUsed)
+}
+
+// SetRunbook sets the runbook field.
+func (m *RecommendationsMutation) SetRunbook(s string) {
+	m.runbook = &s
+}
+
+// Runbook returns the runbook value in the mutation.
+func (m *RecommendationsMutation) Runbook() (r string, exists bool) {
+	v := m.runbook
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRunbook returns the old runbook value of the Recommendations.
+// If the Recommendations object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsMutation) OldRunbook(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRunbook is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRunbook requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRunbook: %w", err)
+	}
+	return oldValue.Runbook, nil
+}
+
+// ClearRunbook clears the value of runbook.
+func (m *RecommendationsMutation) ClearRunbook() {
+	m.runbook = nil
+	m.clearedFields[recommendations.FieldRunbook] = struct{}{}
+}
+
+// RunbookCleared returns if the field runbook was cleared in this mutation.
+func (m *RecommendationsMutation) RunbookCleared() bool {
+	_, ok := m.clearedFields[recommendations.FieldRunbook]
+	return ok
+}
+
+// ResetRunbook reset all changes of the "runbook" field.
+func (m *RecommendationsMutation) ResetRunbook() {
+	m.runbook = nil
+	delete(m.clearedFields, recommendations.FieldRunbook)
+}
+
+// SetRecomendationSourcesID sets the recomendation_sources edge to RecommendationsSources by id.
+func (m *RecommendationsMutation) SetRecomendationSourcesID(id int) {
+	m.recomendation_sources = &id
+}
+
+// ClearRecomendationSources clears the recomendation_sources edge to RecommendationsSources.
+func (m *RecommendationsMutation) ClearRecomendationSources() {
+	m.clearedrecomendation_sources = true
+}
+
+// RecomendationSourcesCleared returns if the edge recomendation_sources was cleared.
+func (m *RecommendationsMutation) RecomendationSourcesCleared() bool {
+	return m.clearedrecomendation_sources
+}
+
+// RecomendationSourcesID returns the recomendation_sources id in the mutation.
+func (m *RecommendationsMutation) RecomendationSourcesID() (id int, exists bool) {
+	if m.recomendation_sources != nil {
+		return *m.recomendation_sources, true
+	}
+	return
+}
+
+// RecomendationSourcesIDs returns the recomendation_sources ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// RecomendationSourcesID instead. It exists only for internal usage by the builders.
+func (m *RecommendationsMutation) RecomendationSourcesIDs() (ids []int) {
+	if id := m.recomendation_sources; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRecomendationSources reset all changes of the "recomendation_sources" edge.
+func (m *RecommendationsMutation) ResetRecomendationSources() {
+	m.recomendation_sources = nil
+	m.clearedrecomendation_sources = false
+}
+
+// SetRecomendationCategoryID sets the recomendation_category edge to RecommendationsCategory by id.
+func (m *RecommendationsMutation) SetRecomendationCategoryID(id int) {
+	m.recomendation_category = &id
+}
+
+// ClearRecomendationCategory clears the recomendation_category edge to RecommendationsCategory.
+func (m *RecommendationsMutation) ClearRecomendationCategory() {
+	m.clearedrecomendation_category = true
+}
+
+// RecomendationCategoryCleared returns if the edge recomendation_category was cleared.
+func (m *RecommendationsMutation) RecomendationCategoryCleared() bool {
+	return m.clearedrecomendation_category
+}
+
+// RecomendationCategoryID returns the recomendation_category id in the mutation.
+func (m *RecommendationsMutation) RecomendationCategoryID() (id int, exists bool) {
+	if m.recomendation_category != nil {
+		return *m.recomendation_category, true
+	}
+	return
+}
+
+// RecomendationCategoryIDs returns the recomendation_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// RecomendationCategoryID instead. It exists only for internal usage by the builders.
+func (m *RecommendationsMutation) RecomendationCategoryIDs() (ids []int) {
+	if id := m.recomendation_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRecomendationCategory reset all changes of the "recomendation_category" edge.
+func (m *RecommendationsMutation) ResetRecomendationCategory() {
+	m.recomendation_category = nil
+	m.clearedrecomendation_category = false
+}
+
+// SetUserCreateID sets the UserCreate edge to User by id.
+func (m *RecommendationsMutation) SetUserCreateID(id int) {
+	m._UserCreate = &id
+}
+
+// ClearUserCreate clears the UserCreate edge to User.
+func (m *RecommendationsMutation) ClearUserCreate() {
+	m.cleared_UserCreate = true
+}
+
+// UserCreateCleared returns if the edge UserCreate was cleared.
+func (m *RecommendationsMutation) UserCreateCleared() bool {
+	return m.cleared_UserCreate
+}
+
+// UserCreateID returns the UserCreate id in the mutation.
+func (m *RecommendationsMutation) UserCreateID() (id int, exists bool) {
+	if m._UserCreate != nil {
+		return *m._UserCreate, true
+	}
+	return
+}
+
+// UserCreateIDs returns the UserCreate ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// UserCreateID instead. It exists only for internal usage by the builders.
+func (m *RecommendationsMutation) UserCreateIDs() (ids []int) {
+	if id := m._UserCreate; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUserCreate reset all changes of the "UserCreate" edge.
+func (m *RecommendationsMutation) ResetUserCreate() {
+	m._UserCreate = nil
+	m.cleared_UserCreate = false
+}
+
+// SetUserApprobedID sets the UserApprobed edge to User by id.
+func (m *RecommendationsMutation) SetUserApprobedID(id int) {
+	m._UserApprobed = &id
+}
+
+// ClearUserApprobed clears the UserApprobed edge to User.
+func (m *RecommendationsMutation) ClearUserApprobed() {
+	m.cleared_UserApprobed = true
+}
+
+// UserApprobedCleared returns if the edge UserApprobed was cleared.
+func (m *RecommendationsMutation) UserApprobedCleared() bool {
+	return m.cleared_UserApprobed
+}
+
+// UserApprobedID returns the UserApprobed id in the mutation.
+func (m *RecommendationsMutation) UserApprobedID() (id int, exists bool) {
+	if m._UserApprobed != nil {
+		return *m._UserApprobed, true
+	}
+	return
+}
+
+// UserApprobedIDs returns the UserApprobed ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// UserApprobedID instead. It exists only for internal usage by the builders.
+func (m *RecommendationsMutation) UserApprobedIDs() (ids []int) {
+	if id := m._UserApprobed; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUserApprobed reset all changes of the "UserApprobed" edge.
+func (m *RecommendationsMutation) ResetUserApprobed() {
+	m._UserApprobed = nil
+	m.cleared_UserApprobed = false
+}
+
+// SetVendorsRecomendationsID sets the vendors_recomendations edge to Vendor by id.
+func (m *RecommendationsMutation) SetVendorsRecomendationsID(id int) {
+	m.vendors_recomendations = &id
+}
+
+// ClearVendorsRecomendations clears the vendors_recomendations edge to Vendor.
+func (m *RecommendationsMutation) ClearVendorsRecomendations() {
+	m.clearedvendors_recomendations = true
+}
+
+// VendorsRecomendationsCleared returns if the edge vendors_recomendations was cleared.
+func (m *RecommendationsMutation) VendorsRecomendationsCleared() bool {
+	return m.clearedvendors_recomendations
+}
+
+// VendorsRecomendationsID returns the vendors_recomendations id in the mutation.
+func (m *RecommendationsMutation) VendorsRecomendationsID() (id int, exists bool) {
+	if m.vendors_recomendations != nil {
+		return *m.vendors_recomendations, true
+	}
+	return
+}
+
+// VendorsRecomendationsIDs returns the vendors_recomendations ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// VendorsRecomendationsID instead. It exists only for internal usage by the builders.
+func (m *RecommendationsMutation) VendorsRecomendationsIDs() (ids []int) {
+	if id := m.vendors_recomendations; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetVendorsRecomendations reset all changes of the "vendors_recomendations" edge.
+func (m *RecommendationsMutation) ResetVendorsRecomendations() {
+	m.vendors_recomendations = nil
+	m.clearedvendors_recomendations = false
+}
+
+// Op returns the operation name.
+func (m *RecommendationsMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Recommendations).
+func (m *RecommendationsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *RecommendationsMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.create_time != nil {
+		fields = append(fields, recommendations.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, recommendations.FieldUpdateTime)
+	}
+	if m.externalId != nil {
+		fields = append(fields, recommendations.FieldExternalId)
+	}
+	if m.resource != nil {
+		fields = append(fields, recommendations.FieldResource)
+	}
+	if m.alarmType != nil {
+		fields = append(fields, recommendations.FieldAlarmType)
+	}
+	if m.shortDescription != nil {
+		fields = append(fields, recommendations.FieldShortDescription)
+	}
+	if m.longDescription != nil {
+		fields = append(fields, recommendations.FieldLongDescription)
+	}
+	if m.command != nil {
+		fields = append(fields, recommendations.FieldCommand)
+	}
+	if m.priority != nil {
+		fields = append(fields, recommendations.FieldPriority)
+	}
+	if m.status != nil {
+		fields = append(fields, recommendations.FieldStatus)
+	}
+	if m.used != nil {
+		fields = append(fields, recommendations.FieldUsed)
+	}
+	if m.runbook != nil {
+		fields = append(fields, recommendations.FieldRunbook)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *RecommendationsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case recommendations.FieldCreateTime:
+		return m.CreateTime()
+	case recommendations.FieldUpdateTime:
+		return m.UpdateTime()
+	case recommendations.FieldExternalId:
+		return m.ExternalId()
+	case recommendations.FieldResource:
+		return m.Resource()
+	case recommendations.FieldAlarmType:
+		return m.AlarmType()
+	case recommendations.FieldShortDescription:
+		return m.ShortDescription()
+	case recommendations.FieldLongDescription:
+		return m.LongDescription()
+	case recommendations.FieldCommand:
+		return m.Command()
+	case recommendations.FieldPriority:
+		return m.Priority()
+	case recommendations.FieldStatus:
+		return m.Status()
+	case recommendations.FieldUsed:
+		return m.Used()
+	case recommendations.FieldRunbook:
+		return m.Runbook()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *RecommendationsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case recommendations.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case recommendations.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case recommendations.FieldExternalId:
+		return m.OldExternalId(ctx)
+	case recommendations.FieldResource:
+		return m.OldResource(ctx)
+	case recommendations.FieldAlarmType:
+		return m.OldAlarmType(ctx)
+	case recommendations.FieldShortDescription:
+		return m.OldShortDescription(ctx)
+	case recommendations.FieldLongDescription:
+		return m.OldLongDescription(ctx)
+	case recommendations.FieldCommand:
+		return m.OldCommand(ctx)
+	case recommendations.FieldPriority:
+		return m.OldPriority(ctx)
+	case recommendations.FieldStatus:
+		return m.OldStatus(ctx)
+	case recommendations.FieldUsed:
+		return m.OldUsed(ctx)
+	case recommendations.FieldRunbook:
+		return m.OldRunbook(ctx)
+	}
+	return nil, fmt.Errorf("unknown Recommendations field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RecommendationsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case recommendations.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case recommendations.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case recommendations.FieldExternalId:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalId(v)
+		return nil
+	case recommendations.FieldResource:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResource(v)
+		return nil
+	case recommendations.FieldAlarmType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlarmType(v)
+		return nil
+	case recommendations.FieldShortDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetShortDescription(v)
+		return nil
+	case recommendations.FieldLongDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLongDescription(v)
+		return nil
+	case recommendations.FieldCommand:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommand(v)
+		return nil
+	case recommendations.FieldPriority:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPriority(v)
+		return nil
+	case recommendations.FieldStatus:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case recommendations.FieldUsed:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsed(v)
+		return nil
+	case recommendations.FieldRunbook:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRunbook(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Recommendations field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *RecommendationsMutation) AddedFields() []string {
+	var fields []string
+	if m.addpriority != nil {
+		fields = append(fields, recommendations.FieldPriority)
+	}
+	if m.addused != nil {
+		fields = append(fields, recommendations.FieldUsed)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *RecommendationsMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case recommendations.FieldPriority:
+		return m.AddedPriority()
+	case recommendations.FieldUsed:
+		return m.AddedUsed()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RecommendationsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case recommendations.FieldPriority:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPriority(v)
+		return nil
+	case recommendations.FieldUsed:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUsed(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Recommendations numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *RecommendationsMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(recommendations.FieldUsed) {
+		fields = append(fields, recommendations.FieldUsed)
+	}
+	if m.FieldCleared(recommendations.FieldRunbook) {
+		fields = append(fields, recommendations.FieldRunbook)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *RecommendationsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RecommendationsMutation) ClearField(name string) error {
+	switch name {
+	case recommendations.FieldUsed:
+		m.ClearUsed()
+		return nil
+	case recommendations.FieldRunbook:
+		m.ClearRunbook()
+		return nil
+	}
+	return fmt.Errorf("unknown Recommendations nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *RecommendationsMutation) ResetField(name string) error {
+	switch name {
+	case recommendations.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case recommendations.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case recommendations.FieldExternalId:
+		m.ResetExternalId()
+		return nil
+	case recommendations.FieldResource:
+		m.ResetResource()
+		return nil
+	case recommendations.FieldAlarmType:
+		m.ResetAlarmType()
+		return nil
+	case recommendations.FieldShortDescription:
+		m.ResetShortDescription()
+		return nil
+	case recommendations.FieldLongDescription:
+		m.ResetLongDescription()
+		return nil
+	case recommendations.FieldCommand:
+		m.ResetCommand()
+		return nil
+	case recommendations.FieldPriority:
+		m.ResetPriority()
+		return nil
+	case recommendations.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case recommendations.FieldUsed:
+		m.ResetUsed()
+		return nil
+	case recommendations.FieldRunbook:
+		m.ResetRunbook()
+		return nil
+	}
+	return fmt.Errorf("unknown Recommendations field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *RecommendationsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.recomendation_sources != nil {
+		edges = append(edges, recommendations.EdgeRecomendationSources)
+	}
+	if m.recomendation_category != nil {
+		edges = append(edges, recommendations.EdgeRecomendationCategory)
+	}
+	if m._UserCreate != nil {
+		edges = append(edges, recommendations.EdgeUserCreate)
+	}
+	if m._UserApprobed != nil {
+		edges = append(edges, recommendations.EdgeUserApprobed)
+	}
+	if m.vendors_recomendations != nil {
+		edges = append(edges, recommendations.EdgeVendorsRecomendations)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *RecommendationsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case recommendations.EdgeRecomendationSources:
+		if id := m.recomendation_sources; id != nil {
+			return []ent.Value{*id}
+		}
+	case recommendations.EdgeRecomendationCategory:
+		if id := m.recomendation_category; id != nil {
+			return []ent.Value{*id}
+		}
+	case recommendations.EdgeUserCreate:
+		if id := m._UserCreate; id != nil {
+			return []ent.Value{*id}
+		}
+	case recommendations.EdgeUserApprobed:
+		if id := m._UserApprobed; id != nil {
+			return []ent.Value{*id}
+		}
+	case recommendations.EdgeVendorsRecomendations:
+		if id := m.vendors_recomendations; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *RecommendationsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 5)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *RecommendationsMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *RecommendationsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.clearedrecomendation_sources {
+		edges = append(edges, recommendations.EdgeRecomendationSources)
+	}
+	if m.clearedrecomendation_category {
+		edges = append(edges, recommendations.EdgeRecomendationCategory)
+	}
+	if m.cleared_UserCreate {
+		edges = append(edges, recommendations.EdgeUserCreate)
+	}
+	if m.cleared_UserApprobed {
+		edges = append(edges, recommendations.EdgeUserApprobed)
+	}
+	if m.clearedvendors_recomendations {
+		edges = append(edges, recommendations.EdgeVendorsRecomendations)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *RecommendationsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case recommendations.EdgeRecomendationSources:
+		return m.clearedrecomendation_sources
+	case recommendations.EdgeRecomendationCategory:
+		return m.clearedrecomendation_category
+	case recommendations.EdgeUserCreate:
+		return m.cleared_UserCreate
+	case recommendations.EdgeUserApprobed:
+		return m.cleared_UserApprobed
+	case recommendations.EdgeVendorsRecomendations:
+		return m.clearedvendors_recomendations
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *RecommendationsMutation) ClearEdge(name string) error {
+	switch name {
+	case recommendations.EdgeRecomendationSources:
+		m.ClearRecomendationSources()
+		return nil
+	case recommendations.EdgeRecomendationCategory:
+		m.ClearRecomendationCategory()
+		return nil
+	case recommendations.EdgeUserCreate:
+		m.ClearUserCreate()
+		return nil
+	case recommendations.EdgeUserApprobed:
+		m.ClearUserApprobed()
+		return nil
+	case recommendations.EdgeVendorsRecomendations:
+		m.ClearVendorsRecomendations()
+		return nil
+	}
+	return fmt.Errorf("unknown Recommendations unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *RecommendationsMutation) ResetEdge(name string) error {
+	switch name {
+	case recommendations.EdgeRecomendationSources:
+		m.ResetRecomendationSources()
+		return nil
+	case recommendations.EdgeRecomendationCategory:
+		m.ResetRecomendationCategory()
+		return nil
+	case recommendations.EdgeUserCreate:
+		m.ResetUserCreate()
+		return nil
+	case recommendations.EdgeUserApprobed:
+		m.ResetUserApprobed()
+		return nil
+	case recommendations.EdgeVendorsRecomendations:
+		m.ResetVendorsRecomendations()
+		return nil
+	}
+	return fmt.Errorf("unknown Recommendations edge %s", name)
+}
+
+// RecommendationsCategoryMutation represents an operation that mutate the RecommendationsCategories
+// nodes in the graph.
+type RecommendationsCategoryMutation struct {
+	config
+	op                     Op
+	typ                    string
+	id                     *int
+	create_time            *time.Time
+	update_time            *time.Time
+	name                   *string
+	clearedFields          map[string]struct{}
+	recommendations        map[int]struct{}
+	removedrecommendations map[int]struct{}
+	clearedrecommendations bool
+	done                   bool
+	oldValue               func(context.Context) (*RecommendationsCategory, error)
+	predicates             []predicate.RecommendationsCategory
+}
+
+var _ ent.Mutation = (*RecommendationsCategoryMutation)(nil)
+
+// recommendationscategoryOption allows to manage the mutation configuration using functional options.
+type recommendationscategoryOption func(*RecommendationsCategoryMutation)
+
+// newRecommendationsCategoryMutation creates new mutation for RecommendationsCategory.
+func newRecommendationsCategoryMutation(c config, op Op, opts ...recommendationscategoryOption) *RecommendationsCategoryMutation {
+	m := &RecommendationsCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRecommendationsCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRecommendationsCategoryID sets the id field of the mutation.
+func withRecommendationsCategoryID(id int) recommendationscategoryOption {
+	return func(m *RecommendationsCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RecommendationsCategory
+		)
+		m.oldValue = func(ctx context.Context) (*RecommendationsCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RecommendationsCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRecommendationsCategory sets the old RecommendationsCategory of the mutation.
+func withRecommendationsCategory(node *RecommendationsCategory) recommendationscategoryOption {
+	return func(m *RecommendationsCategoryMutation) {
+		m.oldValue = func(context.Context) (*RecommendationsCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RecommendationsCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RecommendationsCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *RecommendationsCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *RecommendationsCategoryMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *RecommendationsCategoryMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the RecommendationsCategory.
+// If the RecommendationsCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsCategoryMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *RecommendationsCategoryMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *RecommendationsCategoryMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *RecommendationsCategoryMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the RecommendationsCategory.
+// If the RecommendationsCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsCategoryMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *RecommendationsCategoryMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *RecommendationsCategoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *RecommendationsCategoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the RecommendationsCategory.
+// If the RecommendationsCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsCategoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *RecommendationsCategoryMutation) ResetName() {
+	m.name = nil
+}
+
+// AddRecommendationIDs adds the recommendations edge to Recommendations by ids.
+func (m *RecommendationsCategoryMutation) AddRecommendationIDs(ids ...int) {
+	if m.recommendations == nil {
+		m.recommendations = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.recommendations[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRecommendations clears the recommendations edge to Recommendations.
+func (m *RecommendationsCategoryMutation) ClearRecommendations() {
+	m.clearedrecommendations = true
+}
+
+// RecommendationsCleared returns if the edge recommendations was cleared.
+func (m *RecommendationsCategoryMutation) RecommendationsCleared() bool {
+	return m.clearedrecommendations
+}
+
+// RemoveRecommendationIDs removes the recommendations edge to Recommendations by ids.
+func (m *RecommendationsCategoryMutation) RemoveRecommendationIDs(ids ...int) {
+	if m.removedrecommendations == nil {
+		m.removedrecommendations = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedrecommendations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRecommendations returns the removed ids of recommendations.
+func (m *RecommendationsCategoryMutation) RemovedRecommendationsIDs() (ids []int) {
+	for id := range m.removedrecommendations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RecommendationsIDs returns the recommendations ids in the mutation.
+func (m *RecommendationsCategoryMutation) RecommendationsIDs() (ids []int) {
+	for id := range m.recommendations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRecommendations reset all changes of the "recommendations" edge.
+func (m *RecommendationsCategoryMutation) ResetRecommendations() {
+	m.recommendations = nil
+	m.clearedrecommendations = false
+	m.removedrecommendations = nil
+}
+
+// Op returns the operation name.
+func (m *RecommendationsCategoryMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (RecommendationsCategory).
+func (m *RecommendationsCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *RecommendationsCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, recommendationscategory.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, recommendationscategory.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, recommendationscategory.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *RecommendationsCategoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case recommendationscategory.FieldCreateTime:
+		return m.CreateTime()
+	case recommendationscategory.FieldUpdateTime:
+		return m.UpdateTime()
+	case recommendationscategory.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *RecommendationsCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case recommendationscategory.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case recommendationscategory.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case recommendationscategory.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown RecommendationsCategory field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RecommendationsCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case recommendationscategory.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case recommendationscategory.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case recommendationscategory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RecommendationsCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *RecommendationsCategoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *RecommendationsCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RecommendationsCategoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RecommendationsCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *RecommendationsCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *RecommendationsCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RecommendationsCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RecommendationsCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *RecommendationsCategoryMutation) ResetField(name string) error {
+	switch name {
+	case recommendationscategory.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case recommendationscategory.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case recommendationscategory.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown RecommendationsCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *RecommendationsCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.recommendations != nil {
+		edges = append(edges, recommendationscategory.EdgeRecommendations)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *RecommendationsCategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case recommendationscategory.EdgeRecommendations:
+		ids := make([]ent.Value, 0, len(m.recommendations))
+		for id := range m.recommendations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *RecommendationsCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedrecommendations != nil {
+		edges = append(edges, recommendationscategory.EdgeRecommendations)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *RecommendationsCategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case recommendationscategory.EdgeRecommendations:
+		ids := make([]ent.Value, 0, len(m.removedrecommendations))
+		for id := range m.removedrecommendations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *RecommendationsCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedrecommendations {
+		edges = append(edges, recommendationscategory.EdgeRecommendations)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *RecommendationsCategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case recommendationscategory.EdgeRecommendations:
+		return m.clearedrecommendations
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *RecommendationsCategoryMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RecommendationsCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *RecommendationsCategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case recommendationscategory.EdgeRecommendations:
+		m.ResetRecommendations()
+		return nil
+	}
+	return fmt.Errorf("unknown RecommendationsCategory edge %s", name)
+}
+
+// RecommendationsSourcesMutation represents an operation that mutate the RecommendationsSourcesSlice
+// nodes in the graph.
+type RecommendationsSourcesMutation struct {
+	config
+	op                     Op
+	typ                    string
+	id                     *int
+	create_time            *time.Time
+	update_time            *time.Time
+	name                   *string
+	clearedFields          map[string]struct{}
+	recommendations        map[int]struct{}
+	removedrecommendations map[int]struct{}
+	clearedrecommendations bool
+	done                   bool
+	oldValue               func(context.Context) (*RecommendationsSources, error)
+	predicates             []predicate.RecommendationsSources
+}
+
+var _ ent.Mutation = (*RecommendationsSourcesMutation)(nil)
+
+// recommendationssourcesOption allows to manage the mutation configuration using functional options.
+type recommendationssourcesOption func(*RecommendationsSourcesMutation)
+
+// newRecommendationsSourcesMutation creates new mutation for RecommendationsSources.
+func newRecommendationsSourcesMutation(c config, op Op, opts ...recommendationssourcesOption) *RecommendationsSourcesMutation {
+	m := &RecommendationsSourcesMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRecommendationsSources,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRecommendationsSourcesID sets the id field of the mutation.
+func withRecommendationsSourcesID(id int) recommendationssourcesOption {
+	return func(m *RecommendationsSourcesMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RecommendationsSources
+		)
+		m.oldValue = func(ctx context.Context) (*RecommendationsSources, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RecommendationsSources.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRecommendationsSources sets the old RecommendationsSources of the mutation.
+func withRecommendationsSources(node *RecommendationsSources) recommendationssourcesOption {
+	return func(m *RecommendationsSourcesMutation) {
+		m.oldValue = func(context.Context) (*RecommendationsSources, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RecommendationsSourcesMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RecommendationsSourcesMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *RecommendationsSourcesMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *RecommendationsSourcesMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *RecommendationsSourcesMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the RecommendationsSources.
+// If the RecommendationsSources object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsSourcesMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *RecommendationsSourcesMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *RecommendationsSourcesMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *RecommendationsSourcesMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the RecommendationsSources.
+// If the RecommendationsSources object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsSourcesMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *RecommendationsSourcesMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *RecommendationsSourcesMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *RecommendationsSourcesMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the RecommendationsSources.
+// If the RecommendationsSources object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *RecommendationsSourcesMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *RecommendationsSourcesMutation) ResetName() {
+	m.name = nil
+}
+
+// AddRecommendationIDs adds the recommendations edge to Recommendations by ids.
+func (m *RecommendationsSourcesMutation) AddRecommendationIDs(ids ...int) {
+	if m.recommendations == nil {
+		m.recommendations = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.recommendations[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRecommendations clears the recommendations edge to Recommendations.
+func (m *RecommendationsSourcesMutation) ClearRecommendations() {
+	m.clearedrecommendations = true
+}
+
+// RecommendationsCleared returns if the edge recommendations was cleared.
+func (m *RecommendationsSourcesMutation) RecommendationsCleared() bool {
+	return m.clearedrecommendations
+}
+
+// RemoveRecommendationIDs removes the recommendations edge to Recommendations by ids.
+func (m *RecommendationsSourcesMutation) RemoveRecommendationIDs(ids ...int) {
+	if m.removedrecommendations == nil {
+		m.removedrecommendations = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedrecommendations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRecommendations returns the removed ids of recommendations.
+func (m *RecommendationsSourcesMutation) RemovedRecommendationsIDs() (ids []int) {
+	for id := range m.removedrecommendations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RecommendationsIDs returns the recommendations ids in the mutation.
+func (m *RecommendationsSourcesMutation) RecommendationsIDs() (ids []int) {
+	for id := range m.recommendations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRecommendations reset all changes of the "recommendations" edge.
+func (m *RecommendationsSourcesMutation) ResetRecommendations() {
+	m.recommendations = nil
+	m.clearedrecommendations = false
+	m.removedrecommendations = nil
+}
+
+// Op returns the operation name.
+func (m *RecommendationsSourcesMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (RecommendationsSources).
+func (m *RecommendationsSourcesMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *RecommendationsSourcesMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, recommendationssources.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, recommendationssources.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, recommendationssources.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *RecommendationsSourcesMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case recommendationssources.FieldCreateTime:
+		return m.CreateTime()
+	case recommendationssources.FieldUpdateTime:
+		return m.UpdateTime()
+	case recommendationssources.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *RecommendationsSourcesMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case recommendationssources.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case recommendationssources.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case recommendationssources.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown RecommendationsSources field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RecommendationsSourcesMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case recommendationssources.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case recommendationssources.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case recommendationssources.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RecommendationsSources field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *RecommendationsSourcesMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *RecommendationsSourcesMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *RecommendationsSourcesMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RecommendationsSources numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *RecommendationsSourcesMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *RecommendationsSourcesMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RecommendationsSourcesMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RecommendationsSources nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *RecommendationsSourcesMutation) ResetField(name string) error {
+	switch name {
+	case recommendationssources.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case recommendationssources.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case recommendationssources.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown RecommendationsSources field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *RecommendationsSourcesMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.recommendations != nil {
+		edges = append(edges, recommendationssources.EdgeRecommendations)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *RecommendationsSourcesMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case recommendationssources.EdgeRecommendations:
+		ids := make([]ent.Value, 0, len(m.recommendations))
+		for id := range m.recommendations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *RecommendationsSourcesMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedrecommendations != nil {
+		edges = append(edges, recommendationssources.EdgeRecommendations)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *RecommendationsSourcesMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case recommendationssources.EdgeRecommendations:
+		ids := make([]ent.Value, 0, len(m.removedrecommendations))
+		for id := range m.removedrecommendations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *RecommendationsSourcesMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedrecommendations {
+		edges = append(edges, recommendationssources.EdgeRecommendations)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *RecommendationsSourcesMutation) EdgeCleared(name string) bool {
+	switch name {
+	case recommendationssources.EdgeRecommendations:
+		return m.clearedrecommendations
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *RecommendationsSourcesMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RecommendationsSources unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *RecommendationsSourcesMutation) ResetEdge(name string) error {
+	switch name {
+	case recommendationssources.EdgeRecommendations:
+		m.ResetRecommendations()
+		return nil
+	}
+	return fmt.Errorf("unknown RecommendationsSources edge %s", name)
+}
+
 // ReportFilterMutation represents an operation that mutate the ReportFilters
 // nodes in the graph.
 type ReportFilterMutation struct {
@@ -64493,6 +66806,12 @@ type UserMutation struct {
 	clearedFields               map[string]struct{}
 	profile_photo               *int
 	clearedprofile_photo        bool
+	_User_create                map[int]struct{}
+	removed_User_create         map[int]struct{}
+	cleared_User_create         bool
+	_User_approved              map[int]struct{}
+	removed_User_approved       map[int]struct{}
+	cleared_User_approved       bool
 	groups                      map[int]struct{}
 	removedgroups               map[int]struct{}
 	clearedgroups               bool
@@ -65003,6 +67322,112 @@ func (m *UserMutation) ProfilePhotoIDs() (ids []int) {
 func (m *UserMutation) ResetProfilePhoto() {
 	m.profile_photo = nil
 	m.clearedprofile_photo = false
+}
+
+// AddUserCreateIDs adds the User_create edge to Recommendations by ids.
+func (m *UserMutation) AddUserCreateIDs(ids ...int) {
+	if m._User_create == nil {
+		m._User_create = make(map[int]struct{})
+	}
+	for i := range ids {
+		m._User_create[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUserCreate clears the User_create edge to Recommendations.
+func (m *UserMutation) ClearUserCreate() {
+	m.cleared_User_create = true
+}
+
+// UserCreateCleared returns if the edge User_create was cleared.
+func (m *UserMutation) UserCreateCleared() bool {
+	return m.cleared_User_create
+}
+
+// RemoveUserCreateIDs removes the User_create edge to Recommendations by ids.
+func (m *UserMutation) RemoveUserCreateIDs(ids ...int) {
+	if m.removed_User_create == nil {
+		m.removed_User_create = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removed_User_create[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUserCreate returns the removed ids of User_create.
+func (m *UserMutation) RemovedUserCreateIDs() (ids []int) {
+	for id := range m.removed_User_create {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UserCreateIDs returns the User_create ids in the mutation.
+func (m *UserMutation) UserCreateIDs() (ids []int) {
+	for id := range m._User_create {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUserCreate reset all changes of the "User_create" edge.
+func (m *UserMutation) ResetUserCreate() {
+	m._User_create = nil
+	m.cleared_User_create = false
+	m.removed_User_create = nil
+}
+
+// AddUserApprovedIDs adds the User_approved edge to Recommendations by ids.
+func (m *UserMutation) AddUserApprovedIDs(ids ...int) {
+	if m._User_approved == nil {
+		m._User_approved = make(map[int]struct{})
+	}
+	for i := range ids {
+		m._User_approved[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUserApproved clears the User_approved edge to Recommendations.
+func (m *UserMutation) ClearUserApproved() {
+	m.cleared_User_approved = true
+}
+
+// UserApprovedCleared returns if the edge User_approved was cleared.
+func (m *UserMutation) UserApprovedCleared() bool {
+	return m.cleared_User_approved
+}
+
+// RemoveUserApprovedIDs removes the User_approved edge to Recommendations by ids.
+func (m *UserMutation) RemoveUserApprovedIDs(ids ...int) {
+	if m.removed_User_approved == nil {
+		m.removed_User_approved = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removed_User_approved[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUserApproved returns the removed ids of User_approved.
+func (m *UserMutation) RemovedUserApprovedIDs() (ids []int) {
+	for id := range m.removed_User_approved {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UserApprovedIDs returns the User_approved ids in the mutation.
+func (m *UserMutation) UserApprovedIDs() (ids []int) {
+	for id := range m._User_approved {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUserApproved reset all changes of the "User_approved" edge.
+func (m *UserMutation) ResetUserApproved() {
+	m._User_approved = nil
+	m.cleared_User_approved = false
+	m.removed_User_approved = nil
 }
 
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
@@ -65581,9 +68006,15 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.profile_photo != nil {
 		edges = append(edges, user.EdgeProfilePhoto)
+	}
+	if m._User_create != nil {
+		edges = append(edges, user.EdgeUserCreate)
+	}
+	if m._User_approved != nil {
+		edges = append(edges, user.EdgeUserApproved)
 	}
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
@@ -65614,6 +68045,18 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.profile_photo; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeUserCreate:
+		ids := make([]ent.Value, 0, len(m._User_create))
+		for id := range m._User_create {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeUserApproved:
+		ids := make([]ent.Value, 0, len(m._User_approved))
+		for id := range m._User_approved {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeGroups:
 		ids := make([]ent.Value, 0, len(m.groups))
 		for id := range m.groups {
@@ -65655,7 +68098,13 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
+	if m.removed_User_create != nil {
+		edges = append(edges, user.EdgeUserCreate)
+	}
+	if m.removed_User_approved != nil {
+		edges = append(edges, user.EdgeUserApproved)
+	}
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -65678,6 +68127,18 @@ func (m *UserMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case user.EdgeUserCreate:
+		ids := make([]ent.Value, 0, len(m.removed_User_create))
+		for id := range m.removed_User_create {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeUserApproved:
+		ids := make([]ent.Value, 0, len(m.removed_User_approved))
+		for id := range m.removed_User_approved {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeGroups:
 		ids := make([]ent.Value, 0, len(m.removedgroups))
 		for id := range m.removedgroups {
@@ -65715,9 +68176,15 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.clearedprofile_photo {
 		edges = append(edges, user.EdgeProfilePhoto)
+	}
+	if m.cleared_User_create {
+		edges = append(edges, user.EdgeUserCreate)
+	}
+	if m.cleared_User_approved {
+		edges = append(edges, user.EdgeUserApproved)
 	}
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
@@ -65746,6 +68213,10 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeProfilePhoto:
 		return m.clearedprofile_photo
+	case user.EdgeUserCreate:
+		return m.cleared_User_create
+	case user.EdgeUserApproved:
+		return m.cleared_User_approved
 	case user.EdgeGroups:
 		return m.clearedgroups
 	case user.EdgeOrganization:
@@ -65783,6 +68254,12 @@ func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
 	case user.EdgeProfilePhoto:
 		m.ResetProfilePhoto()
+		return nil
+	case user.EdgeUserCreate:
+		m.ResetUserCreate()
+		return nil
+	case user.EdgeUserApproved:
+		m.ResetUserApproved()
 		return nil
 	case user.EdgeGroups:
 		m.ResetGroups()
@@ -66602,19 +69079,22 @@ func (m *UsersGroupMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type VendorMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	create_time      *time.Time
-	update_time      *time.Time
-	name             *string
-	clearedFields    map[string]struct{}
-	vendor_fk        map[int]struct{}
-	removedvendor_fk map[int]struct{}
-	clearedvendor_fk bool
-	done             bool
-	oldValue         func(context.Context) (*Vendor, error)
-	predicates       []predicate.Vendor
+	op                            Op
+	typ                           string
+	id                            *int
+	create_time                   *time.Time
+	update_time                   *time.Time
+	name                          *string
+	clearedFields                 map[string]struct{}
+	vendor_fk                     map[int]struct{}
+	removedvendor_fk              map[int]struct{}
+	clearedvendor_fk              bool
+	vendors_recomendations        map[int]struct{}
+	removedvendors_recomendations map[int]struct{}
+	clearedvendors_recomendations bool
+	done                          bool
+	oldValue                      func(context.Context) (*Vendor, error)
+	predicates                    []predicate.Vendor
 }
 
 var _ ent.Mutation = (*VendorMutation)(nil)
@@ -66860,6 +69340,59 @@ func (m *VendorMutation) ResetVendorFk() {
 	m.removedvendor_fk = nil
 }
 
+// AddVendorsRecomendationIDs adds the vendors_recomendations edge to Recommendations by ids.
+func (m *VendorMutation) AddVendorsRecomendationIDs(ids ...int) {
+	if m.vendors_recomendations == nil {
+		m.vendors_recomendations = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.vendors_recomendations[ids[i]] = struct{}{}
+	}
+}
+
+// ClearVendorsRecomendations clears the vendors_recomendations edge to Recommendations.
+func (m *VendorMutation) ClearVendorsRecomendations() {
+	m.clearedvendors_recomendations = true
+}
+
+// VendorsRecomendationsCleared returns if the edge vendors_recomendations was cleared.
+func (m *VendorMutation) VendorsRecomendationsCleared() bool {
+	return m.clearedvendors_recomendations
+}
+
+// RemoveVendorsRecomendationIDs removes the vendors_recomendations edge to Recommendations by ids.
+func (m *VendorMutation) RemoveVendorsRecomendationIDs(ids ...int) {
+	if m.removedvendors_recomendations == nil {
+		m.removedvendors_recomendations = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedvendors_recomendations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedVendorsRecomendations returns the removed ids of vendors_recomendations.
+func (m *VendorMutation) RemovedVendorsRecomendationsIDs() (ids []int) {
+	for id := range m.removedvendors_recomendations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// VendorsRecomendationsIDs returns the vendors_recomendations ids in the mutation.
+func (m *VendorMutation) VendorsRecomendationsIDs() (ids []int) {
+	for id := range m.vendors_recomendations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetVendorsRecomendations reset all changes of the "vendors_recomendations" edge.
+func (m *VendorMutation) ResetVendorsRecomendations() {
+	m.vendors_recomendations = nil
+	m.clearedvendors_recomendations = false
+	m.removedvendors_recomendations = nil
+}
+
 // Op returns the operation name.
 func (m *VendorMutation) Op() Op {
 	return m.op
@@ -67009,9 +69542,12 @@ func (m *VendorMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *VendorMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.vendor_fk != nil {
 		edges = append(edges, vendor.EdgeVendorFk)
+	}
+	if m.vendors_recomendations != nil {
+		edges = append(edges, vendor.EdgeVendorsRecomendations)
 	}
 	return edges
 }
@@ -67026,6 +69562,12 @@ func (m *VendorMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case vendor.EdgeVendorsRecomendations:
+		ids := make([]ent.Value, 0, len(m.vendors_recomendations))
+		for id := range m.vendors_recomendations {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -67033,9 +69575,12 @@ func (m *VendorMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *VendorMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedvendor_fk != nil {
 		edges = append(edges, vendor.EdgeVendorFk)
+	}
+	if m.removedvendors_recomendations != nil {
+		edges = append(edges, vendor.EdgeVendorsRecomendations)
 	}
 	return edges
 }
@@ -67050,6 +69595,12 @@ func (m *VendorMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case vendor.EdgeVendorsRecomendations:
+		ids := make([]ent.Value, 0, len(m.removedvendors_recomendations))
+		for id := range m.removedvendors_recomendations {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -67057,9 +69608,12 @@ func (m *VendorMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *VendorMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedvendor_fk {
 		edges = append(edges, vendor.EdgeVendorFk)
+	}
+	if m.clearedvendors_recomendations {
+		edges = append(edges, vendor.EdgeVendorsRecomendations)
 	}
 	return edges
 }
@@ -67070,6 +69624,8 @@ func (m *VendorMutation) EdgeCleared(name string) bool {
 	switch name {
 	case vendor.EdgeVendorFk:
 		return m.clearedvendor_fk
+	case vendor.EdgeVendorsRecomendations:
+		return m.clearedvendors_recomendations
 	}
 	return false
 }
@@ -67089,6 +69645,9 @@ func (m *VendorMutation) ResetEdge(name string) error {
 	switch name {
 	case vendor.EdgeVendorFk:
 		m.ResetVendorFk()
+		return nil
+	case vendor.EdgeVendorsRecomendations:
+		m.ResetVendorsRecomendations()
 		return nil
 	}
 	return fmt.Errorf("unknown Vendor edge %s", name)

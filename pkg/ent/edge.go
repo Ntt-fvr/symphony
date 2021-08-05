@@ -1512,6 +1512,62 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
+func (r *Recommendations) RecomendationSources(ctx context.Context) (*RecommendationsSources, error) {
+	result, err := r.Edges.RecomendationSourcesOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRecomendationSources().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) RecomendationCategory(ctx context.Context) (*RecommendationsCategory, error) {
+	result, err := r.Edges.RecomendationCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRecomendationCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) UserCreate(ctx context.Context) (*User, error) {
+	result, err := r.Edges.UserCreateOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryUserCreate().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) UserApprobed(ctx context.Context) (*User, error) {
+	result, err := r.Edges.UserApprobedOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryUserApprobed().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) VendorsRecomendations(ctx context.Context) (*Vendor, error) {
+	result, err := r.Edges.VendorsRecomendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryVendorsRecomendations().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rc *RecommendationsCategory) Recommendations(ctx context.Context) ([]*Recommendations, error) {
+	result, err := rc.Edges.RecommendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = rc.QueryRecommendations().All(ctx)
+	}
+	return result, err
+}
+
+func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recommendations, error) {
+	result, err := rs.Edges.RecommendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryRecommendations().All(ctx)
+	}
+	return result, err
+}
+
 func (r *Rule) Ruletype(ctx context.Context) (*RuleType, error) {
 	result, err := r.Edges.RuletypeOrErr()
 	if IsNotLoaded(err) {
@@ -1888,6 +1944,22 @@ func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	return result, MaskNotFound(err)
 }
 
+func (u *User) UserCreate(ctx context.Context) ([]*Recommendations, error) {
+	result, err := u.Edges.UserCreateOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserCreate().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) UserApproved(ctx context.Context) ([]*Recommendations, error) {
+	result, err := u.Edges.UserApprovedOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserApproved().All(ctx)
+	}
+	return result, err
+}
+
 func (u *User) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := u.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
@@ -1964,6 +2036,14 @@ func (v *Vendor) VendorFk(ctx context.Context) ([]*Counter, error) {
 	result, err := v.Edges.VendorFkOrErr()
 	if IsNotLoaded(err) {
 		result, err = v.QueryVendorFk().All(ctx)
+	}
+	return result, err
+}
+
+func (v *Vendor) VendorsRecomendations(ctx context.Context) ([]*Recommendations, error) {
+	result, err := v.Edges.VendorsRecomendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = v.QueryVendorsRecomendations().All(ctx)
 	}
 	return result, err
 }

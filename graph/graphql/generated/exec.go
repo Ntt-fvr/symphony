@@ -98,6 +98,7 @@ type ResolverRoot interface {
 	Property() PropertyResolver
 	PropertyType() PropertyTypeResolver
 	Query() QueryResolver
+	Recommendations() RecommendationsResolver
 	ReportFilter() ReportFilterResolver
 	Rule() RuleResolver
 	RuleType() RuleTypeResolver
@@ -114,6 +115,7 @@ type ResolverRoot interface {
 	User() UserResolver
 	VariableDefinition() VariableDefinitionResolver
 	VariableExpression() VariableExpressionResolver
+	Vendor() VendorResolver
 	Viewer() ViewerResolver
 	WorkOrder() WorkOrderResolver
 	WorkOrderType() WorkOrderTypeResolver
@@ -1029,6 +1031,9 @@ type ComplexityRoot struct {
 		AddLocationType                          func(childComplexity int, input models.AddLocationTypeInput) int
 		AddOrganization                          func(childComplexity int, input models.AddOrganizationInput) int
 		AddPermissionsPolicy                     func(childComplexity int, input models.AddPermissionsPolicyInput) int
+		AddRecommendations                       func(childComplexity int, input models.AddRecommendationsInput) int
+		AddRecommendationsCategory               func(childComplexity int, input models.AddRecommendationsCategoryInput) int
+		AddRecommendationsSources                func(childComplexity int, input models.AddRecommendationsSourcesInput) int
 		AddReportFilter                          func(childComplexity int, input models.ReportFilterInput) int
 		AddRule                                  func(childComplexity int, input models.AddRuleInput) int
 		AddRuleLimit                             func(childComplexity int, input models.AddRuleLimitInput) int
@@ -1097,6 +1102,9 @@ type ComplexityRoot struct {
 		EditPermissionsPolicy                    func(childComplexity int, input models.EditPermissionsPolicyInput) int
 		EditProject                              func(childComplexity int, input models.EditProjectInput) int
 		EditProjectType                          func(childComplexity int, input models.EditProjectTypeInput) int
+		EditRecommendations                      func(childComplexity int, input models.EditRecommendationsInput) int
+		EditRecommendationsCategory              func(childComplexity int, input models.EditRecommendationsCategoryInput) int
+		EditRecommendationsSources               func(childComplexity int, input models.EditRecommendationsSourcesInput) int
 		EditReportFilter                         func(childComplexity int, input models.EditReportFilterInput) int
 		EditRule                                 func(childComplexity int, input models.EditRuleInput) int
 		EditRuleLimit                            func(childComplexity int, input models.EditRuleLimitInput) int
@@ -1143,6 +1151,9 @@ type ComplexityRoot struct {
 		RemoveLocation                           func(childComplexity int, id int) int
 		RemoveLocationType                       func(childComplexity int, id int) int
 		RemoveOrganization                       func(childComplexity int, id int) int
+		RemoveRecommendations                    func(childComplexity int, id int) int
+		RemoveRecommendationsCategory            func(childComplexity int, id int) int
+		RemoveRecommendationsSources             func(childComplexity int, id int) int
 		RemoveRule                               func(childComplexity int, id int) int
 		RemoveRuleLimit                          func(childComplexity int, id int) int
 		RemoveRuleType                           func(childComplexity int, id int) int
@@ -1333,55 +1344,122 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		ActionType               func(childComplexity int, id flowschema.ActionTypeID) int
-		AlarmFilters             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
-		AlarmStatus              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmStatusOrder, filterBy []*models.AlarmStatusFilterInput) int
-		Comparators              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) int
-		CounterFamilies          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) int
-		Counters                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
-		Customers                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Domains                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) int
-		EndToEndPath             func(childComplexity int, linkID *int, portID *int) int
-		EquipmentPortDefinitions func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		EquipmentPortTypes       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
-		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
-		EventSeverities          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) int
-		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
-		FlowInstances            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
-		Flows                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
-		Kpis                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
-		Kqis                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiOrder, filterBy []*models.KqiFilterInput) int
-		LatestPythonPackage      func(childComplexity int) int
-		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
-		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Locations                func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) int
-		Me                       func(childComplexity int) int
-		NearestSites             func(childComplexity int, latitude float64, longitude float64, first int) int
-		Node                     func(childComplexity int, id int) int
-		Organizations            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.OrganizationOrder, filterBy []*models.OrganizationFilterInput) int
-		PermissionsPolicies      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
-		PossibleProperties       func(childComplexity int, entityType enum.PropertyEntity) int
-		ProjectTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
-		PythonPackages           func(childComplexity int) int
-		ReportFilters            func(childComplexity int, entity models.FilterEntity) int
-		RuleTypes                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) int
-		SearchForNode            func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		ServiceTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Services                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
-		Surveys                  func(childComplexity int) int
-		Thresholds               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ThresholdOrder, filterBy []*models.ThresholdFilterInput) int
-		TriggerType              func(childComplexity int, id flowschema.TriggerTypeID) int
-		User                     func(childComplexity int, authID string) int
-		Users                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
-		UsersGroups              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
-		Vendors                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) int
-		Vertex                   func(childComplexity int, id int) int
-		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
-		WorkerTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		ActionType                func(childComplexity int, id flowschema.ActionTypeID) int
+		AlarmFilters              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
+		AlarmStatus               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmStatusOrder, filterBy []*models.AlarmStatusFilterInput) int
+		Comparators               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) int
+		CounterFamilies           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) int
+		Counters                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
+		Customers                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Domains                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) int
+		EndToEndPath              func(childComplexity int, linkID *int, portID *int) int
+		EquipmentPortDefinitions  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		EquipmentPortTypes        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		EquipmentPorts            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
+		EquipmentTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Equipments                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
+		EventSeverities           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) int
+		FlowDrafts                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		FlowInstances             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
+		Flows                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		Kpis                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
+		Kqis                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiOrder, filterBy []*models.KqiFilterInput) int
+		LatestPythonPackage       func(childComplexity int) int
+		Links                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
+		LocationTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Locations                 func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) int
+		Me                        func(childComplexity int) int
+		NearestSites              func(childComplexity int, latitude float64, longitude float64, first int) int
+		Node                      func(childComplexity int, id int) int
+		Organizations             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.OrganizationOrder, filterBy []*models.OrganizationFilterInput) int
+		PermissionsPolicies       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
+		PossibleProperties        func(childComplexity int, entityType enum.PropertyEntity) int
+		ProjectTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Projects                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
+		PythonPackages            func(childComplexity int) int
+		Recommendations           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) int
+		RecommendationsCategories func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) int
+		RecommendationsSources    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) int
+		ReportFilters             func(childComplexity int, entity models.FilterEntity) int
+		RuleTypes                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) int
+		SearchForNode             func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		ServiceTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Services                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
+		Surveys                   func(childComplexity int) int
+		Thresholds                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ThresholdOrder, filterBy []*models.ThresholdFilterInput) int
+		TriggerType               func(childComplexity int, id flowschema.TriggerTypeID) int
+		User                      func(childComplexity int, authID string) int
+		Users                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
+		UsersGroups               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
+		Vendors                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) int
+		Vertex                    func(childComplexity int, id int) int
+		WorkOrderTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		WorkOrders                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
+		WorkerTypes               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+	}
+
+	Recommendations struct {
+		AlarmType               func(childComplexity int) int
+		Command                 func(childComplexity int) int
+		ExternalId              func(childComplexity int) int
+		ID                      func(childComplexity int) int
+		LongDescription         func(childComplexity int) int
+		Priority                func(childComplexity int) int
+		RecommendationsCategory func(childComplexity int) int
+		RecommendationsSources  func(childComplexity int) int
+		Resource                func(childComplexity int) int
+		Runbook                 func(childComplexity int) int
+		ShortDescription        func(childComplexity int) int
+		Status                  func(childComplexity int) int
+		Used                    func(childComplexity int) int
+		UserApprobed            func(childComplexity int) int
+		UserCreate              func(childComplexity int) int
+		Vendor                  func(childComplexity int) int
+	}
+
+	RecommendationsCategory struct {
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		Recommendations func(childComplexity int) int
+	}
+
+	RecommendationsCategoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	RecommendationsCategoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	RecommendationsConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	RecommendationsEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	RecommendationsSources struct {
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		Recommendations func(childComplexity int) int
+	}
+
+	RecommendationsSourcesConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	RecommendationsSourcesEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	ReportFilter struct {
@@ -1776,8 +1854,9 @@ type ComplexityRoot struct {
 	}
 
 	Vendor struct {
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		VendorRecommendations func(childComplexity int) int
 	}
 
 	VendorConnection struct {
@@ -2243,6 +2322,15 @@ type MutationResolver interface {
 	AddKqiComparator(ctx context.Context, input models.AddKqiComparatorInput) (*ent.KqiComparator, error)
 	EditKqiComparator(ctx context.Context, input models.EditKqiComparatorInput) (*ent.KqiComparator, error)
 	RemoveKqiComparator(ctx context.Context, id int) (int, error)
+	AddRecommendations(ctx context.Context, input models.AddRecommendationsInput) (*ent.Recommendations, error)
+	EditRecommendations(ctx context.Context, input models.EditRecommendationsInput) (*ent.Recommendations, error)
+	RemoveRecommendations(ctx context.Context, id int) (int, error)
+	AddRecommendationsSources(ctx context.Context, input models.AddRecommendationsSourcesInput) (*ent.RecommendationsSources, error)
+	EditRecommendationsSources(ctx context.Context, input models.EditRecommendationsSourcesInput) (*ent.RecommendationsSources, error)
+	RemoveRecommendationsSources(ctx context.Context, id int) (int, error)
+	AddRecommendationsCategory(ctx context.Context, input models.AddRecommendationsCategoryInput) (*ent.RecommendationsCategory, error)
+	EditRecommendationsCategory(ctx context.Context, input models.EditRecommendationsCategoryInput) (*ent.RecommendationsCategory, error)
+	RemoveRecommendationsCategory(ctx context.Context, id int) (int, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -2310,6 +2398,15 @@ type QueryResolver interface {
 	AlarmStatus(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmStatusOrder, filterBy []*models.AlarmStatusFilterInput) (*ent.AlarmStatusConnection, error)
 	Kqis(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiOrder, filterBy []*models.KqiFilterInput) (*ent.KqiConnection, error)
 	Organizations(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.OrganizationOrder, filterBy []*models.OrganizationFilterInput) (*ent.OrganizationConnection, error)
+	Recommendations(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) (*ent.RecommendationsConnection, error)
+	RecommendationsSources(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesConnection, error)
+	RecommendationsCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) (*ent.RecommendationsCategoryConnection, error)
+}
+type RecommendationsResolver interface {
+	RecommendationsSources(ctx context.Context, obj *ent.Recommendations) (*ent.RecommendationsSources, error)
+	RecommendationsCategory(ctx context.Context, obj *ent.Recommendations) (*ent.RecommendationsCategory, error)
+
+	Vendor(ctx context.Context, obj *ent.Recommendations) (*ent.Vendor, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -2379,6 +2476,9 @@ type VariableDefinitionResolver interface {
 type VariableExpressionResolver interface {
 	VariableDefinition(ctx context.Context, obj *flowschema.VariableExpression) (*flowschema.VariableDefinition, error)
 	PropertyTypeDefinition(ctx context.Context, obj *flowschema.VariableExpression) (*ent.PropertyType, error)
+}
+type VendorResolver interface {
+	VendorRecommendations(ctx context.Context, obj *ent.Vendor) ([]*ent.Recommendations, error)
 }
 type ViewerResolver interface {
 	User(ctx context.Context, obj viewer.Viewer) (*ent.User, error)
@@ -6431,6 +6531,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddPermissionsPolicy(childComplexity, args["input"].(models.AddPermissionsPolicyInput)), true
 
+	case "Mutation.addRecommendations":
+		if e.complexity.Mutation.AddRecommendations == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addRecommendations_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddRecommendations(childComplexity, args["input"].(models.AddRecommendationsInput)), true
+
+	case "Mutation.addRecommendationsCategory":
+		if e.complexity.Mutation.AddRecommendationsCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addRecommendationsCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddRecommendationsCategory(childComplexity, args["input"].(models.AddRecommendationsCategoryInput)), true
+
+	case "Mutation.addRecommendationsSources":
+		if e.complexity.Mutation.AddRecommendationsSources == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addRecommendationsSources_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddRecommendationsSources(childComplexity, args["input"].(models.AddRecommendationsSourcesInput)), true
+
 	case "Mutation.addReportFilter":
 		if e.complexity.Mutation.AddReportFilter == nil {
 			break
@@ -7247,6 +7383,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditProjectType(childComplexity, args["input"].(models.EditProjectTypeInput)), true
 
+	case "Mutation.editRecommendations":
+		if e.complexity.Mutation.EditRecommendations == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editRecommendations_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditRecommendations(childComplexity, args["input"].(models.EditRecommendationsInput)), true
+
+	case "Mutation.editRecommendationsCategory":
+		if e.complexity.Mutation.EditRecommendationsCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editRecommendationsCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditRecommendationsCategory(childComplexity, args["input"].(models.EditRecommendationsCategoryInput)), true
+
+	case "Mutation.editRecommendationsSources":
+		if e.complexity.Mutation.EditRecommendationsSources == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editRecommendationsSources_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditRecommendationsSources(childComplexity, args["input"].(models.EditRecommendationsSourcesInput)), true
+
 	case "Mutation.editReportFilter":
 		if e.complexity.Mutation.EditReportFilter == nil {
 			break
@@ -7798,6 +7970,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveOrganization(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeRecommendations":
+		if e.complexity.Mutation.RemoveRecommendations == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeRecommendations_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveRecommendations(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeRecommendationsCategory":
+		if e.complexity.Mutation.RemoveRecommendationsCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeRecommendationsCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveRecommendationsCategory(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeRecommendationsSources":
+		if e.complexity.Mutation.RemoveRecommendationsSources == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeRecommendationsSources_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveRecommendationsSources(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeRule":
 		if e.complexity.Mutation.RemoveRule == nil {
@@ -9148,6 +9356,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PythonPackages(childComplexity), true
 
+	case "Query.Recommendations":
+		if e.complexity.Query.Recommendations == nil {
+			break
+		}
+
+		args, err := ec.field_Query_Recommendations_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Recommendations(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsOrder), args["filterBy"].([]*models.RecommendationsFilterInput)), true
+
+	case "Query.RecommendationsCategories":
+		if e.complexity.Query.RecommendationsCategories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_RecommendationsCategories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecommendationsCategories(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsCategoryOrder), args["filterBy"].([]*models.RecommendationsCategoryFilterInput)), true
+
+	case "Query.RecommendationsSources":
+		if e.complexity.Query.RecommendationsSources == nil {
+			break
+		}
+
+		args, err := ec.field_Query_RecommendationsSources_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecommendationsSources(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsSourcesOrder), args["filterBy"].([]*models.RecommendationsSourcesFilterInput)), true
+
 	case "Query.reportFilters":
 		if e.complexity.Query.ReportFilters == nil {
 			break
@@ -9334,6 +9578,265 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.WorkerTypes(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+
+	case "Recommendations.alarmType":
+		if e.complexity.Recommendations.AlarmType == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.AlarmType(childComplexity), true
+
+	case "Recommendations.command":
+		if e.complexity.Recommendations.Command == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Command(childComplexity), true
+
+	case "Recommendations.externalID":
+		if e.complexity.Recommendations.ExternalId == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.ExternalId(childComplexity), true
+
+	case "Recommendations.id":
+		if e.complexity.Recommendations.ID == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.ID(childComplexity), true
+
+	case "Recommendations.longDescription":
+		if e.complexity.Recommendations.LongDescription == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.LongDescription(childComplexity), true
+
+	case "Recommendations.priority":
+		if e.complexity.Recommendations.Priority == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Priority(childComplexity), true
+
+	case "Recommendations.recommendationsCategory":
+		if e.complexity.Recommendations.RecommendationsCategory == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.RecommendationsCategory(childComplexity), true
+
+	case "Recommendations.recommendationsSources":
+		if e.complexity.Recommendations.RecommendationsSources == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.RecommendationsSources(childComplexity), true
+
+	case "Recommendations.resource":
+		if e.complexity.Recommendations.Resource == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Resource(childComplexity), true
+
+	case "Recommendations.runbook":
+		if e.complexity.Recommendations.Runbook == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Runbook(childComplexity), true
+
+	case "Recommendations.shortDescription":
+		if e.complexity.Recommendations.ShortDescription == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.ShortDescription(childComplexity), true
+
+	case "Recommendations.status":
+		if e.complexity.Recommendations.Status == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Status(childComplexity), true
+
+	case "Recommendations.used":
+		if e.complexity.Recommendations.Used == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Used(childComplexity), true
+
+	case "Recommendations.userApprobed":
+		if e.complexity.Recommendations.UserApprobed == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.UserApprobed(childComplexity), true
+
+	case "Recommendations.userCreate":
+		if e.complexity.Recommendations.UserCreate == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.UserCreate(childComplexity), true
+
+	case "Recommendations.vendor":
+		if e.complexity.Recommendations.Vendor == nil {
+			break
+		}
+
+		return e.complexity.Recommendations.Vendor(childComplexity), true
+
+	case "RecommendationsCategory.id":
+		if e.complexity.RecommendationsCategory.ID == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategory.ID(childComplexity), true
+
+	case "RecommendationsCategory.name":
+		if e.complexity.RecommendationsCategory.Name == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategory.Name(childComplexity), true
+
+	case "RecommendationsCategory.recommendations":
+		if e.complexity.RecommendationsCategory.Recommendations == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategory.Recommendations(childComplexity), true
+
+	case "RecommendationsCategoryConnection.edges":
+		if e.complexity.RecommendationsCategoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategoryConnection.Edges(childComplexity), true
+
+	case "RecommendationsCategoryConnection.pageInfo":
+		if e.complexity.RecommendationsCategoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategoryConnection.PageInfo(childComplexity), true
+
+	case "RecommendationsCategoryConnection.totalCount":
+		if e.complexity.RecommendationsCategoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategoryConnection.TotalCount(childComplexity), true
+
+	case "RecommendationsCategoryEdge.cursor":
+		if e.complexity.RecommendationsCategoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategoryEdge.Cursor(childComplexity), true
+
+	case "RecommendationsCategoryEdge.node":
+		if e.complexity.RecommendationsCategoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsCategoryEdge.Node(childComplexity), true
+
+	case "RecommendationsConnection.edges":
+		if e.complexity.RecommendationsConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsConnection.Edges(childComplexity), true
+
+	case "RecommendationsConnection.pageInfo":
+		if e.complexity.RecommendationsConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsConnection.PageInfo(childComplexity), true
+
+	case "RecommendationsConnection.totalCount":
+		if e.complexity.RecommendationsConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsConnection.TotalCount(childComplexity), true
+
+	case "RecommendationsEdge.cursor":
+		if e.complexity.RecommendationsEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsEdge.Cursor(childComplexity), true
+
+	case "RecommendationsEdge.node":
+		if e.complexity.RecommendationsEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsEdge.Node(childComplexity), true
+
+	case "RecommendationsSources.id":
+		if e.complexity.RecommendationsSources.ID == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSources.ID(childComplexity), true
+
+	case "RecommendationsSources.name":
+		if e.complexity.RecommendationsSources.Name == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSources.Name(childComplexity), true
+
+	case "RecommendationsSources.recommendations":
+		if e.complexity.RecommendationsSources.Recommendations == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSources.Recommendations(childComplexity), true
+
+	case "RecommendationsSourcesConnection.edges":
+		if e.complexity.RecommendationsSourcesConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSourcesConnection.Edges(childComplexity), true
+
+	case "RecommendationsSourcesConnection.pageInfo":
+		if e.complexity.RecommendationsSourcesConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSourcesConnection.PageInfo(childComplexity), true
+
+	case "RecommendationsSourcesConnection.totalCount":
+		if e.complexity.RecommendationsSourcesConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSourcesConnection.TotalCount(childComplexity), true
+
+	case "RecommendationsSourcesEdge.cursor":
+		if e.complexity.RecommendationsSourcesEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSourcesEdge.Cursor(childComplexity), true
+
+	case "RecommendationsSourcesEdge.node":
+		if e.complexity.RecommendationsSourcesEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.RecommendationsSourcesEdge.Node(childComplexity), true
 
 	case "ReportFilter.entity":
 		if e.complexity.ReportFilter.Entity == nil {
@@ -11124,6 +11627,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Vendor.Name(childComplexity), true
+
+	case "Vendor.vendorRecommendations":
+		if e.complexity.Vendor.VendorRecommendations == nil {
+			break
+		}
+
+		return e.complexity.Vendor.VendorRecommendations(childComplexity), true
 
 	case "VendorConnection.edges":
 		if e.complexity.VendorConnection.Edges == nil {
@@ -15225,6 +15735,210 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
+################################ conection recommendations ###############################################
+"""
+Properties by which Recommendations connections can be ordered.
+"""
+enum RecommendationsOrderField {
+  """
+  Order Recommendations by name.
+  """
+  NAME
+
+  """
+  Order Recommendations by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Recommendations by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Recommendations connections.
+"""
+input RecommendationsOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Recommendations by.
+  """
+  field: RecommendationsOrderField
+}
+
+"""
+A connection to a list of Recommendations.
+"""
+type RecommendationsConnection {
+  """
+  Total Recommendations of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Recommendations edges.
+  """
+  edges: [RecommendationsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Recommendations edge in a connection.
+"""
+type RecommendationsEdge {
+  """
+  The Recommendations at the end of the edge.
+  """
+  node: Recommendations
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection recommendationsSources ###############################################
+"""
+Properties by which RecommendationsSources connections can be ordered.
+"""
+enum RecommendationsSourcesOrderField {
+  """
+  Order RecommendationsSources by name.
+  """
+  NAME
+
+  """
+  Order RecommendationsSources by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order RecommendationsSources by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for RecommendationsSources connections.
+"""
+input RecommendationsSourcesOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order RecommendationsSources by.
+  """
+  field: RecommendationsSourcesOrderField
+}
+
+"""
+A connection to a list of RecommendationsSources.
+"""
+type RecommendationsSourcesConnection {
+  """
+  Total RecommendationsSources of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of RecommendationsSources edges.
+  """
+  edges: [RecommendationsSourcesEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A RecommendationsSources edge in a connection.
+"""
+type RecommendationsSourcesEdge {
+  """
+  The RecommendationsSources at the end of the edge.
+  """
+  node: RecommendationsSources
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection recommendationsCategory ###############################################
+"""
+Properties by which RecommendationsCategory connections can be ordered.
+"""
+enum RecommendationsCategoryOrderField {
+  """
+  Order RecommendationsCategory by name.
+  """
+  NAME
+
+  """
+  Order RecommendationsCategory by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order RecommendationsCategory by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for RecommendationsCategory connections.
+"""
+input RecommendationsCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order RecommendationsCategory by.
+  """
+  field: RecommendationsCategoryOrderField
+}
+
+"""
+A connection to a list of RecommendationsCategory.
+"""
+type RecommendationsCategoryConnection {
+  """
+  Total RecommendationsCategory of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of RecommendationsCategory edges.
+  """
+  edges: [RecommendationsCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A RecommendationsCategory edge in a connection.
+"""
+type RecommendationsCategoryEdge {
+  """
+  The RecommendationsCategory at the end of the edge.
+  """
+  node: RecommendationsCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -17478,6 +18192,108 @@ type Query {
     
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
+  """
+  A list of Recommendations.
+  """
+  Recommendations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsFilterInput!]
+  ): RecommendationsConnection!
+  """
+  A list of RecommendationsSources.
+  """
+  RecommendationsSources(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsSourcesOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsSourcesFilterInput!]
+  ): RecommendationsSourcesConnection!
+  """
+  A list of RecommendationsCategories.
+  """
+  RecommendationsCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsCategoryOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsCategoryFilterInput!]
+  ): RecommendationsCategoryConnection!
 }
 
 type Mutation {
@@ -17769,6 +18585,15 @@ type Mutation {
   addKqiComparator(input: AddKqiComparatorInput!):KqiComparator!
   editKqiComparator(input: EditKqiComparatorInput!): KqiComparator!
   removeKqiComparator(id: ID!): ID!
+  addRecommendations(input: AddRecommendationsInput!):Recommendations!
+  editRecommendations(input: EditRecommendationsInput!): Recommendations!
+  removeRecommendations(id: ID!): ID!
+  addRecommendationsSources(input: AddRecommendationsSourcesInput!):RecommendationsSources!
+  editRecommendationsSources(input: EditRecommendationsSourcesInput!): RecommendationsSources!
+  removeRecommendationsSources(id: ID!): ID!
+  addRecommendationsCategory(input: AddRecommendationsCategoryInput!):RecommendationsCategory!
+  editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory!
+  removeRecommendationsCategory(id: ID!): ID!
 }
 
 """
@@ -17871,6 +18696,7 @@ input CounterFamilyFilterInput {
 type Vendor implements Node {
   id: ID!
   name: String!
+  vendorRecommendations: [Recommendations!]
 }
 
 input AddVendorInput {
@@ -18494,6 +19320,143 @@ input EditKqiComparatorInput {
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
+}
+
+##################### RECOMMENDATIONS #######################
+
+type Recommendations implements Node {
+  id: ID!
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: RecommendationsSources!
+  recommendationsCategory: RecommendationsCategory!
+  userApprobed: User
+  userCreate: User!
+  vendor: Vendor!
+}
+
+input AddRecommendationsInput {
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: ID!
+  recommendationsCategory: ID!
+  userApprobed: ID
+  userCreate: ID!
+  vendor: ID!
+}
+
+input EditRecommendationsInput {
+  id: ID!
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: ID!
+  recommendationsCategory: ID!
+  userApprobed: ID
+  vendor: ID!
+}
+######################## filter ###################
+enum RecommendationsFilterType {
+  EXTERNALID
+  RESOURCE
+  ALARMTYPE
+  SHORTDESCRIPTION
+  LONGDESCRIPTION
+  COMMAND
+  PRIORITY
+  STATUS
+  USED
+  RUNBOOK
+}
+
+input RecommendationsFilterInput {
+  filterType: RecommendationsFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  boolValue: Boolean
+  intValue: Int
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RecommendationsSources implements Node {
+  id: ID!
+  name: String! 
+  recommendations: [Recommendations!]
+}
+
+input AddRecommendationsSourcesInput {
+  name: String!
+}
+
+input EditRecommendationsSourcesInput {
+  id: ID!
+  name: String!
+}
+
+enum RecommendationsSourcesFilterType {
+  NAME
+}
+
+input RecommendationsSourcesFilterInput {
+  filterType: RecommendationsSourcesFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RecommendationsCategory implements Node {
+  id: ID!
+  name: String! 
+  recommendations: [Recommendations!]
+}
+
+input AddRecommendationsCategoryInput {
+  name: String!
+}
+
+input EditRecommendationsCategoryInput {
+  id: ID!
+  name: String!
+}
+
+enum RecommendationsCategoryFilterType {
+  NAME
+}
+
+input RecommendationsCategoryFilterInput {
+  filterType: RecommendationsCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -19469,6 +20432,51 @@ func (ec *executionContext) field_Mutation_addPermissionsPolicy_args(ctx context
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddPermissionsPolicyInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddPermissionsPolicyInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addRecommendationsCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddRecommendationsCategoryInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsCategoryInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addRecommendationsSources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddRecommendationsSourcesInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddRecommendationsSourcesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsSourcesInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addRecommendations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddRecommendationsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddRecommendationsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -20596,6 +21604,51 @@ func (ec *executionContext) field_Mutation_editProject_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editRecommendationsCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditRecommendationsCategoryInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsCategoryInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editRecommendationsSources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditRecommendationsSourcesInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditRecommendationsSourcesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsSourcesInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_editRecommendations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditRecommendationsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditRecommendationsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editReportFilter_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -21349,6 +22402,51 @@ func (ec *executionContext) field_Mutation_removeOrganization_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_removeRecommendationsCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeRecommendationsSources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeRecommendations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_removeRuleLimit_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -21864,6 +22962,300 @@ func (ec *executionContext) field_Query_Kqis_args(ctx context.Context, rawArgs m
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
 		arg5, err = ec.unmarshalOKqiFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKqiFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_RecommendationsCategories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.RecommendationsCategoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalORecommendationsCategoryOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.RecommendationsCategoryFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalORecommendationsCategoryFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_RecommendationsSources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.RecommendationsSourcesOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalORecommendationsSourcesOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.RecommendationsSourcesFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalORecommendationsSourcesFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_Recommendations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.RecommendationsOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalORecommendationsOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.RecommendationsFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalORecommendationsFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -49851,6 +51243,384 @@ func (ec *executionContext) _Mutation_removeKqiComparator(ctx context.Context, f
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addRecommendations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addRecommendations_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddRecommendations(rctx, args["input"].(models.AddRecommendationsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalNRecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editRecommendations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editRecommendations_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditRecommendations(rctx, args["input"].(models.EditRecommendationsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalNRecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeRecommendations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeRecommendations_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveRecommendations(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addRecommendationsSources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addRecommendationsSources_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddRecommendationsSources(rctx, args["input"].(models.AddRecommendationsSourcesInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsSources)
+	fc.Result = res
+	return ec.marshalNRecommendationsSources2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editRecommendationsSources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editRecommendationsSources_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditRecommendationsSources(rctx, args["input"].(models.EditRecommendationsSourcesInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsSources)
+	fc.Result = res
+	return ec.marshalNRecommendationsSources2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeRecommendationsSources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeRecommendationsSources_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveRecommendationsSources(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addRecommendationsCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addRecommendationsCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddRecommendationsCategory(rctx, args["input"].(models.AddRecommendationsCategoryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsCategory)
+	fc.Result = res
+	return ec.marshalNRecommendationsCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editRecommendationsCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editRecommendationsCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditRecommendationsCategory(rctx, args["input"].(models.EditRecommendationsCategoryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsCategory)
+	fc.Result = res
+	return ec.marshalNRecommendationsCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeRecommendationsCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeRecommendationsCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveRecommendationsCategory(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -55401,6 +57171,132 @@ func (ec *executionContext) _Query_organizations(ctx context.Context, field grap
 	return ec.marshalNOrganizationConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganizationConnection(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_Recommendations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_Recommendations_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Recommendations(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsOrder), args["filterBy"].([]*models.RecommendationsFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsConnection)
+	fc.Result = res
+	return ec.marshalNRecommendationsConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_RecommendationsSources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_RecommendationsSources_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().RecommendationsSources(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsSourcesOrder), args["filterBy"].([]*models.RecommendationsSourcesFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsSourcesConnection)
+	fc.Result = res
+	return ec.marshalNRecommendationsSourcesConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_RecommendationsCategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_RecommendationsCategories_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().RecommendationsCategories(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.RecommendationsCategoryOrder), args["filterBy"].([]*models.RecommendationsCategoryFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsCategoryConnection)
+	fc.Result = res
+	return ec.marshalNRecommendationsCategoryConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryConnection(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -55470,6 +57366,1277 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_id(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_externalID(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExternalId, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_resource(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Resource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_alarmType(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlarmType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_shortDescription(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ShortDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_longDescription(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LongDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_command(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Command, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_priority(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Priority, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_status(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_runbook(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Runbook, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_used(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Used, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_recommendationsSources(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Recommendations().RecommendationsSources(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsSources)
+	fc.Result = res
+	return ec.marshalNRecommendationsSources2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_recommendationsCategory(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Recommendations().RecommendationsCategory(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsCategory)
+	fc.Result = res
+	return ec.marshalNRecommendationsCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_userApprobed(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserApprobed(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_userCreate(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserCreate(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Recommendations_vendor(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Recommendations",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Recommendations().Vendor(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Vendor)
+	fc.Result = res
+	return ec.marshalNVendor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐVendor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategory_name(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategory_recommendations(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Recommendations(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalORecommendations2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategoryConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategoryConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategoryConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategoryConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.RecommendationsCategoryEdge)
+	fc.Result = res
+	return ec.marshalNRecommendationsCategoryEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategoryConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategoryConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategoryEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategoryEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsCategory)
+	fc.Result = res
+	return ec.marshalORecommendationsCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsCategoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsCategoryEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsCategoryEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.RecommendationsEdge)
+	fc.Result = res
+	return ec.marshalNRecommendationsEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalORecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSources_id(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSources) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSources",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSources_name(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSources) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSources",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSources_recommendations(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSources) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSources",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Recommendations(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalORecommendations2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSourcesConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSourcesConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSourcesConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSourcesConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSourcesConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSourcesConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.RecommendationsSourcesEdge)
+	fc.Result = res
+	return ec.marshalNRecommendationsSourcesEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSourcesConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSourcesConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSourcesConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSourcesEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSourcesEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSourcesEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.RecommendationsSources)
+	fc.Result = res
+	return ec.marshalORecommendationsSources2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecommendationsSourcesEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.RecommendationsSourcesEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "RecommendationsSourcesEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ReportFilter_id(ctx context.Context, field graphql.CollectedField, obj *ent.ReportFilter) (ret graphql.Marshaler) {
@@ -64215,6 +67382,38 @@ func (ec *executionContext) _Vendor_name(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Vendor_vendorRecommendations(ctx context.Context, field graphql.CollectedField, obj *ent.Vendor) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Vendor",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Vendor().VendorRecommendations(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalORecommendations2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _VendorConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.VendorConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -70476,6 +73675,178 @@ func (ec *executionContext) unmarshalInputAddProjectTypeInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddRecommendationsCategoryInput(ctx context.Context, obj interface{}) (models.AddRecommendationsCategoryInput, error) {
+	var it models.AddRecommendationsCategoryInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddRecommendationsInput(ctx context.Context, obj interface{}) (models.AddRecommendationsInput, error) {
+	var it models.AddRecommendationsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "externalID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalID"))
+			it.ExternalID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resource":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resource"))
+			it.Resource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alarmType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmType"))
+			it.AlarmType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "shortDescription":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("shortDescription"))
+			it.ShortDescription, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "longDescription":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longDescription"))
+			it.LongDescription, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "command":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
+			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "priority":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("priority"))
+			it.Priority, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "runbook":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("runbook"))
+			it.Runbook, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "used":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("used"))
+			it.Used, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "recommendationsSources":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recommendationsSources"))
+			it.RecommendationsSources, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "recommendationsCategory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recommendationsCategory"))
+			it.RecommendationsCategory, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userApprobed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userApprobed"))
+			it.UserApprobed, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userCreate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userCreate"))
+			it.UserCreate, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "vendor":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vendor"))
+			it.Vendor, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddRecommendationsSourcesInput(ctx context.Context, obj interface{}) (models.AddRecommendationsSourcesInput, error) {
+	var it models.AddRecommendationsSourcesInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddRuleInput(ctx context.Context, obj interface{}) (models.AddRuleInput, error) {
 	var it models.AddRuleInput
 	var asMap = obj.(map[string]interface{})
@@ -74078,6 +77449,194 @@ func (ec *executionContext) unmarshalInputEditProjectTypeInput(ctx context.Conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditRecommendationsCategoryInput(ctx context.Context, obj interface{}) (models.EditRecommendationsCategoryInput, error) {
+	var it models.EditRecommendationsCategoryInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditRecommendationsInput(ctx context.Context, obj interface{}) (models.EditRecommendationsInput, error) {
+	var it models.EditRecommendationsInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "externalID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalID"))
+			it.ExternalID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resource":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resource"))
+			it.Resource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alarmType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmType"))
+			it.AlarmType, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "shortDescription":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("shortDescription"))
+			it.ShortDescription, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "longDescription":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("longDescription"))
+			it.LongDescription, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "command":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
+			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "priority":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("priority"))
+			it.Priority, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "runbook":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("runbook"))
+			it.Runbook, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "used":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("used"))
+			it.Used, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "recommendationsSources":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recommendationsSources"))
+			it.RecommendationsSources, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "recommendationsCategory":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recommendationsCategory"))
+			it.RecommendationsCategory, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userApprobed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userApprobed"))
+			it.UserApprobed, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "vendor":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vendor"))
+			it.Vendor, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditRecommendationsSourcesInput(ctx context.Context, obj interface{}) (models.EditRecommendationsSourcesInput, error) {
+	var it models.EditRecommendationsSourcesInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditReportFilterInput(ctx context.Context, obj interface{}) (models.EditReportFilterInput, error) {
 	var it models.EditReportFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -76861,6 +80420,298 @@ func (ec *executionContext) unmarshalInputPublishFlowInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("flowInstancesPolicy"))
 			it.FlowInstancesPolicy, err = ec.unmarshalNFlowNewInstancesPolicy2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowᚐNewInstancesPolicy(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecommendationsCategoryFilterInput(ctx context.Context, obj interface{}) (models.RecommendationsCategoryFilterInput, error) {
+	var it models.RecommendationsCategoryFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNRecommendationsCategoryFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecommendationsCategoryOrder(ctx context.Context, obj interface{}) (ent.RecommendationsCategoryOrder, error) {
+	var it ent.RecommendationsCategoryOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalORecommendationsCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecommendationsFilterInput(ctx context.Context, obj interface{}) (models.RecommendationsFilterInput, error) {
+	var it models.RecommendationsFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNRecommendationsFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "boolValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("boolValue"))
+			it.BoolValue, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "intValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intValue"))
+			it.IntValue, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecommendationsOrder(ctx context.Context, obj interface{}) (ent.RecommendationsOrder, error) {
+	var it ent.RecommendationsOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalORecommendationsOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecommendationsSourcesFilterInput(ctx context.Context, obj interface{}) (models.RecommendationsSourcesFilterInput, error) {
+	var it models.RecommendationsSourcesFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNRecommendationsSourcesFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecommendationsSourcesOrder(ctx context.Context, obj interface{}) (ent.RecommendationsSourcesOrder, error) {
+	var it ent.RecommendationsSourcesOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalORecommendationsSourcesOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -79888,6 +83739,21 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._KqiComparator(ctx, sel, obj)
+	case *ent.Recommendations:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Recommendations(ctx, sel, obj)
+	case *ent.RecommendationsSources:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._RecommendationsSources(ctx, sel, obj)
+	case *ent.RecommendationsCategory:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._RecommendationsCategory(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -86693,6 +90559,51 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addRecommendations":
+			out.Values[i] = ec._Mutation_addRecommendations(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editRecommendations":
+			out.Values[i] = ec._Mutation_editRecommendations(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeRecommendations":
+			out.Values[i] = ec._Mutation_removeRecommendations(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addRecommendationsSources":
+			out.Values[i] = ec._Mutation_addRecommendationsSources(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editRecommendationsSources":
+			out.Values[i] = ec._Mutation_editRecommendationsSources(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeRecommendationsSources":
+			out.Values[i] = ec._Mutation_removeRecommendationsSources(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addRecommendationsCategory":
+			out.Values[i] = ec._Mutation_addRecommendationsCategory(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editRecommendationsCategory":
+			out.Values[i] = ec._Mutation_editRecommendationsCategory(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeRecommendationsCategory":
+			out.Values[i] = ec._Mutation_removeRecommendationsCategory(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -88399,10 +92310,474 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "Recommendations":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_Recommendations(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "RecommendationsSources":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_RecommendationsSources(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "RecommendationsCategories":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_RecommendationsCategories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsImplementors = []string{"Recommendations", "Node"}
+
+func (ec *executionContext) _Recommendations(ctx context.Context, sel ast.SelectionSet, obj *ent.Recommendations) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Recommendations")
+		case "id":
+			out.Values[i] = ec._Recommendations_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "externalID":
+			out.Values[i] = ec._Recommendations_externalID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "resource":
+			out.Values[i] = ec._Recommendations_resource(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "alarmType":
+			out.Values[i] = ec._Recommendations_alarmType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "shortDescription":
+			out.Values[i] = ec._Recommendations_shortDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "longDescription":
+			out.Values[i] = ec._Recommendations_longDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "command":
+			out.Values[i] = ec._Recommendations_command(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "priority":
+			out.Values[i] = ec._Recommendations_priority(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "status":
+			out.Values[i] = ec._Recommendations_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "runbook":
+			out.Values[i] = ec._Recommendations_runbook(ctx, field, obj)
+		case "used":
+			out.Values[i] = ec._Recommendations_used(ctx, field, obj)
+		case "recommendationsSources":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Recommendations_recommendationsSources(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "recommendationsCategory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Recommendations_recommendationsCategory(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "userApprobed":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Recommendations_userApprobed(ctx, field, obj)
+				return res
+			})
+		case "userCreate":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Recommendations_userCreate(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "vendor":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Recommendations_vendor(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsCategoryImplementors = []string{"RecommendationsCategory", "Node"}
+
+func (ec *executionContext) _RecommendationsCategory(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsCategory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsCategoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsCategory")
+		case "id":
+			out.Values[i] = ec._RecommendationsCategory_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._RecommendationsCategory_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recommendations":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecommendationsCategory_recommendations(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsCategoryConnectionImplementors = []string{"RecommendationsCategoryConnection"}
+
+func (ec *executionContext) _RecommendationsCategoryConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsCategoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsCategoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsCategoryConnection")
+		case "totalCount":
+			out.Values[i] = ec._RecommendationsCategoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._RecommendationsCategoryConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._RecommendationsCategoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsCategoryEdgeImplementors = []string{"RecommendationsCategoryEdge"}
+
+func (ec *executionContext) _RecommendationsCategoryEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsCategoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsCategoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsCategoryEdge")
+		case "node":
+			out.Values[i] = ec._RecommendationsCategoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._RecommendationsCategoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsConnectionImplementors = []string{"RecommendationsConnection"}
+
+func (ec *executionContext) _RecommendationsConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsConnection")
+		case "totalCount":
+			out.Values[i] = ec._RecommendationsConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._RecommendationsConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._RecommendationsConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsEdgeImplementors = []string{"RecommendationsEdge"}
+
+func (ec *executionContext) _RecommendationsEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsEdge")
+		case "node":
+			out.Values[i] = ec._RecommendationsEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._RecommendationsEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsSourcesImplementors = []string{"RecommendationsSources", "Node"}
+
+func (ec *executionContext) _RecommendationsSources(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsSources) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsSourcesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsSources")
+		case "id":
+			out.Values[i] = ec._RecommendationsSources_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._RecommendationsSources_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recommendations":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecommendationsSources_recommendations(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsSourcesConnectionImplementors = []string{"RecommendationsSourcesConnection"}
+
+func (ec *executionContext) _RecommendationsSourcesConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsSourcesConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsSourcesConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsSourcesConnection")
+		case "totalCount":
+			out.Values[i] = ec._RecommendationsSourcesConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._RecommendationsSourcesConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._RecommendationsSourcesConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recommendationsSourcesEdgeImplementors = []string{"RecommendationsSourcesEdge"}
+
+func (ec *executionContext) _RecommendationsSourcesEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.RecommendationsSourcesEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recommendationsSourcesEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecommendationsSourcesEdge")
+		case "node":
+			out.Values[i] = ec._RecommendationsSourcesEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._RecommendationsSourcesEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -90920,13 +95295,24 @@ func (ec *executionContext) _Vendor(ctx context.Context, sel ast.SelectionSet, o
 		case "id":
 			out.Values[i] = ec._Vendor_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Vendor_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "vendorRecommendations":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Vendor_vendorRecommendations(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -92554,6 +96940,21 @@ func (ec *executionContext) unmarshalNAddProjectTypeInput2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsCategoryInput(ctx context.Context, v interface{}) (models.AddRecommendationsCategoryInput, error) {
+	res, err := ec.unmarshalInputAddRecommendationsCategoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddRecommendationsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInput(ctx context.Context, v interface{}) (models.AddRecommendationsInput, error) {
+	res, err := ec.unmarshalInputAddRecommendationsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddRecommendationsSourcesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsSourcesInput(ctx context.Context, v interface{}) (models.AddRecommendationsSourcesInput, error) {
+	res, err := ec.unmarshalInputAddRecommendationsSourcesInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddRuleInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRuleInput(ctx context.Context, v interface{}) (models.AddRuleInput, error) {
 	res, err := ec.unmarshalInputAddRuleInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -94141,6 +98542,21 @@ func (ec *executionContext) unmarshalNEditProjectInput2githubᚗcomᚋfacebookin
 
 func (ec *executionContext) unmarshalNEditProjectTypeInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditProjectTypeInput(ctx context.Context, v interface{}) (models.EditProjectTypeInput, error) {
 	res, err := ec.unmarshalInputEditProjectTypeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsCategoryInput(ctx context.Context, v interface{}) (models.EditRecommendationsCategoryInput, error) {
+	res, err := ec.unmarshalInputEditRecommendationsCategoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditRecommendationsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsInput(ctx context.Context, v interface{}) (models.EditRecommendationsInput, error) {
+	res, err := ec.unmarshalInputEditRecommendationsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditRecommendationsSourcesInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditRecommendationsSourcesInput(ctx context.Context, v interface{}) (models.EditRecommendationsSourcesInput, error) {
+	res, err := ec.unmarshalInputEditRecommendationsSourcesInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -97287,6 +101703,276 @@ func (ec *executionContext) marshalNPythonPackage2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._PythonPackage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendations2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx context.Context, sel ast.SelectionSet, v ent.Recommendations) graphql.Marshaler {
+	return ec._Recommendations(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx context.Context, sel ast.SelectionSet, v *ent.Recommendations) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Recommendations(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendationsCategory2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx context.Context, sel ast.SelectionSet, v ent.RecommendationsCategory) graphql.Marshaler {
+	return ec._RecommendationsCategory(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendationsCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsCategory) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsCategory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendationsCategoryConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryConnection(ctx context.Context, sel ast.SelectionSet, v ent.RecommendationsCategoryConnection) graphql.Marshaler {
+	return ec._RecommendationsCategoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendationsCategoryConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryConnection(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsCategoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsCategoryConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendationsCategoryEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.RecommendationsCategoryEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecommendationsCategoryEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNRecommendationsCategoryEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryEdge(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsCategoryEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsCategoryEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRecommendationsCategoryFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterInput(ctx context.Context, v interface{}) (*models.RecommendationsCategoryFilterInput, error) {
+	res, err := ec.unmarshalInputRecommendationsCategoryFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNRecommendationsCategoryFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterType(ctx context.Context, v interface{}) (models.RecommendationsCategoryFilterType, error) {
+	var res models.RecommendationsCategoryFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNRecommendationsCategoryFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterType(ctx context.Context, sel ast.SelectionSet, v models.RecommendationsCategoryFilterType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNRecommendationsConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsConnection(ctx context.Context, sel ast.SelectionSet, v ent.RecommendationsConnection) graphql.Marshaler {
+	return ec._RecommendationsConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendationsConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsConnection(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendationsEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.RecommendationsEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecommendationsEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNRecommendationsEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsEdge(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRecommendationsFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterInput(ctx context.Context, v interface{}) (*models.RecommendationsFilterInput, error) {
+	res, err := ec.unmarshalInputRecommendationsFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNRecommendationsFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterType(ctx context.Context, v interface{}) (models.RecommendationsFilterType, error) {
+	var res models.RecommendationsFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNRecommendationsFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterType(ctx context.Context, sel ast.SelectionSet, v models.RecommendationsFilterType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNRecommendationsSources2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx context.Context, sel ast.SelectionSet, v ent.RecommendationsSources) graphql.Marshaler {
+	return ec._RecommendationsSources(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendationsSources2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsSources) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsSources(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendationsSourcesConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesConnection(ctx context.Context, sel ast.SelectionSet, v ent.RecommendationsSourcesConnection) graphql.Marshaler {
+	return ec._RecommendationsSourcesConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendationsSourcesConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesConnection(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsSourcesConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsSourcesConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecommendationsSourcesEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.RecommendationsSourcesEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecommendationsSourcesEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNRecommendationsSourcesEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesEdge(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsSourcesEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._RecommendationsSourcesEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRecommendationsSourcesFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterInput(ctx context.Context, v interface{}) (*models.RecommendationsSourcesFilterInput, error) {
+	res, err := ec.unmarshalInputRecommendationsSourcesFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNRecommendationsSourcesFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterType(ctx context.Context, v interface{}) (models.RecommendationsSourcesFilterType, error) {
+	var res models.RecommendationsSourcesFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNRecommendationsSourcesFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterType(ctx context.Context, sel ast.SelectionSet, v models.RecommendationsSourcesFilterType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNReportFilter2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReportFilter(ctx context.Context, sel ast.SelectionSet, v ent.ReportFilter) graphql.Marshaler {
@@ -102510,6 +107196,211 @@ func (ec *executionContext) marshalOPythonPackage2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._PythonPackage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORecommendations2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Recommendations) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalORecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx context.Context, sel ast.SelectionSet, v *ent.Recommendations) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Recommendations(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORecommendationsCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategory(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RecommendationsCategory(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalORecommendationsCategoryFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.RecommendationsCategoryFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.RecommendationsCategoryFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNRecommendationsCategoryFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsCategoryFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalORecommendationsCategoryOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryOrder(ctx context.Context, v interface{}) (*ent.RecommendationsCategoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputRecommendationsCategoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalORecommendationsCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryOrderField(ctx context.Context, v interface{}) (*ent.RecommendationsCategoryOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.RecommendationsCategoryOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalORecommendationsCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsCategoryOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalORecommendationsFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.RecommendationsFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.RecommendationsFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNRecommendationsFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalORecommendationsOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsOrder(ctx context.Context, v interface{}) (*ent.RecommendationsOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputRecommendationsOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalORecommendationsOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsOrderField(ctx context.Context, v interface{}) (*ent.RecommendationsOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.RecommendationsOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalORecommendationsOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalORecommendationsSources2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSources(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsSources) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RecommendationsSources(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalORecommendationsSourcesFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.RecommendationsSourcesFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.RecommendationsSourcesFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNRecommendationsSourcesFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRecommendationsSourcesFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalORecommendationsSourcesOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesOrder(ctx context.Context, v interface{}) (*ent.RecommendationsSourcesOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputRecommendationsSourcesOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalORecommendationsSourcesOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesOrderField(ctx context.Context, v interface{}) (*ent.RecommendationsSourcesOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.RecommendationsSourcesOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalORecommendationsSourcesOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsSourcesOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.RecommendationsSourcesOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalORule2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRuleᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Rule) graphql.Marshaler {

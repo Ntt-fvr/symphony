@@ -313,6 +313,32 @@ type AddProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type AddRecommendationsCategoryInput struct {
+	Name string `json:"name"`
+}
+
+type AddRecommendationsInput struct {
+	ExternalID              string  `json:"externalID"`
+	Resource                string  `json:"resource"`
+	AlarmType               string  `json:"alarmType"`
+	ShortDescription        string  `json:"shortDescription"`
+	LongDescription         string  `json:"longDescription"`
+	Command                 string  `json:"command"`
+	Priority                int     `json:"priority"`
+	Status                  bool    `json:"status"`
+	Runbook                 *string `json:"runbook"`
+	Used                    *int    `json:"used"`
+	RecommendationsSources  int     `json:"recommendationsSources"`
+	RecommendationsCategory int     `json:"recommendationsCategory"`
+	UserApprobed            *int    `json:"userApprobed"`
+	UserCreate              int     `json:"userCreate"`
+	Vendor                  int     `json:"vendor"`
+}
+
+type AddRecommendationsSourcesInput struct {
+	Name string `json:"name"`
+}
+
 type AddRuleInput struct {
 	Name            string    `json:"name"`
 	GracePeriod     int       `json:"gracePeriod"`
@@ -813,6 +839,34 @@ type EditProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type EditRecommendationsCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type EditRecommendationsInput struct {
+	ID                      int     `json:"id"`
+	ExternalID              string  `json:"externalID"`
+	Resource                string  `json:"resource"`
+	AlarmType               string  `json:"alarmType"`
+	ShortDescription        string  `json:"shortDescription"`
+	LongDescription         string  `json:"longDescription"`
+	Command                 string  `json:"command"`
+	Priority                int     `json:"priority"`
+	Status                  bool    `json:"status"`
+	Runbook                 *string `json:"runbook"`
+	Used                    *int    `json:"used"`
+	RecommendationsSources  int     `json:"recommendationsSources"`
+	RecommendationsCategory int     `json:"recommendationsCategory"`
+	UserApprobed            *int    `json:"userApprobed"`
+	Vendor                  int     `json:"vendor"`
+}
+
+type EditRecommendationsSourcesInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditReportFilterInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -1148,6 +1202,35 @@ type PythonPackage struct {
 	WhlFileKey        string    `json:"whlFileKey"`
 	UploadTime        time.Time `json:"uploadTime"`
 	HasBreakingChange bool      `json:"hasBreakingChange"`
+}
+
+type RecommendationsCategoryFilterInput struct {
+	FilterType  RecommendationsCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator               `json:"operator"`
+	StringValue *string                           `json:"stringValue"`
+	IDSet       []int                             `json:"idSet"`
+	MaxDepth    *int                              `json:"maxDepth"`
+	StringSet   []string                          `json:"stringSet"`
+}
+
+type RecommendationsFilterInput struct {
+	FilterType  RecommendationsFilterType `json:"filterType"`
+	Operator    enum.FilterOperator       `json:"operator"`
+	StringValue *string                   `json:"stringValue"`
+	BoolValue   *bool                     `json:"boolValue"`
+	IntValue    *int                      `json:"intValue"`
+	IDSet       []int                     `json:"idSet"`
+	MaxDepth    *int                      `json:"maxDepth"`
+	StringSet   []string                  `json:"stringSet"`
+}
+
+type RecommendationsSourcesFilterInput struct {
+	FilterType  RecommendationsSourcesFilterType `json:"filterType"`
+	Operator    enum.FilterOperator              `json:"operator"`
+	StringValue *string                          `json:"stringValue"`
+	IDSet       []int                            `json:"idSet"`
+	MaxDepth    *int                             `json:"maxDepth"`
+	StringSet   []string                         `json:"stringSet"`
 }
 
 type ReportFilterInput struct {
@@ -2190,6 +2273,141 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsCategoryFilterType string
+
+const (
+	RecommendationsCategoryFilterTypeName RecommendationsCategoryFilterType = "NAME"
+)
+
+var AllRecommendationsCategoryFilterType = []RecommendationsCategoryFilterType{
+	RecommendationsCategoryFilterTypeName,
+}
+
+func (e RecommendationsCategoryFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsFilterType string
+
+const (
+	RecommendationsFilterTypeExternalid       RecommendationsFilterType = "EXTERNALID"
+	RecommendationsFilterTypeResource         RecommendationsFilterType = "RESOURCE"
+	RecommendationsFilterTypeAlarmtype        RecommendationsFilterType = "ALARMTYPE"
+	RecommendationsFilterTypeShortdescription RecommendationsFilterType = "SHORTDESCRIPTION"
+	RecommendationsFilterTypeLongdescription  RecommendationsFilterType = "LONGDESCRIPTION"
+	RecommendationsFilterTypeCommand          RecommendationsFilterType = "COMMAND"
+	RecommendationsFilterTypePriority         RecommendationsFilterType = "PRIORITY"
+	RecommendationsFilterTypeStatus           RecommendationsFilterType = "STATUS"
+	RecommendationsFilterTypeUsed             RecommendationsFilterType = "USED"
+	RecommendationsFilterTypeRunbook          RecommendationsFilterType = "RUNBOOK"
+)
+
+var AllRecommendationsFilterType = []RecommendationsFilterType{
+	RecommendationsFilterTypeExternalid,
+	RecommendationsFilterTypeResource,
+	RecommendationsFilterTypeAlarmtype,
+	RecommendationsFilterTypeShortdescription,
+	RecommendationsFilterTypeLongdescription,
+	RecommendationsFilterTypeCommand,
+	RecommendationsFilterTypePriority,
+	RecommendationsFilterTypeStatus,
+	RecommendationsFilterTypeUsed,
+	RecommendationsFilterTypeRunbook,
+}
+
+func (e RecommendationsFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsSourcesFilterType string
+
+const (
+	RecommendationsSourcesFilterTypeName RecommendationsSourcesFilterType = "NAME"
+)
+
+var AllRecommendationsSourcesFilterType = []RecommendationsSourcesFilterType{
+	RecommendationsSourcesFilterTypeName,
+}
+
+func (e RecommendationsSourcesFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsSourcesFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsSourcesFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsSourcesFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsSourcesFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsSourcesFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

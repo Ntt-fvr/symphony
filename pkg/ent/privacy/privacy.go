@@ -1560,6 +1560,78 @@ func (f PropertyTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PropertyTypeMutation", m)
 }
 
+// The RecommendationsQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RecommendationsQueryRuleFunc func(context.Context, *ent.RecommendationsQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RecommendationsQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RecommendationsQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RecommendationsQuery", q)
+}
+
+// The RecommendationsMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RecommendationsMutationRuleFunc func(context.Context, *ent.RecommendationsMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RecommendationsMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RecommendationsMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RecommendationsMutation", m)
+}
+
+// The RecommendationsCategoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RecommendationsCategoryQueryRuleFunc func(context.Context, *ent.RecommendationsCategoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RecommendationsCategoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RecommendationsCategoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RecommendationsCategoryQuery", q)
+}
+
+// The RecommendationsCategoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RecommendationsCategoryMutationRuleFunc func(context.Context, *ent.RecommendationsCategoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RecommendationsCategoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RecommendationsCategoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RecommendationsCategoryMutation", m)
+}
+
+// The RecommendationsSourcesQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RecommendationsSourcesQueryRuleFunc func(context.Context, *ent.RecommendationsSourcesQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RecommendationsSourcesQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RecommendationsSourcesQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RecommendationsSourcesQuery", q)
+}
+
+// The RecommendationsSourcesMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RecommendationsSourcesMutationRuleFunc func(context.Context, *ent.RecommendationsSourcesMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RecommendationsSourcesMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RecommendationsSourcesMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RecommendationsSourcesMutation", m)
+}
+
 // The ReportFilterQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ReportFilterQueryRuleFunc func(context.Context, *ent.ReportFilterQuery) error

@@ -1956,6 +1956,98 @@ var (
 			},
 		},
 	}
+	// RecommendationsColumns holds the columns for the "recommendations" table.
+	RecommendationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "external_id", Type: field.TypeString},
+		{Name: "resource", Type: field.TypeString},
+		{Name: "alarm_type", Type: field.TypeString},
+		{Name: "short_description", Type: field.TypeString},
+		{Name: "long_description", Type: field.TypeString},
+		{Name: "command", Type: field.TypeString},
+		{Name: "priority", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeBool},
+		{Name: "used", Type: field.TypeInt, Nullable: true},
+		{Name: "runbook", Type: field.TypeString, Nullable: true},
+		{Name: "recommendations_category_recommendations", Type: field.TypeInt, Nullable: true},
+		{Name: "recommendations_sources_recommendations", Type: field.TypeInt, Nullable: true},
+		{Name: "user_user_create", Type: field.TypeInt, Nullable: true},
+		{Name: "user_user_approved", Type: field.TypeInt, Nullable: true},
+		{Name: "vendor_vendors_recomendations", Type: field.TypeInt, Nullable: true},
+	}
+	// RecommendationsTable holds the schema information for the "recommendations" table.
+	RecommendationsTable = &schema.Table{
+		Name:       "recommendations",
+		Columns:    RecommendationsColumns,
+		PrimaryKey: []*schema.Column{RecommendationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "recommendations_recommendations_categories_recommendations",
+				Columns: []*schema.Column{RecommendationsColumns[13]},
+
+				RefColumns: []*schema.Column{RecommendationsCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_recommendations_sources_recommendations",
+				Columns: []*schema.Column{RecommendationsColumns[14]},
+
+				RefColumns: []*schema.Column{RecommendationsSourcesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_users_User_create",
+				Columns: []*schema.Column{RecommendationsColumns[15]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_users_User_approved",
+				Columns: []*schema.Column{RecommendationsColumns[16]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_vendors_vendors_recomendations",
+				Columns: []*schema.Column{RecommendationsColumns[17]},
+
+				RefColumns: []*schema.Column{VendorsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// RecommendationsCategoriesColumns holds the columns for the "recommendations_categories" table.
+	RecommendationsCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// RecommendationsCategoriesTable holds the schema information for the "recommendations_categories" table.
+	RecommendationsCategoriesTable = &schema.Table{
+		Name:        "recommendations_categories",
+		Columns:     RecommendationsCategoriesColumns,
+		PrimaryKey:  []*schema.Column{RecommendationsCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// RecommendationsSourcesColumns holds the columns for the "recommendations_sources" table.
+	RecommendationsSourcesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// RecommendationsSourcesTable holds the schema information for the "recommendations_sources" table.
+	RecommendationsSourcesTable = &schema.Table{
+		Name:        "recommendations_sources",
+		Columns:     RecommendationsSourcesColumns,
+		PrimaryKey:  []*schema.Column{RecommendationsSourcesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// ReportFiltersColumns holds the columns for the "report_filters" table.
 	ReportFiltersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3079,6 +3171,9 @@ var (
 		ProjectTypesTable,
 		PropertiesTable,
 		PropertyTypesTable,
+		RecommendationsTable,
+		RecommendationsCategoriesTable,
+		RecommendationsSourcesTable,
 		ReportFiltersTable,
 		RulesTable,
 		RuleLimitsTable,
@@ -3216,6 +3311,11 @@ func init() {
 	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
 	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
 	PropertyTypesTable.ForeignKeys[9].RefTable = WorkerTypesTable
+	RecommendationsTable.ForeignKeys[0].RefTable = RecommendationsCategoriesTable
+	RecommendationsTable.ForeignKeys[1].RefTable = RecommendationsSourcesTable
+	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable
+	RecommendationsTable.ForeignKeys[3].RefTable = UsersTable
+	RecommendationsTable.ForeignKeys[4].RefTable = VendorsTable
 	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
 	RulesTable.ForeignKeys[2].RefTable = ThresholdsTable

@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -72,6 +73,21 @@ func (vc *VendorCreate) AddVendorFk(c ...*Counter) *VendorCreate {
 		ids[i] = c[i].ID
 	}
 	return vc.AddVendorFkIDs(ids...)
+}
+
+// AddVendorsRecomendationIDs adds the vendors_recomendations edge to Recommendations by ids.
+func (vc *VendorCreate) AddVendorsRecomendationIDs(ids ...int) *VendorCreate {
+	vc.mutation.AddVendorsRecomendationIDs(ids...)
+	return vc
+}
+
+// AddVendorsRecomendations adds the vendors_recomendations edges to Recommendations.
+func (vc *VendorCreate) AddVendorsRecomendations(r ...*Recommendations) *VendorCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vc.AddVendorsRecomendationIDs(ids...)
 }
 
 // Mutation returns the VendorMutation object of the builder.
@@ -214,6 +230,25 @@ func (vc *VendorCreate) createSpec() (*Vendor, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: counter.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vc.mutation.VendorsRecomendationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
 				},
 			},
 		}

@@ -294,3 +294,32 @@ func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.Organiza
 	}
 	return query, nil
 }
+func RecommendationsSourcesFilter(query *ent.RecommendationsSourcesQuery, filters []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRecommendationsSourcesFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func RecommendationsFilter(query *ent.RecommendationsQuery, filters []*models.RecommendationsFilterInput) (*ent.RecommendationsQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRecommendationsFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func RecommendationsCategoryFilter(query *ent.RecommendationsCategoryQuery, filters []*models.RecommendationsCategoryFilterInput) (*ent.RecommendationsCategoryQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRecommendationsCategoryFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

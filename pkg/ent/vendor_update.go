@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -52,6 +53,21 @@ func (vu *VendorUpdate) AddVendorFk(c ...*Counter) *VendorUpdate {
 	return vu.AddVendorFkIDs(ids...)
 }
 
+// AddVendorsRecomendationIDs adds the vendors_recomendations edge to Recommendations by ids.
+func (vu *VendorUpdate) AddVendorsRecomendationIDs(ids ...int) *VendorUpdate {
+	vu.mutation.AddVendorsRecomendationIDs(ids...)
+	return vu
+}
+
+// AddVendorsRecomendations adds the vendors_recomendations edges to Recommendations.
+func (vu *VendorUpdate) AddVendorsRecomendations(r ...*Recommendations) *VendorUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vu.AddVendorsRecomendationIDs(ids...)
+}
+
 // Mutation returns the VendorMutation object of the builder.
 func (vu *VendorUpdate) Mutation() *VendorMutation {
 	return vu.mutation
@@ -76,6 +92,27 @@ func (vu *VendorUpdate) RemoveVendorFk(c ...*Counter) *VendorUpdate {
 		ids[i] = c[i].ID
 	}
 	return vu.RemoveVendorFkIDs(ids...)
+}
+
+// ClearVendorsRecomendations clears all "vendors_recomendations" edges to type Recommendations.
+func (vu *VendorUpdate) ClearVendorsRecomendations() *VendorUpdate {
+	vu.mutation.ClearVendorsRecomendations()
+	return vu
+}
+
+// RemoveVendorsRecomendationIDs removes the vendors_recomendations edge to Recommendations by ids.
+func (vu *VendorUpdate) RemoveVendorsRecomendationIDs(ids ...int) *VendorUpdate {
+	vu.mutation.RemoveVendorsRecomendationIDs(ids...)
+	return vu
+}
+
+// RemoveVendorsRecomendations removes vendors_recomendations edges to Recommendations.
+func (vu *VendorUpdate) RemoveVendorsRecomendations(r ...*Recommendations) *VendorUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vu.RemoveVendorsRecomendationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -240,6 +277,60 @@ func (vu *VendorUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if vu.mutation.VendorsRecomendationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.RemovedVendorsRecomendationsIDs(); len(nodes) > 0 && !vu.mutation.VendorsRecomendationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.VendorsRecomendationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, vu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{vendor.Label}
@@ -279,6 +370,21 @@ func (vuo *VendorUpdateOne) AddVendorFk(c ...*Counter) *VendorUpdateOne {
 	return vuo.AddVendorFkIDs(ids...)
 }
 
+// AddVendorsRecomendationIDs adds the vendors_recomendations edge to Recommendations by ids.
+func (vuo *VendorUpdateOne) AddVendorsRecomendationIDs(ids ...int) *VendorUpdateOne {
+	vuo.mutation.AddVendorsRecomendationIDs(ids...)
+	return vuo
+}
+
+// AddVendorsRecomendations adds the vendors_recomendations edges to Recommendations.
+func (vuo *VendorUpdateOne) AddVendorsRecomendations(r ...*Recommendations) *VendorUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vuo.AddVendorsRecomendationIDs(ids...)
+}
+
 // Mutation returns the VendorMutation object of the builder.
 func (vuo *VendorUpdateOne) Mutation() *VendorMutation {
 	return vuo.mutation
@@ -303,6 +409,27 @@ func (vuo *VendorUpdateOne) RemoveVendorFk(c ...*Counter) *VendorUpdateOne {
 		ids[i] = c[i].ID
 	}
 	return vuo.RemoveVendorFkIDs(ids...)
+}
+
+// ClearVendorsRecomendations clears all "vendors_recomendations" edges to type Recommendations.
+func (vuo *VendorUpdateOne) ClearVendorsRecomendations() *VendorUpdateOne {
+	vuo.mutation.ClearVendorsRecomendations()
+	return vuo
+}
+
+// RemoveVendorsRecomendationIDs removes the vendors_recomendations edge to Recommendations by ids.
+func (vuo *VendorUpdateOne) RemoveVendorsRecomendationIDs(ids ...int) *VendorUpdateOne {
+	vuo.mutation.RemoveVendorsRecomendationIDs(ids...)
+	return vuo
+}
+
+// RemoveVendorsRecomendations removes vendors_recomendations edges to Recommendations.
+func (vuo *VendorUpdateOne) RemoveVendorsRecomendations(r ...*Recommendations) *VendorUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return vuo.RemoveVendorsRecomendationIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -457,6 +584,60 @@ func (vuo *VendorUpdateOne) sqlSave(ctx context.Context) (_node *Vendor, err err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: counter.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vuo.mutation.VendorsRecomendationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.RemovedVendorsRecomendationsIDs(); len(nodes) > 0 && !vuo.mutation.VendorsRecomendationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.VendorsRecomendationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vendor.VendorsRecomendationsTable,
+			Columns: []string{vendor.VendorsRecomendationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
 				},
 			},
 		}

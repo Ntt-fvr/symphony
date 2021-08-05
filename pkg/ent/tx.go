@@ -132,6 +132,12 @@ type Tx struct {
 	Property *PropertyClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
+	// Recommendations is the client for interacting with the Recommendations builders.
+	Recommendations *RecommendationsClient
+	// RecommendationsCategory is the client for interacting with the RecommendationsCategory builders.
+	RecommendationsCategory *RecommendationsCategoryClient
+	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
+	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
 	// Rule is the client for interacting with the Rule builders.
@@ -373,6 +379,9 @@ func (tx *Tx) init() {
 	tx.ProjectType = NewProjectTypeClient(tx.config)
 	tx.Property = NewPropertyClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)
+	tx.Recommendations = NewRecommendationsClient(tx.config)
+	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
+	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)

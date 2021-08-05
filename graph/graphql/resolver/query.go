@@ -500,6 +500,66 @@ func (r queryResolver) Organizations(
 		)
 }
 
+func (r queryResolver) RecommendationsSources(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RecommendationsSourcesOrder,
+	filterBy []*models.RecommendationsSourcesFilterInput,
+) (*ent.RecommendationsSourcesConnection, error) {
+	return r.ClientFrom(ctx).
+		RecommendationsSources.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRecommendationsSourcesOrder(orderBy),
+			ent.WithRecommendationsSourcesFilter(
+				func(query *ent.RecommendationsSourcesQuery) (*ent.RecommendationsSourcesQuery, error) {
+					return resolverutil.RecommendationsSourcesFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) RecommendationsCategories(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RecommendationsCategoryOrder,
+	filterBy []*models.RecommendationsCategoryFilterInput,
+) (*ent.RecommendationsCategoryConnection, error) {
+	return r.ClientFrom(ctx).
+		RecommendationsCategory.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRecommendationsCategoryOrder(orderBy),
+			ent.WithRecommendationsCategoryFilter(
+				func(query *ent.RecommendationsCategoryQuery) (*ent.RecommendationsCategoryQuery, error) {
+					return resolverutil.RecommendationsCategoryFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) Recommendations(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RecommendationsOrder,
+	filterBy []*models.RecommendationsFilterInput,
+) (*ent.RecommendationsConnection, error) {
+	return r.ClientFrom(ctx).
+		Recommendations.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRecommendationsOrder(orderBy),
+			ent.WithRecommendationsFilter(
+				func(query *ent.RecommendationsQuery) (*ent.RecommendationsQuery, error) {
+					return resolverutil.RecommendationsFilter(query, filterBy)
+				},
+			),
+		)
+}
+
 func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

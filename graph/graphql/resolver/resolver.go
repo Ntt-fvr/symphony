@@ -214,9 +214,9 @@ func (r resolver) CounterFamily() generated.CounterFamilyResolver {
 	return counterFamilyResolver{}
 }*/
 
-/*func (r resolver) Vendor() generated.VendorResolver {
+func (r resolver) Vendor() generated.VendorResolver {
 	return vendorResolver{}
-}*/
+}
 
 func (r resolver) Tech() generated.TechResolver {
 	return techResolver{}
@@ -295,3 +295,18 @@ func (r resolver) KqiTarget() generated.KqiTargetResolver {
 func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 	return kqiComparatorResolver{}
 }
+
+/**************************************************************************************************/
+/************************* RECOMMENDATIONS ********************************************************/
+/*func (r resolver) RecommendationsCategory() generated.RecommendationsCategoryResolver {
+	return recommendationsCategoryResolver{}
+}
+
+func (r resolver) RecommendationsSources() generated.RecommendationsSourcesResolver {
+	return recommendationsSourcesResolver{}
+}*/
+func (r resolver) Recommendations() generated.RecommendationsResolver {
+	return recommendationsResolver{}
+}
+
+/**************************************************************************************************/
