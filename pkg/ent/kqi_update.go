@@ -19,7 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
@@ -123,23 +123,23 @@ func (ku *KqiUpdate) SetKqiSourceFk(k *KqiSource) *KqiUpdate {
 	return ku.SetKqiSourceFkID(k.ID)
 }
 
-// SetKqiTemporalFrecuencyFkID sets the kqiTemporalFrecuencyFk edge to KqiTemporalFrecuency by id.
-func (ku *KqiUpdate) SetKqiTemporalFrecuencyFkID(id int) *KqiUpdate {
-	ku.mutation.SetKqiTemporalFrecuencyFkID(id)
+// SetKqiTemporalFrequencyFkID sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency by id.
+func (ku *KqiUpdate) SetKqiTemporalFrequencyFkID(id int) *KqiUpdate {
+	ku.mutation.SetKqiTemporalFrequencyFkID(id)
 	return ku
 }
 
-// SetNillableKqiTemporalFrecuencyFkID sets the kqiTemporalFrecuencyFk edge to KqiTemporalFrecuency by id if the given value is not nil.
-func (ku *KqiUpdate) SetNillableKqiTemporalFrecuencyFkID(id *int) *KqiUpdate {
+// SetNillableKqiTemporalFrequencyFkID sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency by id if the given value is not nil.
+func (ku *KqiUpdate) SetNillableKqiTemporalFrequencyFkID(id *int) *KqiUpdate {
 	if id != nil {
-		ku = ku.SetKqiTemporalFrecuencyFkID(*id)
+		ku = ku.SetKqiTemporalFrequencyFkID(*id)
 	}
 	return ku
 }
 
-// SetKqiTemporalFrecuencyFk sets the kqiTemporalFrecuencyFk edge to KqiTemporalFrecuency.
-func (ku *KqiUpdate) SetKqiTemporalFrecuencyFk(k *KqiTemporalFrecuency) *KqiUpdate {
-	return ku.SetKqiTemporalFrecuencyFkID(k.ID)
+// SetKqiTemporalFrequencyFk sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency.
+func (ku *KqiUpdate) SetKqiTemporalFrequencyFk(k *KqiTemporalFrequency) *KqiUpdate {
+	return ku.SetKqiTemporalFrequencyFkID(k.ID)
 }
 
 // AddKqiTargetFkIDs adds the kqiTargetFk edge to KqiTarget by ids.
@@ -180,9 +180,9 @@ func (ku *KqiUpdate) ClearKqiSourceFk() *KqiUpdate {
 	return ku
 }
 
-// ClearKqiTemporalFrecuencyFk clears the "kqiTemporalFrecuencyFk" edge to type KqiTemporalFrecuency.
-func (ku *KqiUpdate) ClearKqiTemporalFrecuencyFk() *KqiUpdate {
-	ku.mutation.ClearKqiTemporalFrecuencyFk()
+// ClearKqiTemporalFrequencyFk clears the "kqiTemporalFrequencyFk" edge to type KqiTemporalFrequency.
+func (ku *KqiUpdate) ClearKqiTemporalFrequencyFk() *KqiUpdate {
+	ku.mutation.ClearKqiTemporalFrequencyFk()
 	return ku
 }
 
@@ -448,33 +448,33 @@ func (ku *KqiUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if ku.mutation.KqiTemporalFrecuencyFkCleared() {
+	if ku.mutation.KqiTemporalFrequencyFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqi.KqiTemporalFrecuencyFkColumn},
+			Table:   kqi.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqi.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: kqitemporalfrecuency.FieldID,
+					Column: kqitemporalfrequency.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ku.mutation.KqiTemporalFrecuencyFkIDs(); len(nodes) > 0 {
+	if nodes := ku.mutation.KqiTemporalFrequencyFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqi.KqiTemporalFrecuencyFkColumn},
+			Table:   kqi.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqi.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: kqitemporalfrecuency.FieldID,
+					Column: kqitemporalfrequency.FieldID,
 				},
 			},
 		}
@@ -642,23 +642,23 @@ func (kuo *KqiUpdateOne) SetKqiSourceFk(k *KqiSource) *KqiUpdateOne {
 	return kuo.SetKqiSourceFkID(k.ID)
 }
 
-// SetKqiTemporalFrecuencyFkID sets the kqiTemporalFrecuencyFk edge to KqiTemporalFrecuency by id.
-func (kuo *KqiUpdateOne) SetKqiTemporalFrecuencyFkID(id int) *KqiUpdateOne {
-	kuo.mutation.SetKqiTemporalFrecuencyFkID(id)
+// SetKqiTemporalFrequencyFkID sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency by id.
+func (kuo *KqiUpdateOne) SetKqiTemporalFrequencyFkID(id int) *KqiUpdateOne {
+	kuo.mutation.SetKqiTemporalFrequencyFkID(id)
 	return kuo
 }
 
-// SetNillableKqiTemporalFrecuencyFkID sets the kqiTemporalFrecuencyFk edge to KqiTemporalFrecuency by id if the given value is not nil.
-func (kuo *KqiUpdateOne) SetNillableKqiTemporalFrecuencyFkID(id *int) *KqiUpdateOne {
+// SetNillableKqiTemporalFrequencyFkID sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency by id if the given value is not nil.
+func (kuo *KqiUpdateOne) SetNillableKqiTemporalFrequencyFkID(id *int) *KqiUpdateOne {
 	if id != nil {
-		kuo = kuo.SetKqiTemporalFrecuencyFkID(*id)
+		kuo = kuo.SetKqiTemporalFrequencyFkID(*id)
 	}
 	return kuo
 }
 
-// SetKqiTemporalFrecuencyFk sets the kqiTemporalFrecuencyFk edge to KqiTemporalFrecuency.
-func (kuo *KqiUpdateOne) SetKqiTemporalFrecuencyFk(k *KqiTemporalFrecuency) *KqiUpdateOne {
-	return kuo.SetKqiTemporalFrecuencyFkID(k.ID)
+// SetKqiTemporalFrequencyFk sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency.
+func (kuo *KqiUpdateOne) SetKqiTemporalFrequencyFk(k *KqiTemporalFrequency) *KqiUpdateOne {
+	return kuo.SetKqiTemporalFrequencyFkID(k.ID)
 }
 
 // AddKqiTargetFkIDs adds the kqiTargetFk edge to KqiTarget by ids.
@@ -699,9 +699,9 @@ func (kuo *KqiUpdateOne) ClearKqiSourceFk() *KqiUpdateOne {
 	return kuo
 }
 
-// ClearKqiTemporalFrecuencyFk clears the "kqiTemporalFrecuencyFk" edge to type KqiTemporalFrecuency.
-func (kuo *KqiUpdateOne) ClearKqiTemporalFrecuencyFk() *KqiUpdateOne {
-	kuo.mutation.ClearKqiTemporalFrecuencyFk()
+// ClearKqiTemporalFrequencyFk clears the "kqiTemporalFrequencyFk" edge to type KqiTemporalFrequency.
+func (kuo *KqiUpdateOne) ClearKqiTemporalFrequencyFk() *KqiUpdateOne {
+	kuo.mutation.ClearKqiTemporalFrequencyFk()
 	return kuo
 }
 
@@ -965,33 +965,33 @@ func (kuo *KqiUpdateOne) sqlSave(ctx context.Context) (_node *Kqi, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if kuo.mutation.KqiTemporalFrecuencyFkCleared() {
+	if kuo.mutation.KqiTemporalFrequencyFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqi.KqiTemporalFrecuencyFkColumn},
+			Table:   kqi.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqi.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: kqitemporalfrecuency.FieldID,
+					Column: kqitemporalfrequency.FieldID,
 				},
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := kuo.mutation.KqiTemporalFrecuencyFkIDs(); len(nodes) > 0 {
+	if nodes := kuo.mutation.KqiTemporalFrequencyFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqi.KqiTemporalFrecuencyFkColumn},
+			Table:   kqi.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqi.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: kqitemporalfrecuency.FieldID,
+					Column: kqitemporalfrequency.FieldID,
 				},
 			},
 		}

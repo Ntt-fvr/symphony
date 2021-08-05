@@ -276,6 +276,7 @@ func FlowInstanceFilter(query *ent.FlowInstanceQuery, filters []*models.FlowInst
 	}
 	return query, nil
 }
+
 func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -285,6 +286,10 @@ func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQ
 	}
 	return query, nil
 }
+<<<<<<< HEAD
+
+=======
+>>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -323,3 +328,56 @@ func RecommendationsCategoryFilter(query *ent.RecommendationsCategoryQuery, filt
 	}
 	return query, nil
 }
+<<<<<<< HEAD
+
+func KqiCategoryFilter(query *ent.KqiCategoryQuery, filters []*models.KqiCategoryFilterInput) (*ent.KqiCategoryQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiCategoryFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiPerspectiveFilter(query *ent.KqiPerspectiveQuery, filters []*models.KqiPerspectiveFilterInput) (*ent.KqiPerspectiveQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiPerspectiveFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiTemporalFrequencyFilter(query *ent.KqiTemporalFrequencyQuery, filters []*models.KqiTemporalFrequencyFilterInput) (*ent.KqiTemporalFrequencyQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiTemporalFrequencyFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiSourceFilter(query *ent.KqiSourceQuery, filters []*models.KqiSourceFilterInput) (*ent.KqiSourceQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiSourceFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiTargetFilter(query *ent.KqiTargetQuery, filters []*models.KqiTargetFilterInput) (*ent.KqiTargetQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiTargetFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+=======
+>>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe

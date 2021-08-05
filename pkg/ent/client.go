@@ -60,7 +60,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -203,8 +203,8 @@ type Client struct {
 	KqiSource *KqiSourceClient
 	// KqiTarget is the client for interacting with the KqiTarget builders.
 	KqiTarget *KqiTargetClient
-	// KqiTemporalFrecuency is the client for interacting with the KqiTemporalFrecuency builders.
-	KqiTemporalFrecuency *KqiTemporalFrecuencyClient
+	// KqiTemporalFrequency is the client for interacting with the KqiTemporalFrequency builders.
+	KqiTemporalFrequency *KqiTemporalFrequencyClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
@@ -341,7 +341,7 @@ func (c *Client) init() {
 	c.KqiPerspective = NewKqiPerspectiveClient(c.config)
 	c.KqiSource = NewKqiSourceClient(c.config)
 	c.KqiTarget = NewKqiTargetClient(c.config)
-	c.KqiTemporalFrecuency = NewKqiTemporalFrecuencyClient(c.config)
+	c.KqiTemporalFrequency = NewKqiTemporalFrequencyClient(c.config)
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.LocationType = NewLocationTypeClient(c.config)
@@ -458,7 +458,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		KqiPerspective:              NewKqiPerspectiveClient(cfg),
 		KqiSource:                   NewKqiSourceClient(cfg),
 		KqiTarget:                   NewKqiTargetClient(cfg),
-		KqiTemporalFrecuency:        NewKqiTemporalFrecuencyClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
@@ -558,7 +558,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		KqiPerspective:              NewKqiPerspectiveClient(cfg),
 		KqiSource:                   NewKqiSourceClient(cfg),
 		KqiTarget:                   NewKqiTargetClient(cfg),
-		KqiTemporalFrecuency:        NewKqiTemporalFrecuencyClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
@@ -671,7 +671,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.KqiPerspective.Use(hooks...)
 	c.KqiSource.Use(hooks...)
 	c.KqiTarget.Use(hooks...)
-	c.KqiTemporalFrecuency.Use(hooks...)
+	c.KqiTemporalFrequency.Use(hooks...)
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
 	c.LocationType.Use(hooks...)
@@ -6315,15 +6315,15 @@ func (c *KqiClient) QueryKqiSourceFk(k *Kqi) *KqiSourceQuery {
 	return query
 }
 
-// QueryKqiTemporalFrecuencyFk queries the kqiTemporalFrecuencyFk edge of a Kqi.
-func (c *KqiClient) QueryKqiTemporalFrecuencyFk(k *Kqi) *KqiTemporalFrecuencyQuery {
-	query := &KqiTemporalFrecuencyQuery{config: c.config}
+// QueryKqiTemporalFrequencyFk queries the kqiTemporalFrequencyFk edge of a Kqi.
+func (c *KqiClient) QueryKqiTemporalFrequencyFk(k *Kqi) *KqiTemporalFrequencyQuery {
+	query := &KqiTemporalFrequencyQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := k.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, id),
-			sqlgraph.To(kqitemporalfrecuency.Table, kqitemporalfrecuency.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiTemporalFrecuencyFkTable, kqi.KqiTemporalFrecuencyFkColumn),
+			sqlgraph.To(kqitemporalfrequency.Table, kqitemporalfrequency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiTemporalFrequencyFkTable, kqi.KqiTemporalFrequencyFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
 		return fromV, nil
@@ -6910,82 +6910,82 @@ func (c *KqiTargetClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], kqitarget.Hooks[:]...)
 }
 
-// KqiTemporalFrecuencyClient is a client for the KqiTemporalFrecuency schema.
-type KqiTemporalFrecuencyClient struct {
+// KqiTemporalFrequencyClient is a client for the KqiTemporalFrequency schema.
+type KqiTemporalFrequencyClient struct {
 	config
 }
 
-// NewKqiTemporalFrecuencyClient returns a client for the KqiTemporalFrecuency from the given config.
-func NewKqiTemporalFrecuencyClient(c config) *KqiTemporalFrecuencyClient {
-	return &KqiTemporalFrecuencyClient{config: c}
+// NewKqiTemporalFrequencyClient returns a client for the KqiTemporalFrequency from the given config.
+func NewKqiTemporalFrequencyClient(c config) *KqiTemporalFrequencyClient {
+	return &KqiTemporalFrequencyClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `kqitemporalfrecuency.Hooks(f(g(h())))`.
-func (c *KqiTemporalFrecuencyClient) Use(hooks ...Hook) {
-	c.hooks.KqiTemporalFrecuency = append(c.hooks.KqiTemporalFrecuency, hooks...)
+// A call to `Use(f, g, h)` equals to `kqitemporalfrequency.Hooks(f(g(h())))`.
+func (c *KqiTemporalFrequencyClient) Use(hooks ...Hook) {
+	c.hooks.KqiTemporalFrequency = append(c.hooks.KqiTemporalFrequency, hooks...)
 }
 
-// Create returns a create builder for KqiTemporalFrecuency.
-func (c *KqiTemporalFrecuencyClient) Create() *KqiTemporalFrecuencyCreate {
-	mutation := newKqiTemporalFrecuencyMutation(c.config, OpCreate)
-	return &KqiTemporalFrecuencyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a create builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Create() *KqiTemporalFrequencyCreate {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpCreate)
+	return &KqiTemporalFrequencyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of KqiTemporalFrecuency entities.
-func (c *KqiTemporalFrecuencyClient) CreateBulk(builders ...*KqiTemporalFrecuencyCreate) *KqiTemporalFrecuencyCreateBulk {
-	return &KqiTemporalFrecuencyCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of KqiTemporalFrequency entities.
+func (c *KqiTemporalFrequencyClient) CreateBulk(builders ...*KqiTemporalFrequencyCreate) *KqiTemporalFrequencyCreateBulk {
+	return &KqiTemporalFrequencyCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for KqiTemporalFrecuency.
-func (c *KqiTemporalFrecuencyClient) Update() *KqiTemporalFrecuencyUpdate {
-	mutation := newKqiTemporalFrecuencyMutation(c.config, OpUpdate)
-	return &KqiTemporalFrecuencyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Update() *KqiTemporalFrequencyUpdate {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpUpdate)
+	return &KqiTemporalFrequencyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *KqiTemporalFrecuencyClient) UpdateOne(ktf *KqiTemporalFrecuency) *KqiTemporalFrecuencyUpdateOne {
-	mutation := newKqiTemporalFrecuencyMutation(c.config, OpUpdateOne, withKqiTemporalFrecuency(ktf))
-	return &KqiTemporalFrecuencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *KqiTemporalFrequencyClient) UpdateOne(ktf *KqiTemporalFrequency) *KqiTemporalFrequencyUpdateOne {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpUpdateOne, withKqiTemporalFrequency(ktf))
+	return &KqiTemporalFrequencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *KqiTemporalFrecuencyClient) UpdateOneID(id int) *KqiTemporalFrecuencyUpdateOne {
-	mutation := newKqiTemporalFrecuencyMutation(c.config, OpUpdateOne, withKqiTemporalFrecuencyID(id))
-	return &KqiTemporalFrecuencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *KqiTemporalFrequencyClient) UpdateOneID(id int) *KqiTemporalFrequencyUpdateOne {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpUpdateOne, withKqiTemporalFrequencyID(id))
+	return &KqiTemporalFrequencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for KqiTemporalFrecuency.
-func (c *KqiTemporalFrecuencyClient) Delete() *KqiTemporalFrecuencyDelete {
-	mutation := newKqiTemporalFrecuencyMutation(c.config, OpDelete)
-	return &KqiTemporalFrecuencyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Delete() *KqiTemporalFrequencyDelete {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpDelete)
+	return &KqiTemporalFrequencyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *KqiTemporalFrecuencyClient) DeleteOne(ktf *KqiTemporalFrecuency) *KqiTemporalFrecuencyDeleteOne {
+func (c *KqiTemporalFrequencyClient) DeleteOne(ktf *KqiTemporalFrequency) *KqiTemporalFrequencyDeleteOne {
 	return c.DeleteOneID(ktf.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *KqiTemporalFrecuencyClient) DeleteOneID(id int) *KqiTemporalFrecuencyDeleteOne {
-	builder := c.Delete().Where(kqitemporalfrecuency.ID(id))
+func (c *KqiTemporalFrequencyClient) DeleteOneID(id int) *KqiTemporalFrequencyDeleteOne {
+	builder := c.Delete().Where(kqitemporalfrequency.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &KqiTemporalFrecuencyDeleteOne{builder}
+	return &KqiTemporalFrequencyDeleteOne{builder}
 }
 
-// Query returns a query builder for KqiTemporalFrecuency.
-func (c *KqiTemporalFrecuencyClient) Query() *KqiTemporalFrecuencyQuery {
-	return &KqiTemporalFrecuencyQuery{config: c.config}
+// Query returns a query builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Query() *KqiTemporalFrequencyQuery {
+	return &KqiTemporalFrequencyQuery{config: c.config}
 }
 
-// Get returns a KqiTemporalFrecuency entity by its id.
-func (c *KqiTemporalFrecuencyClient) Get(ctx context.Context, id int) (*KqiTemporalFrecuency, error) {
-	return c.Query().Where(kqitemporalfrecuency.ID(id)).Only(ctx)
+// Get returns a KqiTemporalFrequency entity by its id.
+func (c *KqiTemporalFrequencyClient) Get(ctx context.Context, id int) (*KqiTemporalFrequency, error) {
+	return c.Query().Where(kqitemporalfrequency.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *KqiTemporalFrecuencyClient) GetX(ctx context.Context, id int) *KqiTemporalFrecuency {
+func (c *KqiTemporalFrequencyClient) GetX(ctx context.Context, id int) *KqiTemporalFrequency {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -6993,15 +6993,15 @@ func (c *KqiTemporalFrecuencyClient) GetX(ctx context.Context, id int) *KqiTempo
 	return obj
 }
 
-// QueryKqiTemporalFrecuencyFk queries the kqiTemporalFrecuencyFk edge of a KqiTemporalFrecuency.
-func (c *KqiTemporalFrecuencyClient) QueryKqiTemporalFrecuencyFk(ktf *KqiTemporalFrecuency) *KqiQuery {
+// QueryKqiTemporalFrequencyFk queries the kqiTemporalFrequencyFk edge of a KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) QueryKqiTemporalFrequencyFk(ktf *KqiTemporalFrequency) *KqiQuery {
 	query := &KqiQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := ktf.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(kqitemporalfrecuency.Table, kqitemporalfrecuency.FieldID, id),
+			sqlgraph.From(kqitemporalfrequency.Table, kqitemporalfrequency.FieldID, id),
 			sqlgraph.To(kqi.Table, kqi.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, kqitemporalfrecuency.KqiTemporalFrecuencyFkTable, kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqitemporalfrequency.KqiTemporalFrequencyFkTable, kqitemporalfrequency.KqiTemporalFrequencyFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(ktf.driver.Dialect(), step)
 		return fromV, nil
@@ -7010,9 +7010,9 @@ func (c *KqiTemporalFrecuencyClient) QueryKqiTemporalFrecuencyFk(ktf *KqiTempora
 }
 
 // Hooks returns the client hooks.
-func (c *KqiTemporalFrecuencyClient) Hooks() []Hook {
-	hooks := c.hooks.KqiTemporalFrecuency
-	return append(hooks[:len(hooks):len(hooks)], kqitemporalfrecuency.Hooks[:]...)
+func (c *KqiTemporalFrequencyClient) Hooks() []Hook {
+	hooks := c.hooks.KqiTemporalFrequency
+	return append(hooks[:len(hooks):len(hooks)], kqitemporalfrequency.Hooks[:]...)
 }
 
 // LinkClient is a client for the Link schema.

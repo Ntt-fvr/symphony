@@ -151,8 +151,8 @@ type KqiSource func(*sql.Selector)
 // KqiTarget is the predicate function for kqitarget builders.
 type KqiTarget func(*sql.Selector)
 
-// KqiTemporalFrecuency is the predicate function for kqitemporalfrecuency builders.
-type KqiTemporalFrecuency func(*sql.Selector)
+// KqiTemporalFrequency is the predicate function for kqitemporalfrequency builders.
+type KqiTemporalFrequency func(*sql.Selector)
 
 // Link is the predicate function for link builders.
 type Link func(*sql.Selector)

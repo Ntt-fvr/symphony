@@ -54,6 +54,12 @@ func (ktc *KqiTargetCreate) SetNillableUpdateTime(t *time.Time) *KqiTargetCreate
 	return ktc
 }
 
+// SetName sets the name field.
+func (ktc *KqiTargetCreate) SetName(s string) *KqiTargetCreate {
+	ktc.mutation.SetName(s)
+	return ktc
+}
+
 // SetFrame sets the frame field.
 func (ktc *KqiTargetCreate) SetFrame(f float64) *KqiTargetCreate {
 	ktc.mutation.SetFrame(f)
@@ -194,6 +200,14 @@ func (ktc *KqiTargetCreate) check() error {
 	if _, ok := ktc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
+	if _, ok := ktc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := ktc.mutation.Name(); ok {
+		if err := kqitarget.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
 	if _, ok := ktc.mutation.Frame(); !ok {
 		return &ValidationError{Name: "frame", err: errors.New("ent: missing required field \"frame\"")}
 	}
@@ -254,6 +268,14 @@ func (ktc *KqiTargetCreate) createSpec() (*KqiTarget, *sqlgraph.CreateSpec) {
 			Column: kqitarget.FieldUpdateTime,
 		})
 		_node.UpdateTime = value
+	}
+	if value, ok := ktc.mutation.Name(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: kqitarget.FieldName,
+		})
+		_node.Name = value
 	}
 	if value, ok := ktc.mutation.Frame(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

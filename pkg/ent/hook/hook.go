@@ -624,15 +624,15 @@ func (f KqiTargetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return f(ctx, mv)
 }
 
-// The KqiTemporalFrecuencyFunc type is an adapter to allow the use of ordinary
-// function as KqiTemporalFrecuency mutator.
-type KqiTemporalFrecuencyFunc func(context.Context, *ent.KqiTemporalFrecuencyMutation) (ent.Value, error)
+// The KqiTemporalFrequencyFunc type is an adapter to allow the use of ordinary
+// function as KqiTemporalFrequency mutator.
+type KqiTemporalFrequencyFunc func(context.Context, *ent.KqiTemporalFrequencyMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f KqiTemporalFrecuencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.KqiTemporalFrecuencyMutation)
+func (f KqiTemporalFrequencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KqiTemporalFrequencyMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiTemporalFrecuencyMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiTemporalFrequencyMutation", m)
 	}
 	return f(ctx, mv)
 }

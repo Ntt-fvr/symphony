@@ -228,7 +228,7 @@ type AddKqiInput struct {
 	KqiCategory          int       `json:"kqiCategory"`
 	KqiPerspective       int       `json:"kqiPerspective"`
 	KqiSource            int       `json:"kqiSource"`
-	KqiTemporalFrecuency int       `json:"kqiTemporalFrecuency"`
+	KqiTemporalFrequency int       `json:"kqiTemporalFrequency"`
 }
 
 type AddKqiPerspectiveInput struct {
@@ -240,6 +240,7 @@ type AddKqiSourceInput struct {
 }
 
 type AddKqiTargetInput struct {
+	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Frame            float64   `json:"frame"`
 	AlowedValidation float64   `json:"alowedValidation"`
@@ -249,7 +250,7 @@ type AddKqiTargetInput struct {
 	Kqi              int       `json:"kqi"`
 }
 
-type AddKqiTemporalFrecuencyInput struct {
+type AddKqiTemporalFrequencyInput struct {
 	Name string `json:"name"`
 }
 
@@ -748,7 +749,7 @@ type EditKqiInput struct {
 	KqiCategory          int       `json:"kqiCategory"`
 	KqiPerspective       int       `json:"kqiPerspective"`
 	KqiSource            int       `json:"kqiSource"`
-	KqiTemporalFrecuency int       `json:"kqiTemporalFrecuency"`
+	KqiTemporalFrequency int       `json:"kqiTemporalFrequency"`
 }
 
 type EditKqiPerspectiveInput struct {
@@ -763,6 +764,7 @@ type EditKqiSourceInput struct {
 
 type EditKqiTargetInput struct {
 	ID               int       `json:"id"`
+	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Frame            float64   `json:"frame"`
 	AlowedValidation float64   `json:"alowedValidation"`
@@ -772,7 +774,7 @@ type EditKqiTargetInput struct {
 	Kqi              int       `json:"kqi"`
 }
 
-type EditKqiTemporalFrecuencyInput struct {
+type EditKqiTemporalFrequencyInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
@@ -1116,6 +1118,15 @@ type KpiFilterInput struct {
 	StringSet   []string            `json:"stringSet"`
 }
 
+type KqiCategoryFilterInput struct {
+	FilterType  KqiCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
+}
+
 type KqiFilterInput struct {
 	FilterType  KqiFilterType       `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
@@ -1123,6 +1134,42 @@ type KqiFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiPerspectiveFilterInput struct {
+	FilterType  KqiPerspectiveFilterType `json:"filterType"`
+	Operator    enum.FilterOperator      `json:"operator"`
+	StringValue *string                  `json:"stringValue"`
+	IDSet       []int                    `json:"idSet"`
+	MaxDepth    *int                     `json:"maxDepth"`
+	StringSet   []string                 `json:"stringSet"`
+}
+
+type KqiSourceFilterInput struct {
+	FilterType  KqiSourceFilterType `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiTargetFilterInput struct {
+	FilterType  KqiTargetFilterType `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiTemporalFrequencyFilterInput struct {
+	FilterType  KqiTemporalFrequencyFilterType `json:"filterType"`
+	Operator    enum.FilterOperator            `json:"operator"`
+	StringValue *string                        `json:"stringValue"`
+	IDSet       []int                          `json:"idSet"`
+	MaxDepth    *int                           `json:"maxDepth"`
+	StringSet   []string                       `json:"stringSet"`
 }
 
 type LatestPythonPackageResult struct {
@@ -2109,6 +2156,45 @@ func (e KpiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type KqiCategoryFilterType string
+
+const (
+	KqiCategoryFilterTypeName KqiCategoryFilterType = "NAME"
+)
+
+var AllKqiCategoryFilterType = []KqiCategoryFilterType{
+	KqiCategoryFilterTypeName,
+}
+
+func (e KqiCategoryFilterType) IsValid() bool {
+	switch e {
+	case KqiCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type KqiFilterType string
 
 const (
@@ -2148,6 +2234,165 @@ func (e KqiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+<<<<<<< HEAD
+type KqiPerspectiveFilterType string
+
+const (
+	KqiPerspectiveFilterTypeName KqiPerspectiveFilterType = "NAME"
+)
+
+var AllKqiPerspectiveFilterType = []KqiPerspectiveFilterType{
+	KqiPerspectiveFilterTypeName,
+}
+
+func (e KqiPerspectiveFilterType) IsValid() bool {
+	switch e {
+	case KqiPerspectiveFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiPerspectiveFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiPerspectiveFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiPerspectiveFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiPerspectiveFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiPerspectiveFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiSourceFilterType string
+
+const (
+	KqiSourceFilterTypeName KqiSourceFilterType = "NAME"
+)
+
+var AllKqiSourceFilterType = []KqiSourceFilterType{
+	KqiSourceFilterTypeName,
+}
+
+func (e KqiSourceFilterType) IsValid() bool {
+	switch e {
+	case KqiSourceFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiSourceFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiSourceFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiSourceFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiSourceFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiSourceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiTargetFilterType string
+
+const (
+	KqiTargetFilterTypeName KqiTargetFilterType = "NAME"
+)
+
+var AllKqiTargetFilterType = []KqiTargetFilterType{
+	KqiTargetFilterTypeName,
+}
+
+func (e KqiTargetFilterType) IsValid() bool {
+	switch e {
+	case KqiTargetFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiTargetFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiTargetFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiTargetFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiTargetFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiTargetFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiTemporalFrequencyFilterType string
+
+const (
+	KqiTemporalFrequencyFilterTypeName KqiTemporalFrequencyFilterType = "NAME"
+)
+
+var AllKqiTemporalFrequencyFilterType = []KqiTemporalFrequencyFilterType{
+	KqiTemporalFrequencyFilterTypeName,
+}
+
+func (e KqiTemporalFrequencyFilterType) IsValid() bool {
+	switch e {
+	case KqiTemporalFrequencyFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiTemporalFrequencyFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiTemporalFrequencyFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiTemporalFrequencyFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiTemporalFrequencyFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+=======
+>>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 type OrganizationFilterType string
 
 const (

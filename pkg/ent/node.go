@@ -64,7 +64,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -3539,11 +3539,11 @@ func (k *Kqi) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[3] = &Edge{
-		Type: "KqiTemporalFrecuency",
-		Name: "kqiTemporalFrecuencyFk",
+		Type: "KqiTemporalFrequency",
+		Name: "kqiTemporalFrequencyFk",
 	}
-	node.Edges[3].IDs, err = k.QueryKqiTemporalFrecuencyFk().
-		Select(kqitemporalfrecuency.FieldID).
+	node.Edges[3].IDs, err = k.QueryKqiTemporalFrequencyFk().
+		Select(kqitemporalfrequency.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3763,7 +3763,7 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     kt.ID,
 		Type:   "KqiTarget",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -3783,10 +3783,18 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(kt.Frame); err != nil {
+	if buf, err = json.Marshal(kt.Name); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kt.Frame); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
 		Type:  "float64",
 		Name:  "frame",
 		Value: string(buf),
@@ -3794,7 +3802,7 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(kt.AlowedValidation); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "float64",
 		Name:  "alowedValidation",
 		Value: string(buf),
@@ -3802,7 +3810,7 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(kt.InitTime); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "time.Time",
 		Name:  "initTime",
 		Value: string(buf),
@@ -3810,7 +3818,7 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(kt.EndTime); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "time.Time",
 		Name:  "endTime",
 		Value: string(buf),
@@ -3818,7 +3826,7 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(kt.Impact); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "string",
 		Name:  "impact",
 		Value: string(buf),
@@ -3826,7 +3834,7 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(kt.Status); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "bool",
 		Name:  "status",
 		Value: string(buf),
@@ -3854,10 +3862,10 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (ktf *KqiTemporalFrecuency) Node(ctx context.Context) (node *Node, err error) {
+func (ktf *KqiTemporalFrequency) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ktf.ID,
-		Type:   "KqiTemporalFrecuency",
+		Type:   "KqiTemporalFrequency",
 		Fields: make([]*Field, 3),
 		Edges:  make([]*Edge, 1),
 	}
@@ -3888,9 +3896,9 @@ func (ktf *KqiTemporalFrecuency) Node(ctx context.Context) (node *Node, err erro
 	}
 	node.Edges[0] = &Edge{
 		Type: "Kqi",
-		Name: "kqiTemporalFrecuencyFk",
+		Name: "kqiTemporalFrequencyFk",
 	}
-	node.Edges[0].IDs, err = ktf.QueryKqiTemporalFrecuencyFk().
+	node.Edges[0].IDs, err = ktf.QueryKqiTemporalFrequencyFk().
 		Select(kqi.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -8404,10 +8412,10 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
-	case kqitemporalfrecuency.Table:
-		n, err := c.KqiTemporalFrecuency.Query().
-			Where(kqitemporalfrecuency.ID(id)).
-			CollectFields(ctx, "KqiTemporalFrecuency").
+	case kqitemporalfrequency.Table:
+		n, err := c.KqiTemporalFrequency.Query().
+			Where(kqitemporalfrequency.ID(id)).
+			CollectFields(ctx, "KqiTemporalFrequency").
 			Only(ctx)
 		if err != nil {
 			return nil, err

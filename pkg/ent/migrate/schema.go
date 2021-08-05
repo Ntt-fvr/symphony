@@ -1257,7 +1257,7 @@ var (
 		{Name: "kqi_category_kqi_category_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "kqi_perspective_kqi_perspective_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "kqi_source_kqi_source_fk", Type: field.TypeInt, Nullable: true},
-		{Name: "kqi_temporal_frecuency_kqi_temporal_frecuency_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "kqi_temporal_frequency_kqi_temporal_frequency_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// KqisTable holds the schema information for the "kqis" table.
 	KqisTable = &schema.Table{
@@ -1287,10 +1287,10 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "kqis_kqi_temporal_frecuencies_kqiTemporalFrecuencyFk",
+				Symbol:  "kqis_kqi_temporal_frequencies_kqiTemporalFrequencyFk",
 				Columns: []*schema.Column{KqisColumns[11]},
 
-				RefColumns: []*schema.Column{KqiTemporalFrecuenciesColumns[0]},
+				RefColumns: []*schema.Column{KqiTemporalFrequenciesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -1374,6 +1374,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "frame", Type: field.TypeFloat64},
 		{Name: "alowed_validation", Type: field.TypeFloat64},
 		{Name: "init_time", Type: field.TypeTime},
@@ -1390,25 +1391,25 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "kqi_targets_kqis_kqiTargetFk",
-				Columns: []*schema.Column{KqiTargetsColumns[9]},
+				Columns: []*schema.Column{KqiTargetsColumns[10]},
 
 				RefColumns: []*schema.Column{KqisColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
 	}
-	// KqiTemporalFrecuenciesColumns holds the columns for the "kqi_temporal_frecuencies" table.
-	KqiTemporalFrecuenciesColumns = []*schema.Column{
+	// KqiTemporalFrequenciesColumns holds the columns for the "kqi_temporal_frequencies" table.
+	KqiTemporalFrequenciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 	}
-	// KqiTemporalFrecuenciesTable holds the schema information for the "kqi_temporal_frecuencies" table.
-	KqiTemporalFrecuenciesTable = &schema.Table{
-		Name:        "kqi_temporal_frecuencies",
-		Columns:     KqiTemporalFrecuenciesColumns,
-		PrimaryKey:  []*schema.Column{KqiTemporalFrecuenciesColumns[0]},
+	// KqiTemporalFrequenciesTable holds the schema information for the "kqi_temporal_frequencies" table.
+	KqiTemporalFrequenciesTable = &schema.Table{
+		Name:        "kqi_temporal_frequencies",
+		Columns:     KqiTemporalFrequenciesColumns,
+		PrimaryKey:  []*schema.Column{KqiTemporalFrequenciesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// LinksColumns holds the columns for the "links" table.
@@ -3160,7 +3161,7 @@ var (
 		KqiPerspectivesTable,
 		KqiSourcesTable,
 		KqiTargetsTable,
-		KqiTemporalFrecuenciesTable,
+		KqiTemporalFrequenciesTable,
 		LinksTable,
 		LocationsTable,
 		LocationTypesTable,
@@ -3275,7 +3276,7 @@ func init() {
 	KqisTable.ForeignKeys[0].RefTable = KqiCategoriesTable
 	KqisTable.ForeignKeys[1].RefTable = KqiPerspectivesTable
 	KqisTable.ForeignKeys[2].RefTable = KqiSourcesTable
-	KqisTable.ForeignKeys[3].RefTable = KqiTemporalFrecuenciesTable
+	KqisTable.ForeignKeys[3].RefTable = KqiTemporalFrequenciesTable
 	KqiComparatorsTable.ForeignKeys[0].RefTable = ComparatorsTable
 	KqiComparatorsTable.ForeignKeys[1].RefTable = KqiTargetsTable
 	KqiTargetsTable.ForeignKeys[0].RefTable = KqisTable

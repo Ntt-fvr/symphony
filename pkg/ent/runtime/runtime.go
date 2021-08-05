@@ -57,7 +57,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -1334,33 +1334,37 @@ func init() {
 	kqitarget.DefaultUpdateTime = kqitargetDescUpdateTime.Default.(func() time.Time)
 	// kqitarget.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	kqitarget.UpdateDefaultUpdateTime = kqitargetDescUpdateTime.UpdateDefault.(func() time.Time)
-	kqitemporalfrecuencyMixin := schema.KqiTemporalFrecuency{}.Mixin()
-	kqitemporalfrecuency.Policy = privacy.NewPolicies(schema.KqiTemporalFrecuency{})
-	kqitemporalfrecuency.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	// kqitargetDescName is the schema descriptor for name field.
+	kqitargetDescName := kqitargetFields[0].Descriptor()
+	// kqitarget.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	kqitarget.NameValidator = kqitargetDescName.Validators[0].(func(string) error)
+	kqitemporalfrequencyMixin := schema.KqiTemporalFrequency{}.Mixin()
+	kqitemporalfrequency.Policy = privacy.NewPolicies(schema.KqiTemporalFrequency{})
+	kqitemporalfrequency.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := kqitemporalfrecuency.Policy.EvalMutation(ctx, m); err != nil {
+			if err := kqitemporalfrequency.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-	kqitemporalfrecuencyMixinFields0 := kqitemporalfrecuencyMixin[0].Fields()
-	kqitemporalfrecuencyFields := schema.KqiTemporalFrecuency{}.Fields()
-	_ = kqitemporalfrecuencyFields
-	// kqitemporalfrecuencyDescCreateTime is the schema descriptor for create_time field.
-	kqitemporalfrecuencyDescCreateTime := kqitemporalfrecuencyMixinFields0[0].Descriptor()
-	// kqitemporalfrecuency.DefaultCreateTime holds the default value on creation for the create_time field.
-	kqitemporalfrecuency.DefaultCreateTime = kqitemporalfrecuencyDescCreateTime.Default.(func() time.Time)
-	// kqitemporalfrecuencyDescUpdateTime is the schema descriptor for update_time field.
-	kqitemporalfrecuencyDescUpdateTime := kqitemporalfrecuencyMixinFields0[1].Descriptor()
-	// kqitemporalfrecuency.DefaultUpdateTime holds the default value on creation for the update_time field.
-	kqitemporalfrecuency.DefaultUpdateTime = kqitemporalfrecuencyDescUpdateTime.Default.(func() time.Time)
-	// kqitemporalfrecuency.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	kqitemporalfrecuency.UpdateDefaultUpdateTime = kqitemporalfrecuencyDescUpdateTime.UpdateDefault.(func() time.Time)
-	// kqitemporalfrecuencyDescName is the schema descriptor for name field.
-	kqitemporalfrecuencyDescName := kqitemporalfrecuencyFields[0].Descriptor()
-	// kqitemporalfrecuency.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	kqitemporalfrecuency.NameValidator = kqitemporalfrecuencyDescName.Validators[0].(func(string) error)
+	kqitemporalfrequencyMixinFields0 := kqitemporalfrequencyMixin[0].Fields()
+	kqitemporalfrequencyFields := schema.KqiTemporalFrequency{}.Fields()
+	_ = kqitemporalfrequencyFields
+	// kqitemporalfrequencyDescCreateTime is the schema descriptor for create_time field.
+	kqitemporalfrequencyDescCreateTime := kqitemporalfrequencyMixinFields0[0].Descriptor()
+	// kqitemporalfrequency.DefaultCreateTime holds the default value on creation for the create_time field.
+	kqitemporalfrequency.DefaultCreateTime = kqitemporalfrequencyDescCreateTime.Default.(func() time.Time)
+	// kqitemporalfrequencyDescUpdateTime is the schema descriptor for update_time field.
+	kqitemporalfrequencyDescUpdateTime := kqitemporalfrequencyMixinFields0[1].Descriptor()
+	// kqitemporalfrequency.DefaultUpdateTime holds the default value on creation for the update_time field.
+	kqitemporalfrequency.DefaultUpdateTime = kqitemporalfrequencyDescUpdateTime.Default.(func() time.Time)
+	// kqitemporalfrequency.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	kqitemporalfrequency.UpdateDefaultUpdateTime = kqitemporalfrequencyDescUpdateTime.UpdateDefault.(func() time.Time)
+	// kqitemporalfrequencyDescName is the schema descriptor for name field.
+	kqitemporalfrequencyDescName := kqitemporalfrequencyFields[0].Descriptor()
+	// kqitemporalfrequency.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	kqitemporalfrequency.NameValidator = kqitemporalfrequencyDescName.Validators[0].(func(string) error)
 	linkMixin := schema.Link{}.Mixin()
 	link.Policy = privacy.NewPolicies(schema.Link{})
 	link.Hooks[0] = func(next ent.Mutator) ent.Mutator {

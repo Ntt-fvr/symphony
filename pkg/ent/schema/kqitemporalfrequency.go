@@ -14,27 +14,27 @@ import (
 )
 
 // Alarm defines the property type schema.
-type KqiSource struct {
+type KqiTemporalFrequency struct {
 	schema
 }
 
 // Alarm returns property type alarm.
-func (KqiSource) Fields() []ent.Field {
+func (KqiTemporalFrequency) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().Annotations(entgql.OrderField("NAME")),
 	}
 }
 
 // Edges returns property type edges.
-func (KqiSource) Edges() []ent.Edge {
+func (KqiTemporalFrequency) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("kqiSourceFk", Kqi.Type).
+		edge.To("kqiTemporalFrequencyFk", Kqi.Type).
 			Annotations(entgql.MapsTo("kqi")),
 	}
 }
 
 // Policy returns entity policy.
-func (KqiSource) Policy() ent.Policy {
+func (KqiTemporalFrequency) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

@@ -10,24 +10,24 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type kqiTemporalFrecuencyResolver struct{}
+type kqiTemporalFrequencyResolver struct{}
 
-func (kqiTemporalFrecuencyResolver) Kqi(ctx context.Context, kqiTemporalFrecuency *ent.KqiTemporalFrecuency) ([]*ent.Kqi, error) {
-	variable, err := kqiTemporalFrecuency.KqiTemporalFrecuencyFk(ctx)
+func (kqiTemporalFrequencyResolver) Kqi(ctx context.Context, kqiTemporalFrequency *ent.KqiTemporalFrequency) ([]*ent.Kqi, error) {
+	variable, err := kqiTemporalFrequency.KqiTemporalFrequencyFk(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
 }
-func (r mutationResolver) AddKqiTemporalFrecuency(ctx context.Context, input models.AddKqiTemporalFrecuencyInput) (*ent.KqiTemporalFrecuency, error) {
+func (r mutationResolver) AddKqiTemporalFrequency(ctx context.Context, input models.AddKqiTemporalFrequencyInput) (*ent.KqiTemporalFrequency, error) {
 	client := r.ClientFrom(ctx)
-	typ, err := client.KqiTemporalFrecuency.Create().
+	typ, err := client.KqiTemporalFrequency.Create().
 		SetName(input.Name).
 		Save(ctx)
 	if err != nil {
@@ -39,11 +39,11 @@ func (r mutationResolver) AddKqiTemporalFrecuency(ctx context.Context, input mod
 	return typ, nil
 }
 
-func (r mutationResolver) RemoveKqiTemporalFrecuency(ctx context.Context, id int) (int, error) {
+func (r mutationResolver) RemoveKqiTemporalFrequency(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
-	t, err := client.KqiTemporalFrecuency.Query().
+	t, err := client.KqiTemporalFrequency.Query().
 		Where(
-			kqitemporalfrecuency.ID(id),
+			kqitemporalfrequency.ID(id),
 		).
 		Only(ctx)
 	if err != nil {
@@ -51,15 +51,15 @@ func (r mutationResolver) RemoveKqiTemporalFrecuency(ctx context.Context, id int
 	}
 	//TODO: borrar o editar los edges relacionados
 
-	if err := client.KqiTemporalFrecuency.DeleteOne(t).Exec(ctx); err != nil {
+	if err := client.KqiTemporalFrequency.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
 
-func (r mutationResolver) EditKqiTemporalFrecuency(ctx context.Context, input models.EditKqiTemporalFrecuencyInput) (*ent.KqiTemporalFrecuency, error) {
+func (r mutationResolver) EditKqiTemporalFrequency(ctx context.Context, input models.EditKqiTemporalFrequencyInput) (*ent.KqiTemporalFrequency, error) {
 	client := r.ClientFrom(ctx)
-	et, err := client.KqiTemporalFrecuency.Get(ctx, input.ID)
+	et, err := client.KqiTemporalFrequency.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
@@ -68,7 +68,7 @@ func (r mutationResolver) EditKqiTemporalFrecuency(ctx context.Context, input mo
 	}
 	if input.Name != et.Name {
 
-		if et, err = client.KqiTemporalFrecuency.
+		if et, err = client.KqiTemporalFrequency.
 			UpdateOne(et).
 			SetName(input.Name).
 			Save(ctx); err != nil {

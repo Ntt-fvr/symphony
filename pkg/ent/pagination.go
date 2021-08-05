@@ -65,7 +65,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -10343,6 +10343,49 @@ func (kc *KqiCategoryQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// KqiCategoryOrderFieldName orders KqiCategory by name.
+	KqiCategoryOrderFieldName = &KqiCategoryOrderField{
+		field: kqicategory.FieldName,
+		toCursor: func(kc *KqiCategory) Cursor {
+			return Cursor{
+				ID:    kc.ID,
+				Value: kc.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiCategoryOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqicategory.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiCategoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiCategoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiCategoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiCategoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiCategoryOrderField", str)
+	}
+	return nil
+}
+
 // KqiCategoryOrderField defines the ordering field of KqiCategory.
 type KqiCategoryOrderField struct {
 	field    string
@@ -10781,6 +10824,49 @@ func (kp *KqiPerspectiveQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// KqiPerspectiveOrderFieldName orders KqiPerspective by name.
+	KqiPerspectiveOrderFieldName = &KqiPerspectiveOrderField{
+		field: kqiperspective.FieldName,
+		toCursor: func(kp *KqiPerspective) Cursor {
+			return Cursor{
+				ID:    kp.ID,
+				Value: kp.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiPerspectiveOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqiperspective.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiPerspectiveOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiPerspectiveOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiPerspectiveOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiPerspectiveOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiPerspectiveOrderField", str)
+	}
+	return nil
+}
+
 // KqiPerspectiveOrderField defines the ordering field of KqiPerspective.
 type KqiPerspectiveOrderField struct {
 	field    string
@@ -10998,6 +11084,49 @@ func (ks *KqiSourceQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// KqiSourceOrderFieldName orders KqiSource by name.
+	KqiSourceOrderFieldName = &KqiSourceOrderField{
+		field: kqisource.FieldName,
+		toCursor: func(ks *KqiSource) Cursor {
+			return Cursor{
+				ID:    ks.ID,
+				Value: ks.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiSourceOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqisource.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiSourceOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiSourceOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiSourceOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiSourceOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiSourceOrderField", str)
+	}
+	return nil
 }
 
 // KqiSourceOrderField defines the ordering field of KqiSource.
@@ -11219,6 +11348,49 @@ func (kt *KqiTargetQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// KqiTargetOrderFieldName orders KqiTarget by name.
+	KqiTargetOrderFieldName = &KqiTargetOrderField{
+		field: kqitarget.FieldName,
+		toCursor: func(kt *KqiTarget) Cursor {
+			return Cursor{
+				ID:    kt.ID,
+				Value: kt.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiTargetOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqitarget.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiTargetOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiTargetOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiTargetOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiTargetOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiTargetOrderField", str)
+	}
+	return nil
+}
+
 // KqiTargetOrderField defines the ordering field of KqiTarget.
 type KqiTargetOrderField struct {
 	field    string
@@ -11242,111 +11414,111 @@ var DefaultKqiTargetOrder = &KqiTargetOrder{
 	},
 }
 
-// KqiTemporalFrecuencyEdge is the edge representation of KqiTemporalFrecuency.
-type KqiTemporalFrecuencyEdge struct {
-	Node   *KqiTemporalFrecuency `json:"node"`
+// KqiTemporalFrequencyEdge is the edge representation of KqiTemporalFrequency.
+type KqiTemporalFrequencyEdge struct {
+	Node   *KqiTemporalFrequency `json:"node"`
 	Cursor Cursor                `json:"cursor"`
 }
 
-// KqiTemporalFrecuencyConnection is the connection containing edges to KqiTemporalFrecuency.
-type KqiTemporalFrecuencyConnection struct {
-	Edges      []*KqiTemporalFrecuencyEdge `json:"edges"`
+// KqiTemporalFrequencyConnection is the connection containing edges to KqiTemporalFrequency.
+type KqiTemporalFrequencyConnection struct {
+	Edges      []*KqiTemporalFrequencyEdge `json:"edges"`
 	PageInfo   PageInfo                    `json:"pageInfo"`
 	TotalCount int                         `json:"totalCount"`
 }
 
-// KqiTemporalFrecuencyPaginateOption enables pagination customization.
-type KqiTemporalFrecuencyPaginateOption func(*kqiTemporalFrecuencyPager) error
+// KqiTemporalFrequencyPaginateOption enables pagination customization.
+type KqiTemporalFrequencyPaginateOption func(*kqiTemporalFrequencyPager) error
 
-// WithKqiTemporalFrecuencyOrder configures pagination ordering.
-func WithKqiTemporalFrecuencyOrder(order *KqiTemporalFrecuencyOrder) KqiTemporalFrecuencyPaginateOption {
+// WithKqiTemporalFrequencyOrder configures pagination ordering.
+func WithKqiTemporalFrequencyOrder(order *KqiTemporalFrequencyOrder) KqiTemporalFrequencyPaginateOption {
 	if order == nil {
-		order = DefaultKqiTemporalFrecuencyOrder
+		order = DefaultKqiTemporalFrequencyOrder
 	}
 	o := *order
-	return func(pager *kqiTemporalFrecuencyPager) error {
+	return func(pager *kqiTemporalFrequencyPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultKqiTemporalFrecuencyOrder.Field
+			o.Field = DefaultKqiTemporalFrequencyOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithKqiTemporalFrecuencyFilter configures pagination filter.
-func WithKqiTemporalFrecuencyFilter(filter func(*KqiTemporalFrecuencyQuery) (*KqiTemporalFrecuencyQuery, error)) KqiTemporalFrecuencyPaginateOption {
-	return func(pager *kqiTemporalFrecuencyPager) error {
+// WithKqiTemporalFrequencyFilter configures pagination filter.
+func WithKqiTemporalFrequencyFilter(filter func(*KqiTemporalFrequencyQuery) (*KqiTemporalFrequencyQuery, error)) KqiTemporalFrequencyPaginateOption {
+	return func(pager *kqiTemporalFrequencyPager) error {
 		if filter == nil {
-			return errors.New("KqiTemporalFrecuencyQuery filter cannot be nil")
+			return errors.New("KqiTemporalFrequencyQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type kqiTemporalFrecuencyPager struct {
-	order  *KqiTemporalFrecuencyOrder
-	filter func(*KqiTemporalFrecuencyQuery) (*KqiTemporalFrecuencyQuery, error)
+type kqiTemporalFrequencyPager struct {
+	order  *KqiTemporalFrequencyOrder
+	filter func(*KqiTemporalFrequencyQuery) (*KqiTemporalFrequencyQuery, error)
 }
 
-func newKqiTemporalFrecuencyPager(opts []KqiTemporalFrecuencyPaginateOption) (*kqiTemporalFrecuencyPager, error) {
-	pager := &kqiTemporalFrecuencyPager{}
+func newKqiTemporalFrequencyPager(opts []KqiTemporalFrequencyPaginateOption) (*kqiTemporalFrequencyPager, error) {
+	pager := &kqiTemporalFrequencyPager{}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultKqiTemporalFrecuencyOrder
+		pager.order = DefaultKqiTemporalFrequencyOrder
 	}
 	return pager, nil
 }
 
-func (p *kqiTemporalFrecuencyPager) applyFilter(query *KqiTemporalFrecuencyQuery) (*KqiTemporalFrecuencyQuery, error) {
+func (p *kqiTemporalFrequencyPager) applyFilter(query *KqiTemporalFrequencyQuery) (*KqiTemporalFrequencyQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *kqiTemporalFrecuencyPager) toCursor(ktf *KqiTemporalFrecuency) Cursor {
+func (p *kqiTemporalFrequencyPager) toCursor(ktf *KqiTemporalFrequency) Cursor {
 	return p.order.Field.toCursor(ktf)
 }
 
-func (p *kqiTemporalFrecuencyPager) applyCursors(query *KqiTemporalFrecuencyQuery, after, before *Cursor) *KqiTemporalFrecuencyQuery {
+func (p *kqiTemporalFrequencyPager) applyCursors(query *KqiTemporalFrequencyQuery, after, before *Cursor) *KqiTemporalFrequencyQuery {
 	for _, predicate := range cursorsToPredicates(
 		p.order.Direction, after, before,
-		p.order.Field.field, DefaultKqiTemporalFrecuencyOrder.Field.field,
+		p.order.Field.field, DefaultKqiTemporalFrequencyOrder.Field.field,
 	) {
 		query = query.Where(predicate)
 	}
 	return query
 }
 
-func (p *kqiTemporalFrecuencyPager) applyOrder(query *KqiTemporalFrecuencyQuery, reverse bool) *KqiTemporalFrecuencyQuery {
+func (p *kqiTemporalFrequencyPager) applyOrder(query *KqiTemporalFrequencyQuery, reverse bool) *KqiTemporalFrequencyQuery {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultKqiTemporalFrecuencyOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultKqiTemporalFrecuencyOrder.Field.field))
+	if p.order.Field != DefaultKqiTemporalFrequencyOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultKqiTemporalFrequencyOrder.Field.field))
 	}
 	return query
 }
 
-// Paginate executes the query and returns a relay based cursor connection to KqiTemporalFrecuency.
-func (ktf *KqiTemporalFrecuencyQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to KqiTemporalFrequency.
+func (ktf *KqiTemporalFrequencyQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...KqiTemporalFrecuencyPaginateOption,
-) (*KqiTemporalFrecuencyConnection, error) {
+	before *Cursor, last *int, opts ...KqiTemporalFrequencyPaginateOption,
+) (*KqiTemporalFrequencyConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newKqiTemporalFrecuencyPager(opts)
+	pager, err := newKqiTemporalFrequencyPager(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -11355,7 +11527,7 @@ func (ktf *KqiTemporalFrecuencyQuery) Paginate(
 		return nil, err
 	}
 
-	conn := &KqiTemporalFrecuencyConnection{Edges: []*KqiTemporalFrecuencyEdge{}}
+	conn := &KqiTemporalFrequencyConnection{Edges: []*KqiTemporalFrequencyEdge{}}
 	if !hasCollectedField(ctx, edgesField) ||
 		first != nil && *first == 0 ||
 		last != nil && *last == 0 {
@@ -11408,22 +11580,22 @@ func (ktf *KqiTemporalFrecuencyQuery) Paginate(
 		nodes = nodes[:len(nodes)-1]
 	}
 
-	var nodeAt func(int) *KqiTemporalFrecuency
+	var nodeAt func(int) *KqiTemporalFrequency
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *KqiTemporalFrecuency {
+		nodeAt = func(i int) *KqiTemporalFrequency {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *KqiTemporalFrecuency {
+		nodeAt = func(i int) *KqiTemporalFrequency {
 			return nodes[i]
 		}
 	}
 
-	conn.Edges = make([]*KqiTemporalFrecuencyEdge, len(nodes))
+	conn.Edges = make([]*KqiTemporalFrequencyEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		conn.Edges[i] = &KqiTemporalFrecuencyEdge{
+		conn.Edges[i] = &KqiTemporalFrequencyEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -11438,24 +11610,67 @@ func (ktf *KqiTemporalFrecuencyQuery) Paginate(
 	return conn, nil
 }
 
-// KqiTemporalFrecuencyOrderField defines the ordering field of KqiTemporalFrecuency.
-type KqiTemporalFrecuencyOrderField struct {
+var (
+	// KqiTemporalFrequencyOrderFieldName orders KqiTemporalFrequency by name.
+	KqiTemporalFrequencyOrderFieldName = &KqiTemporalFrequencyOrderField{
+		field: kqitemporalfrequency.FieldName,
+		toCursor: func(ktf *KqiTemporalFrequency) Cursor {
+			return Cursor{
+				ID:    ktf.ID,
+				Value: ktf.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiTemporalFrequencyOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqitemporalfrequency.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiTemporalFrequencyOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiTemporalFrequencyOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiTemporalFrequencyOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiTemporalFrequencyOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiTemporalFrequencyOrderField", str)
+	}
+	return nil
+}
+
+// KqiTemporalFrequencyOrderField defines the ordering field of KqiTemporalFrequency.
+type KqiTemporalFrequencyOrderField struct {
 	field    string
-	toCursor func(*KqiTemporalFrecuency) Cursor
+	toCursor func(*KqiTemporalFrequency) Cursor
 }
 
-// KqiTemporalFrecuencyOrder defines the ordering of KqiTemporalFrecuency.
-type KqiTemporalFrecuencyOrder struct {
+// KqiTemporalFrequencyOrder defines the ordering of KqiTemporalFrequency.
+type KqiTemporalFrequencyOrder struct {
 	Direction OrderDirection                  `json:"direction"`
-	Field     *KqiTemporalFrecuencyOrderField `json:"field"`
+	Field     *KqiTemporalFrequencyOrderField `json:"field"`
 }
 
-// DefaultKqiTemporalFrecuencyOrder is the default ordering of KqiTemporalFrecuency.
-var DefaultKqiTemporalFrecuencyOrder = &KqiTemporalFrecuencyOrder{
+// DefaultKqiTemporalFrequencyOrder is the default ordering of KqiTemporalFrequency.
+var DefaultKqiTemporalFrequencyOrder = &KqiTemporalFrequencyOrder{
 	Direction: OrderDirectionAsc,
-	Field: &KqiTemporalFrecuencyOrderField{
-		field: kqitemporalfrecuency.FieldID,
-		toCursor: func(ktf *KqiTemporalFrecuency) Cursor {
+	Field: &KqiTemporalFrequencyOrderField{
+		field: kqitemporalfrequency.FieldID,
+		toCursor: func(ktf *KqiTemporalFrequency) Cursor {
 			return Cursor{ID: ktf.ID}
 		},
 	},

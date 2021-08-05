@@ -75,7 +75,7 @@ type hooks struct {
 	KqiPerspective              []ent.Hook
 	KqiSource                   []ent.Hook
 	KqiTarget                   []ent.Hook
-	KqiTemporalFrecuency        []ent.Hook
+	KqiTemporalFrequency        []ent.Hook
 	Link                        []ent.Hook
 	Location                    []ent.Hook
 	LocationType                []ent.Hook

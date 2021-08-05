@@ -873,18 +873,18 @@ func (kt *KqiTargetQuery) collectField(ctx *graphql.OperationContext, field grap
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (ktf *KqiTemporalFrecuencyQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTemporalFrecuencyQuery {
+func (ktf *KqiTemporalFrequencyQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTemporalFrequencyQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		ktf = ktf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
 	}
 	return ktf
 }
 
-func (ktf *KqiTemporalFrecuencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTemporalFrecuencyQuery {
+func (ktf *KqiTemporalFrequencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTemporalFrequencyQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "kqi":
-			ktf = ktf.WithKqiTemporalFrecuencyFk(func(query *KqiQuery) {
+			ktf = ktf.WithKqiTemporalFrequencyFk(func(query *KqiQuery) {
 				query.collectField(ctx, field)
 			})
 		}

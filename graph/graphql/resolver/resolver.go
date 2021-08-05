@@ -206,6 +206,8 @@ func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
 
+<<<<<<< HEAD
+=======
 /*func (r resolver) Domain() generated.DomainResolver {
 	return domainResolver{}
 }
@@ -214,6 +216,7 @@ func (r resolver) CounterFamily() generated.CounterFamilyResolver {
 	return counterFamilyResolver{}
 }*/
 
+>>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe
 func (r resolver) Vendor() generated.VendorResolver {
 	return vendorResolver{}
 }
@@ -277,8 +280,9 @@ func (r resolver) KqiCategory() generated.KqiCategoryResolver {
 func (r resolver) KqiPerspective() generated.KqiPerspectiveResolver {
 	return kqiPerspectiveResolver{}
 }
-func (r resolver) KqiTemporalFrecuency() generated.KqiTemporalFrecuencyResolver {
-	return kqiTemporalFrecuencyResolver{}
+
+func (r resolver) KqiTemporalFrequency() generated.KqiTemporalFrequencyResolver {
+	return kqiTemporalFrequencyResolver{}
 }
 
 func (r resolver) KqiSource() generated.KqiSourceResolver {
@@ -296,6 +300,11 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 	return kqiComparatorResolver{}
 }
 
+<<<<<<< HEAD
+func (r resolver) Recommendations() generated.RecommendationsResolver {
+	return recommendationsResolver{}
+}
+=======
 /**************************************************************************************************/
 /************************* RECOMMENDATIONS ********************************************************/
 /*func (r resolver) RecommendationsCategory() generated.RecommendationsCategoryResolver {
@@ -310,3 +319,4 @@ func (r resolver) Recommendations() generated.RecommendationsResolver {
 }
 
 /**************************************************************************************************/
+>>>>>>> b73dc7b7035f5bedb16851fe14c969263c3b17fe

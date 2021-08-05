@@ -289,7 +289,7 @@ func (c *KqiTargetClient) Instantiate(kt *KqiTarget) *KqiTarget {
 }
 
 // Instantiate entity configuration.
-func (c *KqiTemporalFrecuencyClient) Instantiate(ktf *KqiTemporalFrecuency) *KqiTemporalFrecuency {
+func (c *KqiTemporalFrequencyClient) Instantiate(ktf *KqiTemporalFrequency) *KqiTemporalFrequency {
 	ktf.config = c.config
 	return ktf
 }

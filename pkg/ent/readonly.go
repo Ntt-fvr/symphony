@@ -69,7 +69,7 @@ func (c *Client) ReadOnly() *Client {
 		KqiPerspective:              NewKqiPerspectiveClient(cfg),
 		KqiSource:                   NewKqiSourceClient(cfg),
 		KqiTarget:                   NewKqiTargetClient(cfg),
-		KqiTemporalFrecuency:        NewKqiTemporalFrecuencyClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),

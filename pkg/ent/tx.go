@@ -110,8 +110,8 @@ type Tx struct {
 	KqiSource *KqiSourceClient
 	// KqiTarget is the client for interacting with the KqiTarget builders.
 	KqiTarget *KqiTargetClient
-	// KqiTemporalFrecuency is the client for interacting with the KqiTemporalFrecuency builders.
-	KqiTemporalFrecuency *KqiTemporalFrecuencyClient
+	// KqiTemporalFrequency is the client for interacting with the KqiTemporalFrequency builders.
+	KqiTemporalFrequency *KqiTemporalFrequencyClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
@@ -368,7 +368,7 @@ func (tx *Tx) init() {
 	tx.KqiPerspective = NewKqiPerspectiveClient(tx.config)
 	tx.KqiSource = NewKqiSourceClient(tx.config)
 	tx.KqiTarget = NewKqiTargetClient(tx.config)
-	tx.KqiTemporalFrecuency = NewKqiTemporalFrecuencyClient(tx.config)
+	tx.KqiTemporalFrequency = NewKqiTemporalFrequencyClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.LocationType = NewLocationTypeClient(tx.config)

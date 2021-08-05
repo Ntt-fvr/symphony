@@ -944,10 +944,10 @@ func (k *Kqi) KqiSourceFk(ctx context.Context) (*KqiSource, error) {
 	return result, MaskNotFound(err)
 }
 
-func (k *Kqi) KqiTemporalFrecuencyFk(ctx context.Context) (*KqiTemporalFrecuency, error) {
-	result, err := k.Edges.KqiTemporalFrecuencyFkOrErr()
+func (k *Kqi) KqiTemporalFrequencyFk(ctx context.Context) (*KqiTemporalFrequency, error) {
+	result, err := k.Edges.KqiTemporalFrequencyFkOrErr()
 	if IsNotLoaded(err) {
-		result, err = k.QueryKqiTemporalFrecuencyFk().Only(ctx)
+		result, err = k.QueryKqiTemporalFrequencyFk().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -1016,10 +1016,10 @@ func (kt *KqiTarget) Kqitargetcomparatorfk(ctx context.Context) ([]*KqiComparato
 	return result, err
 }
 
-func (ktf *KqiTemporalFrecuency) KqiTemporalFrecuencyFk(ctx context.Context) ([]*Kqi, error) {
-	result, err := ktf.Edges.KqiTemporalFrecuencyFkOrErr()
+func (ktf *KqiTemporalFrequency) KqiTemporalFrequencyFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := ktf.Edges.KqiTemporalFrequencyFkOrErr()
 	if IsNotLoaded(err) {
-		result, err = ktf.QueryKqiTemporalFrecuencyFk().All(ctx)
+		result, err = ktf.QueryKqiTemporalFrequencyFk().All(ctx)
 	}
 	return result, err
 }

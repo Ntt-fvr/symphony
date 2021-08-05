@@ -1296,28 +1296,28 @@ func (f KqiTargetMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KqiTargetMutation", m)
 }
 
-// The KqiTemporalFrecuencyQueryRuleFunc type is an adapter to allow the use of ordinary
+// The KqiTemporalFrequencyQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type KqiTemporalFrecuencyQueryRuleFunc func(context.Context, *ent.KqiTemporalFrecuencyQuery) error
+type KqiTemporalFrequencyQueryRuleFunc func(context.Context, *ent.KqiTemporalFrequencyQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f KqiTemporalFrecuencyQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.KqiTemporalFrecuencyQuery); ok {
+func (f KqiTemporalFrequencyQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.KqiTemporalFrequencyQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.KqiTemporalFrecuencyQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.KqiTemporalFrequencyQuery", q)
 }
 
-// The KqiTemporalFrecuencyMutationRuleFunc type is an adapter to allow the use of ordinary
+// The KqiTemporalFrequencyMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type KqiTemporalFrecuencyMutationRuleFunc func(context.Context, *ent.KqiTemporalFrecuencyMutation) error
+type KqiTemporalFrequencyMutationRuleFunc func(context.Context, *ent.KqiTemporalFrequencyMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f KqiTemporalFrecuencyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.KqiTemporalFrecuencyMutation); ok {
+func (f KqiTemporalFrequencyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.KqiTemporalFrequencyMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KqiTemporalFrecuencyMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KqiTemporalFrequencyMutation", m)
 }
 
 // The LinkQueryRuleFunc type is an adapter to allow the use of ordinary
