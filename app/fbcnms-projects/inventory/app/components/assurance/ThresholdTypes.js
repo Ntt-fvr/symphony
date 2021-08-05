@@ -14,7 +14,7 @@ import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import ThresholdContext from './ThresholdContext';
+import ThresholdProvider from './ThresholdProvider';
 import ThresholdTypeItem from './ThresholdTypeItem';
 import TitleTextCardsThresholds from './TitleTextCardsThresholds';
 import fbt from 'fbt';
@@ -54,10 +54,28 @@ const ThresholdQuery = graphql`
           rule {
             id
             name
+            status
+            gracePeriod
+            additionalInfo
+            specificProblem
+            eventTypeName
+            startDateTime
+            endDateTime
             ruleType {
+              id
               name
             }
-            status
+            ruleLimit {
+              number
+              limitType
+            }
+            eventSeverity {
+              id
+              name
+            }
+            threshold {
+              name
+            }
           }
         }
       }
@@ -144,12 +162,9 @@ const ThresholdTypes = () => {
 
   if (showEditRuleForm) {
     return (
-      <ThresholdContext.Provider value={'red'}>
-        <EditRuleItemForm
-          threshold={dataEdit.item.node}
-          hideAddRuleForm={hideEditRuleForm}
-        />
-      </ThresholdContext.Provider>
+      <ThresholdProvider>
+        <EditRuleItemForm hideAddRuleForm={hideEditRuleForm} />
+      </ThresholdProvider>
     );
   }
 
@@ -170,7 +185,7 @@ const ThresholdTypes = () => {
 
   if (showEditCard) {
     return (
-      <ThresholdContext.Provider value={'red'}>
+      <ThresholdProvider>
         <EditThresholdItemForm
           thresholdNames={thresholdNames}
           formValues={dataEdit.item.node}
@@ -179,12 +194,12 @@ const ThresholdTypes = () => {
             showEditRuleItemForm(dataEdit);
           }}
         />
-      </ThresholdContext.Provider>
+      </ThresholdProvider>
     );
   }
 
   return (
-    <ThresholdContext.Provider value={'red'}>
+    <ThresholdProvider>
       <div className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} lg={9} xl={9}>
@@ -219,7 +234,7 @@ const ThresholdTypes = () => {
           </Grid>
         </Grid>
       </div>
-    </ThresholdContext.Provider>
+    </ThresholdProvider>
   );
 };
 

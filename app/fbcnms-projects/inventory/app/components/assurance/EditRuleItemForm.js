@@ -8,16 +8,8 @@
  * @format
  */
 
-import type {AddRuleLimitMutationVariables} from '../../mutations/__generated__/AddRuleLimitMutation.graphql';
-import type {AddRuleMutationResponse} from '../../mutations/__generated__/AddRuleMutation.graphql';
-import type {AddRuleMutationVariables} from '../../mutations/__generated__/AddRuleMutation.graphql';
-
 import type {EditRuleItemFormQuery} from './__generated__/EditRuleItemFormQuery.graphql';
 
-import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
-
-import AddRuleLimitMutation from '../../mutations/AddRuleLimitMutation';
-import AddRuleMutation from '../../mutations/AddRuleMutation';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
@@ -26,18 +18,18 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import ThresholdContext from "./ThresholdContext";
 import fbt from 'fbt';
-import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useStore} from './ThresholdProvider';
 
 const EditRuleQuery = graphql`
   query EditRuleItemFormQuery {
@@ -50,14 +42,6 @@ const EditRuleQuery = graphql`
       }
     }
     comparators {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-    ruleTypes {
       edges {
         node {
           id
@@ -149,94 +133,23 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  threshold: {
-    id: string,
-    name: string,
-  },
   hideAddRuleForm: void => void,
 |}>;
 
-type Rule = {
-  data: {
-    id: string,
-    name: string,
-    status: boolean,
-    gracePeriod: number,
-    specificProblem: string,
-    additionalInfo: string,
-    alarmSeverities: string,
-    alarmType: string,
-    upperTarget: string,
-    upperLimit: string,
-    lowerTarget: string,
-    lowerLimit: string,
-    startTime: string,
-    endTime: string,
-  },
-};
-
 const EditRuleItemForm = (props: Props) => {
-  const {threshold, hideAddRuleForm} = props;
+  const {rule} = useStore();
+  const {hideAddRuleForm} = props;
 
-  const [rule, setRule] = useState<Rule>({data: {}});
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(rule.status);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<EditRuleItemFormQuery>(EditRuleQuery, {});
-  const ruleTypeId = data.ruleTypes?.edges[0].node.id;
 
-  const color = useContext(ThresholdContext);
-
-  function handleChange({target}) {
-    setRule({
-      data: {
-        ...rule.data,
-        [target.name]: target.value,
-      },
-    });
-  }
-
-  function handleClick() {
-    const variables: AddRuleMutationVariables = {
-      input: {
-        name: rule.data.name,
-        status: checked,
-        gracePeriod: rule.data.gracePeriod,
-        startDateTime: moment(rule.data.startTime).format(),
-        endDateTime: moment(rule.data.endTime).format(),
-        ruleType: ruleTypeId,
-        eventTypeName: rule.data.alarmType,
-        specificProblem: rule.data.specificProblem,
-        additionalInfo: rule.data.additionalInfo,
-        eventSeverity: rule.data.alarmSeverities,
-        treshold: threshold.id,
-      },
-    };
-
-    const response: MutationCallbacks<AddRuleMutationResponse> = {
-      onCompleted: response => {
-        const variablesUpper: AddRuleLimitMutationVariables = {
-          input: {
-            number: Number(rule.data.upperLimit),
-            limitType: 'UPPER',
-            comparator: rule.data.upperTarget,
-            rule: response.addRule.id,
-          },
-        };
-        const variablesLower: AddRuleLimitMutationVariables = {
-          input: {
-            number: Number(rule.data.lowerLimit),
-            limitType: 'LOWER',
-            comparator: rule.data.lowerTarget,
-            rule: response.addRule.id,
-          },
-        };
-        AddRuleLimitMutation(variablesUpper);
-        AddRuleLimitMutation(variablesLower);
-      },
-    };
-
-    AddRuleMutation(variables, response);
-  }
+  const nameRule = useFormInput(rule.name);
+  const gracePeriodRule = useFormInput(rule.gracePeriod);
+  const additionalInfoRule = useFormInput(rule.additionalInfo);
+  const specificProblemRule = useFormInput(rule.specificProblem);
+  const alarmTypeRule = useFormInput(rule.eventTypeName);
+  const eventSeverityRules = useFormInput(rule.eventSeverityId);
 
   const classes = useStyles();
 
@@ -244,24 +157,18 @@ const EditRuleItemForm = (props: Props) => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
-          <h1 style={{color}}>Hola Context</h1>
           <ConfigureTitleSubItem
             title={fbt('Threshold Catalog/', 'Threshold Catalog')}
-            tag={` ${threshold.name}`}
+            tag={` ${rule.thresholdName}`}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <Card>
-            <CardHeader className={classes.cardHeader}>Build Rule</CardHeader>
+            <CardHeader className={classes.cardHeader}>Edit Rule</CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={1} xl={1}>
                 <FormField className={classes.formField} label="Enabled">
-                  <Switch
-                    title={''}
-                    checked={checked}
-                    onChange={setChecked}
-                    onClick={handleClick}
-                  />
+                  <Switch title={''} checked={checked} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
@@ -270,17 +177,22 @@ const EditRuleItemForm = (props: Props) => {
                   label="Rule Name"
                   required>
                   <TextInput
+                    {...nameRule}
                     type="string"
                     autoComplete="off"
                     className={classes.textInput}
                     name="name"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={3} xl={3}>
                 <FormField className={classes.formField} label="ID" required>
-                  <TextInput className={classes.textInput} name="id" disabled />
+                  <TextInput
+                    value={rule.id}
+                    className={classes.textInput}
+                    name="id"
+                    disabled
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={12} sm={12} lg={2} xl={2}>
@@ -289,10 +201,10 @@ const EditRuleItemForm = (props: Props) => {
                   label="Grace period"
                   required>
                   <TextInput
+                    {...gracePeriodRule}
                     className={classes.textInput}
                     type="number"
                     name="gracePeriod"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -313,6 +225,7 @@ const EditRuleItemForm = (props: Props) => {
               <Grid item xs={12} sm={12} lg={2} xl={2}>
                 <FormField className={classes.formField} label="Alarm severity">
                   <Select
+                    {...eventSeverityRules}
                     className={classes.selectAlarm}
                     disableUnderline
                     inputProps={{
@@ -320,9 +233,8 @@ const EditRuleItemForm = (props: Props) => {
                         icon: classes.icon,
                       },
                     }}
-                    name="alarmSeverities"
-                    onChange={handleChange}>
-                    {data.eventSeveritys.edges.map((item, index) => (
+                    name="eventSeverities">
+                    {data.eventSeverities.edges.map((item, index) => (
                       <MenuItem key={index} value={item.node?.id}>
                         {item.node?.name}
                       </MenuItem>
@@ -336,9 +248,9 @@ const EditRuleItemForm = (props: Props) => {
                   label="Alarm type name"
                   required>
                   <TextInput
+                    {...alarmTypeRule}
                     className={classes.textInput}
                     name="alarmType"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -360,8 +272,7 @@ const EditRuleItemForm = (props: Props) => {
                         <Select
                           className={classes.selectUpper}
                           disableUnderline
-                          name="upperTarget"
-                          onChange={handleChange}>
+                          name="upperTarget">
                           {data.comparators.edges.map((item, index) => (
                             <MenuItem key={index} value={item.node?.id}>
                               {item.node?.name}
@@ -377,7 +288,6 @@ const EditRuleItemForm = (props: Props) => {
                           placeholder="Number"
                           className={`${classes.textInput} ${classes.green}`}
                           name="upperLimit"
-                          onChange={handleChange}
                         />
                       </FormField>
                     </Grid>
@@ -388,8 +298,7 @@ const EditRuleItemForm = (props: Props) => {
                         <Select
                           className={classes.selectLower}
                           disableUnderline
-                          name="lowerTarget"
-                          onChange={handleChange}>
+                          name="lowerTarget">
                           {data.comparators.edges.map((item, index) => (
                             <MenuItem key={index} value={item.node?.id}>
                               {item.node?.name}
@@ -405,7 +314,6 @@ const EditRuleItemForm = (props: Props) => {
                           placeholder="Number"
                           className={`${classes.textInput} ${classes.red}`}
                           name="lowerLimit"
-                          onChange={handleChange}
                         />
                       </FormField>
                     </Grid>
@@ -429,7 +337,6 @@ const EditRuleItemForm = (props: Props) => {
                     type="datetime-local"
                     name="startTime"
                     disabled={!checkedCheckbox}
-                    onChange={handleChange}
                   />
                 </FormField>
                 <FormField label="End" className={classes.formField}>
@@ -439,7 +346,6 @@ const EditRuleItemForm = (props: Props) => {
                     type="datetime-local"
                     name="endTime"
                     disabled={!checkedCheckbox}
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -448,22 +354,22 @@ const EditRuleItemForm = (props: Props) => {
                   className={classes.formField}
                   label="Specific problem">
                   <TextInput
+                    {...specificProblemRule}
                     className={classes.textInput}
                     type="multiline"
                     rows={3}
                     name="specificProblem"
-                    onChange={handleChange}
                   />
                 </FormField>
                 <FormField
                   className={classes.formField}
                   label="Additional info">
                   <TextInput
+                    {...additionalInfoRule}
                     className={classes.textInput}
                     type="multiline"
                     rows={3}
                     name="additionalInfo"
-                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
@@ -473,7 +379,6 @@ const EditRuleItemForm = (props: Props) => {
                     <Button
                       className={classes.addRule}
                       onClick={() => {
-                        handleClick();
                         hideAddRuleForm();
                       }}>
                       Save

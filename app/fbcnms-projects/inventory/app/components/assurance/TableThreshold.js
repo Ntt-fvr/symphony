@@ -28,6 +28,8 @@ import TableRow from '@material-ui/core/TableRow';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+import {types} from './ThresholdReducer';
+import {useDispatch} from './ThresholdProvider';
 import {withStyles} from '@material-ui/core/styles';
 
 const StyledTableCell = withStyles(() => ({
@@ -62,7 +64,20 @@ const useStyles = makeStyles(() => ({
 type Rule = {
   id: string,
   name: string,
+  gracePeriod: string,
+  additionalInfo: string,
+  specificProblem: string,
+  eventTypeName: string,
+  startDateTime: string,
+  endDateTime: string,
+  threshold: {
+    name: string,
+  },
   ruleType: {
+    name: string,
+  },
+  eventSeverity: {
+    id: string,
     name: string,
   },
   status: boolean,
@@ -76,7 +91,9 @@ type Props = $ReadOnly<{|
 export default function DenseTable(props: Props) {
   const {rule, editRule} = props;
   const classes = useStyles();
-  const [checked, setChecked] = useState();
+  const [checked, setChecked] = useState(true);
+
+  const dispatch = useDispatch();
 
   const handleRemove = id => {
     const variables: RemoveRuleMutationVariables = {
@@ -86,6 +103,22 @@ export default function DenseTable(props: Props) {
   };
 
   const handleClick = row => {
+    dispatch({
+      type: types.sendEditRule,
+      payload: {
+        id: row.id,
+        name: row.name,
+        status: row.status,
+        gracePeriod: row.gracePeriod,
+        additionalInfo: row.additionalInfo,
+        specificProblem: row.specificProblem,
+        eventTypeName: row.eventTypeName,
+        startDateTime: row.startDateTime,
+        endDateTime: row.endDateTime,
+        thresholdName: row.threshold.name,
+        eventSeverityId: row.eventSeverity.id,
+      },
+    });
     editRule();
   };
 
@@ -107,13 +140,7 @@ export default function DenseTable(props: Props) {
             {rule.map(row => (
               <StyledTableRow key={row.id}>
                 <TableCell component="th" scope="row">
-                  <Switch
-                    title={''}
-                    checked={row.status}
-                    onChange={() => {
-                      setChecked();
-                    }}
-                  />
+                  <Switch title={''} checked={checked} onChange={setChecked} />
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {row.name}
