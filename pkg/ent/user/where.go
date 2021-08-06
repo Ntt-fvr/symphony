@@ -949,6 +949,62 @@ func HasProfilePhotoWith(preds ...predicate.File) predicate.User {
 	})
 }
 
+// HasUserCreate applies the HasEdge predicate on the "User_create" edge.
+func HasUserCreate() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserCreateTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserCreateTable, UserCreateColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserCreateWith applies the HasEdge predicate on the "User_create" edge with a given conditions (other predicates).
+func HasUserCreateWith(preds ...predicate.Recommendations) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserCreateInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserCreateTable, UserCreateColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUserApproved applies the HasEdge predicate on the "User_approved" edge.
+func HasUserApproved() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserApprovedTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserApprovedTable, UserApprovedColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserApprovedWith applies the HasEdge predicate on the "User_approved" edge with a given conditions (other predicates).
+func HasUserApprovedWith(preds ...predicate.Recommendations) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserApprovedInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserApprovedTable, UserApprovedColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasGroups applies the HasEdge predicate on the "groups" edge.
 func HasGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

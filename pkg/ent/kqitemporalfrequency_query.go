@@ -17,51 +17,51 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
-// KqiTemporalFrecuencyQuery is the builder for querying KqiTemporalFrecuency entities.
-type KqiTemporalFrecuencyQuery struct {
+// KqiTemporalFrequencyQuery is the builder for querying KqiTemporalFrequency entities.
+type KqiTemporalFrequencyQuery struct {
 	config
 	limit      *int
 	offset     *int
 	order      []OrderFunc
 	unique     []string
-	predicates []predicate.KqiTemporalFrecuency
+	predicates []predicate.KqiTemporalFrequency
 	// eager-loading edges.
-	withKqiTemporalFrecuencyFk *KqiQuery
+	withKqiTemporalFrequencyFk *KqiQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
 // Where adds a new predicate for the builder.
-func (ktfq *KqiTemporalFrecuencyQuery) Where(ps ...predicate.KqiTemporalFrecuency) *KqiTemporalFrecuencyQuery {
+func (ktfq *KqiTemporalFrequencyQuery) Where(ps ...predicate.KqiTemporalFrequency) *KqiTemporalFrequencyQuery {
 	ktfq.predicates = append(ktfq.predicates, ps...)
 	return ktfq
 }
 
 // Limit adds a limit step to the query.
-func (ktfq *KqiTemporalFrecuencyQuery) Limit(limit int) *KqiTemporalFrecuencyQuery {
+func (ktfq *KqiTemporalFrequencyQuery) Limit(limit int) *KqiTemporalFrequencyQuery {
 	ktfq.limit = &limit
 	return ktfq
 }
 
 // Offset adds an offset step to the query.
-func (ktfq *KqiTemporalFrecuencyQuery) Offset(offset int) *KqiTemporalFrecuencyQuery {
+func (ktfq *KqiTemporalFrequencyQuery) Offset(offset int) *KqiTemporalFrequencyQuery {
 	ktfq.offset = &offset
 	return ktfq
 }
 
 // Order adds an order step to the query.
-func (ktfq *KqiTemporalFrecuencyQuery) Order(o ...OrderFunc) *KqiTemporalFrecuencyQuery {
+func (ktfq *KqiTemporalFrequencyQuery) Order(o ...OrderFunc) *KqiTemporalFrequencyQuery {
 	ktfq.order = append(ktfq.order, o...)
 	return ktfq
 }
 
-// QueryKqiTemporalFrecuencyFk chains the current query on the kqiTemporalFrecuencyFk edge.
-func (ktfq *KqiTemporalFrecuencyQuery) QueryKqiTemporalFrecuencyFk() *KqiQuery {
+// QueryKqiTemporalFrequencyFk chains the current query on the kqiTemporalFrequencyFk edge.
+func (ktfq *KqiTemporalFrequencyQuery) QueryKqiTemporalFrequencyFk() *KqiQuery {
 	query := &KqiQuery{config: ktfq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ktfq.prepareQuery(ctx); err != nil {
@@ -72,9 +72,9 @@ func (ktfq *KqiTemporalFrecuencyQuery) QueryKqiTemporalFrecuencyFk() *KqiQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(kqitemporalfrecuency.Table, kqitemporalfrecuency.FieldID, selector),
+			sqlgraph.From(kqitemporalfrequency.Table, kqitemporalfrequency.FieldID, selector),
 			sqlgraph.To(kqi.Table, kqi.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, kqitemporalfrecuency.KqiTemporalFrecuencyFkTable, kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqitemporalfrequency.KqiTemporalFrequencyFkTable, kqitemporalfrequency.KqiTemporalFrequencyFkColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ktfq.driver.Dialect(), step)
 		return fromU, nil
@@ -82,20 +82,20 @@ func (ktfq *KqiTemporalFrecuencyQuery) QueryKqiTemporalFrecuencyFk() *KqiQuery {
 	return query
 }
 
-// First returns the first KqiTemporalFrecuency entity in the query. Returns *NotFoundError when no kqitemporalfrecuency was found.
-func (ktfq *KqiTemporalFrecuencyQuery) First(ctx context.Context) (*KqiTemporalFrecuency, error) {
+// First returns the first KqiTemporalFrequency entity in the query. Returns *NotFoundError when no kqitemporalfrequency was found.
+func (ktfq *KqiTemporalFrequencyQuery) First(ctx context.Context) (*KqiTemporalFrequency, error) {
 	nodes, err := ktfq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{kqitemporalfrecuency.Label}
+		return nil, &NotFoundError{kqitemporalfrequency.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) FirstX(ctx context.Context) *KqiTemporalFrecuency {
+func (ktfq *KqiTemporalFrequencyQuery) FirstX(ctx context.Context) *KqiTemporalFrequency {
 	node, err := ktfq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -103,21 +103,21 @@ func (ktfq *KqiTemporalFrecuencyQuery) FirstX(ctx context.Context) *KqiTemporalF
 	return node
 }
 
-// FirstID returns the first KqiTemporalFrecuency id in the query. Returns *NotFoundError when no id was found.
-func (ktfq *KqiTemporalFrecuencyQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first KqiTemporalFrequency id in the query. Returns *NotFoundError when no id was found.
+func (ktfq *KqiTemporalFrequencyQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = ktfq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) FirstIDX(ctx context.Context) int {
+func (ktfq *KqiTemporalFrequencyQuery) FirstIDX(ctx context.Context) int {
 	id, err := ktfq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -125,8 +125,8 @@ func (ktfq *KqiTemporalFrecuencyQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns the only KqiTemporalFrecuency entity in the query, returns an error if not exactly one entity was returned.
-func (ktfq *KqiTemporalFrecuencyQuery) Only(ctx context.Context) (*KqiTemporalFrecuency, error) {
+// Only returns the only KqiTemporalFrequency entity in the query, returns an error if not exactly one entity was returned.
+func (ktfq *KqiTemporalFrequencyQuery) Only(ctx context.Context) (*KqiTemporalFrequency, error) {
 	nodes, err := ktfq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
@@ -135,14 +135,14 @@ func (ktfq *KqiTemporalFrecuencyQuery) Only(ctx context.Context) (*KqiTemporalFr
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{kqitemporalfrecuency.Label}
+		return nil, &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		return nil, &NotSingularError{kqitemporalfrecuency.Label}
+		return nil, &NotSingularError{kqitemporalfrequency.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) OnlyX(ctx context.Context) *KqiTemporalFrecuency {
+func (ktfq *KqiTemporalFrequencyQuery) OnlyX(ctx context.Context) *KqiTemporalFrequency {
 	node, err := ktfq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -150,8 +150,8 @@ func (ktfq *KqiTemporalFrecuencyQuery) OnlyX(ctx context.Context) *KqiTemporalFr
 	return node
 }
 
-// OnlyID returns the only KqiTemporalFrecuency id in the query, returns an error if not exactly one id was returned.
-func (ktfq *KqiTemporalFrecuencyQuery) OnlyID(ctx context.Context) (id int, err error) {
+// OnlyID returns the only KqiTemporalFrequency id in the query, returns an error if not exactly one id was returned.
+func (ktfq *KqiTemporalFrequencyQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = ktfq.Limit(2).IDs(ctx); err != nil {
 		return
@@ -160,15 +160,15 @@ func (ktfq *KqiTemporalFrecuencyQuery) OnlyID(ctx context.Context) (id int, err 
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = &NotSingularError{kqitemporalfrecuency.Label}
+		err = &NotSingularError{kqitemporalfrequency.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) OnlyIDX(ctx context.Context) int {
+func (ktfq *KqiTemporalFrequencyQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ktfq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -176,8 +176,8 @@ func (ktfq *KqiTemporalFrecuencyQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of KqiTemporalFrecuencies.
-func (ktfq *KqiTemporalFrecuencyQuery) All(ctx context.Context) ([]*KqiTemporalFrecuency, error) {
+// All executes the query and returns a list of KqiTemporalFrequencies.
+func (ktfq *KqiTemporalFrequencyQuery) All(ctx context.Context) ([]*KqiTemporalFrequency, error) {
 	if err := ktfq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +185,7 @@ func (ktfq *KqiTemporalFrecuencyQuery) All(ctx context.Context) ([]*KqiTemporalF
 }
 
 // AllX is like All, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) AllX(ctx context.Context) []*KqiTemporalFrecuency {
+func (ktfq *KqiTemporalFrequencyQuery) AllX(ctx context.Context) []*KqiTemporalFrequency {
 	nodes, err := ktfq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -193,17 +193,17 @@ func (ktfq *KqiTemporalFrecuencyQuery) AllX(ctx context.Context) []*KqiTemporalF
 	return nodes
 }
 
-// IDs executes the query and returns a list of KqiTemporalFrecuency ids.
-func (ktfq *KqiTemporalFrecuencyQuery) IDs(ctx context.Context) ([]int, error) {
+// IDs executes the query and returns a list of KqiTemporalFrequency ids.
+func (ktfq *KqiTemporalFrequencyQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	if err := ktfq.Select(kqitemporalfrecuency.FieldID).Scan(ctx, &ids); err != nil {
+	if err := ktfq.Select(kqitemporalfrequency.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) IDsX(ctx context.Context) []int {
+func (ktfq *KqiTemporalFrequencyQuery) IDsX(ctx context.Context) []int {
 	ids, err := ktfq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -212,7 +212,7 @@ func (ktfq *KqiTemporalFrecuencyQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (ktfq *KqiTemporalFrecuencyQuery) Count(ctx context.Context) (int, error) {
+func (ktfq *KqiTemporalFrequencyQuery) Count(ctx context.Context) (int, error) {
 	if err := ktfq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -220,7 +220,7 @@ func (ktfq *KqiTemporalFrecuencyQuery) Count(ctx context.Context) (int, error) {
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) CountX(ctx context.Context) int {
+func (ktfq *KqiTemporalFrequencyQuery) CountX(ctx context.Context) int {
 	count, err := ktfq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -229,7 +229,7 @@ func (ktfq *KqiTemporalFrecuencyQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (ktfq *KqiTemporalFrecuencyQuery) Exist(ctx context.Context) (bool, error) {
+func (ktfq *KqiTemporalFrequencyQuery) Exist(ctx context.Context) (bool, error) {
 	if err := ktfq.prepareQuery(ctx); err != nil {
 		return false, err
 	}
@@ -237,7 +237,7 @@ func (ktfq *KqiTemporalFrecuencyQuery) Exist(ctx context.Context) (bool, error) 
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (ktfq *KqiTemporalFrecuencyQuery) ExistX(ctx context.Context) bool {
+func (ktfq *KqiTemporalFrequencyQuery) ExistX(ctx context.Context) bool {
 	exist, err := ktfq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -247,32 +247,32 @@ func (ktfq *KqiTemporalFrecuencyQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (ktfq *KqiTemporalFrecuencyQuery) Clone() *KqiTemporalFrecuencyQuery {
+func (ktfq *KqiTemporalFrequencyQuery) Clone() *KqiTemporalFrequencyQuery {
 	if ktfq == nil {
 		return nil
 	}
-	return &KqiTemporalFrecuencyQuery{
+	return &KqiTemporalFrequencyQuery{
 		config:                     ktfq.config,
 		limit:                      ktfq.limit,
 		offset:                     ktfq.offset,
 		order:                      append([]OrderFunc{}, ktfq.order...),
 		unique:                     append([]string{}, ktfq.unique...),
-		predicates:                 append([]predicate.KqiTemporalFrecuency{}, ktfq.predicates...),
-		withKqiTemporalFrecuencyFk: ktfq.withKqiTemporalFrecuencyFk.Clone(),
+		predicates:                 append([]predicate.KqiTemporalFrequency{}, ktfq.predicates...),
+		withKqiTemporalFrequencyFk: ktfq.withKqiTemporalFrequencyFk.Clone(),
 		// clone intermediate query.
 		sql:  ktfq.sql.Clone(),
 		path: ktfq.path,
 	}
 }
 
-//  WithKqiTemporalFrecuencyFk tells the query-builder to eager-loads the nodes that are connected to
-// the "kqiTemporalFrecuencyFk" edge. The optional arguments used to configure the query builder of the edge.
-func (ktfq *KqiTemporalFrecuencyQuery) WithKqiTemporalFrecuencyFk(opts ...func(*KqiQuery)) *KqiTemporalFrecuencyQuery {
+//  WithKqiTemporalFrequencyFk tells the query-builder to eager-loads the nodes that are connected to
+// the "kqiTemporalFrequencyFk" edge. The optional arguments used to configure the query builder of the edge.
+func (ktfq *KqiTemporalFrequencyQuery) WithKqiTemporalFrequencyFk(opts ...func(*KqiQuery)) *KqiTemporalFrequencyQuery {
 	query := &KqiQuery{config: ktfq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	ktfq.withKqiTemporalFrecuencyFk = query
+	ktfq.withKqiTemporalFrequencyFk = query
 	return ktfq
 }
 
@@ -286,13 +286,13 @@ func (ktfq *KqiTemporalFrecuencyQuery) WithKqiTemporalFrecuencyFk(opts ...func(*
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.KqiTemporalFrecuency.Query().
-//		GroupBy(kqitemporalfrecuency.FieldCreateTime).
+//	client.KqiTemporalFrequency.Query().
+//		GroupBy(kqitemporalfrequency.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
-func (ktfq *KqiTemporalFrecuencyQuery) GroupBy(field string, fields ...string) *KqiTemporalFrecuencyGroupBy {
-	group := &KqiTemporalFrecuencyGroupBy{config: ktfq.config}
+func (ktfq *KqiTemporalFrequencyQuery) GroupBy(field string, fields ...string) *KqiTemporalFrequencyGroupBy {
+	group := &KqiTemporalFrequencyGroupBy{config: ktfq.config}
 	group.fields = append([]string{field}, fields...)
 	group.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := ktfq.prepareQuery(ctx); err != nil {
@@ -311,12 +311,12 @@ func (ktfq *KqiTemporalFrecuencyQuery) GroupBy(field string, fields ...string) *
 //		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
-//	client.KqiTemporalFrecuency.Query().
-//		Select(kqitemporalfrecuency.FieldCreateTime).
+//	client.KqiTemporalFrequency.Query().
+//		Select(kqitemporalfrequency.FieldCreateTime).
 //		Scan(ctx, &v)
 //
-func (ktfq *KqiTemporalFrecuencyQuery) Select(field string, fields ...string) *KqiTemporalFrecuencySelect {
-	selector := &KqiTemporalFrecuencySelect{config: ktfq.config}
+func (ktfq *KqiTemporalFrequencyQuery) Select(field string, fields ...string) *KqiTemporalFrequencySelect {
+	selector := &KqiTemporalFrequencySelect{config: ktfq.config}
 	selector.fields = append([]string{field}, fields...)
 	selector.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := ktfq.prepareQuery(ctx); err != nil {
@@ -327,7 +327,7 @@ func (ktfq *KqiTemporalFrecuencyQuery) Select(field string, fields ...string) *K
 	return selector
 }
 
-func (ktfq *KqiTemporalFrecuencyQuery) prepareQuery(ctx context.Context) error {
+func (ktfq *KqiTemporalFrequencyQuery) prepareQuery(ctx context.Context) error {
 	if ktfq.path != nil {
 		prev, err := ktfq.path(ctx)
 		if err != nil {
@@ -335,22 +335,22 @@ func (ktfq *KqiTemporalFrecuencyQuery) prepareQuery(ctx context.Context) error {
 		}
 		ktfq.sql = prev
 	}
-	if err := kqitemporalfrecuency.Policy.EvalQuery(ctx, ktfq); err != nil {
+	if err := kqitemporalfrequency.Policy.EvalQuery(ctx, ktfq); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ktfq *KqiTemporalFrecuencyQuery) sqlAll(ctx context.Context) ([]*KqiTemporalFrecuency, error) {
+func (ktfq *KqiTemporalFrequencyQuery) sqlAll(ctx context.Context) ([]*KqiTemporalFrequency, error) {
 	var (
-		nodes       = []*KqiTemporalFrecuency{}
+		nodes       = []*KqiTemporalFrequency{}
 		_spec       = ktfq.querySpec()
 		loadedTypes = [1]bool{
-			ktfq.withKqiTemporalFrecuencyFk != nil,
+			ktfq.withKqiTemporalFrequencyFk != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
-		node := &KqiTemporalFrecuency{config: ktfq.config}
+		node := &KqiTemporalFrequency{config: ktfq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
 		return values
@@ -370,44 +370,44 @@ func (ktfq *KqiTemporalFrecuencyQuery) sqlAll(ctx context.Context) ([]*KqiTempor
 		return nodes, nil
 	}
 
-	if query := ktfq.withKqiTemporalFrecuencyFk; query != nil {
+	if query := ktfq.withKqiTemporalFrequencyFk; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*KqiTemporalFrecuency)
+		nodeids := make(map[int]*KqiTemporalFrequency)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.KqiTemporalFrecuencyFk = []*Kqi{}
+			nodes[i].Edges.KqiTemporalFrequencyFk = []*Kqi{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Kqi(func(s *sql.Selector) {
-			s.Where(sql.InValues(kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn, fks...))
+			s.Where(sql.InValues(kqitemporalfrequency.KqiTemporalFrequencyFkColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.kqi_temporal_frecuency_kqi_temporal_frecuency_fk
+			fk := n.kqi_temporal_frequency_kqi_temporal_frequency_fk
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "kqi_temporal_frecuency_kqi_temporal_frecuency_fk" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "kqi_temporal_frequency_kqi_temporal_frequency_fk" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "kqi_temporal_frecuency_kqi_temporal_frecuency_fk" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "kqi_temporal_frequency_kqi_temporal_frequency_fk" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.KqiTemporalFrecuencyFk = append(node.Edges.KqiTemporalFrecuencyFk, n)
+			node.Edges.KqiTemporalFrequencyFk = append(node.Edges.KqiTemporalFrequencyFk, n)
 		}
 	}
 
 	return nodes, nil
 }
 
-func (ktfq *KqiTemporalFrecuencyQuery) sqlCount(ctx context.Context) (int, error) {
+func (ktfq *KqiTemporalFrequencyQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ktfq.querySpec()
 	return sqlgraph.CountNodes(ctx, ktfq.driver, _spec)
 }
 
-func (ktfq *KqiTemporalFrecuencyQuery) sqlExist(ctx context.Context) (bool, error) {
+func (ktfq *KqiTemporalFrequencyQuery) sqlExist(ctx context.Context) (bool, error) {
 	n, err := ktfq.sqlCount(ctx)
 	if err != nil {
 		return false, fmt.Errorf("ent: check existence: %v", err)
@@ -415,14 +415,14 @@ func (ktfq *KqiTemporalFrecuencyQuery) sqlExist(ctx context.Context) (bool, erro
 	return n > 0, nil
 }
 
-func (ktfq *KqiTemporalFrecuencyQuery) querySpec() *sqlgraph.QuerySpec {
+func (ktfq *KqiTemporalFrequencyQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   kqitemporalfrecuency.Table,
-			Columns: kqitemporalfrecuency.Columns,
+			Table:   kqitemporalfrequency.Table,
+			Columns: kqitemporalfrequency.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: kqitemporalfrecuency.FieldID,
+				Column: kqitemporalfrequency.FieldID,
 			},
 		},
 		From:   ktfq.sql,
@@ -444,26 +444,26 @@ func (ktfq *KqiTemporalFrecuencyQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := ktfq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector, kqitemporalfrecuency.ValidColumn)
+				ps[i](selector, kqitemporalfrequency.ValidColumn)
 			}
 		}
 	}
 	return _spec
 }
 
-func (ktfq *KqiTemporalFrecuencyQuery) sqlQuery() *sql.Selector {
+func (ktfq *KqiTemporalFrequencyQuery) sqlQuery() *sql.Selector {
 	builder := sql.Dialect(ktfq.driver.Dialect())
-	t1 := builder.Table(kqitemporalfrecuency.Table)
-	selector := builder.Select(t1.Columns(kqitemporalfrecuency.Columns...)...).From(t1)
+	t1 := builder.Table(kqitemporalfrequency.Table)
+	selector := builder.Select(t1.Columns(kqitemporalfrequency.Columns...)...).From(t1)
 	if ktfq.sql != nil {
 		selector = ktfq.sql
-		selector.Select(selector.Columns(kqitemporalfrecuency.Columns...)...)
+		selector.Select(selector.Columns(kqitemporalfrequency.Columns...)...)
 	}
 	for _, p := range ktfq.predicates {
 		p(selector)
 	}
 	for _, p := range ktfq.order {
-		p(selector, kqitemporalfrecuency.ValidColumn)
+		p(selector, kqitemporalfrequency.ValidColumn)
 	}
 	if offset := ktfq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -476,8 +476,8 @@ func (ktfq *KqiTemporalFrecuencyQuery) sqlQuery() *sql.Selector {
 	return selector
 }
 
-// KqiTemporalFrecuencyGroupBy is the builder for group-by KqiTemporalFrecuency entities.
-type KqiTemporalFrecuencyGroupBy struct {
+// KqiTemporalFrequencyGroupBy is the builder for group-by KqiTemporalFrequency entities.
+type KqiTemporalFrequencyGroupBy struct {
 	config
 	fields []string
 	fns    []AggregateFunc
@@ -487,13 +487,13 @@ type KqiTemporalFrecuencyGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Aggregate(fns ...AggregateFunc) *KqiTemporalFrecuencyGroupBy {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Aggregate(fns ...AggregateFunc) *KqiTemporalFrequencyGroupBy {
 	ktfgb.fns = append(ktfgb.fns, fns...)
 	return ktfgb
 }
 
 // Scan applies the group-by query and scan the result into the given value.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Scan(ctx context.Context, v interface{}) error {
 	query, err := ktfgb.path(ctx)
 	if err != nil {
 		return err
@@ -503,16 +503,16 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Scan(ctx context.Context, v interface{
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) ScanX(ctx context.Context, v interface{}) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) ScanX(ctx context.Context, v interface{}) {
 	if err := ktfgb.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Strings(ctx context.Context) ([]string, error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Strings(ctx context.Context) ([]string, error) {
 	if len(ktfgb.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencyGroupBy.Strings is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencyGroupBy.Strings is not achievable when grouping more than 1 field")
 	}
 	var v []string
 	if err := ktfgb.Scan(ctx, &v); err != nil {
@@ -522,7 +522,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Strings(ctx context.Context) ([]string
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) StringsX(ctx context.Context) []string {
+func (ktfgb *KqiTemporalFrequencyGroupBy) StringsX(ctx context.Context) []string {
 	v, err := ktfgb.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -531,7 +531,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) StringsX(ctx context.Context) []string
 }
 
 // String returns a single string from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) String(ctx context.Context) (_ string, err error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = ktfgb.Strings(ctx); err != nil {
 		return
@@ -540,15 +540,15 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) String(ctx context.Context) (_ string,
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencyGroupBy.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencyGroupBy.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) StringX(ctx context.Context) string {
+func (ktfgb *KqiTemporalFrequencyGroupBy) StringX(ctx context.Context) string {
 	v, err := ktfgb.String(ctx)
 	if err != nil {
 		panic(err)
@@ -557,9 +557,9 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Ints(ctx context.Context) ([]int, error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Ints(ctx context.Context) ([]int, error) {
 	if len(ktfgb.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencyGroupBy.Ints is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencyGroupBy.Ints is not achievable when grouping more than 1 field")
 	}
 	var v []int
 	if err := ktfgb.Scan(ctx, &v); err != nil {
@@ -569,7 +569,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Ints(ctx context.Context) ([]int, erro
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) IntsX(ctx context.Context) []int {
+func (ktfgb *KqiTemporalFrequencyGroupBy) IntsX(ctx context.Context) []int {
 	v, err := ktfgb.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -578,7 +578,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Int(ctx context.Context) (_ int, err error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = ktfgb.Ints(ctx); err != nil {
 		return
@@ -587,15 +587,15 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Int(ctx context.Context) (_ int, err e
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencyGroupBy.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencyGroupBy.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) IntX(ctx context.Context) int {
+func (ktfgb *KqiTemporalFrequencyGroupBy) IntX(ctx context.Context) int {
 	v, err := ktfgb.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -604,9 +604,9 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64s(ctx context.Context) ([]float64, error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 	if len(ktfgb.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencyGroupBy.Float64s is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencyGroupBy.Float64s is not achievable when grouping more than 1 field")
 	}
 	var v []float64
 	if err := ktfgb.Scan(ctx, &v); err != nil {
@@ -616,7 +616,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64s(ctx context.Context) ([]float
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64sX(ctx context.Context) []float64 {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Float64sX(ctx context.Context) []float64 {
 	v, err := ktfgb.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -625,7 +625,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64sX(ctx context.Context) []float
 }
 
 // Float64 returns a single float64 from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64(ctx context.Context) (_ float64, err error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = ktfgb.Float64s(ctx); err != nil {
 		return
@@ -634,15 +634,15 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64(ctx context.Context) (_ float6
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencyGroupBy.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencyGroupBy.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64X(ctx context.Context) float64 {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Float64X(ctx context.Context) float64 {
 	v, err := ktfgb.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -651,9 +651,9 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Float64X(ctx context.Context) float64 
 }
 
 // Bools returns list of bools from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Bools(ctx context.Context) ([]bool, error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Bools(ctx context.Context) ([]bool, error) {
 	if len(ktfgb.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencyGroupBy.Bools is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencyGroupBy.Bools is not achievable when grouping more than 1 field")
 	}
 	var v []bool
 	if err := ktfgb.Scan(ctx, &v); err != nil {
@@ -663,7 +663,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Bools(ctx context.Context) ([]bool, er
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) BoolsX(ctx context.Context) []bool {
+func (ktfgb *KqiTemporalFrequencyGroupBy) BoolsX(ctx context.Context) []bool {
 	v, err := ktfgb.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -672,7 +672,7 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from group-by. It is only allowed when querying group-by with one field.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) Bool(ctx context.Context) (_ bool, err error) {
+func (ktfgb *KqiTemporalFrequencyGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = ktfgb.Bools(ctx); err != nil {
 		return
@@ -681,15 +681,15 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) Bool(ctx context.Context) (_ bool, err
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencyGroupBy.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencyGroupBy.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (ktfgb *KqiTemporalFrecuencyGroupBy) BoolX(ctx context.Context) bool {
+func (ktfgb *KqiTemporalFrequencyGroupBy) BoolX(ctx context.Context) bool {
 	v, err := ktfgb.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -697,9 +697,9 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (ktfgb *KqiTemporalFrecuencyGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (ktfgb *KqiTemporalFrequencyGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range ktfgb.fields {
-		if !kqitemporalfrecuency.ValidColumn(f) {
+		if !kqitemporalfrequency.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
 		}
 	}
@@ -716,18 +716,18 @@ func (ktfgb *KqiTemporalFrecuencyGroupBy) sqlScan(ctx context.Context, v interfa
 	return sql.ScanSlice(rows, v)
 }
 
-func (ktfgb *KqiTemporalFrecuencyGroupBy) sqlQuery() *sql.Selector {
+func (ktfgb *KqiTemporalFrequencyGroupBy) sqlQuery() *sql.Selector {
 	selector := ktfgb.sql
 	columns := make([]string, 0, len(ktfgb.fields)+len(ktfgb.fns))
 	columns = append(columns, ktfgb.fields...)
 	for _, fn := range ktfgb.fns {
-		columns = append(columns, fn(selector, kqitemporalfrecuency.ValidColumn))
+		columns = append(columns, fn(selector, kqitemporalfrequency.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(ktfgb.fields...)
 }
 
-// KqiTemporalFrecuencySelect is the builder for select fields of KqiTemporalFrecuency entities.
-type KqiTemporalFrecuencySelect struct {
+// KqiTemporalFrequencySelect is the builder for select fields of KqiTemporalFrequency entities.
+type KqiTemporalFrequencySelect struct {
 	config
 	fields []string
 	// intermediate query (i.e. traversal path).
@@ -736,7 +736,7 @@ type KqiTemporalFrecuencySelect struct {
 }
 
 // Scan applies the selector query and scan the result into the given value.
-func (ktfs *KqiTemporalFrecuencySelect) Scan(ctx context.Context, v interface{}) error {
+func (ktfs *KqiTemporalFrequencySelect) Scan(ctx context.Context, v interface{}) error {
 	query, err := ktfs.path(ctx)
 	if err != nil {
 		return err
@@ -746,16 +746,16 @@ func (ktfs *KqiTemporalFrecuencySelect) Scan(ctx context.Context, v interface{})
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) ScanX(ctx context.Context, v interface{}) {
+func (ktfs *KqiTemporalFrequencySelect) ScanX(ctx context.Context, v interface{}) {
 	if err := ktfs.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Strings(ctx context.Context) ([]string, error) {
+func (ktfs *KqiTemporalFrequencySelect) Strings(ctx context.Context) ([]string, error) {
 	if len(ktfs.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencySelect.Strings is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencySelect.Strings is not achievable when selecting more than 1 field")
 	}
 	var v []string
 	if err := ktfs.Scan(ctx, &v); err != nil {
@@ -765,7 +765,7 @@ func (ktfs *KqiTemporalFrecuencySelect) Strings(ctx context.Context) ([]string, 
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) StringsX(ctx context.Context) []string {
+func (ktfs *KqiTemporalFrequencySelect) StringsX(ctx context.Context) []string {
 	v, err := ktfs.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -774,7 +774,7 @@ func (ktfs *KqiTemporalFrecuencySelect) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) String(ctx context.Context) (_ string, err error) {
+func (ktfs *KqiTemporalFrequencySelect) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = ktfs.Strings(ctx); err != nil {
 		return
@@ -783,15 +783,15 @@ func (ktfs *KqiTemporalFrecuencySelect) String(ctx context.Context) (_ string, e
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencySelect.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencySelect.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) StringX(ctx context.Context) string {
+func (ktfs *KqiTemporalFrequencySelect) StringX(ctx context.Context) string {
 	v, err := ktfs.String(ctx)
 	if err != nil {
 		panic(err)
@@ -800,9 +800,9 @@ func (ktfs *KqiTemporalFrecuencySelect) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Ints(ctx context.Context) ([]int, error) {
+func (ktfs *KqiTemporalFrequencySelect) Ints(ctx context.Context) ([]int, error) {
 	if len(ktfs.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencySelect.Ints is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencySelect.Ints is not achievable when selecting more than 1 field")
 	}
 	var v []int
 	if err := ktfs.Scan(ctx, &v); err != nil {
@@ -812,7 +812,7 @@ func (ktfs *KqiTemporalFrecuencySelect) Ints(ctx context.Context) ([]int, error)
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) IntsX(ctx context.Context) []int {
+func (ktfs *KqiTemporalFrequencySelect) IntsX(ctx context.Context) []int {
 	v, err := ktfs.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -821,7 +821,7 @@ func (ktfs *KqiTemporalFrecuencySelect) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Int(ctx context.Context) (_ int, err error) {
+func (ktfs *KqiTemporalFrequencySelect) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = ktfs.Ints(ctx); err != nil {
 		return
@@ -830,15 +830,15 @@ func (ktfs *KqiTemporalFrecuencySelect) Int(ctx context.Context) (_ int, err err
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencySelect.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencySelect.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) IntX(ctx context.Context) int {
+func (ktfs *KqiTemporalFrequencySelect) IntX(ctx context.Context) int {
 	v, err := ktfs.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -847,9 +847,9 @@ func (ktfs *KqiTemporalFrecuencySelect) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Float64s(ctx context.Context) ([]float64, error) {
+func (ktfs *KqiTemporalFrequencySelect) Float64s(ctx context.Context) ([]float64, error) {
 	if len(ktfs.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencySelect.Float64s is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencySelect.Float64s is not achievable when selecting more than 1 field")
 	}
 	var v []float64
 	if err := ktfs.Scan(ctx, &v); err != nil {
@@ -859,7 +859,7 @@ func (ktfs *KqiTemporalFrecuencySelect) Float64s(ctx context.Context) ([]float64
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) Float64sX(ctx context.Context) []float64 {
+func (ktfs *KqiTemporalFrequencySelect) Float64sX(ctx context.Context) []float64 {
 	v, err := ktfs.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -868,7 +868,7 @@ func (ktfs *KqiTemporalFrecuencySelect) Float64sX(ctx context.Context) []float64
 }
 
 // Float64 returns a single float64 from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Float64(ctx context.Context) (_ float64, err error) {
+func (ktfs *KqiTemporalFrequencySelect) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = ktfs.Float64s(ctx); err != nil {
 		return
@@ -877,15 +877,15 @@ func (ktfs *KqiTemporalFrecuencySelect) Float64(ctx context.Context) (_ float64,
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencySelect.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencySelect.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) Float64X(ctx context.Context) float64 {
+func (ktfs *KqiTemporalFrequencySelect) Float64X(ctx context.Context) float64 {
 	v, err := ktfs.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -894,9 +894,9 @@ func (ktfs *KqiTemporalFrecuencySelect) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Bools(ctx context.Context) ([]bool, error) {
+func (ktfs *KqiTemporalFrequencySelect) Bools(ctx context.Context) ([]bool, error) {
 	if len(ktfs.fields) > 1 {
-		return nil, errors.New("ent: KqiTemporalFrecuencySelect.Bools is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: KqiTemporalFrequencySelect.Bools is not achievable when selecting more than 1 field")
 	}
 	var v []bool
 	if err := ktfs.Scan(ctx, &v); err != nil {
@@ -906,7 +906,7 @@ func (ktfs *KqiTemporalFrecuencySelect) Bools(ctx context.Context) ([]bool, erro
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) BoolsX(ctx context.Context) []bool {
+func (ktfs *KqiTemporalFrequencySelect) BoolsX(ctx context.Context) []bool {
 	v, err := ktfs.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -915,7 +915,7 @@ func (ktfs *KqiTemporalFrecuencySelect) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from selector. It is only allowed when selecting one field.
-func (ktfs *KqiTemporalFrecuencySelect) Bool(ctx context.Context) (_ bool, err error) {
+func (ktfs *KqiTemporalFrequencySelect) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = ktfs.Bools(ctx); err != nil {
 		return
@@ -924,15 +924,15 @@ func (ktfs *KqiTemporalFrecuencySelect) Bool(ctx context.Context) (_ bool, err e
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{kqitemporalfrecuency.Label}
+		err = &NotFoundError{kqitemporalfrequency.Label}
 	default:
-		err = fmt.Errorf("ent: KqiTemporalFrecuencySelect.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: KqiTemporalFrequencySelect.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (ktfs *KqiTemporalFrecuencySelect) BoolX(ctx context.Context) bool {
+func (ktfs *KqiTemporalFrequencySelect) BoolX(ctx context.Context) bool {
 	v, err := ktfs.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -940,9 +940,9 @@ func (ktfs *KqiTemporalFrecuencySelect) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (ktfs *KqiTemporalFrecuencySelect) sqlScan(ctx context.Context, v interface{}) error {
+func (ktfs *KqiTemporalFrequencySelect) sqlScan(ctx context.Context, v interface{}) error {
 	for _, f := range ktfs.fields {
-		if !kqitemporalfrecuency.ValidColumn(f) {
+		if !kqitemporalfrequency.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
 		}
 	}
@@ -955,7 +955,7 @@ func (ktfs *KqiTemporalFrecuencySelect) sqlScan(ctx context.Context, v interface
 	return sql.ScanSlice(rows, v)
 }
 
-func (ktfs *KqiTemporalFrecuencySelect) sqlQuery() sql.Querier {
+func (ktfs *KqiTemporalFrequencySelect) sqlQuery() sql.Querier {
 	selector := ktfs.sql
 	selector.Select(selector.Columns(ktfs.fields...)...)
 	return selector

@@ -12,11 +12,11 @@ import (
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 )
 
-// KqiTemporalFrecuency is the model entity for the KqiTemporalFrecuency schema.
-type KqiTemporalFrecuency struct {
+// KqiTemporalFrequency is the model entity for the KqiTemporalFrequency schema.
+type KqiTemporalFrequency struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -27,30 +27,30 @@ type KqiTemporalFrecuency struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the KqiTemporalFrecuencyQuery when eager-loading is set.
-	Edges KqiTemporalFrecuencyEdges `json:"edges"`
+	// The values are being populated by the KqiTemporalFrequencyQuery when eager-loading is set.
+	Edges KqiTemporalFrequencyEdges `json:"edges"`
 }
 
-// KqiTemporalFrecuencyEdges holds the relations/edges for other nodes in the graph.
-type KqiTemporalFrecuencyEdges struct {
-	// KqiTemporalFrecuencyFk holds the value of the kqiTemporalFrecuencyFk edge.
-	KqiTemporalFrecuencyFk []*Kqi
+// KqiTemporalFrequencyEdges holds the relations/edges for other nodes in the graph.
+type KqiTemporalFrequencyEdges struct {
+	// KqiTemporalFrequencyFk holds the value of the kqiTemporalFrequencyFk edge.
+	KqiTemporalFrequencyFk []*Kqi
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// KqiTemporalFrecuencyFkOrErr returns the KqiTemporalFrecuencyFk value or an error if the edge
+// KqiTemporalFrequencyFkOrErr returns the KqiTemporalFrequencyFk value or an error if the edge
 // was not loaded in eager-loading.
-func (e KqiTemporalFrecuencyEdges) KqiTemporalFrecuencyFkOrErr() ([]*Kqi, error) {
+func (e KqiTemporalFrequencyEdges) KqiTemporalFrequencyFkOrErr() ([]*Kqi, error) {
 	if e.loadedTypes[0] {
-		return e.KqiTemporalFrecuencyFk, nil
+		return e.KqiTemporalFrequencyFk, nil
 	}
-	return nil, &NotLoadedError{edge: "kqiTemporalFrecuencyFk"}
+	return nil, &NotLoadedError{edge: "kqiTemporalFrequencyFk"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*KqiTemporalFrecuency) scanValues() []interface{} {
+func (*KqiTemporalFrequency) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
 		&sql.NullTime{},   // create_time
@@ -60,9 +60,9 @@ func (*KqiTemporalFrecuency) scanValues() []interface{} {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the KqiTemporalFrecuency fields.
-func (ktf *KqiTemporalFrecuency) assignValues(values ...interface{}) error {
-	if m, n := len(values), len(kqitemporalfrecuency.Columns); m < n {
+// to the KqiTemporalFrequency fields.
+func (ktf *KqiTemporalFrequency) assignValues(values ...interface{}) error {
+	if m, n := len(values), len(kqitemporalfrequency.Columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	value, ok := values[0].(*sql.NullInt64)
@@ -89,33 +89,33 @@ func (ktf *KqiTemporalFrecuency) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryKqiTemporalFrecuencyFk queries the kqiTemporalFrecuencyFk edge of the KqiTemporalFrecuency.
-func (ktf *KqiTemporalFrecuency) QueryKqiTemporalFrecuencyFk() *KqiQuery {
-	return (&KqiTemporalFrecuencyClient{config: ktf.config}).QueryKqiTemporalFrecuencyFk(ktf)
+// QueryKqiTemporalFrequencyFk queries the kqiTemporalFrequencyFk edge of the KqiTemporalFrequency.
+func (ktf *KqiTemporalFrequency) QueryKqiTemporalFrequencyFk() *KqiQuery {
+	return (&KqiTemporalFrequencyClient{config: ktf.config}).QueryKqiTemporalFrequencyFk(ktf)
 }
 
-// Update returns a builder for updating this KqiTemporalFrecuency.
-// Note that, you need to call KqiTemporalFrecuency.Unwrap() before calling this method, if this KqiTemporalFrecuency
+// Update returns a builder for updating this KqiTemporalFrequency.
+// Note that, you need to call KqiTemporalFrequency.Unwrap() before calling this method, if this KqiTemporalFrequency
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ktf *KqiTemporalFrecuency) Update() *KqiTemporalFrecuencyUpdateOne {
-	return (&KqiTemporalFrecuencyClient{config: ktf.config}).UpdateOne(ktf)
+func (ktf *KqiTemporalFrequency) Update() *KqiTemporalFrequencyUpdateOne {
+	return (&KqiTemporalFrequencyClient{config: ktf.config}).UpdateOne(ktf)
 }
 
 // Unwrap unwraps the entity that was returned from a transaction after it was closed,
 // so that all next queries will be executed through the driver which created the transaction.
-func (ktf *KqiTemporalFrecuency) Unwrap() *KqiTemporalFrecuency {
+func (ktf *KqiTemporalFrequency) Unwrap() *KqiTemporalFrequency {
 	tx, ok := ktf.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: KqiTemporalFrecuency is not a transactional entity")
+		panic("ent: KqiTemporalFrequency is not a transactional entity")
 	}
 	ktf.config.driver = tx.drv
 	return ktf
 }
 
 // String implements the fmt.Stringer.
-func (ktf *KqiTemporalFrecuency) String() string {
+func (ktf *KqiTemporalFrequency) String() string {
 	var builder strings.Builder
-	builder.WriteString("KqiTemporalFrecuency(")
+	builder.WriteString("KqiTemporalFrequency(")
 	builder.WriteString(fmt.Sprintf("id=%v", ktf.ID))
 	builder.WriteString(", create_time=")
 	builder.WriteString(ktf.CreateTime.Format(time.ANSIC))
@@ -127,10 +127,10 @@ func (ktf *KqiTemporalFrecuency) String() string {
 	return builder.String()
 }
 
-// KqiTemporalFrecuencies is a parsable slice of KqiTemporalFrecuency.
-type KqiTemporalFrecuencies []*KqiTemporalFrecuency
+// KqiTemporalFrequencies is a parsable slice of KqiTemporalFrequency.
+type KqiTemporalFrequencies []*KqiTemporalFrequency
 
-func (ktf KqiTemporalFrecuencies) config(cfg config) {
+func (ktf KqiTemporalFrequencies) config(cfg config) {
 	for _i := range ktf {
 		ktf[_i].config = cfg
 	}

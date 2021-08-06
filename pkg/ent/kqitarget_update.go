@@ -33,6 +33,12 @@ func (ktu *KqiTargetUpdate) Where(ps ...predicate.KqiTarget) *KqiTargetUpdate {
 	return ktu
 }
 
+// SetName sets the name field.
+func (ktu *KqiTargetUpdate) SetName(s string) *KqiTargetUpdate {
+	ktu.mutation.SetName(s)
+	return ktu
+}
+
 // SetFrame sets the frame field.
 func (ktu *KqiTargetUpdate) SetFrame(f float64) *KqiTargetUpdate {
 	ktu.mutation.ResetFrame()
@@ -157,12 +163,18 @@ func (ktu *KqiTargetUpdate) Save(ctx context.Context) (int, error) {
 	)
 	ktu.defaults()
 	if len(ktu.hooks) == 0 {
+		if err = ktu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ktu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*KqiTargetMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ktu.check(); err != nil {
+				return 0, err
 			}
 			ktu.mutation = mutation
 			affected, err = ktu.sqlSave(ctx)
@@ -209,6 +221,16 @@ func (ktu *KqiTargetUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ktu *KqiTargetUpdate) check() error {
+	if v, ok := ktu.mutation.Name(); ok {
+		if err := kqitarget.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -232,6 +254,13 @@ func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: kqitarget.FieldUpdateTime,
+		})
+	}
+	if value, ok := ktu.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: kqitarget.FieldName,
 		})
 	}
 	if value, ok := ktu.mutation.Frame(); ok {
@@ -397,6 +426,12 @@ type KqiTargetUpdateOne struct {
 	mutation *KqiTargetMutation
 }
 
+// SetName sets the name field.
+func (ktuo *KqiTargetUpdateOne) SetName(s string) *KqiTargetUpdateOne {
+	ktuo.mutation.SetName(s)
+	return ktuo
+}
+
 // SetFrame sets the frame field.
 func (ktuo *KqiTargetUpdateOne) SetFrame(f float64) *KqiTargetUpdateOne {
 	ktuo.mutation.ResetFrame()
@@ -521,12 +556,18 @@ func (ktuo *KqiTargetUpdateOne) Save(ctx context.Context) (*KqiTarget, error) {
 	)
 	ktuo.defaults()
 	if len(ktuo.hooks) == 0 {
+		if err = ktuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = ktuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*KqiTargetMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ktuo.check(); err != nil {
+				return nil, err
 			}
 			ktuo.mutation = mutation
 			node, err = ktuo.sqlSave(ctx)
@@ -573,6 +614,16 @@ func (ktuo *KqiTargetUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ktuo *KqiTargetUpdateOne) check() error {
+	if v, ok := ktuo.mutation.Name(); ok {
+		if err := kqitarget.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -594,6 +645,13 @@ func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: kqitarget.FieldUpdateTime,
+		})
+	}
+	if value, ok := ktuo.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: kqitarget.FieldName,
 		})
 	}
 	if value, ok := ktuo.mutation.Frame(); ok {

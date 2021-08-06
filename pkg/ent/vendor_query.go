@@ -18,6 +18,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/counter"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
 )
 
@@ -30,7 +31,8 @@ type VendorQuery struct {
 	unique     []string
 	predicates []predicate.Vendor
 	// eager-loading edges.
-	withVendorFk *CounterQuery
+	withVendorFk              *CounterQuery
+	withVendorsRecomendations *RecommendationsQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (vq *VendorQuery) QueryVendorFk() *CounterQuery {
 			sqlgraph.From(vendor.Table, vendor.FieldID, selector),
 			sqlgraph.To(counter.Table, counter.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorFkTable, vendor.VendorFkColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVendorsRecomendations chains the current query on the vendors_recomendations edge.
+func (vq *VendorQuery) QueryVendorsRecomendations() *RecommendationsQuery {
+	query := &RecommendationsQuery{config: vq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := vq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := vq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vendor.Table, vendor.FieldID, selector),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorsRecomendationsTable, vendor.VendorsRecomendationsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
 		return fromU, nil
@@ -252,13 +276,14 @@ func (vq *VendorQuery) Clone() *VendorQuery {
 		return nil
 	}
 	return &VendorQuery{
-		config:       vq.config,
-		limit:        vq.limit,
-		offset:       vq.offset,
-		order:        append([]OrderFunc{}, vq.order...),
-		unique:       append([]string{}, vq.unique...),
-		predicates:   append([]predicate.Vendor{}, vq.predicates...),
-		withVendorFk: vq.withVendorFk.Clone(),
+		config:                    vq.config,
+		limit:                     vq.limit,
+		offset:                    vq.offset,
+		order:                     append([]OrderFunc{}, vq.order...),
+		unique:                    append([]string{}, vq.unique...),
+		predicates:                append([]predicate.Vendor{}, vq.predicates...),
+		withVendorFk:              vq.withVendorFk.Clone(),
+		withVendorsRecomendations: vq.withVendorsRecomendations.Clone(),
 		// clone intermediate query.
 		sql:  vq.sql.Clone(),
 		path: vq.path,
@@ -273,6 +298,17 @@ func (vq *VendorQuery) WithVendorFk(opts ...func(*CounterQuery)) *VendorQuery {
 		opt(query)
 	}
 	vq.withVendorFk = query
+	return vq
+}
+
+//  WithVendorsRecomendations tells the query-builder to eager-loads the nodes that are connected to
+// the "vendors_recomendations" edge. The optional arguments used to configure the query builder of the edge.
+func (vq *VendorQuery) WithVendorsRecomendations(opts ...func(*RecommendationsQuery)) *VendorQuery {
+	query := &RecommendationsQuery{config: vq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	vq.withVendorsRecomendations = query
 	return vq
 }
 
@@ -345,8 +381,9 @@ func (vq *VendorQuery) sqlAll(ctx context.Context) ([]*Vendor, error) {
 	var (
 		nodes       = []*Vendor{}
 		_spec       = vq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			vq.withVendorFk != nil,
+			vq.withVendorsRecomendations != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -396,6 +433,35 @@ func (vq *VendorQuery) sqlAll(ctx context.Context) ([]*Vendor, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "vendor_vendor_fk" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.VendorFk = append(node.Edges.VendorFk, n)
+		}
+	}
+
+	if query := vq.withVendorsRecomendations; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Vendor)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.VendorsRecomendations = []*Recommendations{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Recommendations(func(s *sql.Selector) {
+			s.Where(sql.InValues(vendor.VendorsRecomendationsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.vendor_vendors_recomendations
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "vendor_vendors_recomendations" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "vendor_vendors_recomendations" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.VendorsRecomendations = append(node.Edges.VendorsRecomendations, n)
 		}
 	}
 

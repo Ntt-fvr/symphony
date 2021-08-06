@@ -624,15 +624,15 @@ func (f KqiTargetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return f(ctx, mv)
 }
 
-// The KqiTemporalFrecuencyFunc type is an adapter to allow the use of ordinary
-// function as KqiTemporalFrecuency mutator.
-type KqiTemporalFrecuencyFunc func(context.Context, *ent.KqiTemporalFrecuencyMutation) (ent.Value, error)
+// The KqiTemporalFrequencyFunc type is an adapter to allow the use of ordinary
+// function as KqiTemporalFrequency mutator.
+type KqiTemporalFrequencyFunc func(context.Context, *ent.KqiTemporalFrequencyMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f KqiTemporalFrecuencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.KqiTemporalFrecuencyMutation)
+func (f KqiTemporalFrequencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KqiTemporalFrequencyMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiTemporalFrecuencyMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiTemporalFrequencyMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -763,6 +763,45 @@ func (f PropertyTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	mv, ok := m.(*ent.PropertyTypeMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RecommendationsFunc type is an adapter to allow the use of ordinary
+// function as Recommendations mutator.
+type RecommendationsFunc func(context.Context, *ent.RecommendationsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecommendationsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RecommendationsMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecommendationsMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RecommendationsCategoryFunc type is an adapter to allow the use of ordinary
+// function as RecommendationsCategory mutator.
+type RecommendationsCategoryFunc func(context.Context, *ent.RecommendationsCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecommendationsCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RecommendationsCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecommendationsCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RecommendationsSourcesFunc type is an adapter to allow the use of ordinary
+// function as RecommendationsSources mutator.
+type RecommendationsSourcesFunc func(context.Context, *ent.RecommendationsSourcesMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecommendationsSourcesFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RecommendationsSourcesMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecommendationsSourcesMutation", m)
 	}
 	return f(ctx, mv)
 }

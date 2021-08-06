@@ -65,7 +65,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -76,6 +76,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -10340,6 +10343,49 @@ func (kc *KqiCategoryQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// KqiCategoryOrderFieldName orders KqiCategory by name.
+	KqiCategoryOrderFieldName = &KqiCategoryOrderField{
+		field: kqicategory.FieldName,
+		toCursor: func(kc *KqiCategory) Cursor {
+			return Cursor{
+				ID:    kc.ID,
+				Value: kc.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiCategoryOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqicategory.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiCategoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiCategoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiCategoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiCategoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiCategoryOrderField", str)
+	}
+	return nil
+}
+
 // KqiCategoryOrderField defines the ordering field of KqiCategory.
 type KqiCategoryOrderField struct {
 	field    string
@@ -10778,6 +10824,49 @@ func (kp *KqiPerspectiveQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// KqiPerspectiveOrderFieldName orders KqiPerspective by name.
+	KqiPerspectiveOrderFieldName = &KqiPerspectiveOrderField{
+		field: kqiperspective.FieldName,
+		toCursor: func(kp *KqiPerspective) Cursor {
+			return Cursor{
+				ID:    kp.ID,
+				Value: kp.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiPerspectiveOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqiperspective.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiPerspectiveOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiPerspectiveOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiPerspectiveOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiPerspectiveOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiPerspectiveOrderField", str)
+	}
+	return nil
+}
+
 // KqiPerspectiveOrderField defines the ordering field of KqiPerspective.
 type KqiPerspectiveOrderField struct {
 	field    string
@@ -10995,6 +11084,49 @@ func (ks *KqiSourceQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// KqiSourceOrderFieldName orders KqiSource by name.
+	KqiSourceOrderFieldName = &KqiSourceOrderField{
+		field: kqisource.FieldName,
+		toCursor: func(ks *KqiSource) Cursor {
+			return Cursor{
+				ID:    ks.ID,
+				Value: ks.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiSourceOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqisource.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiSourceOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiSourceOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiSourceOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiSourceOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiSourceOrderField", str)
+	}
+	return nil
 }
 
 // KqiSourceOrderField defines the ordering field of KqiSource.
@@ -11216,6 +11348,49 @@ func (kt *KqiTargetQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// KqiTargetOrderFieldName orders KqiTarget by name.
+	KqiTargetOrderFieldName = &KqiTargetOrderField{
+		field: kqitarget.FieldName,
+		toCursor: func(kt *KqiTarget) Cursor {
+			return Cursor{
+				ID:    kt.ID,
+				Value: kt.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiTargetOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqitarget.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiTargetOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiTargetOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiTargetOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiTargetOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiTargetOrderField", str)
+	}
+	return nil
+}
+
 // KqiTargetOrderField defines the ordering field of KqiTarget.
 type KqiTargetOrderField struct {
 	field    string
@@ -11239,111 +11414,111 @@ var DefaultKqiTargetOrder = &KqiTargetOrder{
 	},
 }
 
-// KqiTemporalFrecuencyEdge is the edge representation of KqiTemporalFrecuency.
-type KqiTemporalFrecuencyEdge struct {
-	Node   *KqiTemporalFrecuency `json:"node"`
+// KqiTemporalFrequencyEdge is the edge representation of KqiTemporalFrequency.
+type KqiTemporalFrequencyEdge struct {
+	Node   *KqiTemporalFrequency `json:"node"`
 	Cursor Cursor                `json:"cursor"`
 }
 
-// KqiTemporalFrecuencyConnection is the connection containing edges to KqiTemporalFrecuency.
-type KqiTemporalFrecuencyConnection struct {
-	Edges      []*KqiTemporalFrecuencyEdge `json:"edges"`
+// KqiTemporalFrequencyConnection is the connection containing edges to KqiTemporalFrequency.
+type KqiTemporalFrequencyConnection struct {
+	Edges      []*KqiTemporalFrequencyEdge `json:"edges"`
 	PageInfo   PageInfo                    `json:"pageInfo"`
 	TotalCount int                         `json:"totalCount"`
 }
 
-// KqiTemporalFrecuencyPaginateOption enables pagination customization.
-type KqiTemporalFrecuencyPaginateOption func(*kqiTemporalFrecuencyPager) error
+// KqiTemporalFrequencyPaginateOption enables pagination customization.
+type KqiTemporalFrequencyPaginateOption func(*kqiTemporalFrequencyPager) error
 
-// WithKqiTemporalFrecuencyOrder configures pagination ordering.
-func WithKqiTemporalFrecuencyOrder(order *KqiTemporalFrecuencyOrder) KqiTemporalFrecuencyPaginateOption {
+// WithKqiTemporalFrequencyOrder configures pagination ordering.
+func WithKqiTemporalFrequencyOrder(order *KqiTemporalFrequencyOrder) KqiTemporalFrequencyPaginateOption {
 	if order == nil {
-		order = DefaultKqiTemporalFrecuencyOrder
+		order = DefaultKqiTemporalFrequencyOrder
 	}
 	o := *order
-	return func(pager *kqiTemporalFrecuencyPager) error {
+	return func(pager *kqiTemporalFrequencyPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultKqiTemporalFrecuencyOrder.Field
+			o.Field = DefaultKqiTemporalFrequencyOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithKqiTemporalFrecuencyFilter configures pagination filter.
-func WithKqiTemporalFrecuencyFilter(filter func(*KqiTemporalFrecuencyQuery) (*KqiTemporalFrecuencyQuery, error)) KqiTemporalFrecuencyPaginateOption {
-	return func(pager *kqiTemporalFrecuencyPager) error {
+// WithKqiTemporalFrequencyFilter configures pagination filter.
+func WithKqiTemporalFrequencyFilter(filter func(*KqiTemporalFrequencyQuery) (*KqiTemporalFrequencyQuery, error)) KqiTemporalFrequencyPaginateOption {
+	return func(pager *kqiTemporalFrequencyPager) error {
 		if filter == nil {
-			return errors.New("KqiTemporalFrecuencyQuery filter cannot be nil")
+			return errors.New("KqiTemporalFrequencyQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type kqiTemporalFrecuencyPager struct {
-	order  *KqiTemporalFrecuencyOrder
-	filter func(*KqiTemporalFrecuencyQuery) (*KqiTemporalFrecuencyQuery, error)
+type kqiTemporalFrequencyPager struct {
+	order  *KqiTemporalFrequencyOrder
+	filter func(*KqiTemporalFrequencyQuery) (*KqiTemporalFrequencyQuery, error)
 }
 
-func newKqiTemporalFrecuencyPager(opts []KqiTemporalFrecuencyPaginateOption) (*kqiTemporalFrecuencyPager, error) {
-	pager := &kqiTemporalFrecuencyPager{}
+func newKqiTemporalFrequencyPager(opts []KqiTemporalFrequencyPaginateOption) (*kqiTemporalFrequencyPager, error) {
+	pager := &kqiTemporalFrequencyPager{}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultKqiTemporalFrecuencyOrder
+		pager.order = DefaultKqiTemporalFrequencyOrder
 	}
 	return pager, nil
 }
 
-func (p *kqiTemporalFrecuencyPager) applyFilter(query *KqiTemporalFrecuencyQuery) (*KqiTemporalFrecuencyQuery, error) {
+func (p *kqiTemporalFrequencyPager) applyFilter(query *KqiTemporalFrequencyQuery) (*KqiTemporalFrequencyQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *kqiTemporalFrecuencyPager) toCursor(ktf *KqiTemporalFrecuency) Cursor {
+func (p *kqiTemporalFrequencyPager) toCursor(ktf *KqiTemporalFrequency) Cursor {
 	return p.order.Field.toCursor(ktf)
 }
 
-func (p *kqiTemporalFrecuencyPager) applyCursors(query *KqiTemporalFrecuencyQuery, after, before *Cursor) *KqiTemporalFrecuencyQuery {
+func (p *kqiTemporalFrequencyPager) applyCursors(query *KqiTemporalFrequencyQuery, after, before *Cursor) *KqiTemporalFrequencyQuery {
 	for _, predicate := range cursorsToPredicates(
 		p.order.Direction, after, before,
-		p.order.Field.field, DefaultKqiTemporalFrecuencyOrder.Field.field,
+		p.order.Field.field, DefaultKqiTemporalFrequencyOrder.Field.field,
 	) {
 		query = query.Where(predicate)
 	}
 	return query
 }
 
-func (p *kqiTemporalFrecuencyPager) applyOrder(query *KqiTemporalFrecuencyQuery, reverse bool) *KqiTemporalFrecuencyQuery {
+func (p *kqiTemporalFrequencyPager) applyOrder(query *KqiTemporalFrequencyQuery, reverse bool) *KqiTemporalFrequencyQuery {
 	direction := p.order.Direction
 	if reverse {
 		direction = direction.reverse()
 	}
 	query = query.Order(direction.orderFunc(p.order.Field.field))
-	if p.order.Field != DefaultKqiTemporalFrecuencyOrder.Field {
-		query = query.Order(direction.orderFunc(DefaultKqiTemporalFrecuencyOrder.Field.field))
+	if p.order.Field != DefaultKqiTemporalFrequencyOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultKqiTemporalFrequencyOrder.Field.field))
 	}
 	return query
 }
 
-// Paginate executes the query and returns a relay based cursor connection to KqiTemporalFrecuency.
-func (ktf *KqiTemporalFrecuencyQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to KqiTemporalFrequency.
+func (ktf *KqiTemporalFrequencyQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...KqiTemporalFrecuencyPaginateOption,
-) (*KqiTemporalFrecuencyConnection, error) {
+	before *Cursor, last *int, opts ...KqiTemporalFrequencyPaginateOption,
+) (*KqiTemporalFrequencyConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newKqiTemporalFrecuencyPager(opts)
+	pager, err := newKqiTemporalFrequencyPager(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -11352,7 +11527,7 @@ func (ktf *KqiTemporalFrecuencyQuery) Paginate(
 		return nil, err
 	}
 
-	conn := &KqiTemporalFrecuencyConnection{Edges: []*KqiTemporalFrecuencyEdge{}}
+	conn := &KqiTemporalFrequencyConnection{Edges: []*KqiTemporalFrequencyEdge{}}
 	if !hasCollectedField(ctx, edgesField) ||
 		first != nil && *first == 0 ||
 		last != nil && *last == 0 {
@@ -11405,22 +11580,22 @@ func (ktf *KqiTemporalFrecuencyQuery) Paginate(
 		nodes = nodes[:len(nodes)-1]
 	}
 
-	var nodeAt func(int) *KqiTemporalFrecuency
+	var nodeAt func(int) *KqiTemporalFrequency
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *KqiTemporalFrecuency {
+		nodeAt = func(i int) *KqiTemporalFrequency {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *KqiTemporalFrecuency {
+		nodeAt = func(i int) *KqiTemporalFrequency {
 			return nodes[i]
 		}
 	}
 
-	conn.Edges = make([]*KqiTemporalFrecuencyEdge, len(nodes))
+	conn.Edges = make([]*KqiTemporalFrequencyEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		conn.Edges[i] = &KqiTemporalFrecuencyEdge{
+		conn.Edges[i] = &KqiTemporalFrequencyEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -11435,24 +11610,67 @@ func (ktf *KqiTemporalFrecuencyQuery) Paginate(
 	return conn, nil
 }
 
-// KqiTemporalFrecuencyOrderField defines the ordering field of KqiTemporalFrecuency.
-type KqiTemporalFrecuencyOrderField struct {
+var (
+	// KqiTemporalFrequencyOrderFieldName orders KqiTemporalFrequency by name.
+	KqiTemporalFrequencyOrderFieldName = &KqiTemporalFrequencyOrderField{
+		field: kqitemporalfrequency.FieldName,
+		toCursor: func(ktf *KqiTemporalFrequency) Cursor {
+			return Cursor{
+				ID:    ktf.ID,
+				Value: ktf.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KqiTemporalFrequencyOrderField) String() string {
+	var str string
+	switch f.field {
+	case kqitemporalfrequency.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KqiTemporalFrequencyOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KqiTemporalFrequencyOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KqiTemporalFrequencyOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KqiTemporalFrequencyOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KqiTemporalFrequencyOrderField", str)
+	}
+	return nil
+}
+
+// KqiTemporalFrequencyOrderField defines the ordering field of KqiTemporalFrequency.
+type KqiTemporalFrequencyOrderField struct {
 	field    string
-	toCursor func(*KqiTemporalFrecuency) Cursor
+	toCursor func(*KqiTemporalFrequency) Cursor
 }
 
-// KqiTemporalFrecuencyOrder defines the ordering of KqiTemporalFrecuency.
-type KqiTemporalFrecuencyOrder struct {
+// KqiTemporalFrequencyOrder defines the ordering of KqiTemporalFrequency.
+type KqiTemporalFrequencyOrder struct {
 	Direction OrderDirection                  `json:"direction"`
-	Field     *KqiTemporalFrecuencyOrderField `json:"field"`
+	Field     *KqiTemporalFrequencyOrderField `json:"field"`
 }
 
-// DefaultKqiTemporalFrecuencyOrder is the default ordering of KqiTemporalFrecuency.
-var DefaultKqiTemporalFrecuencyOrder = &KqiTemporalFrecuencyOrder{
+// DefaultKqiTemporalFrequencyOrder is the default ordering of KqiTemporalFrequency.
+var DefaultKqiTemporalFrequencyOrder = &KqiTemporalFrequencyOrder{
 	Direction: OrderDirectionAsc,
-	Field: &KqiTemporalFrecuencyOrderField{
-		field: kqitemporalfrecuency.FieldID,
-		toCursor: func(ktf *KqiTemporalFrecuency) Cursor {
+	Field: &KqiTemporalFrequencyOrderField{
+		field: kqitemporalfrequency.FieldID,
+		toCursor: func(ktf *KqiTemporalFrequency) Cursor {
 			return Cursor{ID: ktf.ID}
 		},
 	},
@@ -13815,6 +14033,918 @@ var DefaultPropertyTypeOrder = &PropertyTypeOrder{
 		field: propertytype.FieldID,
 		toCursor: func(pt *PropertyType) Cursor {
 			return Cursor{ID: pt.ID}
+		},
+	},
+}
+
+// RecommendationsEdge is the edge representation of Recommendations.
+type RecommendationsEdge struct {
+	Node   *Recommendations `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// RecommendationsConnection is the connection containing edges to Recommendations.
+type RecommendationsConnection struct {
+	Edges      []*RecommendationsEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+// RecommendationsPaginateOption enables pagination customization.
+type RecommendationsPaginateOption func(*recommendationsPager) error
+
+// WithRecommendationsOrder configures pagination ordering.
+func WithRecommendationsOrder(order *RecommendationsOrder) RecommendationsPaginateOption {
+	if order == nil {
+		order = DefaultRecommendationsOrder
+	}
+	o := *order
+	return func(pager *recommendationsPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultRecommendationsOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithRecommendationsFilter configures pagination filter.
+func WithRecommendationsFilter(filter func(*RecommendationsQuery) (*RecommendationsQuery, error)) RecommendationsPaginateOption {
+	return func(pager *recommendationsPager) error {
+		if filter == nil {
+			return errors.New("RecommendationsQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type recommendationsPager struct {
+	order  *RecommendationsOrder
+	filter func(*RecommendationsQuery) (*RecommendationsQuery, error)
+}
+
+func newRecommendationsPager(opts []RecommendationsPaginateOption) (*recommendationsPager, error) {
+	pager := &recommendationsPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultRecommendationsOrder
+	}
+	return pager, nil
+}
+
+func (p *recommendationsPager) applyFilter(query *RecommendationsQuery) (*RecommendationsQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *recommendationsPager) toCursor(r *Recommendations) Cursor {
+	return p.order.Field.toCursor(r)
+}
+
+func (p *recommendationsPager) applyCursors(query *RecommendationsQuery, after, before *Cursor) *RecommendationsQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultRecommendationsOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *recommendationsPager) applyOrder(query *RecommendationsQuery, reverse bool) *RecommendationsQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultRecommendationsOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultRecommendationsOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Recommendations.
+func (r *RecommendationsQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...RecommendationsPaginateOption,
+) (*RecommendationsConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newRecommendationsPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if r, err = pager.applyFilter(r); err != nil {
+		return nil, err
+	}
+
+	conn := &RecommendationsConnection{Edges: []*RecommendationsEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := r.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := r.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	r = pager.applyCursors(r, after, before)
+	r = pager.applyOrder(r, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		r = r.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		r = r.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := r.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *Recommendations
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Recommendations {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Recommendations {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*RecommendationsEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &RecommendationsEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// RecommendationsOrderFieldExternalId orders Recommendations by externalId.
+	RecommendationsOrderFieldExternalId = &RecommendationsOrderField{
+		field: recommendations.FieldExternalId,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.ExternalId,
+			}
+		},
+	}
+	// RecommendationsOrderFieldResource orders Recommendations by resource.
+	RecommendationsOrderFieldResource = &RecommendationsOrderField{
+		field: recommendations.FieldResource,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.Resource,
+			}
+		},
+	}
+	// RecommendationsOrderFieldAlarmType orders Recommendations by alarmType.
+	RecommendationsOrderFieldAlarmType = &RecommendationsOrderField{
+		field: recommendations.FieldAlarmType,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.AlarmType,
+			}
+		},
+	}
+	// RecommendationsOrderFieldShortDescription orders Recommendations by shortDescription.
+	RecommendationsOrderFieldShortDescription = &RecommendationsOrderField{
+		field: recommendations.FieldShortDescription,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.ShortDescription,
+			}
+		},
+	}
+	// RecommendationsOrderFieldLongDescription orders Recommendations by longDescription.
+	RecommendationsOrderFieldLongDescription = &RecommendationsOrderField{
+		field: recommendations.FieldLongDescription,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.LongDescription,
+			}
+		},
+	}
+	// RecommendationsOrderFieldCommand orders Recommendations by command.
+	RecommendationsOrderFieldCommand = &RecommendationsOrderField{
+		field: recommendations.FieldCommand,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.Command,
+			}
+		},
+	}
+	// RecommendationsOrderFieldPriority orders Recommendations by priority.
+	RecommendationsOrderFieldPriority = &RecommendationsOrderField{
+		field: recommendations.FieldPriority,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.Priority,
+			}
+		},
+	}
+	// RecommendationsOrderFieldStatus orders Recommendations by status.
+	RecommendationsOrderFieldStatus = &RecommendationsOrderField{
+		field: recommendations.FieldStatus,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.Status,
+			}
+		},
+	}
+	// RecommendationsOrderFieldUsed orders Recommendations by used.
+	RecommendationsOrderFieldUsed = &RecommendationsOrderField{
+		field: recommendations.FieldUsed,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.Used,
+			}
+		},
+	}
+	// RecommendationsOrderFieldRunbook orders Recommendations by runbook.
+	RecommendationsOrderFieldRunbook = &RecommendationsOrderField{
+		field: recommendations.FieldRunbook,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{
+				ID:    r.ID,
+				Value: r.Runbook,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f RecommendationsOrderField) String() string {
+	var str string
+	switch f.field {
+	case recommendations.FieldExternalId:
+		str = "EXTERNALID"
+	case recommendations.FieldResource:
+		str = "RESOURCE"
+	case recommendations.FieldAlarmType:
+		str = "ALARMTYPE"
+	case recommendations.FieldShortDescription:
+		str = "SHORTDESCRIPTION"
+	case recommendations.FieldLongDescription:
+		str = "LONGDESCRIPTION"
+	case recommendations.FieldCommand:
+		str = "COMMAND"
+	case recommendations.FieldPriority:
+		str = "PRIORITY"
+	case recommendations.FieldStatus:
+		str = "STATUS"
+	case recommendations.FieldUsed:
+		str = "USED"
+	case recommendations.FieldRunbook:
+		str = "RUNBOOK"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f RecommendationsOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *RecommendationsOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("RecommendationsOrderField %T must be a string", v)
+	}
+	switch str {
+	case "EXTERNALID":
+		*f = *RecommendationsOrderFieldExternalId
+	case "RESOURCE":
+		*f = *RecommendationsOrderFieldResource
+	case "ALARMTYPE":
+		*f = *RecommendationsOrderFieldAlarmType
+	case "SHORTDESCRIPTION":
+		*f = *RecommendationsOrderFieldShortDescription
+	case "LONGDESCRIPTION":
+		*f = *RecommendationsOrderFieldLongDescription
+	case "COMMAND":
+		*f = *RecommendationsOrderFieldCommand
+	case "PRIORITY":
+		*f = *RecommendationsOrderFieldPriority
+	case "STATUS":
+		*f = *RecommendationsOrderFieldStatus
+	case "USED":
+		*f = *RecommendationsOrderFieldUsed
+	case "RUNBOOK":
+		*f = *RecommendationsOrderFieldRunbook
+	default:
+		return fmt.Errorf("%s is not a valid RecommendationsOrderField", str)
+	}
+	return nil
+}
+
+// RecommendationsOrderField defines the ordering field of Recommendations.
+type RecommendationsOrderField struct {
+	field    string
+	toCursor func(*Recommendations) Cursor
+}
+
+// RecommendationsOrder defines the ordering of Recommendations.
+type RecommendationsOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *RecommendationsOrderField `json:"field"`
+}
+
+// DefaultRecommendationsOrder is the default ordering of Recommendations.
+var DefaultRecommendationsOrder = &RecommendationsOrder{
+	Direction: OrderDirectionAsc,
+	Field: &RecommendationsOrderField{
+		field: recommendations.FieldID,
+		toCursor: func(r *Recommendations) Cursor {
+			return Cursor{ID: r.ID}
+		},
+	},
+}
+
+// RecommendationsCategoryEdge is the edge representation of RecommendationsCategory.
+type RecommendationsCategoryEdge struct {
+	Node   *RecommendationsCategory `json:"node"`
+	Cursor Cursor                   `json:"cursor"`
+}
+
+// RecommendationsCategoryConnection is the connection containing edges to RecommendationsCategory.
+type RecommendationsCategoryConnection struct {
+	Edges      []*RecommendationsCategoryEdge `json:"edges"`
+	PageInfo   PageInfo                       `json:"pageInfo"`
+	TotalCount int                            `json:"totalCount"`
+}
+
+// RecommendationsCategoryPaginateOption enables pagination customization.
+type RecommendationsCategoryPaginateOption func(*recommendationsCategoryPager) error
+
+// WithRecommendationsCategoryOrder configures pagination ordering.
+func WithRecommendationsCategoryOrder(order *RecommendationsCategoryOrder) RecommendationsCategoryPaginateOption {
+	if order == nil {
+		order = DefaultRecommendationsCategoryOrder
+	}
+	o := *order
+	return func(pager *recommendationsCategoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultRecommendationsCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithRecommendationsCategoryFilter configures pagination filter.
+func WithRecommendationsCategoryFilter(filter func(*RecommendationsCategoryQuery) (*RecommendationsCategoryQuery, error)) RecommendationsCategoryPaginateOption {
+	return func(pager *recommendationsCategoryPager) error {
+		if filter == nil {
+			return errors.New("RecommendationsCategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type recommendationsCategoryPager struct {
+	order  *RecommendationsCategoryOrder
+	filter func(*RecommendationsCategoryQuery) (*RecommendationsCategoryQuery, error)
+}
+
+func newRecommendationsCategoryPager(opts []RecommendationsCategoryPaginateOption) (*recommendationsCategoryPager, error) {
+	pager := &recommendationsCategoryPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultRecommendationsCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *recommendationsCategoryPager) applyFilter(query *RecommendationsCategoryQuery) (*RecommendationsCategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *recommendationsCategoryPager) toCursor(rc *RecommendationsCategory) Cursor {
+	return p.order.Field.toCursor(rc)
+}
+
+func (p *recommendationsCategoryPager) applyCursors(query *RecommendationsCategoryQuery, after, before *Cursor) *RecommendationsCategoryQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultRecommendationsCategoryOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *recommendationsCategoryPager) applyOrder(query *RecommendationsCategoryQuery, reverse bool) *RecommendationsCategoryQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultRecommendationsCategoryOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultRecommendationsCategoryOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to RecommendationsCategory.
+func (rc *RecommendationsCategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...RecommendationsCategoryPaginateOption,
+) (*RecommendationsCategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newRecommendationsCategoryPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if rc, err = pager.applyFilter(rc); err != nil {
+		return nil, err
+	}
+
+	conn := &RecommendationsCategoryConnection{Edges: []*RecommendationsCategoryEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := rc.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := rc.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	rc = pager.applyCursors(rc, after, before)
+	rc = pager.applyOrder(rc, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		rc = rc.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		rc = rc.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := rc.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *RecommendationsCategory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *RecommendationsCategory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *RecommendationsCategory {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*RecommendationsCategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &RecommendationsCategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// RecommendationsCategoryOrderFieldName orders RecommendationsCategory by name.
+	RecommendationsCategoryOrderFieldName = &RecommendationsCategoryOrderField{
+		field: recommendationscategory.FieldName,
+		toCursor: func(rc *RecommendationsCategory) Cursor {
+			return Cursor{
+				ID:    rc.ID,
+				Value: rc.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f RecommendationsCategoryOrderField) String() string {
+	var str string
+	switch f.field {
+	case recommendationscategory.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f RecommendationsCategoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *RecommendationsCategoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("RecommendationsCategoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *RecommendationsCategoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid RecommendationsCategoryOrderField", str)
+	}
+	return nil
+}
+
+// RecommendationsCategoryOrderField defines the ordering field of RecommendationsCategory.
+type RecommendationsCategoryOrderField struct {
+	field    string
+	toCursor func(*RecommendationsCategory) Cursor
+}
+
+// RecommendationsCategoryOrder defines the ordering of RecommendationsCategory.
+type RecommendationsCategoryOrder struct {
+	Direction OrderDirection                     `json:"direction"`
+	Field     *RecommendationsCategoryOrderField `json:"field"`
+}
+
+// DefaultRecommendationsCategoryOrder is the default ordering of RecommendationsCategory.
+var DefaultRecommendationsCategoryOrder = &RecommendationsCategoryOrder{
+	Direction: OrderDirectionAsc,
+	Field: &RecommendationsCategoryOrderField{
+		field: recommendationscategory.FieldID,
+		toCursor: func(rc *RecommendationsCategory) Cursor {
+			return Cursor{ID: rc.ID}
+		},
+	},
+}
+
+// RecommendationsSourcesEdge is the edge representation of RecommendationsSources.
+type RecommendationsSourcesEdge struct {
+	Node   *RecommendationsSources `json:"node"`
+	Cursor Cursor                  `json:"cursor"`
+}
+
+// RecommendationsSourcesConnection is the connection containing edges to RecommendationsSources.
+type RecommendationsSourcesConnection struct {
+	Edges      []*RecommendationsSourcesEdge `json:"edges"`
+	PageInfo   PageInfo                      `json:"pageInfo"`
+	TotalCount int                           `json:"totalCount"`
+}
+
+// RecommendationsSourcesPaginateOption enables pagination customization.
+type RecommendationsSourcesPaginateOption func(*recommendationsSourcesPager) error
+
+// WithRecommendationsSourcesOrder configures pagination ordering.
+func WithRecommendationsSourcesOrder(order *RecommendationsSourcesOrder) RecommendationsSourcesPaginateOption {
+	if order == nil {
+		order = DefaultRecommendationsSourcesOrder
+	}
+	o := *order
+	return func(pager *recommendationsSourcesPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultRecommendationsSourcesOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithRecommendationsSourcesFilter configures pagination filter.
+func WithRecommendationsSourcesFilter(filter func(*RecommendationsSourcesQuery) (*RecommendationsSourcesQuery, error)) RecommendationsSourcesPaginateOption {
+	return func(pager *recommendationsSourcesPager) error {
+		if filter == nil {
+			return errors.New("RecommendationsSourcesQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type recommendationsSourcesPager struct {
+	order  *RecommendationsSourcesOrder
+	filter func(*RecommendationsSourcesQuery) (*RecommendationsSourcesQuery, error)
+}
+
+func newRecommendationsSourcesPager(opts []RecommendationsSourcesPaginateOption) (*recommendationsSourcesPager, error) {
+	pager := &recommendationsSourcesPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultRecommendationsSourcesOrder
+	}
+	return pager, nil
+}
+
+func (p *recommendationsSourcesPager) applyFilter(query *RecommendationsSourcesQuery) (*RecommendationsSourcesQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *recommendationsSourcesPager) toCursor(rs *RecommendationsSources) Cursor {
+	return p.order.Field.toCursor(rs)
+}
+
+func (p *recommendationsSourcesPager) applyCursors(query *RecommendationsSourcesQuery, after, before *Cursor) *RecommendationsSourcesQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultRecommendationsSourcesOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *recommendationsSourcesPager) applyOrder(query *RecommendationsSourcesQuery, reverse bool) *RecommendationsSourcesQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultRecommendationsSourcesOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultRecommendationsSourcesOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to RecommendationsSources.
+func (rs *RecommendationsSourcesQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...RecommendationsSourcesPaginateOption,
+) (*RecommendationsSourcesConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newRecommendationsSourcesPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if rs, err = pager.applyFilter(rs); err != nil {
+		return nil, err
+	}
+
+	conn := &RecommendationsSourcesConnection{Edges: []*RecommendationsSourcesEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := rs.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := rs.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	rs = pager.applyCursors(rs, after, before)
+	rs = pager.applyOrder(rs, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		rs = rs.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		rs = rs.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := rs.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *RecommendationsSources
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *RecommendationsSources {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *RecommendationsSources {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*RecommendationsSourcesEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &RecommendationsSourcesEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// RecommendationsSourcesOrderFieldName orders RecommendationsSources by name.
+	RecommendationsSourcesOrderFieldName = &RecommendationsSourcesOrderField{
+		field: recommendationssources.FieldName,
+		toCursor: func(rs *RecommendationsSources) Cursor {
+			return Cursor{
+				ID:    rs.ID,
+				Value: rs.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f RecommendationsSourcesOrderField) String() string {
+	var str string
+	switch f.field {
+	case recommendationssources.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f RecommendationsSourcesOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *RecommendationsSourcesOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("RecommendationsSourcesOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *RecommendationsSourcesOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid RecommendationsSourcesOrderField", str)
+	}
+	return nil
+}
+
+// RecommendationsSourcesOrderField defines the ordering field of RecommendationsSources.
+type RecommendationsSourcesOrderField struct {
+	field    string
+	toCursor func(*RecommendationsSources) Cursor
+}
+
+// RecommendationsSourcesOrder defines the ordering of RecommendationsSources.
+type RecommendationsSourcesOrder struct {
+	Direction OrderDirection                    `json:"direction"`
+	Field     *RecommendationsSourcesOrderField `json:"field"`
+}
+
+// DefaultRecommendationsSourcesOrder is the default ordering of RecommendationsSources.
+var DefaultRecommendationsSourcesOrder = &RecommendationsSourcesOrder{
+	Direction: OrderDirectionAsc,
+	Field: &RecommendationsSourcesOrderField{
+		field: recommendationssources.FieldID,
+		toCursor: func(rs *RecommendationsSources) Cursor {
+			return Cursor{ID: rs.ID}
 		},
 	},
 }

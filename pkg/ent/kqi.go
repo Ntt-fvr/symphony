@@ -16,7 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 )
 
 // Kqi is the model entity for the Kqi schema.
@@ -44,7 +44,7 @@ type Kqi struct {
 	kqi_category_kqi_category_fk                     *int
 	kqi_perspective_kqi_perspective_fk               *int
 	kqi_source_kqi_source_fk                         *int
-	kqi_temporal_frecuency_kqi_temporal_frecuency_fk *int
+	kqi_temporal_frequency_kqi_temporal_frequency_fk *int
 }
 
 // KqiEdges holds the relations/edges for other nodes in the graph.
@@ -55,8 +55,8 @@ type KqiEdges struct {
 	KqiPerspectiveFk *KqiPerspective
 	// KqiSourceFk holds the value of the kqiSourceFk edge.
 	KqiSourceFk *KqiSource
-	// KqiTemporalFrecuencyFk holds the value of the kqiTemporalFrecuencyFk edge.
-	KqiTemporalFrecuencyFk *KqiTemporalFrecuency
+	// KqiTemporalFrequencyFk holds the value of the kqiTemporalFrequencyFk edge.
+	KqiTemporalFrequencyFk *KqiTemporalFrequency
 	// KqiTargetFk holds the value of the kqiTargetFk edge.
 	KqiTargetFk []*KqiTarget
 	// loadedTypes holds the information for reporting if a
@@ -106,18 +106,18 @@ func (e KqiEdges) KqiSourceFkOrErr() (*KqiSource, error) {
 	return nil, &NotLoadedError{edge: "kqiSourceFk"}
 }
 
-// KqiTemporalFrecuencyFkOrErr returns the KqiTemporalFrecuencyFk value or an error if the edge
+// KqiTemporalFrequencyFkOrErr returns the KqiTemporalFrequencyFk value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e KqiEdges) KqiTemporalFrecuencyFkOrErr() (*KqiTemporalFrecuency, error) {
+func (e KqiEdges) KqiTemporalFrequencyFkOrErr() (*KqiTemporalFrequency, error) {
 	if e.loadedTypes[3] {
-		if e.KqiTemporalFrecuencyFk == nil {
-			// The edge kqiTemporalFrecuencyFk was loaded in eager-loading,
+		if e.KqiTemporalFrequencyFk == nil {
+			// The edge kqiTemporalFrequencyFk was loaded in eager-loading,
 			// but was not found.
-			return nil, &NotFoundError{label: kqitemporalfrecuency.Label}
+			return nil, &NotFoundError{label: kqitemporalfrequency.Label}
 		}
-		return e.KqiTemporalFrecuencyFk, nil
+		return e.KqiTemporalFrequencyFk, nil
 	}
-	return nil, &NotLoadedError{edge: "kqiTemporalFrecuencyFk"}
+	return nil, &NotLoadedError{edge: "kqiTemporalFrequencyFk"}
 }
 
 // KqiTargetFkOrErr returns the KqiTargetFk value or an error if the edge
@@ -149,7 +149,7 @@ func (*Kqi) fkValues() []interface{} {
 		&sql.NullInt64{}, // kqi_category_kqi_category_fk
 		&sql.NullInt64{}, // kqi_perspective_kqi_perspective_fk
 		&sql.NullInt64{}, // kqi_source_kqi_source_fk
-		&sql.NullInt64{}, // kqi_temporal_frecuency_kqi_temporal_frecuency_fk
+		&sql.NullInt64{}, // kqi_temporal_frequency_kqi_temporal_frequency_fk
 	}
 }
 
@@ -221,10 +221,10 @@ func (k *Kqi) assignValues(values ...interface{}) error {
 			*k.kqi_source_kqi_source_fk = int(value.Int64)
 		}
 		if value, ok := values[3].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field kqi_temporal_frecuency_kqi_temporal_frecuency_fk", value)
+			return fmt.Errorf("unexpected type %T for edge-field kqi_temporal_frequency_kqi_temporal_frequency_fk", value)
 		} else if value.Valid {
-			k.kqi_temporal_frecuency_kqi_temporal_frecuency_fk = new(int)
-			*k.kqi_temporal_frecuency_kqi_temporal_frecuency_fk = int(value.Int64)
+			k.kqi_temporal_frequency_kqi_temporal_frequency_fk = new(int)
+			*k.kqi_temporal_frequency_kqi_temporal_frequency_fk = int(value.Int64)
 		}
 	}
 	return nil
@@ -245,9 +245,9 @@ func (k *Kqi) QueryKqiSourceFk() *KqiSourceQuery {
 	return (&KqiClient{config: k.config}).QueryKqiSourceFk(k)
 }
 
-// QueryKqiTemporalFrecuencyFk queries the kqiTemporalFrecuencyFk edge of the Kqi.
-func (k *Kqi) QueryKqiTemporalFrecuencyFk() *KqiTemporalFrecuencyQuery {
-	return (&KqiClient{config: k.config}).QueryKqiTemporalFrecuencyFk(k)
+// QueryKqiTemporalFrequencyFk queries the kqiTemporalFrequencyFk edge of the Kqi.
+func (k *Kqi) QueryKqiTemporalFrequencyFk() *KqiTemporalFrequencyQuery {
+	return (&KqiClient{config: k.config}).QueryKqiTemporalFrequencyFk(k)
 }
 
 // QueryKqiTargetFk queries the kqiTargetFk edge of the Kqi.

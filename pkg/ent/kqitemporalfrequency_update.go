@@ -14,72 +14,72 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
-// KqiTemporalFrecuencyUpdate is the builder for updating KqiTemporalFrecuency entities.
-type KqiTemporalFrecuencyUpdate struct {
+// KqiTemporalFrequencyUpdate is the builder for updating KqiTemporalFrequency entities.
+type KqiTemporalFrequencyUpdate struct {
 	config
 	hooks    []Hook
-	mutation *KqiTemporalFrecuencyMutation
+	mutation *KqiTemporalFrequencyMutation
 }
 
 // Where adds a new predicate for the builder.
-func (ktfu *KqiTemporalFrecuencyUpdate) Where(ps ...predicate.KqiTemporalFrecuency) *KqiTemporalFrecuencyUpdate {
+func (ktfu *KqiTemporalFrequencyUpdate) Where(ps ...predicate.KqiTemporalFrequency) *KqiTemporalFrequencyUpdate {
 	ktfu.mutation.predicates = append(ktfu.mutation.predicates, ps...)
 	return ktfu
 }
 
 // SetName sets the name field.
-func (ktfu *KqiTemporalFrecuencyUpdate) SetName(s string) *KqiTemporalFrecuencyUpdate {
+func (ktfu *KqiTemporalFrequencyUpdate) SetName(s string) *KqiTemporalFrequencyUpdate {
 	ktfu.mutation.SetName(s)
 	return ktfu
 }
 
-// AddKqiTemporalFrecuencyFkIDs adds the kqiTemporalFrecuencyFk edge to Kqi by ids.
-func (ktfu *KqiTemporalFrecuencyUpdate) AddKqiTemporalFrecuencyFkIDs(ids ...int) *KqiTemporalFrecuencyUpdate {
-	ktfu.mutation.AddKqiTemporalFrecuencyFkIDs(ids...)
+// AddKqiTemporalFrequencyFkIDs adds the kqiTemporalFrequencyFk edge to Kqi by ids.
+func (ktfu *KqiTemporalFrequencyUpdate) AddKqiTemporalFrequencyFkIDs(ids ...int) *KqiTemporalFrequencyUpdate {
+	ktfu.mutation.AddKqiTemporalFrequencyFkIDs(ids...)
 	return ktfu
 }
 
-// AddKqiTemporalFrecuencyFk adds the kqiTemporalFrecuencyFk edges to Kqi.
-func (ktfu *KqiTemporalFrecuencyUpdate) AddKqiTemporalFrecuencyFk(k ...*Kqi) *KqiTemporalFrecuencyUpdate {
+// AddKqiTemporalFrequencyFk adds the kqiTemporalFrequencyFk edges to Kqi.
+func (ktfu *KqiTemporalFrequencyUpdate) AddKqiTemporalFrequencyFk(k ...*Kqi) *KqiTemporalFrequencyUpdate {
 	ids := make([]int, len(k))
 	for i := range k {
 		ids[i] = k[i].ID
 	}
-	return ktfu.AddKqiTemporalFrecuencyFkIDs(ids...)
+	return ktfu.AddKqiTemporalFrequencyFkIDs(ids...)
 }
 
-// Mutation returns the KqiTemporalFrecuencyMutation object of the builder.
-func (ktfu *KqiTemporalFrecuencyUpdate) Mutation() *KqiTemporalFrecuencyMutation {
+// Mutation returns the KqiTemporalFrequencyMutation object of the builder.
+func (ktfu *KqiTemporalFrequencyUpdate) Mutation() *KqiTemporalFrequencyMutation {
 	return ktfu.mutation
 }
 
-// ClearKqiTemporalFrecuencyFk clears all "kqiTemporalFrecuencyFk" edges to type Kqi.
-func (ktfu *KqiTemporalFrecuencyUpdate) ClearKqiTemporalFrecuencyFk() *KqiTemporalFrecuencyUpdate {
-	ktfu.mutation.ClearKqiTemporalFrecuencyFk()
+// ClearKqiTemporalFrequencyFk clears all "kqiTemporalFrequencyFk" edges to type Kqi.
+func (ktfu *KqiTemporalFrequencyUpdate) ClearKqiTemporalFrequencyFk() *KqiTemporalFrequencyUpdate {
+	ktfu.mutation.ClearKqiTemporalFrequencyFk()
 	return ktfu
 }
 
-// RemoveKqiTemporalFrecuencyFkIDs removes the kqiTemporalFrecuencyFk edge to Kqi by ids.
-func (ktfu *KqiTemporalFrecuencyUpdate) RemoveKqiTemporalFrecuencyFkIDs(ids ...int) *KqiTemporalFrecuencyUpdate {
-	ktfu.mutation.RemoveKqiTemporalFrecuencyFkIDs(ids...)
+// RemoveKqiTemporalFrequencyFkIDs removes the kqiTemporalFrequencyFk edge to Kqi by ids.
+func (ktfu *KqiTemporalFrequencyUpdate) RemoveKqiTemporalFrequencyFkIDs(ids ...int) *KqiTemporalFrequencyUpdate {
+	ktfu.mutation.RemoveKqiTemporalFrequencyFkIDs(ids...)
 	return ktfu
 }
 
-// RemoveKqiTemporalFrecuencyFk removes kqiTemporalFrecuencyFk edges to Kqi.
-func (ktfu *KqiTemporalFrecuencyUpdate) RemoveKqiTemporalFrecuencyFk(k ...*Kqi) *KqiTemporalFrecuencyUpdate {
+// RemoveKqiTemporalFrequencyFk removes kqiTemporalFrequencyFk edges to Kqi.
+func (ktfu *KqiTemporalFrequencyUpdate) RemoveKqiTemporalFrequencyFk(k ...*Kqi) *KqiTemporalFrequencyUpdate {
 	ids := make([]int, len(k))
 	for i := range k {
 		ids[i] = k[i].ID
 	}
-	return ktfu.RemoveKqiTemporalFrecuencyFkIDs(ids...)
+	return ktfu.RemoveKqiTemporalFrequencyFkIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (ktfu *KqiTemporalFrecuencyUpdate) Save(ctx context.Context) (int, error) {
+func (ktfu *KqiTemporalFrequencyUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -92,7 +92,7 @@ func (ktfu *KqiTemporalFrecuencyUpdate) Save(ctx context.Context) (int, error) {
 		affected, err = ktfu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*KqiTemporalFrecuencyMutation)
+			mutation, ok := m.(*KqiTemporalFrequencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -115,7 +115,7 @@ func (ktfu *KqiTemporalFrecuencyUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ktfu *KqiTemporalFrecuencyUpdate) SaveX(ctx context.Context) int {
+func (ktfu *KqiTemporalFrequencyUpdate) SaveX(ctx context.Context) int {
 	affected, err := ktfu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -124,44 +124,44 @@ func (ktfu *KqiTemporalFrecuencyUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (ktfu *KqiTemporalFrecuencyUpdate) Exec(ctx context.Context) error {
+func (ktfu *KqiTemporalFrequencyUpdate) Exec(ctx context.Context) error {
 	_, err := ktfu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ktfu *KqiTemporalFrecuencyUpdate) ExecX(ctx context.Context) {
+func (ktfu *KqiTemporalFrequencyUpdate) ExecX(ctx context.Context) {
 	if err := ktfu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ktfu *KqiTemporalFrecuencyUpdate) defaults() {
+func (ktfu *KqiTemporalFrequencyUpdate) defaults() {
 	if _, ok := ktfu.mutation.UpdateTime(); !ok {
-		v := kqitemporalfrecuency.UpdateDefaultUpdateTime()
+		v := kqitemporalfrequency.UpdateDefaultUpdateTime()
 		ktfu.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ktfu *KqiTemporalFrecuencyUpdate) check() error {
+func (ktfu *KqiTemporalFrequencyUpdate) check() error {
 	if v, ok := ktfu.mutation.Name(); ok {
-		if err := kqitemporalfrecuency.NameValidator(v); err != nil {
+		if err := kqitemporalfrequency.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (ktfu *KqiTemporalFrecuencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (ktfu *KqiTemporalFrequencyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   kqitemporalfrecuency.Table,
-			Columns: kqitemporalfrecuency.Columns,
+			Table:   kqitemporalfrequency.Table,
+			Columns: kqitemporalfrequency.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: kqitemporalfrecuency.FieldID,
+				Column: kqitemporalfrequency.FieldID,
 			},
 		},
 	}
@@ -176,22 +176,22 @@ func (ktfu *KqiTemporalFrecuencyUpdate) sqlSave(ctx context.Context) (n int, err
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldUpdateTime,
+			Column: kqitemporalfrequency.FieldUpdateTime,
 		})
 	}
 	if value, ok := ktfu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldName,
+			Column: kqitemporalfrequency.FieldName,
 		})
 	}
-	if ktfu.mutation.KqiTemporalFrecuencyFkCleared() {
+	if ktfu.mutation.KqiTemporalFrequencyFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -202,12 +202,12 @@ func (ktfu *KqiTemporalFrecuencyUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ktfu.mutation.RemovedKqiTemporalFrecuencyFkIDs(); len(nodes) > 0 && !ktfu.mutation.KqiTemporalFrecuencyFkCleared() {
+	if nodes := ktfu.mutation.RemovedKqiTemporalFrequencyFkIDs(); len(nodes) > 0 && !ktfu.mutation.KqiTemporalFrequencyFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -221,12 +221,12 @@ func (ktfu *KqiTemporalFrecuencyUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ktfu.mutation.KqiTemporalFrecuencyFkIDs(); len(nodes) > 0 {
+	if nodes := ktfu.mutation.KqiTemporalFrequencyFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -242,7 +242,7 @@ func (ktfu *KqiTemporalFrecuencyUpdate) sqlSave(ctx context.Context) (n int, err
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ktfu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{kqitemporalfrecuency.Label}
+			err = &NotFoundError{kqitemporalfrequency.Label}
 		} else if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
 		}
@@ -251,65 +251,65 @@ func (ktfu *KqiTemporalFrecuencyUpdate) sqlSave(ctx context.Context) (n int, err
 	return n, nil
 }
 
-// KqiTemporalFrecuencyUpdateOne is the builder for updating a single KqiTemporalFrecuency entity.
-type KqiTemporalFrecuencyUpdateOne struct {
+// KqiTemporalFrequencyUpdateOne is the builder for updating a single KqiTemporalFrequency entity.
+type KqiTemporalFrequencyUpdateOne struct {
 	config
 	hooks    []Hook
-	mutation *KqiTemporalFrecuencyMutation
+	mutation *KqiTemporalFrequencyMutation
 }
 
 // SetName sets the name field.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) SetName(s string) *KqiTemporalFrecuencyUpdateOne {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) SetName(s string) *KqiTemporalFrequencyUpdateOne {
 	ktfuo.mutation.SetName(s)
 	return ktfuo
 }
 
-// AddKqiTemporalFrecuencyFkIDs adds the kqiTemporalFrecuencyFk edge to Kqi by ids.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) AddKqiTemporalFrecuencyFkIDs(ids ...int) *KqiTemporalFrecuencyUpdateOne {
-	ktfuo.mutation.AddKqiTemporalFrecuencyFkIDs(ids...)
+// AddKqiTemporalFrequencyFkIDs adds the kqiTemporalFrequencyFk edge to Kqi by ids.
+func (ktfuo *KqiTemporalFrequencyUpdateOne) AddKqiTemporalFrequencyFkIDs(ids ...int) *KqiTemporalFrequencyUpdateOne {
+	ktfuo.mutation.AddKqiTemporalFrequencyFkIDs(ids...)
 	return ktfuo
 }
 
-// AddKqiTemporalFrecuencyFk adds the kqiTemporalFrecuencyFk edges to Kqi.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) AddKqiTemporalFrecuencyFk(k ...*Kqi) *KqiTemporalFrecuencyUpdateOne {
+// AddKqiTemporalFrequencyFk adds the kqiTemporalFrequencyFk edges to Kqi.
+func (ktfuo *KqiTemporalFrequencyUpdateOne) AddKqiTemporalFrequencyFk(k ...*Kqi) *KqiTemporalFrequencyUpdateOne {
 	ids := make([]int, len(k))
 	for i := range k {
 		ids[i] = k[i].ID
 	}
-	return ktfuo.AddKqiTemporalFrecuencyFkIDs(ids...)
+	return ktfuo.AddKqiTemporalFrequencyFkIDs(ids...)
 }
 
-// Mutation returns the KqiTemporalFrecuencyMutation object of the builder.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) Mutation() *KqiTemporalFrecuencyMutation {
+// Mutation returns the KqiTemporalFrequencyMutation object of the builder.
+func (ktfuo *KqiTemporalFrequencyUpdateOne) Mutation() *KqiTemporalFrequencyMutation {
 	return ktfuo.mutation
 }
 
-// ClearKqiTemporalFrecuencyFk clears all "kqiTemporalFrecuencyFk" edges to type Kqi.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) ClearKqiTemporalFrecuencyFk() *KqiTemporalFrecuencyUpdateOne {
-	ktfuo.mutation.ClearKqiTemporalFrecuencyFk()
+// ClearKqiTemporalFrequencyFk clears all "kqiTemporalFrequencyFk" edges to type Kqi.
+func (ktfuo *KqiTemporalFrequencyUpdateOne) ClearKqiTemporalFrequencyFk() *KqiTemporalFrequencyUpdateOne {
+	ktfuo.mutation.ClearKqiTemporalFrequencyFk()
 	return ktfuo
 }
 
-// RemoveKqiTemporalFrecuencyFkIDs removes the kqiTemporalFrecuencyFk edge to Kqi by ids.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) RemoveKqiTemporalFrecuencyFkIDs(ids ...int) *KqiTemporalFrecuencyUpdateOne {
-	ktfuo.mutation.RemoveKqiTemporalFrecuencyFkIDs(ids...)
+// RemoveKqiTemporalFrequencyFkIDs removes the kqiTemporalFrequencyFk edge to Kqi by ids.
+func (ktfuo *KqiTemporalFrequencyUpdateOne) RemoveKqiTemporalFrequencyFkIDs(ids ...int) *KqiTemporalFrequencyUpdateOne {
+	ktfuo.mutation.RemoveKqiTemporalFrequencyFkIDs(ids...)
 	return ktfuo
 }
 
-// RemoveKqiTemporalFrecuencyFk removes kqiTemporalFrecuencyFk edges to Kqi.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) RemoveKqiTemporalFrecuencyFk(k ...*Kqi) *KqiTemporalFrecuencyUpdateOne {
+// RemoveKqiTemporalFrequencyFk removes kqiTemporalFrequencyFk edges to Kqi.
+func (ktfuo *KqiTemporalFrequencyUpdateOne) RemoveKqiTemporalFrequencyFk(k ...*Kqi) *KqiTemporalFrequencyUpdateOne {
 	ids := make([]int, len(k))
 	for i := range k {
 		ids[i] = k[i].ID
 	}
-	return ktfuo.RemoveKqiTemporalFrecuencyFkIDs(ids...)
+	return ktfuo.RemoveKqiTemporalFrequencyFkIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) Save(ctx context.Context) (*KqiTemporalFrecuency, error) {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) Save(ctx context.Context) (*KqiTemporalFrequency, error) {
 	var (
 		err  error
-		node *KqiTemporalFrecuency
+		node *KqiTemporalFrequency
 	)
 	ktfuo.defaults()
 	if len(ktfuo.hooks) == 0 {
@@ -319,7 +319,7 @@ func (ktfuo *KqiTemporalFrecuencyUpdateOne) Save(ctx context.Context) (*KqiTempo
 		node, err = ktfuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*KqiTemporalFrecuencyMutation)
+			mutation, ok := m.(*KqiTemporalFrequencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -342,7 +342,7 @@ func (ktfuo *KqiTemporalFrecuencyUpdateOne) Save(ctx context.Context) (*KqiTempo
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) SaveX(ctx context.Context) *KqiTemporalFrecuency {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) SaveX(ctx context.Context) *KqiTemporalFrequency {
 	node, err := ktfuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -351,72 +351,72 @@ func (ktfuo *KqiTemporalFrecuencyUpdateOne) SaveX(ctx context.Context) *KqiTempo
 }
 
 // Exec executes the query on the entity.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) Exec(ctx context.Context) error {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) Exec(ctx context.Context) error {
 	_, err := ktfuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) ExecX(ctx context.Context) {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) ExecX(ctx context.Context) {
 	if err := ktfuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) defaults() {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) defaults() {
 	if _, ok := ktfuo.mutation.UpdateTime(); !ok {
-		v := kqitemporalfrecuency.UpdateDefaultUpdateTime()
+		v := kqitemporalfrequency.UpdateDefaultUpdateTime()
 		ktfuo.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) check() error {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) check() error {
 	if v, ok := ktfuo.mutation.Name(); ok {
-		if err := kqitemporalfrecuency.NameValidator(v); err != nil {
+		if err := kqitemporalfrequency.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (ktfuo *KqiTemporalFrecuencyUpdateOne) sqlSave(ctx context.Context) (_node *KqiTemporalFrecuency, err error) {
+func (ktfuo *KqiTemporalFrequencyUpdateOne) sqlSave(ctx context.Context) (_node *KqiTemporalFrequency, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   kqitemporalfrecuency.Table,
-			Columns: kqitemporalfrecuency.Columns,
+			Table:   kqitemporalfrequency.Table,
+			Columns: kqitemporalfrequency.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: kqitemporalfrecuency.FieldID,
+				Column: kqitemporalfrequency.FieldID,
 			},
 		},
 	}
 	id, ok := ktfuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing KqiTemporalFrecuency.ID for update")}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing KqiTemporalFrequency.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if value, ok := ktfuo.mutation.UpdateTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldUpdateTime,
+			Column: kqitemporalfrequency.FieldUpdateTime,
 		})
 	}
 	if value, ok := ktfuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldName,
+			Column: kqitemporalfrequency.FieldName,
 		})
 	}
-	if ktfuo.mutation.KqiTemporalFrecuencyFkCleared() {
+	if ktfuo.mutation.KqiTemporalFrequencyFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -427,12 +427,12 @@ func (ktfuo *KqiTemporalFrecuencyUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ktfuo.mutation.RemovedKqiTemporalFrecuencyFkIDs(); len(nodes) > 0 && !ktfuo.mutation.KqiTemporalFrecuencyFkCleared() {
+	if nodes := ktfuo.mutation.RemovedKqiTemporalFrequencyFkIDs(); len(nodes) > 0 && !ktfuo.mutation.KqiTemporalFrequencyFkCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -446,12 +446,12 @@ func (ktfuo *KqiTemporalFrecuencyUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ktfuo.mutation.KqiTemporalFrecuencyFkIDs(); len(nodes) > 0 {
+	if nodes := ktfuo.mutation.KqiTemporalFrequencyFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -465,12 +465,12 @@ func (ktfuo *KqiTemporalFrecuencyUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &KqiTemporalFrecuency{config: ktfuo.config}
+	_node = &KqiTemporalFrequency{config: ktfuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, ktfuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{kqitemporalfrecuency.Label}
+			err = &NotFoundError{kqitemporalfrequency.Label}
 		} else if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
 		}

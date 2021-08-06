@@ -9,6 +9,8 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 // Alarm defines the property type schema.
@@ -19,7 +21,7 @@ type KqiCategory struct {
 // Alarm returns property type alarm.
 func (KqiCategory) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty().Unique().Annotations(entgql.OrderField("NAME")),
 	}
 }
 
@@ -29,4 +31,18 @@ func (KqiCategory) Edges() []ent.Edge {
 		edge.To("kqiCategoryFk", Kqi.Type).
 			Annotations(entgql.MapsTo("kqi")),
 	}
+}
+
+// Policy returns entity policy.
+func (KqiCategory) Policy() ent.Policy {
+	/*return authz.NewPolicy(
+		authz.WithMutationRules(
+			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)*/
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
 }

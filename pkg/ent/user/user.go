@@ -41,6 +41,10 @@ const (
 
 	// EdgeProfilePhoto holds the string denoting the profile_photo edge name in mutations.
 	EdgeProfilePhoto = "profile_photo"
+	// EdgeUserCreate holds the string denoting the user_create edge name in mutations.
+	EdgeUserCreate = "User_create"
+	// EdgeUserApproved holds the string denoting the user_approved edge name in mutations.
+	EdgeUserApproved = "User_approved"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
@@ -63,6 +67,20 @@ const (
 	ProfilePhotoInverseTable = "files"
 	// ProfilePhotoColumn is the table column denoting the profile_photo relation/edge.
 	ProfilePhotoColumn = "user_profile_photo"
+	// UserCreateTable is the table the holds the User_create relation/edge.
+	UserCreateTable = "recommendations"
+	// UserCreateInverseTable is the table name for the Recommendations entity.
+	// It exists in this package in order to avoid circular dependency with the "recommendations" package.
+	UserCreateInverseTable = "recommendations"
+	// UserCreateColumn is the table column denoting the User_create relation/edge.
+	UserCreateColumn = "user_user_create"
+	// UserApprovedTable is the table the holds the User_approved relation/edge.
+	UserApprovedTable = "recommendations"
+	// UserApprovedInverseTable is the table name for the Recommendations entity.
+	// It exists in this package in order to avoid circular dependency with the "recommendations" package.
+	UserApprovedInverseTable = "recommendations"
+	// UserApprovedColumn is the table column denoting the User_approved relation/edge.
+	UserApprovedColumn = "user_user_approved"
 	// GroupsTable is the table the holds the groups relation/edge. The primary key declared below.
 	GroupsTable = "users_group_members"
 	// GroupsInverseTable is the table name for the UsersGroup entity.

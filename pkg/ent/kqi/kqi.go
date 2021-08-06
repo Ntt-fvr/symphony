@@ -38,8 +38,8 @@ const (
 	EdgeKqiPerspectiveFk = "kqiPerspectiveFk"
 	// EdgeKqiSourceFk holds the string denoting the kqisourcefk edge name in mutations.
 	EdgeKqiSourceFk = "kqiSourceFk"
-	// EdgeKqiTemporalFrecuencyFk holds the string denoting the kqitemporalfrecuencyfk edge name in mutations.
-	EdgeKqiTemporalFrecuencyFk = "kqiTemporalFrecuencyFk"
+	// EdgeKqiTemporalFrequencyFk holds the string denoting the kqitemporalfrequencyfk edge name in mutations.
+	EdgeKqiTemporalFrequencyFk = "kqiTemporalFrequencyFk"
 	// EdgeKqiTargetFk holds the string denoting the kqitargetfk edge name in mutations.
 	EdgeKqiTargetFk = "kqiTargetFk"
 
@@ -66,13 +66,13 @@ const (
 	KqiSourceFkInverseTable = "kqi_sources"
 	// KqiSourceFkColumn is the table column denoting the kqiSourceFk relation/edge.
 	KqiSourceFkColumn = "kqi_source_kqi_source_fk"
-	// KqiTemporalFrecuencyFkTable is the table the holds the kqiTemporalFrecuencyFk relation/edge.
-	KqiTemporalFrecuencyFkTable = "kqis"
-	// KqiTemporalFrecuencyFkInverseTable is the table name for the KqiTemporalFrecuency entity.
-	// It exists in this package in order to avoid circular dependency with the "kqitemporalfrecuency" package.
-	KqiTemporalFrecuencyFkInverseTable = "kqi_temporal_frecuencies"
-	// KqiTemporalFrecuencyFkColumn is the table column denoting the kqiTemporalFrecuencyFk relation/edge.
-	KqiTemporalFrecuencyFkColumn = "kqi_temporal_frecuency_kqi_temporal_frecuency_fk"
+	// KqiTemporalFrequencyFkTable is the table the holds the kqiTemporalFrequencyFk relation/edge.
+	KqiTemporalFrequencyFkTable = "kqis"
+	// KqiTemporalFrequencyFkInverseTable is the table name for the KqiTemporalFrequency entity.
+	// It exists in this package in order to avoid circular dependency with the "kqitemporalfrequency" package.
+	KqiTemporalFrequencyFkInverseTable = "kqi_temporal_frequencies"
+	// KqiTemporalFrequencyFkColumn is the table column denoting the kqiTemporalFrequencyFk relation/edge.
+	KqiTemporalFrequencyFkColumn = "kqi_temporal_frequency_kqi_temporal_frequency_fk"
 	// KqiTargetFkTable is the table the holds the kqiTargetFk relation/edge.
 	KqiTargetFkTable = "kqi_targets"
 	// KqiTargetFkInverseTable is the table name for the KqiTarget entity.
@@ -99,7 +99,7 @@ var ForeignKeys = []string{
 	"kqi_category_kqi_category_fk",
 	"kqi_perspective_kqi_perspective_fk",
 	"kqi_source_kqi_source_fk",
-	"kqi_temporal_frecuency_kqi_temporal_frecuency_fk",
+	"kqi_temporal_frequency_kqi_temporal_frequency_fk",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

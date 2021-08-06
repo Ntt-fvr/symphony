@@ -289,7 +289,7 @@ func (c *KqiTargetClient) Instantiate(kt *KqiTarget) *KqiTarget {
 }
 
 // Instantiate entity configuration.
-func (c *KqiTemporalFrecuencyClient) Instantiate(ktf *KqiTemporalFrecuency) *KqiTemporalFrecuency {
+func (c *KqiTemporalFrequencyClient) Instantiate(ktf *KqiTemporalFrequency) *KqiTemporalFrequency {
 	ktf.config = c.config
 	return ktf
 }
@@ -352,6 +352,24 @@ func (c *PropertyClient) Instantiate(pr *Property) *Property {
 func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 	pt.config = c.config
 	return pt
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsClient) Instantiate(r *Recommendations) *Recommendations {
+	r.config = c.config
+	return r
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsCategoryClient) Instantiate(rc *RecommendationsCategory) *RecommendationsCategory {
+	rc.config = c.config
+	return rc
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *RecommendationsSources {
+	rs.config = c.config
+	return rs
 }
 
 // Instantiate entity configuration.

@@ -151,8 +151,8 @@ type KqiSource func(*sql.Selector)
 // KqiTarget is the predicate function for kqitarget builders.
 type KqiTarget func(*sql.Selector)
 
-// KqiTemporalFrecuency is the predicate function for kqitemporalfrecuency builders.
-type KqiTemporalFrecuency func(*sql.Selector)
+// KqiTemporalFrequency is the predicate function for kqitemporalfrequency builders.
+type KqiTemporalFrequency func(*sql.Selector)
 
 // Link is the predicate function for link builders.
 type Link func(*sql.Selector)
@@ -183,6 +183,15 @@ type Property func(*sql.Selector)
 
 // PropertyType is the predicate function for propertytype builders.
 type PropertyType func(*sql.Selector)
+
+// Recommendations is the predicate function for recommendations builders.
+type Recommendations func(*sql.Selector)
+
+// RecommendationsCategory is the predicate function for recommendationscategory builders.
+type RecommendationsCategory func(*sql.Selector)
+
+// RecommendationsSources is the predicate function for recommendationssources builders.
+type RecommendationsSources func(*sql.Selector)
 
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
