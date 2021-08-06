@@ -9,7 +9,7 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -17,6 +17,10 @@ import fbt from 'fbt';
 import {TitleTextCardsKqiSource} from './TitleTextCardsKqiSource';
 
 import {KqiAddItemForm} from './KqiAddItemForm';
+
+import KqiSourceFormEdit from './KqiSourceFormEdit';
+
+import KqiSourcesTypeItem from './KqiSourcesTypeItem ';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +43,17 @@ const useStyles = makeStyles(theme => ({
 
 const KqiSourcesTypes = () => {
   const classes = useStyles();
+  const [showEditCard, setShowEditCard] = useState(false);
 
+  const showEditKqiSourceForm = () => {
+    setShowEditCard(true);
+  };
+
+  if (showEditCard) {
+    return (
+      <KqiSourceFormEdit returnKqiSources={() => setShowEditCard(false)} />
+    );
+  }
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -55,24 +69,7 @@ const KqiSourcesTypes = () => {
         <Grid className={classes.paper} item xs={9}>
           <TitleTextCardsKqiSource />
           <List>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
-            <h1>lista de cards</h1>
+            <KqiSourcesTypeItem edit={() => showEditKqiSourceForm()} />
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={3}>

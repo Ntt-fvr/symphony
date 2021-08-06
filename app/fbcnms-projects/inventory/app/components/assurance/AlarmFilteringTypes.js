@@ -102,7 +102,6 @@ const AlarmFilteringTypes = () => {
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
-        dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
         returnTableAlarm={() => setShowForm(false)}
       />
     );
@@ -113,7 +112,6 @@ const AlarmFilteringTypes = () => {
       <EditAlarmFilteringItemForm
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
-        // onChangeDelete={}
       />
     );
   }
@@ -122,7 +120,7 @@ const AlarmFilteringTypes = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <ConfigureTitle
-            title={fbt('Alarm Filtering', 'Alarm Filtering Title')}
+            title={fbt('Alarm Filter', 'Alarm Filter Title')}
             subtitle={fbt(
               'Alarm filtering rules for Fault Management processes',
               'Alarm description ',
@@ -147,7 +145,7 @@ const AlarmFilteringTypes = () => {
         <Grid className={classes.addButton} item xs={2}>
           <FormField>
             <Button onClick={handleClickAdd} className={classes.button}>
-              Add Alarm Filtering
+              Add Alarm Filter
             </Button>
           </FormField>
         </Grid>
@@ -155,7 +153,6 @@ const AlarmFilteringTypes = () => {
           <AlarmFilteringTable
             dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
             edit={handleClickEdit}
-            // onChange={handleRemove}
           />
         </Grid>
       </Grid>

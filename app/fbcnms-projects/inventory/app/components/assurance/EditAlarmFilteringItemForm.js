@@ -33,6 +33,10 @@ import {makeStyles} from '@material-ui/styles';
 import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
 
 import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
+import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
+
+import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -110,9 +114,17 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
   const user = useFormInput(formValues.item.user);
-  const alarmStatus = useFormInput(formValues.item.alarmStatus.name);
+  const alarmStatus = useFormInput(formValues.item.alarmStatus.id);
   const [checked, setChecked] = useState(formValues.item.enable);
-
+  
+  const handleRemove = id => {
+    const variables: RemoveAlarmFilterMutationVariables = {
+      id: id,
+    };
+    RemoveAlarmFilterMutation(variables);
+  };
+  
+  
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
       input: {
@@ -123,7 +135,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         beginTime: moment(beginTime.value).format(),
         endTime: moment(endTime.value).format(),
         reason: reason.value,
-        alarmStatus: "8589934592",
+        alarmStatus: alarmStatus.value,
       },
     };
     EditAlarmFilterMutation(variables);
@@ -135,13 +147,17 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         <Grid container className={classes.titleButtons}>
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              {fbt('Edit Alarm Filtering', ' ')}
+              {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
           <Grid xs={1}>
-            <DeleteOutlinedIcon
+            <IconButton
+              icon={DeleteOutlinedIcon}
               className={classes.delete}
-              // onClick={() => handleRemove()}
+              onClick={() => {
+                handleRemove(formValues.item.id)
+                closeEditForm()
+              }}
             />
           </Grid>
           <Grid xs={2}>
@@ -162,7 +178,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <Button
                     onClick={() => {
                       handleClickEdit();
-                      closeEditForm();
+                      closeEditForm()
                     }}
                     className={classes.option}
                     variant="contained"
@@ -221,6 +237,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="Start" className={classes.formField}>
                     <TextField
                       {...beginTime}
+                      variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
                       name="beginTime"
@@ -231,6 +248,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="End" className={classes.formField}>
                     <TextField
                       {...endTime}
+                      variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
                       name="endTime"

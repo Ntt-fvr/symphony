@@ -9,10 +9,15 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
+import KqiFormCreate from './KqiFormCreate';
+import KqiFormEdit from './KqiFormEdit';
+
+import Button from '@symphony/design-system/components/Button';
+import KqiTable from './KqiTable';
 import fbt from 'fbt';
 
 const useStyles = makeStyles(theme => ({
@@ -23,36 +28,61 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
   },
-  listCarCounter: {
-    listStyle: 'none',
+  addKpi: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  powerSearchContainer: {
-    margin: '10px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  titulo: {
+    paddingTop: '2rem',
   },
-  titulo: {},
+  buttonAdd: {
+    padding: '0 2rem',
+  },
 }));
 
 const KqiTypes = () => {
   const classes = useStyles();
+  const [showFormCreate, setShowFormCreate] = useState(false);
+  const [showFormEdit, setShowFormEdit] = useState(false);
+
+  function handleClick() {
+    setShowFormCreate(true);
+  }
+
+  if (showFormCreate) {
+    return <KqiFormCreate returnTableKqi={() => setShowFormCreate(false)} />;
+  }
+
+  function formEdit() {
+    setShowFormEdit(true);
+  }
+
+  if (showFormEdit) {
+    return <KqiFormEdit returnTableKqi={() => setShowFormEdit(false)} />;
+  }
 
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid className={classes.titulo} item xs={9}>
+        <Grid item xs={11}>
           <ConfigureTitle
-            title={fbt('KQI (Key Quality Indicator) ', 'Counters Title')}
+            title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
             subtitle={fbt(
               'Quality indicators and targets to be defined by users and used by service quality management processes',
               'KQI description',
             )}
           />
         </Grid>
+        <Grid className={classes.addKpi} item xs={1}>
+          <Button onClick={handleClick} className={classes.buttonAdd}>
+            Add KQI
+          </Button>
+        </Grid>
       </Grid>
-      <Grid container spacing={3}>
-        <Grid className={classes.paper} item xs={3}>
-          <h1>TABLA</h1>
+      <Grid className={classes.titulo} container spacing={2}>
+        <Grid className={classes.paper} item xs={12}>
+          <KqiTable viewFormEdit={formEdit} />
         </Grid>
       </Grid>
     </div>

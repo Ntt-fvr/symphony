@@ -58,11 +58,11 @@ export default function Catalog() {
   const classes = useStyles();
   const tabBars: Array<RouteTab> = [
     {
-      id: 'alarm_filtering',
+      id: 'alarm_admission',
       tab: {
-        label: fbt('ALARM FILTERING', ''),
+        label: fbt('ALARM ADMISSION', ''),
       },
-      path: 'alarm_filtering',
+      path: 'alarm_admission',
     },
   ];
 
@@ -94,10 +94,10 @@ export default function Catalog() {
           <Switch>
             <Route
               exact
-              path={relativeUrl('/alarm_filtering')}
+              path={relativeUrl('/alarm_admission')}
               component={AlarmFilteringTypes}
             />
-            <Redirect to={relativeUrl('/alarm_filtering')} />
+            <Redirect to={relativeUrl('/alarm_admission')} />
           </Switch>
         </InventorySuspense>
       </InventoryErrorBoundary>
