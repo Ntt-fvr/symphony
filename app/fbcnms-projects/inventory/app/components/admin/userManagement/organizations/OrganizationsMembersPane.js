@@ -102,7 +102,7 @@ function SearchBar(
             <Text className={classes.text} variant="subtitle2" useEllipsis={true}>
               <fbt desc="">
                 <fbt:plural count={organization.members.length} showCount="yes">
-                  Member
+                  Members
                 </fbt:plural>
               </fbt>
             </Text>
@@ -121,7 +121,7 @@ export default function OrganizationsMembersPane(props: Props) {
     () => (
       <div className={classes.title}>
         <ProfileIcon className={classes.titleIcon} />
-        <fbt desc="">Members</fbt>
+        <fbt desc="">Organization Members</fbt>
       </div>
     ),
     [classes.title, classes.titleIcon],
@@ -132,11 +132,8 @@ export default function OrganizationsMembersPane(props: Props) {
       <div className={classes.subtitle}>
         <Text variant="body2" color="gray">
           <fbt desc="">
-            Add users to organizations in order to [TEXT]
+            View users to organization
           </fbt>
-        </Text>
-        <Text variant="body2" color="gray">
-          <fbt desc="">Users can be members of multiple organizations.</fbt>
         </Text>
       </div>
     ),
