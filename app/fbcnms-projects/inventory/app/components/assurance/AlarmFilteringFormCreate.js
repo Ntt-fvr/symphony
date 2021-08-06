@@ -173,8 +173,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     };
     AddAlarmFilterMutation(variables);
+    setTimeout(() => returnTableAlarm(), 1000)
   }
-    // setTimeout(() => returnTableAlarm(), 1)
   
   return (
     <div className={classes.root}>

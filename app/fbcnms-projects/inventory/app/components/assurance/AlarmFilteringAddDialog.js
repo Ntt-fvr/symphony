@@ -60,7 +60,11 @@ type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   onAlarmSelected: () => void,
-  onAlarmSelectedData: string,
+  onAlarmSelectedData: {
+    name: string,
+    beginTime: string,
+    endTime: string,
+  },
 |}>;
 
 const AlarmFilteringAddDialog = (props: Props) => {
@@ -97,10 +101,10 @@ const AlarmFilteringAddDialog = (props: Props) => {
             <Text>During the period:</Text>
           </Grid>
           <Grid item xs={6}>
-            <Text weight="bold">Start: DateTimeFormat.dateTime(onAlarmSelectedData.beginTime)</Text>
+            <Text weight="bold">Start: {DateTimeFormat.dateTime(onAlarmSelectedData.beginTime)}</Text>
           </Grid>
           <Grid item xs={6}>
-            <Text weight="bold">End: DateTimeFormat.dateTime(onAlarmSelectedData.endTime) </Text>
+            <Text weight="bold">End: {DateTimeFormat.dateTime(onAlarmSelectedData.endTime)} </Text>
           </Grid>
         </Grid>
       </DialogContent>
