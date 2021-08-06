@@ -84,7 +84,7 @@ export default function PermissionsPolicyRulesPane(props: Props) {
           },
           {
             tab: {
-              label: `${fbt('Inventory PerformanceCatalog', '')}`,
+              label: `${fbt('Inventory Catalog', '')}`,
             },
             view: (
               <PermissionsPolicyInventoryCatalogRulesTab

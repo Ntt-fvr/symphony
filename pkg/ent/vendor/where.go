@@ -409,6 +409,34 @@ func HasVendorFkWith(preds ...predicate.Counter) predicate.Vendor {
 	})
 }
 
+// HasVendorsRecomendations applies the HasEdge predicate on the "vendors_recomendations" edge.
+func HasVendorsRecomendations() predicate.Vendor {
+	return predicate.Vendor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VendorsRecomendationsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VendorsRecomendationsTable, VendorsRecomendationsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVendorsRecomendationsWith applies the HasEdge predicate on the "vendors_recomendations" edge with a given conditions (other predicates).
+func HasVendorsRecomendationsWith(preds ...predicate.Recommendations) predicate.Vendor {
+	return predicate.Vendor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VendorsRecomendationsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VendorsRecomendationsTable, VendorsRecomendationsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Vendor) predicate.Vendor {
 	return predicate.Vendor(func(s *sql.Selector) {

@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
@@ -32,42 +33,9 @@ func (ktu *KqiTargetUpdate) Where(ps ...predicate.KqiTarget) *KqiTargetUpdate {
 	return ktu
 }
 
-// SetComparator sets the comparator field.
-func (ktu *KqiTargetUpdate) SetComparator(f float64) *KqiTargetUpdate {
-	ktu.mutation.ResetComparator()
-	ktu.mutation.SetComparator(f)
-	return ktu
-}
-
-// AddComparator adds f to comparator.
-func (ktu *KqiTargetUpdate) AddComparator(f float64) *KqiTargetUpdate {
-	ktu.mutation.AddComparator(f)
-	return ktu
-}
-
-// SetReferenceValue sets the referenceValue field.
-func (ktu *KqiTargetUpdate) SetReferenceValue(f float64) *KqiTargetUpdate {
-	ktu.mutation.ResetReferenceValue()
-	ktu.mutation.SetReferenceValue(f)
-	return ktu
-}
-
-// AddReferenceValue adds f to referenceValue.
-func (ktu *KqiTargetUpdate) AddReferenceValue(f float64) *KqiTargetUpdate {
-	ktu.mutation.AddReferenceValue(f)
-	return ktu
-}
-
-// SetWarningComparator sets the warningComparator field.
-func (ktu *KqiTargetUpdate) SetWarningComparator(f float64) *KqiTargetUpdate {
-	ktu.mutation.ResetWarningComparator()
-	ktu.mutation.SetWarningComparator(f)
-	return ktu
-}
-
-// AddWarningComparator adds f to warningComparator.
-func (ktu *KqiTargetUpdate) AddWarningComparator(f float64) *KqiTargetUpdate {
-	ktu.mutation.AddWarningComparator(f)
+// SetName sets the name field.
+func (ktu *KqiTargetUpdate) SetName(s string) *KqiTargetUpdate {
+	ktu.mutation.SetName(s)
 	return ktu
 }
 
@@ -115,9 +83,9 @@ func (ktu *KqiTargetUpdate) SetImpact(s string) *KqiTargetUpdate {
 	return ktu
 }
 
-// SetActive sets the active field.
-func (ktu *KqiTargetUpdate) SetActive(b bool) *KqiTargetUpdate {
-	ktu.mutation.SetActive(b)
+// SetStatus sets the status field.
+func (ktu *KqiTargetUpdate) SetStatus(b bool) *KqiTargetUpdate {
+	ktu.mutation.SetStatus(b)
 	return ktu
 }
 
@@ -140,6 +108,21 @@ func (ktu *KqiTargetUpdate) SetKqiTargetFk(k *Kqi) *KqiTargetUpdate {
 	return ktu.SetKqiTargetFkID(k.ID)
 }
 
+// AddKqitargetcomparatorfkIDs adds the kqitargetcomparatorfk edge to KqiComparator by ids.
+func (ktu *KqiTargetUpdate) AddKqitargetcomparatorfkIDs(ids ...int) *KqiTargetUpdate {
+	ktu.mutation.AddKqitargetcomparatorfkIDs(ids...)
+	return ktu
+}
+
+// AddKqitargetcomparatorfk adds the kqitargetcomparatorfk edges to KqiComparator.
+func (ktu *KqiTargetUpdate) AddKqitargetcomparatorfk(k ...*KqiComparator) *KqiTargetUpdate {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return ktu.AddKqitargetcomparatorfkIDs(ids...)
+}
+
 // Mutation returns the KqiTargetMutation object of the builder.
 func (ktu *KqiTargetUpdate) Mutation() *KqiTargetMutation {
 	return ktu.mutation
@@ -151,6 +134,27 @@ func (ktu *KqiTargetUpdate) ClearKqiTargetFk() *KqiTargetUpdate {
 	return ktu
 }
 
+// ClearKqitargetcomparatorfk clears all "kqitargetcomparatorfk" edges to type KqiComparator.
+func (ktu *KqiTargetUpdate) ClearKqitargetcomparatorfk() *KqiTargetUpdate {
+	ktu.mutation.ClearKqitargetcomparatorfk()
+	return ktu
+}
+
+// RemoveKqitargetcomparatorfkIDs removes the kqitargetcomparatorfk edge to KqiComparator by ids.
+func (ktu *KqiTargetUpdate) RemoveKqitargetcomparatorfkIDs(ids ...int) *KqiTargetUpdate {
+	ktu.mutation.RemoveKqitargetcomparatorfkIDs(ids...)
+	return ktu
+}
+
+// RemoveKqitargetcomparatorfk removes kqitargetcomparatorfk edges to KqiComparator.
+func (ktu *KqiTargetUpdate) RemoveKqitargetcomparatorfk(k ...*KqiComparator) *KqiTargetUpdate {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return ktu.RemoveKqitargetcomparatorfkIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ktu *KqiTargetUpdate) Save(ctx context.Context) (int, error) {
 	var (
@@ -159,12 +163,18 @@ func (ktu *KqiTargetUpdate) Save(ctx context.Context) (int, error) {
 	)
 	ktu.defaults()
 	if len(ktu.hooks) == 0 {
+		if err = ktu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ktu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*KqiTargetMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ktu.check(); err != nil {
+				return 0, err
 			}
 			ktu.mutation = mutation
 			affected, err = ktu.sqlSave(ctx)
@@ -211,6 +221,16 @@ func (ktu *KqiTargetUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ktu *KqiTargetUpdate) check() error {
+	if v, ok := ktu.mutation.Name(); ok {
+		if err := kqitarget.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -236,46 +256,11 @@ func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: kqitarget.FieldUpdateTime,
 		})
 	}
-	if value, ok := ktu.mutation.Comparator(); ok {
+	if value, ok := ktu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: kqitarget.FieldComparator,
-		})
-	}
-	if value, ok := ktu.mutation.AddedComparator(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldComparator,
-		})
-	}
-	if value, ok := ktu.mutation.ReferenceValue(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldReferenceValue,
-		})
-	}
-	if value, ok := ktu.mutation.AddedReferenceValue(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldReferenceValue,
-		})
-	}
-	if value, ok := ktu.mutation.WarningComparator(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldWarningComparator,
-		})
-	}
-	if value, ok := ktu.mutation.AddedWarningComparator(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldWarningComparator,
+			Column: kqitarget.FieldName,
 		})
 	}
 	if value, ok := ktu.mutation.Frame(); ok {
@@ -327,11 +312,11 @@ func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: kqitarget.FieldImpact,
 		})
 	}
-	if value, ok := ktu.mutation.Active(); ok {
+	if value, ok := ktu.mutation.Status(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: kqitarget.FieldActive,
+			Column: kqitarget.FieldStatus,
 		})
 	}
 	if ktu.mutation.KqiTargetFkCleared() {
@@ -369,6 +354,60 @@ func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ktu.mutation.KqitargetcomparatorfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ktu.mutation.RemovedKqitargetcomparatorfkIDs(); len(nodes) > 0 && !ktu.mutation.KqitargetcomparatorfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ktu.mutation.KqitargetcomparatorfkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ktu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{kqitarget.Label}
@@ -387,42 +426,9 @@ type KqiTargetUpdateOne struct {
 	mutation *KqiTargetMutation
 }
 
-// SetComparator sets the comparator field.
-func (ktuo *KqiTargetUpdateOne) SetComparator(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.ResetComparator()
-	ktuo.mutation.SetComparator(f)
-	return ktuo
-}
-
-// AddComparator adds f to comparator.
-func (ktuo *KqiTargetUpdateOne) AddComparator(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.AddComparator(f)
-	return ktuo
-}
-
-// SetReferenceValue sets the referenceValue field.
-func (ktuo *KqiTargetUpdateOne) SetReferenceValue(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.ResetReferenceValue()
-	ktuo.mutation.SetReferenceValue(f)
-	return ktuo
-}
-
-// AddReferenceValue adds f to referenceValue.
-func (ktuo *KqiTargetUpdateOne) AddReferenceValue(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.AddReferenceValue(f)
-	return ktuo
-}
-
-// SetWarningComparator sets the warningComparator field.
-func (ktuo *KqiTargetUpdateOne) SetWarningComparator(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.ResetWarningComparator()
-	ktuo.mutation.SetWarningComparator(f)
-	return ktuo
-}
-
-// AddWarningComparator adds f to warningComparator.
-func (ktuo *KqiTargetUpdateOne) AddWarningComparator(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.AddWarningComparator(f)
+// SetName sets the name field.
+func (ktuo *KqiTargetUpdateOne) SetName(s string) *KqiTargetUpdateOne {
+	ktuo.mutation.SetName(s)
 	return ktuo
 }
 
@@ -470,9 +476,9 @@ func (ktuo *KqiTargetUpdateOne) SetImpact(s string) *KqiTargetUpdateOne {
 	return ktuo
 }
 
-// SetActive sets the active field.
-func (ktuo *KqiTargetUpdateOne) SetActive(b bool) *KqiTargetUpdateOne {
-	ktuo.mutation.SetActive(b)
+// SetStatus sets the status field.
+func (ktuo *KqiTargetUpdateOne) SetStatus(b bool) *KqiTargetUpdateOne {
+	ktuo.mutation.SetStatus(b)
 	return ktuo
 }
 
@@ -495,6 +501,21 @@ func (ktuo *KqiTargetUpdateOne) SetKqiTargetFk(k *Kqi) *KqiTargetUpdateOne {
 	return ktuo.SetKqiTargetFkID(k.ID)
 }
 
+// AddKqitargetcomparatorfkIDs adds the kqitargetcomparatorfk edge to KqiComparator by ids.
+func (ktuo *KqiTargetUpdateOne) AddKqitargetcomparatorfkIDs(ids ...int) *KqiTargetUpdateOne {
+	ktuo.mutation.AddKqitargetcomparatorfkIDs(ids...)
+	return ktuo
+}
+
+// AddKqitargetcomparatorfk adds the kqitargetcomparatorfk edges to KqiComparator.
+func (ktuo *KqiTargetUpdateOne) AddKqitargetcomparatorfk(k ...*KqiComparator) *KqiTargetUpdateOne {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return ktuo.AddKqitargetcomparatorfkIDs(ids...)
+}
+
 // Mutation returns the KqiTargetMutation object of the builder.
 func (ktuo *KqiTargetUpdateOne) Mutation() *KqiTargetMutation {
 	return ktuo.mutation
@@ -506,6 +527,27 @@ func (ktuo *KqiTargetUpdateOne) ClearKqiTargetFk() *KqiTargetUpdateOne {
 	return ktuo
 }
 
+// ClearKqitargetcomparatorfk clears all "kqitargetcomparatorfk" edges to type KqiComparator.
+func (ktuo *KqiTargetUpdateOne) ClearKqitargetcomparatorfk() *KqiTargetUpdateOne {
+	ktuo.mutation.ClearKqitargetcomparatorfk()
+	return ktuo
+}
+
+// RemoveKqitargetcomparatorfkIDs removes the kqitargetcomparatorfk edge to KqiComparator by ids.
+func (ktuo *KqiTargetUpdateOne) RemoveKqitargetcomparatorfkIDs(ids ...int) *KqiTargetUpdateOne {
+	ktuo.mutation.RemoveKqitargetcomparatorfkIDs(ids...)
+	return ktuo
+}
+
+// RemoveKqitargetcomparatorfk removes kqitargetcomparatorfk edges to KqiComparator.
+func (ktuo *KqiTargetUpdateOne) RemoveKqitargetcomparatorfk(k ...*KqiComparator) *KqiTargetUpdateOne {
+	ids := make([]int, len(k))
+	for i := range k {
+		ids[i] = k[i].ID
+	}
+	return ktuo.RemoveKqitargetcomparatorfkIDs(ids...)
+}
+
 // Save executes the query and returns the updated entity.
 func (ktuo *KqiTargetUpdateOne) Save(ctx context.Context) (*KqiTarget, error) {
 	var (
@@ -514,12 +556,18 @@ func (ktuo *KqiTargetUpdateOne) Save(ctx context.Context) (*KqiTarget, error) {
 	)
 	ktuo.defaults()
 	if len(ktuo.hooks) == 0 {
+		if err = ktuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = ktuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*KqiTargetMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ktuo.check(); err != nil {
+				return nil, err
 			}
 			ktuo.mutation = mutation
 			node, err = ktuo.sqlSave(ctx)
@@ -566,6 +614,16 @@ func (ktuo *KqiTargetUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ktuo *KqiTargetUpdateOne) check() error {
+	if v, ok := ktuo.mutation.Name(); ok {
+		if err := kqitarget.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -589,46 +647,11 @@ func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, 
 			Column: kqitarget.FieldUpdateTime,
 		})
 	}
-	if value, ok := ktuo.mutation.Comparator(); ok {
+	if value, ok := ktuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: kqitarget.FieldComparator,
-		})
-	}
-	if value, ok := ktuo.mutation.AddedComparator(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldComparator,
-		})
-	}
-	if value, ok := ktuo.mutation.ReferenceValue(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldReferenceValue,
-		})
-	}
-	if value, ok := ktuo.mutation.AddedReferenceValue(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldReferenceValue,
-		})
-	}
-	if value, ok := ktuo.mutation.WarningComparator(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldWarningComparator,
-		})
-	}
-	if value, ok := ktuo.mutation.AddedWarningComparator(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeFloat64,
-			Value:  value,
-			Column: kqitarget.FieldWarningComparator,
+			Column: kqitarget.FieldName,
 		})
 	}
 	if value, ok := ktuo.mutation.Frame(); ok {
@@ -680,11 +703,11 @@ func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, 
 			Column: kqitarget.FieldImpact,
 		})
 	}
-	if value, ok := ktuo.mutation.Active(); ok {
+	if value, ok := ktuo.mutation.Status(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: kqitarget.FieldActive,
+			Column: kqitarget.FieldStatus,
 		})
 	}
 	if ktuo.mutation.KqiTargetFkCleared() {
@@ -714,6 +737,60 @@ func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: kqi.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ktuo.mutation.KqitargetcomparatorfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ktuo.mutation.RemovedKqitargetcomparatorfkIDs(); len(nodes) > 0 && !ktuo.mutation.KqitargetcomparatorfkCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ktuo.mutation.KqitargetcomparatorfkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   kqitarget.KqitargetcomparatorfkTable,
+			Columns: []string{kqitarget.KqitargetcomparatorfkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kqicomparator.FieldID,
 				},
 			},
 		}

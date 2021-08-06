@@ -1103,25 +1103,25 @@ func HasEventseverityWith(preds ...predicate.EventSeverity) predicate.Rule {
 	})
 }
 
-// HasTreshold applies the HasEdge predicate on the "treshold" edge.
-func HasTreshold() predicate.Rule {
+// HasThreshold applies the HasEdge predicate on the "threshold" edge.
+func HasThreshold() predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TresholdTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, TresholdTable, TresholdColumn),
+			sqlgraph.To(ThresholdTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ThresholdTable, ThresholdColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTresholdWith applies the HasEdge predicate on the "treshold" edge with a given conditions (other predicates).
-func HasTresholdWith(preds ...predicate.Treshold) predicate.Rule {
+// HasThresholdWith applies the HasEdge predicate on the "threshold" edge with a given conditions (other predicates).
+func HasThresholdWith(preds ...predicate.Threshold) predicate.Rule {
 	return predicate.Rule(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TresholdInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, TresholdTable, TresholdColumn),
+			sqlgraph.To(ThresholdInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ThresholdTable, ThresholdColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

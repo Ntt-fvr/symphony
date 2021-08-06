@@ -78,19 +78,6 @@ func (f BlockInstanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return f(ctx, mv)
 }
 
-// The CategoryFunc type is an adapter to allow the use of ordinary
-// function as Category mutator.
-type CategoryFunc func(context.Context, *ent.CategoryMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f CategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.CategoryMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CategoryMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The CheckListCategoryFunc type is an adapter to allow the use of ordinary
 // function as CheckListCategory mutator.
 type CheckListCategoryFunc func(context.Context, *ent.CheckListCategoryMutation) (ent.Value, error)
@@ -572,6 +559,45 @@ func (f KqiFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	return f(ctx, mv)
 }
 
+// The KqiCategoryFunc type is an adapter to allow the use of ordinary
+// function as KqiCategory mutator.
+type KqiCategoryFunc func(context.Context, *ent.KqiCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f KqiCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KqiCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The KqiComparatorFunc type is an adapter to allow the use of ordinary
+// function as KqiComparator mutator.
+type KqiComparatorFunc func(context.Context, *ent.KqiComparatorMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f KqiComparatorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KqiComparatorMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiComparatorMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The KqiPerspectiveFunc type is an adapter to allow the use of ordinary
+// function as KqiPerspective mutator.
+type KqiPerspectiveFunc func(context.Context, *ent.KqiPerspectiveMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f KqiPerspectiveFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KqiPerspectiveMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiPerspectiveMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The KqiSourceFunc type is an adapter to allow the use of ordinary
 // function as KqiSource mutator.
 type KqiSourceFunc func(context.Context, *ent.KqiSourceMutation) (ent.Value, error)
@@ -594,6 +620,19 @@ func (f KqiTargetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	mv, ok := m.(*ent.KqiTargetMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiTargetMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The KqiTemporalFrequencyFunc type is an adapter to allow the use of ordinary
+// function as KqiTemporalFrequency mutator.
+type KqiTemporalFrequencyFunc func(context.Context, *ent.KqiTemporalFrequencyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f KqiTemporalFrequencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KqiTemporalFrequencyMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KqiTemporalFrequencyMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -637,6 +676,19 @@ func (f LocationTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The OrganizationFunc type is an adapter to allow the use of ordinary
+// function as Organization mutator.
+type OrganizationFunc func(context.Context, *ent.OrganizationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrganizationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrganizationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrganizationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The PermissionsPolicyFunc type is an adapter to allow the use of ordinary
 // function as PermissionsPolicy mutator.
 type PermissionsPolicyFunc func(context.Context, *ent.PermissionsPolicyMutation) (ent.Value, error)
@@ -646,19 +698,6 @@ func (f PermissionsPolicyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.
 	mv, ok := m.(*ent.PermissionsPolicyMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PermissionsPolicyMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The PerspectiveFunc type is an adapter to allow the use of ordinary
-// function as Perspective mutator.
-type PerspectiveFunc func(context.Context, *ent.PerspectiveMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f PerspectiveFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.PerspectiveMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PerspectiveMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -724,6 +763,45 @@ func (f PropertyTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	mv, ok := m.(*ent.PropertyTypeMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PropertyTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RecommendationsFunc type is an adapter to allow the use of ordinary
+// function as Recommendations mutator.
+type RecommendationsFunc func(context.Context, *ent.RecommendationsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecommendationsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RecommendationsMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecommendationsMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RecommendationsCategoryFunc type is an adapter to allow the use of ordinary
+// function as RecommendationsCategory mutator.
+type RecommendationsCategoryFunc func(context.Context, *ent.RecommendationsCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecommendationsCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RecommendationsCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecommendationsCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RecommendationsSourcesFunc type is an adapter to allow the use of ordinary
+// function as RecommendationsSources mutator.
+type RecommendationsSourcesFunc func(context.Context, *ent.RecommendationsSourcesMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecommendationsSourcesFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RecommendationsSourcesMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecommendationsSourcesMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -923,28 +1001,15 @@ func (f TechFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return f(ctx, mv)
 }
 
-// The TemporalFrecuencyFunc type is an adapter to allow the use of ordinary
-// function as TemporalFrecuency mutator.
-type TemporalFrecuencyFunc func(context.Context, *ent.TemporalFrecuencyMutation) (ent.Value, error)
+// The ThresholdFunc type is an adapter to allow the use of ordinary
+// function as Threshold mutator.
+type ThresholdFunc func(context.Context, *ent.ThresholdMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f TemporalFrecuencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.TemporalFrecuencyMutation)
+func (f ThresholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ThresholdMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TemporalFrecuencyMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The TresholdFunc type is an adapter to allow the use of ordinary
-// function as Treshold mutator.
-type TresholdFunc func(context.Context, *ent.TresholdMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f TresholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.TresholdMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TresholdMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ThresholdMutation", m)
 	}
 	return f(ctx, mv)
 }

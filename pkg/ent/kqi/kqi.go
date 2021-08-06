@@ -32,33 +32,33 @@ const (
 	// FieldFormula holds the string denoting the formula field in the database.
 	FieldFormula = "formula"
 
-	// EdgeCategoryFk holds the string denoting the categoryfk edge name in mutations.
-	EdgeCategoryFk = "categoryFk"
-	// EdgePerspectiveFk holds the string denoting the perspectivefk edge name in mutations.
-	EdgePerspectiveFk = "perspectiveFk"
+	// EdgeKqiCategoryFk holds the string denoting the kqicategoryfk edge name in mutations.
+	EdgeKqiCategoryFk = "kqiCategoryFk"
+	// EdgeKqiPerspectiveFk holds the string denoting the kqiperspectivefk edge name in mutations.
+	EdgeKqiPerspectiveFk = "kqiPerspectiveFk"
 	// EdgeKqiSourceFk holds the string denoting the kqisourcefk edge name in mutations.
 	EdgeKqiSourceFk = "kqiSourceFk"
-	// EdgeTemporalFrecuencyFk holds the string denoting the temporalfrecuencyfk edge name in mutations.
-	EdgeTemporalFrecuencyFk = "temporalFrecuencyFk"
+	// EdgeKqiTemporalFrequencyFk holds the string denoting the kqitemporalfrequencyfk edge name in mutations.
+	EdgeKqiTemporalFrequencyFk = "kqiTemporalFrequencyFk"
 	// EdgeKqiTargetFk holds the string denoting the kqitargetfk edge name in mutations.
 	EdgeKqiTargetFk = "kqiTargetFk"
 
 	// Table holds the table name of the kqi in the database.
 	Table = "kqis"
-	// CategoryFkTable is the table the holds the categoryFk relation/edge.
-	CategoryFkTable = "kqis"
-	// CategoryFkInverseTable is the table name for the Category entity.
-	// It exists in this package in order to avoid circular dependency with the "category" package.
-	CategoryFkInverseTable = "categories"
-	// CategoryFkColumn is the table column denoting the categoryFk relation/edge.
-	CategoryFkColumn = "category_category_fk"
-	// PerspectiveFkTable is the table the holds the perspectiveFk relation/edge.
-	PerspectiveFkTable = "kqis"
-	// PerspectiveFkInverseTable is the table name for the Perspective entity.
-	// It exists in this package in order to avoid circular dependency with the "perspective" package.
-	PerspectiveFkInverseTable = "perspectives"
-	// PerspectiveFkColumn is the table column denoting the perspectiveFk relation/edge.
-	PerspectiveFkColumn = "perspective_perspective_fk"
+	// KqiCategoryFkTable is the table the holds the kqiCategoryFk relation/edge.
+	KqiCategoryFkTable = "kqis"
+	// KqiCategoryFkInverseTable is the table name for the KqiCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "kqicategory" package.
+	KqiCategoryFkInverseTable = "kqi_categories"
+	// KqiCategoryFkColumn is the table column denoting the kqiCategoryFk relation/edge.
+	KqiCategoryFkColumn = "kqi_category_kqi_category_fk"
+	// KqiPerspectiveFkTable is the table the holds the kqiPerspectiveFk relation/edge.
+	KqiPerspectiveFkTable = "kqis"
+	// KqiPerspectiveFkInverseTable is the table name for the KqiPerspective entity.
+	// It exists in this package in order to avoid circular dependency with the "kqiperspective" package.
+	KqiPerspectiveFkInverseTable = "kqi_perspectives"
+	// KqiPerspectiveFkColumn is the table column denoting the kqiPerspectiveFk relation/edge.
+	KqiPerspectiveFkColumn = "kqi_perspective_kqi_perspective_fk"
 	// KqiSourceFkTable is the table the holds the kqiSourceFk relation/edge.
 	KqiSourceFkTable = "kqis"
 	// KqiSourceFkInverseTable is the table name for the KqiSource entity.
@@ -66,13 +66,13 @@ const (
 	KqiSourceFkInverseTable = "kqi_sources"
 	// KqiSourceFkColumn is the table column denoting the kqiSourceFk relation/edge.
 	KqiSourceFkColumn = "kqi_source_kqi_source_fk"
-	// TemporalFrecuencyFkTable is the table the holds the temporalFrecuencyFk relation/edge.
-	TemporalFrecuencyFkTable = "kqis"
-	// TemporalFrecuencyFkInverseTable is the table name for the TemporalFrecuency entity.
-	// It exists in this package in order to avoid circular dependency with the "temporalfrecuency" package.
-	TemporalFrecuencyFkInverseTable = "temporal_frecuencies"
-	// TemporalFrecuencyFkColumn is the table column denoting the temporalFrecuencyFk relation/edge.
-	TemporalFrecuencyFkColumn = "temporal_frecuency_temporal_frecuency_fk"
+	// KqiTemporalFrequencyFkTable is the table the holds the kqiTemporalFrequencyFk relation/edge.
+	KqiTemporalFrequencyFkTable = "kqis"
+	// KqiTemporalFrequencyFkInverseTable is the table name for the KqiTemporalFrequency entity.
+	// It exists in this package in order to avoid circular dependency with the "kqitemporalfrequency" package.
+	KqiTemporalFrequencyFkInverseTable = "kqi_temporal_frequencies"
+	// KqiTemporalFrequencyFkColumn is the table column denoting the kqiTemporalFrequencyFk relation/edge.
+	KqiTemporalFrequencyFkColumn = "kqi_temporal_frequency_kqi_temporal_frequency_fk"
 	// KqiTargetFkTable is the table the holds the kqiTargetFk relation/edge.
 	KqiTargetFkTable = "kqi_targets"
 	// KqiTargetFkInverseTable is the table name for the KqiTarget entity.
@@ -96,10 +96,10 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Kqi type.
 var ForeignKeys = []string{
-	"category_category_fk",
+	"kqi_category_kqi_category_fk",
+	"kqi_perspective_kqi_perspective_fk",
 	"kqi_source_kqi_source_fk",
-	"perspective_perspective_fk",
-	"temporal_frecuency_temporal_frecuency_fk",
+	"kqi_temporal_frequency_kqi_temporal_frequency_fk",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

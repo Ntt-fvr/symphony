@@ -13,6 +13,7 @@ import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useFormInput} from './common/useFormInput';
 
 import classNames from 'classnames';
 
@@ -40,7 +41,7 @@ const useStyles = makeStyles(() => ({
 
 const AlarmStatusQuery = graphql`
   query AlarmFilteringStatusQuery {
-    alarmStatuss {
+    alarmStatus {
       edges {
         node {
           name
@@ -63,42 +64,47 @@ export const AlarmFilteringStatus = (props: Props) => {
     {},
   );
   
-  const dataStatusResponse = dataStatus.alarmStatuss?.edges.map((item, index) => item.node).filter(item => item.name == buttonName)
+  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node).filter(item => item.name == buttonName)
+
   return (
     <>
       {dataStatusResponse.map((item, index) => {
+        const alarmStatus = useFormInput(item.id);
         switch (buttonName) {
           case 'Active':
             return (
-              <Button
+              <Button 
+                {...alarmStatus}
                 key={item.id}
                 value={item.id}
                 variant="outlined"
                 weight="bold"
                 className={classNames(classes.button, classes.buttonActive)}>
-                Active
+                {item.name}
               </Button>
             );
           case 'Pending':
             return (
               <Button
+                {...alarmStatus}
                 key={item.id}
                 value={item.id}
                 variant="outlined"
                 weight="bold"
                 className={classNames(classes.button, classes.buttonPendig)}>
-                Pending
+                {item.name}
               </Button>
             );
           case 'Closed':
             return (
               <Button
+                {...alarmStatus}
                 key={item.id}
                 value={item.id}
                 variant="outlined"
                 weight="bold"
                 className={classNames(classes.button, classes.buttonClose)}>
-                Closed
+                {item.name}
               </Button>
             );
           }

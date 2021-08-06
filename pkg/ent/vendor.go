@@ -35,9 +35,11 @@ type Vendor struct {
 type VendorEdges struct {
 	// VendorFk holds the value of the vendor_fk edge.
 	VendorFk []*Counter
+	// VendorsRecomendations holds the value of the vendors_recomendations edge.
+	VendorsRecomendations []*Recommendations
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // VendorFkOrErr returns the VendorFk value or an error if the edge
@@ -47,6 +49,15 @@ func (e VendorEdges) VendorFkOrErr() ([]*Counter, error) {
 		return e.VendorFk, nil
 	}
 	return nil, &NotLoadedError{edge: "vendor_fk"}
+}
+
+// VendorsRecomendationsOrErr returns the VendorsRecomendations value or an error if the edge
+// was not loaded in eager-loading.
+func (e VendorEdges) VendorsRecomendationsOrErr() ([]*Recommendations, error) {
+	if e.loadedTypes[1] {
+		return e.VendorsRecomendations, nil
+	}
+	return nil, &NotLoadedError{edge: "vendors_recomendations"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -92,6 +103,11 @@ func (v *Vendor) assignValues(values ...interface{}) error {
 // QueryVendorFk queries the vendor_fk edge of the Vendor.
 func (v *Vendor) QueryVendorFk() *CounterQuery {
 	return (&VendorClient{config: v.config}).QueryVendorFk(v)
+}
+
+// QueryVendorsRecomendations queries the vendors_recomendations edge of the Vendor.
+func (v *Vendor) QueryVendorsRecomendations() *RecommendationsQuery {
+	return (&VendorClient{config: v.config}).QueryVendorsRecomendations(v)
 }
 
 // Update returns a builder for updating this Vendor.

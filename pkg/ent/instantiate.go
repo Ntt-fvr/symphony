@@ -37,12 +37,6 @@ func (c *BlockInstanceClient) Instantiate(bi *BlockInstance) *BlockInstance {
 }
 
 // Instantiate entity configuration.
-func (c *CategoryClient) Instantiate(ca *Category) *Category {
-	ca.config = c.config
-	return ca
-}
-
-// Instantiate entity configuration.
 func (c *CheckListCategoryClient) Instantiate(clc *CheckListCategory) *CheckListCategory {
 	clc.config = c.config
 	return clc
@@ -265,6 +259,24 @@ func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
 }
 
 // Instantiate entity configuration.
+func (c *KqiCategoryClient) Instantiate(kc *KqiCategory) *KqiCategory {
+	kc.config = c.config
+	return kc
+}
+
+// Instantiate entity configuration.
+func (c *KqiComparatorClient) Instantiate(kc *KqiComparator) *KqiComparator {
+	kc.config = c.config
+	return kc
+}
+
+// Instantiate entity configuration.
+func (c *KqiPerspectiveClient) Instantiate(kp *KqiPerspective) *KqiPerspective {
+	kp.config = c.config
+	return kp
+}
+
+// Instantiate entity configuration.
 func (c *KqiSourceClient) Instantiate(ks *KqiSource) *KqiSource {
 	ks.config = c.config
 	return ks
@@ -274,6 +286,12 @@ func (c *KqiSourceClient) Instantiate(ks *KqiSource) *KqiSource {
 func (c *KqiTargetClient) Instantiate(kt *KqiTarget) *KqiTarget {
 	kt.config = c.config
 	return kt
+}
+
+// Instantiate entity configuration.
+func (c *KqiTemporalFrequencyClient) Instantiate(ktf *KqiTemporalFrequency) *KqiTemporalFrequency {
+	ktf.config = c.config
+	return ktf
 }
 
 // Instantiate entity configuration.
@@ -295,15 +313,15 @@ func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 }
 
 // Instantiate entity configuration.
-func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
-	pp.config = c.config
-	return pp
+func (c *OrganizationClient) Instantiate(o *Organization) *Organization {
+	o.config = c.config
+	return o
 }
 
 // Instantiate entity configuration.
-func (c *PerspectiveClient) Instantiate(pe *Perspective) *Perspective {
-	pe.config = c.config
-	return pe
+func (c *PermissionsPolicyClient) Instantiate(pp *PermissionsPolicy) *PermissionsPolicy {
+	pp.config = c.config
+	return pp
 }
 
 // Instantiate entity configuration.
@@ -334,6 +352,24 @@ func (c *PropertyClient) Instantiate(pr *Property) *Property {
 func (c *PropertyTypeClient) Instantiate(pt *PropertyType) *PropertyType {
 	pt.config = c.config
 	return pt
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsClient) Instantiate(r *Recommendations) *Recommendations {
+	r.config = c.config
+	return r
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsCategoryClient) Instantiate(rc *RecommendationsCategory) *RecommendationsCategory {
+	rc.config = c.config
+	return rc
+}
+
+// Instantiate entity configuration.
+func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *RecommendationsSources {
+	rs.config = c.config
+	return rs
 }
 
 // Instantiate entity configuration.
@@ -427,13 +463,7 @@ func (c *TechClient) Instantiate(t *Tech) *Tech {
 }
 
 // Instantiate entity configuration.
-func (c *TemporalFrecuencyClient) Instantiate(tf *TemporalFrecuency) *TemporalFrecuency {
-	tf.config = c.config
-	return tf
-}
-
-// Instantiate entity configuration.
-func (c *TresholdClient) Instantiate(t *Treshold) *Treshold {
+func (c *ThresholdClient) Instantiate(t *Threshold) *Threshold {
 	t.config = c.config
 	return t
 }

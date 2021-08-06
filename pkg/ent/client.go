@@ -18,7 +18,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
-	"github.com/facebookincubator/symphony/pkg/ent/category"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -56,18 +55,25 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
+	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
-	"github.com/facebookincubator/symphony/pkg/ent/perspective"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationscategory"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/rulelimit"
@@ -83,8 +89,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatequestion"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
-	"github.com/facebookincubator/symphony/pkg/ent/temporalfrecuency"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/vendor"
@@ -114,8 +119,6 @@ type Client struct {
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
 	BlockInstance *BlockInstanceClient
-	// Category is the client for interacting with the Category builders.
-	Category *CategoryClient
 	// CheckListCategory is the client for interacting with the CheckListCategory builders.
 	CheckListCategory *CheckListCategoryClient
 	// CheckListCategoryDefinition is the client for interacting with the CheckListCategoryDefinition builders.
@@ -190,20 +193,28 @@ type Client struct {
 	Kpi *KpiClient
 	// Kqi is the client for interacting with the Kqi builders.
 	Kqi *KqiClient
+	// KqiCategory is the client for interacting with the KqiCategory builders.
+	KqiCategory *KqiCategoryClient
+	// KqiComparator is the client for interacting with the KqiComparator builders.
+	KqiComparator *KqiComparatorClient
+	// KqiPerspective is the client for interacting with the KqiPerspective builders.
+	KqiPerspective *KqiPerspectiveClient
 	// KqiSource is the client for interacting with the KqiSource builders.
 	KqiSource *KqiSourceClient
 	// KqiTarget is the client for interacting with the KqiTarget builders.
 	KqiTarget *KqiTargetClient
+	// KqiTemporalFrequency is the client for interacting with the KqiTemporalFrequency builders.
+	KqiTemporalFrequency *KqiTemporalFrequencyClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
 	Location *LocationClient
 	// LocationType is the client for interacting with the LocationType builders.
 	LocationType *LocationTypeClient
+	// Organization is the client for interacting with the Organization builders.
+	Organization *OrganizationClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
-	// Perspective is the client for interacting with the Perspective builders.
-	Perspective *PerspectiveClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectTemplate is the client for interacting with the ProjectTemplate builders.
@@ -214,6 +225,12 @@ type Client struct {
 	Property *PropertyClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
+	// Recommendations is the client for interacting with the Recommendations builders.
+	Recommendations *RecommendationsClient
+	// RecommendationsCategory is the client for interacting with the RecommendationsCategory builders.
+	RecommendationsCategory *RecommendationsCategoryClient
+	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
+	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
 	// Rule is the client for interacting with the Rule builders.
@@ -244,10 +261,8 @@ type Client struct {
 	SurveyWiFiScan *SurveyWiFiScanClient
 	// Tech is the client for interacting with the Tech builders.
 	Tech *TechClient
-	// TemporalFrecuency is the client for interacting with the TemporalFrecuency builders.
-	TemporalFrecuency *TemporalFrecuencyClient
-	// Treshold is the client for interacting with the Treshold builders.
-	Treshold *TresholdClient
+	// Threshold is the client for interacting with the Threshold builders.
+	Threshold *ThresholdClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -284,7 +299,6 @@ func (c *Client) init() {
 	c.AlarmStatus = NewAlarmStatusClient(c.config)
 	c.Block = NewBlockClient(c.config)
 	c.BlockInstance = NewBlockInstanceClient(c.config)
-	c.Category = NewCategoryClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
 	c.CheckListCategoryDefinition = NewCheckListCategoryDefinitionClient(c.config)
 	c.CheckListItem = NewCheckListItemClient(c.config)
@@ -322,18 +336,25 @@ func (c *Client) init() {
 	c.Hyperlink = NewHyperlinkClient(c.config)
 	c.Kpi = NewKpiClient(c.config)
 	c.Kqi = NewKqiClient(c.config)
+	c.KqiCategory = NewKqiCategoryClient(c.config)
+	c.KqiComparator = NewKqiComparatorClient(c.config)
+	c.KqiPerspective = NewKqiPerspectiveClient(c.config)
 	c.KqiSource = NewKqiSourceClient(c.config)
 	c.KqiTarget = NewKqiTargetClient(c.config)
+	c.KqiTemporalFrequency = NewKqiTemporalFrequencyClient(c.config)
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.LocationType = NewLocationTypeClient(c.config)
+	c.Organization = NewOrganizationClient(c.config)
 	c.PermissionsPolicy = NewPermissionsPolicyClient(c.config)
-	c.Perspective = NewPerspectiveClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.ProjectTemplate = NewProjectTemplateClient(c.config)
 	c.ProjectType = NewProjectTypeClient(c.config)
 	c.Property = NewPropertyClient(c.config)
 	c.PropertyType = NewPropertyTypeClient(c.config)
+	c.Recommendations = NewRecommendationsClient(c.config)
+	c.RecommendationsCategory = NewRecommendationsCategoryClient(c.config)
+	c.RecommendationsSources = NewRecommendationsSourcesClient(c.config)
 	c.ReportFilter = NewReportFilterClient(c.config)
 	c.Rule = NewRuleClient(c.config)
 	c.RuleLimit = NewRuleLimitClient(c.config)
@@ -349,8 +370,7 @@ func (c *Client) init() {
 	c.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(c.config)
 	c.SurveyWiFiScan = NewSurveyWiFiScanClient(c.config)
 	c.Tech = NewTechClient(c.config)
-	c.TemporalFrecuency = NewTemporalFrecuencyClient(c.config)
-	c.Treshold = NewTresholdClient(c.config)
+	c.Threshold = NewThresholdClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UsersGroup = NewUsersGroupClient(c.config)
 	c.Vendor = NewVendorClient(c.config)
@@ -396,7 +416,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		AlarmStatus:                 NewAlarmStatusClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
-		Category:                    NewCategoryClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
 		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
 		CheckListItem:               NewCheckListItemClient(cfg),
@@ -434,18 +453,25 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Kpi:                         NewKpiClient(cfg),
 		Kqi:                         NewKqiClient(cfg),
+		KqiCategory:                 NewKqiCategoryClient(cfg),
+		KqiComparator:               NewKqiComparatorClient(cfg),
+		KqiPerspective:              NewKqiPerspectiveClient(cfg),
 		KqiSource:                   NewKqiSourceClient(cfg),
 		KqiTarget:                   NewKqiTargetClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
+		Organization:                NewOrganizationClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
-		Perspective:                 NewPerspectiveClient(cfg),
 		Project:                     NewProjectClient(cfg),
 		ProjectTemplate:             NewProjectTemplateClient(cfg),
 		ProjectType:                 NewProjectTypeClient(cfg),
 		Property:                    NewPropertyClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
+		Recommendations:             NewRecommendationsClient(cfg),
+		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
+		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                NewReportFilterClient(cfg),
 		Rule:                        NewRuleClient(cfg),
 		RuleLimit:                   NewRuleLimitClient(cfg),
@@ -461,8 +487,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
 		Tech:                        NewTechClient(cfg),
-		TemporalFrecuency:           NewTemporalFrecuencyClient(cfg),
-		Treshold:                    NewTresholdClient(cfg),
+		Threshold:                   NewThresholdClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
 		Vendor:                      NewVendorClient(cfg),
@@ -491,7 +516,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		AlarmStatus:                 NewAlarmStatusClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
-		Category:                    NewCategoryClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
 		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
 		CheckListItem:               NewCheckListItemClient(cfg),
@@ -529,18 +553,25 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Kpi:                         NewKpiClient(cfg),
 		Kqi:                         NewKqiClient(cfg),
+		KqiCategory:                 NewKqiCategoryClient(cfg),
+		KqiComparator:               NewKqiComparatorClient(cfg),
+		KqiPerspective:              NewKqiPerspectiveClient(cfg),
 		KqiSource:                   NewKqiSourceClient(cfg),
 		KqiTarget:                   NewKqiTargetClient(cfg),
+		KqiTemporalFrequency:        NewKqiTemporalFrequencyClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
 		LocationType:                NewLocationTypeClient(cfg),
+		Organization:                NewOrganizationClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
-		Perspective:                 NewPerspectiveClient(cfg),
 		Project:                     NewProjectClient(cfg),
 		ProjectTemplate:             NewProjectTemplateClient(cfg),
 		ProjectType:                 NewProjectTypeClient(cfg),
 		Property:                    NewPropertyClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
+		Recommendations:             NewRecommendationsClient(cfg),
+		RecommendationsCategory:     NewRecommendationsCategoryClient(cfg),
+		RecommendationsSources:      NewRecommendationsSourcesClient(cfg),
 		ReportFilter:                NewReportFilterClient(cfg),
 		Rule:                        NewRuleClient(cfg),
 		RuleLimit:                   NewRuleLimitClient(cfg),
@@ -556,8 +587,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SurveyTemplateQuestion:      NewSurveyTemplateQuestionClient(cfg),
 		SurveyWiFiScan:              NewSurveyWiFiScanClient(cfg),
 		Tech:                        NewTechClient(cfg),
-		TemporalFrecuency:           NewTemporalFrecuencyClient(cfg),
-		Treshold:                    NewTresholdClient(cfg),
+		Threshold:                   NewThresholdClient(cfg),
 		User:                        NewUserClient(cfg),
 		UsersGroup:                  NewUsersGroupClient(cfg),
 		Vendor:                      NewVendorClient(cfg),
@@ -599,7 +629,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.AlarmStatus.Use(hooks...)
 	c.Block.Use(hooks...)
 	c.BlockInstance.Use(hooks...)
-	c.Category.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
 	c.CheckListCategoryDefinition.Use(hooks...)
 	c.CheckListItem.Use(hooks...)
@@ -637,18 +666,25 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Hyperlink.Use(hooks...)
 	c.Kpi.Use(hooks...)
 	c.Kqi.Use(hooks...)
+	c.KqiCategory.Use(hooks...)
+	c.KqiComparator.Use(hooks...)
+	c.KqiPerspective.Use(hooks...)
 	c.KqiSource.Use(hooks...)
 	c.KqiTarget.Use(hooks...)
+	c.KqiTemporalFrequency.Use(hooks...)
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
 	c.LocationType.Use(hooks...)
+	c.Organization.Use(hooks...)
 	c.PermissionsPolicy.Use(hooks...)
-	c.Perspective.Use(hooks...)
 	c.Project.Use(hooks...)
 	c.ProjectTemplate.Use(hooks...)
 	c.ProjectType.Use(hooks...)
 	c.Property.Use(hooks...)
 	c.PropertyType.Use(hooks...)
+	c.Recommendations.Use(hooks...)
+	c.RecommendationsCategory.Use(hooks...)
+	c.RecommendationsSources.Use(hooks...)
 	c.ReportFilter.Use(hooks...)
 	c.Rule.Use(hooks...)
 	c.RuleLimit.Use(hooks...)
@@ -664,8 +700,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.SurveyTemplateQuestion.Use(hooks...)
 	c.SurveyWiFiScan.Use(hooks...)
 	c.Tech.Use(hooks...)
-	c.TemporalFrecuency.Use(hooks...)
-	c.Treshold.Use(hooks...)
+	c.Threshold.Use(hooks...)
 	c.User.Use(hooks...)
 	c.UsersGroup.Use(hooks...)
 	c.Vendor.Use(hooks...)
@@ -1375,111 +1410,6 @@ func (c *BlockInstanceClient) QuerySubflowInstance(bi *BlockInstance) *FlowInsta
 func (c *BlockInstanceClient) Hooks() []Hook {
 	hooks := c.hooks.BlockInstance
 	return append(hooks[:len(hooks):len(hooks)], blockinstance.Hooks[:]...)
-}
-
-// CategoryClient is a client for the Category schema.
-type CategoryClient struct {
-	config
-}
-
-// NewCategoryClient returns a client for the Category from the given config.
-func NewCategoryClient(c config) *CategoryClient {
-	return &CategoryClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `category.Hooks(f(g(h())))`.
-func (c *CategoryClient) Use(hooks ...Hook) {
-	c.hooks.Category = append(c.hooks.Category, hooks...)
-}
-
-// Create returns a create builder for Category.
-func (c *CategoryClient) Create() *CategoryCreate {
-	mutation := newCategoryMutation(c.config, OpCreate)
-	return &CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Category entities.
-func (c *CategoryClient) CreateBulk(builders ...*CategoryCreate) *CategoryCreateBulk {
-	return &CategoryCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Category.
-func (c *CategoryClient) Update() *CategoryUpdate {
-	mutation := newCategoryMutation(c.config, OpUpdate)
-	return &CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *CategoryClient) UpdateOne(ca *Category) *CategoryUpdateOne {
-	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategory(ca))
-	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *CategoryClient) UpdateOneID(id int) *CategoryUpdateOne {
-	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategoryID(id))
-	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Category.
-func (c *CategoryClient) Delete() *CategoryDelete {
-	mutation := newCategoryMutation(c.config, OpDelete)
-	return &CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *CategoryClient) DeleteOne(ca *Category) *CategoryDeleteOne {
-	return c.DeleteOneID(ca.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *CategoryClient) DeleteOneID(id int) *CategoryDeleteOne {
-	builder := c.Delete().Where(category.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &CategoryDeleteOne{builder}
-}
-
-// Query returns a query builder for Category.
-func (c *CategoryClient) Query() *CategoryQuery {
-	return &CategoryQuery{config: c.config}
-}
-
-// Get returns a Category entity by its id.
-func (c *CategoryClient) Get(ctx context.Context, id int) (*Category, error) {
-	return c.Query().Where(category.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *CategoryClient) GetX(ctx context.Context, id int) *Category {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryCategoryFk queries the categoryFk edge of a Category.
-func (c *CategoryClient) QueryCategoryFk(ca *Category) *KqiQuery {
-	query := &KqiQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := ca.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(category.Table, category.FieldID, id),
-			sqlgraph.To(kqi.Table, kqi.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, category.CategoryFkTable, category.CategoryFkColumn),
-		)
-		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *CategoryClient) Hooks() []Hook {
-	hooks := c.hooks.Category
-	return append(hooks[:len(hooks):len(hooks)], category.Hooks[:]...)
 }
 
 // CheckListCategoryClient is a client for the CheckListCategory schema.
@@ -2227,6 +2157,22 @@ func (c *ComparatorClient) QueryComparatorrulelimit(co *Comparator) *RuleLimitQu
 			sqlgraph.From(comparator.Table, comparator.FieldID, id),
 			sqlgraph.To(rulelimit.Table, rulelimit.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, comparator.ComparatorrulelimitTable, comparator.ComparatorrulelimitColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryComparatorkqitargetfk queries the comparatorkqitargetfk edge of a Comparator.
+func (c *ComparatorClient) QueryComparatorkqitargetfk(co *Comparator) *KqiComparatorQuery {
+	query := &KqiComparatorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(comparator.Table, comparator.FieldID, id),
+			sqlgraph.To(kqicomparator.Table, kqicomparator.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, comparator.ComparatorkqitargetfkTable, comparator.ComparatorkqitargetfkColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -6216,15 +6162,15 @@ func (c *KpiClient) QueryFormulakpi(k *Kpi) *FormulaQuery {
 	return query
 }
 
-// QueryTresholdkpi queries the tresholdkpi edge of a Kpi.
-func (c *KpiClient) QueryTresholdkpi(k *Kpi) *TresholdQuery {
-	query := &TresholdQuery{config: c.config}
+// QueryThresholdkpi queries the thresholdkpi edge of a Kpi.
+func (c *KpiClient) QueryThresholdkpi(k *Kpi) *ThresholdQuery {
+	query := &ThresholdQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := k.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kpi.Table, kpi.FieldID, id),
-			sqlgraph.To(treshold.Table, treshold.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, kpi.TresholdkpiTable, kpi.TresholdkpiColumn),
+			sqlgraph.To(threshold.Table, threshold.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, kpi.ThresholdkpiTable, kpi.ThresholdkpiColumn),
 		)
 		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
 		return fromV, nil
@@ -6321,15 +6267,15 @@ func (c *KqiClient) GetX(ctx context.Context, id int) *Kqi {
 	return obj
 }
 
-// QueryCategoryFk queries the categoryFk edge of a Kqi.
-func (c *KqiClient) QueryCategoryFk(k *Kqi) *CategoryQuery {
-	query := &CategoryQuery{config: c.config}
+// QueryKqiCategoryFk queries the kqiCategoryFk edge of a Kqi.
+func (c *KqiClient) QueryKqiCategoryFk(k *Kqi) *KqiCategoryQuery {
+	query := &KqiCategoryQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := k.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, id),
-			sqlgraph.To(category.Table, category.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.CategoryFkTable, kqi.CategoryFkColumn),
+			sqlgraph.To(kqicategory.Table, kqicategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiCategoryFkTable, kqi.KqiCategoryFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
 		return fromV, nil
@@ -6337,15 +6283,15 @@ func (c *KqiClient) QueryCategoryFk(k *Kqi) *CategoryQuery {
 	return query
 }
 
-// QueryPerspectiveFk queries the perspectiveFk edge of a Kqi.
-func (c *KqiClient) QueryPerspectiveFk(k *Kqi) *PerspectiveQuery {
-	query := &PerspectiveQuery{config: c.config}
+// QueryKqiPerspectiveFk queries the kqiPerspectiveFk edge of a Kqi.
+func (c *KqiClient) QueryKqiPerspectiveFk(k *Kqi) *KqiPerspectiveQuery {
+	query := &KqiPerspectiveQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := k.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, id),
-			sqlgraph.To(perspective.Table, perspective.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.PerspectiveFkTable, kqi.PerspectiveFkColumn),
+			sqlgraph.To(kqiperspective.Table, kqiperspective.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiPerspectiveFkTable, kqi.KqiPerspectiveFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
 		return fromV, nil
@@ -6369,15 +6315,15 @@ func (c *KqiClient) QueryKqiSourceFk(k *Kqi) *KqiSourceQuery {
 	return query
 }
 
-// QueryTemporalFrecuencyFk queries the temporalFrecuencyFk edge of a Kqi.
-func (c *KqiClient) QueryTemporalFrecuencyFk(k *Kqi) *TemporalFrecuencyQuery {
-	query := &TemporalFrecuencyQuery{config: c.config}
+// QueryKqiTemporalFrequencyFk queries the kqiTemporalFrequencyFk edge of a Kqi.
+func (c *KqiClient) QueryKqiTemporalFrequencyFk(k *Kqi) *KqiTemporalFrequencyQuery {
+	query := &KqiTemporalFrequencyQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := k.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kqi.Table, kqi.FieldID, id),
-			sqlgraph.To(temporalfrecuency.Table, temporalfrecuency.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, kqi.TemporalFrecuencyFkTable, kqi.TemporalFrecuencyFkColumn),
+			sqlgraph.To(kqitemporalfrequency.Table, kqitemporalfrequency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqi.KqiTemporalFrequencyFkTable, kqi.KqiTemporalFrequencyFkColumn),
 		)
 		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
 		return fromV, nil
@@ -6405,6 +6351,337 @@ func (c *KqiClient) QueryKqiTargetFk(k *Kqi) *KqiTargetQuery {
 func (c *KqiClient) Hooks() []Hook {
 	hooks := c.hooks.Kqi
 	return append(hooks[:len(hooks):len(hooks)], kqi.Hooks[:]...)
+}
+
+// KqiCategoryClient is a client for the KqiCategory schema.
+type KqiCategoryClient struct {
+	config
+}
+
+// NewKqiCategoryClient returns a client for the KqiCategory from the given config.
+func NewKqiCategoryClient(c config) *KqiCategoryClient {
+	return &KqiCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kqicategory.Hooks(f(g(h())))`.
+func (c *KqiCategoryClient) Use(hooks ...Hook) {
+	c.hooks.KqiCategory = append(c.hooks.KqiCategory, hooks...)
+}
+
+// Create returns a create builder for KqiCategory.
+func (c *KqiCategoryClient) Create() *KqiCategoryCreate {
+	mutation := newKqiCategoryMutation(c.config, OpCreate)
+	return &KqiCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of KqiCategory entities.
+func (c *KqiCategoryClient) CreateBulk(builders ...*KqiCategoryCreate) *KqiCategoryCreateBulk {
+	return &KqiCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for KqiCategory.
+func (c *KqiCategoryClient) Update() *KqiCategoryUpdate {
+	mutation := newKqiCategoryMutation(c.config, OpUpdate)
+	return &KqiCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KqiCategoryClient) UpdateOne(kc *KqiCategory) *KqiCategoryUpdateOne {
+	mutation := newKqiCategoryMutation(c.config, OpUpdateOne, withKqiCategory(kc))
+	return &KqiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KqiCategoryClient) UpdateOneID(id int) *KqiCategoryUpdateOne {
+	mutation := newKqiCategoryMutation(c.config, OpUpdateOne, withKqiCategoryID(id))
+	return &KqiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for KqiCategory.
+func (c *KqiCategoryClient) Delete() *KqiCategoryDelete {
+	mutation := newKqiCategoryMutation(c.config, OpDelete)
+	return &KqiCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KqiCategoryClient) DeleteOne(kc *KqiCategory) *KqiCategoryDeleteOne {
+	return c.DeleteOneID(kc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KqiCategoryClient) DeleteOneID(id int) *KqiCategoryDeleteOne {
+	builder := c.Delete().Where(kqicategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KqiCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for KqiCategory.
+func (c *KqiCategoryClient) Query() *KqiCategoryQuery {
+	return &KqiCategoryQuery{config: c.config}
+}
+
+// Get returns a KqiCategory entity by its id.
+func (c *KqiCategoryClient) Get(ctx context.Context, id int) (*KqiCategory, error) {
+	return c.Query().Where(kqicategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KqiCategoryClient) GetX(ctx context.Context, id int) *KqiCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryKqiCategoryFk queries the kqiCategoryFk edge of a KqiCategory.
+func (c *KqiCategoryClient) QueryKqiCategoryFk(kc *KqiCategory) *KqiQuery {
+	query := &KqiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqicategory.Table, kqicategory.FieldID, id),
+			sqlgraph.To(kqi.Table, kqi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqicategory.KqiCategoryFkTable, kqicategory.KqiCategoryFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(kc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KqiCategoryClient) Hooks() []Hook {
+	hooks := c.hooks.KqiCategory
+	return append(hooks[:len(hooks):len(hooks)], kqicategory.Hooks[:]...)
+}
+
+// KqiComparatorClient is a client for the KqiComparator schema.
+type KqiComparatorClient struct {
+	config
+}
+
+// NewKqiComparatorClient returns a client for the KqiComparator from the given config.
+func NewKqiComparatorClient(c config) *KqiComparatorClient {
+	return &KqiComparatorClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kqicomparator.Hooks(f(g(h())))`.
+func (c *KqiComparatorClient) Use(hooks ...Hook) {
+	c.hooks.KqiComparator = append(c.hooks.KqiComparator, hooks...)
+}
+
+// Create returns a create builder for KqiComparator.
+func (c *KqiComparatorClient) Create() *KqiComparatorCreate {
+	mutation := newKqiComparatorMutation(c.config, OpCreate)
+	return &KqiComparatorCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of KqiComparator entities.
+func (c *KqiComparatorClient) CreateBulk(builders ...*KqiComparatorCreate) *KqiComparatorCreateBulk {
+	return &KqiComparatorCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for KqiComparator.
+func (c *KqiComparatorClient) Update() *KqiComparatorUpdate {
+	mutation := newKqiComparatorMutation(c.config, OpUpdate)
+	return &KqiComparatorUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KqiComparatorClient) UpdateOne(kc *KqiComparator) *KqiComparatorUpdateOne {
+	mutation := newKqiComparatorMutation(c.config, OpUpdateOne, withKqiComparator(kc))
+	return &KqiComparatorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KqiComparatorClient) UpdateOneID(id int) *KqiComparatorUpdateOne {
+	mutation := newKqiComparatorMutation(c.config, OpUpdateOne, withKqiComparatorID(id))
+	return &KqiComparatorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for KqiComparator.
+func (c *KqiComparatorClient) Delete() *KqiComparatorDelete {
+	mutation := newKqiComparatorMutation(c.config, OpDelete)
+	return &KqiComparatorDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KqiComparatorClient) DeleteOne(kc *KqiComparator) *KqiComparatorDeleteOne {
+	return c.DeleteOneID(kc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KqiComparatorClient) DeleteOneID(id int) *KqiComparatorDeleteOne {
+	builder := c.Delete().Where(kqicomparator.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KqiComparatorDeleteOne{builder}
+}
+
+// Query returns a query builder for KqiComparator.
+func (c *KqiComparatorClient) Query() *KqiComparatorQuery {
+	return &KqiComparatorQuery{config: c.config}
+}
+
+// Get returns a KqiComparator entity by its id.
+func (c *KqiComparatorClient) Get(ctx context.Context, id int) (*KqiComparator, error) {
+	return c.Query().Where(kqicomparator.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KqiComparatorClient) GetX(ctx context.Context, id int) *KqiComparator {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryComparatorkqitargetfk queries the comparatorkqitargetfk edge of a KqiComparator.
+func (c *KqiComparatorClient) QueryComparatorkqitargetfk(kc *KqiComparator) *ComparatorQuery {
+	query := &ComparatorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqicomparator.Table, kqicomparator.FieldID, id),
+			sqlgraph.To(comparator.Table, comparator.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqicomparator.ComparatorkqitargetfkTable, kqicomparator.ComparatorkqitargetfkColumn),
+		)
+		fromV = sqlgraph.Neighbors(kc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryKqitargetcomparatorfk queries the kqitargetcomparatorfk edge of a KqiComparator.
+func (c *KqiComparatorClient) QueryKqitargetcomparatorfk(kc *KqiComparator) *KqiTargetQuery {
+	query := &KqiTargetQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqicomparator.Table, kqicomparator.FieldID, id),
+			sqlgraph.To(kqitarget.Table, kqitarget.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kqicomparator.KqitargetcomparatorfkTable, kqicomparator.KqitargetcomparatorfkColumn),
+		)
+		fromV = sqlgraph.Neighbors(kc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KqiComparatorClient) Hooks() []Hook {
+	hooks := c.hooks.KqiComparator
+	return append(hooks[:len(hooks):len(hooks)], kqicomparator.Hooks[:]...)
+}
+
+// KqiPerspectiveClient is a client for the KqiPerspective schema.
+type KqiPerspectiveClient struct {
+	config
+}
+
+// NewKqiPerspectiveClient returns a client for the KqiPerspective from the given config.
+func NewKqiPerspectiveClient(c config) *KqiPerspectiveClient {
+	return &KqiPerspectiveClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kqiperspective.Hooks(f(g(h())))`.
+func (c *KqiPerspectiveClient) Use(hooks ...Hook) {
+	c.hooks.KqiPerspective = append(c.hooks.KqiPerspective, hooks...)
+}
+
+// Create returns a create builder for KqiPerspective.
+func (c *KqiPerspectiveClient) Create() *KqiPerspectiveCreate {
+	mutation := newKqiPerspectiveMutation(c.config, OpCreate)
+	return &KqiPerspectiveCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of KqiPerspective entities.
+func (c *KqiPerspectiveClient) CreateBulk(builders ...*KqiPerspectiveCreate) *KqiPerspectiveCreateBulk {
+	return &KqiPerspectiveCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for KqiPerspective.
+func (c *KqiPerspectiveClient) Update() *KqiPerspectiveUpdate {
+	mutation := newKqiPerspectiveMutation(c.config, OpUpdate)
+	return &KqiPerspectiveUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KqiPerspectiveClient) UpdateOne(kp *KqiPerspective) *KqiPerspectiveUpdateOne {
+	mutation := newKqiPerspectiveMutation(c.config, OpUpdateOne, withKqiPerspective(kp))
+	return &KqiPerspectiveUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KqiPerspectiveClient) UpdateOneID(id int) *KqiPerspectiveUpdateOne {
+	mutation := newKqiPerspectiveMutation(c.config, OpUpdateOne, withKqiPerspectiveID(id))
+	return &KqiPerspectiveUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for KqiPerspective.
+func (c *KqiPerspectiveClient) Delete() *KqiPerspectiveDelete {
+	mutation := newKqiPerspectiveMutation(c.config, OpDelete)
+	return &KqiPerspectiveDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KqiPerspectiveClient) DeleteOne(kp *KqiPerspective) *KqiPerspectiveDeleteOne {
+	return c.DeleteOneID(kp.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KqiPerspectiveClient) DeleteOneID(id int) *KqiPerspectiveDeleteOne {
+	builder := c.Delete().Where(kqiperspective.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KqiPerspectiveDeleteOne{builder}
+}
+
+// Query returns a query builder for KqiPerspective.
+func (c *KqiPerspectiveClient) Query() *KqiPerspectiveQuery {
+	return &KqiPerspectiveQuery{config: c.config}
+}
+
+// Get returns a KqiPerspective entity by its id.
+func (c *KqiPerspectiveClient) Get(ctx context.Context, id int) (*KqiPerspective, error) {
+	return c.Query().Where(kqiperspective.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KqiPerspectiveClient) GetX(ctx context.Context, id int) *KqiPerspective {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryKqiPerspectiveFk queries the kqiPerspectiveFk edge of a KqiPerspective.
+func (c *KqiPerspectiveClient) QueryKqiPerspectiveFk(kp *KqiPerspective) *KqiQuery {
+	query := &KqiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqiperspective.Table, kqiperspective.FieldID, id),
+			sqlgraph.To(kqi.Table, kqi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqiperspective.KqiPerspectiveFkTable, kqiperspective.KqiPerspectiveFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(kp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KqiPerspectiveClient) Hooks() []Hook {
+	hooks := c.hooks.KqiPerspective
+	return append(hooks[:len(hooks):len(hooks)], kqiperspective.Hooks[:]...)
 }
 
 // KqiSourceClient is a client for the KqiSource schema.
@@ -6611,10 +6888,131 @@ func (c *KqiTargetClient) QueryKqiTargetFk(kt *KqiTarget) *KqiQuery {
 	return query
 }
 
+// QueryKqitargetcomparatorfk queries the kqitargetcomparatorfk edge of a KqiTarget.
+func (c *KqiTargetClient) QueryKqitargetcomparatorfk(kt *KqiTarget) *KqiComparatorQuery {
+	query := &KqiComparatorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqitarget.Table, kqitarget.FieldID, id),
+			sqlgraph.To(kqicomparator.Table, kqicomparator.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqitarget.KqitargetcomparatorfkTable, kqitarget.KqitargetcomparatorfkColumn),
+		)
+		fromV = sqlgraph.Neighbors(kt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *KqiTargetClient) Hooks() []Hook {
 	hooks := c.hooks.KqiTarget
 	return append(hooks[:len(hooks):len(hooks)], kqitarget.Hooks[:]...)
+}
+
+// KqiTemporalFrequencyClient is a client for the KqiTemporalFrequency schema.
+type KqiTemporalFrequencyClient struct {
+	config
+}
+
+// NewKqiTemporalFrequencyClient returns a client for the KqiTemporalFrequency from the given config.
+func NewKqiTemporalFrequencyClient(c config) *KqiTemporalFrequencyClient {
+	return &KqiTemporalFrequencyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kqitemporalfrequency.Hooks(f(g(h())))`.
+func (c *KqiTemporalFrequencyClient) Use(hooks ...Hook) {
+	c.hooks.KqiTemporalFrequency = append(c.hooks.KqiTemporalFrequency, hooks...)
+}
+
+// Create returns a create builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Create() *KqiTemporalFrequencyCreate {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpCreate)
+	return &KqiTemporalFrequencyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of KqiTemporalFrequency entities.
+func (c *KqiTemporalFrequencyClient) CreateBulk(builders ...*KqiTemporalFrequencyCreate) *KqiTemporalFrequencyCreateBulk {
+	return &KqiTemporalFrequencyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Update() *KqiTemporalFrequencyUpdate {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpUpdate)
+	return &KqiTemporalFrequencyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KqiTemporalFrequencyClient) UpdateOne(ktf *KqiTemporalFrequency) *KqiTemporalFrequencyUpdateOne {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpUpdateOne, withKqiTemporalFrequency(ktf))
+	return &KqiTemporalFrequencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KqiTemporalFrequencyClient) UpdateOneID(id int) *KqiTemporalFrequencyUpdateOne {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpUpdateOne, withKqiTemporalFrequencyID(id))
+	return &KqiTemporalFrequencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Delete() *KqiTemporalFrequencyDelete {
+	mutation := newKqiTemporalFrequencyMutation(c.config, OpDelete)
+	return &KqiTemporalFrequencyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KqiTemporalFrequencyClient) DeleteOne(ktf *KqiTemporalFrequency) *KqiTemporalFrequencyDeleteOne {
+	return c.DeleteOneID(ktf.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KqiTemporalFrequencyClient) DeleteOneID(id int) *KqiTemporalFrequencyDeleteOne {
+	builder := c.Delete().Where(kqitemporalfrequency.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KqiTemporalFrequencyDeleteOne{builder}
+}
+
+// Query returns a query builder for KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) Query() *KqiTemporalFrequencyQuery {
+	return &KqiTemporalFrequencyQuery{config: c.config}
+}
+
+// Get returns a KqiTemporalFrequency entity by its id.
+func (c *KqiTemporalFrequencyClient) Get(ctx context.Context, id int) (*KqiTemporalFrequency, error) {
+	return c.Query().Where(kqitemporalfrequency.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KqiTemporalFrequencyClient) GetX(ctx context.Context, id int) *KqiTemporalFrequency {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryKqiTemporalFrequencyFk queries the kqiTemporalFrequencyFk edge of a KqiTemporalFrequency.
+func (c *KqiTemporalFrequencyClient) QueryKqiTemporalFrequencyFk(ktf *KqiTemporalFrequency) *KqiQuery {
+	query := &KqiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ktf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kqitemporalfrequency.Table, kqitemporalfrequency.FieldID, id),
+			sqlgraph.To(kqi.Table, kqi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kqitemporalfrequency.KqiTemporalFrequencyFkTable, kqitemporalfrequency.KqiTemporalFrequencyFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(ktf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KqiTemporalFrequencyClient) Hooks() []Hook {
+	hooks := c.hooks.KqiTemporalFrequency
+	return append(hooks[:len(hooks):len(hooks)], kqitemporalfrequency.Hooks[:]...)
 }
 
 // LinkClient is a client for the Link schema.
@@ -7204,6 +7602,127 @@ func (c *LocationTypeClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], locationtype.Hooks[:]...)
 }
 
+// OrganizationClient is a client for the Organization schema.
+type OrganizationClient struct {
+	config
+}
+
+// NewOrganizationClient returns a client for the Organization from the given config.
+func NewOrganizationClient(c config) *OrganizationClient {
+	return &OrganizationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organization.Hooks(f(g(h())))`.
+func (c *OrganizationClient) Use(hooks ...Hook) {
+	c.hooks.Organization = append(c.hooks.Organization, hooks...)
+}
+
+// Create returns a create builder for Organization.
+func (c *OrganizationClient) Create() *OrganizationCreate {
+	mutation := newOrganizationMutation(c.config, OpCreate)
+	return &OrganizationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Organization entities.
+func (c *OrganizationClient) CreateBulk(builders ...*OrganizationCreate) *OrganizationCreateBulk {
+	return &OrganizationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Organization.
+func (c *OrganizationClient) Update() *OrganizationUpdate {
+	mutation := newOrganizationMutation(c.config, OpUpdate)
+	return &OrganizationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationClient) UpdateOne(o *Organization) *OrganizationUpdateOne {
+	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganization(o))
+	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationClient) UpdateOneID(id int) *OrganizationUpdateOne {
+	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganizationID(id))
+	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Organization.
+func (c *OrganizationClient) Delete() *OrganizationDelete {
+	mutation := newOrganizationMutation(c.config, OpDelete)
+	return &OrganizationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *OrganizationClient) DeleteOne(o *Organization) *OrganizationDeleteOne {
+	return c.DeleteOneID(o.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *OrganizationClient) DeleteOneID(id int) *OrganizationDeleteOne {
+	builder := c.Delete().Where(organization.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationDeleteOne{builder}
+}
+
+// Query returns a query builder for Organization.
+func (c *OrganizationClient) Query() *OrganizationQuery {
+	return &OrganizationQuery{config: c.config}
+}
+
+// Get returns a Organization entity by its id.
+func (c *OrganizationClient) Get(ctx context.Context, id int) (*Organization, error) {
+	return c.Query().Where(organization.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationClient) GetX(ctx context.Context, id int) *Organization {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUserFk queries the user_fk edge of a Organization.
+func (c *OrganizationClient) QueryUserFk(o *Organization) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.UserFkTable, organization.UserFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWorkOrderFk queries the work_order_fk edge of a Organization.
+func (c *OrganizationClient) QueryWorkOrderFk(o *Organization) *WorkOrderQuery {
+	query := &WorkOrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(workorder.Table, workorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.WorkOrderFkTable, organization.WorkOrderFkColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationClient) Hooks() []Hook {
+	hooks := c.hooks.Organization
+	return append(hooks[:len(hooks):len(hooks)], organization.Hooks[:]...)
+}
+
 // PermissionsPolicyClient is a client for the PermissionsPolicy schema.
 type PermissionsPolicyClient struct {
 	config
@@ -7307,111 +7826,6 @@ func (c *PermissionsPolicyClient) QueryGroups(pp *PermissionsPolicy) *UsersGroup
 func (c *PermissionsPolicyClient) Hooks() []Hook {
 	hooks := c.hooks.PermissionsPolicy
 	return append(hooks[:len(hooks):len(hooks)], permissionspolicy.Hooks[:]...)
-}
-
-// PerspectiveClient is a client for the Perspective schema.
-type PerspectiveClient struct {
-	config
-}
-
-// NewPerspectiveClient returns a client for the Perspective from the given config.
-func NewPerspectiveClient(c config) *PerspectiveClient {
-	return &PerspectiveClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `perspective.Hooks(f(g(h())))`.
-func (c *PerspectiveClient) Use(hooks ...Hook) {
-	c.hooks.Perspective = append(c.hooks.Perspective, hooks...)
-}
-
-// Create returns a create builder for Perspective.
-func (c *PerspectiveClient) Create() *PerspectiveCreate {
-	mutation := newPerspectiveMutation(c.config, OpCreate)
-	return &PerspectiveCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Perspective entities.
-func (c *PerspectiveClient) CreateBulk(builders ...*PerspectiveCreate) *PerspectiveCreateBulk {
-	return &PerspectiveCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Perspective.
-func (c *PerspectiveClient) Update() *PerspectiveUpdate {
-	mutation := newPerspectiveMutation(c.config, OpUpdate)
-	return &PerspectiveUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *PerspectiveClient) UpdateOne(pe *Perspective) *PerspectiveUpdateOne {
-	mutation := newPerspectiveMutation(c.config, OpUpdateOne, withPerspective(pe))
-	return &PerspectiveUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *PerspectiveClient) UpdateOneID(id int) *PerspectiveUpdateOne {
-	mutation := newPerspectiveMutation(c.config, OpUpdateOne, withPerspectiveID(id))
-	return &PerspectiveUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Perspective.
-func (c *PerspectiveClient) Delete() *PerspectiveDelete {
-	mutation := newPerspectiveMutation(c.config, OpDelete)
-	return &PerspectiveDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *PerspectiveClient) DeleteOne(pe *Perspective) *PerspectiveDeleteOne {
-	return c.DeleteOneID(pe.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *PerspectiveClient) DeleteOneID(id int) *PerspectiveDeleteOne {
-	builder := c.Delete().Where(perspective.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &PerspectiveDeleteOne{builder}
-}
-
-// Query returns a query builder for Perspective.
-func (c *PerspectiveClient) Query() *PerspectiveQuery {
-	return &PerspectiveQuery{config: c.config}
-}
-
-// Get returns a Perspective entity by its id.
-func (c *PerspectiveClient) Get(ctx context.Context, id int) (*Perspective, error) {
-	return c.Query().Where(perspective.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *PerspectiveClient) GetX(ctx context.Context, id int) *Perspective {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryPerspectiveFk queries the perspectiveFk edge of a Perspective.
-func (c *PerspectiveClient) QueryPerspectiveFk(pe *Perspective) *KqiQuery {
-	query := &KqiQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := pe.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(perspective.Table, perspective.FieldID, id),
-			sqlgraph.To(kqi.Table, kqi.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, perspective.PerspectiveFkTable, perspective.PerspectiveFkColumn),
-		)
-		fromV = sqlgraph.Neighbors(pe.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *PerspectiveClient) Hooks() []Hook {
-	hooks := c.hooks.Perspective
-	return append(hooks[:len(hooks):len(hooks)], perspective.Hooks[:]...)
 }
 
 // ProjectClient is a client for the Project schema.
@@ -8467,6 +8881,385 @@ func (c *PropertyTypeClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], propertytype.Hooks[:]...)
 }
 
+// RecommendationsClient is a client for the Recommendations schema.
+type RecommendationsClient struct {
+	config
+}
+
+// NewRecommendationsClient returns a client for the Recommendations from the given config.
+func NewRecommendationsClient(c config) *RecommendationsClient {
+	return &RecommendationsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `recommendations.Hooks(f(g(h())))`.
+func (c *RecommendationsClient) Use(hooks ...Hook) {
+	c.hooks.Recommendations = append(c.hooks.Recommendations, hooks...)
+}
+
+// Create returns a create builder for Recommendations.
+func (c *RecommendationsClient) Create() *RecommendationsCreate {
+	mutation := newRecommendationsMutation(c.config, OpCreate)
+	return &RecommendationsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Recommendations entities.
+func (c *RecommendationsClient) CreateBulk(builders ...*RecommendationsCreate) *RecommendationsCreateBulk {
+	return &RecommendationsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Recommendations.
+func (c *RecommendationsClient) Update() *RecommendationsUpdate {
+	mutation := newRecommendationsMutation(c.config, OpUpdate)
+	return &RecommendationsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RecommendationsClient) UpdateOne(r *Recommendations) *RecommendationsUpdateOne {
+	mutation := newRecommendationsMutation(c.config, OpUpdateOne, withRecommendations(r))
+	return &RecommendationsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RecommendationsClient) UpdateOneID(id int) *RecommendationsUpdateOne {
+	mutation := newRecommendationsMutation(c.config, OpUpdateOne, withRecommendationsID(id))
+	return &RecommendationsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Recommendations.
+func (c *RecommendationsClient) Delete() *RecommendationsDelete {
+	mutation := newRecommendationsMutation(c.config, OpDelete)
+	return &RecommendationsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RecommendationsClient) DeleteOne(r *Recommendations) *RecommendationsDeleteOne {
+	return c.DeleteOneID(r.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RecommendationsClient) DeleteOneID(id int) *RecommendationsDeleteOne {
+	builder := c.Delete().Where(recommendations.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RecommendationsDeleteOne{builder}
+}
+
+// Query returns a query builder for Recommendations.
+func (c *RecommendationsClient) Query() *RecommendationsQuery {
+	return &RecommendationsQuery{config: c.config}
+}
+
+// Get returns a Recommendations entity by its id.
+func (c *RecommendationsClient) Get(ctx context.Context, id int) (*Recommendations, error) {
+	return c.Query().Where(recommendations.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RecommendationsClient) GetX(ctx context.Context, id int) *Recommendations {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRecomendationSources queries the recomendation_sources edge of a Recommendations.
+func (c *RecommendationsClient) QueryRecomendationSources(r *Recommendations) *RecommendationsSourcesQuery {
+	query := &RecommendationsSourcesQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendations.Table, recommendations.FieldID, id),
+			sqlgraph.To(recommendationssources.Table, recommendationssources.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recommendations.RecomendationSourcesTable, recommendations.RecomendationSourcesColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRecomendationCategory queries the recomendation_category edge of a Recommendations.
+func (c *RecommendationsClient) QueryRecomendationCategory(r *Recommendations) *RecommendationsCategoryQuery {
+	query := &RecommendationsCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendations.Table, recommendations.FieldID, id),
+			sqlgraph.To(recommendationscategory.Table, recommendationscategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recommendations.RecomendationCategoryTable, recommendations.RecomendationCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserCreate queries the UserCreate edge of a Recommendations.
+func (c *RecommendationsClient) QueryUserCreate(r *Recommendations) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendations.Table, recommendations.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recommendations.UserCreateTable, recommendations.UserCreateColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserApprobed queries the UserApprobed edge of a Recommendations.
+func (c *RecommendationsClient) QueryUserApprobed(r *Recommendations) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendations.Table, recommendations.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recommendations.UserApprobedTable, recommendations.UserApprobedColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVendorsRecomendations queries the vendors_recomendations edge of a Recommendations.
+func (c *RecommendationsClient) QueryVendorsRecomendations(r *Recommendations) *VendorQuery {
+	query := &VendorQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendations.Table, recommendations.FieldID, id),
+			sqlgraph.To(vendor.Table, vendor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recommendations.VendorsRecomendationsTable, recommendations.VendorsRecomendationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RecommendationsClient) Hooks() []Hook {
+	hooks := c.hooks.Recommendations
+	return append(hooks[:len(hooks):len(hooks)], recommendations.Hooks[:]...)
+}
+
+// RecommendationsCategoryClient is a client for the RecommendationsCategory schema.
+type RecommendationsCategoryClient struct {
+	config
+}
+
+// NewRecommendationsCategoryClient returns a client for the RecommendationsCategory from the given config.
+func NewRecommendationsCategoryClient(c config) *RecommendationsCategoryClient {
+	return &RecommendationsCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `recommendationscategory.Hooks(f(g(h())))`.
+func (c *RecommendationsCategoryClient) Use(hooks ...Hook) {
+	c.hooks.RecommendationsCategory = append(c.hooks.RecommendationsCategory, hooks...)
+}
+
+// Create returns a create builder for RecommendationsCategory.
+func (c *RecommendationsCategoryClient) Create() *RecommendationsCategoryCreate {
+	mutation := newRecommendationsCategoryMutation(c.config, OpCreate)
+	return &RecommendationsCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RecommendationsCategory entities.
+func (c *RecommendationsCategoryClient) CreateBulk(builders ...*RecommendationsCategoryCreate) *RecommendationsCategoryCreateBulk {
+	return &RecommendationsCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RecommendationsCategory.
+func (c *RecommendationsCategoryClient) Update() *RecommendationsCategoryUpdate {
+	mutation := newRecommendationsCategoryMutation(c.config, OpUpdate)
+	return &RecommendationsCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RecommendationsCategoryClient) UpdateOne(rc *RecommendationsCategory) *RecommendationsCategoryUpdateOne {
+	mutation := newRecommendationsCategoryMutation(c.config, OpUpdateOne, withRecommendationsCategory(rc))
+	return &RecommendationsCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RecommendationsCategoryClient) UpdateOneID(id int) *RecommendationsCategoryUpdateOne {
+	mutation := newRecommendationsCategoryMutation(c.config, OpUpdateOne, withRecommendationsCategoryID(id))
+	return &RecommendationsCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RecommendationsCategory.
+func (c *RecommendationsCategoryClient) Delete() *RecommendationsCategoryDelete {
+	mutation := newRecommendationsCategoryMutation(c.config, OpDelete)
+	return &RecommendationsCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RecommendationsCategoryClient) DeleteOne(rc *RecommendationsCategory) *RecommendationsCategoryDeleteOne {
+	return c.DeleteOneID(rc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RecommendationsCategoryClient) DeleteOneID(id int) *RecommendationsCategoryDeleteOne {
+	builder := c.Delete().Where(recommendationscategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RecommendationsCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for RecommendationsCategory.
+func (c *RecommendationsCategoryClient) Query() *RecommendationsCategoryQuery {
+	return &RecommendationsCategoryQuery{config: c.config}
+}
+
+// Get returns a RecommendationsCategory entity by its id.
+func (c *RecommendationsCategoryClient) Get(ctx context.Context, id int) (*RecommendationsCategory, error) {
+	return c.Query().Where(recommendationscategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RecommendationsCategoryClient) GetX(ctx context.Context, id int) *RecommendationsCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRecommendations queries the recommendations edge of a RecommendationsCategory.
+func (c *RecommendationsCategoryClient) QueryRecommendations(rc *RecommendationsCategory) *RecommendationsQuery {
+	query := &RecommendationsQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendationscategory.Table, recommendationscategory.FieldID, id),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, recommendationscategory.RecommendationsTable, recommendationscategory.RecommendationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(rc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RecommendationsCategoryClient) Hooks() []Hook {
+	hooks := c.hooks.RecommendationsCategory
+	return append(hooks[:len(hooks):len(hooks)], recommendationscategory.Hooks[:]...)
+}
+
+// RecommendationsSourcesClient is a client for the RecommendationsSources schema.
+type RecommendationsSourcesClient struct {
+	config
+}
+
+// NewRecommendationsSourcesClient returns a client for the RecommendationsSources from the given config.
+func NewRecommendationsSourcesClient(c config) *RecommendationsSourcesClient {
+	return &RecommendationsSourcesClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `recommendationssources.Hooks(f(g(h())))`.
+func (c *RecommendationsSourcesClient) Use(hooks ...Hook) {
+	c.hooks.RecommendationsSources = append(c.hooks.RecommendationsSources, hooks...)
+}
+
+// Create returns a create builder for RecommendationsSources.
+func (c *RecommendationsSourcesClient) Create() *RecommendationsSourcesCreate {
+	mutation := newRecommendationsSourcesMutation(c.config, OpCreate)
+	return &RecommendationsSourcesCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RecommendationsSources entities.
+func (c *RecommendationsSourcesClient) CreateBulk(builders ...*RecommendationsSourcesCreate) *RecommendationsSourcesCreateBulk {
+	return &RecommendationsSourcesCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RecommendationsSources.
+func (c *RecommendationsSourcesClient) Update() *RecommendationsSourcesUpdate {
+	mutation := newRecommendationsSourcesMutation(c.config, OpUpdate)
+	return &RecommendationsSourcesUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RecommendationsSourcesClient) UpdateOne(rs *RecommendationsSources) *RecommendationsSourcesUpdateOne {
+	mutation := newRecommendationsSourcesMutation(c.config, OpUpdateOne, withRecommendationsSources(rs))
+	return &RecommendationsSourcesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RecommendationsSourcesClient) UpdateOneID(id int) *RecommendationsSourcesUpdateOne {
+	mutation := newRecommendationsSourcesMutation(c.config, OpUpdateOne, withRecommendationsSourcesID(id))
+	return &RecommendationsSourcesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RecommendationsSources.
+func (c *RecommendationsSourcesClient) Delete() *RecommendationsSourcesDelete {
+	mutation := newRecommendationsSourcesMutation(c.config, OpDelete)
+	return &RecommendationsSourcesDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RecommendationsSourcesClient) DeleteOne(rs *RecommendationsSources) *RecommendationsSourcesDeleteOne {
+	return c.DeleteOneID(rs.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RecommendationsSourcesClient) DeleteOneID(id int) *RecommendationsSourcesDeleteOne {
+	builder := c.Delete().Where(recommendationssources.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RecommendationsSourcesDeleteOne{builder}
+}
+
+// Query returns a query builder for RecommendationsSources.
+func (c *RecommendationsSourcesClient) Query() *RecommendationsSourcesQuery {
+	return &RecommendationsSourcesQuery{config: c.config}
+}
+
+// Get returns a RecommendationsSources entity by its id.
+func (c *RecommendationsSourcesClient) Get(ctx context.Context, id int) (*RecommendationsSources, error) {
+	return c.Query().Where(recommendationssources.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RecommendationsSourcesClient) GetX(ctx context.Context, id int) *RecommendationsSources {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRecommendations queries the recommendations edge of a RecommendationsSources.
+func (c *RecommendationsSourcesClient) QueryRecommendations(rs *RecommendationsSources) *RecommendationsQuery {
+	query := &RecommendationsQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rs.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recommendationssources.Table, recommendationssources.FieldID, id),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, recommendationssources.RecommendationsTable, recommendationssources.RecommendationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(rs.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RecommendationsSourcesClient) Hooks() []Hook {
+	hooks := c.hooks.RecommendationsSources
+	return append(hooks[:len(hooks):len(hooks)], recommendationssources.Hooks[:]...)
+}
+
 // ReportFilterClient is a client for the ReportFilter schema.
 type ReportFilterClient struct {
 	config
@@ -8671,15 +9464,15 @@ func (c *RuleClient) QueryEventseverity(r *Rule) *EventSeverityQuery {
 	return query
 }
 
-// QueryTreshold queries the treshold edge of a Rule.
-func (c *RuleClient) QueryTreshold(r *Rule) *TresholdQuery {
-	query := &TresholdQuery{config: c.config}
+// QueryThreshold queries the threshold edge of a Rule.
+func (c *RuleClient) QueryThreshold(r *Rule) *ThresholdQuery {
+	query := &ThresholdQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := r.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(rule.Table, rule.FieldID, id),
-			sqlgraph.To(treshold.Table, treshold.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, rule.TresholdTable, rule.TresholdColumn),
+			sqlgraph.To(threshold.Table, threshold.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, rule.ThresholdTable, rule.ThresholdColumn),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -10506,187 +11299,82 @@ func (c *TechClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], tech.Hooks[:]...)
 }
 
-// TemporalFrecuencyClient is a client for the TemporalFrecuency schema.
-type TemporalFrecuencyClient struct {
+// ThresholdClient is a client for the Threshold schema.
+type ThresholdClient struct {
 	config
 }
 
-// NewTemporalFrecuencyClient returns a client for the TemporalFrecuency from the given config.
-func NewTemporalFrecuencyClient(c config) *TemporalFrecuencyClient {
-	return &TemporalFrecuencyClient{config: c}
+// NewThresholdClient returns a client for the Threshold from the given config.
+func NewThresholdClient(c config) *ThresholdClient {
+	return &ThresholdClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `temporalfrecuency.Hooks(f(g(h())))`.
-func (c *TemporalFrecuencyClient) Use(hooks ...Hook) {
-	c.hooks.TemporalFrecuency = append(c.hooks.TemporalFrecuency, hooks...)
+// A call to `Use(f, g, h)` equals to `threshold.Hooks(f(g(h())))`.
+func (c *ThresholdClient) Use(hooks ...Hook) {
+	c.hooks.Threshold = append(c.hooks.Threshold, hooks...)
 }
 
-// Create returns a create builder for TemporalFrecuency.
-func (c *TemporalFrecuencyClient) Create() *TemporalFrecuencyCreate {
-	mutation := newTemporalFrecuencyMutation(c.config, OpCreate)
-	return &TemporalFrecuencyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a create builder for Threshold.
+func (c *ThresholdClient) Create() *ThresholdCreate {
+	mutation := newThresholdMutation(c.config, OpCreate)
+	return &ThresholdCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of TemporalFrecuency entities.
-func (c *TemporalFrecuencyClient) CreateBulk(builders ...*TemporalFrecuencyCreate) *TemporalFrecuencyCreateBulk {
-	return &TemporalFrecuencyCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Threshold entities.
+func (c *ThresholdClient) CreateBulk(builders ...*ThresholdCreate) *ThresholdCreateBulk {
+	return &ThresholdCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for TemporalFrecuency.
-func (c *TemporalFrecuencyClient) Update() *TemporalFrecuencyUpdate {
-	mutation := newTemporalFrecuencyMutation(c.config, OpUpdate)
-	return &TemporalFrecuencyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *TemporalFrecuencyClient) UpdateOne(tf *TemporalFrecuency) *TemporalFrecuencyUpdateOne {
-	mutation := newTemporalFrecuencyMutation(c.config, OpUpdateOne, withTemporalFrecuency(tf))
-	return &TemporalFrecuencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *TemporalFrecuencyClient) UpdateOneID(id int) *TemporalFrecuencyUpdateOne {
-	mutation := newTemporalFrecuencyMutation(c.config, OpUpdateOne, withTemporalFrecuencyID(id))
-	return &TemporalFrecuencyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for TemporalFrecuency.
-func (c *TemporalFrecuencyClient) Delete() *TemporalFrecuencyDelete {
-	mutation := newTemporalFrecuencyMutation(c.config, OpDelete)
-	return &TemporalFrecuencyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *TemporalFrecuencyClient) DeleteOne(tf *TemporalFrecuency) *TemporalFrecuencyDeleteOne {
-	return c.DeleteOneID(tf.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *TemporalFrecuencyClient) DeleteOneID(id int) *TemporalFrecuencyDeleteOne {
-	builder := c.Delete().Where(temporalfrecuency.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &TemporalFrecuencyDeleteOne{builder}
-}
-
-// Query returns a query builder for TemporalFrecuency.
-func (c *TemporalFrecuencyClient) Query() *TemporalFrecuencyQuery {
-	return &TemporalFrecuencyQuery{config: c.config}
-}
-
-// Get returns a TemporalFrecuency entity by its id.
-func (c *TemporalFrecuencyClient) Get(ctx context.Context, id int) (*TemporalFrecuency, error) {
-	return c.Query().Where(temporalfrecuency.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *TemporalFrecuencyClient) GetX(ctx context.Context, id int) *TemporalFrecuency {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryTemporalFrecuencyFk queries the temporalFrecuencyFk edge of a TemporalFrecuency.
-func (c *TemporalFrecuencyClient) QueryTemporalFrecuencyFk(tf *TemporalFrecuency) *KqiQuery {
-	query := &KqiQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := tf.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(temporalfrecuency.Table, temporalfrecuency.FieldID, id),
-			sqlgraph.To(kqi.Table, kqi.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, temporalfrecuency.TemporalFrecuencyFkTable, temporalfrecuency.TemporalFrecuencyFkColumn),
-		)
-		fromV = sqlgraph.Neighbors(tf.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *TemporalFrecuencyClient) Hooks() []Hook {
-	hooks := c.hooks.TemporalFrecuency
-	return append(hooks[:len(hooks):len(hooks)], temporalfrecuency.Hooks[:]...)
-}
-
-// TresholdClient is a client for the Treshold schema.
-type TresholdClient struct {
-	config
-}
-
-// NewTresholdClient returns a client for the Treshold from the given config.
-func NewTresholdClient(c config) *TresholdClient {
-	return &TresholdClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `treshold.Hooks(f(g(h())))`.
-func (c *TresholdClient) Use(hooks ...Hook) {
-	c.hooks.Treshold = append(c.hooks.Treshold, hooks...)
-}
-
-// Create returns a create builder for Treshold.
-func (c *TresholdClient) Create() *TresholdCreate {
-	mutation := newTresholdMutation(c.config, OpCreate)
-	return &TresholdCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Treshold entities.
-func (c *TresholdClient) CreateBulk(builders ...*TresholdCreate) *TresholdCreateBulk {
-	return &TresholdCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Treshold.
-func (c *TresholdClient) Update() *TresholdUpdate {
-	mutation := newTresholdMutation(c.config, OpUpdate)
-	return &TresholdUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Threshold.
+func (c *ThresholdClient) Update() *ThresholdUpdate {
+	mutation := newThresholdMutation(c.config, OpUpdate)
+	return &ThresholdUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *TresholdClient) UpdateOne(t *Treshold) *TresholdUpdateOne {
-	mutation := newTresholdMutation(c.config, OpUpdateOne, withTreshold(t))
-	return &TresholdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ThresholdClient) UpdateOne(t *Threshold) *ThresholdUpdateOne {
+	mutation := newThresholdMutation(c.config, OpUpdateOne, withThreshold(t))
+	return &ThresholdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TresholdClient) UpdateOneID(id int) *TresholdUpdateOne {
-	mutation := newTresholdMutation(c.config, OpUpdateOne, withTresholdID(id))
-	return &TresholdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ThresholdClient) UpdateOneID(id int) *ThresholdUpdateOne {
+	mutation := newThresholdMutation(c.config, OpUpdateOne, withThresholdID(id))
+	return &ThresholdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Treshold.
-func (c *TresholdClient) Delete() *TresholdDelete {
-	mutation := newTresholdMutation(c.config, OpDelete)
-	return &TresholdDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Threshold.
+func (c *ThresholdClient) Delete() *ThresholdDelete {
+	mutation := newThresholdMutation(c.config, OpDelete)
+	return &ThresholdDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *TresholdClient) DeleteOne(t *Treshold) *TresholdDeleteOne {
+func (c *ThresholdClient) DeleteOne(t *Threshold) *ThresholdDeleteOne {
 	return c.DeleteOneID(t.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *TresholdClient) DeleteOneID(id int) *TresholdDeleteOne {
-	builder := c.Delete().Where(treshold.ID(id))
+func (c *ThresholdClient) DeleteOneID(id int) *ThresholdDeleteOne {
+	builder := c.Delete().Where(threshold.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &TresholdDeleteOne{builder}
+	return &ThresholdDeleteOne{builder}
 }
 
-// Query returns a query builder for Treshold.
-func (c *TresholdClient) Query() *TresholdQuery {
-	return &TresholdQuery{config: c.config}
+// Query returns a query builder for Threshold.
+func (c *ThresholdClient) Query() *ThresholdQuery {
+	return &ThresholdQuery{config: c.config}
 }
 
-// Get returns a Treshold entity by its id.
-func (c *TresholdClient) Get(ctx context.Context, id int) (*Treshold, error) {
-	return c.Query().Where(treshold.ID(id)).Only(ctx)
+// Get returns a Threshold entity by its id.
+func (c *ThresholdClient) Get(ctx context.Context, id int) (*Threshold, error) {
+	return c.Query().Where(threshold.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TresholdClient) GetX(ctx context.Context, id int) *Treshold {
+func (c *ThresholdClient) GetX(ctx context.Context, id int) *Threshold {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -10694,15 +11382,15 @@ func (c *TresholdClient) GetX(ctx context.Context, id int) *Treshold {
 	return obj
 }
 
-// QueryKpi queries the kpi edge of a Treshold.
-func (c *TresholdClient) QueryKpi(t *Treshold) *KpiQuery {
+// QueryKpi queries the kpi edge of a Threshold.
+func (c *ThresholdClient) QueryKpi(t *Threshold) *KpiQuery {
 	query := &KpiQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(treshold.Table, treshold.FieldID, id),
+			sqlgraph.From(threshold.Table, threshold.FieldID, id),
 			sqlgraph.To(kpi.Table, kpi.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, treshold.KpiTable, treshold.KpiColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, threshold.KpiTable, threshold.KpiColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -10710,15 +11398,15 @@ func (c *TresholdClient) QueryKpi(t *Treshold) *KpiQuery {
 	return query
 }
 
-// QueryRuletreshold queries the ruletreshold edge of a Treshold.
-func (c *TresholdClient) QueryRuletreshold(t *Treshold) *RuleQuery {
+// QueryRulethreshold queries the rulethreshold edge of a Threshold.
+func (c *ThresholdClient) QueryRulethreshold(t *Threshold) *RuleQuery {
 	query := &RuleQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(treshold.Table, treshold.FieldID, id),
+			sqlgraph.From(threshold.Table, threshold.FieldID, id),
 			sqlgraph.To(rule.Table, rule.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, treshold.RuletresholdTable, treshold.RuletresholdColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, threshold.RulethresholdTable, threshold.RulethresholdColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -10727,9 +11415,9 @@ func (c *TresholdClient) QueryRuletreshold(t *Treshold) *RuleQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *TresholdClient) Hooks() []Hook {
-	hooks := c.hooks.Treshold
-	return append(hooks[:len(hooks):len(hooks)], treshold.Hooks[:]...)
+func (c *ThresholdClient) Hooks() []Hook {
+	hooks := c.hooks.Threshold
+	return append(hooks[:len(hooks):len(hooks)], threshold.Hooks[:]...)
 }
 
 // UserClient is a client for the User schema.
@@ -10831,6 +11519,38 @@ func (c *UserClient) QueryProfilePhoto(u *User) *FileQuery {
 	return query
 }
 
+// QueryUserCreate queries the User_create edge of a User.
+func (c *UserClient) QueryUserCreate(u *User) *RecommendationsQuery {
+	query := &RecommendationsQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserCreateTable, user.UserCreateColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserApproved queries the User_approved edge of a User.
+func (c *UserClient) QueryUserApproved(u *User) *RecommendationsQuery {
+	query := &RecommendationsQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserApprovedTable, user.UserApprovedColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryGroups queries the groups edge of a User.
 func (c *UserClient) QueryGroups(u *User) *UsersGroupQuery {
 	query := &UsersGroupQuery{config: c.config}
@@ -10840,6 +11560,22 @@ func (c *UserClient) QueryGroups(u *User) *UsersGroupQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(usersgroup.Table, usersgroup.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.GroupsTable, user.GroupsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrganization queries the organization edge of a User.
+func (c *UserClient) QueryOrganization(u *User) *OrganizationQuery {
+	query := &OrganizationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.OrganizationTable, user.OrganizationColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -11153,6 +11889,22 @@ func (c *VendorClient) QueryVendorFk(v *Vendor) *CounterQuery {
 	return query
 }
 
+// QueryVendorsRecomendations queries the vendors_recomendations edge of a Vendor.
+func (c *VendorClient) QueryVendorsRecomendations(v *Vendor) *RecommendationsQuery {
+	query := &RecommendationsQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vendor.Table, vendor.FieldID, id),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, vendor.VendorsRecomendationsTable, vendor.VendorsRecomendationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *VendorClient) Hooks() []Hook {
 	hooks := c.hooks.Vendor
@@ -11299,6 +12051,22 @@ func (c *WorkOrderClient) QueryLinks(wo *WorkOrder) *LinkQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, workorder.LinksTable, workorder.LinksColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrganization queries the organization edge of a WorkOrder.
+func (c *WorkOrderClient) QueryOrganization(wo *WorkOrder) *OrganizationQuery {
+	query := &OrganizationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, workorder.OrganizationTable, workorder.OrganizationColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

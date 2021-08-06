@@ -26,6 +26,7 @@ export type EditUserInput = {|
   status?: ?UserStatus,
   role?: ?UserRole,
   distanceUnit?: ?DistanceUnit,
+  organizationFk?: ?string,
 |};
 export type EditUserMutationVariables = {|
   input: EditUserInput

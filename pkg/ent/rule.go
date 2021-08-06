@@ -15,7 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/eventseverity"
 	"github.com/facebookincubator/symphony/pkg/ent/rule"
 	"github.com/facebookincubator/symphony/pkg/ent/ruletype"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // Rule is the model entity for the Rule schema.
@@ -48,7 +48,7 @@ type Rule struct {
 	Edges                            RuleEdges `json:"edges"`
 	event_severity_eventseverityrule *int
 	rule_type_ruletyperule           *int
-	treshold_ruletreshold            *int
+	threshold_rulethreshold          *int
 }
 
 // RuleEdges holds the relations/edges for other nodes in the graph.
@@ -57,8 +57,8 @@ type RuleEdges struct {
 	Ruletype *RuleType
 	// Eventseverity holds the value of the eventseverity edge.
 	Eventseverity *EventSeverity
-	// Treshold holds the value of the treshold edge.
-	Treshold *Treshold
+	// Threshold holds the value of the threshold edge.
+	Threshold *Threshold
 	// Rulelimitrule holds the value of the rulelimitrule edge.
 	Rulelimitrule []*RuleLimit
 	// loadedTypes holds the information for reporting if a
@@ -94,18 +94,18 @@ func (e RuleEdges) EventseverityOrErr() (*EventSeverity, error) {
 	return nil, &NotLoadedError{edge: "eventseverity"}
 }
 
-// TresholdOrErr returns the Treshold value or an error if the edge
+// ThresholdOrErr returns the Threshold value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e RuleEdges) TresholdOrErr() (*Treshold, error) {
+func (e RuleEdges) ThresholdOrErr() (*Threshold, error) {
 	if e.loadedTypes[2] {
-		if e.Treshold == nil {
-			// The edge treshold was loaded in eager-loading,
+		if e.Threshold == nil {
+			// The edge threshold was loaded in eager-loading,
 			// but was not found.
-			return nil, &NotFoundError{label: treshold.Label}
+			return nil, &NotFoundError{label: threshold.Label}
 		}
-		return e.Treshold, nil
+		return e.Threshold, nil
 	}
-	return nil, &NotLoadedError{edge: "treshold"}
+	return nil, &NotLoadedError{edge: "threshold"}
 }
 
 // RulelimitruleOrErr returns the Rulelimitrule value or an error if the edge
@@ -139,7 +139,7 @@ func (*Rule) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // event_severity_eventseverityrule
 		&sql.NullInt64{}, // rule_type_ruletyperule
-		&sql.NullInt64{}, // treshold_ruletreshold
+		&sql.NullInt64{}, // threshold_rulethreshold
 	}
 }
 
@@ -223,10 +223,10 @@ func (r *Rule) assignValues(values ...interface{}) error {
 			*r.rule_type_ruletyperule = int(value.Int64)
 		}
 		if value, ok := values[2].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field treshold_ruletreshold", value)
+			return fmt.Errorf("unexpected type %T for edge-field threshold_rulethreshold", value)
 		} else if value.Valid {
-			r.treshold_ruletreshold = new(int)
-			*r.treshold_ruletreshold = int(value.Int64)
+			r.threshold_rulethreshold = new(int)
+			*r.threshold_rulethreshold = int(value.Int64)
 		}
 	}
 	return nil
@@ -242,9 +242,9 @@ func (r *Rule) QueryEventseverity() *EventSeverityQuery {
 	return (&RuleClient{config: r.config}).QueryEventseverity(r)
 }
 
-// QueryTreshold queries the treshold edge of the Rule.
-func (r *Rule) QueryTreshold() *TresholdQuery {
-	return (&RuleClient{config: r.config}).QueryTreshold(r)
+// QueryThreshold queries the threshold edge of the Rule.
+func (r *Rule) QueryThreshold() *ThresholdQuery {
+	return (&RuleClient{config: r.config}).QueryThreshold(r)
 }
 
 // QueryRulelimitrule queries the rulelimitrule edge of the Rule.

@@ -26,8 +26,6 @@ type Tx struct {
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
 	BlockInstance *BlockInstanceClient
-	// Category is the client for interacting with the Category builders.
-	Category *CategoryClient
 	// CheckListCategory is the client for interacting with the CheckListCategory builders.
 	CheckListCategory *CheckListCategoryClient
 	// CheckListCategoryDefinition is the client for interacting with the CheckListCategoryDefinition builders.
@@ -102,20 +100,28 @@ type Tx struct {
 	Kpi *KpiClient
 	// Kqi is the client for interacting with the Kqi builders.
 	Kqi *KqiClient
+	// KqiCategory is the client for interacting with the KqiCategory builders.
+	KqiCategory *KqiCategoryClient
+	// KqiComparator is the client for interacting with the KqiComparator builders.
+	KqiComparator *KqiComparatorClient
+	// KqiPerspective is the client for interacting with the KqiPerspective builders.
+	KqiPerspective *KqiPerspectiveClient
 	// KqiSource is the client for interacting with the KqiSource builders.
 	KqiSource *KqiSourceClient
 	// KqiTarget is the client for interacting with the KqiTarget builders.
 	KqiTarget *KqiTargetClient
+	// KqiTemporalFrequency is the client for interacting with the KqiTemporalFrequency builders.
+	KqiTemporalFrequency *KqiTemporalFrequencyClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
 	Location *LocationClient
 	// LocationType is the client for interacting with the LocationType builders.
 	LocationType *LocationTypeClient
+	// Organization is the client for interacting with the Organization builders.
+	Organization *OrganizationClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
-	// Perspective is the client for interacting with the Perspective builders.
-	Perspective *PerspectiveClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectTemplate is the client for interacting with the ProjectTemplate builders.
@@ -126,6 +132,12 @@ type Tx struct {
 	Property *PropertyClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
+	// Recommendations is the client for interacting with the Recommendations builders.
+	Recommendations *RecommendationsClient
+	// RecommendationsCategory is the client for interacting with the RecommendationsCategory builders.
+	RecommendationsCategory *RecommendationsCategoryClient
+	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
+	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
 	// Rule is the client for interacting with the Rule builders.
@@ -156,10 +168,8 @@ type Tx struct {
 	SurveyWiFiScan *SurveyWiFiScanClient
 	// Tech is the client for interacting with the Tech builders.
 	Tech *TechClient
-	// TemporalFrecuency is the client for interacting with the TemporalFrecuency builders.
-	TemporalFrecuency *TemporalFrecuencyClient
-	// Treshold is the client for interacting with the Treshold builders.
-	Treshold *TresholdClient
+	// Threshold is the client for interacting with the Threshold builders.
+	Threshold *ThresholdClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
@@ -316,7 +326,6 @@ func (tx *Tx) init() {
 	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
-	tx.Category = NewCategoryClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)
 	tx.CheckListCategoryDefinition = NewCheckListCategoryDefinitionClient(tx.config)
 	tx.CheckListItem = NewCheckListItemClient(tx.config)
@@ -354,18 +363,25 @@ func (tx *Tx) init() {
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
 	tx.Kpi = NewKpiClient(tx.config)
 	tx.Kqi = NewKqiClient(tx.config)
+	tx.KqiCategory = NewKqiCategoryClient(tx.config)
+	tx.KqiComparator = NewKqiComparatorClient(tx.config)
+	tx.KqiPerspective = NewKqiPerspectiveClient(tx.config)
 	tx.KqiSource = NewKqiSourceClient(tx.config)
 	tx.KqiTarget = NewKqiTargetClient(tx.config)
+	tx.KqiTemporalFrequency = NewKqiTemporalFrequencyClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.LocationType = NewLocationTypeClient(tx.config)
+	tx.Organization = NewOrganizationClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
-	tx.Perspective = NewPerspectiveClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectTemplate = NewProjectTemplateClient(tx.config)
 	tx.ProjectType = NewProjectTypeClient(tx.config)
 	tx.Property = NewPropertyClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)
+	tx.Recommendations = NewRecommendationsClient(tx.config)
+	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
+	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
 	tx.Rule = NewRuleClient(tx.config)
 	tx.RuleLimit = NewRuleLimitClient(tx.config)
@@ -381,8 +397,7 @@ func (tx *Tx) init() {
 	tx.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(tx.config)
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
 	tx.Tech = NewTechClient(tx.config)
-	tx.TemporalFrecuency = NewTemporalFrecuencyClient(tx.config)
-	tx.Treshold = NewTresholdClient(tx.config)
+	tx.Threshold = NewThresholdClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
 	tx.Vendor = NewVendorClient(tx.config)

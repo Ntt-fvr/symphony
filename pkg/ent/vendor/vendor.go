@@ -26,6 +26,8 @@ const (
 
 	// EdgeVendorFk holds the string denoting the vendor_fk edge name in mutations.
 	EdgeVendorFk = "vendor_fk"
+	// EdgeVendorsRecomendations holds the string denoting the vendors_recomendations edge name in mutations.
+	EdgeVendorsRecomendations = "vendors_recomendations"
 
 	// Table holds the table name of the vendor in the database.
 	Table = "vendors"
@@ -36,6 +38,13 @@ const (
 	VendorFkInverseTable = "counters"
 	// VendorFkColumn is the table column denoting the vendor_fk relation/edge.
 	VendorFkColumn = "vendor_vendor_fk"
+	// VendorsRecomendationsTable is the table the holds the vendors_recomendations relation/edge.
+	VendorsRecomendationsTable = "recommendations"
+	// VendorsRecomendationsInverseTable is the table name for the Recommendations entity.
+	// It exists in this package in order to avoid circular dependency with the "recommendations" package.
+	VendorsRecomendationsInverseTable = "recommendations"
+	// VendorsRecomendationsColumn is the table column denoting the vendors_recomendations relation/edge.
+	VendorsRecomendationsColumn = "vendor_vendors_recomendations"
 )
 
 // Columns holds all SQL columns for vendor fields.

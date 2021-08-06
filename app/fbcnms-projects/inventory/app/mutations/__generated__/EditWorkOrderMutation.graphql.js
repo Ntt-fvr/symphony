@@ -30,6 +30,7 @@ export type EditWorkOrderInput = {|
   installDate?: ?any,
   assigneeId?: ?string,
   index?: ?number,
+  organizationFk?: ?string,
   status?: ?WorkOrderStatus,
   priority?: ?WorkOrderPriority,
   projectId?: ?string,

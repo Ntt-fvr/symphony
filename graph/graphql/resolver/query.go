@@ -302,21 +302,22 @@ func (r queryResolver) Kpis(
 			),
 		)
 }
-func (r queryResolver) Tresholds(
+
+func (r queryResolver) Thresholds(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *ent.TresholdOrder,
-	filterBy []*models.TresholdFilterInput,
-) (*ent.TresholdConnection, error) {
+	orderBy *ent.ThresholdOrder,
+	filterBy []*models.ThresholdFilterInput,
+) (*ent.ThresholdConnection, error) {
 	return r.ClientFrom(ctx).
-		Treshold.
+		Threshold.
 		Query().
 		Paginate(ctx, after, first, before, last,
-			ent.WithTresholdOrder(orderBy),
-			ent.WithTresholdFilter(
-				func(query *ent.TresholdQuery) (*ent.TresholdQuery, error) {
-					return resolverutil.TresholdFilter(query, filterBy)
+			ent.WithThresholdOrder(orderBy),
+			ent.WithThresholdFilter(
+				func(query *ent.ThresholdQuery) (*ent.ThresholdQuery, error) {
+					return resolverutil.ThresholdFilter(query, filterBy)
 				},
 			),
 		)
@@ -382,7 +383,7 @@ func (r queryResolver) Vendors(
 		)
 }
 
-func (r queryResolver) CounterFamilys(
+func (r queryResolver) CounterFamilies(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -420,7 +421,7 @@ func (r queryResolver) RuleTypes(
 			),
 		)
 }
-func (r queryResolver) EventSeveritys(
+func (r queryResolver) EventSeverities(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -460,7 +461,7 @@ func (r queryResolver) Comparators(
 		)
 }
 
-func (r queryResolver) AlarmStatuss(
+func (r queryResolver) AlarmStatus(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -475,6 +476,85 @@ func (r queryResolver) AlarmStatuss(
 			ent.WithAlarmStatusFilter(
 				func(query *ent.AlarmStatusQuery) (*ent.AlarmStatusQuery, error) {
 					return resolverutil.AlarmStatusFilter(query, filterBy)
+				},
+			),
+		)
+}
+func (r queryResolver) Organizations(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.OrganizationOrder,
+	filterBy []*models.OrganizationFilterInput,
+) (*ent.OrganizationConnection, error) {
+	return r.ClientFrom(ctx).
+		Organization.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithOrganizationOrder(orderBy),
+			ent.WithOrganizationFilter(
+				func(query *ent.OrganizationQuery) (*ent.OrganizationQuery, error) {
+					return resolverutil.OrganizationFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) RecommendationsSources(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RecommendationsSourcesOrder,
+	filterBy []*models.RecommendationsSourcesFilterInput,
+) (*ent.RecommendationsSourcesConnection, error) {
+	return r.ClientFrom(ctx).
+		RecommendationsSources.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRecommendationsSourcesOrder(orderBy),
+			ent.WithRecommendationsSourcesFilter(
+				func(query *ent.RecommendationsSourcesQuery) (*ent.RecommendationsSourcesQuery, error) {
+					return resolverutil.RecommendationsSourcesFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) RecommendationsCategories(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RecommendationsCategoryOrder,
+	filterBy []*models.RecommendationsCategoryFilterInput,
+) (*ent.RecommendationsCategoryConnection, error) {
+	return r.ClientFrom(ctx).
+		RecommendationsCategory.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRecommendationsCategoryOrder(orderBy),
+			ent.WithRecommendationsCategoryFilter(
+				func(query *ent.RecommendationsCategoryQuery) (*ent.RecommendationsCategoryQuery, error) {
+					return resolverutil.RecommendationsCategoryFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) Recommendations(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.RecommendationsOrder,
+	filterBy []*models.RecommendationsFilterInput,
+) (*ent.RecommendationsConnection, error) {
+	return r.ClientFrom(ctx).
+		Recommendations.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithRecommendationsOrder(orderBy),
+			ent.WithRecommendationsFilter(
+				func(query *ent.RecommendationsQuery) (*ent.RecommendationsQuery, error) {
+					return resolverutil.RecommendationsFilter(query, filterBy)
 				},
 			),
 		)
@@ -815,6 +895,106 @@ func (r queryResolver) Kqis(
 			ent.WithKqiFilter(
 				func(query *ent.KqiQuery) (*ent.KqiQuery, error) {
 					return resolverutil.KqiFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) KqiCategories(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KqiCategoryOrder,
+	filterBy []*models.KqiCategoryFilterInput,
+) (*ent.KqiCategoryConnection, error) {
+	return r.ClientFrom(ctx).
+		KqiCategory.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKqiCategoryOrder(orderBy),
+			ent.WithKqiCategoryFilter(
+				func(query *ent.KqiCategoryQuery) (*ent.KqiCategoryQuery, error) {
+					return resolverutil.KqiCategoryFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) KqiPerspectives(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KqiPerspectiveOrder,
+	filterBy []*models.KqiPerspectiveFilterInput,
+) (*ent.KqiPerspectiveConnection, error) {
+	return r.ClientFrom(ctx).
+		KqiPerspective.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKqiPerspectiveOrder(orderBy),
+			ent.WithKqiPerspectiveFilter(
+				func(query *ent.KqiPerspectiveQuery) (*ent.KqiPerspectiveQuery, error) {
+					return resolverutil.KqiPerspectiveFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) KqiTemporalFrequencies(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KqiTemporalFrequencyOrder,
+	filterBy []*models.KqiTemporalFrequencyFilterInput,
+) (*ent.KqiTemporalFrequencyConnection, error) {
+	return r.ClientFrom(ctx).
+		KqiTemporalFrequency.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKqiTemporalFrequencyOrder(orderBy),
+			ent.WithKqiTemporalFrequencyFilter(
+				func(query *ent.KqiTemporalFrequencyQuery) (*ent.KqiTemporalFrequencyQuery, error) {
+					return resolverutil.KqiTemporalFrequencyFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) KqiSources(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KqiSourceOrder,
+	filterBy []*models.KqiSourceFilterInput,
+) (*ent.KqiSourceConnection, error) {
+	return r.ClientFrom(ctx).
+		KqiSource.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKqiSourceOrder(orderBy),
+			ent.WithKqiSourceFilter(
+				func(query *ent.KqiSourceQuery) (*ent.KqiSourceQuery, error) {
+					return resolverutil.KqiSourceFilter(query, filterBy)
+				},
+			),
+		)
+}
+
+func (r queryResolver) KqiTargets(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KqiTargetOrder,
+	filterBy []*models.KqiTargetFilterInput,
+) (*ent.KqiTargetConnection, error) {
+	return r.ClientFrom(ctx).
+		KqiTarget.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKqiTargetOrder(orderBy),
+			ent.WithKqiTargetFilter(
+				func(query *ent.KqiTargetQuery) (*ent.KqiTargetQuery, error) {
+					return resolverutil.KqiTargetFilter(query, filterBy)
 				},
 			),
 		)

@@ -25,12 +25,8 @@ type KqiTarget struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// Comparator holds the value of the "comparator" field.
-	Comparator float64 `json:"comparator,omitempty"`
-	// ReferenceValue holds the value of the "referenceValue" field.
-	ReferenceValue float64 `json:"referenceValue,omitempty"`
-	// WarningComparator holds the value of the "warningComparator" field.
-	WarningComparator float64 `json:"warningComparator,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Frame holds the value of the "frame" field.
 	Frame float64 `json:"frame,omitempty"`
 	// AlowedValidation holds the value of the "alowedValidation" field.
@@ -41,8 +37,8 @@ type KqiTarget struct {
 	EndTime time.Time `json:"endTime,omitempty"`
 	// Impact holds the value of the "impact" field.
 	Impact string `json:"impact,omitempty"`
-	// Active holds the value of the "active" field.
-	Active bool `json:"active,omitempty"`
+	// Status holds the value of the "status" field.
+	Status bool `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the KqiTargetQuery when eager-loading is set.
 	Edges             KqiTargetEdges `json:"edges"`
@@ -53,9 +49,11 @@ type KqiTarget struct {
 type KqiTargetEdges struct {
 	// KqiTargetFk holds the value of the kqiTargetFk edge.
 	KqiTargetFk *Kqi
+	// Kqitargetcomparatorfk holds the value of the kqitargetcomparatorfk edge.
+	Kqitargetcomparatorfk []*KqiComparator
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // KqiTargetFkOrErr returns the KqiTargetFk value or an error if the edge
@@ -72,21 +70,28 @@ func (e KqiTargetEdges) KqiTargetFkOrErr() (*Kqi, error) {
 	return nil, &NotLoadedError{edge: "kqiTargetFk"}
 }
 
+// KqitargetcomparatorfkOrErr returns the Kqitargetcomparatorfk value or an error if the edge
+// was not loaded in eager-loading.
+func (e KqiTargetEdges) KqitargetcomparatorfkOrErr() ([]*KqiComparator, error) {
+	if e.loadedTypes[1] {
+		return e.Kqitargetcomparatorfk, nil
+	}
+	return nil, &NotLoadedError{edge: "kqitargetcomparatorfk"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*KqiTarget) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},   // id
 		&sql.NullTime{},    // create_time
 		&sql.NullTime{},    // update_time
-		&sql.NullFloat64{}, // comparator
-		&sql.NullFloat64{}, // referenceValue
-		&sql.NullFloat64{}, // warningComparator
+		&sql.NullString{},  // name
 		&sql.NullFloat64{}, // frame
 		&sql.NullFloat64{}, // alowedValidation
 		&sql.NullTime{},    // initTime
 		&sql.NullTime{},    // endTime
 		&sql.NullString{},  // impact
-		&sql.NullBool{},    // active
+		&sql.NullBool{},    // status
 	}
 }
 
@@ -119,52 +124,42 @@ func (kt *KqiTarget) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		kt.UpdateTime = value.Time
 	}
-	if value, ok := values[2].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field comparator", values[2])
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field name", values[2])
 	} else if value.Valid {
-		kt.Comparator = value.Float64
+		kt.Name = value.String
 	}
 	if value, ok := values[3].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field referenceValue", values[3])
-	} else if value.Valid {
-		kt.ReferenceValue = value.Float64
-	}
-	if value, ok := values[4].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field warningComparator", values[4])
-	} else if value.Valid {
-		kt.WarningComparator = value.Float64
-	}
-	if value, ok := values[5].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field frame", values[5])
+		return fmt.Errorf("unexpected type %T for field frame", values[3])
 	} else if value.Valid {
 		kt.Frame = value.Float64
 	}
-	if value, ok := values[6].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field alowedValidation", values[6])
+	if value, ok := values[4].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field alowedValidation", values[4])
 	} else if value.Valid {
 		kt.AlowedValidation = value.Float64
 	}
-	if value, ok := values[7].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field initTime", values[7])
+	if value, ok := values[5].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field initTime", values[5])
 	} else if value.Valid {
 		kt.InitTime = value.Time
 	}
-	if value, ok := values[8].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field endTime", values[8])
+	if value, ok := values[6].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field endTime", values[6])
 	} else if value.Valid {
 		kt.EndTime = value.Time
 	}
-	if value, ok := values[9].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field impact", values[9])
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field impact", values[7])
 	} else if value.Valid {
 		kt.Impact = value.String
 	}
-	if value, ok := values[10].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field active", values[10])
+	if value, ok := values[8].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[8])
 	} else if value.Valid {
-		kt.Active = value.Bool
+		kt.Status = value.Bool
 	}
-	values = values[11:]
+	values = values[9:]
 	if len(values) == len(kqitarget.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field kqi_kqi_target_fk", value)
@@ -179,6 +174,11 @@ func (kt *KqiTarget) assignValues(values ...interface{}) error {
 // QueryKqiTargetFk queries the kqiTargetFk edge of the KqiTarget.
 func (kt *KqiTarget) QueryKqiTargetFk() *KqiQuery {
 	return (&KqiTargetClient{config: kt.config}).QueryKqiTargetFk(kt)
+}
+
+// QueryKqitargetcomparatorfk queries the kqitargetcomparatorfk edge of the KqiTarget.
+func (kt *KqiTarget) QueryKqitargetcomparatorfk() *KqiComparatorQuery {
+	return (&KqiTargetClient{config: kt.config}).QueryKqitargetcomparatorfk(kt)
 }
 
 // Update returns a builder for updating this KqiTarget.
@@ -208,12 +208,8 @@ func (kt *KqiTarget) String() string {
 	builder.WriteString(kt.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(kt.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", comparator=")
-	builder.WriteString(fmt.Sprintf("%v", kt.Comparator))
-	builder.WriteString(", referenceValue=")
-	builder.WriteString(fmt.Sprintf("%v", kt.ReferenceValue))
-	builder.WriteString(", warningComparator=")
-	builder.WriteString(fmt.Sprintf("%v", kt.WarningComparator))
+	builder.WriteString(", name=")
+	builder.WriteString(kt.Name)
 	builder.WriteString(", frame=")
 	builder.WriteString(fmt.Sprintf("%v", kt.Frame))
 	builder.WriteString(", alowedValidation=")
@@ -224,8 +220,8 @@ func (kt *KqiTarget) String() string {
 	builder.WriteString(kt.EndTime.Format(time.ANSIC))
 	builder.WriteString(", impact=")
 	builder.WriteString(kt.Impact)
-	builder.WriteString(", active=")
-	builder.WriteString(fmt.Sprintf("%v", kt.Active))
+	builder.WriteString(", status=")
+	builder.WriteString(fmt.Sprintf("%v", kt.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }

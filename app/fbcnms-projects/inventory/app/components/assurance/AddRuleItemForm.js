@@ -40,7 +40,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const AddRuleQuery = graphql`
   query AddRuleItemFormQuery {
-    eventSeveritys {
+    eventSeverities {
       edges {
         node {
           id
@@ -205,7 +205,7 @@ const AddRuleItemForm = (props: Props) => {
         specificProblem: rule.data.specificProblem,
         additionalInfo: rule.data.additionalInfo,
         eventSeverity: rule.data.alarmSeverities,
-        treshold: threshold.id,
+        threshold: threshold.id,
       },
     };
 
@@ -318,7 +318,7 @@ const AddRuleItemForm = (props: Props) => {
                     }}
                     name="alarmSeverities"
                     onChange={handleChange}>
-                    {data.eventSeveritys.edges.map((item, index) => (
+                    {data.eventSeverities.edges.map((item, index) => (
                       <MenuItem key={index} value={item.node?.id}>
                         {item.node?.name}
                       </MenuItem>

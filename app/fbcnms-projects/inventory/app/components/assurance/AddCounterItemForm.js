@@ -34,7 +34,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const AddCountersQuery = graphql`
   query AddCounterItemFormQuery {
-    counterFamilys {
+    counterFamilies {
       edges {
         node {
           id
@@ -187,7 +187,7 @@ export default function AddCounterItemForm(props: Props) {
           disableUnderline
           name="family"
           onChange={handleChange}>
-          {data.counterFamilys.edges.map((item, index) => (
+          {data.counterFamilies.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>

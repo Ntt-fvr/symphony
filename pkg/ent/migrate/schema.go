@@ -206,20 +206,6 @@ var (
 			},
 		},
 	}
-	// CategoriesColumns holds the columns for the "categories" table.
-	CategoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
-	}
-	// CategoriesTable holds the schema information for the "categories" table.
-	CategoriesTable = &schema.Table{
-		Name:        "categories",
-		Columns:     CategoriesColumns,
-		PrimaryKey:  []*schema.Column{CategoriesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
-	}
 	// CheckListCategoriesColumns holds the columns for the "check_list_categories" table.
 	CheckListCategoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1166,7 +1152,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "active", Type: field.TypeBool},
+		{Name: "status", Type: field.TypeBool},
 		{Name: "kpi_formulakpi", Type: field.TypeInt, Nullable: true},
 		{Name: "tech_formulatech", Type: field.TypeInt, Nullable: true},
 	}
@@ -1268,10 +1254,10 @@ var (
 		{Name: "start_date_time", Type: field.TypeTime},
 		{Name: "end_date_time", Type: field.TypeTime},
 		{Name: "formula", Type: field.TypeString},
-		{Name: "category_category_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "kqi_category_kqi_category_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "kqi_perspective_kqi_perspective_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "kqi_source_kqi_source_fk", Type: field.TypeInt, Nullable: true},
-		{Name: "perspective_perspective_fk", Type: field.TypeInt, Nullable: true},
-		{Name: "temporal_frecuency_temporal_frecuency_fk", Type: field.TypeInt, Nullable: true},
+		{Name: "kqi_temporal_frequency_kqi_temporal_frequency_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// KqisTable holds the schema information for the "kqis" table.
 	KqisTable = &schema.Table{
@@ -1280,34 +1266,94 @@ var (
 		PrimaryKey: []*schema.Column{KqisColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "kqis_categories_categoryFk",
+				Symbol:  "kqis_kqi_categories_kqiCategoryFk",
 				Columns: []*schema.Column{KqisColumns[8]},
 
-				RefColumns: []*schema.Column{CategoriesColumns[0]},
+				RefColumns: []*schema.Column{KqiCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "kqis_kqi_perspectives_kqiPerspectiveFk",
+				Columns: []*schema.Column{KqisColumns[9]},
+
+				RefColumns: []*schema.Column{KqiPerspectivesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "kqis_kqi_sources_kqiSourceFk",
-				Columns: []*schema.Column{KqisColumns[9]},
+				Columns: []*schema.Column{KqisColumns[10]},
 
 				RefColumns: []*schema.Column{KqiSourcesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "kqis_perspectives_perspectiveFk",
-				Columns: []*schema.Column{KqisColumns[10]},
-
-				RefColumns: []*schema.Column{PerspectivesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "kqis_temporal_frecuencies_temporalFrecuencyFk",
+				Symbol:  "kqis_kqi_temporal_frequencies_kqiTemporalFrequencyFk",
 				Columns: []*schema.Column{KqisColumns[11]},
 
-				RefColumns: []*schema.Column{TemporalFrecuenciesColumns[0]},
+				RefColumns: []*schema.Column{KqiTemporalFrequenciesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// KqiCategoriesColumns holds the columns for the "kqi_categories" table.
+	KqiCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// KqiCategoriesTable holds the schema information for the "kqi_categories" table.
+	KqiCategoriesTable = &schema.Table{
+		Name:        "kqi_categories",
+		Columns:     KqiCategoriesColumns,
+		PrimaryKey:  []*schema.Column{KqiCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// KqiComparatorsColumns holds the columns for the "kqi_comparators" table.
+	KqiComparatorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "number", Type: field.TypeFloat64},
+		{Name: "comparator_type", Type: field.TypeString},
+		{Name: "comparator_comparatorkqitargetfk", Type: field.TypeInt, Nullable: true},
+		{Name: "kqi_target_kqitargetcomparatorfk", Type: field.TypeInt, Nullable: true},
+	}
+	// KqiComparatorsTable holds the schema information for the "kqi_comparators" table.
+	KqiComparatorsTable = &schema.Table{
+		Name:       "kqi_comparators",
+		Columns:    KqiComparatorsColumns,
+		PrimaryKey: []*schema.Column{KqiComparatorsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "kqi_comparators_comparators_comparatorkqitargetfk",
+				Columns: []*schema.Column{KqiComparatorsColumns[5]},
+
+				RefColumns: []*schema.Column{ComparatorsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "kqi_comparators_kqi_targets_kqitargetcomparatorfk",
+				Columns: []*schema.Column{KqiComparatorsColumns[6]},
+
+				RefColumns: []*schema.Column{KqiTargetsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// KqiPerspectivesColumns holds the columns for the "kqi_perspectives" table.
+	KqiPerspectivesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// KqiPerspectivesTable holds the schema information for the "kqi_perspectives" table.
+	KqiPerspectivesTable = &schema.Table{
+		Name:        "kqi_perspectives",
+		Columns:     KqiPerspectivesColumns,
+		PrimaryKey:  []*schema.Column{KqiPerspectivesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// KqiSourcesColumns holds the columns for the "kqi_sources" table.
 	KqiSourcesColumns = []*schema.Column{
@@ -1328,15 +1374,13 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "comparator", Type: field.TypeFloat64},
-		{Name: "reference_value", Type: field.TypeFloat64},
-		{Name: "warning_comparator", Type: field.TypeFloat64},
+		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "frame", Type: field.TypeFloat64},
 		{Name: "alowed_validation", Type: field.TypeFloat64},
 		{Name: "init_time", Type: field.TypeTime},
 		{Name: "end_time", Type: field.TypeTime},
 		{Name: "impact", Type: field.TypeString},
-		{Name: "active", Type: field.TypeBool},
+		{Name: "status", Type: field.TypeBool},
 		{Name: "kqi_kqi_target_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// KqiTargetsTable holds the schema information for the "kqi_targets" table.
@@ -1347,12 +1391,26 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "kqi_targets_kqis_kqiTargetFk",
-				Columns: []*schema.Column{KqiTargetsColumns[12]},
+				Columns: []*schema.Column{KqiTargetsColumns[10]},
 
 				RefColumns: []*schema.Column{KqisColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
+	}
+	// KqiTemporalFrequenciesColumns holds the columns for the "kqi_temporal_frequencies" table.
+	KqiTemporalFrequenciesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// KqiTemporalFrequenciesTable holds the schema information for the "kqi_temporal_frequencies" table.
+	KqiTemporalFrequenciesTable = &schema.Table{
+		Name:        "kqi_temporal_frequencies",
+		Columns:     KqiTemporalFrequenciesColumns,
+		PrimaryKey:  []*schema.Column{KqiTemporalFrequenciesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// LinksColumns holds the columns for the "links" table.
 	LinksColumns = []*schema.Column{
@@ -1437,6 +1495,21 @@ var (
 		PrimaryKey:  []*schema.Column{LocationTypesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// OrganizationsColumns holds the columns for the "organizations" table.
+	OrganizationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+	}
+	// OrganizationsTable holds the schema information for the "organizations" table.
+	OrganizationsTable = &schema.Table{
+		Name:        "organizations",
+		Columns:     OrganizationsColumns,
+		PrimaryKey:  []*schema.Column{OrganizationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// PermissionsPoliciesColumns holds the columns for the "permissions_policies" table.
 	PermissionsPoliciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1455,20 +1528,6 @@ var (
 		Name:        "permissions_policies",
 		Columns:     PermissionsPoliciesColumns,
 		PrimaryKey:  []*schema.Column{PermissionsPoliciesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
-	}
-	// PerspectivesColumns holds the columns for the "perspectives" table.
-	PerspectivesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
-	}
-	// PerspectivesTable holds the schema information for the "perspectives" table.
-	PerspectivesTable = &schema.Table{
-		Name:        "perspectives",
-		Columns:     PerspectivesColumns,
-		PrimaryKey:  []*schema.Column{PerspectivesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// ProjectsColumns holds the columns for the "projects" table.
@@ -1898,6 +1957,98 @@ var (
 			},
 		},
 	}
+	// RecommendationsColumns holds the columns for the "recommendations" table.
+	RecommendationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "external_id", Type: field.TypeString},
+		{Name: "resource", Type: field.TypeString},
+		{Name: "alarm_type", Type: field.TypeString},
+		{Name: "short_description", Type: field.TypeString},
+		{Name: "long_description", Type: field.TypeString},
+		{Name: "command", Type: field.TypeString},
+		{Name: "priority", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeBool},
+		{Name: "used", Type: field.TypeInt, Nullable: true},
+		{Name: "runbook", Type: field.TypeString, Nullable: true},
+		{Name: "recommendations_category_recommendations", Type: field.TypeInt, Nullable: true},
+		{Name: "recommendations_sources_recommendations", Type: field.TypeInt, Nullable: true},
+		{Name: "user_user_create", Type: field.TypeInt, Nullable: true},
+		{Name: "user_user_approved", Type: field.TypeInt, Nullable: true},
+		{Name: "vendor_vendors_recomendations", Type: field.TypeInt, Nullable: true},
+	}
+	// RecommendationsTable holds the schema information for the "recommendations" table.
+	RecommendationsTable = &schema.Table{
+		Name:       "recommendations",
+		Columns:    RecommendationsColumns,
+		PrimaryKey: []*schema.Column{RecommendationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "recommendations_recommendations_categories_recommendations",
+				Columns: []*schema.Column{RecommendationsColumns[13]},
+
+				RefColumns: []*schema.Column{RecommendationsCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_recommendations_sources_recommendations",
+				Columns: []*schema.Column{RecommendationsColumns[14]},
+
+				RefColumns: []*schema.Column{RecommendationsSourcesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_users_User_create",
+				Columns: []*schema.Column{RecommendationsColumns[15]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_users_User_approved",
+				Columns: []*schema.Column{RecommendationsColumns[16]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "recommendations_vendors_vendors_recomendations",
+				Columns: []*schema.Column{RecommendationsColumns[17]},
+
+				RefColumns: []*schema.Column{VendorsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// RecommendationsCategoriesColumns holds the columns for the "recommendations_categories" table.
+	RecommendationsCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// RecommendationsCategoriesTable holds the schema information for the "recommendations_categories" table.
+	RecommendationsCategoriesTable = &schema.Table{
+		Name:        "recommendations_categories",
+		Columns:     RecommendationsCategoriesColumns,
+		PrimaryKey:  []*schema.Column{RecommendationsCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// RecommendationsSourcesColumns holds the columns for the "recommendations_sources" table.
+	RecommendationsSourcesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// RecommendationsSourcesTable holds the schema information for the "recommendations_sources" table.
+	RecommendationsSourcesTable = &schema.Table{
+		Name:        "recommendations_sources",
+		Columns:     RecommendationsSourcesColumns,
+		PrimaryKey:  []*schema.Column{RecommendationsSourcesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// ReportFiltersColumns holds the columns for the "report_filters" table.
 	ReportFiltersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1936,7 +2087,7 @@ var (
 		{Name: "additional_info", Type: field.TypeString, Nullable: true},
 		{Name: "event_severity_eventseverityrule", Type: field.TypeInt, Nullable: true},
 		{Name: "rule_type_ruletyperule", Type: field.TypeInt, Nullable: true},
-		{Name: "treshold_ruletreshold", Type: field.TypeInt, Nullable: true},
+		{Name: "threshold_rulethreshold", Type: field.TypeInt, Nullable: true},
 	}
 	// RulesTable holds the schema information for the "rules" table.
 	RulesTable = &schema.Table{
@@ -1959,10 +2110,10 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "rules_tresholds_ruletreshold",
+				Symbol:  "rules_thresholds_rulethreshold",
 				Columns: []*schema.Column{RulesColumns[13]},
 
-				RefColumns: []*schema.Column{TresholdsColumns[0]},
+				RefColumns: []*schema.Column{ThresholdsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -2405,39 +2556,25 @@ var (
 			},
 		},
 	}
-	// TemporalFrecuenciesColumns holds the columns for the "temporal_frecuencies" table.
-	TemporalFrecuenciesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
-	}
-	// TemporalFrecuenciesTable holds the schema information for the "temporal_frecuencies" table.
-	TemporalFrecuenciesTable = &schema.Table{
-		Name:        "temporal_frecuencies",
-		Columns:     TemporalFrecuenciesColumns,
-		PrimaryKey:  []*schema.Column{TemporalFrecuenciesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
-	}
-	// TresholdsColumns holds the columns for the "tresholds" table.
-	TresholdsColumns = []*schema.Column{
+	// ThresholdsColumns holds the columns for the "thresholds" table.
+	ThresholdsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString},
 		{Name: "status", Type: field.TypeBool},
-		{Name: "kpi_tresholdkpi", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "kpi_thresholdkpi", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
-	// TresholdsTable holds the schema information for the "tresholds" table.
-	TresholdsTable = &schema.Table{
-		Name:       "tresholds",
-		Columns:    TresholdsColumns,
-		PrimaryKey: []*schema.Column{TresholdsColumns[0]},
+	// ThresholdsTable holds the schema information for the "thresholds" table.
+	ThresholdsTable = &schema.Table{
+		Name:       "thresholds",
+		Columns:    ThresholdsColumns,
+		PrimaryKey: []*schema.Column{ThresholdsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "tresholds_kpis_tresholdkpi",
-				Columns: []*schema.Column{TresholdsColumns[6]},
+				Symbol:  "thresholds_kpis_thresholdkpi",
+				Columns: []*schema.Column{ThresholdsColumns[6]},
 
 				RefColumns: []*schema.Column{KpisColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2456,13 +2593,22 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
 		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
+		{Name: "organization_user_fk", Type: field.TypeInt, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
-		Name:        "users",
-		Columns:     UsersColumns,
-		PrimaryKey:  []*schema.Column{UsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "users",
+		Columns:    UsersColumns,
+		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "users_organizations_user_fk",
+				Columns: []*schema.Column{UsersColumns[10]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// UsersGroupsColumns holds the columns for the "users_groups" table.
 	UsersGroupsColumns = []*schema.Column{
@@ -2507,6 +2653,7 @@ var (
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "close_date", Type: field.TypeTime, Nullable: true},
+		{Name: "organization_work_order_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "project_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template", Type: field.TypeInt, Nullable: true},
@@ -2521,43 +2668,50 @@ var (
 		PrimaryKey: []*schema.Column{WorkOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "work_orders_projects_work_orders",
+				Symbol:  "work_orders_organizations_work_order_fk",
 				Columns: []*schema.Column{WorkOrdersColumns[11]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "work_orders_projects_work_orders",
+				Columns: []*schema.Column{WorkOrdersColumns[12]},
 
 				RefColumns: []*schema.Column{ProjectsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_types_type",
-				Columns: []*schema.Column{WorkOrdersColumns[12]},
+				Columns: []*schema.Column{WorkOrdersColumns[13]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_templates_template",
-				Columns: []*schema.Column{WorkOrdersColumns[13]},
+				Columns: []*schema.Column{WorkOrdersColumns[14]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_locations_location",
-				Columns: []*schema.Column{WorkOrdersColumns[14]},
+				Columns: []*schema.Column{WorkOrdersColumns[15]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_owner",
-				Columns: []*schema.Column{WorkOrdersColumns[15]},
+				Columns: []*schema.Column{WorkOrdersColumns[16]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_assignee",
-				Columns: []*schema.Column{WorkOrdersColumns[16]},
+				Columns: []*schema.Column{WorkOrdersColumns[17]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2965,7 +3119,6 @@ var (
 		AlarmStatusTable,
 		BlocksTable,
 		BlockInstancesTable,
-		CategoriesTable,
 		CheckListCategoriesTable,
 		CheckListCategoryDefinitionsTable,
 		CheckListItemsTable,
@@ -3003,18 +3156,25 @@ var (
 		HyperlinksTable,
 		KpisTable,
 		KqisTable,
+		KqiCategoriesTable,
+		KqiComparatorsTable,
+		KqiPerspectivesTable,
 		KqiSourcesTable,
 		KqiTargetsTable,
+		KqiTemporalFrequenciesTable,
 		LinksTable,
 		LocationsTable,
 		LocationTypesTable,
+		OrganizationsTable,
 		PermissionsPoliciesTable,
-		PerspectivesTable,
 		ProjectsTable,
 		ProjectTemplatesTable,
 		ProjectTypesTable,
 		PropertiesTable,
 		PropertyTypesTable,
+		RecommendationsTable,
+		RecommendationsCategoriesTable,
+		RecommendationsSourcesTable,
 		ReportFiltersTable,
 		RulesTable,
 		RuleLimitsTable,
@@ -3030,8 +3190,7 @@ var (
 		SurveyTemplateQuestionsTable,
 		SurveyWiFiScansTable,
 		TechesTable,
-		TemporalFrecuenciesTable,
-		TresholdsTable,
+		ThresholdsTable,
 		UsersTable,
 		UsersGroupsTable,
 		VendorsTable,
@@ -3114,10 +3273,12 @@ func init() {
 	HyperlinksTable.ForeignKeys[1].RefTable = LocationsTable
 	HyperlinksTable.ForeignKeys[2].RefTable = WorkOrdersTable
 	KpisTable.ForeignKeys[0].RefTable = DomainsTable
-	KqisTable.ForeignKeys[0].RefTable = CategoriesTable
-	KqisTable.ForeignKeys[1].RefTable = KqiSourcesTable
-	KqisTable.ForeignKeys[2].RefTable = PerspectivesTable
-	KqisTable.ForeignKeys[3].RefTable = TemporalFrecuenciesTable
+	KqisTable.ForeignKeys[0].RefTable = KqiCategoriesTable
+	KqisTable.ForeignKeys[1].RefTable = KqiPerspectivesTable
+	KqisTable.ForeignKeys[2].RefTable = KqiSourcesTable
+	KqisTable.ForeignKeys[3].RefTable = KqiTemporalFrequenciesTable
+	KqiComparatorsTable.ForeignKeys[0].RefTable = ComparatorsTable
+	KqiComparatorsTable.ForeignKeys[1].RefTable = KqiTargetsTable
 	KqiTargetsTable.ForeignKeys[0].RefTable = KqisTable
 	LinksTable.ForeignKeys[0].RefTable = WorkOrdersTable
 	LocationsTable.ForeignKeys[0].RefTable = LocationTypesTable
@@ -3151,9 +3312,14 @@ func init() {
 	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
 	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
 	PropertyTypesTable.ForeignKeys[9].RefTable = WorkerTypesTable
+	RecommendationsTable.ForeignKeys[0].RefTable = RecommendationsCategoriesTable
+	RecommendationsTable.ForeignKeys[1].RefTable = RecommendationsSourcesTable
+	RecommendationsTable.ForeignKeys[2].RefTable = UsersTable
+	RecommendationsTable.ForeignKeys[3].RefTable = UsersTable
+	RecommendationsTable.ForeignKeys[4].RefTable = VendorsTable
 	RulesTable.ForeignKeys[0].RefTable = EventSeveritiesTable
 	RulesTable.ForeignKeys[1].RefTable = RuleTypesTable
-	RulesTable.ForeignKeys[2].RefTable = TresholdsTable
+	RulesTable.ForeignKeys[2].RefTable = ThresholdsTable
 	RuleLimitsTable.ForeignKeys[0].RefTable = ComparatorsTable
 	RuleLimitsTable.ForeignKeys[1].RefTable = RulesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable
@@ -3174,13 +3340,15 @@ func init() {
 	SurveyWiFiScansTable.ForeignKeys[1].RefTable = SurveyQuestionsTable
 	SurveyWiFiScansTable.ForeignKeys[2].RefTable = LocationsTable
 	TechesTable.ForeignKeys[0].RefTable = DomainsTable
-	TresholdsTable.ForeignKeys[0].RefTable = KpisTable
-	WorkOrdersTable.ForeignKeys[0].RefTable = ProjectsTable
-	WorkOrdersTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
-	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTemplatesTable
-	WorkOrdersTable.ForeignKeys[3].RefTable = LocationsTable
-	WorkOrdersTable.ForeignKeys[4].RefTable = UsersTable
+	ThresholdsTable.ForeignKeys[0].RefTable = KpisTable
+	UsersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	WorkOrdersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	WorkOrdersTable.ForeignKeys[1].RefTable = ProjectsTable
+	WorkOrdersTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
+	WorkOrdersTable.ForeignKeys[3].RefTable = WorkOrderTemplatesTable
+	WorkOrdersTable.ForeignKeys[4].RefTable = LocationsTable
 	WorkOrdersTable.ForeignKeys[5].RefTable = UsersTable
+	WorkOrdersTable.ForeignKeys[6].RefTable = UsersTable
 	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable

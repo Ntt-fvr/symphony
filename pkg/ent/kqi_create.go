@@ -14,12 +14,12 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/category"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
+	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
+	"github.com/facebookincubator/symphony/pkg/ent/kqiperspective"
 	"github.com/facebookincubator/symphony/pkg/ent/kqisource"
 	"github.com/facebookincubator/symphony/pkg/ent/kqitarget"
-	"github.com/facebookincubator/symphony/pkg/ent/perspective"
-	"github.com/facebookincubator/symphony/pkg/ent/temporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 )
 
 // KqiCreate is the builder for creating a Kqi entity.
@@ -87,42 +87,42 @@ func (kc *KqiCreate) SetFormula(s string) *KqiCreate {
 	return kc
 }
 
-// SetCategoryFkID sets the categoryFk edge to Category by id.
-func (kc *KqiCreate) SetCategoryFkID(id int) *KqiCreate {
-	kc.mutation.SetCategoryFkID(id)
+// SetKqiCategoryFkID sets the kqiCategoryFk edge to KqiCategory by id.
+func (kc *KqiCreate) SetKqiCategoryFkID(id int) *KqiCreate {
+	kc.mutation.SetKqiCategoryFkID(id)
 	return kc
 }
 
-// SetNillableCategoryFkID sets the categoryFk edge to Category by id if the given value is not nil.
-func (kc *KqiCreate) SetNillableCategoryFkID(id *int) *KqiCreate {
+// SetNillableKqiCategoryFkID sets the kqiCategoryFk edge to KqiCategory by id if the given value is not nil.
+func (kc *KqiCreate) SetNillableKqiCategoryFkID(id *int) *KqiCreate {
 	if id != nil {
-		kc = kc.SetCategoryFkID(*id)
+		kc = kc.SetKqiCategoryFkID(*id)
 	}
 	return kc
 }
 
-// SetCategoryFk sets the categoryFk edge to Category.
-func (kc *KqiCreate) SetCategoryFk(c *Category) *KqiCreate {
-	return kc.SetCategoryFkID(c.ID)
+// SetKqiCategoryFk sets the kqiCategoryFk edge to KqiCategory.
+func (kc *KqiCreate) SetKqiCategoryFk(k *KqiCategory) *KqiCreate {
+	return kc.SetKqiCategoryFkID(k.ID)
 }
 
-// SetPerspectiveFkID sets the perspectiveFk edge to Perspective by id.
-func (kc *KqiCreate) SetPerspectiveFkID(id int) *KqiCreate {
-	kc.mutation.SetPerspectiveFkID(id)
+// SetKqiPerspectiveFkID sets the kqiPerspectiveFk edge to KqiPerspective by id.
+func (kc *KqiCreate) SetKqiPerspectiveFkID(id int) *KqiCreate {
+	kc.mutation.SetKqiPerspectiveFkID(id)
 	return kc
 }
 
-// SetNillablePerspectiveFkID sets the perspectiveFk edge to Perspective by id if the given value is not nil.
-func (kc *KqiCreate) SetNillablePerspectiveFkID(id *int) *KqiCreate {
+// SetNillableKqiPerspectiveFkID sets the kqiPerspectiveFk edge to KqiPerspective by id if the given value is not nil.
+func (kc *KqiCreate) SetNillableKqiPerspectiveFkID(id *int) *KqiCreate {
 	if id != nil {
-		kc = kc.SetPerspectiveFkID(*id)
+		kc = kc.SetKqiPerspectiveFkID(*id)
 	}
 	return kc
 }
 
-// SetPerspectiveFk sets the perspectiveFk edge to Perspective.
-func (kc *KqiCreate) SetPerspectiveFk(p *Perspective) *KqiCreate {
-	return kc.SetPerspectiveFkID(p.ID)
+// SetKqiPerspectiveFk sets the kqiPerspectiveFk edge to KqiPerspective.
+func (kc *KqiCreate) SetKqiPerspectiveFk(k *KqiPerspective) *KqiCreate {
+	return kc.SetKqiPerspectiveFkID(k.ID)
 }
 
 // SetKqiSourceFkID sets the kqiSourceFk edge to KqiSource by id.
@@ -144,23 +144,23 @@ func (kc *KqiCreate) SetKqiSourceFk(k *KqiSource) *KqiCreate {
 	return kc.SetKqiSourceFkID(k.ID)
 }
 
-// SetTemporalFrecuencyFkID sets the temporalFrecuencyFk edge to TemporalFrecuency by id.
-func (kc *KqiCreate) SetTemporalFrecuencyFkID(id int) *KqiCreate {
-	kc.mutation.SetTemporalFrecuencyFkID(id)
+// SetKqiTemporalFrequencyFkID sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency by id.
+func (kc *KqiCreate) SetKqiTemporalFrequencyFkID(id int) *KqiCreate {
+	kc.mutation.SetKqiTemporalFrequencyFkID(id)
 	return kc
 }
 
-// SetNillableTemporalFrecuencyFkID sets the temporalFrecuencyFk edge to TemporalFrecuency by id if the given value is not nil.
-func (kc *KqiCreate) SetNillableTemporalFrecuencyFkID(id *int) *KqiCreate {
+// SetNillableKqiTemporalFrequencyFkID sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency by id if the given value is not nil.
+func (kc *KqiCreate) SetNillableKqiTemporalFrequencyFkID(id *int) *KqiCreate {
 	if id != nil {
-		kc = kc.SetTemporalFrecuencyFkID(*id)
+		kc = kc.SetKqiTemporalFrequencyFkID(*id)
 	}
 	return kc
 }
 
-// SetTemporalFrecuencyFk sets the temporalFrecuencyFk edge to TemporalFrecuency.
-func (kc *KqiCreate) SetTemporalFrecuencyFk(t *TemporalFrecuency) *KqiCreate {
-	return kc.SetTemporalFrecuencyFkID(t.ID)
+// SetKqiTemporalFrequencyFk sets the kqiTemporalFrequencyFk edge to KqiTemporalFrequency.
+func (kc *KqiCreate) SetKqiTemporalFrequencyFk(k *KqiTemporalFrequency) *KqiCreate {
+	return kc.SetKqiTemporalFrequencyFkID(k.ID)
 }
 
 // AddKqiTargetFkIDs adds the kqiTargetFk edge to KqiTarget by ids.
@@ -351,17 +351,17 @@ func (kc *KqiCreate) createSpec() (*Kqi, *sqlgraph.CreateSpec) {
 		})
 		_node.Formula = value
 	}
-	if nodes := kc.mutation.CategoryFkIDs(); len(nodes) > 0 {
+	if nodes := kc.mutation.KqiCategoryFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.CategoryFkTable,
-			Columns: []string{kqi.CategoryFkColumn},
+			Table:   kqi.KqiCategoryFkTable,
+			Columns: []string{kqi.KqiCategoryFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: category.FieldID,
+					Column: kqicategory.FieldID,
 				},
 			},
 		}
@@ -370,17 +370,17 @@ func (kc *KqiCreate) createSpec() (*Kqi, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := kc.mutation.PerspectiveFkIDs(); len(nodes) > 0 {
+	if nodes := kc.mutation.KqiPerspectiveFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.PerspectiveFkTable,
-			Columns: []string{kqi.PerspectiveFkColumn},
+			Table:   kqi.KqiPerspectiveFkTable,
+			Columns: []string{kqi.KqiPerspectiveFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: perspective.FieldID,
+					Column: kqiperspective.FieldID,
 				},
 			},
 		}
@@ -408,17 +408,17 @@ func (kc *KqiCreate) createSpec() (*Kqi, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := kc.mutation.TemporalFrecuencyFkIDs(); len(nodes) > 0 {
+	if nodes := kc.mutation.KqiTemporalFrequencyFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   kqi.TemporalFrecuencyFkTable,
-			Columns: []string{kqi.TemporalFrecuencyFkColumn},
+			Table:   kqi.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqi.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: temporalfrecuency.FieldID,
+					Column: kqitemporalfrequency.FieldID,
 				},
 			},
 		}

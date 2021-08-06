@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -33,7 +33,13 @@ import {makeStyles} from '@material-ui/styles';
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
+import type {AlarmFilteringFormCreateQuery} from './__generated__/AlarmFilteringFormCreateQuery.graphql'
+
 import DateTimeFormat from '../../common/DateTimeFormat.js';
+import {useFormInput} from './common/useFormInput';
+import {graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import classNames from 'classnames';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -75,9 +81,46 @@ const useStyles = makeStyles(() => ({
     paddingTop: '40px',
   },
   time: {
-    marginBottom: '20px',
+    marginBottom: '13px',
   },
+  button: {
+    width: '111px',
+    height: '36px',
+  },
+  buttonActive: {
+    border: '1px solid #00AF5B',
+    color: '#00AF5B',
+    fontSize: '14px',
+  },
+  buttonPending: {
+    border: '1px solid #FFB63E',
+    color: '#FFB63E',
+    fontSize: '14px',
+  },
+  buttonClosed: {
+    border: '1px solid #8895AD',
+    color: '#8895AD',
+    fontSize: '14px',
+  },
+  textFieldDate: {
+    height: '12px',
+    border: '1px solid #D2DAE7',
+  }
 }));
+
+const AlarmStatusQuery = graphql`
+  query AlarmFilteringFormCreateQuery {
+    alarmStatus {
+      edges {
+        node {
+          name
+          id
+        }
+      }
+    }
+  }
+`;
+
 
 type AlarmFilter = {
   id: string,
@@ -94,16 +137,18 @@ type AlarmFilter = {
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
-  dataValues: any,
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm, dataValues} = props;
+  const {returnTableAlarm} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
-  
+  const dataStatus = useLazyLoadQuery<AlarmFilteringFormCreateQuery>( AlarmStatusQuery, {} );
+  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node)
+  const valueId = useRef('')
+
   function handleChange({target}) {
     setAlarmFilter({
       data: {
@@ -124,11 +169,11 @@ const AlarmFilteringFormCreate = (props: Props) => {
         reason: AlarmFilter.data.reason,
         user: 'user',
         creationTime: moment(AlarmFilter.data.creationTime).format(),
-        alarmStatus: "8589934592",
+        alarmStatus: valueId.current,
       },
     };
     AddAlarmFilterMutation(variables);
-    console.log("Hola soy variables", variables);
+    setTimeout(() => returnTableAlarm(), 1000)
   }
   
   return (
@@ -137,7 +182,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
         <Grid container className={classes.titleButtons}>
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
-              {fbt('Edit Alarm Filtering', ' ')}
+              {fbt('Create Alarm Filter', ' ')}
             </Text>
           </Grid>
           <Grid xs={2}>
@@ -172,12 +217,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                <Switch
-                  title={''}
-                  checked={checked}
-                  onChange={setChecked}
-                  onClick={handleClick}
-                />
+                  <Switch
+                    title={''}
+                    checked={checked}
+                    onChange={setChecked}
+                    onClick={handleClick}
+                  />
                 </FormField>
               </Grid>
               <Grid xs={11}>
@@ -218,6 +263,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 <Grid xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
+                      InputProps={{
+                        classes: {
+                          input: classes.textFieldDate,
+                        },
+                      }}
+                      variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
                       name="beginTime"
@@ -228,6 +279,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 <Grid xs={6}>
                   <FormField label="End" className={classes.formField}>
                     <TextField
+                      InputProps={{
+                        classes: {
+                          input: classes.textFieldDate,
+                        },
+                      }}
+                      variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
                       name="endTime"
@@ -239,32 +296,59 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                  {
+                    {
                       (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.beginTime).format()) ||
                       (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.endTime).format()) &&
-                    <AlarmFilteringStatus
-                      buttonName="Active"
-                      className={classes.formFieldStatus}
-                      name="alarmStatus"
-                    />
-                    
-                  }
-                  {
-                    moment(AlarmFilter.data.creationTime).format() > moment(AlarmFilter.data.endTime).format()  &&
-                    <AlarmFilteringStatus
-                      buttonName='Closed'
-                      className={classes.formFieldStatus}
-                      name="alarmStatus"
-                    />
-                  }
-                  {
-                    moment(AlarmFilter.data.creationTime).format() < moment(AlarmFilter.data.beginTime).format() &&
-                    <AlarmFilteringStatus
-                      buttonName='Pending'
-                      className={classes.formFieldStatus}
-                      name="alarmStatus"
-                    />
-                  }
+                      dataStatusResponse
+                      .filter(item => item.name == 'Active')
+                      .map(filteredItem => (          
+                        <Button 
+                          value={valueId.current = filteredItem.id}
+                          variant="outlined"
+                          weight="bold"
+                          name="alarmStatus"
+                          className={classNames(classes.button, classes.buttonActive)}
+                          onChange={handleChange}
+                        >
+                        {filteredItem.name}
+                      </Button>
+
+                      ))
+                    }
+                    {
+                      moment(AlarmFilter.data.creationTime).format() > moment(AlarmFilter.data.endTime).format()  &&
+                      dataStatusResponse
+                      .filter(item => item.name == 'Closed')
+                      .map(filteredItem => (
+                        <Button 
+                          value={valueId.current = filteredItem.id}
+                          variant="outlined"
+                          weight="bold"
+                          name="alarmStatus"
+                          className={classNames(classes.button, classes.buttonClosed)}
+                          onChange={handleChange}
+                        >
+                        {filteredItem.name}
+                      </Button>
+                      ))
+                    }
+                    {
+                      moment(AlarmFilter.data.creationTime).format() < moment(AlarmFilter.data.beginTime).format() &&
+                      dataStatusResponse
+                      .filter(item => item.name == 'Pending')
+                      .map(filteredItem => (
+                        <Button 
+                          value={valueId.current = filteredItem.id}
+                          variant="outlined"
+                          weight="bold"
+                          name="alarmStatus"
+                          className={classNames(classes.button, classes.buttonPending)}
+                          onChange={handleChange}
+                        >
+                        {filteredItem.name}
+                      </Button>
+                      ))
+                    }
                   </FormField>
                 </Grid>
                 <Grid xs={9}>

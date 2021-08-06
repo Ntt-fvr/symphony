@@ -25,9 +25,6 @@ type Block func(*sql.Selector)
 // BlockInstance is the predicate function for blockinstance builders.
 type BlockInstance func(*sql.Selector)
 
-// Category is the predicate function for category builders.
-type Category func(*sql.Selector)
-
 // CheckListCategory is the predicate function for checklistcategory builders.
 type CheckListCategory func(*sql.Selector)
 
@@ -139,11 +136,23 @@ type Kpi func(*sql.Selector)
 // Kqi is the predicate function for kqi builders.
 type Kqi func(*sql.Selector)
 
+// KqiCategory is the predicate function for kqicategory builders.
+type KqiCategory func(*sql.Selector)
+
+// KqiComparator is the predicate function for kqicomparator builders.
+type KqiComparator func(*sql.Selector)
+
+// KqiPerspective is the predicate function for kqiperspective builders.
+type KqiPerspective func(*sql.Selector)
+
 // KqiSource is the predicate function for kqisource builders.
 type KqiSource func(*sql.Selector)
 
 // KqiTarget is the predicate function for kqitarget builders.
 type KqiTarget func(*sql.Selector)
+
+// KqiTemporalFrequency is the predicate function for kqitemporalfrequency builders.
+type KqiTemporalFrequency func(*sql.Selector)
 
 // Link is the predicate function for link builders.
 type Link func(*sql.Selector)
@@ -154,11 +163,11 @@ type Location func(*sql.Selector)
 // LocationType is the predicate function for locationtype builders.
 type LocationType func(*sql.Selector)
 
+// Organization is the predicate function for organization builders.
+type Organization func(*sql.Selector)
+
 // PermissionsPolicy is the predicate function for permissionspolicy builders.
 type PermissionsPolicy func(*sql.Selector)
-
-// Perspective is the predicate function for perspective builders.
-type Perspective func(*sql.Selector)
 
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
@@ -174,6 +183,15 @@ type Property func(*sql.Selector)
 
 // PropertyType is the predicate function for propertytype builders.
 type PropertyType func(*sql.Selector)
+
+// Recommendations is the predicate function for recommendations builders.
+type Recommendations func(*sql.Selector)
+
+// RecommendationsCategory is the predicate function for recommendationscategory builders.
+type RecommendationsCategory func(*sql.Selector)
+
+// RecommendationsSources is the predicate function for recommendationssources builders.
+type RecommendationsSources func(*sql.Selector)
 
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
@@ -220,11 +238,8 @@ type SurveyWiFiScan func(*sql.Selector)
 // Tech is the predicate function for tech builders.
 type Tech func(*sql.Selector)
 
-// TemporalFrecuency is the predicate function for temporalfrecuency builders.
-type TemporalFrecuency func(*sql.Selector)
-
-// Treshold is the predicate function for treshold builders.
-type Treshold func(*sql.Selector)
+// Threshold is the predicate function for threshold builders.
+type Threshold func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

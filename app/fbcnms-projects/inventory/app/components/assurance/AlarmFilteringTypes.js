@@ -9,21 +9,19 @@
  */
 import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
 import AlarmFilteringTable from './AlarmFilteringTable';
-import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
 import Button from '@symphony/design-system/components/Button';
+import EditAlarmFilteringItemForm from './EditAlarmFilteringItemForm';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useEffect, useState} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-import PowerSearchBar from '../power_search/PowerSearchBar';
-import fbt from 'fbt';
 import ConfigureTitle from './common/ConfigureTitle';
+import PowerSearchBar from '../power_search/PowerSearchBar';
 import RelayEnvironment from '../../common/RelayEnvironment';
+import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
-import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
-import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -41,7 +39,7 @@ const useStyles = makeStyles(() => ({
 
 const AlarmFilteringQuery = graphql`
   query AlarmFilteringTypesQuery {
-    AlarmFilters {
+    alarmFilters {
       edges {
         node {
           id
@@ -91,7 +89,6 @@ const AlarmFilteringTypes = () => {
       setDataAlarms(data);
     });
   }, [DataAlarms]);
-    
 
   const handleClickEdit = (alarm: Alarms) => {
     setShowEditForm(true);
@@ -102,11 +99,9 @@ const AlarmFilteringTypes = () => {
     setShowForm(true);
   };
 
-
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
-        dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
         returnTableAlarm={() => setShowForm(false)}
       />
     );
@@ -117,7 +112,6 @@ const AlarmFilteringTypes = () => {
       <EditAlarmFilteringItemForm
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
-        // onChangeDelete={}
       />
     );
   }
@@ -126,11 +120,10 @@ const AlarmFilteringTypes = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <ConfigureTitle
-            title={fbt('Alarm Filtering', 'Alarm Filtering Title')}
+            title={fbt('Alarm Filter', 'Alarm Filter Title')}
             subtitle={fbt(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
-                'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
-              'Counters description ',
+              'Alarm filtering rules for Fault Management processes',
+              'Alarm description ',
             )}
           />
         </Grid>
@@ -152,7 +145,7 @@ const AlarmFilteringTypes = () => {
         <Grid className={classes.addButton} item xs={2}>
           <FormField>
             <Button onClick={handleClickAdd} className={classes.button}>
-              Add Alarm Filtering
+              Add Alarm Filter
             </Button>
           </FormField>
         </Grid>
@@ -160,7 +153,6 @@ const AlarmFilteringTypes = () => {
           <AlarmFilteringTable
             dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
             edit={handleClickEdit}
-            // onChange={handleRemove}
           />
         </Grid>
       </Grid>

@@ -12,17 +12,17 @@ import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddButton from './common/AddButton';
-import Table from './Table';
+import TableThreshold from './TableThreshold';
 
 // DESING SYSTEM //
-import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
+import type {EditThresholdMutationVariables} from '../../mutations/__generated__/EditThresholdMutation.graphql';
 
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import EditTresholdMutation from '../../mutations/EditTresholdMutation';
+import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
@@ -96,7 +96,20 @@ const useStyles = makeStyles(theme => ({
 type Rule = {
   id: string,
   name: string,
+  gracePeriod: string,
+  additionalInfo: string,
+  specificProblem: string,
+  eventTypeName: string,
+  startDateTime: string,
+  endDateTime: string,
+  threshold: {
+    name: string,
+  },
   ruleType: {
+    name: string,
+  },
+  eventSeverity: {
+    id: string,
     name: string,
   },
   status: boolean,
@@ -135,7 +148,7 @@ export default function ThresholdTypeItem(props: Props) {
   const [checked, setChecked] = useState(status);
 
   const handleClick = () => {
-    const variables: EditTresholdMutationVariables = {
+    const variables: EditThresholdMutationVariables = {
       input: {
         id: id,
         name: name,
@@ -218,7 +231,7 @@ export default function ThresholdTypeItem(props: Props) {
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <Table rule={rule} editRule={editRule} />
+              <TableThreshold rule={rule} editRule={editRule} />
             </Grid>
           </Grid>
         </AccordionDetails>

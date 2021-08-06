@@ -30,6 +30,8 @@ func (Vendor) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("vendor_fk", Counter.Type).
 			Annotations(entgql.MapsTo("vendor")),
+		edge.To("vendors_recomendations", Recommendations.Type).
+			Annotations(entgql.MapsTo("vendors_recomendations")),
 	}
 }
 

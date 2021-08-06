@@ -12,8 +12,6 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 
-	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
-
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"

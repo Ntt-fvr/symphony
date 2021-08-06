@@ -576,25 +576,25 @@ func HasFormulakpiWith(preds ...predicate.Formula) predicate.Kpi {
 	})
 }
 
-// HasTresholdkpi applies the HasEdge predicate on the "tresholdkpi" edge.
-func HasTresholdkpi() predicate.Kpi {
+// HasThresholdkpi applies the HasEdge predicate on the "thresholdkpi" edge.
+func HasThresholdkpi() predicate.Kpi {
 	return predicate.Kpi(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TresholdkpiTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, TresholdkpiTable, TresholdkpiColumn),
+			sqlgraph.To(ThresholdkpiTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, ThresholdkpiTable, ThresholdkpiColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTresholdkpiWith applies the HasEdge predicate on the "tresholdkpi" edge with a given conditions (other predicates).
-func HasTresholdkpiWith(preds ...predicate.Treshold) predicate.Kpi {
+// HasThresholdkpiWith applies the HasEdge predicate on the "thresholdkpi" edge with a given conditions (other predicates).
+func HasThresholdkpiWith(preds ...predicate.Threshold) predicate.Kpi {
 	return predicate.Kpi(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TresholdkpiInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, TresholdkpiTable, TresholdkpiColumn),
+			sqlgraph.To(ThresholdkpiInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, ThresholdkpiTable, ThresholdkpiColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

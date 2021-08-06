@@ -17,6 +17,16 @@ import (
 
 type vendorResolver struct{}
 
+func (vendorResolver) VendorRecommendations(ctx context.Context, vendor *ent.Vendor) ([]*ent.Recommendations, error) {
+	variable, err := vendor.VendorsRecomendations(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+	} else {
+		return variable, nil
+	}
+}
+
 func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

@@ -41,8 +41,8 @@ func (Rule) Edges() []ent.Edge {
 		edge.From("eventseverity", EventSeverity.Type).
 			Ref("eventseverityrule").
 			Unique(),
-		edge.From("treshold", Treshold.Type).
-			Ref("ruletreshold").
+		edge.From("threshold", Threshold.Type).
+			Ref("rulethreshold").
 			Unique(),
 		edge.To("rulelimitrule", RuleLimit.Type).
 			Annotations(entgql.MapsTo("ruleLimit")),

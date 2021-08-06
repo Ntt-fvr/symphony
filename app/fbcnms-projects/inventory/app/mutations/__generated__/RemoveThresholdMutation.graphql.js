@@ -18,7 +18,7 @@ export type RemoveThresholdMutationVariables = {|
   id: string
 |};
 export type RemoveThresholdMutationResponse = {|
-  +removeTreshold: string
+  +removeThreshold: string
 |};
 export type RemoveThresholdMutation = {|
   variables: RemoveThresholdMutationVariables,
@@ -31,7 +31,7 @@ export type RemoveThresholdMutation = {|
 mutation RemoveThresholdMutation(
   $id: ID!
 ) {
-  removeTreshold(id: $id)
+  removeThreshold(id: $id)
 }
 */
 
@@ -54,7 +54,7 @@ v1 = [
       }
     ],
     "kind": "ScalarField",
-    "name": "removeTreshold",
+    "name": "removeThreshold",
     "storageKey": null
   }
 ];
@@ -76,16 +76,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c0dbd4f68a121f61bc54eafb68ccab16",
+    "cacheID": "10f4a4b50ef0bdb46e2444dc6675f5a2",
     "id": null,
     "metadata": {},
     "name": "RemoveThresholdMutation",
     "operationKind": "mutation",
-    "text": "mutation RemoveThresholdMutation(\n  $id: ID!\n) {\n  removeTreshold(id: $id)\n}\n"
+    "text": "mutation RemoveThresholdMutation(\n  $id: ID!\n) {\n  removeThreshold(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bc921d03b1a31602b5251edcd665668f';
+(node/*: any*/).hash = '787d8391415d17458e8d80f404f57bab';
 
 module.exports = node;

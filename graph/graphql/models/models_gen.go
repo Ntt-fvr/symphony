@@ -92,10 +92,6 @@ type AddBulkServiceLinksAndPortsInput struct {
 	LinkIds []int `json:"linkIds"`
 }
 
-type AddCategoryInput struct {
-	Name string `json:"name"`
-}
-
 type AddComparatorInput struct {
 	Name string `json:"name"`
 }
@@ -180,7 +176,7 @@ type AddFlowDraftInput struct {
 
 type AddFormulaInput struct {
 	Name   string `json:"name"`
-	Active bool   `json:"active"`
+	Status bool   `json:"status"`
 	TechFk int    `json:"techFk"`
 	KpiFk  int    `json:"kpiFk"`
 }
@@ -212,16 +208,31 @@ type AddKpiInput struct {
 	Status      bool   `json:"status"`
 }
 
+type AddKqiCategoryInput struct {
+	Name string `json:"name"`
+}
+
+type AddKqiComparatorInput struct {
+	KqiTargetFk    int     `json:"kqiTargetFk"`
+	ComparatorFk   int     `json:"comparatorFk"`
+	Number         float64 `json:"number"`
+	ComparatorType string  `json:"comparatorType"`
+}
+
 type AddKqiInput struct {
-	Name              string    `json:"name"`
-	Description       string    `json:"description"`
-	Formula           string    `json:"formula"`
-	StartDateTime     time.Time `json:"startDateTime"`
-	EndDateTime       time.Time `json:"endDateTime"`
-	Category          int       `json:"category"`
-	Perspective       int       `json:"perspective"`
-	KqiSource         int       `json:"kqiSource"`
-	TemporalFrecuency int       `json:"temporalFrecuency"`
+	Name                 string    `json:"name"`
+	Description          string    `json:"description"`
+	Formula              string    `json:"formula"`
+	StartDateTime        time.Time `json:"startDateTime"`
+	EndDateTime          time.Time `json:"endDateTime"`
+	KqiCategory          int       `json:"kqiCategory"`
+	KqiPerspective       int       `json:"kqiPerspective"`
+	KqiSource            int       `json:"kqiSource"`
+	KqiTemporalFrequency int       `json:"kqiTemporalFrequency"`
+}
+
+type AddKqiPerspectiveInput struct {
+	Name string `json:"name"`
 }
 
 type AddKqiSourceInput struct {
@@ -229,16 +240,18 @@ type AddKqiSourceInput struct {
 }
 
 type AddKqiTargetInput struct {
-	Impact            string    `json:"impact"`
-	Comparator        float64   `json:"comparator"`
-	ReferenceValue    float64   `json:"referenceValue"`
-	WarningComparator float64   `json:"warningComparator"`
-	Frame             float64   `json:"frame"`
-	AlowedValidation  float64   `json:"alowedValidation"`
-	InitTime          time.Time `json:"initTime"`
-	EndTime           time.Time `json:"endTime"`
-	Active            bool      `json:"active"`
-	Kqi               int       `json:"kqi"`
+	Name             string    `json:"name"`
+	Impact           string    `json:"impact"`
+	Frame            float64   `json:"frame"`
+	AlowedValidation float64   `json:"alowedValidation"`
+	InitTime         time.Time `json:"initTime"`
+	EndTime          time.Time `json:"endTime"`
+	Status           bool      `json:"status"`
+	Kqi              int       `json:"kqi"`
+}
+
+type AddKqiTemporalFrequencyInput struct {
+	Name string `json:"name"`
 }
 
 type AddLinkInput struct {
@@ -268,6 +281,11 @@ type AddLocationTypeInput struct {
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
 }
 
+type AddOrganizationInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type AddPermissionsPolicyInput struct {
 	Name            string                         `json:"name"`
 	Description     *string                        `json:"description"`
@@ -277,10 +295,6 @@ type AddPermissionsPolicyInput struct {
 	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
 	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
 	Groups          []int                          `json:"groups"`
-}
-
-type AddPerspectiveInput struct {
-	Name string `json:"name"`
 }
 
 type AddProjectInput struct {
@@ -300,6 +314,32 @@ type AddProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type AddRecommendationsCategoryInput struct {
+	Name string `json:"name"`
+}
+
+type AddRecommendationsInput struct {
+	ExternalID              string  `json:"externalID"`
+	Resource                string  `json:"resource"`
+	AlarmType               string  `json:"alarmType"`
+	ShortDescription        string  `json:"shortDescription"`
+	LongDescription         string  `json:"longDescription"`
+	Command                 string  `json:"command"`
+	Priority                int     `json:"priority"`
+	Status                  bool    `json:"status"`
+	Runbook                 *string `json:"runbook"`
+	Used                    *int    `json:"used"`
+	RecommendationsSources  int     `json:"recommendationsSources"`
+	RecommendationsCategory int     `json:"recommendationsCategory"`
+	UserApprobed            *int    `json:"userApprobed"`
+	UserCreate              int     `json:"userCreate"`
+	Vendor                  int     `json:"vendor"`
+}
+
+type AddRecommendationsSourcesInput struct {
+	Name string `json:"name"`
+}
+
 type AddRuleInput struct {
 	Name            string    `json:"name"`
 	GracePeriod     int       `json:"gracePeriod"`
@@ -311,7 +351,7 @@ type AddRuleInput struct {
 	AdditionalInfo  *string   `json:"additionalInfo"`
 	Status          bool      `json:"status"`
 	EventSeverity   int       `json:"eventSeverity"`
-	Treshold        int       `json:"treshold"`
+	Threshold       int       `json:"threshold"`
 }
 
 type AddRuleLimitInput struct {
@@ -337,11 +377,7 @@ type AddTechInput struct {
 	DomainFk int    `json:"domainFk"`
 }
 
-type AddTemporalFrecuencyInput struct {
-	Name string `json:"name"`
-}
-
-type AddTresholdInput struct {
+type AddThresholdInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      bool   `json:"status"`
@@ -371,6 +407,7 @@ type AddWorkOrderInput struct {
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	AssigneeID          *int                      `json:"assigneeId"`
 	Index               *int                      `json:"index"`
+	OrganizationFk      *int                      `json:"organizationFk"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
 }
@@ -602,11 +639,6 @@ type EditBlockInstanceInput struct {
 	EndDate       *time.Time                  `json:"endDate"`
 }
 
-type EditCategoryInput struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
 type EditComparatorInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -681,7 +713,7 @@ type EditFlowInstanceInput struct {
 type EditFormulaInput struct {
 	ID     int    `json:"id"`
 	Name   string `json:"name"`
-	Active bool   `json:"active"`
+	Status bool   `json:"status"`
 	TechFk int    `json:"techFk"`
 	KpiFk  int    `json:"kpiFk"`
 }
@@ -694,17 +726,35 @@ type EditKpiInput struct {
 	Status      bool   `json:"status"`
 }
 
+type EditKqiCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type EditKqiComparatorInput struct {
+	ID             int     `json:"id"`
+	KqiTargetFk    int     `json:"kqiTargetFk"`
+	ComparatorFk   int     `json:"comparatorFk"`
+	Number         float64 `json:"number"`
+	ComparatorType string  `json:"comparatorType"`
+}
+
 type EditKqiInput struct {
-	ID                int       `json:"id"`
-	Name              string    `json:"name"`
-	Description       string    `json:"description"`
-	Formula           string    `json:"formula"`
-	StartDateTime     time.Time `json:"startDateTime"`
-	EndDateTime       time.Time `json:"endDateTime"`
-	Category          int       `json:"category"`
-	Perspective       int       `json:"perspective"`
-	KqiSource         int       `json:"kqiSource"`
-	TemporalFrecuency int       `json:"temporalFrecuency"`
+	ID                   int       `json:"id"`
+	Name                 string    `json:"name"`
+	Description          string    `json:"description"`
+	Formula              string    `json:"formula"`
+	StartDateTime        time.Time `json:"startDateTime"`
+	EndDateTime          time.Time `json:"endDateTime"`
+	KqiCategory          int       `json:"kqiCategory"`
+	KqiPerspective       int       `json:"kqiPerspective"`
+	KqiSource            int       `json:"kqiSource"`
+	KqiTemporalFrequency int       `json:"kqiTemporalFrequency"`
+}
+
+type EditKqiPerspectiveInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditKqiSourceInput struct {
@@ -713,17 +763,20 @@ type EditKqiSourceInput struct {
 }
 
 type EditKqiTargetInput struct {
-	ID                int       `json:"id"`
-	Impact            string    `json:"impact"`
-	Comparator        float64   `json:"comparator"`
-	ReferenceValue    float64   `json:"referenceValue"`
-	WarningComparator float64   `json:"warningComparator"`
-	Frame             float64   `json:"frame"`
-	AlowedValidation  float64   `json:"alowedValidation"`
-	InitTime          time.Time `json:"initTime"`
-	EndTime           time.Time `json:"endTime"`
-	Active            bool      `json:"active"`
-	Kqi               int       `json:"kqi"`
+	ID               int       `json:"id"`
+	Name             string    `json:"name"`
+	Impact           string    `json:"impact"`
+	Frame            float64   `json:"frame"`
+	AlowedValidation float64   `json:"alowedValidation"`
+	InitTime         time.Time `json:"initTime"`
+	EndTime          time.Time `json:"endTime"`
+	Status           bool      `json:"status"`
+	Kqi              int       `json:"kqi"`
+}
+
+type EditKqiTemporalFrequencyInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditLinkInput struct {
@@ -751,6 +804,12 @@ type EditLocationTypeInput struct {
 	Properties         []*models.PropertyTypeInput     `json:"properties"`
 }
 
+type EditOrganizationInput struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type EditPermissionsPolicyInput struct {
 	ID              int                            `json:"id"`
 	Name            *string                        `json:"name"`
@@ -761,11 +820,6 @@ type EditPermissionsPolicyInput struct {
 	AutomationInput *models1.AutomationPolicyInput `json:"automationInput"`
 	AssuranceInput  *models1.AssurancePolicyInput  `json:"assuranceInput"`
 	Groups          []int                          `json:"groups"`
-}
-
-type EditPerspectiveInput struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
 }
 
 type EditProjectInput struct {
@@ -787,6 +841,34 @@ type EditProjectTypeInput struct {
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
 }
 
+type EditRecommendationsCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type EditRecommendationsInput struct {
+	ID                      int     `json:"id"`
+	ExternalID              string  `json:"externalID"`
+	Resource                string  `json:"resource"`
+	AlarmType               string  `json:"alarmType"`
+	ShortDescription        string  `json:"shortDescription"`
+	LongDescription         string  `json:"longDescription"`
+	Command                 string  `json:"command"`
+	Priority                int     `json:"priority"`
+	Status                  bool    `json:"status"`
+	Runbook                 *string `json:"runbook"`
+	Used                    *int    `json:"used"`
+	RecommendationsSources  int     `json:"recommendationsSources"`
+	RecommendationsCategory int     `json:"recommendationsCategory"`
+	UserApprobed            *int    `json:"userApprobed"`
+	Vendor                  int     `json:"vendor"`
+}
+
+type EditRecommendationsSourcesInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditReportFilterInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -804,7 +886,7 @@ type EditRuleInput struct {
 	AdditionalInfo  *string    `json:"additionalInfo"`
 	Status          bool       `json:"status"`
 	EventSeverity   int        `json:"eventSeverity"`
-	Treshold        int        `json:"treshold"`
+	Threshold       int        `json:"threshold"`
 }
 
 type EditRuleLimitInput struct {
@@ -826,12 +908,7 @@ type EditTechInput struct {
 	DomainFk int    `json:"domainFk"`
 }
 
-type EditTemporalFrecuencyInput struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-type EditTresholdInput struct {
+type EditThresholdInput struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -839,12 +916,13 @@ type EditTresholdInput struct {
 }
 
 type EditUserInput struct {
-	ID           int                `json:"id"`
-	FirstName    *string            `json:"firstName"`
-	LastName     *string            `json:"lastName"`
-	Status       *user.Status       `json:"status"`
-	Role         *user.Role         `json:"role"`
-	DistanceUnit *user.DistanceUnit `json:"distanceUnit"`
+	ID             int                `json:"id"`
+	FirstName      *string            `json:"firstName"`
+	LastName       *string            `json:"lastName"`
+	Status         *user.Status       `json:"status"`
+	Role           *user.Role         `json:"role"`
+	DistanceUnit   *user.DistanceUnit `json:"distanceUnit"`
+	OrganizationFk *int               `json:"organizationFk"`
 }
 
 type EditUsersGroupInput struct {
@@ -869,6 +947,7 @@ type EditWorkOrderInput struct {
 	InstallDate         *time.Time                `json:"installDate"`
 	AssigneeID          *int                      `json:"assigneeId"`
 	Index               *int                      `json:"index"`
+	OrganizationFk      *int                      `json:"organizationFk"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
 	ProjectID           *int                      `json:"projectId"`
@@ -1039,6 +1118,15 @@ type KpiFilterInput struct {
 	StringSet   []string            `json:"stringSet"`
 }
 
+type KqiCategoryFilterInput struct {
+	FilterType  KqiCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
+}
+
 type KqiFilterInput struct {
 	FilterType  KqiFilterType       `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
@@ -1046,6 +1134,42 @@ type KqiFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiPerspectiveFilterInput struct {
+	FilterType  KqiPerspectiveFilterType `json:"filterType"`
+	Operator    enum.FilterOperator      `json:"operator"`
+	StringValue *string                  `json:"stringValue"`
+	IDSet       []int                    `json:"idSet"`
+	MaxDepth    *int                     `json:"maxDepth"`
+	StringSet   []string                 `json:"stringSet"`
+}
+
+type KqiSourceFilterInput struct {
+	FilterType  KqiSourceFilterType `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiTargetFilterInput struct {
+	FilterType  KqiTargetFilterType `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiTemporalFrequencyFilterInput struct {
+	FilterType  KqiTemporalFrequencyFilterType `json:"filterType"`
+	Operator    enum.FilterOperator            `json:"operator"`
+	StringValue *string                        `json:"stringValue"`
+	IDSet       []int                          `json:"idSet"`
+	MaxDepth    *int                           `json:"maxDepth"`
+	StringSet   []string                       `json:"stringSet"`
 }
 
 type LatestPythonPackageResult struct {
@@ -1066,6 +1190,15 @@ type LocationTypeIndex struct {
 type NetworkTopology struct {
 	Nodes []ent.Noder     `json:"nodes"`
 	Links []*TopologyLink `json:"links"`
+}
+
+type OrganizationFilterInput struct {
+	FilterType  OrganizationFilterType `json:"filterType"`
+	Operator    enum.FilterOperator    `json:"operator"`
+	StringValue *string                `json:"stringValue"`
+	IDSet       []int                  `json:"idSet"`
+	MaxDepth    *int                   `json:"maxDepth"`
+	StringSet   []string               `json:"stringSet"`
 }
 
 type PermissionsPolicyFilterInput struct {
@@ -1116,6 +1249,35 @@ type PythonPackage struct {
 	WhlFileKey        string    `json:"whlFileKey"`
 	UploadTime        time.Time `json:"uploadTime"`
 	HasBreakingChange bool      `json:"hasBreakingChange"`
+}
+
+type RecommendationsCategoryFilterInput struct {
+	FilterType  RecommendationsCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator               `json:"operator"`
+	StringValue *string                           `json:"stringValue"`
+	IDSet       []int                             `json:"idSet"`
+	MaxDepth    *int                              `json:"maxDepth"`
+	StringSet   []string                          `json:"stringSet"`
+}
+
+type RecommendationsFilterInput struct {
+	FilterType  RecommendationsFilterType `json:"filterType"`
+	Operator    enum.FilterOperator       `json:"operator"`
+	StringValue *string                   `json:"stringValue"`
+	BoolValue   *bool                     `json:"boolValue"`
+	IntValue    *int                      `json:"intValue"`
+	IDSet       []int                     `json:"idSet"`
+	MaxDepth    *int                      `json:"maxDepth"`
+	StringSet   []string                  `json:"stringSet"`
+}
+
+type RecommendationsSourcesFilterInput struct {
+	FilterType  RecommendationsSourcesFilterType `json:"filterType"`
+	Operator    enum.FilterOperator              `json:"operator"`
+	StringValue *string                          `json:"stringValue"`
+	IDSet       []int                            `json:"idSet"`
+	MaxDepth    *int                             `json:"maxDepth"`
+	StringSet   []string                         `json:"stringSet"`
 }
 
 type ReportFilterInput struct {
@@ -1380,14 +1542,8 @@ type TechnicianWorkOrderUploadInput struct {
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 }
 
-type TopologyLink struct {
-	Type   TopologyLinkType `json:"type"`
-	Source ent.Noder        `json:"source"`
-	Target ent.Noder        `json:"target"`
-}
-
-type TresholdFilterInput struct {
-	FilterType  TresholdFilterType  `json:"filterType"`
+type ThresholdFilterInput struct {
+	FilterType  ThresholdFilterType `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
 	StringValue *string             `json:"stringValue"`
 	IDSet       []int               `json:"idSet"`
@@ -1395,12 +1551,18 @@ type TresholdFilterInput struct {
 	StringSet   []string            `json:"stringSet"`
 }
 
-type TresholdInput struct {
+type ThresholdInput struct {
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	Status      bool         `json:"status"`
 	Rule        []*RuleInput `json:"rule"`
 	Kpi         int          `json:"kpi"`
+}
+
+type TopologyLink struct {
+	Type   TopologyLinkType `json:"type"`
+	Source ent.Noder        `json:"source"`
+	Target ent.Noder        `json:"target"`
 }
 
 type TriggerBlock struct {
@@ -1994,6 +2156,45 @@ func (e KpiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type KqiCategoryFilterType string
+
+const (
+	KqiCategoryFilterTypeName KqiCategoryFilterType = "NAME"
+)
+
+var AllKqiCategoryFilterType = []KqiCategoryFilterType{
+	KqiCategoryFilterTypeName,
+}
+
+func (e KqiCategoryFilterType) IsValid() bool {
+	switch e {
+	case KqiCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type KqiFilterType string
 
 const (
@@ -2030,6 +2231,201 @@ func (e *KqiFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e KqiFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiPerspectiveFilterType string
+
+const (
+	KqiPerspectiveFilterTypeName KqiPerspectiveFilterType = "NAME"
+)
+
+var AllKqiPerspectiveFilterType = []KqiPerspectiveFilterType{
+	KqiPerspectiveFilterTypeName,
+}
+
+func (e KqiPerspectiveFilterType) IsValid() bool {
+	switch e {
+	case KqiPerspectiveFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiPerspectiveFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiPerspectiveFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiPerspectiveFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiPerspectiveFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiPerspectiveFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiSourceFilterType string
+
+const (
+	KqiSourceFilterTypeName KqiSourceFilterType = "NAME"
+)
+
+var AllKqiSourceFilterType = []KqiSourceFilterType{
+	KqiSourceFilterTypeName,
+}
+
+func (e KqiSourceFilterType) IsValid() bool {
+	switch e {
+	case KqiSourceFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiSourceFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiSourceFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiSourceFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiSourceFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiSourceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiTargetFilterType string
+
+const (
+	KqiTargetFilterTypeName KqiTargetFilterType = "NAME"
+)
+
+var AllKqiTargetFilterType = []KqiTargetFilterType{
+	KqiTargetFilterTypeName,
+}
+
+func (e KqiTargetFilterType) IsValid() bool {
+	switch e {
+	case KqiTargetFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiTargetFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiTargetFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiTargetFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiTargetFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiTargetFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiTemporalFrequencyFilterType string
+
+const (
+	KqiTemporalFrequencyFilterTypeName KqiTemporalFrequencyFilterType = "NAME"
+)
+
+var AllKqiTemporalFrequencyFilterType = []KqiTemporalFrequencyFilterType{
+	KqiTemporalFrequencyFilterTypeName,
+}
+
+func (e KqiTemporalFrequencyFilterType) IsValid() bool {
+	switch e {
+	case KqiTemporalFrequencyFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiTemporalFrequencyFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiTemporalFrequencyFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiTemporalFrequencyFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiTemporalFrequencyFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type OrganizationFilterType string
+
+const (
+	OrganizationFilterTypeName OrganizationFilterType = "NAME"
+)
+
+var AllOrganizationFilterType = []OrganizationFilterType{
+	OrganizationFilterTypeName,
+}
+
+func (e OrganizationFilterType) IsValid() bool {
+	switch e {
+	case OrganizationFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e OrganizationFilterType) String() string {
+	return string(e)
+}
+
+func (e *OrganizationFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrganizationFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrganizationFilterType", str)
+	}
+	return nil
+}
+
+func (e OrganizationFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2119,6 +2515,141 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsCategoryFilterType string
+
+const (
+	RecommendationsCategoryFilterTypeName RecommendationsCategoryFilterType = "NAME"
+)
+
+var AllRecommendationsCategoryFilterType = []RecommendationsCategoryFilterType{
+	RecommendationsCategoryFilterTypeName,
+}
+
+func (e RecommendationsCategoryFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsFilterType string
+
+const (
+	RecommendationsFilterTypeExternalid       RecommendationsFilterType = "EXTERNALID"
+	RecommendationsFilterTypeResource         RecommendationsFilterType = "RESOURCE"
+	RecommendationsFilterTypeAlarmtype        RecommendationsFilterType = "ALARMTYPE"
+	RecommendationsFilterTypeShortdescription RecommendationsFilterType = "SHORTDESCRIPTION"
+	RecommendationsFilterTypeLongdescription  RecommendationsFilterType = "LONGDESCRIPTION"
+	RecommendationsFilterTypeCommand          RecommendationsFilterType = "COMMAND"
+	RecommendationsFilterTypePriority         RecommendationsFilterType = "PRIORITY"
+	RecommendationsFilterTypeStatus           RecommendationsFilterType = "STATUS"
+	RecommendationsFilterTypeUsed             RecommendationsFilterType = "USED"
+	RecommendationsFilterTypeRunbook          RecommendationsFilterType = "RUNBOOK"
+)
+
+var AllRecommendationsFilterType = []RecommendationsFilterType{
+	RecommendationsFilterTypeExternalid,
+	RecommendationsFilterTypeResource,
+	RecommendationsFilterTypeAlarmtype,
+	RecommendationsFilterTypeShortdescription,
+	RecommendationsFilterTypeLongdescription,
+	RecommendationsFilterTypeCommand,
+	RecommendationsFilterTypePriority,
+	RecommendationsFilterTypeStatus,
+	RecommendationsFilterTypeUsed,
+	RecommendationsFilterTypeRunbook,
+}
+
+func (e RecommendationsFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsSourcesFilterType string
+
+const (
+	RecommendationsSourcesFilterTypeName RecommendationsSourcesFilterType = "NAME"
+)
+
+var AllRecommendationsSourcesFilterType = []RecommendationsSourcesFilterType{
+	RecommendationsSourcesFilterTypeName,
+}
+
+func (e RecommendationsSourcesFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsSourcesFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsSourcesFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsSourcesFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsSourcesFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsSourcesFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2265,6 +2796,45 @@ func (e SurveyStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ThresholdFilterType string
+
+const (
+	ThresholdFilterTypeName ThresholdFilterType = "NAME"
+)
+
+var AllThresholdFilterType = []ThresholdFilterType{
+	ThresholdFilterTypeName,
+}
+
+func (e ThresholdFilterType) IsValid() bool {
+	switch e {
+	case ThresholdFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e ThresholdFilterType) String() string {
+	return string(e)
+}
+
+func (e *ThresholdFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ThresholdFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ThresholdFilterType", str)
+	}
+	return nil
+}
+
+func (e ThresholdFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type TopologyLinkType string
 
 const (
@@ -2301,45 +2871,6 @@ func (e *TopologyLinkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e TopologyLinkType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type TresholdFilterType string
-
-const (
-	TresholdFilterTypeName TresholdFilterType = "NAME"
-)
-
-var AllTresholdFilterType = []TresholdFilterType{
-	TresholdFilterTypeName,
-}
-
-func (e TresholdFilterType) IsValid() bool {
-	switch e {
-	case TresholdFilterTypeName:
-		return true
-	}
-	return false
-}
-
-func (e TresholdFilterType) String() string {
-	return string(e)
-}
-
-func (e *TresholdFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = TresholdFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid TresholdFilterType", str)
-	}
-	return nil
-}
-
-func (e TresholdFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

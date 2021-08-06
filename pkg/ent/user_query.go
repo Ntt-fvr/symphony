@@ -18,8 +18,10 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -35,11 +37,15 @@ type UserQuery struct {
 	predicates []predicate.User
 	// eager-loading edges.
 	withProfilePhoto       *FileQuery
+	withUserCreate         *RecommendationsQuery
+	withUserApproved       *RecommendationsQuery
 	withGroups             *UsersGroupQuery
+	withOrganization       *OrganizationQuery
 	withOwnedWorkOrders    *WorkOrderQuery
 	withAssignedWorkOrders *WorkOrderQuery
 	withCreatedProjects    *ProjectQuery
 	withFeatures           *FeatureQuery
+	withFKs                bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -91,6 +97,50 @@ func (uq *UserQuery) QueryProfilePhoto() *FileQuery {
 	return query
 }
 
+// QueryUserCreate chains the current query on the User_create edge.
+func (uq *UserQuery) QueryUserCreate() *RecommendationsQuery {
+	query := &RecommendationsQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserCreateTable, user.UserCreateColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserApproved chains the current query on the User_approved edge.
+func (uq *UserQuery) QueryUserApproved() *RecommendationsQuery {
+	query := &RecommendationsQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(recommendations.Table, recommendations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserApprovedTable, user.UserApprovedColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryGroups chains the current query on the groups edge.
 func (uq *UserQuery) QueryGroups() *UsersGroupQuery {
 	query := &UsersGroupQuery{config: uq.config}
@@ -106,6 +156,28 @@ func (uq *UserQuery) QueryGroups() *UsersGroupQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(usersgroup.Table, usersgroup.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, user.GroupsTable, user.GroupsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrganization chains the current query on the organization edge.
+func (uq *UserQuery) QueryOrganization() *OrganizationQuery {
+	query := &OrganizationQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.OrganizationTable, user.OrganizationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -378,7 +450,10 @@ func (uq *UserQuery) Clone() *UserQuery {
 		unique:                 append([]string{}, uq.unique...),
 		predicates:             append([]predicate.User{}, uq.predicates...),
 		withProfilePhoto:       uq.withProfilePhoto.Clone(),
+		withUserCreate:         uq.withUserCreate.Clone(),
+		withUserApproved:       uq.withUserApproved.Clone(),
 		withGroups:             uq.withGroups.Clone(),
+		withOrganization:       uq.withOrganization.Clone(),
 		withOwnedWorkOrders:    uq.withOwnedWorkOrders.Clone(),
 		withAssignedWorkOrders: uq.withAssignedWorkOrders.Clone(),
 		withCreatedProjects:    uq.withCreatedProjects.Clone(),
@@ -400,6 +475,28 @@ func (uq *UserQuery) WithProfilePhoto(opts ...func(*FileQuery)) *UserQuery {
 	return uq
 }
 
+//  WithUserCreate tells the query-builder to eager-loads the nodes that are connected to
+// the "User_create" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserCreate(opts ...func(*RecommendationsQuery)) *UserQuery {
+	query := &RecommendationsQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUserCreate = query
+	return uq
+}
+
+//  WithUserApproved tells the query-builder to eager-loads the nodes that are connected to
+// the "User_approved" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserApproved(opts ...func(*RecommendationsQuery)) *UserQuery {
+	query := &RecommendationsQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUserApproved = query
+	return uq
+}
+
 //  WithGroups tells the query-builder to eager-loads the nodes that are connected to
 // the "groups" edge. The optional arguments used to configure the query builder of the edge.
 func (uq *UserQuery) WithGroups(opts ...func(*UsersGroupQuery)) *UserQuery {
@@ -408,6 +505,17 @@ func (uq *UserQuery) WithGroups(opts ...func(*UsersGroupQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withGroups = query
+	return uq
+}
+
+//  WithOrganization tells the query-builder to eager-loads the nodes that are connected to
+// the "organization" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UserQuery) WithOrganization(opts ...func(*OrganizationQuery)) *UserQuery {
+	query := &OrganizationQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withOrganization = query
 	return uq
 }
 
@@ -523,20 +631,33 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	var (
 		nodes       = []*User{}
+		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [9]bool{
 			uq.withProfilePhoto != nil,
+			uq.withUserCreate != nil,
+			uq.withUserApproved != nil,
 			uq.withGroups != nil,
+			uq.withOrganization != nil,
 			uq.withOwnedWorkOrders != nil,
 			uq.withAssignedWorkOrders != nil,
 			uq.withCreatedProjects != nil,
 			uq.withFeatures != nil,
 		}
 	)
+	if uq.withOrganization != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
+	}
 	_spec.ScanValues = func() []interface{} {
 		node := &User{config: uq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
+		if withFKs {
+			values = append(values, node.fkValues()...)
+		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -579,6 +700,64 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_profile_photo" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.ProfilePhoto = n
+		}
+	}
+
+	if query := uq.withUserCreate; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.UserCreate = []*Recommendations{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Recommendations(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.UserCreateColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_user_create
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_user_create" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_user_create" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.UserCreate = append(node.Edges.UserCreate, n)
+		}
+	}
+
+	if query := uq.withUserApproved; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.UserApproved = []*Recommendations{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Recommendations(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.UserApprovedColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_user_approved
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_user_approved" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_user_approved" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.UserApproved = append(node.Edges.UserApproved, n)
 		}
 	}
 
@@ -642,6 +821,31 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Groups = append(nodes[i].Edges.Groups, n)
+			}
+		}
+	}
+
+	if query := uq.withOrganization; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*User)
+		for i := range nodes {
+			if fk := nodes[i].organization_user_fk; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(organization.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "organization_user_fk" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Organization = n
 			}
 		}
 	}

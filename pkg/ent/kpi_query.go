@@ -20,7 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/treshold"
+	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
 // KpiQuery is the builder for querying Kpi entities.
@@ -32,10 +32,10 @@ type KpiQuery struct {
 	unique     []string
 	predicates []predicate.Kpi
 	// eager-loading edges.
-	withDomain      *DomainQuery
-	withFormulakpi  *FormulaQuery
-	withTresholdkpi *TresholdQuery
-	withFKs         bool
+	withDomain       *DomainQuery
+	withFormulakpi   *FormulaQuery
+	withThresholdkpi *ThresholdQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -109,9 +109,9 @@ func (kq *KpiQuery) QueryFormulakpi() *FormulaQuery {
 	return query
 }
 
-// QueryTresholdkpi chains the current query on the tresholdkpi edge.
-func (kq *KpiQuery) QueryTresholdkpi() *TresholdQuery {
-	query := &TresholdQuery{config: kq.config}
+// QueryThresholdkpi chains the current query on the thresholdkpi edge.
+func (kq *KpiQuery) QueryThresholdkpi() *ThresholdQuery {
+	query := &ThresholdQuery{config: kq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := kq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -122,8 +122,8 @@ func (kq *KpiQuery) QueryTresholdkpi() *TresholdQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(kpi.Table, kpi.FieldID, selector),
-			sqlgraph.To(treshold.Table, treshold.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, kpi.TresholdkpiTable, kpi.TresholdkpiColumn),
+			sqlgraph.To(threshold.Table, threshold.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, kpi.ThresholdkpiTable, kpi.ThresholdkpiColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(kq.driver.Dialect(), step)
 		return fromU, nil
@@ -301,15 +301,15 @@ func (kq *KpiQuery) Clone() *KpiQuery {
 		return nil
 	}
 	return &KpiQuery{
-		config:          kq.config,
-		limit:           kq.limit,
-		offset:          kq.offset,
-		order:           append([]OrderFunc{}, kq.order...),
-		unique:          append([]string{}, kq.unique...),
-		predicates:      append([]predicate.Kpi{}, kq.predicates...),
-		withDomain:      kq.withDomain.Clone(),
-		withFormulakpi:  kq.withFormulakpi.Clone(),
-		withTresholdkpi: kq.withTresholdkpi.Clone(),
+		config:           kq.config,
+		limit:            kq.limit,
+		offset:           kq.offset,
+		order:            append([]OrderFunc{}, kq.order...),
+		unique:           append([]string{}, kq.unique...),
+		predicates:       append([]predicate.Kpi{}, kq.predicates...),
+		withDomain:       kq.withDomain.Clone(),
+		withFormulakpi:   kq.withFormulakpi.Clone(),
+		withThresholdkpi: kq.withThresholdkpi.Clone(),
 		// clone intermediate query.
 		sql:  kq.sql.Clone(),
 		path: kq.path,
@@ -338,14 +338,14 @@ func (kq *KpiQuery) WithFormulakpi(opts ...func(*FormulaQuery)) *KpiQuery {
 	return kq
 }
 
-//  WithTresholdkpi tells the query-builder to eager-loads the nodes that are connected to
-// the "tresholdkpi" edge. The optional arguments used to configure the query builder of the edge.
-func (kq *KpiQuery) WithTresholdkpi(opts ...func(*TresholdQuery)) *KpiQuery {
-	query := &TresholdQuery{config: kq.config}
+//  WithThresholdkpi tells the query-builder to eager-loads the nodes that are connected to
+// the "thresholdkpi" edge. The optional arguments used to configure the query builder of the edge.
+func (kq *KpiQuery) WithThresholdkpi(opts ...func(*ThresholdQuery)) *KpiQuery {
+	query := &ThresholdQuery{config: kq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	kq.withTresholdkpi = query
+	kq.withThresholdkpi = query
 	return kq
 }
 
@@ -422,7 +422,7 @@ func (kq *KpiQuery) sqlAll(ctx context.Context) ([]*Kpi, error) {
 		loadedTypes = [3]bool{
 			kq.withDomain != nil,
 			kq.withFormulakpi != nil,
-			kq.withTresholdkpi != nil,
+			kq.withThresholdkpi != nil,
 		}
 	)
 	if kq.withDomain != nil {
@@ -509,7 +509,7 @@ func (kq *KpiQuery) sqlAll(ctx context.Context) ([]*Kpi, error) {
 		}
 	}
 
-	if query := kq.withTresholdkpi; query != nil {
+	if query := kq.withThresholdkpi; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*Kpi)
 		for i := range nodes {
@@ -517,23 +517,23 @@ func (kq *KpiQuery) sqlAll(ctx context.Context) ([]*Kpi, error) {
 			nodeids[nodes[i].ID] = nodes[i]
 		}
 		query.withFKs = true
-		query.Where(predicate.Treshold(func(s *sql.Selector) {
-			s.Where(sql.InValues(kpi.TresholdkpiColumn, fks...))
+		query.Where(predicate.Threshold(func(s *sql.Selector) {
+			s.Where(sql.InValues(kpi.ThresholdkpiColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.kpi_tresholdkpi
+			fk := n.kpi_thresholdkpi
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "kpi_tresholdkpi" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "kpi_thresholdkpi" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "kpi_tresholdkpi" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "kpi_thresholdkpi" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Tresholdkpi = n
+			node.Edges.Thresholdkpi = n
 		}
 	}
 
