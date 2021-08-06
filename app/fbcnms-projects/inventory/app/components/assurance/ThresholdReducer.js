@@ -23,6 +23,7 @@ const initialStore = {
     eventTypeName: '',
     startDateTime: '',
     endDateTime: '',
+    thresholdId: '',
     thresholdName: '',
     eventSeverityId: '',
   },

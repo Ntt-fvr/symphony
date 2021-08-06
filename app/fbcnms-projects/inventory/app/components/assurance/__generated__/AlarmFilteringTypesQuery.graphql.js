@@ -16,7 +16,7 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AlarmFilteringTypesQueryVariables = {||};
 export type AlarmFilteringTypesQueryResponse = {|
-  +AlarmFilters: {|
+  +alarmFilters: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -45,7 +45,7 @@ export type AlarmFilteringTypesQuery = {|
 
 /*
 query AlarmFilteringTypesQuery {
-  AlarmFilters {
+  alarmFilters {
     edges {
       node {
         id
@@ -88,7 +88,7 @@ v2 = [
     "args": null,
     "concreteType": "AlarmFilterConnection",
     "kind": "LinkedField",
-    "name": "AlarmFilters",
+    "name": "alarmFilters",
     "plural": false,
     "selections": [
       {
@@ -199,16 +199,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "64d755a730b542014041f7074ddb10cf",
+    "cacheID": "7988eb62db16c7bd0821eb585b520414",
     "id": null,
     "metadata": {},
     "name": "AlarmFilteringTypesQuery",
     "operationKind": "query",
-    "text": "query AlarmFilteringTypesQuery {\n  AlarmFilters {\n    edges {\n      node {\n        id\n        name\n        networkResource\n        enable\n        beginTime\n        endTime\n        reason\n        user\n        creationTime\n        alarmStatus {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AlarmFilteringTypesQuery {\n  alarmFilters {\n    edges {\n      node {\n        id\n        name\n        networkResource\n        enable\n        beginTime\n        endTime\n        reason\n        user\n        creationTime\n        alarmStatus {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7e4d851fafc447b0f3f9e70063b1947d';
+(node/*: any*/).hash = 'eaf1aca142a63831ff2d5e4f18e35885';
 
 module.exports = node;

@@ -32,14 +32,6 @@ export type EditRuleItemFormQueryResponse = {|
       |}
     |}>
   |},
-  +ruleTypes: {|
-    +edges: $ReadOnlyArray<{|
-      +node: ?{|
-        +id: string,
-        +name: string,
-      |}
-    |}>
-  |},
 |};
 export type EditRuleItemFormQuery = {|
   variables: EditRuleItemFormQueryVariables,
@@ -59,14 +51,6 @@ query EditRuleItemFormQuery {
     }
   }
   comparators {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
-  ruleTypes {
     edges {
       node {
         id
@@ -158,38 +142,6 @@ v1 = [
       }
     ],
     "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "RuleTypeConnection",
-    "kind": "LinkedField",
-    "name": "ruleTypes",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "RuleTypeEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "RuleType",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": (v0/*: any*/),
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
   }
 ];
 return {
@@ -210,16 +162,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "af19e57661178e9af7a14e1c54d5eb8e",
+    "cacheID": "a8a73cfc4b8bf21da74bceb02d3e48bc",
     "id": null,
     "metadata": {},
     "name": "EditRuleItemFormQuery",
     "operationKind": "query",
-    "text": "query EditRuleItemFormQuery {\n  eventSeverities {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  ruleTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query EditRuleItemFormQuery {\n  eventSeverities {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '450ba50fdd874132a811b0f8aa2b5c79';
+(node/*: any*/).hash = '6c61d998c09ada78d123afc9fd2cc091';
 
 module.exports = node;

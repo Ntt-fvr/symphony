@@ -39,7 +39,7 @@ const useStyles = makeStyles(() => ({
 
 const AlarmFilteringQuery = graphql`
   query AlarmFilteringTypesQuery {
-    AlarmFilters {
+    alarmFilters {
       edges {
         node {
           id

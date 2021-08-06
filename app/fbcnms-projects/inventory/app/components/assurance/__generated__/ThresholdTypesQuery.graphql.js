@@ -50,7 +50,8 @@ export type ThresholdTypesQueryResponse = {|
             +name: string,
           |},
           +threshold: {|
-            +name: string
+            +id: string,
+            +name: string,
           |},
         |}>,
       |}
@@ -101,8 +102,8 @@ query ThresholdTypesQuery {
             name
           }
           threshold {
-            name
             id
+            name
           }
         }
       }
@@ -229,6 +230,16 @@ v15 = {
   "plural": false,
   "selections": (v4/*: any*/),
   "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Threshold",
+  "kind": "LinkedField",
+  "name": "threshold",
+  "plural": false,
+  "selections": (v4/*: any*/),
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -298,18 +309,7 @@ return {
                         "storageKey": null
                       },
                       (v15/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "Threshold",
-                        "kind": "LinkedField",
-                        "name": "threshold",
-                        "plural": false,
-                        "selections": [
-                          (v1/*: any*/)
-                        ],
-                        "storageKey": null
-                      }
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -394,19 +394,7 @@ return {
                         "storageKey": null
                       },
                       (v15/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "Threshold",
-                        "kind": "LinkedField",
-                        "name": "threshold",
-                        "plural": false,
-                        "selections": [
-                          (v1/*: any*/),
-                          (v0/*: any*/)
-                        ],
-                        "storageKey": null
-                      }
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -422,16 +410,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "caaf451e24bb491b0dafd4dfb88ee98c",
+    "cacheID": "7f20de4d63b33ac1332f665098f4bbbd",
     "id": null,
     "metadata": {},
     "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          status\n          gracePeriod\n          additionalInfo\n          specificProblem\n          eventTypeName\n          startDateTime\n          endDateTime\n          ruleType {\n            id\n            name\n          }\n          ruleLimit {\n            number\n            limitType\n            id\n          }\n          eventSeverity {\n            id\n            name\n          }\n          threshold {\n            name\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          status\n          gracePeriod\n          additionalInfo\n          specificProblem\n          eventTypeName\n          startDateTime\n          endDateTime\n          ruleType {\n            id\n            name\n          }\n          ruleLimit {\n            number\n            limitType\n            id\n          }\n          eventSeverity {\n            id\n            name\n          }\n          threshold {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8abdb64cfc10b471d9366a36c8180c0b';
+(node/*: any*/).hash = '0ebee5be6c68cbdf0984ea0b278dde12';
 
 module.exports = node;

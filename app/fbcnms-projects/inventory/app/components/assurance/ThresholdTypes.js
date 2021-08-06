@@ -74,6 +74,7 @@ const ThresholdQuery = graphql`
               name
             }
             threshold {
+              id
               name
             }
           }

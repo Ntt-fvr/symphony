@@ -10,11 +10,14 @@
 
 import type {EditRuleItemFormQuery} from './__generated__/EditRuleItemFormQuery.graphql';
 
+import type {EditRuleMutationVariables} from '../../mutations/__generated__/EditRuleMutation.graphql';
+
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import EditRuleMutation from '../../mutations/EditRuleMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -148,8 +151,28 @@ const EditRuleItemForm = (props: Props) => {
   const gracePeriodRule = useFormInput(rule.gracePeriod);
   const additionalInfoRule = useFormInput(rule.additionalInfo);
   const specificProblemRule = useFormInput(rule.specificProblem);
-  const alarmTypeRule = useFormInput(rule.eventTypeName);
+  const eventTypeRule = useFormInput(rule.eventTypeName);
   const eventSeverityRules = useFormInput(rule.eventSeverityId);
+
+  const handleClick = () => {
+    const variables: EditRuleMutationVariables = {
+      input: {
+        id: rule.id,
+        name: nameRule.value,
+        gracePeriod: Number(gracePeriodRule.value),
+        startDateTime: '2021-08-04T22:45:00Z',
+        endDateTime: '2021-08-30T22:45:00Z',
+        ruleType: '223338299392',
+        eventTypeName: eventTypeRule.value,
+        specificProblem: specificProblemRule.value,
+        additionalInfo: additionalInfoRule.value,
+        status: checked,
+        eventSeverity: eventSeverityRules.value,
+        threshold: rule.thresholdId,
+      },
+    };
+    EditRuleMutation(variables);
+  };
 
   const classes = useStyles();
 
@@ -248,7 +271,7 @@ const EditRuleItemForm = (props: Props) => {
                   label="Alarm type name"
                   required>
                   <TextInput
-                    {...alarmTypeRule}
+                    {...eventTypeRule}
                     className={classes.textInput}
                     name="alarmType"
                   />
@@ -336,6 +359,7 @@ const EditRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="startTime"
+                    defaultValue="2017-05-24T10:30"
                     disabled={!checkedCheckbox}
                   />
                 </FormField>
@@ -379,6 +403,7 @@ const EditRuleItemForm = (props: Props) => {
                     <Button
                       className={classes.addRule}
                       onClick={() => {
+                        handleClick();
                         hideAddRuleForm();
                       }}>
                       Save
