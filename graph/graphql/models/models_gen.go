@@ -2560,16 +2560,21 @@ func (e RecommendationsCategoryFilterType) MarshalGQL(w io.Writer) {
 type RecommendationsFilterType string
 
 const (
-	RecommendationsFilterTypeExternalid       RecommendationsFilterType = "EXTERNALID"
-	RecommendationsFilterTypeResource         RecommendationsFilterType = "RESOURCE"
-	RecommendationsFilterTypeAlarmtype        RecommendationsFilterType = "ALARMTYPE"
-	RecommendationsFilterTypeShortdescription RecommendationsFilterType = "SHORTDESCRIPTION"
-	RecommendationsFilterTypeLongdescription  RecommendationsFilterType = "LONGDESCRIPTION"
-	RecommendationsFilterTypeCommand          RecommendationsFilterType = "COMMAND"
-	RecommendationsFilterTypePriority         RecommendationsFilterType = "PRIORITY"
-	RecommendationsFilterTypeStatus           RecommendationsFilterType = "STATUS"
-	RecommendationsFilterTypeUsed             RecommendationsFilterType = "USED"
-	RecommendationsFilterTypeRunbook          RecommendationsFilterType = "RUNBOOK"
+	RecommendationsFilterTypeExternalid              RecommendationsFilterType = "EXTERNALID"
+	RecommendationsFilterTypeResource                RecommendationsFilterType = "RESOURCE"
+	RecommendationsFilterTypeAlarmtype               RecommendationsFilterType = "ALARMTYPE"
+	RecommendationsFilterTypeShortdescription        RecommendationsFilterType = "SHORTDESCRIPTION"
+	RecommendationsFilterTypeLongdescription         RecommendationsFilterType = "LONGDESCRIPTION"
+	RecommendationsFilterTypeCommand                 RecommendationsFilterType = "COMMAND"
+	RecommendationsFilterTypePriority                RecommendationsFilterType = "PRIORITY"
+	RecommendationsFilterTypeStatus                  RecommendationsFilterType = "STATUS"
+	RecommendationsFilterTypeUsed                    RecommendationsFilterType = "USED"
+	RecommendationsFilterTypeRunbook                 RecommendationsFilterType = "RUNBOOK"
+	RecommendationsFilterTypeRecommendationssource   RecommendationsFilterType = "RECOMMENDATIONSSOURCE"
+	RecommendationsFilterTypeRecommendationscategory RecommendationsFilterType = "RECOMMENDATIONSCATEGORY"
+	RecommendationsFilterTypeUsercreate              RecommendationsFilterType = "USERCREATE"
+	RecommendationsFilterTypeUserapprove             RecommendationsFilterType = "USERAPPROVE"
+	RecommendationsFilterTypeVendorrecommendations   RecommendationsFilterType = "VENDORRECOMMENDATIONS"
 )
 
 var AllRecommendationsFilterType = []RecommendationsFilterType{
@@ -2583,11 +2588,16 @@ var AllRecommendationsFilterType = []RecommendationsFilterType{
 	RecommendationsFilterTypeStatus,
 	RecommendationsFilterTypeUsed,
 	RecommendationsFilterTypeRunbook,
+	RecommendationsFilterTypeRecommendationssource,
+	RecommendationsFilterTypeRecommendationscategory,
+	RecommendationsFilterTypeUsercreate,
+	RecommendationsFilterTypeUserapprove,
+	RecommendationsFilterTypeVendorrecommendations,
 }
 
 func (e RecommendationsFilterType) IsValid() bool {
 	switch e {
-	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook:
+	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook, RecommendationsFilterTypeRecommendationssource, RecommendationsFilterTypeRecommendationscategory, RecommendationsFilterTypeUsercreate, RecommendationsFilterTypeUserapprove, RecommendationsFilterTypeVendorrecommendations:
 		return true
 	}
 	return false
