@@ -121,7 +121,12 @@ const AlarmFilteringTable = (props: Props) => {
                   </TableCell>
                   <TableCell>{item.networkResource}</TableCell>
                   <TableCell>
-                    <AlarmFilteringStatus buttonName={item.alarmStatus.name}/>
+                    <AlarmFilteringStatus 
+                      creationDate={item.creationTime}
+                      beginDate={item.beginTime}
+                      endDate={item.endTime}
+                      valueButton={item.id}  
+                    />
                   </TableCell>
                   <TableCell>
                     {DateTimeFormat.dateTime(item.beginTime)}

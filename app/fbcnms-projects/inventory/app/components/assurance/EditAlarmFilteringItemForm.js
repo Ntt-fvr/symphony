@@ -68,8 +68,7 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '2rem',
   },
   titleButtons: {
-    padding: '1rem 1rem 0 1rem',
-    alignItems: 'center',
+  marginBottom: "1rem",
   },
   reason: {
     minHeight: '100px',
@@ -144,7 +143,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons}>
+        <Grid container className={classes.titleButtons} alignItems="center">
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Edit Alarm Filter', ' ')}
@@ -261,7 +260,9 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="Status" className={classes.formField}>
                     <AlarmFilteringStatus
                       {...alarmStatus}
-                      buttonName={formValues.item.alarmStatus.name}
+                      creationDate={formValues.item.creationTime}
+                      beginDate={formValues.item.beginTime}
+                      endDate={formValues.item.endTime}
                       className={classes.formFieldStatus}
                       name="alarmStatus"
                     />

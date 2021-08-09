@@ -14,7 +14,7 @@ import {makeStyles} from '@material-ui/styles';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useFormInput} from './common/useFormInput';
-
+import moment from 'moment';
 import classNames from 'classnames';
 
 const useStyles = makeStyles(() => ({
@@ -27,12 +27,12 @@ const useStyles = makeStyles(() => ({
     color: '#00AF5B',
     fontSize: '14px',
   },
-  buttonPendig: {
+  buttonPending: {
     border: '1px solid #FFB63E',
     color: '#FFB63E',
     fontSize: '14px',
   },
-  buttonClose: {
+  buttonClosed: {
     border: '1px solid #8895AD',
     color: '#8895AD',
     fontSize: '14px',
@@ -53,62 +53,67 @@ const AlarmStatusQuery = graphql`
 `;
 
 type Props = $ReadOnly<{|
-  buttonName: string,
+  valueButton: string,
+  creationDate: string,
+  beginDate: string,
+  endDate: string,
 |}>;
 
 export const AlarmFilteringStatus = (props: Props) => {
-  const {buttonName} = props;
+  const {valueButton, creationDate, beginDate, endDate} = props;
   const classes = useStyles();
   const dataStatus = useLazyLoadQuery<AlarmFilteringStatusQuery>(
     AlarmStatusQuery,
     {},
   );
   
-  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node).filter(item => item.name == buttonName)
+  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node)
+  
 
   return (
     <>
-      {dataStatusResponse.map((item, index) => {
-        const alarmStatus = useFormInput(item.id);
-        switch (buttonName) {
-          case 'Active':
-            return (
-              <Button 
-                {...alarmStatus}
-                key={item.id}
-                value={item.id}
+      {moment(creationDate).format() <= moment(beginDate).format() ||
+        (moment(creationDate).format() <= moment(endDate).format() &&
+          dataStatusResponse
+            .filter(item => item.name == 'Active')
+            .map(filteredItem => (
+              <Button
+              valueButton={filteredItem.id}
+                value={filteredItem.id}
                 variant="outlined"
-                weight="bold"
+                name="alarmStatus"
                 className={classNames(classes.button, classes.buttonActive)}>
-                {item.name}
+                {filteredItem.name}
               </Button>
-            );
-          case 'Pending':
-            return (
-              <Button
-                {...alarmStatus}
-                key={item.id}
-                value={item.id}
-                variant="outlined"
-                weight="bold"
-                className={classNames(classes.button, classes.buttonPendig)}>
-                {item.name}
-              </Button>
-            );
-          case 'Closed':
-            return (
-              <Button
-                {...alarmStatus}
-                key={item.id}
-                value={item.id}
-                variant="outlined"
-                weight="bold"
-                className={classNames(classes.button, classes.buttonClose)}>
-                {item.name}
-              </Button>
-            );
-          }
-      })}
+            )))}
+      {moment(creationDate).format() > moment(endDate).format() &&
+        dataStatusResponse
+          .filter(item => item.name == 'Closed')
+          .map(filteredItem => (
+            <Button
+            valueButton={filteredItem.id}
+              value={filteredItem.id}
+              variant="outlined"
+              weight="bold"
+              name="alarmStatus"
+              className={classNames(classes.button, classes.buttonClosed)}>
+              {filteredItem.name}
+            </Button>
+          ))}
+      {moment(creationDate).format() < moment(beginDate).format() &&
+        dataStatusResponse
+          .filter(item => item.name == 'Pending')
+          .map(filteredItem => (
+            <Button
+            valueButton={filteredItem.id}
+              value={filteredItem.id}
+              variant="outlined"
+              weight="bold"
+              name="alarmStatus"
+              className={classNames(classes.button, classes.buttonPending)}>
+              {filteredItem.name}
+            </Button>
+          ))}
     </>
   );
 };
