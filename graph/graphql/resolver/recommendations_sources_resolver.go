@@ -1,5 +1,5 @@
 // Copyright (c) 2004-present Facebook All rights reserved.
-// Use of this source code is governed by a BSD-style
+// Use of this sources code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 package resolver
@@ -10,24 +10,27 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendationssources"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type kqiTemporalFrecuencyResolver struct{}
+type recommendationsSourcesResolver struct{}
 
-func (kqiTemporalFrecuencyResolver) Kqi(ctx context.Context, kqiTemporalFrecuency *ent.KqiTemporalFrecuency) ([]*ent.Kqi, error) {
-	variable, err := kqiTemporalFrecuency.KqiTemporalFrecuencyFk(ctx)
+func (recommendationsSourcesResolver) Recommendations(ctx context.Context, recommendationsSources *ent.RecommendationsSources) ([]*ent.Recommendations, error) {
+	variable, err := recommendationsSources.Recommendations(ctx)
+
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
 }
-func (r mutationResolver) AddKqiTemporalFrecuency(ctx context.Context, input models.AddKqiTemporalFrecuencyInput) (*ent.KqiTemporalFrecuency, error) {
+
+func (r mutationResolver) AddRecommendationsSources(ctx context.Context, input models.AddRecommendationsSourcesInput) (*ent.RecommendationsSources, error) {
 	client := r.ClientFrom(ctx)
-	typ, err := client.KqiTemporalFrecuency.Create().
+	typ, err := client.
+		RecommendationsSources.Create().
 		SetName(input.Name).
 		Save(ctx)
 	if err != nil {
@@ -39,11 +42,11 @@ func (r mutationResolver) AddKqiTemporalFrecuency(ctx context.Context, input mod
 	return typ, nil
 }
 
-func (r mutationResolver) RemoveKqiTemporalFrecuency(ctx context.Context, id int) (int, error) {
+func (r mutationResolver) RemoveRecommendationsSources(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
-	t, err := client.KqiTemporalFrecuency.Query().
+	t, err := client.RecommendationsSources.Query().
 		Where(
-			kqitemporalfrecuency.ID(id),
+			recommendationssources.ID(id),
 		).
 		Only(ctx)
 	if err != nil {
@@ -51,15 +54,15 @@ func (r mutationResolver) RemoveKqiTemporalFrecuency(ctx context.Context, id int
 	}
 	//TODO: borrar o editar los edges relacionados
 
-	if err := client.KqiTemporalFrecuency.DeleteOne(t).Exec(ctx); err != nil {
+	if err := client.RecommendationsSources.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has ocurred error on proces: %w")
 	}
 	return id, nil
 }
 
-func (r mutationResolver) EditKqiTemporalFrecuency(ctx context.Context, input models.EditKqiTemporalFrecuencyInput) (*ent.KqiTemporalFrecuency, error) {
+func (r mutationResolver) EditRecommendationsSources(ctx context.Context, input models.EditRecommendationsSourcesInput) (*ent.RecommendationsSources, error) {
 	client := r.ClientFrom(ctx)
-	et, err := client.KqiTemporalFrecuency.Get(ctx, input.ID)
+	et, err := client.RecommendationsSources.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
@@ -68,7 +71,7 @@ func (r mutationResolver) EditKqiTemporalFrecuency(ctx context.Context, input mo
 	}
 	if input.Name != et.Name {
 
-		if et, err = client.KqiTemporalFrecuency.
+		if et, err = client.RecommendationsSources.
 			UpdateOne(et).
 			SetName(input.Name).
 			Save(ctx); err != nil {

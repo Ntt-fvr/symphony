@@ -13,25 +13,25 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
-// KqiTemporalFrecuencyDelete is the builder for deleting a KqiTemporalFrecuency entity.
-type KqiTemporalFrecuencyDelete struct {
+// KqiTemporalFrequencyDelete is the builder for deleting a KqiTemporalFrequency entity.
+type KqiTemporalFrequencyDelete struct {
 	config
 	hooks    []Hook
-	mutation *KqiTemporalFrecuencyMutation
+	mutation *KqiTemporalFrequencyMutation
 }
 
 // Where adds a new predicate to the delete builder.
-func (ktfd *KqiTemporalFrecuencyDelete) Where(ps ...predicate.KqiTemporalFrecuency) *KqiTemporalFrecuencyDelete {
+func (ktfd *KqiTemporalFrequencyDelete) Where(ps ...predicate.KqiTemporalFrequency) *KqiTemporalFrequencyDelete {
 	ktfd.mutation.predicates = append(ktfd.mutation.predicates, ps...)
 	return ktfd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (ktfd *KqiTemporalFrecuencyDelete) Exec(ctx context.Context) (int, error) {
+func (ktfd *KqiTemporalFrequencyDelete) Exec(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -40,7 +40,7 @@ func (ktfd *KqiTemporalFrecuencyDelete) Exec(ctx context.Context) (int, error) {
 		affected, err = ktfd.sqlExec(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*KqiTemporalFrecuencyMutation)
+			mutation, ok := m.(*KqiTemporalFrequencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -60,7 +60,7 @@ func (ktfd *KqiTemporalFrecuencyDelete) Exec(ctx context.Context) (int, error) {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ktfd *KqiTemporalFrecuencyDelete) ExecX(ctx context.Context) int {
+func (ktfd *KqiTemporalFrequencyDelete) ExecX(ctx context.Context) int {
 	n, err := ktfd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -68,13 +68,13 @@ func (ktfd *KqiTemporalFrecuencyDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (ktfd *KqiTemporalFrecuencyDelete) sqlExec(ctx context.Context) (int, error) {
+func (ktfd *KqiTemporalFrequencyDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := &sqlgraph.DeleteSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table: kqitemporalfrecuency.Table,
+			Table: kqitemporalfrequency.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: kqitemporalfrecuency.FieldID,
+				Column: kqitemporalfrequency.FieldID,
 			},
 		},
 	}
@@ -88,25 +88,25 @@ func (ktfd *KqiTemporalFrecuencyDelete) sqlExec(ctx context.Context) (int, error
 	return sqlgraph.DeleteNodes(ctx, ktfd.driver, _spec)
 }
 
-// KqiTemporalFrecuencyDeleteOne is the builder for deleting a single KqiTemporalFrecuency entity.
-type KqiTemporalFrecuencyDeleteOne struct {
-	ktfd *KqiTemporalFrecuencyDelete
+// KqiTemporalFrequencyDeleteOne is the builder for deleting a single KqiTemporalFrequency entity.
+type KqiTemporalFrequencyDeleteOne struct {
+	ktfd *KqiTemporalFrequencyDelete
 }
 
 // Exec executes the deletion query.
-func (ktfdo *KqiTemporalFrecuencyDeleteOne) Exec(ctx context.Context) error {
+func (ktfdo *KqiTemporalFrequencyDeleteOne) Exec(ctx context.Context) error {
 	n, err := ktfdo.ktfd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{kqitemporalfrecuency.Label}
+		return &NotFoundError{kqitemporalfrequency.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ktfdo *KqiTemporalFrecuencyDeleteOne) ExecX(ctx context.Context) {
+func (ktfdo *KqiTemporalFrequencyDeleteOne) ExecX(ctx context.Context) {
 	ktfdo.ktfd.ExecX(ctx)
 }

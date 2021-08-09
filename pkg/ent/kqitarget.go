@@ -25,6 +25,8 @@ type KqiTarget struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Frame holds the value of the "frame" field.
 	Frame float64 `json:"frame,omitempty"`
 	// AlowedValidation holds the value of the "alowedValidation" field.
@@ -83,6 +85,7 @@ func (*KqiTarget) scanValues() []interface{} {
 		&sql.NullInt64{},   // id
 		&sql.NullTime{},    // create_time
 		&sql.NullTime{},    // update_time
+		&sql.NullString{},  // name
 		&sql.NullFloat64{}, // frame
 		&sql.NullFloat64{}, // alowedValidation
 		&sql.NullTime{},    // initTime
@@ -121,37 +124,42 @@ func (kt *KqiTarget) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		kt.UpdateTime = value.Time
 	}
-	if value, ok := values[2].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field frame", values[2])
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field name", values[2])
+	} else if value.Valid {
+		kt.Name = value.String
+	}
+	if value, ok := values[3].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field frame", values[3])
 	} else if value.Valid {
 		kt.Frame = value.Float64
 	}
-	if value, ok := values[3].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field alowedValidation", values[3])
+	if value, ok := values[4].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field alowedValidation", values[4])
 	} else if value.Valid {
 		kt.AlowedValidation = value.Float64
 	}
-	if value, ok := values[4].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field initTime", values[4])
+	if value, ok := values[5].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field initTime", values[5])
 	} else if value.Valid {
 		kt.InitTime = value.Time
 	}
-	if value, ok := values[5].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field endTime", values[5])
+	if value, ok := values[6].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field endTime", values[6])
 	} else if value.Valid {
 		kt.EndTime = value.Time
 	}
-	if value, ok := values[6].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field impact", values[6])
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field impact", values[7])
 	} else if value.Valid {
 		kt.Impact = value.String
 	}
-	if value, ok := values[7].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field status", values[7])
+	if value, ok := values[8].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[8])
 	} else if value.Valid {
 		kt.Status = value.Bool
 	}
-	values = values[8:]
+	values = values[9:]
 	if len(values) == len(kqitarget.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field kqi_kqi_target_fk", value)
@@ -200,6 +208,8 @@ func (kt *KqiTarget) String() string {
 	builder.WriteString(kt.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(kt.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", name=")
+	builder.WriteString(kt.Name)
 	builder.WriteString(", frame=")
 	builder.WriteString(fmt.Sprintf("%v", kt.Frame))
 	builder.WriteString(", alowedValidation=")

@@ -6,6 +6,7 @@ package schema
 
 import (
 	"github.com/badoux/checkmail"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -64,9 +65,13 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("profile_photo", File.Type).
 			Unique(),
+		edge.To("User_create", Recommendations.Type).
+			Annotations(entgql.MapsTo("UserCreate")),
+		edge.To("User_approved", Recommendations.Type).
+			Annotations(entgql.MapsTo("UserApprobed")),
 		edge.From("groups", UsersGroup.Type).
 			Ref("members"),
-			edge.From("organization", Organization.Type).
+		edge.From("organization", Organization.Type).
 			Ref("user_fk").Unique(),
 		edge.From("owned_work_orders", WorkOrder.Type).
 			Ref("owner"),

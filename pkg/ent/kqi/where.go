@@ -867,25 +867,25 @@ func HasKqiSourceFkWith(preds ...predicate.KqiSource) predicate.Kqi {
 	})
 }
 
-// HasKqiTemporalFrecuencyFk applies the HasEdge predicate on the "kqiTemporalFrecuencyFk" edge.
-func HasKqiTemporalFrecuencyFk() predicate.Kqi {
+// HasKqiTemporalFrequencyFk applies the HasEdge predicate on the "kqiTemporalFrequencyFk" edge.
+func HasKqiTemporalFrequencyFk() predicate.Kqi {
 	return predicate.Kqi(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(KqiTemporalFrecuencyFkTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, KqiTemporalFrecuencyFkTable, KqiTemporalFrecuencyFkColumn),
+			sqlgraph.To(KqiTemporalFrequencyFkTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, KqiTemporalFrequencyFkTable, KqiTemporalFrequencyFkColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasKqiTemporalFrecuencyFkWith applies the HasEdge predicate on the "kqiTemporalFrecuencyFk" edge with a given conditions (other predicates).
-func HasKqiTemporalFrecuencyFkWith(preds ...predicate.KqiTemporalFrecuency) predicate.Kqi {
+// HasKqiTemporalFrequencyFkWith applies the HasEdge predicate on the "kqiTemporalFrequencyFk" edge with a given conditions (other predicates).
+func HasKqiTemporalFrequencyFkWith(preds ...predicate.KqiTemporalFrequency) predicate.Kqi {
 	return predicate.Kqi(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(KqiTemporalFrecuencyFkInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, KqiTemporalFrecuencyFkTable, KqiTemporalFrecuencyFkColumn),
+			sqlgraph.To(KqiTemporalFrequencyFkInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, KqiTemporalFrequencyFkTable, KqiTemporalFrequencyFkColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

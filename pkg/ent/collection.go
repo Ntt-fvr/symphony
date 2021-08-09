@@ -873,18 +873,18 @@ func (kt *KqiTargetQuery) collectField(ctx *graphql.OperationContext, field grap
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (ktf *KqiTemporalFrecuencyQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTemporalFrecuencyQuery {
+func (ktf *KqiTemporalFrequencyQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTemporalFrequencyQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		ktf = ktf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
 	}
 	return ktf
 }
 
-func (ktf *KqiTemporalFrecuencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTemporalFrecuencyQuery {
+func (ktf *KqiTemporalFrequencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTemporalFrequencyQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
 		case "kqi":
-			ktf = ktf.WithKqiTemporalFrecuencyFk(func(query *KqiQuery) {
+			ktf = ktf.WithKqiTemporalFrequencyFk(func(query *KqiQuery) {
 				query.collectField(ctx, field)
 			})
 		}
@@ -1177,6 +1177,58 @@ func (pt *PropertyTypeQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (r *RecommendationsQuery) CollectFields(ctx context.Context, satisfies ...string) *RecommendationsQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		r = r.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return r
+}
+
+func (r *RecommendationsQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RecommendationsQuery {
+	return r
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rc *RecommendationsCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *RecommendationsCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rc = rc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rc
+}
+
+func (rc *RecommendationsCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RecommendationsCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "recomendation_category":
+			rc = rc.WithRecommendations(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rs *RecommendationsSourcesQuery) CollectFields(ctx context.Context, satisfies ...string) *RecommendationsSourcesQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rs = rs.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rs
+}
+
+func (rs *RecommendationsSourcesQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RecommendationsSourcesQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "recomendation_source":
+			rs = rs.WithRecommendations(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rs
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rf *ReportFilterQuery) CollectFields(ctx context.Context, satisfies ...string) *ReportFilterQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rf = rf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1409,6 +1461,18 @@ func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) *Use
 }
 
 func (u *UserQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *UserQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "UserApprobed":
+			u = u.WithUserApproved(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		case "UserCreate":
+			u = u.WithUserCreate(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return u
 }
 
@@ -1437,6 +1501,10 @@ func (v *VendorQuery) collectField(ctx *graphql.OperationContext, field graphql.
 		switch field.Name {
 		case "vendor":
 			v = v.WithVendorFk(func(query *CounterQuery) {
+				query.collectField(ctx, field)
+			})
+		case "vendors_recomendations":
+			v = v.WithVendorsRecomendations(func(query *RecommendationsQuery) {
 				query.collectField(ctx, field)
 			})
 		}

@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -165,6 +166,36 @@ func (uc *UserCreate) SetNillableProfilePhotoID(id *int) *UserCreate {
 // SetProfilePhoto sets the profile_photo edge to File.
 func (uc *UserCreate) SetProfilePhoto(f *File) *UserCreate {
 	return uc.SetProfilePhotoID(f.ID)
+}
+
+// AddUserCreateIDs adds the User_create edge to Recommendations by ids.
+func (uc *UserCreate) AddUserCreateIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserCreateIDs(ids...)
+	return uc
+}
+
+// AddUserCreate adds the User_create edges to Recommendations.
+func (uc *UserCreate) AddUserCreate(r ...*Recommendations) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddUserCreateIDs(ids...)
+}
+
+// AddUserApprovedIDs adds the User_approved edge to Recommendations by ids.
+func (uc *UserCreate) AddUserApprovedIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserApprovedIDs(ids...)
+	return uc
+}
+
+// AddUserApproved adds the User_approved edges to Recommendations.
+func (uc *UserCreate) AddUserApproved(r ...*Recommendations) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddUserApprovedIDs(ids...)
 }
 
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
@@ -500,6 +531,44 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserCreateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserApprovedIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
 				},
 			},
 		}

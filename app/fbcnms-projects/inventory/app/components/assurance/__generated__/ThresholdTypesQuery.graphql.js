@@ -30,10 +30,29 @@ export type ThresholdTypesQueryResponse = {|
         +rule: ?$ReadOnlyArray<{|
           +id: string,
           +name: string,
-          +ruleType: {|
-            +name: string
-          |},
           +status: boolean,
+          +gracePeriod: ?number,
+          +additionalInfo: ?string,
+          +specificProblem: ?string,
+          +eventTypeName: ?string,
+          +startDateTime: ?any,
+          +endDateTime: ?any,
+          +ruleType: {|
+            +id: string,
+            +name: string,
+          |},
+          +ruleLimit: ?$ReadOnlyArray<{|
+            +number: number,
+            +limitType: string,
+          |}>,
+          +eventSeverity: {|
+            +id: string,
+            +name: string,
+          |},
+          +threshold: {|
+            +id: string,
+            +name: string,
+          |},
         |}>,
       |}
     |}>
@@ -62,11 +81,30 @@ query ThresholdTypesQuery {
         rule {
           id
           name
+          status
+          gracePeriod
+          additionalInfo
+          specificProblem
+          eventTypeName
+          startDateTime
+          endDateTime
           ruleType {
+            id
             name
+          }
+          ruleLimit {
+            number
+            limitType
             id
           }
-          status
+          eventSeverity {
+            id
+            name
+          }
+          threshold {
+            id
+            name
+          }
         }
       }
     }
@@ -103,17 +141,104 @@ v3 = {
   "name": "status",
   "storageKey": null
 },
-v4 = {
+v4 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "Kpi",
   "kind": "LinkedField",
   "name": "kpi",
   "plural": false,
-  "selections": [
-    (v0/*: any*/),
-    (v1/*: any*/)
-  ],
+  "selections": (v4/*: any*/),
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "gracePeriod",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "additionalInfo",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "specificProblem",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "eventTypeName",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "startDateTime",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "endDateTime",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "RuleType",
+  "kind": "LinkedField",
+  "name": "ruleType",
+  "plural": false,
+  "selections": (v4/*: any*/),
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "number",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "limitType",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "EventSeverity",
+  "kind": "LinkedField",
+  "name": "eventSeverity",
+  "plural": false,
+  "selections": (v4/*: any*/),
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Threshold",
+  "kind": "LinkedField",
+  "name": "threshold",
+  "plural": false,
+  "selections": (v4/*: any*/),
   "storageKey": null
 };
 return {
@@ -151,7 +276,7 @@ return {
                   (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v4/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -162,19 +287,29 @@ return {
                     "selections": [
                       (v0/*: any*/),
                       (v1/*: any*/),
+                      (v3/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/),
+                      (v9/*: any*/),
+                      (v10/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "RuleType",
+                        "concreteType": "RuleLimit",
                         "kind": "LinkedField",
-                        "name": "ruleType",
-                        "plural": false,
+                        "name": "ruleLimit",
+                        "plural": true,
                         "selections": [
-                          (v1/*: any*/)
+                          (v13/*: any*/),
+                          (v14/*: any*/)
                         ],
                         "storageKey": null
                       },
-                      (v3/*: any*/)
+                      (v15/*: any*/),
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -225,7 +360,7 @@ return {
                   (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v4/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -236,20 +371,30 @@ return {
                     "selections": [
                       (v0/*: any*/),
                       (v1/*: any*/),
+                      (v3/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/),
+                      (v9/*: any*/),
+                      (v10/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "RuleType",
+                        "concreteType": "RuleLimit",
                         "kind": "LinkedField",
-                        "name": "ruleType",
-                        "plural": false,
+                        "name": "ruleLimit",
+                        "plural": true,
                         "selections": [
-                          (v1/*: any*/),
+                          (v13/*: any*/),
+                          (v14/*: any*/),
                           (v0/*: any*/)
                         ],
                         "storageKey": null
                       },
-                      (v3/*: any*/)
+                      (v15/*: any*/),
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -265,16 +410,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "46f87783caabe2cefc5dc531052dd494",
+    "cacheID": "7f20de4d63b33ac1332f665098f4bbbd",
     "id": null,
     "metadata": {},
     "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          ruleType {\n            name\n            id\n          }\n          status\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          status\n          gracePeriod\n          additionalInfo\n          specificProblem\n          eventTypeName\n          startDateTime\n          endDateTime\n          ruleType {\n            id\n            name\n          }\n          ruleLimit {\n            number\n            limitType\n            id\n          }\n          eventSeverity {\n            id\n            name\n          }\n          threshold {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b74cb59c532224a8488d114cdc774e1f';
+(node/*: any*/).hash = '0ebee5be6c68cbdf0984ea0b278dde12';
 
 module.exports = node;

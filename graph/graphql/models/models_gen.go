@@ -228,7 +228,7 @@ type AddKqiInput struct {
 	KqiCategory          int       `json:"kqiCategory"`
 	KqiPerspective       int       `json:"kqiPerspective"`
 	KqiSource            int       `json:"kqiSource"`
-	KqiTemporalFrecuency int       `json:"kqiTemporalFrecuency"`
+	KqiTemporalFrequency int       `json:"kqiTemporalFrequency"`
 }
 
 type AddKqiPerspectiveInput struct {
@@ -240,6 +240,7 @@ type AddKqiSourceInput struct {
 }
 
 type AddKqiTargetInput struct {
+	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Frame            float64   `json:"frame"`
 	AlowedValidation float64   `json:"alowedValidation"`
@@ -249,7 +250,7 @@ type AddKqiTargetInput struct {
 	Kqi              int       `json:"kqi"`
 }
 
-type AddKqiTemporalFrecuencyInput struct {
+type AddKqiTemporalFrequencyInput struct {
 	Name string `json:"name"`
 }
 
@@ -311,6 +312,32 @@ type AddProjectTypeInput struct {
 	Description *string                     `json:"description"`
 	Properties  []*models.PropertyTypeInput `json:"properties"`
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
+}
+
+type AddRecommendationsCategoryInput struct {
+	Name string `json:"name"`
+}
+
+type AddRecommendationsInput struct {
+	ExternalID              string  `json:"externalID"`
+	Resource                string  `json:"resource"`
+	AlarmType               string  `json:"alarmType"`
+	ShortDescription        string  `json:"shortDescription"`
+	LongDescription         string  `json:"longDescription"`
+	Command                 string  `json:"command"`
+	Priority                int     `json:"priority"`
+	Status                  bool    `json:"status"`
+	Runbook                 *string `json:"runbook"`
+	Used                    *int    `json:"used"`
+	RecommendationsSources  int     `json:"recommendationsSources"`
+	RecommendationsCategory int     `json:"recommendationsCategory"`
+	UserApprobed            *int    `json:"userApprobed"`
+	UserCreate              int     `json:"userCreate"`
+	Vendor                  int     `json:"vendor"`
+}
+
+type AddRecommendationsSourcesInput struct {
+	Name string `json:"name"`
 }
 
 type AddRuleInput struct {
@@ -722,7 +749,7 @@ type EditKqiInput struct {
 	KqiCategory          int       `json:"kqiCategory"`
 	KqiPerspective       int       `json:"kqiPerspective"`
 	KqiSource            int       `json:"kqiSource"`
-	KqiTemporalFrecuency int       `json:"kqiTemporalFrecuency"`
+	KqiTemporalFrequency int       `json:"kqiTemporalFrequency"`
 }
 
 type EditKqiPerspectiveInput struct {
@@ -737,6 +764,7 @@ type EditKqiSourceInput struct {
 
 type EditKqiTargetInput struct {
 	ID               int       `json:"id"`
+	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Frame            float64   `json:"frame"`
 	AlowedValidation float64   `json:"alowedValidation"`
@@ -746,7 +774,7 @@ type EditKqiTargetInput struct {
 	Kqi              int       `json:"kqi"`
 }
 
-type EditKqiTemporalFrecuencyInput struct {
+type EditKqiTemporalFrequencyInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
@@ -811,6 +839,34 @@ type EditProjectTypeInput struct {
 	Description *string                     `json:"description"`
 	Properties  []*models.PropertyTypeInput `json:"properties"`
 	WorkOrders  []*WorkOrderDefinitionInput `json:"workOrders"`
+}
+
+type EditRecommendationsCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type EditRecommendationsInput struct {
+	ID                      int     `json:"id"`
+	ExternalID              string  `json:"externalID"`
+	Resource                string  `json:"resource"`
+	AlarmType               string  `json:"alarmType"`
+	ShortDescription        string  `json:"shortDescription"`
+	LongDescription         string  `json:"longDescription"`
+	Command                 string  `json:"command"`
+	Priority                int     `json:"priority"`
+	Status                  bool    `json:"status"`
+	Runbook                 *string `json:"runbook"`
+	Used                    *int    `json:"used"`
+	RecommendationsSources  int     `json:"recommendationsSources"`
+	RecommendationsCategory int     `json:"recommendationsCategory"`
+	UserApprobed            *int    `json:"userApprobed"`
+	Vendor                  int     `json:"vendor"`
+}
+
+type EditRecommendationsSourcesInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditReportFilterInput struct {
@@ -1062,6 +1118,15 @@ type KpiFilterInput struct {
 	StringSet   []string            `json:"stringSet"`
 }
 
+type KqiCategoryFilterInput struct {
+	FilterType  KqiCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
+}
+
 type KqiFilterInput struct {
 	FilterType  KqiFilterType       `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
@@ -1069,6 +1134,42 @@ type KqiFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiPerspectiveFilterInput struct {
+	FilterType  KqiPerspectiveFilterType `json:"filterType"`
+	Operator    enum.FilterOperator      `json:"operator"`
+	StringValue *string                  `json:"stringValue"`
+	IDSet       []int                    `json:"idSet"`
+	MaxDepth    *int                     `json:"maxDepth"`
+	StringSet   []string                 `json:"stringSet"`
+}
+
+type KqiSourceFilterInput struct {
+	FilterType  KqiSourceFilterType `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiTargetFilterInput struct {
+	FilterType  KqiTargetFilterType `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
+type KqiTemporalFrequencyFilterInput struct {
+	FilterType  KqiTemporalFrequencyFilterType `json:"filterType"`
+	Operator    enum.FilterOperator            `json:"operator"`
+	StringValue *string                        `json:"stringValue"`
+	IDSet       []int                          `json:"idSet"`
+	MaxDepth    *int                           `json:"maxDepth"`
+	StringSet   []string                       `json:"stringSet"`
 }
 
 type LatestPythonPackageResult struct {
@@ -1148,6 +1249,35 @@ type PythonPackage struct {
 	WhlFileKey        string    `json:"whlFileKey"`
 	UploadTime        time.Time `json:"uploadTime"`
 	HasBreakingChange bool      `json:"hasBreakingChange"`
+}
+
+type RecommendationsCategoryFilterInput struct {
+	FilterType  RecommendationsCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator               `json:"operator"`
+	StringValue *string                           `json:"stringValue"`
+	IDSet       []int                             `json:"idSet"`
+	MaxDepth    *int                              `json:"maxDepth"`
+	StringSet   []string                          `json:"stringSet"`
+}
+
+type RecommendationsFilterInput struct {
+	FilterType  RecommendationsFilterType `json:"filterType"`
+	Operator    enum.FilterOperator       `json:"operator"`
+	StringValue *string                   `json:"stringValue"`
+	BoolValue   *bool                     `json:"boolValue"`
+	IntValue    *int                      `json:"intValue"`
+	IDSet       []int                     `json:"idSet"`
+	MaxDepth    *int                      `json:"maxDepth"`
+	StringSet   []string                  `json:"stringSet"`
+}
+
+type RecommendationsSourcesFilterInput struct {
+	FilterType  RecommendationsSourcesFilterType `json:"filterType"`
+	Operator    enum.FilterOperator              `json:"operator"`
+	StringValue *string                          `json:"stringValue"`
+	IDSet       []int                            `json:"idSet"`
+	MaxDepth    *int                             `json:"maxDepth"`
+	StringSet   []string                         `json:"stringSet"`
 }
 
 type ReportFilterInput struct {
@@ -2026,6 +2156,45 @@ func (e KpiFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type KqiCategoryFilterType string
+
+const (
+	KqiCategoryFilterTypeName KqiCategoryFilterType = "NAME"
+)
+
+var AllKqiCategoryFilterType = []KqiCategoryFilterType{
+	KqiCategoryFilterTypeName,
+}
+
+func (e KqiCategoryFilterType) IsValid() bool {
+	switch e {
+	case KqiCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type KqiFilterType string
 
 const (
@@ -2062,6 +2231,162 @@ func (e *KqiFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e KqiFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiPerspectiveFilterType string
+
+const (
+	KqiPerspectiveFilterTypeName KqiPerspectiveFilterType = "NAME"
+)
+
+var AllKqiPerspectiveFilterType = []KqiPerspectiveFilterType{
+	KqiPerspectiveFilterTypeName,
+}
+
+func (e KqiPerspectiveFilterType) IsValid() bool {
+	switch e {
+	case KqiPerspectiveFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiPerspectiveFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiPerspectiveFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiPerspectiveFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiPerspectiveFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiPerspectiveFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiSourceFilterType string
+
+const (
+	KqiSourceFilterTypeName KqiSourceFilterType = "NAME"
+)
+
+var AllKqiSourceFilterType = []KqiSourceFilterType{
+	KqiSourceFilterTypeName,
+}
+
+func (e KqiSourceFilterType) IsValid() bool {
+	switch e {
+	case KqiSourceFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiSourceFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiSourceFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiSourceFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiSourceFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiSourceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiTargetFilterType string
+
+const (
+	KqiTargetFilterTypeName KqiTargetFilterType = "NAME"
+)
+
+var AllKqiTargetFilterType = []KqiTargetFilterType{
+	KqiTargetFilterTypeName,
+}
+
+func (e KqiTargetFilterType) IsValid() bool {
+	switch e {
+	case KqiTargetFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiTargetFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiTargetFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiTargetFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiTargetFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiTargetFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KqiTemporalFrequencyFilterType string
+
+const (
+	KqiTemporalFrequencyFilterTypeName KqiTemporalFrequencyFilterType = "NAME"
+)
+
+var AllKqiTemporalFrequencyFilterType = []KqiTemporalFrequencyFilterType{
+	KqiTemporalFrequencyFilterTypeName,
+}
+
+func (e KqiTemporalFrequencyFilterType) IsValid() bool {
+	switch e {
+	case KqiTemporalFrequencyFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KqiTemporalFrequencyFilterType) String() string {
+	return string(e)
+}
+
+func (e *KqiTemporalFrequencyFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KqiTemporalFrequencyFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KqiTemporalFrequencyFilterType", str)
+	}
+	return nil
+}
+
+func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2190,6 +2515,141 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsCategoryFilterType string
+
+const (
+	RecommendationsCategoryFilterTypeName RecommendationsCategoryFilterType = "NAME"
+)
+
+var AllRecommendationsCategoryFilterType = []RecommendationsCategoryFilterType{
+	RecommendationsCategoryFilterTypeName,
+}
+
+func (e RecommendationsCategoryFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsFilterType string
+
+const (
+	RecommendationsFilterTypeExternalid       RecommendationsFilterType = "EXTERNALID"
+	RecommendationsFilterTypeResource         RecommendationsFilterType = "RESOURCE"
+	RecommendationsFilterTypeAlarmtype        RecommendationsFilterType = "ALARMTYPE"
+	RecommendationsFilterTypeShortdescription RecommendationsFilterType = "SHORTDESCRIPTION"
+	RecommendationsFilterTypeLongdescription  RecommendationsFilterType = "LONGDESCRIPTION"
+	RecommendationsFilterTypeCommand          RecommendationsFilterType = "COMMAND"
+	RecommendationsFilterTypePriority         RecommendationsFilterType = "PRIORITY"
+	RecommendationsFilterTypeStatus           RecommendationsFilterType = "STATUS"
+	RecommendationsFilterTypeUsed             RecommendationsFilterType = "USED"
+	RecommendationsFilterTypeRunbook          RecommendationsFilterType = "RUNBOOK"
+)
+
+var AllRecommendationsFilterType = []RecommendationsFilterType{
+	RecommendationsFilterTypeExternalid,
+	RecommendationsFilterTypeResource,
+	RecommendationsFilterTypeAlarmtype,
+	RecommendationsFilterTypeShortdescription,
+	RecommendationsFilterTypeLongdescription,
+	RecommendationsFilterTypeCommand,
+	RecommendationsFilterTypePriority,
+	RecommendationsFilterTypeStatus,
+	RecommendationsFilterTypeUsed,
+	RecommendationsFilterTypeRunbook,
+}
+
+func (e RecommendationsFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type RecommendationsSourcesFilterType string
+
+const (
+	RecommendationsSourcesFilterTypeName RecommendationsSourcesFilterType = "NAME"
+)
+
+var AllRecommendationsSourcesFilterType = []RecommendationsSourcesFilterType{
+	RecommendationsSourcesFilterTypeName,
+}
+
+func (e RecommendationsSourcesFilterType) IsValid() bool {
+	switch e {
+	case RecommendationsSourcesFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e RecommendationsSourcesFilterType) String() string {
+	return string(e)
+}
+
+func (e *RecommendationsSourcesFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = RecommendationsSourcesFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid RecommendationsSourcesFilterType", str)
+	}
+	return nil
+}
+
+func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

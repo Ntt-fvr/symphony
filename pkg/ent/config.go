@@ -75,7 +75,7 @@ type hooks struct {
 	KqiPerspective              []ent.Hook
 	KqiSource                   []ent.Hook
 	KqiTarget                   []ent.Hook
-	KqiTemporalFrecuency        []ent.Hook
+	KqiTemporalFrequency        []ent.Hook
 	Link                        []ent.Hook
 	Location                    []ent.Hook
 	LocationType                []ent.Hook
@@ -86,6 +86,9 @@ type hooks struct {
 	ProjectType                 []ent.Hook
 	Property                    []ent.Hook
 	PropertyType                []ent.Hook
+	Recommendations             []ent.Hook
+	RecommendationsCategory     []ent.Hook
+	RecommendationsSources      []ent.Hook
 	ReportFilter                []ent.Hook
 	Rule                        []ent.Hook
 	RuleLimit                   []ent.Hook

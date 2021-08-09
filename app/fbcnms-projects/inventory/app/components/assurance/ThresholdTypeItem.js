@@ -15,7 +15,7 @@ import AddButton from './common/AddButton';
 import TableThreshold from './TableThreshold';
 
 // DESING SYSTEM //
-import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
+import type {EditThresholdMutationVariables} from '../../mutations/__generated__/EditThresholdMutation.graphql';
 
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -96,7 +96,20 @@ const useStyles = makeStyles(theme => ({
 type Rule = {
   id: string,
   name: string,
+  gracePeriod: string,
+  additionalInfo: string,
+  specificProblem: string,
+  eventTypeName: string,
+  startDateTime: string,
+  endDateTime: string,
+  threshold: {
+    name: string,
+  },
   ruleType: {
+    name: string,
+  },
+  eventSeverity: {
+    id: string,
     name: string,
   },
   status: boolean,
@@ -135,7 +148,7 @@ export default function ThresholdTypeItem(props: Props) {
   const [checked, setChecked] = useState(status);
 
   const handleClick = () => {
-    const variables: EditTresholdMutationVariables = {
+    const variables: EditThresholdMutationVariables = {
       input: {
         id: id,
         name: name,

@@ -9,6 +9,8 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 // Alarm defines the property type schema.
@@ -36,9 +38,23 @@ func (Kqi) Edges() []ent.Edge {
 			Ref("kqiPerspectiveFk").Unique(),
 		edge.From("kqiSourceFk", KqiSource.Type).
 			Ref("kqiSourceFk").Unique(),
-		edge.From("kqiTemporalFrecuencyFk", KqiTemporalFrecuency.Type).
-			Ref("kqiTemporalFrecuencyFk").Unique(),
+		edge.From("kqiTemporalFrequencyFk", KqiTemporalFrequency.Type).
+			Ref("kqiTemporalFrequencyFk").Unique(),
 		edge.To("kqiTargetFk", KqiTarget.Type).
 			Annotations(entgql.MapsTo("kqiTarget")),
 	}
+}
+
+// Policy returns entity policy.
+func (Kqi) Policy() ent.Policy {
+	/*return authz.NewPolicy(
+		authz.WithMutationRules(
+			authz.AssuranceTemplatesWritePolicyRule(),
+		),
+	)*/
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
 }

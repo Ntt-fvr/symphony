@@ -276,6 +276,7 @@ func FlowInstanceFilter(query *ent.FlowInstanceQuery, filters []*models.FlowInst
 	}
 	return query, nil
 }
+
 func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -296,3 +297,82 @@ func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.Organiza
 	return query, nil
 }
 
+func RecommendationsSourcesFilter(query *ent.RecommendationsSourcesQuery, filters []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRecommendationsSourcesFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func RecommendationsFilter(query *ent.RecommendationsQuery, filters []*models.RecommendationsFilterInput) (*ent.RecommendationsQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRecommendationsFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func RecommendationsCategoryFilter(query *ent.RecommendationsCategoryQuery, filters []*models.RecommendationsCategoryFilterInput) (*ent.RecommendationsCategoryQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleRecommendationsCategoryFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiCategoryFilter(query *ent.KqiCategoryQuery, filters []*models.KqiCategoryFilterInput) (*ent.KqiCategoryQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiCategoryFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiPerspectiveFilter(query *ent.KqiPerspectiveQuery, filters []*models.KqiPerspectiveFilterInput) (*ent.KqiPerspectiveQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiPerspectiveFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiTemporalFrequencyFilter(query *ent.KqiTemporalFrequencyQuery, filters []*models.KqiTemporalFrequencyFilterInput) (*ent.KqiTemporalFrequencyQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiTemporalFrequencyFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiSourceFilter(query *ent.KqiSourceQuery, filters []*models.KqiSourceFilterInput) (*ent.KqiSourceQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiSourceFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+
+func KqiTargetFilter(query *ent.KqiTargetQuery, filters []*models.KqiTargetFilterInput) (*ent.KqiTargetQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKqiTargetFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

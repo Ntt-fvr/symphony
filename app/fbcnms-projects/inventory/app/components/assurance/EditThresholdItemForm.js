@@ -16,7 +16,7 @@ import TableThreshold from './TableThreshold';
 import {useFormInput} from './common/useFormInput';
 
 // MUTATIONS //
-import type {EditTresholdMutationVariables} from '../../mutations/__generated__/EditTresholdMutation.graphql';
+import type {EditThresholdMutationVariables} from '../../mutations/__generated__/EditThresholdMutation.graphql';
 
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -99,7 +99,7 @@ export const EditThresholdItemForm = (props: Props) => {
   const [checked, setChecked] = useState(formValues.status);
 
   const handleClick = () => {
-    const variables: EditTresholdMutationVariables = {
+    const variables: EditThresholdMutationVariables = {
       input: {
         id: formValues.id,
         name: name.value,

@@ -3354,6 +3354,545 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
+################################ conection recommendations ###############################################
+"""
+Properties by which Recommendations connections can be ordered.
+"""
+enum RecommendationsOrderField {
+  """
+  Order Recommendations by name.
+  """
+  NAME
+
+  """
+  Order Recommendations by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order Recommendations by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for Recommendations connections.
+"""
+input RecommendationsOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order Recommendations by.
+  """
+  field: RecommendationsOrderField
+}
+
+"""
+A connection to a list of Recommendations.
+"""
+type RecommendationsConnection {
+  """
+  Total Recommendations of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Recommendations edges.
+  """
+  edges: [RecommendationsEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A Recommendations edge in a connection.
+"""
+type RecommendationsEdge {
+  """
+  The Recommendations at the end of the edge.
+  """
+  node: Recommendations
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection recommendationsSources ###############################################
+"""
+Properties by which RecommendationsSources connections can be ordered.
+"""
+enum RecommendationsSourcesOrderField {
+  """
+  Order RecommendationsSources by name.
+  """
+  NAME
+
+  """
+  Order RecommendationsSources by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order RecommendationsSources by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for RecommendationsSources connections.
+"""
+input RecommendationsSourcesOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order RecommendationsSources by.
+  """
+  field: RecommendationsSourcesOrderField
+}
+
+"""
+A connection to a list of RecommendationsSources.
+"""
+type RecommendationsSourcesConnection {
+  """
+  Total RecommendationsSources of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of RecommendationsSources edges.
+  """
+  edges: [RecommendationsSourcesEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A RecommendationsSources edge in a connection.
+"""
+type RecommendationsSourcesEdge {
+  """
+  The RecommendationsSources at the end of the edge.
+  """
+  node: RecommendationsSources
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+################################ conection recommendationsCategory ###############################################
+"""
+Properties by which RecommendationsCategory connections can be ordered.
+"""
+enum RecommendationsCategoryOrderField {
+  """
+  Order RecommendationsCategory by name.
+  """
+  NAME
+
+  """
+  Order RecommendationsCategory by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order RecommendationsCategory by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for RecommendationsCategory connections.
+"""
+input RecommendationsCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order RecommendationsCategory by.
+  """
+  field: RecommendationsCategoryOrderField
+}
+
+"""
+A connection to a list of RecommendationsCategory.
+"""
+type RecommendationsCategoryConnection {
+  """
+  Total RecommendationsCategory of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of RecommendationsCategory edges.
+  """
+  edges: [RecommendationsCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A RecommendationsCategory edge in a connection.
+"""
+type RecommendationsCategoryEdge {
+  """
+  The RecommendationsCategory at the end of the edge.
+  """
+  node: RecommendationsCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which kqi category connections can be ordered.
+""" 
+enum KqiCategoryOrderField {
+  """
+  Order kqi category by name.
+  """
+  NAME
+
+  """
+  Order kqi category by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kqi category by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kqi category connections.
+"""
+input KqiCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kqi category by.
+  """
+  field: KqiCategoryOrderField
+}
+
+"""
+A connection to a list of kqi category.
+"""
+type KqiCategoryConnection {
+  """
+  Total kqi category of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kqi category edges.
+  """
+  edges: [KqiCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kqi category edge in a connection.
+"""
+type KqiCategoryEdge {
+  """
+  The kqi category at the end of the edge.
+  """
+  node: KqiCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which kqi perspective connections can be ordered.
+""" 
+enum KqiPerspectiveOrderField {
+  """
+  Order kqi perspective by name.
+  """
+  NAME
+
+  """
+  Order kqi perspective by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kqi perspective by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kqi perspective connections.
+"""
+input KqiPerspectiveOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kqi perspective by.
+  """
+  field: KqiPerspectiveOrderField
+}
+
+"""
+A connection to a list of kqi perspective.
+"""
+type KqiPerspectiveConnection {
+  """
+  Total kqi perspective of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kqi perspective edges.
+  """
+  edges: [KqiPerspectiveEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kqi perspective edge in a connection.
+"""
+type KqiPerspectiveEdge {
+  """
+  The kqi perspective at the end of the edge.
+  """
+  node: KqiPerspective
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which kqi temporal frequency connections can be ordered.
+""" 
+enum KqiTemporalFrequencyOrderField {
+  """
+  Order kqi temporal frequency by name.
+  """
+  NAME
+
+  """
+  Order kqi temporal frequency by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kqi temporal frequency by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kqi temporal frequency connections.
+"""
+input KqiTemporalFrequencyOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kqi temporal frequency by.
+  """
+  field: KqiTemporalFrequencyOrderField
+}
+
+"""
+A connection to a list of kqi temporal frequency.
+"""
+type KqiTemporalFrequencyConnection {
+  """
+  Total kqi temporal frequency of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kqi temporal frequency edges.
+  """
+  edges: [KqiTemporalFrequencyEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kqi temporal frequency edge in a connection.
+"""
+type KqiTemporalFrequencyEdge {
+  """
+  The kqi temporal frequency at the end of the edge.
+  """
+  node: KqiTemporalFrequency
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which kqi source connections can be ordered.
+""" 
+enum KqiSourceOrderField {
+  """
+  Order kqi source by name.
+  """
+  NAME
+
+  """
+  Order kqi source by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kqi source by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kqi source connections.
+"""
+input KqiSourceOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kqi source by.
+  """
+  field: KqiSourceOrderField
+}
+
+"""
+A connection to a list of kqi source.
+"""
+type KqiSourceConnection {
+  """
+  Total kqi source of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kqi source edges.
+  """
+  edges: [KqiSourceEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kqi source edge in a connection.
+"""
+type KqiSourceEdge {
+  """
+  The kqi source at the end of the edge.
+  """
+  node: KqiSource
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+Properties by which kqi target connections can be ordered.
+""" 
+enum KqiTargetOrderField {
+  """
+  Order kqi target by name.
+  """
+  NAME
+
+  """
+  Order kqi target by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kqi target by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kqi target connections.
+"""
+input KqiTargetOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kqi target by.
+  """
+  field: KqiTargetOrderField
+}
+
+"""
+A connection to a list of kqi target.
+"""
+type KqiTargetConnection {
+  """
+  Total kqi target of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kqi target edges.
+  """
+  edges: [KqiTargetEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kqi target edge in a connection.
+"""
+type KqiTargetEdge {
+  """
+  The kqi target at the end of the edge.
+  """
+  node: KqiTarget
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -4639,6 +5178,33 @@ enum FlowInstanceStatus
   CANCELED
 }
 
+type FlowExecutionTemplate implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+  connectors: [Connector!]!
+}
+
+enum BlockInstanceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
+  ) {
+  PENDING
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  WAITING
+}
+
+type VariableValue
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+  ) {
+  variableDefinitionKey: String!
+  value: String!
+}
+
 type BlockInstance implements Node {
   id: ID!
   status: BlockInstanceStatus!
@@ -4665,33 +5231,6 @@ input EditBlockInstanceInput {
   outputs: [VariableValueInput!]
   failure_reason: String
   endDate: Time
-}
-
-type FlowExecutionTemplate implements Node {
-  id: ID!
-  name: String!
-  description: String
-  blocks: [Block!]!
-  connectors: [Connector!]!
-}
-
-enum BlockInstanceStatus
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/blockinstance.Status"
-  ) {
-  PENDING
-  IN_PROGRESS
-  FAILED
-  COMPLETED
-  WAITING
-}
-
-type VariableValue
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
-  ) {
-  variableDefinitionKey: String!
-  value: String!
 }
 
 type FlowInstance implements Node {
@@ -5256,7 +5795,7 @@ type Query {
   """
   A list of AlarmFilter.
   """
-  AlarmFilters(
+  alarmFilters(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5536,10 +6075,11 @@ type Query {
     
     filterBy: [AlarmStatusFilterInput!]
   ): AlarmStatusConnection!
+
   """
   A list of Kqi.
   """
-  Kqis(
+  kqis(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5571,6 +6111,179 @@ type Query {
     filterBy: [KqiFilterInput!]
   ): KqiConnection!
   
+  """
+  A list of kqiCategories.
+  """
+  kqiCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kqiCategories.
+    """
+    orderBy: KqiCategoryOrder
+
+    
+    #Filtering options for the returned kqiCategories.
+    
+    filterBy: [KqiCategoryFilterInput!]
+  ): KqiCategoryConnection!
+
+  """
+  A list of kqiPerspectives.
+  """
+  kqiPerspectives(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kqiPerspectives.
+    """
+    orderBy: KqiPerspectiveOrder
+
+    
+    #Filtering options for the returned kqiPerspectives.
+    
+    filterBy: [KqiPerspectiveFilterInput!]
+  ): KqiPerspectiveConnection!
+
+  """
+  A list of kqiTemporalFrequency.
+  """
+  kqiTemporalFrequencies(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kqiTemporalFrequency.
+    """
+    orderBy: KqiTemporalFrequencyOrder
+
+    
+    #Filtering options for the returned kqiTemporalFrequency.
+    
+    filterBy: [KqiTemporalFrequencyFilterInput!]
+  ): KqiTemporalFrequencyConnection!
+
+  """
+  A list of kqiSource.
+  """
+  kqiSources(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kqiSource.
+    """
+    orderBy: KqiSourceOrder
+
+    
+    #Filtering options for the returned kqiSource.
+    
+    filterBy: [KqiSourceFilterInput!]
+  ): KqiSourceConnection!
+
+  """
+  A list of kqiTarget.
+  """
+  kqiTargets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kqiTarget.
+    """
+    orderBy: KqiTargetOrder
+
+    
+    #Filtering options for the returned kqiTarget.
+    filterBy: [KqiTargetFilterInput!]
+  ): KqiTargetConnection!
 
   """
   A list of organization.
@@ -5607,6 +6320,108 @@ type Query {
     
     filterBy: [OrganizationFilterInput!]
   ): OrganizationConnection!
+  """
+  A list of Recommendations.
+  """
+  Recommendations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsFilterInput!]
+  ): RecommendationsConnection!
+  """
+  A list of RecommendationsSources.
+  """
+  RecommendationsSources(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsSourcesOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsSourcesFilterInput!]
+  ): RecommendationsSourcesConnection!
+  """
+  A list of RecommendationsCategories.
+  """
+  RecommendationsCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned counters.
+    """
+    orderBy: RecommendationsCategoryOrder
+
+    
+    #Filtering options for the returned counters.
+    
+    filterBy: [RecommendationsCategoryFilterInput!]
+  ): RecommendationsCategoryConnection!
 }
 
 type Mutation {
@@ -5886,9 +6701,9 @@ type Mutation {
   addKqiPerspective(input: AddKqiPerspectiveInput!):KqiPerspective!
   editKqiPerspective(input: EditKqiPerspectiveInput!): KqiPerspective!
   removeKqiPerspective(id: ID!): ID!
-  addKqiTemporalFrecuency(input: AddKqiTemporalFrecuencyInput!):KqiTemporalFrecuency!
-  editKqiTemporalFrecuency(input: EditKqiTemporalFrecuencyInput!): KqiTemporalFrecuency!
-  removeKqiTemporalFrecuency(id: ID!): ID!
+  addKqiTemporalFrequency(input: AddKqiTemporalFrequencyInput!):KqiTemporalFrequency!
+  editKqiTemporalFrequency(input: EditKqiTemporalFrequencyInput!): KqiTemporalFrequency!
+  removeKqiTemporalFrequency(id: ID!): ID!
   addKqiSource(input: AddKqiSourceInput!):KqiSource!
   editKqiSource(input: EditKqiSourceInput!): KqiSource!
   removeKqiSource(id: ID!): ID!
@@ -5898,6 +6713,15 @@ type Mutation {
   addKqiComparator(input: AddKqiComparatorInput!):KqiComparator!
   editKqiComparator(input: EditKqiComparatorInput!): KqiComparator!
   removeKqiComparator(id: ID!): ID!
+  addRecommendations(input: AddRecommendationsInput!):Recommendations!
+  editRecommendations(input: EditRecommendationsInput!): Recommendations!
+  removeRecommendations(id: ID!): ID!
+  addRecommendationsSources(input: AddRecommendationsSourcesInput!):RecommendationsSources!
+  editRecommendationsSources(input: EditRecommendationsSourcesInput!): RecommendationsSources!
+  removeRecommendationsSources(id: ID!): ID!
+  addRecommendationsCategory(input: AddRecommendationsCategoryInput!):RecommendationsCategory!
+  editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory!
+  removeRecommendationsCategory(id: ID!): ID!
 }
 
 """
@@ -6000,6 +6824,7 @@ input CounterFamilyFilterInput {
 type Vendor implements Node {
   id: ID!
   name: String!
+  vendorRecommendations: [Recommendations!]
 }
 
 input AddVendorInput {
@@ -6457,7 +7282,7 @@ type Kqi implements Node {
   kqiCategory: KqiCategory!
   kqiPerspective: KqiPerspective!
   kqiSource: KqiSource!
-  kqiTemporalFrecuency: KqiTemporalFrecuency!
+  kqiTemporalFrequency: KqiTemporalFrequency!
   kqiTarget: [KqiTarget!]
 }
 
@@ -6470,7 +7295,7 @@ input AddKqiInput {
   kqiCategory: ID!
   kqiPerspective: ID!
   kqiSource: ID!
-  kqiTemporalFrecuency: ID!
+  kqiTemporalFrequency: ID!
 }
 
 input EditKqiInput {
@@ -6483,7 +7308,7 @@ input EditKqiInput {
   kqiCategory: ID!
   kqiPerspective: ID!
   kqiSource: ID!
-  kqiTemporalFrecuency: ID!
+  kqiTemporalFrequency: ID!
 }
 
 enum KqiFilterType {
@@ -6526,6 +7351,20 @@ input EditKqiCategoryInput {
   id: ID!
   name: String!
 }
+
+enum KqiCategoryFilterType {
+  NAME
+}
+
+input KqiCategoryFilterInput {
+  filterType: KqiCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 type KqiPerspective implements Node {
   id: ID!
   name: String! 
@@ -6540,6 +7379,20 @@ input EditKqiPerspectiveInput {
   id: ID!
   name: String!
 }
+
+enum KqiPerspectiveFilterType {
+  NAME
+}
+
+input KqiPerspectiveFilterInput {
+  filterType: KqiPerspectiveFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 type KqiSource implements Node {
   id: ID!
   name: String! 
@@ -6555,23 +7408,50 @@ input EditKqiSourceInput {
   name: String!
 }
 
-type KqiTemporalFrecuency implements Node {
+enum KqiSourceFilterType {
+  NAME
+}
+
+input KqiSourceFilterInput {
+  filterType: KqiSourceFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type KqiTemporalFrequency implements Node {
   id: ID!
   name: String! 
   kqi: [Kqi!]
 }
 
-input AddKqiTemporalFrecuencyInput {
+input AddKqiTemporalFrequencyInput {
   name: String!
 }
 
-input EditKqiTemporalFrecuencyInput {
+input EditKqiTemporalFrequencyInput {
   id: ID!
   name: String!
+}
+
+enum KqiTemporalFrequencyFilterType {
+  NAME
+}
+
+input KqiTemporalFrequencyFilterInput {
+  filterType: KqiTemporalFrequencyFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 type KqiTarget implements Node {
   id: ID!
+  name: String! 
   impact: String!
   frame: Float!
   alowedValidation: Float!
@@ -6579,9 +7459,11 @@ type KqiTarget implements Node {
   endTime: Time!
   status: Boolean!
   kqi: Kqi!
+  kqiComparator: [KqiComparator]!
 }
 
 input AddKqiTargetInput {
+  name: String! 
   impact: String!
   frame: Float!
   alowedValidation: Float!
@@ -6593,6 +7475,7 @@ input AddKqiTargetInput {
 
 input EditKqiTargetInput {
   id: ID!
+  name: String! 
   impact: String!
   frame: Float!
   alowedValidation: Float!
@@ -6600,6 +7483,19 @@ input EditKqiTargetInput {
   endTime: Time!
   status: Boolean!
   kqi: ID!
+}
+
+enum KqiTargetFilterType {
+  NAME
+}
+
+input KqiTargetFilterInput {
+  filterType: KqiTargetFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 type KqiComparator implements Node {
@@ -6623,4 +7519,141 @@ input EditKqiComparatorInput {
   comparatorFk: ID!
   number: Float!
   comparatorType: String!
+}
+
+##################### RECOMMENDATIONS #######################
+
+type Recommendations implements Node {
+  id: ID!
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: RecommendationsSources!
+  recommendationsCategory: RecommendationsCategory!
+  userApprobed: User
+  userCreate: User!
+  vendor: Vendor!
+}
+
+input AddRecommendationsInput {
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: ID!
+  recommendationsCategory: ID!
+  userApprobed: ID
+  userCreate: ID!
+  vendor: ID!
+}
+
+input EditRecommendationsInput {
+  id: ID!
+  externalID: String!
+  resource: String!
+  alarmType: String!
+  shortDescription: String!
+  longDescription: String!
+  command: String!
+  priority: Int!
+  status: Boolean!
+  runbook: String
+  used: Int
+  recommendationsSources: ID!
+  recommendationsCategory: ID!
+  userApprobed: ID
+  vendor: ID!
+}
+######################## filter ###################
+enum RecommendationsFilterType {
+  EXTERNALID
+  RESOURCE
+  ALARMTYPE
+  SHORTDESCRIPTION
+  LONGDESCRIPTION
+  COMMAND
+  PRIORITY
+  STATUS
+  USED
+  RUNBOOK
+}
+
+input RecommendationsFilterInput {
+  filterType: RecommendationsFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  boolValue: Boolean
+  intValue: Int
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RecommendationsSources implements Node {
+  id: ID!
+  name: String! 
+  recommendations: [Recommendations!]
+}
+
+input AddRecommendationsSourcesInput {
+  name: String!
+}
+
+input EditRecommendationsSourcesInput {
+  id: ID!
+  name: String!
+}
+
+enum RecommendationsSourcesFilterType {
+  NAME
+}
+
+input RecommendationsSourcesFilterInput {
+  filterType: RecommendationsSourcesFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
+type RecommendationsCategory implements Node {
+  id: ID!
+  name: String! 
+  recommendations: [Recommendations!]
+}
+
+input AddRecommendationsCategoryInput {
+  name: String!
+}
+
+input EditRecommendationsCategoryInput {
+  id: ID!
+  name: String!
+}
+
+enum RecommendationsCategoryFilterType {
+  NAME
+}
+
+input RecommendationsCategoryFilterInput {
+  filterType: RecommendationsCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
 }

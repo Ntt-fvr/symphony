@@ -15,24 +15,24 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
-	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrecuency"
+	"github.com/facebookincubator/symphony/pkg/ent/kqitemporalfrequency"
 )
 
-// KqiTemporalFrecuencyCreate is the builder for creating a KqiTemporalFrecuency entity.
-type KqiTemporalFrecuencyCreate struct {
+// KqiTemporalFrequencyCreate is the builder for creating a KqiTemporalFrequency entity.
+type KqiTemporalFrequencyCreate struct {
 	config
-	mutation *KqiTemporalFrecuencyMutation
+	mutation *KqiTemporalFrequencyMutation
 	hooks    []Hook
 }
 
 // SetCreateTime sets the create_time field.
-func (ktfc *KqiTemporalFrecuencyCreate) SetCreateTime(t time.Time) *KqiTemporalFrecuencyCreate {
+func (ktfc *KqiTemporalFrequencyCreate) SetCreateTime(t time.Time) *KqiTemporalFrequencyCreate {
 	ktfc.mutation.SetCreateTime(t)
 	return ktfc
 }
 
 // SetNillableCreateTime sets the create_time field if the given value is not nil.
-func (ktfc *KqiTemporalFrecuencyCreate) SetNillableCreateTime(t *time.Time) *KqiTemporalFrecuencyCreate {
+func (ktfc *KqiTemporalFrequencyCreate) SetNillableCreateTime(t *time.Time) *KqiTemporalFrequencyCreate {
 	if t != nil {
 		ktfc.SetCreateTime(*t)
 	}
@@ -40,13 +40,13 @@ func (ktfc *KqiTemporalFrecuencyCreate) SetNillableCreateTime(t *time.Time) *Kqi
 }
 
 // SetUpdateTime sets the update_time field.
-func (ktfc *KqiTemporalFrecuencyCreate) SetUpdateTime(t time.Time) *KqiTemporalFrecuencyCreate {
+func (ktfc *KqiTemporalFrequencyCreate) SetUpdateTime(t time.Time) *KqiTemporalFrequencyCreate {
 	ktfc.mutation.SetUpdateTime(t)
 	return ktfc
 }
 
 // SetNillableUpdateTime sets the update_time field if the given value is not nil.
-func (ktfc *KqiTemporalFrecuencyCreate) SetNillableUpdateTime(t *time.Time) *KqiTemporalFrecuencyCreate {
+func (ktfc *KqiTemporalFrequencyCreate) SetNillableUpdateTime(t *time.Time) *KqiTemporalFrequencyCreate {
 	if t != nil {
 		ktfc.SetUpdateTime(*t)
 	}
@@ -54,36 +54,36 @@ func (ktfc *KqiTemporalFrecuencyCreate) SetNillableUpdateTime(t *time.Time) *Kqi
 }
 
 // SetName sets the name field.
-func (ktfc *KqiTemporalFrecuencyCreate) SetName(s string) *KqiTemporalFrecuencyCreate {
+func (ktfc *KqiTemporalFrequencyCreate) SetName(s string) *KqiTemporalFrequencyCreate {
 	ktfc.mutation.SetName(s)
 	return ktfc
 }
 
-// AddKqiTemporalFrecuencyFkIDs adds the kqiTemporalFrecuencyFk edge to Kqi by ids.
-func (ktfc *KqiTemporalFrecuencyCreate) AddKqiTemporalFrecuencyFkIDs(ids ...int) *KqiTemporalFrecuencyCreate {
-	ktfc.mutation.AddKqiTemporalFrecuencyFkIDs(ids...)
+// AddKqiTemporalFrequencyFkIDs adds the kqiTemporalFrequencyFk edge to Kqi by ids.
+func (ktfc *KqiTemporalFrequencyCreate) AddKqiTemporalFrequencyFkIDs(ids ...int) *KqiTemporalFrequencyCreate {
+	ktfc.mutation.AddKqiTemporalFrequencyFkIDs(ids...)
 	return ktfc
 }
 
-// AddKqiTemporalFrecuencyFk adds the kqiTemporalFrecuencyFk edges to Kqi.
-func (ktfc *KqiTemporalFrecuencyCreate) AddKqiTemporalFrecuencyFk(k ...*Kqi) *KqiTemporalFrecuencyCreate {
+// AddKqiTemporalFrequencyFk adds the kqiTemporalFrequencyFk edges to Kqi.
+func (ktfc *KqiTemporalFrequencyCreate) AddKqiTemporalFrequencyFk(k ...*Kqi) *KqiTemporalFrequencyCreate {
 	ids := make([]int, len(k))
 	for i := range k {
 		ids[i] = k[i].ID
 	}
-	return ktfc.AddKqiTemporalFrecuencyFkIDs(ids...)
+	return ktfc.AddKqiTemporalFrequencyFkIDs(ids...)
 }
 
-// Mutation returns the KqiTemporalFrecuencyMutation object of the builder.
-func (ktfc *KqiTemporalFrecuencyCreate) Mutation() *KqiTemporalFrecuencyMutation {
+// Mutation returns the KqiTemporalFrequencyMutation object of the builder.
+func (ktfc *KqiTemporalFrequencyCreate) Mutation() *KqiTemporalFrequencyMutation {
 	return ktfc.mutation
 }
 
-// Save creates the KqiTemporalFrecuency in the database.
-func (ktfc *KqiTemporalFrecuencyCreate) Save(ctx context.Context) (*KqiTemporalFrecuency, error) {
+// Save creates the KqiTemporalFrequency in the database.
+func (ktfc *KqiTemporalFrequencyCreate) Save(ctx context.Context) (*KqiTemporalFrequency, error) {
 	var (
 		err  error
-		node *KqiTemporalFrecuency
+		node *KqiTemporalFrequency
 	)
 	ktfc.defaults()
 	if len(ktfc.hooks) == 0 {
@@ -93,7 +93,7 @@ func (ktfc *KqiTemporalFrecuencyCreate) Save(ctx context.Context) (*KqiTemporalF
 		node, err = ktfc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*KqiTemporalFrecuencyMutation)
+			mutation, ok := m.(*KqiTemporalFrequencyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -116,7 +116,7 @@ func (ktfc *KqiTemporalFrecuencyCreate) Save(ctx context.Context) (*KqiTemporalF
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ktfc *KqiTemporalFrecuencyCreate) SaveX(ctx context.Context) *KqiTemporalFrecuency {
+func (ktfc *KqiTemporalFrequencyCreate) SaveX(ctx context.Context) *KqiTemporalFrequency {
 	v, err := ktfc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -125,19 +125,19 @@ func (ktfc *KqiTemporalFrecuencyCreate) SaveX(ctx context.Context) *KqiTemporalF
 }
 
 // defaults sets the default values of the builder before save.
-func (ktfc *KqiTemporalFrecuencyCreate) defaults() {
+func (ktfc *KqiTemporalFrequencyCreate) defaults() {
 	if _, ok := ktfc.mutation.CreateTime(); !ok {
-		v := kqitemporalfrecuency.DefaultCreateTime()
+		v := kqitemporalfrequency.DefaultCreateTime()
 		ktfc.mutation.SetCreateTime(v)
 	}
 	if _, ok := ktfc.mutation.UpdateTime(); !ok {
-		v := kqitemporalfrecuency.DefaultUpdateTime()
+		v := kqitemporalfrequency.DefaultUpdateTime()
 		ktfc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ktfc *KqiTemporalFrecuencyCreate) check() error {
+func (ktfc *KqiTemporalFrequencyCreate) check() error {
 	if _, ok := ktfc.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
 	}
@@ -148,14 +148,14 @@ func (ktfc *KqiTemporalFrecuencyCreate) check() error {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
 	if v, ok := ktfc.mutation.Name(); ok {
-		if err := kqitemporalfrecuency.NameValidator(v); err != nil {
+		if err := kqitemporalfrequency.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	return nil
 }
 
-func (ktfc *KqiTemporalFrecuencyCreate) sqlSave(ctx context.Context) (*KqiTemporalFrecuency, error) {
+func (ktfc *KqiTemporalFrequencyCreate) sqlSave(ctx context.Context) (*KqiTemporalFrequency, error) {
 	_node, _spec := ktfc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ktfc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
@@ -168,14 +168,14 @@ func (ktfc *KqiTemporalFrecuencyCreate) sqlSave(ctx context.Context) (*KqiTempor
 	return _node, nil
 }
 
-func (ktfc *KqiTemporalFrecuencyCreate) createSpec() (*KqiTemporalFrecuency, *sqlgraph.CreateSpec) {
+func (ktfc *KqiTemporalFrequencyCreate) createSpec() (*KqiTemporalFrequency, *sqlgraph.CreateSpec) {
 	var (
-		_node = &KqiTemporalFrecuency{config: ktfc.config}
+		_node = &KqiTemporalFrequency{config: ktfc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: kqitemporalfrecuency.Table,
+			Table: kqitemporalfrequency.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: kqitemporalfrecuency.FieldID,
+				Column: kqitemporalfrequency.FieldID,
 			},
 		}
 	)
@@ -183,7 +183,7 @@ func (ktfc *KqiTemporalFrecuencyCreate) createSpec() (*KqiTemporalFrecuency, *sq
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldCreateTime,
+			Column: kqitemporalfrequency.FieldCreateTime,
 		})
 		_node.CreateTime = value
 	}
@@ -191,7 +191,7 @@ func (ktfc *KqiTemporalFrecuencyCreate) createSpec() (*KqiTemporalFrecuency, *sq
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldUpdateTime,
+			Column: kqitemporalfrequency.FieldUpdateTime,
 		})
 		_node.UpdateTime = value
 	}
@@ -199,16 +199,16 @@ func (ktfc *KqiTemporalFrecuencyCreate) createSpec() (*KqiTemporalFrecuency, *sq
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: kqitemporalfrecuency.FieldName,
+			Column: kqitemporalfrequency.FieldName,
 		})
 		_node.Name = value
 	}
-	if nodes := ktfc.mutation.KqiTemporalFrecuencyFkIDs(); len(nodes) > 0 {
+	if nodes := ktfc.mutation.KqiTemporalFrequencyFkIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   kqitemporalfrecuency.KqiTemporalFrecuencyFkTable,
-			Columns: []string{kqitemporalfrecuency.KqiTemporalFrecuencyFkColumn},
+			Table:   kqitemporalfrequency.KqiTemporalFrequencyFkTable,
+			Columns: []string{kqitemporalfrequency.KqiTemporalFrequencyFkColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -225,23 +225,23 @@ func (ktfc *KqiTemporalFrecuencyCreate) createSpec() (*KqiTemporalFrecuency, *sq
 	return _node, _spec
 }
 
-// KqiTemporalFrecuencyCreateBulk is the builder for creating a bulk of KqiTemporalFrecuency entities.
-type KqiTemporalFrecuencyCreateBulk struct {
+// KqiTemporalFrequencyCreateBulk is the builder for creating a bulk of KqiTemporalFrequency entities.
+type KqiTemporalFrequencyCreateBulk struct {
 	config
-	builders []*KqiTemporalFrecuencyCreate
+	builders []*KqiTemporalFrequencyCreate
 }
 
-// Save creates the KqiTemporalFrecuency entities in the database.
-func (ktfcb *KqiTemporalFrecuencyCreateBulk) Save(ctx context.Context) ([]*KqiTemporalFrecuency, error) {
+// Save creates the KqiTemporalFrequency entities in the database.
+func (ktfcb *KqiTemporalFrequencyCreateBulk) Save(ctx context.Context) ([]*KqiTemporalFrequency, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(ktfcb.builders))
-	nodes := make([]*KqiTemporalFrecuency, len(ktfcb.builders))
+	nodes := make([]*KqiTemporalFrequency, len(ktfcb.builders))
 	mutators := make([]Mutator, len(ktfcb.builders))
 	for i := range ktfcb.builders {
 		func(i int, root context.Context) {
 			builder := ktfcb.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*KqiTemporalFrecuencyMutation)
+				mutation, ok := m.(*KqiTemporalFrequencyMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -284,7 +284,7 @@ func (ktfcb *KqiTemporalFrecuencyCreateBulk) Save(ctx context.Context) ([]*KqiTe
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ktfcb *KqiTemporalFrecuencyCreateBulk) SaveX(ctx context.Context) []*KqiTemporalFrecuency {
+func (ktfcb *KqiTemporalFrequencyCreateBulk) SaveX(ctx context.Context) []*KqiTemporalFrequency {
 	v, err := ktfcb.Save(ctx)
 	if err != nil {
 		panic(err)
