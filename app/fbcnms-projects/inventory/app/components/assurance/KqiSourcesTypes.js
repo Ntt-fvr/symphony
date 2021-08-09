@@ -8,12 +8,15 @@
  * @format
  */
 
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import fbt from 'fbt';
+import {fetchQuery, graphql} from 'relay-runtime';
+
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useState} from 'react';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-import fbt from 'fbt';
 import {TitleTextCardsKqiSource} from './TitleTextCardsKqiSource';
 
 import {KqiAddItemForm} from './KqiAddItemForm';
@@ -41,17 +44,56 @@ const useStyles = makeStyles(theme => ({
   titulo: {},
 }));
 
+const KqiSourceQuery = graphql`
+  query KqiSourcesTypesQuery {
+    kqiSources {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+type KqiSource = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+    },
+  },
+};
+
 const KqiSourcesTypes = () => {
   const classes = useStyles();
+  const [items, setItems] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
+  const [dataEdit, setDataEdit] = useState<KqiSource>({});
 
-  const showEditKqiSourceForm = () => {
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, KqiSourceQuery, {}).then(data => {
+      setItems(data);
+    });
+  }, [items]);
+
+  const showEditKqiSourceForm = (kqiSources: KqiSource) => {
     setShowEditCard(true);
+    setDataEdit(kqiSources);
   };
+  const hideEditCounterForm = () => {
+    setShowEditCard(false);
+  };
+
+  const kqiSourcesNames = items.kqiSources?.edges.map(item => item.node.name);
 
   if (showEditCard) {
     return (
-      <KqiSourceFormEdit returnKqiSources={() => setShowEditCard(false)} />
+      <KqiSourceFormEdit
+        kqiSourcesNames={kqiSourcesNames}
+        formValues={dataEdit.item.node}
+        hideEditCounterForm={hideEditCounterForm}
+      />
     );
   }
   return (
@@ -59,7 +101,7 @@ const KqiSourcesTypes = () => {
       <Grid container spacing={3}>
         <Grid className={classes.titulo} item xs={12}>
           <ConfigureTitle
-            title={fbt('KQI Sources', 'Counters Title')}
+            title={fbt('KQI Sources', 'KQI Title')}
             subtitle={fbt(
               'Data sources for quality indicators',
               'KQI sources description',
@@ -69,7 +111,14 @@ const KqiSourcesTypes = () => {
         <Grid className={classes.paper} item xs={9}>
           <TitleTextCardsKqiSource />
           <List>
-            <KqiSourcesTypeItem edit={() => showEditKqiSourceForm()} />
+            {items.kqiSources?.edges.map(item => (
+              <KqiSourcesTypeItem
+                key={item.node?.id}
+                // handleRemove={() => handleRemove(item.node?.id)}
+                edit={() => showEditKqiSourceForm({item})}
+                {...item.node}
+              />
+            ))}
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={3}>

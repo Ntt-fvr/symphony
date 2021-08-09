@@ -64,7 +64,7 @@ export const TitleTextCardsKqiSource = () => {
             classes.edit,
           )}
           variant="subtitle2">
-          Edit
+          Delete
         </Text>
       </Grid>
       <Grid xs={1}>
@@ -75,7 +75,7 @@ export const TitleTextCardsKqiSource = () => {
             classes.delete,
           )}
           variant="subtitle2">
-          Delete
+          Edit
         </Text>
       </Grid>
     </Grid>

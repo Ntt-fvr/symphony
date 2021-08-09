@@ -11,8 +11,8 @@
 import React from 'react';
 
 // DESING SYSTEM //
+import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
 
-import Accordion from '@material-ui/core/Accordion';
 import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
@@ -70,7 +70,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const KqiSourcesTypeItem = props => {
+type Props = $ReadOnly<{|
+  id: string,
+  name: string,
+  edit: MouseEventHandler,
+|}>;
+
+const KqiSourcesTypeItem = (props: Props) => {
+  const {name, id, edit} = props;
   const classes = useStyles();
 
   return (
@@ -78,18 +85,15 @@ const KqiSourcesTypeItem = props => {
       <Card margins={'none'} className={classes.container}>
         <Grid container className={classes.insideContainer}>
           <Grid xs={3} className={classNames(classes.inside, classes.kqiName)}>
-            <Button
-              onClick={props.edit}
-              variant="text"
-              className={classes.bold}>
+            <Button variant="text" className={classes.bold} onClick={edit}>
               <Text weight={'medium'} color={'primary'}>
-                TLLI Availability
+                {name}
               </Text>
             </Button>
           </Grid>
 
           <Grid xs={7} className={classNames(classes.inside, classes.iD)}>
-            <Text className={classes.bold}>1101623842021</Text>
+            <Text className={classes.bold}>{id}</Text>
           </Grid>
 
           <Grid
@@ -103,7 +107,7 @@ const KqiSourcesTypeItem = props => {
             <IconButton
               className={classes.editIcon}
               icon={EditIcon}
-              onClick={props.edit}
+              onClick={edit}
             />
           </Grid>
         </Grid>
