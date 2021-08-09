@@ -10,6 +10,7 @@
 
 import type {EditRuleItemFormQuery} from './__generated__/EditRuleItemFormQuery.graphql';
 
+import type {EditRuleLimitMutationVariables} from '../../mutations/__generated__/EditRuleLimitMutation.graphql';
 import type {EditRuleMutationVariables} from '../../mutations/__generated__/EditRuleMutation.graphql';
 
 import Button from '@symphony/design-system/components/Button';
@@ -17,6 +18,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
+import EditRuleLimitMutation from '../../mutations/EditRuleLimitMutation';
 import EditRuleMutation from '../../mutations/EditRuleMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
@@ -27,6 +29,7 @@ import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
+import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -45,6 +48,14 @@ const EditRuleQuery = graphql`
       }
     }
     comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    ruleTypes {
       edges {
         node {
           id
@@ -143,6 +154,7 @@ const EditRuleItemForm = (props: Props) => {
   const {rule} = useStore();
   const {hideAddRuleForm} = props;
 
+  const [ruleData, setRuleData] = useState({data: {}});
   const [checked, setChecked] = useState(rule.status);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<EditRuleItemFormQuery>(EditRuleQuery, {});
@@ -153,6 +165,19 @@ const EditRuleItemForm = (props: Props) => {
   const specificProblemRule = useFormInput(rule.specificProblem);
   const eventTypeRule = useFormInput(rule.eventTypeName);
   const eventSeverityRules = useFormInput(rule.eventSeverityId);
+  const comparatorUpper = useFormInput(rule.ruleLimit[0].comparator.id);
+  const comparatorLower = useFormInput(rule.ruleLimit[1].comparator.id);
+  const upper = useFormInput(rule.ruleLimit[0].number);
+  const lower = useFormInput(rule.ruleLimit[1].number);
+
+  function handleChange({target}) {
+    setRuleData({
+      data: {
+        ...ruleData.data,
+        [target.name]: target.value,
+      },
+    });
+  }
 
   const handleClick = () => {
     const variables: EditRuleMutationVariables = {
@@ -160,9 +185,9 @@ const EditRuleItemForm = (props: Props) => {
         id: rule.id,
         name: nameRule.value,
         gracePeriod: Number(gracePeriodRule.value),
-        startDateTime: '2021-08-04T22:45:00Z',
-        endDateTime: '2021-08-30T22:45:00Z',
-        ruleType: '223338299392',
+        startDateTime: moment(ruleData.data.startTime).format(),
+        endDateTime: moment(ruleData.data.endTime).format(),
+        ruleType: data.ruleTypes.edges[0].node.id,
         eventTypeName: eventTypeRule.value,
         specificProblem: specificProblemRule.value,
         additionalInfo: additionalInfoRule.value,
@@ -171,7 +196,27 @@ const EditRuleItemForm = (props: Props) => {
         threshold: rule.thresholdId,
       },
     };
+    const variablesUpper: EditRuleLimitMutationVariables = {
+      input: {
+        id: rule.ruleLimit[0].id,
+        number: Number(upper.value),
+        limitType: 'UPPER',
+        comparator: comparatorUpper.value,
+        rule: rule.id,
+      },
+    };
+    const variablesLower: EditRuleLimitMutationVariables = {
+      input: {
+        id: rule.ruleLimit[1].id,
+        number: Number(lower.value),
+        limitType: 'LOWER',
+        comparator: comparatorLower.value,
+        rule: rule.id,
+      },
+    };
     EditRuleMutation(variables);
+    EditRuleLimitMutation(variablesUpper);
+    EditRuleLimitMutation(variablesLower);
   };
 
   const classes = useStyles();
@@ -293,6 +338,7 @@ const EditRuleItemForm = (props: Props) => {
                         className={classes.limitRangeSelect}
                         label="Upper Target">
                         <Select
+                          {...comparatorUpper}
                           className={classes.selectUpper}
                           disableUnderline
                           name="upperTarget">
@@ -307,6 +353,7 @@ const EditRuleItemForm = (props: Props) => {
                     <Grid item xs={6} sm={6} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
+                          {...upper}
                           type="number"
                           placeholder="Number"
                           className={`${classes.textInput} ${classes.green}`}
@@ -319,6 +366,7 @@ const EditRuleItemForm = (props: Props) => {
                         className={classes.limitRangeSelect}
                         label="Lower Target">
                         <Select
+                          {...comparatorLower}
                           className={classes.selectLower}
                           disableUnderline
                           name="lowerTarget">
@@ -333,6 +381,7 @@ const EditRuleItemForm = (props: Props) => {
                     <Grid item xs={6} sm={6} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
+                          {...lower}
                           type="number"
                           placeholder="Number"
                           className={`${classes.textInput} ${classes.red}`}
@@ -359,8 +408,9 @@ const EditRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="startTime"
-                    defaultValue="2017-05-24T10:30"
+                    defaultValue={moment(rule.startDateTime).format('YYYY-MM-DDThh:mm')}
                     disabled={!checkedCheckbox}
+                    onChange={handleChange}
                   />
                 </FormField>
                 <FormField label="End" className={classes.formField}>
@@ -369,7 +419,9 @@ const EditRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="endTime"
+                    defaultValue={moment(rule.endDateTime).format('YYYY-MM-DDThh:mm')}
                     disabled={!checkedCheckbox}
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>

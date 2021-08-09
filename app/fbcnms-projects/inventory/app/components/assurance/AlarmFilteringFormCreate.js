@@ -71,8 +71,7 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '2rem',
   },
   titleButtons: {
-    padding: '1rem 1rem 0 1rem',
-    alignItems: 'center',
+    marginBottom: "1rem",
   },
   reason: {
     minHeight: '100px',
@@ -179,36 +178,34 @@ const AlarmFilteringFormCreate = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons}>
+        <Grid container className={classes.titleButtons} alignItems="center">
           <Grid xs={9}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Create Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid xs={2}>
-            <Grid container>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    className={classes.option}
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => returnTableAlarm()}>
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    onClick={() => setDialogOpen(true)}
-                    className={classes.option}
-                    variant="contained"
-                    color="primary">
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
+          <Grid xs={3} container>
+            <Grid xs={8}>
+              <FormField>
+                <Button
+                  className={classes.option}
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => returnTableAlarm()}>
+                  Cancel
+                </Button>
+              </FormField>
+            </Grid>
+            <Grid xs={4}>
+              <FormField>
+                <Button
+                  onClick={() => setDialogOpen(true)}
+                  className={classes.option}
+                  variant="contained"
+                  color="primary">
+                  Save
+                </Button>
+              </FormField>
             </Grid>
           </Grid>
         </Grid>
@@ -296,59 +293,62 @@ const AlarmFilteringFormCreate = (props: Props) => {
               <Grid container xs={6} className={classes.status}>
                 <Grid xs={3}>
                   <FormField label="Status" className={classes.formField}>
-                    {
-                      (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.beginTime).format()) ||
-                      (moment(AlarmFilter.data.creationTime).format() <= moment(AlarmFilter.data.endTime).format()) &&
+                    {moment(AlarmFilter.data.creationTime).format() <=
+                      moment(AlarmFilter.data.beginTime).format() ||
+                      (moment(AlarmFilter.data.creationTime).format() <=
+                        moment(AlarmFilter.data.endTime).format() &&
+                        dataStatusResponse
+                          .filter(item => item.name == 'Active')
+                          .map(filteredItem => (
+                            <Button
+                              value={(valueId.current = filteredItem.id)}
+                              variant="outlined"
+                              weight="bold"
+                              name="alarmStatus"
+                              className={classNames(
+                                classes.button,
+                                classes.buttonActive,
+                              )}
+                              onChange={handleChange}>
+                              {filteredItem.name}
+                            </Button>
+                          )))}
+                    {moment(AlarmFilter.data.creationTime).format() >
+                      moment(AlarmFilter.data.endTime).format() &&
                       dataStatusResponse
-                      .filter(item => item.name == 'Active')
-                      .map(filteredItem => (          
-                        <Button 
-                          value={valueId.current = filteredItem.id}
-                          variant="outlined"
-                          weight="bold"
-                          name="alarmStatus"
-                          className={classNames(classes.button, classes.buttonActive)}
-                          onChange={handleChange}
-                        >
-                        {filteredItem.name}
-                      </Button>
-
-                      ))
-                    }
-                    {
-                      moment(AlarmFilter.data.creationTime).format() > moment(AlarmFilter.data.endTime).format()  &&
+                        .filter(item => item.name == 'Closed')
+                        .map(filteredItem => (
+                          <Button
+                            value={(valueId.current = filteredItem.id)}
+                            variant="outlined"
+                            weight="bold"
+                            name="alarmStatus"
+                            className={classNames(
+                              classes.button,
+                              classes.buttonClosed,
+                            )}
+                            onChange={handleChange}>
+                            {filteredItem.name}
+                          </Button>
+                        ))}
+                    {moment(AlarmFilter.data.creationTime).format() <
+                      moment(AlarmFilter.data.beginTime).format() &&
                       dataStatusResponse
-                      .filter(item => item.name == 'Closed')
-                      .map(filteredItem => (
-                        <Button 
-                          value={valueId.current = filteredItem.id}
-                          variant="outlined"
-                          weight="bold"
-                          name="alarmStatus"
-                          className={classNames(classes.button, classes.buttonClosed)}
-                          onChange={handleChange}
-                        >
-                        {filteredItem.name}
-                      </Button>
-                      ))
-                    }
-                    {
-                      moment(AlarmFilter.data.creationTime).format() < moment(AlarmFilter.data.beginTime).format() &&
-                      dataStatusResponse
-                      .filter(item => item.name == 'Pending')
-                      .map(filteredItem => (
-                        <Button 
-                          value={valueId.current = filteredItem.id}
-                          variant="outlined"
-                          weight="bold"
-                          name="alarmStatus"
-                          className={classNames(classes.button, classes.buttonPending)}
-                          onChange={handleChange}
-                        >
-                        {filteredItem.name}
-                      </Button>
-                      ))
-                    }
+                        .filter(item => item.name == 'Pending')
+                        .map(filteredItem => (
+                          <Button
+                            value={(valueId.current = filteredItem.id)}
+                            variant="outlined"
+                            weight="bold"
+                            name="alarmStatus"
+                            className={classNames(
+                              classes.button,
+                              classes.buttonPending,
+                            )}
+                            onChange={handleChange}>
+                            {filteredItem.name}
+                          </Button>
+                        ))}
                   </FormField>
                 </Grid>
                 <Grid xs={9}>
