@@ -93,6 +93,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type RuleLimit = {
+  id: string,
+  name: string,
+  limitType: string,
+  comparator: {
+    id: string,
+    name: string,
+  },
+};
+
 type Rule = {
   id: string,
   name: string,
@@ -103,8 +113,10 @@ type Rule = {
   startDateTime: string,
   endDateTime: string,
   threshold: {
+    id: string,
     name: string,
   },
+  ruleLimit: Array<RuleLimit>,
   ruleType: {
     name: string,
   },

@@ -66,6 +66,11 @@ const ThresholdQuery = graphql`
               name
             }
             ruleLimit {
+              comparator {
+                id
+                name
+              }
+              id
               number
               limitType
             }

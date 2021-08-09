@@ -26,6 +26,7 @@ const initialStore = {
     thresholdId: '',
     thresholdName: '',
     eventSeverityId: '',
+    ruleLimit: [],
   },
 };
 

@@ -42,6 +42,11 @@ export type ThresholdTypesQueryResponse = {|
             +name: string,
           |},
           +ruleLimit: ?$ReadOnlyArray<{|
+            +comparator: {|
+              +id: string,
+              +name: string,
+            |},
+            +id: string,
             +number: number,
             +limitType: string,
           |}>,
@@ -93,9 +98,13 @@ query ThresholdTypesQuery {
             name
           }
           ruleLimit {
+            comparator {
+              id
+              name
+            }
+            id
             number
             limitType
-            id
           }
           eventSeverity {
             id
@@ -131,186 +140,175 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "description",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v4 = [
+v3 = [
   (v0/*: any*/),
   (v1/*: any*/)
 ],
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Kpi",
-  "kind": "LinkedField",
-  "name": "kpi",
-  "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "gracePeriod",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "additionalInfo",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "specificProblem",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "eventTypeName",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "startDateTime",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "endDateTime",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "RuleType",
-  "kind": "LinkedField",
-  "name": "ruleType",
-  "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "number",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "limitType",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "EventSeverity",
-  "kind": "LinkedField",
-  "name": "eventSeverity",
-  "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Threshold",
-  "kind": "LinkedField",
-  "name": "threshold",
-  "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "ThresholdTypesQuery",
+v4 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ThresholdConnection",
+    "kind": "LinkedField",
+    "name": "thresholds",
+    "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ThresholdConnection",
+        "concreteType": "ThresholdEdge",
         "kind": "LinkedField",
-        "name": "thresholds",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ThresholdEdge",
+            "concreteType": "Threshold",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "Threshold",
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              },
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Kpi",
                 "kind": "LinkedField",
-                "name": "node",
+                "name": "kpi",
                 "plural": false,
+                "selections": (v3/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Rule",
+                "kind": "LinkedField",
+                "name": "rule",
+                "plural": true,
                 "selections": [
                   (v0/*: any*/),
                   (v1/*: any*/),
                   (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Rule",
+                    "kind": "ScalarField",
+                    "name": "gracePeriod",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "additionalInfo",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "specificProblem",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "eventTypeName",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "startDateTime",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "endDateTime",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "RuleType",
                     "kind": "LinkedField",
-                    "name": "rule",
+                    "name": "ruleType",
+                    "plural": false,
+                    "selections": (v3/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "RuleLimit",
+                    "kind": "LinkedField",
+                    "name": "ruleLimit",
                     "plural": true,
                     "selections": [
-                      (v0/*: any*/),
-                      (v1/*: any*/),
-                      (v3/*: any*/),
-                      (v6/*: any*/),
-                      (v7/*: any*/),
-                      (v8/*: any*/),
-                      (v9/*: any*/),
-                      (v10/*: any*/),
-                      (v11/*: any*/),
-                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "RuleLimit",
+                        "concreteType": "Comparator",
                         "kind": "LinkedField",
-                        "name": "ruleLimit",
-                        "plural": true,
-                        "selections": [
-                          (v13/*: any*/),
-                          (v14/*: any*/)
-                        ],
+                        "name": "comparator",
+                        "plural": false,
+                        "selections": (v3/*: any*/),
                         "storageKey": null
                       },
-                      (v15/*: any*/),
-                      (v16/*: any*/)
+                      (v0/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "number",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "limitType",
+                        "storageKey": null
+                      }
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "EventSeverity",
+                    "kind": "LinkedField",
+                    "name": "eventSeverity",
+                    "plural": false,
+                    "selections": (v3/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Threshold",
+                    "kind": "LinkedField",
+                    "name": "threshold",
+                    "plural": false,
+                    "selections": (v3/*: any*/),
                     "storageKey": null
                   }
                 ],
@@ -323,6 +321,16 @@ return {
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ThresholdTypesQuery",
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -331,95 +339,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ThresholdTypesQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ThresholdConnection",
-        "kind": "LinkedField",
-        "name": "thresholds",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ThresholdEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Threshold",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "Rule",
-                    "kind": "LinkedField",
-                    "name": "rule",
-                    "plural": true,
-                    "selections": [
-                      (v0/*: any*/),
-                      (v1/*: any*/),
-                      (v3/*: any*/),
-                      (v6/*: any*/),
-                      (v7/*: any*/),
-                      (v8/*: any*/),
-                      (v9/*: any*/),
-                      (v10/*: any*/),
-                      (v11/*: any*/),
-                      (v12/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "RuleLimit",
-                        "kind": "LinkedField",
-                        "name": "ruleLimit",
-                        "plural": true,
-                        "selections": [
-                          (v13/*: any*/),
-                          (v14/*: any*/),
-                          (v0/*: any*/)
-                        ],
-                        "storageKey": null
-                      },
-                      (v15/*: any*/),
-                      (v16/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "7f20de4d63b33ac1332f665098f4bbbd",
+    "cacheID": "1a51584190fe02457a758e472493460b",
     "id": null,
     "metadata": {},
     "name": "ThresholdTypesQuery",
     "operationKind": "query",
-    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          status\n          gracePeriod\n          additionalInfo\n          specificProblem\n          eventTypeName\n          startDateTime\n          endDateTime\n          ruleType {\n            id\n            name\n          }\n          ruleLimit {\n            number\n            limitType\n            id\n          }\n          eventSeverity {\n            id\n            name\n          }\n          threshold {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ThresholdTypesQuery {\n  thresholds {\n    edges {\n      node {\n        id\n        name\n        description\n        status\n        kpi {\n          id\n          name\n        }\n        rule {\n          id\n          name\n          status\n          gracePeriod\n          additionalInfo\n          specificProblem\n          eventTypeName\n          startDateTime\n          endDateTime\n          ruleType {\n            id\n            name\n          }\n          ruleLimit {\n            comparator {\n              id\n              name\n            }\n            id\n            number\n            limitType\n          }\n          eventSeverity {\n            id\n            name\n          }\n          threshold {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0ebee5be6c68cbdf0984ea0b278dde12';
+(node/*: any*/).hash = 'a21c0c1b751bacf8a7f0247d42320156';
 
 module.exports = node;

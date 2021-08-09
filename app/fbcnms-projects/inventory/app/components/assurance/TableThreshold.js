@@ -61,6 +61,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type RuleLimit = {
+  id: string,
+  name: string,
+  limitType: string,
+  comparator: {
+    id: string,
+    name: string,
+  },
+};
+
 type Rule = {
   id: string,
   name: string,
@@ -74,6 +84,7 @@ type Rule = {
     id: string,
     name: string,
   },
+  ruleLimit: Array<RuleLimit>,
   ruleType: {
     name: string,
   },
@@ -119,6 +130,7 @@ export default function DenseTable(props: Props) {
         thresholdId: row.threshold.id,
         thresholdName: row.threshold.name,
         eventSeverityId: row.eventSeverity.id,
+        ruleLimit: row.ruleLimit,
       },
     });
     editRule();
@@ -142,7 +154,11 @@ export default function DenseTable(props: Props) {
             {rule.map(row => (
               <StyledTableRow key={row.id}>
                 <TableCell component="th" scope="row">
-                  <Switch title={''} checked={row.status} onChange={setChecked} />
+                  <Switch
+                    title={''}
+                    checked={row.status}
+                    onChange={setChecked}
+                  />
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {row.name}
