@@ -151,7 +151,7 @@ const AlarmFilteringTypes = () => {
         </Grid>
         <Grid item xs={12}>
           <AlarmFilteringTable
-            dataValues={DataAlarms.AlarmFilters?.edges.map(item => item.node)}
+            dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
             edit={handleClickEdit}
           />
         </Grid>
