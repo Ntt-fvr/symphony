@@ -86,9 +86,11 @@ type WorkOrderEdges struct {
 	Owner *User
 	// Assignee holds the value of the assignee edge.
 	Assignee *User
+	// Appointment holds the value of the appointment edge.
+	Appointment []*Appointment
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [14]bool
+	loadedTypes [15]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -245,6 +247,15 @@ func (e WorkOrderEdges) AssigneeOrErr() (*User, error) {
 		return e.Assignee, nil
 	}
 	return nil, &NotLoadedError{edge: "assignee"}
+}
+
+// AppointmentOrErr returns the Appointment value or an error if the edge
+// was not loaded in eager-loading.
+func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
+	if e.loadedTypes[14] {
+		return e.Appointment, nil
+	}
+	return nil, &NotLoadedError{edge: "appointment"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -451,6 +462,11 @@ func (wo *WorkOrder) QueryOwner() *UserQuery {
 // QueryAssignee queries the assignee edge of the WorkOrder.
 func (wo *WorkOrder) QueryAssignee() *UserQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryAssignee(wo)
+}
+
+// QueryAppointment queries the appointment edge of the WorkOrder.
+func (wo *WorkOrder) QueryAppointment() *AppointmentQuery {
+	return (&WorkOrderClient{config: wo.config}).QueryAppointment(wo)
 }
 
 // Update returns a builder for updating this WorkOrder.

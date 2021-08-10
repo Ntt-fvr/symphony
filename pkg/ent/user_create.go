@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -239,6 +240,21 @@ func (uc *UserCreate) AddFeatures(f ...*Feature) *UserCreate {
 		ids[i] = f[i].ID
 	}
 	return uc.AddFeatureIDs(ids...)
+}
+
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (uc *UserCreate) AddAppointmentIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAppointmentIDs(ids...)
+	return uc
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (uc *UserCreate) AddAppointment(a ...*Appointment) *UserCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAppointmentIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -575,6 +591,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppointmentTable,
+			Columns: []string{user.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
 				},
 			},
 		}

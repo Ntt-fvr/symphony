@@ -24,6 +24,22 @@ func (a *Activity) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 	return result, MaskNotFound(err)
 }
 
+func (a *Appointment) Workorder(ctx context.Context) (*WorkOrder, error) {
+	result, err := a.Edges.WorkorderOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryWorkorder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *Appointment) Assignee(ctx context.Context) (*User, error) {
+	result, err := a.Edges.AssigneeOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryAssignee().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (b *Block) Flow(ctx context.Context) (*Flow, error) {
 	result, err := b.Edges.FlowOrErr()
 	if IsNotLoaded(err) {
@@ -1552,6 +1568,14 @@ func (u *User) Features(ctx context.Context) ([]*Feature, error) {
 	return result, err
 }
 
+func (u *User) Appointment(ctx context.Context) ([]*Appointment, error) {
+	result, err := u.Edges.AppointmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryAppointment().All(ctx)
+	}
+	return result, err
+}
+
 func (ug *UsersGroup) Members(ctx context.Context) ([]*User, error) {
 	result, err := ug.Edges.MembersOrErr()
 	if IsNotLoaded(err) {
@@ -1686,6 +1710,14 @@ func (wo *WorkOrder) Assignee(ctx context.Context) (*User, error) {
 		result, err = wo.QueryAssignee().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
+	result, err := wo.Edges.AppointmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryAppointment().All(ctx)
+	}
+	return result, err
 }
 
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {

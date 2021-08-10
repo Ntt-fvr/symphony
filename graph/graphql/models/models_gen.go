@@ -62,6 +62,13 @@ type ActivityFilterInput struct {
 	ActivityType   activity.ActivityType `json:"activityType"`
 }
 
+type AddAppointmentInput struct {
+	CreatorID   *int      `json:"creatorId"`
+	AssigneeID  int       `json:"assigneeID"`
+	WorkorderID int       `json:"workorderID"`
+	Date        time.Time `json:"date"`
+}
+
 type AddBlockInstanceInput struct {
 	Status    *blockinstance.Status       `json:"status"`
 	Inputs    []*flowschema.VariableValue `json:"inputs"`
@@ -346,6 +353,13 @@ type DecisionRoute struct {
 type DecisionRouteInput struct {
 	Cid       *string                  `json:"cid"`
 	Condition *VariableExpressionInput `json:"condition"`
+}
+
+type EditAppointmentInput struct {
+	ID          int       `json:"id"`
+	AssigneeID  int       `json:"assigneeID"`
+	WorkorderID int       `json:"workorderID"`
+	Date        time.Time `json:"date"`
 }
 
 type EditBlockInput struct {

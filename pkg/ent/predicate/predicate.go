@@ -13,6 +13,9 @@ import (
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 
+// Appointment is the predicate function for appointment builders.
+type Appointment func(*sql.Selector)
+
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 

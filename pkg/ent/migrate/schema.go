@@ -47,6 +47,39 @@ var (
 			},
 		},
 	}
+	// AppointmentsColumns holds the columns for the "appointments" table.
+	AppointmentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "appointment_date", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "CANCELLED"}, Default: "ACTIVE"},
+		{Name: "creation_date", Type: field.TypeTime},
+		{Name: "user_appointment", Type: field.TypeInt, Nullable: true},
+		{Name: "work_order_appointment", Type: field.TypeInt, Nullable: true},
+	}
+	// AppointmentsTable holds the schema information for the "appointments" table.
+	AppointmentsTable = &schema.Table{
+		Name:       "appointments",
+		Columns:    AppointmentsColumns,
+		PrimaryKey: []*schema.Column{AppointmentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "appointments_users_appointment",
+				Columns: []*schema.Column{AppointmentsColumns[6]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "appointments_work_orders_appointment",
+				Columns: []*schema.Column{AppointmentsColumns[7]},
+
+				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// BlocksColumns holds the columns for the "blocks" table.
 	BlocksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2417,6 +2450,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ActivitiesTable,
+		AppointmentsTable,
 		BlocksTable,
 		BlockInstancesTable,
 		CheckListCategoriesTable,
@@ -2489,6 +2523,8 @@ var (
 func init() {
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
+	AppointmentsTable.ForeignKeys[0].RefTable = UsersTable
+	AppointmentsTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	BlocksTable.ForeignKeys[0].RefTable = FlowsTable
 	BlocksTable.ForeignKeys[1].RefTable = BlocksTable
 	BlocksTable.ForeignKeys[2].RefTable = FlowsTable

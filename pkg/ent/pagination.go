@@ -19,6 +19,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -506,6 +507,268 @@ var DefaultActivityOrder = &ActivityOrder{
 	Field: &ActivityOrderField{
 		field: activity.FieldID,
 		toCursor: func(a *Activity) Cursor {
+			return Cursor{ID: a.ID}
+		},
+	},
+}
+
+// AppointmentEdge is the edge representation of Appointment.
+type AppointmentEdge struct {
+	Node   *Appointment `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// AppointmentConnection is the connection containing edges to Appointment.
+type AppointmentConnection struct {
+	Edges      []*AppointmentEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+// AppointmentPaginateOption enables pagination customization.
+type AppointmentPaginateOption func(*appointmentPager) error
+
+// WithAppointmentOrder configures pagination ordering.
+func WithAppointmentOrder(order *AppointmentOrder) AppointmentPaginateOption {
+	if order == nil {
+		order = DefaultAppointmentOrder
+	}
+	o := *order
+	return func(pager *appointmentPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultAppointmentOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithAppointmentFilter configures pagination filter.
+func WithAppointmentFilter(filter func(*AppointmentQuery) (*AppointmentQuery, error)) AppointmentPaginateOption {
+	return func(pager *appointmentPager) error {
+		if filter == nil {
+			return errors.New("AppointmentQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type appointmentPager struct {
+	order  *AppointmentOrder
+	filter func(*AppointmentQuery) (*AppointmentQuery, error)
+}
+
+func newAppointmentPager(opts []AppointmentPaginateOption) (*appointmentPager, error) {
+	pager := &appointmentPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultAppointmentOrder
+	}
+	return pager, nil
+}
+
+func (p *appointmentPager) applyFilter(query *AppointmentQuery) (*AppointmentQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *appointmentPager) toCursor(a *Appointment) Cursor {
+	return p.order.Field.toCursor(a)
+}
+
+func (p *appointmentPager) applyCursors(query *AppointmentQuery, after, before *Cursor) *AppointmentQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultAppointmentOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *appointmentPager) applyOrder(query *AppointmentQuery, reverse bool) *AppointmentQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultAppointmentOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultAppointmentOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Appointment.
+func (a *AppointmentQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...AppointmentPaginateOption,
+) (*AppointmentConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newAppointmentPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if a, err = pager.applyFilter(a); err != nil {
+		return nil, err
+	}
+
+	conn := &AppointmentConnection{Edges: []*AppointmentEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := a.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := a.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	a = pager.applyCursors(a, after, before)
+	a = pager.applyOrder(a, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		a = a.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		a = a.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := a.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *Appointment
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Appointment {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Appointment {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*AppointmentEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &AppointmentEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// AppointmentOrderFieldCreationDate orders Appointment by creation_date.
+	AppointmentOrderFieldCreationDate = &AppointmentOrderField{
+		field: appointment.FieldCreationDate,
+		toCursor: func(a *Appointment) Cursor {
+			return Cursor{
+				ID:    a.ID,
+				Value: a.CreationDate,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f AppointmentOrderField) String() string {
+	var str string
+	switch f.field {
+	case appointment.FieldCreationDate:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f AppointmentOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *AppointmentOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("AppointmentOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *AppointmentOrderFieldCreationDate
+	default:
+		return fmt.Errorf("%s is not a valid AppointmentOrderField", str)
+	}
+	return nil
+}
+
+// AppointmentOrderField defines the ordering field of Appointment.
+type AppointmentOrderField struct {
+	field    string
+	toCursor func(*Appointment) Cursor
+}
+
+// AppointmentOrder defines the ordering of Appointment.
+type AppointmentOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *AppointmentOrderField `json:"field"`
+}
+
+// DefaultAppointmentOrder is the default ordering of Appointment.
+var DefaultAppointmentOrder = &AppointmentOrder{
+	Direction: OrderDirectionAsc,
+	Field: &AppointmentOrderField{
+		field: appointment.FieldID,
+		toCursor: func(a *Appointment) Cursor {
 			return Cursor{ID: a.ID}
 		},
 	},

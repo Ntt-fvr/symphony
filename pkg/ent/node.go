@@ -18,6 +18,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -185,6 +186,77 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[1].IDs, err = a.QueryWorkOrder().
 		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (a *Appointment) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     a.ID,
+		Type:   "Appointment",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(a.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.AppointmentDate); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "appointment_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "appointment.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.CreationDate); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "time.Time",
+		Name:  "creation_date",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "WorkOrder",
+		Name: "workorder",
+	}
+	node.Edges[0].IDs, err = a.QueryWorkorder().
+		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "User",
+		Name: "assignee",
+	}
+	node.Edges[1].IDs, err = a.QueryAssignee().
+		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -5234,7 +5306,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 6),
+		Edges:  make([]*Edge, 7),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -5369,6 +5441,16 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[6] = &Edge{
+		Type: "Appointment",
+		Name: "appointment",
+	}
+	node.Edges[6].IDs, err = u.QueryAppointment().
+		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -5458,7 +5540,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 		ID:     wo.ID,
 		Type:   "WorkOrder",
 		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 14),
+		Edges:  make([]*Edge, 15),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wo.CreateTime); err != nil {
@@ -5677,6 +5759,16 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[13].IDs, err = wo.QueryAssignee().
 		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[14] = &Edge{
+		Type: "Appointment",
+		Name: "appointment",
+	}
+	node.Edges[14].IDs, err = wo.QueryAppointment().
+		Select(appointment.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -6033,6 +6125,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Activity.Query().
 			Where(activity.ID(id)).
 			CollectFields(ctx, "Activity").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case appointment.Table:
+		n, err := c.Appointment.Query().
+			Where(appointment.ID(id)).
+			CollectFields(ctx, "Appointment").
 			Only(ctx)
 		if err != nil {
 			return nil, err

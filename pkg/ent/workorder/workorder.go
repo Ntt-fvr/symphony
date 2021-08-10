@@ -69,6 +69,8 @@ const (
 	EdgeOwner = "owner"
 	// EdgeAssignee holds the string denoting the assignee edge name in mutations.
 	EdgeAssignee = "assignee"
+	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
+	EdgeAppointment = "appointment"
 
 	// Table holds the table name of the workorder in the database.
 	Table = "work_orders"
@@ -170,6 +172,13 @@ const (
 	AssigneeInverseTable = "users"
 	// AssigneeColumn is the table column denoting the assignee relation/edge.
 	AssigneeColumn = "work_order_assignee"
+	// AppointmentTable is the table the holds the appointment relation/edge.
+	AppointmentTable = "appointments"
+	// AppointmentInverseTable is the table name for the Appointment entity.
+	// It exists in this package in order to avoid circular dependency with the "appointment" package.
+	AppointmentInverseTable = "appointments"
+	// AppointmentColumn is the table column denoting the appointment relation/edge.
+	AppointmentColumn = "work_order_appointment"
 )
 
 // Columns holds all SQL columns for workorder fields.

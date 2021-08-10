@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -56,6 +57,7 @@ type WorkOrderQuery struct {
 	withProject             *ProjectQuery
 	withOwner               *UserQuery
 	withAssignee            *UserQuery
+	withAppointment         *AppointmentQuery
 	withFKs                 bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -394,6 +396,28 @@ func (woq *WorkOrderQuery) QueryAssignee() *UserQuery {
 	return query
 }
 
+// QueryAppointment chains the current query on the appointment edge.
+func (woq *WorkOrderQuery) QueryAppointment() *AppointmentQuery {
+	query := &AppointmentQuery{config: woq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := woq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
+			sqlgraph.To(appointment.Table, appointment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, workorder.AppointmentTable, workorder.AppointmentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first WorkOrder entity in the query. Returns *NotFoundError when no workorder was found.
 func (woq *WorkOrderQuery) First(ctx context.Context) (*WorkOrder, error) {
 	nodes, err := woq.Limit(1).All(ctx)
@@ -584,6 +608,7 @@ func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
 		withProject:             woq.withProject.Clone(),
 		withOwner:               woq.withOwner.Clone(),
 		withAssignee:            woq.withAssignee.Clone(),
+		withAppointment:         woq.withAppointment.Clone(),
 		// clone intermediate query.
 		sql:  woq.sql.Clone(),
 		path: woq.path,
@@ -744,6 +769,17 @@ func (woq *WorkOrderQuery) WithAssignee(opts ...func(*UserQuery)) *WorkOrderQuer
 	return woq
 }
 
+//  WithAppointment tells the query-builder to eager-loads the nodes that are connected to
+// the "appointment" edge. The optional arguments used to configure the query builder of the edge.
+func (woq *WorkOrderQuery) WithAppointment(opts ...func(*AppointmentQuery)) *WorkOrderQuery {
+	query := &AppointmentQuery{config: woq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	woq.withAppointment = query
+	return woq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -814,7 +850,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		nodes       = []*WorkOrder{}
 		withFKs     = woq.withFKs
 		_spec       = woq.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [15]bool{
 			woq.withType != nil,
 			woq.withTemplate != nil,
 			woq.withEquipment != nil,
@@ -829,6 +865,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			woq.withProject != nil,
 			woq.withOwner != nil,
 			woq.withAssignee != nil,
+			woq.withAppointment != nil,
 		}
 	)
 	if woq.withType != nil || woq.withTemplate != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
@@ -1240,6 +1277,35 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			for i := range nodes {
 				nodes[i].Edges.Assignee = n
 			}
+		}
+	}
+
+	if query := woq.withAppointment; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*WorkOrder)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Appointment = []*Appointment{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Appointment(func(s *sql.Selector) {
+			s.Where(sql.InValues(workorder.AppointmentColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.work_order_appointment
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "work_order_appointment" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "work_order_appointment" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Appointment = append(node.Edges.Appointment, n)
 		}
 	}
 

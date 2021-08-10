@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -385,6 +386,21 @@ func (woc *WorkOrderCreate) SetNillableAssigneeID(id *int) *WorkOrderCreate {
 // SetAssignee sets the assignee edge to User.
 func (woc *WorkOrderCreate) SetAssignee(u *User) *WorkOrderCreate {
 	return woc.SetAssigneeID(u.ID)
+}
+
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (woc *WorkOrderCreate) AddAppointmentIDs(ids ...int) *WorkOrderCreate {
+	woc.mutation.AddAppointmentIDs(ids...)
+	return woc
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (woc *WorkOrderCreate) AddAppointment(a ...*Appointment) *WorkOrderCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return woc.AddAppointmentIDs(ids...)
 }
 
 // Mutation returns the WorkOrderMutation object of the builder.
@@ -860,6 +876,25 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := woc.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
 				},
 			},
 		}

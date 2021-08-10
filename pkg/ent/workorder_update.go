@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -398,6 +399,21 @@ func (wou *WorkOrderUpdate) SetAssignee(u *User) *WorkOrderUpdate {
 	return wou.SetAssigneeID(u.ID)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (wou *WorkOrderUpdate) AddAppointmentIDs(ids ...int) *WorkOrderUpdate {
+	wou.mutation.AddAppointmentIDs(ids...)
+	return wou
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (wou *WorkOrderUpdate) AddAppointment(a ...*Appointment) *WorkOrderUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wou.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
@@ -605,6 +621,27 @@ func (wou *WorkOrderUpdate) ClearOwner() *WorkOrderUpdate {
 func (wou *WorkOrderUpdate) ClearAssignee() *WorkOrderUpdate {
 	wou.mutation.ClearAssignee()
 	return wou
+}
+
+// ClearAppointment clears all "appointment" edges to type Appointment.
+func (wou *WorkOrderUpdate) ClearAppointment() *WorkOrderUpdate {
+	wou.mutation.ClearAppointment()
+	return wou
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (wou *WorkOrderUpdate) RemoveAppointmentIDs(ids ...int) *WorkOrderUpdate {
+	wou.mutation.RemoveAppointmentIDs(ids...)
+	return wou
+}
+
+// RemoveAppointment removes appointment edges to Appointment.
+func (wou *WorkOrderUpdate) RemoveAppointment(a ...*Appointment) *WorkOrderUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wou.RemoveAppointmentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1450,6 +1487,60 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if wou.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedAppointmentIDs(); len(nodes) > 0 && !wou.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -1821,6 +1912,21 @@ func (wouo *WorkOrderUpdateOne) SetAssignee(u *User) *WorkOrderUpdateOne {
 	return wouo.SetAssigneeID(u.ID)
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (wouo *WorkOrderUpdateOne) AddAppointmentIDs(ids ...int) *WorkOrderUpdateOne {
+	wouo.mutation.AddAppointmentIDs(ids...)
+	return wouo
+}
+
+// AddAppointment adds the appointment edges to Appointment.
+func (wouo *WorkOrderUpdateOne) AddAppointment(a ...*Appointment) *WorkOrderUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wouo.AddAppointmentIDs(ids...)
+}
+
 // Mutation returns the WorkOrderMutation object of the builder.
 func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
@@ -2028,6 +2134,27 @@ func (wouo *WorkOrderUpdateOne) ClearOwner() *WorkOrderUpdateOne {
 func (wouo *WorkOrderUpdateOne) ClearAssignee() *WorkOrderUpdateOne {
 	wouo.mutation.ClearAssignee()
 	return wouo
+}
+
+// ClearAppointment clears all "appointment" edges to type Appointment.
+func (wouo *WorkOrderUpdateOne) ClearAppointment() *WorkOrderUpdateOne {
+	wouo.mutation.ClearAppointment()
+	return wouo
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (wouo *WorkOrderUpdateOne) RemoveAppointmentIDs(ids ...int) *WorkOrderUpdateOne {
+	wouo.mutation.RemoveAppointmentIDs(ids...)
+	return wouo
+}
+
+// RemoveAppointment removes appointment edges to Appointment.
+func (wouo *WorkOrderUpdateOne) RemoveAppointment(a ...*Appointment) *WorkOrderUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return wouo.RemoveAppointmentIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -2863,6 +2990,60 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedAppointmentIDs(); len(nodes) > 0 && !wouo.mutation.AppointmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.AppointmentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.AppointmentTable,
+			Columns: []string{workorder.AppointmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: appointment.FieldID,
 				},
 			},
 		}

@@ -26,6 +26,19 @@ func (f ActivityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The AppointmentFunc type is an adapter to allow the use of ordinary
+// function as Appointment mutator.
+type AppointmentFunc func(context.Context, *ent.AppointmentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppointmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppointmentMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppointmentMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The BlockFunc type is an adapter to allow the use of ordinary
 // function as Block mutator.
 type BlockFunc func(context.Context, *ent.BlockMutation) (ent.Value, error)

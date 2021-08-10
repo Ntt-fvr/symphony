@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -83,6 +84,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
+	// Appointment is the client for interacting with the Appointment builders.
+	Appointment *AppointmentClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -211,6 +214,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Activity = NewActivityClient(c.config)
+	c.Appointment = NewAppointmentClient(c.config)
 	c.Block = NewBlockClient(c.config)
 	c.BlockInstance = NewBlockInstanceClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
@@ -300,6 +304,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                         ctx,
 		config:                      cfg,
 		Activity:                    NewActivityClient(cfg),
+		Appointment:                 NewAppointmentClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
@@ -372,6 +377,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		config:                      cfg,
 		Activity:                    NewActivityClient(cfg),
+		Appointment:                 NewAppointmentClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
@@ -457,6 +463,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Activity.Use(hooks...)
+	c.Appointment.Use(hooks...)
 	c.Block.Use(hooks...)
 	c.BlockInstance.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
@@ -634,6 +641,127 @@ func (c *ActivityClient) QueryWorkOrder(a *Activity) *WorkOrderQuery {
 func (c *ActivityClient) Hooks() []Hook {
 	hooks := c.hooks.Activity
 	return append(hooks[:len(hooks):len(hooks)], activity.Hooks[:]...)
+}
+
+// AppointmentClient is a client for the Appointment schema.
+type AppointmentClient struct {
+	config
+}
+
+// NewAppointmentClient returns a client for the Appointment from the given config.
+func NewAppointmentClient(c config) *AppointmentClient {
+	return &AppointmentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appointment.Hooks(f(g(h())))`.
+func (c *AppointmentClient) Use(hooks ...Hook) {
+	c.hooks.Appointment = append(c.hooks.Appointment, hooks...)
+}
+
+// Create returns a create builder for Appointment.
+func (c *AppointmentClient) Create() *AppointmentCreate {
+	mutation := newAppointmentMutation(c.config, OpCreate)
+	return &AppointmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Appointment entities.
+func (c *AppointmentClient) CreateBulk(builders ...*AppointmentCreate) *AppointmentCreateBulk {
+	return &AppointmentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Appointment.
+func (c *AppointmentClient) Update() *AppointmentUpdate {
+	mutation := newAppointmentMutation(c.config, OpUpdate)
+	return &AppointmentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppointmentClient) UpdateOne(a *Appointment) *AppointmentUpdateOne {
+	mutation := newAppointmentMutation(c.config, OpUpdateOne, withAppointment(a))
+	return &AppointmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppointmentClient) UpdateOneID(id int) *AppointmentUpdateOne {
+	mutation := newAppointmentMutation(c.config, OpUpdateOne, withAppointmentID(id))
+	return &AppointmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Appointment.
+func (c *AppointmentClient) Delete() *AppointmentDelete {
+	mutation := newAppointmentMutation(c.config, OpDelete)
+	return &AppointmentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AppointmentClient) DeleteOne(a *Appointment) *AppointmentDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AppointmentClient) DeleteOneID(id int) *AppointmentDeleteOne {
+	builder := c.Delete().Where(appointment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppointmentDeleteOne{builder}
+}
+
+// Query returns a query builder for Appointment.
+func (c *AppointmentClient) Query() *AppointmentQuery {
+	return &AppointmentQuery{config: c.config}
+}
+
+// Get returns a Appointment entity by its id.
+func (c *AppointmentClient) Get(ctx context.Context, id int) (*Appointment, error) {
+	return c.Query().Where(appointment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppointmentClient) GetX(ctx context.Context, id int) *Appointment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryWorkorder queries the workorder edge of a Appointment.
+func (c *AppointmentClient) QueryWorkorder(a *Appointment) *WorkOrderQuery {
+	query := &WorkOrderQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appointment.Table, appointment.FieldID, id),
+			sqlgraph.To(workorder.Table, workorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, appointment.WorkorderTable, appointment.WorkorderColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAssignee queries the assignee edge of a Appointment.
+func (c *AppointmentClient) QueryAssignee(a *Appointment) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appointment.Table, appointment.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, appointment.AssigneeTable, appointment.AssigneeColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AppointmentClient) Hooks() []Hook {
+	hooks := c.hooks.Appointment
+	return append(hooks[:len(hooks):len(hooks)], appointment.Hooks[:]...)
 }
 
 // BlockClient is a client for the Block schema.
@@ -8136,6 +8264,22 @@ func (c *UserClient) QueryFeatures(u *User) *FeatureQuery {
 	return query
 }
 
+// QueryAppointment queries the appointment edge of a User.
+func (c *UserClient) QueryAppointment(u *User) *AppointmentQuery {
+	query := &AppointmentQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(appointment.Table, appointment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AppointmentTable, user.AppointmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -8579,6 +8723,22 @@ func (c *WorkOrderClient) QueryAssignee(wo *WorkOrder) *UserQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.AssigneeTable, workorder.AssigneeColumn),
+		)
+		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppointment queries the appointment edge of a WorkOrder.
+func (c *WorkOrderClient) QueryAppointment(wo *WorkOrder) *AppointmentQuery {
+	query := &AppointmentQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, id),
+			sqlgraph.To(appointment.Table, appointment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, workorder.AppointmentTable, workorder.AppointmentColumn),
 		)
 		fromV = sqlgraph.Neighbors(wo.driver.Dialect(), step)
 		return fromV, nil

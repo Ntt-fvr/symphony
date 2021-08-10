@@ -201,6 +201,7 @@ func (WorkOrder) Edges() []ent.Edge {
 		edge.To("assignee", User.Type).
 			Annotations(entgql.MapsTo("assignedTo")).
 			Unique(),
+		edge.To("appointment", Appointment.Type),
 	}
 }
 
