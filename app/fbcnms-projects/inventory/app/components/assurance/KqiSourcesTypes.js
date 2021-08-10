@@ -7,6 +7,9 @@
  * @flow
  * @format
  */
+import type {DeleteKqiSourceMutationVariables} from '../../mutations/__generated__/DeleteKqiSourceMutation.graphql';
+
+import DeleteKqiSourceMutation from '../../mutations/DeleteKqiSourceMutation';
 
 import React, {useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
@@ -77,6 +80,13 @@ const KqiSourcesTypes = () => {
     });
   }, [items]);
 
+  const handleRemove = id => {
+    const variables: DeleteKqiSourceMutationVariables = {
+      id: id,
+    };
+    DeleteKqiSourceMutation(variables);
+  };
+
   const showEditKqiSourceForm = (kqiSources: KqiSource) => {
     setShowEditCard(true);
     setDataEdit(kqiSources);
@@ -114,7 +124,7 @@ const KqiSourcesTypes = () => {
             {items.kqiSources?.edges.map(item => (
               <KqiSourcesTypeItem
                 key={item.node?.id}
-                // handleRemove={() => handleRemove(item.node?.id)}
+                handleRemove={() => handleRemove(item.node?.id)}
                 edit={() => showEditKqiSourceForm({item})}
                 {...item.node}
               />

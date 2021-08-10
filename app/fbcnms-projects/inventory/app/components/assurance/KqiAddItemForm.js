@@ -96,6 +96,7 @@ export const KqiAddItemForm = (props: Props) => {
         card_header="Add KQI Source"
         title="KQI Source"
         text_button="Add new KQI Source"
+        names={kqiSourcesNames}
       />
     );
   }

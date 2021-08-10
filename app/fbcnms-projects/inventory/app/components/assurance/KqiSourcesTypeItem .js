@@ -74,10 +74,11 @@ type Props = $ReadOnly<{|
   id: string,
   name: string,
   edit: MouseEventHandler,
+  handleRemove: void => void,
 |}>;
 
 const KqiSourcesTypeItem = (props: Props) => {
-  const {name, id, edit} = props;
+  const {name, id, edit, handleRemove} = props;
   const classes = useStyles();
 
   return (
@@ -99,7 +100,10 @@ const KqiSourcesTypeItem = (props: Props) => {
           <Grid
             xs={1}
             className={classNames(classes.inside, classes.contIconDelete)}>
-            <DeleteOutlinedIcon className={classes.deleteIcon} />
+            <DeleteOutlinedIcon
+              className={classes.deleteIcon}
+              onClick={handleRemove}
+            />
           </Grid>
           <Grid
             xs={1}
