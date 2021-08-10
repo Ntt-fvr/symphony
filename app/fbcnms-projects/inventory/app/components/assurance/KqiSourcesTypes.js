@@ -81,7 +81,7 @@ const KqiSourcesTypes = () => {
     setShowEditCard(true);
     setDataEdit(kqiSources);
   };
-  const hideEditCounterForm = () => {
+  const hideKqiSourceFormEdit = () => {
     setShowEditCard(false);
   };
 
@@ -92,7 +92,7 @@ const KqiSourcesTypes = () => {
       <KqiSourceFormEdit
         kqiSourcesNames={kqiSourcesNames}
         formValues={dataEdit.item.node}
-        hideEditCounterForm={hideEditCounterForm}
+        hideKqiSourceFormEdit={hideKqiSourceFormEdit}
       />
     );
   }
