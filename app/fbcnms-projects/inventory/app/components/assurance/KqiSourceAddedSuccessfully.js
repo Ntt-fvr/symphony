@@ -44,15 +44,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type Node = {
+  node: {
+    name: string,
+  },
+};
 type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
   data_entry: string,
+  names?: Array<Node>,
+  kqiSourcesNames: Array<Node>,
 |}>;
 
 const KqiSourceAddedSuccessfully = (props: Props) => {
-  const {card_header, title, text_button, data_entry} = props;
+  const {
+    card_header,
+    title,
+    text_button,
+    data_entry,
+    kqiSourcesNames,
+    names,
+  } = props;
   const classes = useStyles();
   const [returnForm, setReturnForm] = useState(false);
 
@@ -62,7 +76,11 @@ const KqiSourceAddedSuccessfully = (props: Props) => {
 
   if (returnForm) {
     return (
-      <>{data_entry == 'KQI Source' && <KqiAddItemForm dataValues={[]} />}</>
+      <>
+        {data_entry === 'KQI Source' && (
+          <KqiAddItemForm kqiSourcesNames={names} />
+        )}
+      </>
     );
   }
   return (
@@ -85,7 +103,7 @@ const KqiSourceAddedSuccessfully = (props: Props) => {
         </Grid>
         <Grid className={classes.addButton}>
           <Clickable onClick={handleClick}>
-            <AddButton textButton={text_button} />
+            <AddButton textButton={text_button} disabled={false} />
           </Clickable>
         </Grid>
       </Grid>
