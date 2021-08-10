@@ -4256,6 +4256,10 @@ input ProjectFilterInput {
 
 enum CounterFilterType {
   NAME
+  EXTERNALID
+  NETWORKMANAGERSYSTEM
+  COUNTERFAMILY
+  VENDORFK
 }
 
 input CounterFilterInput {
@@ -6916,7 +6920,7 @@ input EditTechInput {
 
 type Formula implements Node {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
@@ -6924,7 +6928,7 @@ type Formula implements Node {
 }
 
 input AddFormulaInput {
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -6932,7 +6936,7 @@ input AddFormulaInput {
 
 input EditFormulaInput {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!

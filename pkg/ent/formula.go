@@ -26,8 +26,8 @@ type Formula struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	// TextFormula holds the value of the "textFormula" field.
+	TextFormula string `json:"textFormula,omitempty"`
 	// Status holds the value of the "status" field.
 	Status bool `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -93,7 +93,7 @@ func (*Formula) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
+		&sql.NullString{}, // textFormula
 		&sql.NullBool{},   // status
 	}
 }
@@ -129,9 +129,9 @@ func (f *Formula) assignValues(values ...interface{}) error {
 		f.UpdateTime = value.Time
 	}
 	if value, ok := values[2].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field name", values[2])
+		return fmt.Errorf("unexpected type %T for field textFormula", values[2])
 	} else if value.Valid {
-		f.Name = value.String
+		f.TextFormula = value.String
 	}
 	if value, ok := values[3].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field status", values[3])
@@ -198,8 +198,8 @@ func (f *Formula) String() string {
 	builder.WriteString(f.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(f.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", name=")
-	builder.WriteString(f.Name)
+	builder.WriteString(", textFormula=")
+	builder.WriteString(f.TextFormula)
 	builder.WriteString(", status=")
 	builder.WriteString(fmt.Sprintf("%v", f.Status))
 	builder.WriteByte(')')

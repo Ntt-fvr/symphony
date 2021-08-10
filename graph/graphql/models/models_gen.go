@@ -175,10 +175,10 @@ type AddFlowDraftInput struct {
 }
 
 type AddFormulaInput struct {
-	Name   string `json:"name"`
-	Status bool   `json:"status"`
-	TechFk int    `json:"techFk"`
-	KpiFk  int    `json:"kpiFk"`
+	TextFormula string `json:"textFormula"`
+	Status      bool   `json:"status"`
+	TechFk      int    `json:"techFk"`
+	KpiFk       int    `json:"kpiFk"`
 }
 
 type AddHyperlinkInput struct {
@@ -711,11 +711,11 @@ type EditFlowInstanceInput struct {
 }
 
 type EditFormulaInput struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Status bool   `json:"status"`
-	TechFk int    `json:"techFk"`
-	KpiFk  int    `json:"kpiFk"`
+	ID          int    `json:"id"`
+	TextFormula string `json:"textFormula"`
+	Status      bool   `json:"status"`
+	TechFk      int    `json:"techFk"`
+	KpiFk       int    `json:"kpiFk"`
 }
 
 type EditKpiInput struct {
@@ -1859,16 +1859,24 @@ func (e CounterFamilyFilterType) MarshalGQL(w io.Writer) {
 type CounterFilterType string
 
 const (
-	CounterFilterTypeName CounterFilterType = "NAME"
+	CounterFilterTypeName                 CounterFilterType = "NAME"
+	CounterFilterTypeExternalid           CounterFilterType = "EXTERNALID"
+	CounterFilterTypeNetworkmanagersystem CounterFilterType = "NETWORKMANAGERSYSTEM"
+	CounterFilterTypeCounterfamily        CounterFilterType = "COUNTERFAMILY"
+	CounterFilterTypeVendorfk             CounterFilterType = "VENDORFK"
 )
 
 var AllCounterFilterType = []CounterFilterType{
 	CounterFilterTypeName,
+	CounterFilterTypeExternalid,
+	CounterFilterTypeNetworkmanagersystem,
+	CounterFilterTypeCounterfamily,
+	CounterFilterTypeVendorfk,
 }
 
 func (e CounterFilterType) IsValid() bool {
 	switch e {
-	case CounterFilterTypeName:
+	case CounterFilterTypeName, CounterFilterTypeExternalid, CounterFilterTypeNetworkmanagersystem, CounterFilterTypeCounterfamily, CounterFilterTypeVendorfk:
 		return true
 	}
 	return false
