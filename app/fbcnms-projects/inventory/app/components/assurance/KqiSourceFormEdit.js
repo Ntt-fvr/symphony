@@ -157,6 +157,7 @@ const KqiSourceFormEdit = (props: Props) => {
                     {...name}
                     className={classes.textInput}
                     name="name"
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
@@ -166,6 +167,7 @@ const KqiSourceFormEdit = (props: Props) => {
                     {...id}
                     className={classes.textInput}
                     name="iD"
+                    autoComplete="off"
                     disabled
                   />
                 </FormField>

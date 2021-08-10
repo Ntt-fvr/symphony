@@ -14,6 +14,9 @@ import React, {useState} from 'react';
 import KqiSourceAddedSuccessfully from './KqiSourceAddedSuccessfully';
 
 // MUTATIONS //
+import type {AddKqiSourceMutationVariables} from '../../mutations/__generated__/AddKqiSourceMutation.graphql';
+
+import AddKqiSourceMutation from '../../mutations/AddKqiSourceMutation';
 
 // DESING SYSTEM //
 import Button from '@symphony/design-system/components/Button';
@@ -43,54 +46,48 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-end',
   },
 }));
-
+type Node = {
+  node: {
+    name: string,
+  },
+};
 type Props = $ReadOnly<{|
-  dataValues: Array<string>,
+  kqiSourcesNames: Array<Node>,
 |}>;
 
-type Counters = {
+type KqiSources = {
   data: {
-    name: string,
     id: string,
-    nms: string,
-    family: string,
+    name: string,
   },
 };
 
 export const KqiAddItemForm = (props: Props) => {
-  const {dataValues} = props;
+  const {kqiSourcesNames} = props;
   const classes = useStyles();
-  const [counters, setCounters] = useState<Counters>({data: {}});
+  const [kqiSource, setkqiSource] = useState<KqiSources>({data: {}});
   const [showChecking, setShowChecking] = useState();
-  const [activate, setActivate] = useState('');
 
-  const inputFilter = () => {
-    return dataValues?.filter(item => item === counters.data.name) || [];
-  };
+  const names = kqiSourcesNames?.map(item => item.node.name);
 
   function handleChange({target}) {
-    setCounters({
+    setkqiSource({
       data: {
-        ...counters.data,
+        ...kqiSource.data,
         [target.name]: target.value,
       },
     });
-
-    const validateInputs = Object.values(counters.data);
-    validateInputs.map(item => item != null) &&
-      validateInputs.length === 1 &&
-      setActivate(validateInputs);
   }
 
   function handleClick() {
+    const variables: AddKqiSourceMutationVariables = {
+      input: {
+        name: kqiSource.data.name,
+      },
+    };
     setShowChecking(true);
+    AddKqiSourceMutation(variables);
   }
-
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'KQI name existing'};
-    }
-  };
 
   if (showChecking) {
     return (
@@ -110,19 +107,31 @@ export const KqiAddItemForm = (props: Props) => {
         className={classes.formField}
         label="Name"
         required
-        {...validationName()}>
+        hasError={names?.some(item => item === kqiSource.data.name)}
+        errorText={
+          names?.some(item => item === kqiSource.data.name)
+            ? 'Name existing'
+            : ''
+        }>
         <TextInput
           className={classes.textInput}
           name="name"
           type="string"
           onChange={handleChange}
+          autoComplete="off"
         />
       </FormField>
       <FormField>
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={!activate}>
+          disabled={
+            !(
+              Object.values(kqiSource.data).length === 1 &&
+              !Object.values(kqiSource.data).some(item => item === '') &&
+              !names?.some(item => item === kqiSource.data.name)
+            )
+          }>
           Save KQI Source
         </Button>
       </FormField>

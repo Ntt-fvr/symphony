@@ -122,7 +122,7 @@ const KqiSourcesTypes = () => {
           </List>
         </Grid>
         <Grid className={classes.paper} item xs={3}>
-          <KqiAddItemForm />
+          <KqiAddItemForm kqiSourcesNames={items.kqiSources?.edges} />
         </Grid>
       </Grid>
     </div>
