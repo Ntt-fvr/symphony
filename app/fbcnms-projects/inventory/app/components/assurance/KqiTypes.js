@@ -9,7 +9,7 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -19,6 +19,9 @@ import KqiFormEdit from './KqiFormEdit';
 import Button from '@symphony/design-system/components/Button';
 import KqiTable from './KqiTable';
 import fbt from 'fbt';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery} from 'relay-runtime';
+import {graphql} from 'react-relay';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,28 +33,139 @@ const useStyles = makeStyles(theme => ({
   },
   addKpi: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titulo: {
-    paddingTop: '2rem',
-  },
-  buttonAdd: {
-    padding: '0 2rem',
   },
 }));
 
+const KqiQuery = graphql`
+  query KqiTypesQuery{
+    kqis{
+      edges{
+        node{
+          id
+          name
+          description
+          formula
+          startDateTime
+          endDateTime
+          kqiCategory{
+            id
+            name 
+          }
+          kqiPerspective{
+            id
+            name
+          }
+          kqiSource{
+            id
+            name
+          }
+          kqiTemporalFrequency{
+            id
+            name
+          }
+        }
+      }
+    }
+    kqiPerspectives{
+      edges{
+        node{
+          id
+          name
+        }
+      }
+    }
+    kqiSources{
+      edges{
+        node{
+          id
+          name
+        }
+      }
+    }
+    kqiCategories{
+      edges{
+        node{
+          id
+          name
+        }
+      }
+    }
+    kqiTemporalFrequencies{
+      edges{
+        node{
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+
+type Kqis = {
+  item: {
+    node: {
+      id: string,
+      name: string,
+      kqi: {
+        id: string,
+        name: string,
+        description: string,
+        formula: string,
+        startDateTime: string,
+        endDateTime: string,
+        kqiCategory: {
+          id: string,
+          name: string,
+        },
+        kqiPerspective: {
+          id: string,
+          name: string,
+        },
+        kqiSource: {
+          id: string,
+          name: string,
+        },
+        kqiTemporalFrequency: {
+          id: string,
+          name: string,
+        }
+      }
+    }
+  }
+}
+
 const KqiTypes = () => {
   const classes = useStyles();
+  const [dataKqi, setDataKqi] = useState({});
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
+  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node)
+  const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node)
+  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node)
+  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node)
+
+  useEffect(() => {
+      fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
+        setDataKqi(data);
+      });
+    }, []);
+  
   function handleClick() {
     setShowFormCreate(true);
   }
 
   if (showFormCreate) {
-    return <KqiFormCreate returnTableKqi={() => setShowFormCreate(false)} />;
+    return (
+      <KqiFormCreate
+        dataPerspectives={dataResponsePerspectives}
+        dataSources={dataResponseSources}
+        dataCategories={dataResponseCategories}
+        dataTemporalFrequencies={dataResponseTemporalFrequencies}
+        returnTableKqi={() => setShowFormCreate(false)}
+      />
+    );
   }
 
   function formEdit() {
@@ -82,7 +196,7 @@ const KqiTypes = () => {
       </Grid>
       <Grid className={classes.titulo} container spacing={2}>
         <Grid className={classes.paper} item xs={12}>
-          <KqiTable viewFormEdit={formEdit} />
+          <KqiTable dataValues={dataKqi.kqis?.edges.map(item => item.node)} viewFormEdit={formEdit} />
         </Grid>
       </Grid>
     </div>
