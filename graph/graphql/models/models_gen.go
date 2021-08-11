@@ -71,7 +71,7 @@ type AddAlarmFilterInput struct {
 	Reason          string    `json:"reason"`
 	User            string    `json:"user"`
 	CreationTime    time.Time `json:"creationTime"`
-	AlarmStatus     int       `json:"alarmStatus"`
+	AlarmStatus     *int      `json:"alarmStatus"`
 }
 
 type AddAlarmStatusInput struct {
@@ -617,7 +617,7 @@ type EditAlarmFilterInput struct {
 	BeginTime       time.Time `json:"beginTime"`
 	EndTime         time.Time `json:"endTime"`
 	Reason          string    `json:"reason"`
-	AlarmStatus     int       `json:"alarmStatus"`
+	AlarmStatus     *int      `json:"alarmStatus"`
 }
 
 type EditAlarmStatusInput struct {

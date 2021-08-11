@@ -19904,7 +19904,7 @@ input AddAlarmFilterInput {
   reason: String!
   user: String!
   creationTime: Time!  
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 input AlarmFilterInput {
@@ -19926,7 +19926,7 @@ input EditAlarmFilterInput {
   beginTime: Time!
   endTime: Time!
   reason: String! 
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 enum AlarmFilterFilterType {
@@ -74475,7 +74475,7 @@ func (ec *executionContext) unmarshalInputAddAlarmFilterInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
-			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			it.AlarmStatus, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -78417,7 +78417,7 @@ func (ec *executionContext) unmarshalInputEditAlarmFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
-			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			it.AlarmStatus, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}

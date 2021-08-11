@@ -7199,7 +7199,7 @@ input AddAlarmFilterInput {
   reason: String!
   user: String!
   creationTime: Time!  
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 input AlarmFilterInput {
@@ -7221,7 +7221,7 @@ input EditAlarmFilterInput {
   beginTime: Time!
   endTime: Time!
   reason: String! 
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 enum AlarmFilterFilterType {
