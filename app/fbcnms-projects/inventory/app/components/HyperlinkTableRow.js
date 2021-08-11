@@ -72,7 +72,6 @@ class HyperlinkTableRow extends React.Component<Props, State> {
   static contextType = AppContext;
   context: AppContextType;
 
-  /**TODO: Desde properties de Files */
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -82,45 +81,12 @@ class HyperlinkTableRow extends React.Component<Props, State> {
     };
   }
 
-  /**TODO - modularizar funciones */
-  // handleDelete = () => {
-  //   this.props.onDocumentDeleted(this.props.file);
-  // };
-
-  handleInputChangeLink = () => {
-    // this.setState({isChecked: !this.state.isChecked}, () => {
-    //   if (this.state.isChecked) {
-    //     if (this.props.onChecked)
-    //       this.props.onChecked({type: 'checkIncrement'});
-
-    //     if (this.state.selectValue !== '') {
-    //       if (this.props.onChecked)
-    //         this.props.onChecked({
-    //           type: 'valueIncrement',
-    //           file: this.props.hyperlink,
-    //           value: this.state.selectValue,
-    //         });
-    //     }
-    //   } else {
-    //     if (this.props.onChecked)
-    //       this.props.onChecked({type: 'checkDecrement'});
-    //     if (this.state.selectValue !== '') {
-    //       if (this.props.onChecked)
-    //         this.props.onChecked({
-    //           type: 'valueDecrement',
-    //           file: this.props.hyperlink,
-    //           value: this.state.selectValue,
-    //         });
-    //     }
-    //   }
-    // });
+  handleInputChangeLink = selection => {
     this.setState({isChecked: !this.state.isChecked}, () => {
       if (this.state.isChecked) {
-        // despues de dar click al check = estado'activo'
         if (this.props.onChecked)
           this.props.onChecked({type: 'checkIncrement'});
         if (this.state.selectValue !== '') {
-          console.log('ya entre');
           if (this.props.onChecked)
             this.props.onChecked({
               type: 'valueIncrement',
@@ -145,15 +111,13 @@ class HyperlinkTableRow extends React.Component<Props, State> {
 
   render() {
     const _setCategory = (value: string) => {
-      if (this.state.selectValue === '') {
-        if (this.props.onChecked)
-          this.props.onChecked({
-            type: 'valueIncrement',
-            link: this.props.hyperlink,
-            value: value,
-          });
+      if (this.props.onChecked) {
+        this.props.onChecked({
+          type: 'valueIncrement',
+          link: this.props.hyperlink,
+          value: value,
+        });
       }
-      this.setState({selectValue: value});
       return;
     };
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
@@ -217,9 +181,13 @@ class HyperlinkTableRow extends React.Component<Props, State> {
                   label: x,
                 }))}
                 onChange={value => {
-                  _setCategory(value ? value : '');
+                  this.setState({selectValue: value}, () => {
+                    _setCategory(this.state.selectValue);
+                  });
                 }}
-                selectedValue={this.state.isChecked && this.state.selectValue}
+                selectedValue={
+                  this.state.isChecked ? this.state.selectValue : ''
+                }
               />
             </FormField>
           </TableCell>
