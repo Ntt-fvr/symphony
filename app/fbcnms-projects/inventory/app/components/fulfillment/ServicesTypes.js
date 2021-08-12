@@ -9,25 +9,95 @@
  */
 
 import React from 'react';
+import fbt from 'fbt';
+
+// COMPONENTS //
+import Button from '@symphony/design-system/components/Button';
+import ConfigureTitle from './common/ConfigureTitle';
+import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+
+import ServiceTypeCard from './ServicesTypeCard';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1,
+    flexGrow: '1',
     margin: '40px',
+    // border: '1px solid red',
   },
   paper: {
     padding: theme.spacing(2),
   },
-  listCarKpi: {
-    listStyle: 'none',
+  container: {
+    // border: '1px solid black',
+  },
+  containerTitle: {
+    // border: '1px solid orange',
+  },
+  title: {
+    marginLeft: '0.3rem',
+  },
+  containerButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    // border: '1px solid orange',
+  },
+  button: {
+    padding: '0 2rem',
+    marginRight: '0.7rem',
   },
 }));
 
+const handleClickAdd = () => {
+  console.log('Agregar service');
+};
+
+const st = 'Service type';
+const str = 'CFS';
+const si = 'Service ID';
+const sir = '112';
+const de = 'Description';
+const der = 'CFS Access';
+const as = 'Associated services';
+const asr = '2 RFS';
+
 const ServicesTypes = () => {
+  const classes = useStyles();
+
   return (
-    <div>
-      <h1>Hola Mundo</h1>
+    <div className={classes.root}>
+      <Grid container spacing={2} className={classes.container}>
+        <Grid item xs={10} className={classes.containerTitle}>
+          <ConfigureTitle
+            className={classes.title}
+            title={fbt('Service', '')}
+            subtitle={fbt(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+              '',
+            )}
+          />
+        </Grid>
+        <Grid xs={2} className={classes.containerButton}>
+          <Button onClick={handleClickAdd} className={classes.button}>
+            Add Service
+          </Button>
+        </Grid>
+        <Grid className={classes.paper} item xs={12}>
+          <List disablePadding>
+            <ServiceTypeCard
+              serviceType={st}
+              serviceTypeRes={str}
+              serviceID={si}
+              serviceIdRes={sir}
+              description={de}
+              descriptionRes={der}
+              associatedServices={as}
+              associatedServicesRes={asr}
+            />
+          </List>
+        </Grid>
+      </Grid>
     </div>
   );
 };
