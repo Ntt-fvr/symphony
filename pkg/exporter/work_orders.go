@@ -123,9 +123,11 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 		}
 	}
 	templa, err := wo.QueryTemplate().Only(ctx)
+	if ent.MaskNotFound(err) != nil {
+		return nil, err
+	}
 	if templa != nil {
 		templateName = templa.Name
-
 	}
 	if v := wo.CloseDate; v != nil {
 		date = GetStringDate(v)
