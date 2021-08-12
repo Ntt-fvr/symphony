@@ -252,7 +252,9 @@ func TestExportWOWithFilters(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
+				wo.QueryTemplate().OnlyX(ctx).Name,
 				workorder.StatusClosed.String(),
+				GetStringDate(wo.CloseDate),
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),
