@@ -37,7 +37,7 @@ type WoRower struct {
 	Log log.Logger
 }
 
-var WoDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
+var WoDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Template", "Project Name", "Status", "Close Date", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
 func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
@@ -101,7 +101,7 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 	if err != nil {
 		return nil, err
 	}
-	var projName, locName string
+	var projName, locName, templateName, date string
 
 	proj, err := wo.QueryProject().Only(ctx)
 	if ent.MaskNotFound(err) != nil {
@@ -121,6 +121,14 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 		if err == nil && parent != nil {
 			locName = parent.Name + "; " + locName
 		}
+	}
+	templa, err := wo.QueryTemplate().Only(ctx)
+	if templa != nil {
+		templateName = templa.Name
+
+	}
+	if v := wo.CloseDate; v != nil {
+		date = GetStringDate(v)
 	}
 
 	assigneeName := ""
@@ -142,7 +150,7 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 	}
 
 	row := []string{
-		strconv.Itoa(wo.ID), wo.Name, projName, wo.Status.String(), assigneeName,
+		strconv.Itoa(wo.ID), wo.Name, projName, templateName, wo.Status.String(), date, assigneeName,
 		ownerName, wo.Priority.String(), GetStringDate(&wo.CreationDate),
 		GetStringDate(wo.InstallDate), locName,
 	}
