@@ -81,7 +81,7 @@ class HyperlinkTableRow extends React.Component<Props, State> {
     };
   }
 
-  handleInputChangeLink = selection => {
+  handleInputChangeLink = () => {
     this.setState({isChecked: !this.state.isChecked}, () => {
       if (this.state.isChecked) {
         if (this.props.onChecked)
@@ -118,7 +118,6 @@ class HyperlinkTableRow extends React.Component<Props, State> {
           value: value,
         });
       }
-      return;
     };
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
     const {classes, hyperlink, entityId} = this.props;
