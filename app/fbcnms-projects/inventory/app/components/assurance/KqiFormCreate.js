@@ -26,10 +26,7 @@ import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 import moment from 'moment';
 import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
-
 import AddKqiMutation from '../../mutations/AddKqiMutation';
-import type {AlarmFilteringFormCreateQuery} from './__generated__/AlarmFilteringFormCreateQuery.graphql'
-
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const useStyles = makeStyles(() => ({

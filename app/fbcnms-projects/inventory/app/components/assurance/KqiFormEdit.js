@@ -28,9 +28,20 @@ import KqiFormEditTarget from './KqiFormEditTarget';
 import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import IconButton from '@symphony/design-system/components/IconButton';
+import {DARK} from '@symphony/design-system/theme/symphony';
+import IconButton from '@material-ui/core/IconButton'
 
 import {makeStyles} from '@material-ui/styles';
+import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
+
+import EditKqiMutation from '../../mutations/EditKqiMutation';
+// import type {RemoveKqiMutationVariables} from '../../mutations/__generated__/RemoveKqiMutation.graphql';
+
+// import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
+import {graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
+import moment from 'moment';
+import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -115,37 +126,93 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
-const data = {
-  counters: {
-    edges: [
-      {
-        node: {
-          id: '244813135872',
-          name: 'contador_family_7',
-          networkManagerSystem: 'hola bebe',
-          externalID: '123456789',
-        },
+
+type Props = $ReadOnly<{|
+  formValues: {
+    item: {
+      id: string,
+      name: string,
+      description: string,
+      formula: string,
+      startDateTime: string,
+      endDateTime: string,
+      kqiCategory: {
+        id: string,
+        name: string,
       },
-      {
-        node: {
-          id: '244813135873',
-          name: 'contador_family_8',
-          networkManagerSystem: 'hola sergio',
-          externalID: '987654321',
-        },
+      kqiPerspective: {
+        id: string,
+        name: string,
       },
-    ],
+      kqiSource: {
+        id: string,
+        name: string,
+      },
+      kqiTemporalFrequency: {
+        id: string,
+        name: string,
+      },
+    },
   },
-};
+  dataKqiTargets: any,
+  dataPerspectives: any,
+  dataSources: any,
+  dataCategories: any,
+  dataTemporalFrequencies: any,
+  returnTableKqi: () => void,
+|}>;
 
 const handleRemove = () => {
   console.log('remove');
 };
 
-const KqiFormEdit = props => {
+const KqiFormEdit = (props: Props) => {
+  const {
+    formValues,
+    dataKqiTargets,
+    dataPerspectives,
+    dataSources,
+    dataCategories,
+    dataTemporalFrequencies,
+    returnTableKqi
+  } = props;
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
   const [showEditTarget, setShowEditTarget] = useState(false);
+  console.log("Hola soy formValues", formValues);
+  const name = useFormInput(formValues.item.name);
+  const description = useFormInput(formValues.item.description);
+  const formula = useFormInput(formValues.item.formula);
+  const startDateTime = useFormInput(
+    moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
+  );
+  const endDateTime = useFormInput(
+    moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
+  );
+  const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
+  const kqiPerspective = useFormInput(formValues.item.kqiPerspective.id);
+  const kqiSource = useFormInput(formValues.item.kqiSource.id);
+  const kqiTemporalFrequency = useFormInput(
+    formValues.item.kqiTemporalFrequency.id,
+  );
+
+  const handleClick = () => {
+    const variables: EditKqiMutationVariables = {
+      input: {
+        id: formValues.item.id,
+        name: name.value,
+        description: description.value,
+        formula: formula.value,
+        startDateTime: moment(startDateTime.value).format(),
+        endDateTime: moment(endDateTime.value).format(),
+        kqiCategory: kqiCategory.value,
+        kqiPerspective: kqiPerspective.value,
+        kqiSource: kqiSource.value,
+        kqiTemporalFrequency: kqiTemporalFrequency.value,
+      },
+    };
+    EditKqiMutation(variables);
+  };
 
   const showFormCreateTarget = () => {
     setShowCreateTarget(true);
@@ -177,11 +244,12 @@ const KqiFormEdit = props => {
           />
         </Grid>
         <Grid item xs={1} className={classes.delete}>
-          <IconButton
-            skin={'gray'}
-            icon={DeleteOutlinedIcon}
-            onClick={handleRemove}
-          />
+          <IconButton>
+            <DeleteOutlinedIcon
+              onClick={handleRemove}
+              style={{color: DARK.D300}}
+            />
+          </IconButton>
         </Grid>
         <Grid item xs={2}>
           <Grid container>
@@ -191,7 +259,7 @@ const KqiFormEdit = props => {
                   className={classes.option}
                   variant="outlined"
                   color="primary"
-                  onClick={props.returnTableKqi}>
+                  onClick={() => returnTableKqi()}>
                   Cancel
                 </Button>
               </FormField>
@@ -199,7 +267,7 @@ const KqiFormEdit = props => {
             <Grid xs={6}>
               <FormField>
                 <Button
-                  onClick={props.returnTableKqi}
+                  onClick={handleClick}
                   className={classes.option}
                   variant="contained"
                   color="primary">
@@ -215,24 +283,34 @@ const KqiFormEdit = props => {
             <Grid container spacing={1} className={classes.insideContainer}>
               <Grid item xs={6}>
                 <FormField label="Name" className={classes.formField}>
-                  <TextInput className={classes.textInput} />
+                  <TextInput
+                    {...name}
+                    name="name"
+                    className={classes.textInput}
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="ID">
-                  <TextInput className={classes.textInput} />
+                  <TextInput
+                    value={formValues.item.id}
+                    name="id"
+                    disabled
+                    className={classes.textInput}
+                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
                 <Grid item xs={6}>
                   <FormField label="Category" className={classes.formField}>
                     <Select
+                      {...kqiCategory}
                       className={classes.select}
                       disableUnderline
-                      name="family">
-                      {data.counters.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
+                      name="kqiCategory">
+                      {dataCategories?.map((item, index) => (
+                        <MenuItem key={index} value={item.id}>
+                          {item.name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -241,12 +319,13 @@ const KqiFormEdit = props => {
                 <Grid item xs={6}>
                   <FormField label="Perspective" className={classes.formField}>
                     <Select
+                      {...kqiPerspective}
                       className={classes.select}
                       disableUnderline
-                      name="family">
-                      {data.counters.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
+                      name="kqiPerspective">
+                      {dataPerspectives?.map((item, index) => (
+                        <MenuItem key={index} value={item.id}>
+                          {item.name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -261,6 +340,8 @@ const KqiFormEdit = props => {
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Description">
                   <TextInput
+                    {...description}
+                    name="description"
                     className={classes.textInput}
                     type="multiline"
                     rows={3}
@@ -271,10 +352,12 @@ const KqiFormEdit = props => {
                 <Grid item xs={6}>
                   <FormField label="Start" className={classes.formField}>
                     <TextField
+                      {...startDateTime}
+                      disabled
+                      name="startDateTime"
                       variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-05-24T10:30"
                       className={classes.calendar}
                     />
                   </FormField>
@@ -282,10 +365,11 @@ const KqiFormEdit = props => {
                 <Grid item xs={6}>
                   <FormField label="End" className={classes.formField}>
                     <TextField
+                      {...endDateTime}
+                      name="endDateTime"
                       variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
-                      defaultValue="2021-05-24T10:30"
                       className={classes.calendar}
                     />
                   </FormField>
@@ -293,12 +377,13 @@ const KqiFormEdit = props => {
                 <Grid item xs={6}>
                   <FormField label="Source" className={classes.formField}>
                     <Select
+                      {...kqiSource}
                       className={classes.select}
                       disableUnderline
-                      name="family">
-                      {data.counters.edges.map((item, index) => (
-                        <MenuItem key={index} value={item.node?.id}>
-                          {item.node?.name}
+                      name="kqiSource">
+                      {dataSources?.map((item, index) => (
+                        <MenuItem key={index} value={item.id}>
+                          {item.name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -312,15 +397,16 @@ const KqiFormEdit = props => {
                       <Text variant={'caption'}>Repeat every</Text>
 
                       <Select
+                        {...kqiTemporalFrequency}
                         className={classNames(
                           classes.select,
                           classes.selectRepeatEvery,
                         )}
                         disableUnderline
-                        name="family">
-                        {data.counters.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
+                        name="kqiTemporalFrequency">
+                        {dataTemporalFrequencies?.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {item.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -331,6 +417,8 @@ const KqiFormEdit = props => {
               <Grid item xs={6}>
                 <FormField label="Formula" className={classes.formField}>
                   <TextInput
+                    {...formula}
+                    name="formula"
                     type="multiline"
                     rows={10}
                     className={classes.textInput}
@@ -343,6 +431,7 @@ const KqiFormEdit = props => {
       </Grid>
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
+          dataTableTargets={dataKqiTargets}
           create={() => showFormCreateTarget()}
           edit={() => showFormEditTarget()}
         />
