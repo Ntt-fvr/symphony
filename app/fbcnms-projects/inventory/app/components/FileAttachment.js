@@ -148,7 +148,6 @@ class FileAttachment extends React.Component<Props, State> {
           value: value,
         });
       }
-      return;
     };
 
     const {classes, file} = this.props;

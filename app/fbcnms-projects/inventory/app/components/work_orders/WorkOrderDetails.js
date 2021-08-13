@@ -177,7 +177,6 @@ const WorkOrderDetails = ({
 
   const linkFiles = () => {
     countDispatch({type: 'apply', value: '', file: null, link: null});
-
     if (state.files.length) {
       enqueueSnackbar('Linking files');
       onGroupDuplicates(state?.files).map(item => {
@@ -189,7 +188,6 @@ const WorkOrderDetails = ({
         );
       });
     }
-
     if (state.links.length) {
       enqueueSnackbar('Linking hyperlinks');
       onGroupDuplicates(state?.links).map(item => {
@@ -201,15 +199,14 @@ const WorkOrderDetails = ({
       });
     }
   };
-  const onGroupDuplicates = attach => {
-    const result: Array<Object> = Object.values(
-      attach.reduce((acc, item) => {
-        acc[item.id] = [...(acc[item.id] ?? []), item];
-        return acc;
-      }, []),
-    ).map((item: any) => item[item.length - 1]);
 
-    return result;
+  const onGroupDuplicates = attach => {
+    const result = attach.reduce((acc, item) => {
+      acc[item.id] = [...(acc[item.id] ?? []), item];
+      return acc;
+    }, []);
+
+    return Object.values(result).map((item: Object) => item[item.length - 1]);
   };
 
   function reducerCounter(
