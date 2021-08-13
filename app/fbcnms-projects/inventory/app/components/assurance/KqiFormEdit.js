@@ -35,9 +35,9 @@ import {makeStyles} from '@material-ui/styles';
 import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
 
 import EditKqiMutation from '../../mutations/EditKqiMutation';
-// import type {RemoveKqiMutationVariables} from '../../mutations/__generated__/RemoveKqiMutation.graphql';
+import type {RemoveKqiMutationVariables} from '../../mutations/__generated__/RemoveKqiMutation.graphql';
 
-// import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
+import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import moment from 'moment';
@@ -162,9 +162,6 @@ type Props = $ReadOnly<{|
   returnTableKqi: () => void,
 |}>;
 
-const handleRemove = () => {
-  console.log('remove');
-};
 
 const KqiFormEdit = (props: Props) => {
   const {
@@ -179,7 +176,6 @@ const KqiFormEdit = (props: Props) => {
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
   const [showEditTarget, setShowEditTarget] = useState(false);
-  console.log("Hola soy formValues", formValues);
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
@@ -195,6 +191,13 @@ const KqiFormEdit = (props: Props) => {
   const kqiTemporalFrequency = useFormInput(
     formValues.item.kqiTemporalFrequency.id,
   );
+  
+  const handleRemove = id => {
+    const variables: RemoveKqiMutationVariables = {
+      id: id,
+    };
+    RemoveKqiMutation(variables);
+  };
 
   const handleClick = () => {
     const variables: EditKqiMutationVariables = {
@@ -246,7 +249,10 @@ const KqiFormEdit = (props: Props) => {
         <Grid item xs={1} className={classes.delete}>
           <IconButton>
             <DeleteOutlinedIcon
-              onClick={handleRemove}
+              onClick={() => {
+                handleRemove(formValues.item.id)
+                returnTableKqi()
+              }}
               style={{color: DARK.D300}}
             />
           </IconButton>
