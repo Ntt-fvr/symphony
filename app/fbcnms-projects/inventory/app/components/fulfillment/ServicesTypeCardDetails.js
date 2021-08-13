@@ -14,6 +14,7 @@ import React, {useState} from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
@@ -29,6 +30,8 @@ import ServicesRelatedCardDetails from './ServicesRelatedCardDetails';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+
+import fbt from 'fbt';
 
 import symphony from '@symphony/design-system/theme/symphony';
 
@@ -116,22 +119,43 @@ type Props = $ReadOnly<{|
   descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
+  onClose: () => void,
 |}>;
 
 const ServicesTypeCardDetails = (props: Props) => {
   const {
-    serviceType,
+    // serviceType,
     serviceID,
     description,
-    serviceTypeRes,
+    // serviceTypeRes,
     serviceIdRes,
     descriptionRes,
+    onClose,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
   return (
     <div className={classes.root}>
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            id: 'wk_templates',
+            name: 'Worker Templates',
+            onClick: onClose,
+          },
+          true
+            ? {
+                id: 'nuevo',
+                name: 'nueboo',
+              }
+            : {
+                id: 'new_wo_type',
+                name: `${fbt('New worker template', '')}`,
+              },
+        ]}
+        size="large"
+      />
       <Accordion
         className={classes.card}
         container
@@ -211,43 +235,3 @@ const ServicesTypeCardDetails = (props: Props) => {
   );
 };
 export default ServicesTypeCardDetails;
-/*
-<Card margins={'none'} className={classes.container}>
-        <Grid container className={classes.insideContainer}>
-          <Grid item xs={2}>
-            <div className={classes.inline}>
-              <div className={classes.iconContainer}>
-                <LinearScaleIcon />
-              </div>
-              <DynamicPropertyTypes name={serviceType} txt={serviceTypeRes} />
-            </div>
-          </Grid>
-
-          <Grid
-            xs={8}
-            className={classNames(classes.inline, classes.gridInner)}>
-            <DynamicPropertyTypes
-              className={classes.serviceId}
-              name={serviceID}
-              txt={serviceIdRes}
-            />
-            <DynamicPropertyTypes name={description} txt={descriptionRes} />
-            <DynamicPropertyTypes
-              className={classes.associatedService}
-              name={associatedServices}
-              txt={associatedServicesRes}
-            />
-          </Grid>
-          <Grid xs={2} className={classNames(classes.inline, classes.gridEnd)}>
-            <DeleteOutlinedIcon className={classes.deleteIcon} />
-            <IconButton className={classes.editIcon} icon={EditIcon} />
-            <Button variant="text" className={classes.view}>
-              <Text weight={'bold'} color={'primary'}>
-                {'View details'}
-              </Text>
-            </Button>
-          </Grid>
-        </Grid>
-      </Card>
-
- */
