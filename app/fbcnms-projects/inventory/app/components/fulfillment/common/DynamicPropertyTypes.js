@@ -11,15 +11,18 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 
+import Button from '@symphony/design-system/components/Button';
 import Text from '@symphony/design-system/components/Text';
 
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    // border: '1px solid red',
   },
-  bold: {
-    fontWeight: 'bold',
+  name: {
+    marginRight: '7px',
+  },
+  container: {
+    margin: '7px 0',
   },
 }));
 type Props = $ReadOnly<{|
@@ -30,15 +33,27 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DynamicPropertyTypes = (props: Props) => {
-  const {name, txt, className} = props;
+  const {name, txt, btn, className} = props;
   const classes = useStyles();
 
   return (
     <div className={(classes.root, className)}>
-      <Text variant="subtitle2">{name}:</Text>
-      <Text weight={'bold'} color={'regular'}>
-        {txt}
-      </Text>
+      <div className={classes.container}>
+        <Text className={classes.name} variant="subtitle2">
+          {name}:
+        </Text>
+        {txt ? (
+          <Text weight={'bold'} color={'regular'}>
+            {txt}
+          </Text>
+        ) : (
+          <Button variant="text">
+            <Text weight={'bold'} color={'primary'}>
+              {btn}
+            </Text>
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

@@ -11,79 +11,73 @@
 import React from 'react';
 
 // DESING SYSTEM //
-import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
+import Card from '@symphony/design-system/components/Card/Card';
+
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import Button from '@symphony/design-system/components/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import DynamicPropertyTypes from './common/DynamicPropertyTypes';
+// import Card from '@symphony/design-system/components/Card/Card';
+// import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-import LinearScaleIcon from '@material-ui/icons/LinearScale';
+// import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
-import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
-// import ServicesTypeCardDetails from './ServicesTypeCardDetails';
+import DynamicPropertyTypes from './common/DynamicPropertyTypes';
+
 import symphony from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
-    marginBottom: '7px',
+    marginBottom: '5px',
   },
   container: {
     display: 'flex',
     alignItems: 'center',
   },
   insideContainer: {
-    padding: '9px 15px',
+    padding: '0px 20px 0px 0px',
+    border: '1px solid red',
   },
-  view: {
-    marginLeft: '1rem',
+  bold: {
+    fontWeight: 'bold',
   },
+
   editIcon: {
-    marginLeft: '1rem',
+    paddingLeft: '2rem',
   },
   deleteIcon: {
     margin: '0px',
-    color: DARK.D300,
+    color: symphony.palette.D300,
   },
-  inline: {
+  inside: {
+    margin: '2px 0',
     display: 'flex',
     alignItems: 'center',
-    flexGrow: 1,
+    border: '1px solid red',
+  },
+  serviceType: {
+    justifyContent: 'flex-start',
   },
   serviceId: {
-    paddingLeft: '4rem',
-  },
-  associatedService: {
-    paddingRight: '4rem',
-  },
-  iconContainer: {
-    borderRadius: '50%',
-    marginRight: '1.5rem',
-    backgroundColor: symphony.palette.D50,
-    color: symphony.palette.D500,
-    width: '48px',
-    height: '48px',
-    display: 'flex',
-    flexShrink: 0,
     justifyContent: 'center',
-    alignItems: 'center',
-    ...symphony.typography.h5,
   },
-  gridEnd: {
-    display: 'flex',
-    alignItems: 'center',
+  Description: {
     justifyContent: 'flex-end',
-    flexGrow: 1,
   },
-  gridInner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexGrow: 1,
+  contIconViewDetail: {
+    paddingLeft: '',
+    justifyContent: 'flex-end',
+  },
+  view: {
+    paddingLeft: '2rem',
+  },
+  inter: {
+    border: '1px solid red',
   },
 }));
 
@@ -96,26 +90,60 @@ type Props = $ReadOnly<{|
   descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
-  open: MouseEventHandler,
 |}>;
 
-const ServiceTypeCard = (props: Props) => {
+const ServicesRelatedCardItemType = (props: Props) => {
   const {
-    serviceType,
-    serviceID,
-    description,
-    associatedServices,
-    serviceTypeRes,
-    serviceIdRes,
-    descriptionRes,
-    associatedServicesRes,
-    open,
+    // serviceType,
+    // serviceID,
+    // description,
+    // serviceTypeRes,
+    // serviceIdRes,
+    // descriptionRes,
   } = props;
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Card margins={'none'} className={classes.container}>
+      <Card variant={'none'} margins={'none'} className={classes.container}>
+        <Grid container className={classes.insideContainer}>
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.serviceType)}>
+            <DynamicPropertyTypes name={'Service type'} txt={'RFS'} />
+          </Grid>
+
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.serviceId)}>
+            <DynamicPropertyTypes name={'ServiceID'} txt={'57'} />
+          </Grid>
+
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.Description)}>
+            <DynamicPropertyTypes name={'Description'} txt={'RFS Last Mile'} />
+          </Grid>
+          <Grid
+            xs={3}
+            className={classNames(classes.inside, classes.contIconViewDetail)}>
+            <DeleteOutlinedIcon className={classes.deleteIcon} />
+            <IconButton className={classes.editIcon} icon={EditIcon} />
+            <Button variant="text" className={classes.view}>
+              <Text weight={'bold'} color={'primary'}>
+                {'View details'}
+              </Text>
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
+    </div>
+  );
+};
+export default ServicesRelatedCardItemType;
+
+/*
+<Card margins={'none'} className={classes.container}>
         <Grid container className={classes.insideContainer}>
           <Grid item xs={2}>
             <div className={classes.inline}>
@@ -144,7 +172,7 @@ const ServiceTypeCard = (props: Props) => {
           <Grid xs={2} className={classNames(classes.inline, classes.gridEnd)}>
             <DeleteOutlinedIcon className={classes.deleteIcon} />
             <IconButton className={classes.editIcon} icon={EditIcon} />
-            <Button variant="text" className={classes.view} onClick={open}>
+            <Button variant="text" className={classes.view}>
               <Text weight={'bold'} color={'primary'}>
                 {'View details'}
               </Text>
@@ -152,7 +180,5 @@ const ServiceTypeCard = (props: Props) => {
           </Grid>
         </Grid>
       </Card>
-    </div>
-  );
-};
-export default ServiceTypeCard;
+
+ */

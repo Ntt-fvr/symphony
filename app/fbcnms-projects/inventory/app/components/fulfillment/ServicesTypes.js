@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 // COMPONENTS //
@@ -18,6 +18,7 @@ import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 import ServiceTypeCard from './ServicesTypeCard';
+import ServicesTypeCardDetails from './ServicesTypeCardDetails';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,7 +65,26 @@ const asr = '2 RFS';
 
 const ServicesTypes = () => {
   const classes = useStyles();
+  const [showEditCard, setShowEditCard] = useState(false);
 
+  const showServicesTypeCardDetails = () => {
+    console.log('view');
+    setShowEditCard(true);
+  };
+  if (showEditCard) {
+    return (
+      <ServicesTypeCardDetails
+        serviceType={st}
+        serviceTypeRes={str}
+        serviceID={si}
+        serviceIdRes={sir}
+        description={de}
+        descriptionRes={der}
+        associatedServices={as}
+        associatedServicesRes={asr}
+      />
+    );
+  }
   return (
     <div className={classes.root}>
       <Grid container spacing={2} className={classes.container}>
@@ -94,6 +114,7 @@ const ServicesTypes = () => {
               descriptionRes={der}
               associatedServices={as}
               associatedServicesRes={asr}
+              open={() => showServicesTypeCardDetails()}
             />
           </List>
         </Grid>

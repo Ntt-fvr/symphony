@@ -14,32 +14,31 @@ import React, {useState} from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+// import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 // import Button from '@symphony/design-system/components/Button';
 // import Card from '@symphony/design-system/components/Card/Card';
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@symphony/design-system/components/IconButton';
+// import IconButton from '@symphony/design-system/components/IconButton';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
 // import classNames from 'classnames';
-import ServicesRelatedCardDetails from './ServicesRelatedCardDetails';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {EditIcon} from '@symphony/design-system/icons';
+// import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
+
+import ServicesRelatedCardItemType from './ServicesRelatedCardItemType';
 
 import symphony from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    margin: '40px',
     '&. MuiAccordionSummary-content': {
       margin: '4px 0',
     },
-    border: '1px solid blue',
   },
   card: {
     marginBottom: '7px',
@@ -47,7 +46,7 @@ const useStyles = makeStyles(() => ({
   containerGrid2: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    paddingLeft: '2rem',
     border: '1px solid green',
   },
   containerGrid3: {
@@ -76,7 +75,7 @@ const useStyles = makeStyles(() => ({
     border: '1px solid red',
   },
   serviceId: {
-    paddingLeft: '2rem',
+    paddingLeft: '4rem',
   },
   associatedService: {
     paddingRight: '4rem',
@@ -118,14 +117,14 @@ type Props = $ReadOnly<{|
   associatedServicesRes?: string,
 |}>;
 
-const ServicesTypeCardDetails = (props: Props) => {
+const ServicesRelatedCardDetails = (props: Props) => {
   const {
-    serviceType,
-    serviceID,
-    description,
-    serviceTypeRes,
-    serviceIdRes,
-    descriptionRes,
+    // serviceType,
+    // serviceID,
+    // description,
+    // serviceTypeRes,
+    // serviceIdRes,
+    // descriptionRes,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -149,68 +148,32 @@ const ServicesTypeCardDetails = (props: Props) => {
                   <LinearScaleIcon />
                 </div>
                 <Text variant={'h6'} weight={'bold'}>
-                  Service type CFS
+                  Related services
                 </Text>
               </div>
             </Grid>
 
-            <Grid xs={6} className={classes.containerGrid2}>
-              <DynamicPropertyTypes
-                className={classes.serviceId}
-                name={serviceID}
-                txt={serviceIdRes}
-              />
-              <DynamicPropertyTypes name={description} txt={descriptionRes} />
-            </Grid>
-
-            <Grid xs={2} className={classes.containerGrid3}>
-              <DeleteOutlinedIcon
-                className={classes.deleteIcon}
-                // onClick={handleRemove}
-              />
-              <IconButton
-                className={classes.editIcon}
-                icon={EditIcon}
-                // onClick={edit}
-              />
+            <Grid xs={8} className={classes.containerGrid2}>
+              <DynamicPropertyTypes name={'RFS'} txt={'2'} />
             </Grid>
           </Grid>
         </AccordionSummary>
 
         <AccordionDetails className={''}>
           <Grid container spacing={0}>
-            <Grid xs={6}>
-              <DynamicPropertyTypes name={'ExternalId'} txt={'C000000005'} />
-              <DynamicPropertyTypes name={'HasStarted'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsBundle'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsServiceEnabled'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsStateful'} txt={'False'} />
-              <DynamicPropertyTypes name={'Name'} txt={'CFS_ACC_001'} />
-            </Grid>
-            <Grid xs={6} className={''}>
-              <DynamicPropertyTypes
-                name={'SchemaLocation'}
-                btn={
-                  'https://mycsp.com:8080/tmf-api/schema/Service/vCPE.schema.json'
-                }
-              />
-              <DynamicPropertyTypes
-                name={'ServiceDate'}
-                txt={'2018-01-15T12:26:11.747Z'}
-              />
-              <DynamicPropertyTypes name={'ServiceState'} txt={'Planned'} />
-              <DynamicPropertyTypes name={'ServiceType'} txt={'BSA'} />
-              <DynamicPropertyTypes name={'State'} txt={'Planned'} />
-              <DynamicPropertyTypes name={'Type'} txt={'CFS'} />
+            <Grid xs={12}>
+              <ServicesRelatedCardItemType />
+              <ServicesRelatedCardItemType />
+              <ServicesRelatedCardItemType />
             </Grid>
           </Grid>
         </AccordionDetails>
       </Accordion>
-      <ServicesRelatedCardDetails />
     </div>
   );
 };
-export default ServicesTypeCardDetails;
+export default ServicesRelatedCardDetails;
+
 /*
 <Card margins={'none'} className={classes.container}>
         <Grid container className={classes.insideContainer}>
