@@ -16811,6 +16811,7 @@ what filters should we apply on users
 enum UserFilterType {
   USER_NAME
   USER_STATUS
+  USER_ORGANIZATION
 }
 
 """
@@ -16924,6 +16925,7 @@ enum WorkOrderFilterType
   WORK_ORDER_PRIORITY
   LOCATION_INST
   LOCATION_INST_EXTERNAL_ID
+  WORK_ORDER_ORGANIZATION
 }
 
 input WorkOrderFilterInput
@@ -20027,7 +20029,9 @@ input KqiFilterInput {
 }
 
 enum OrganizationFilterType {
+  ID
   NAME
+  DESCRIPTION
 }
 
 input OrganizationFilterInput {

@@ -2401,16 +2401,20 @@ func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
 type OrganizationFilterType string
 
 const (
-	OrganizationFilterTypeName OrganizationFilterType = "NAME"
+	OrganizationFilterTypeID          OrganizationFilterType = "ID"
+	OrganizationFilterTypeName        OrganizationFilterType = "NAME"
+	OrganizationFilterTypeDescription OrganizationFilterType = "DESCRIPTION"
 )
 
 var AllOrganizationFilterType = []OrganizationFilterType{
+	OrganizationFilterTypeID,
 	OrganizationFilterTypeName,
+	OrganizationFilterTypeDescription,
 }
 
 func (e OrganizationFilterType) IsValid() bool {
 	switch e {
-	case OrganizationFilterTypeName:
+	case OrganizationFilterTypeID, OrganizationFilterTypeName, OrganizationFilterTypeDescription:
 		return true
 	}
 	return false
@@ -2896,18 +2900,20 @@ func (e TopologyLinkType) MarshalGQL(w io.Writer) {
 type UserFilterType string
 
 const (
-	UserFilterTypeUserName   UserFilterType = "USER_NAME"
-	UserFilterTypeUserStatus UserFilterType = "USER_STATUS"
+	UserFilterTypeUserName         UserFilterType = "USER_NAME"
+	UserFilterTypeUserStatus       UserFilterType = "USER_STATUS"
+	UserFilterTypeUserOrganization UserFilterType = "USER_ORGANIZATION"
 )
 
 var AllUserFilterType = []UserFilterType{
 	UserFilterTypeUserName,
 	UserFilterTypeUserStatus,
+	UserFilterTypeUserOrganization,
 }
 
 func (e UserFilterType) IsValid() bool {
 	switch e {
-	case UserFilterTypeUserName, UserFilterTypeUserStatus:
+	case UserFilterTypeUserName, UserFilterTypeUserStatus, UserFilterTypeUserOrganization:
 		return true
 	}
 	return false
