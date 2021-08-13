@@ -37,7 +37,7 @@ type WoRower struct {
 	Log log.Logger
 }
 
-var WoDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Template", "Project Name", "Status", "Close Date", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
+var WoDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Template", "Status", "Close Date", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
 func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
