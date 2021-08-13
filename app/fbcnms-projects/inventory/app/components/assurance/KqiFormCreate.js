@@ -130,10 +130,28 @@ const data = {
   },
 };
 
-type Kqis = {
+type KqiPerspectives = {
   id: string,
-  name: string,
-  kqi: {
+  name: string
+}
+
+type KqiSources = {
+  id: string,
+  name: string
+}
+
+type KqiCategories = {
+  id: string,
+  name: string
+}
+
+type KqiTemporalFrequency = {
+  id: string,
+  name: string
+}
+
+type Kqis = {
+  data: {
     id: string,
     name: string,
     description: string,
@@ -149,10 +167,10 @@ type Kqis = {
 
 type Props = $ReadOnly<{|
   returnTableKqi: () => void,
-  dataPerspectives: any,
-  dataSources: any,
-  dataCategories: any,
-  dataTemporalFrequencies: any
+  dataPerspectives: Array<KqiPerspectives>,
+  dataSources: Array<KqiSources>,
+  dataCategories: Array<KqiCategories>,
+  dataTemporalFrequencies: Array<KqiTemporalFrequency>,
 |}>;
 
 const KqiFormCreate = (props: Props) => {

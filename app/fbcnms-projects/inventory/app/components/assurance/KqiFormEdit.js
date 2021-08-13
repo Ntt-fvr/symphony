@@ -127,6 +127,26 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type KqiPerspectives = {
+  id: string,
+  name: string
+}
+
+type KqiSources = {
+  id: string,
+  name: string
+}
+
+type KqiCategories = {
+  id: string,
+  name: string
+}
+
+type KqiTemporalFrequency = {
+  id: string,
+  name: string
+}
+
 type Props = $ReadOnly<{|
   formValues: {
     item: {
@@ -154,11 +174,12 @@ type Props = $ReadOnly<{|
       },
     },
   },
+  
   dataKqiTargets: any,
-  dataPerspectives: any,
-  dataSources: any,
-  dataCategories: any,
-  dataTemporalFrequencies: any,
+  dataPerspectives: Array<KqiPerspectives>,
+  dataSources: Array<KqiSources>,
+  dataCategories: Array<KqiCategories>,
+  dataTemporalFrequencies: Array<KqiTemporalFrequency>,
   returnTableKqi: () => void,
 |}>;
 
