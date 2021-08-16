@@ -7,20 +7,17 @@ package importer
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
-
+	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-
-	"github.com/AlekSi/pointer"
-
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	"io"
+	"net/http"
+	"strings"
 )
 
 const minimalProjectLineLength = 5
@@ -32,7 +29,11 @@ func (m *importer) processExportedProject(w http.ResponseWriter, r *http.Request
 	log := m.logger.For(ctx)
 	nextLineToSkipIndex := -1
 	client := m.ClientFrom(ctx)
-
+	userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+	if !ok {
+		http.Error(w, "import can only be done by user", http.StatusInternalServerError)
+	}
+	u := userViewer.User()
 	log.Debug("Exported Project - started")
 	var (
 		err                    error
@@ -129,13 +130,6 @@ func (m *importer) processExportedProject(w http.ResponseWriter, r *http.Request
 					continue
 				}
 
-				userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-				if !ok {
-					errs = append(errs, ErrorLine{Line: numRows, Error: "", Message: "import can only be done by user"})
-					continue
-				}
-				u := userViewer.User()
-
 				if id == 0 {
 					// new project
 					loc, err := m.verifyOrCreateLocationHierarchy(ctx, importLine, false, nil)
@@ -160,7 +154,14 @@ func (m *importer) processExportedProject(w http.ResponseWriter, r *http.Request
 					if commit {
 						if _, err := m.createProject(ctx, m.r.Mutation(), name, projType, &description, &priority, &u.ID, locID, propInputs); err == nil {
 							modifiedCount++
+						} else {
+							errTxt := err.Error()
+							if strings.Contains(errTxt, "already exists") {
+								errTxt = "already exists"
+							}
+							errs = append(errs, ErrorLine{Line: numRows, Error: errTxt, Message: fmt.Sprintf("error while creating project  %q", name)})
 						}
+
 					}
 				}
 			}
@@ -192,12 +193,7 @@ func (m *importer) inputValidationsProject(ctx context.Context, importHeader Imp
 	return err
 }
 
-func (m *importer) validatePropertiesForProjectType(ctx context.Context, line ImportRecord, projType *ent.ProjectType) ([]*models.PropertyInput, error) {
-	err := line.validatePropertiesMismatch(ctx, []interface{}{projType})
-	if err != nil {
-		return nil, err
-	}
-
+func (m *importer) validatePropertiesForProjectType(ctx context.Context, l ImportRecord, projType *ent.ProjectType) ([]*models.PropertyInput, error) {
 	var pInputs []*models.PropertyInput
 	propTypes, err := projType.QueryProperties().All(ctx)
 	if ent.MaskNotFound(err) != nil {
@@ -205,7 +201,12 @@ func (m *importer) validatePropertiesForProjectType(ctx context.Context, line Im
 	}
 	for _, ptype := range propTypes {
 		ptypeName := ptype.Name
-		pInput, err := line.GetPropertyInput(ctx, projType, ptypeName)
+		idx := l.title.Find(ptypeName)
+		if idx == -1 {
+			continue
+		}
+		value := l.line[idx]
+		pInput, err := getPropInput(*ptype, value)
 		if err != nil {
 			return nil, err
 		}

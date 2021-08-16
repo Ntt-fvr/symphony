@@ -137,6 +137,12 @@ func (l ImportRecord) validatePropertiesMismatch(ctx context.Context, typs []int
 
 // GetPropertyInput returns a PropertyInput model from a proptypeName
 func (l ImportRecord) GetPropertyInput(ctx context.Context, typ interface{}, proptypeName string) (*models.PropertyInput, error) {
+
+	idx := l.title.Find(proptypeName)
+	if idx == -1 {
+		return nil, nil
+	}
+
 	var pTyp *ent.PropertyType
 	var err error
 	switch l.entity() {
@@ -165,10 +171,6 @@ func (l ImportRecord) GetPropertyInput(ctx context.Context, typ interface{}, pro
 		return nil, errors.Wrapf(err, "property type does not exist %q", proptypeName)
 	}
 
-	idx := l.title.Find(proptypeName)
-	if idx == -1 {
-		return nil, nil
-	}
 	value := l.line[idx]
 	return getPropInput(*pTyp, value)
 }
