@@ -29,6 +29,8 @@ import {makeStyles} from '@material-ui/styles';
 
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 
+import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
+
 import symphony from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
@@ -90,6 +92,7 @@ type Props = $ReadOnly<{|
   descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
+  viewDetails?: MouseEventHandler,
 |}>;
 
 const ServicesRelatedCardItemType = (props: Props) => {
@@ -100,6 +103,7 @@ const ServicesRelatedCardItemType = (props: Props) => {
     // serviceTypeRes,
     // serviceIdRes,
     // descriptionRes,
+    viewDetails,
   } = props;
   const classes = useStyles();
 
@@ -129,7 +133,10 @@ const ServicesRelatedCardItemType = (props: Props) => {
             className={classNames(classes.inside, classes.contIconViewDetail)}>
             <DeleteOutlinedIcon className={classes.deleteIcon} />
             <IconButton className={classes.editIcon} icon={EditIcon} />
-            <Button variant="text" className={classes.view}>
+            <Button
+              variant="text"
+              className={classes.view}
+              onClick={viewDetails}>
               <Text weight={'bold'} color={'primary'}>
                 {'View details'}
               </Text>
@@ -141,44 +148,3 @@ const ServicesRelatedCardItemType = (props: Props) => {
   );
 };
 export default ServicesRelatedCardItemType;
-
-/*
-<Card margins={'none'} className={classes.container}>
-        <Grid container className={classes.insideContainer}>
-          <Grid item xs={2}>
-            <div className={classes.inline}>
-              <div className={classes.iconContainer}>
-                <LinearScaleIcon />
-              </div>
-              <DynamicPropertyTypes name={serviceType} txt={serviceTypeRes} />
-            </div>
-          </Grid>
-
-          <Grid
-            xs={8}
-            className={classNames(classes.inline, classes.gridInner)}>
-            <DynamicPropertyTypes
-              className={classes.serviceId}
-              name={serviceID}
-              txt={serviceIdRes}
-            />
-            <DynamicPropertyTypes name={description} txt={descriptionRes} />
-            <DynamicPropertyTypes
-              className={classes.associatedService}
-              name={associatedServices}
-              txt={associatedServicesRes}
-            />
-          </Grid>
-          <Grid xs={2} className={classNames(classes.inline, classes.gridEnd)}>
-            <DeleteOutlinedIcon className={classes.deleteIcon} />
-            <IconButton className={classes.editIcon} icon={EditIcon} />
-            <Button variant="text" className={classes.view}>
-              <Text weight={'bold'} color={'primary'}>
-                {'View details'}
-              </Text>
-            </Button>
-          </Grid>
-        </Grid>
-      </Card>
-
- */

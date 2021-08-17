@@ -15,27 +15,24 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+// import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 // import Button from '@symphony/design-system/components/Button';
 // import Card from '@symphony/design-system/components/Card/Card';
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@symphony/design-system/components/IconButton';
+// import IconButton from '@symphony/design-system/components/IconButton';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
 // import classNames from 'classnames';
-import ServicesRelatedCardDetails from './ServicesRelatedCardDetails';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import {EditIcon} from '@symphony/design-system/icons';
+// import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 import fbt from 'fbt';
 
 import symphony from '@symphony/design-system/theme/symphony';
-
-import ServicesRelatedCardDetailsInner from './ServicesRelatedCardDetailsInner';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -83,6 +80,10 @@ const useStyles = makeStyles(() => ({
   serviceId: {
     paddingLeft: '2rem',
   },
+  prueba: {
+    margin: '0 70px',
+    border: '1px solid red',
+  },
   associatedService: {
     paddingRight: '4rem',
   },
@@ -121,44 +122,35 @@ type Props = $ReadOnly<{|
   descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
-  onClose: () => void,
+  // onClose: () => void,
 |}>;
 
-const ServicesTypeCardDetails = (props: Props) => {
+const ServicesRelatedCardDetailsInner = (props: Props) => {
   const {
     // serviceType,
-    serviceID,
-    description,
+    // serviceID,
+    // description,
     // serviceTypeRes,
-    serviceIdRes,
-    descriptionRes,
-    onClose,
+    // serviceIdRes,
+    // descriptionRes,
+    // onClose,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [showEditCard, setShowEditCard] = useState(false);
-
-  const showServicesRelatedCardDetailsInner = () => {
-    console.log('view');
-    setShowEditCard(true);
-  };
-  if (showEditCard) {
-    return <ServicesRelatedCardDetailsInner />;
-  }
 
   return (
     <div className={classes.root}>
       <Breadcrumbs
         breadcrumbs={[
           {
-            id: 'Services',
-            name: 'Services',
-            onClick: onClose,
+            id: 'CFS_ID_112',
+            name: 'CFS ID 112',
+            // onClick: onClose,
           },
           true
             ? {
-                id: 'id',
-                name: 'CFS',
+                id: 'RFS_ID_57',
+                name: 'RFS ID 57',
               }
             : {
                 id: 'CFS_ID_112',
@@ -184,67 +176,47 @@ const ServicesTypeCardDetails = (props: Props) => {
                   <LinearScaleIcon />
                 </div>
                 <Text variant={'h6'} weight={'bold'}>
-                  Service type CFS
+                  RFS
                 </Text>
               </div>
             </Grid>
 
-            <Grid xs={6} className={classes.containerGrid2}>
+            <Grid xs={7} className={classes.containerGrid2}>
               <DynamicPropertyTypes
                 className={classes.serviceId}
-                name={serviceID}
-                txt={serviceIdRes}
+                name={'Service ID'}
+                txt={'57'}
               />
-              <DynamicPropertyTypes name={description} txt={descriptionRes} />
-            </Grid>
-
-            <Grid xs={2} className={classes.containerGrid3}>
-              <DeleteOutlinedIcon
-                className={classes.deleteIcon}
-                // onClick={handleRemove}
-              />
-              <IconButton
-                className={classes.editIcon}
-                icon={EditIcon}
-                // onClick={edit}
+              <DynamicPropertyTypes
+                name={'Description'}
+                txt={'RFS Last Mile'}
               />
             </Grid>
           </Grid>
         </AccordionSummary>
 
-        <AccordionDetails className={''}>
+        <AccordionDetails className={classes.prueba}>
           <Grid container spacing={0}>
             <Grid xs={6}>
-              <DynamicPropertyTypes name={'ExternalId'} txt={'C000000005'} />
+              <DynamicPropertyTypes
+                name={'Description'}
+                txt={'RFS Last Mile'}
+              />
               <DynamicPropertyTypes name={'HasStarted'} txt={'False'} />
               <DynamicPropertyTypes name={'IsBundle'} txt={'False'} />
               <DynamicPropertyTypes name={'IsServiceEnabled'} txt={'False'} />
-              <DynamicPropertyTypes name={'IsStateful'} txt={'False'} />
-              <DynamicPropertyTypes name={'Name'} txt={'CFS_ACC_001'} />
+              <DynamicPropertyTypes name={'IsStateful'} txt={'Planed'} />
             </Grid>
             <Grid xs={6} className={''}>
-              <DynamicPropertyTypes
-                name={'SchemaLocation'}
-                btn={
-                  'https://mycsp.com:8080/tmf-api/schema/Service/vCPE.schema.json'
-                }
-              />
-              <DynamicPropertyTypes
-                name={'ServiceDate'}
-                txt={'2018-01-15T12:26:11.747Z'}
-              />
+              <DynamicPropertyTypes name={'Name'} txt={'RFS_LM_001'} />
               <DynamicPropertyTypes name={'ServiceState'} txt={'Planned'} />
               <DynamicPropertyTypes name={'ServiceType'} txt={'BSA'} />
               <DynamicPropertyTypes name={'State'} txt={'Planned'} />
-              <DynamicPropertyTypes name={'Type'} txt={'CFS'} />
             </Grid>
           </Grid>
         </AccordionDetails>
       </Accordion>
-      <ServicesRelatedCardDetails
-        viewDetails={() => showServicesRelatedCardDetailsInner()}
-      />
     </div>
   );
 };
-export default ServicesTypeCardDetails;
+export default ServicesRelatedCardDetailsInner;
