@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
@@ -94,6 +95,21 @@ func (oc *OrganizationCreate) AddWorkOrderFk(w ...*WorkOrder) *OrganizationCreat
 		ids[i] = w[i].ID
 	}
 	return oc.AddWorkOrderFkIDs(ids...)
+}
+
+// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
+func (oc *OrganizationCreate) AddPolicyIDs(ids ...int) *OrganizationCreate {
+	oc.mutation.AddPolicyIDs(ids...)
+	return oc
+}
+
+// AddPolicies adds the policies edges to PermissionsPolicy.
+func (oc *OrganizationCreate) AddPolicies(p ...*PermissionsPolicy) *OrganizationCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return oc.AddPolicyIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -266,6 +282,25 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workorder.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.PoliciesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PoliciesTable,
+			Columns: organization.PoliciesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: permissionspolicy.FieldID,
 				},
 			},
 		}
