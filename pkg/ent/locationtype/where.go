@@ -770,6 +770,34 @@ func HasPropertyTypesWith(preds ...predicate.PropertyType) predicate.LocationTyp
 	})
 }
 
+// HasFileCategoryType applies the HasEdge predicate on the "file_category_type" edge.
+func HasFileCategoryType() predicate.LocationType {
+	return predicate.LocationType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FileCategoryTypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FileCategoryTypeTable, FileCategoryTypeColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFileCategoryTypeWith applies the HasEdge predicate on the "file_category_type" edge with a given conditions (other predicates).
+func HasFileCategoryTypeWith(preds ...predicate.FileCategoryType) predicate.LocationType {
+	return predicate.LocationType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FileCategoryTypeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FileCategoryTypeTable, FileCategoryTypeColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasSurveyTemplateCategories applies the HasEdge predicate on the "survey_template_categories" edge.
 func HasSurveyTemplateCategories() predicate.LocationType {
 	return predicate.LocationType(func(s *sql.Selector) {

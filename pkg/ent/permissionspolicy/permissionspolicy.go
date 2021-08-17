@@ -33,6 +33,8 @@ const (
 	FieldWorkforcePolicy = "workforce_policy"
 	// FieldAutomationPolicy holds the string denoting the automation_policy field in the database.
 	FieldAutomationPolicy = "automation_policy"
+	// FieldAssurancePolicy holds the string denoting the assurance_policy field in the database.
+	FieldAssurancePolicy = "assurance_policy"
 
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldInventoryPolicy,
 	FieldWorkforcePolicy,
 	FieldAutomationPolicy,
+	FieldAssurancePolicy,
 }
 
 var (
