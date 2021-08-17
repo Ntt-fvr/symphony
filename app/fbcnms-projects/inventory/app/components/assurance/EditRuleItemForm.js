@@ -165,10 +165,10 @@ const EditRuleItemForm = (props: Props) => {
   const specificProblemRule = useFormInput(rule.specificProblem);
   const eventTypeRule = useFormInput(rule.eventTypeName);
   const eventSeverityRules = useFormInput(rule.eventSeverityId);
-  const comparatorUpper = useFormInput(rule.ruleLimit[0].comparator.id);
-  const comparatorLower = useFormInput(rule.ruleLimit[1].comparator.id);
-  const upper = useFormInput(rule.ruleLimit[0].number);
-  const lower = useFormInput(rule.ruleLimit[1].number);
+  const comparatorUpper = useFormInput(rule.ruleLimit[0]?.comparator.id);
+  const comparatorLower = useFormInput(rule.ruleLimit[1]?.comparator.id);
+  const upper = useFormInput(rule.ruleLimit[0]?.number);
+  const lower = useFormInput(rule.ruleLimit[1]?.number);
 
   function handleChange({target}) {
     setRuleData({
@@ -198,7 +198,7 @@ const EditRuleItemForm = (props: Props) => {
     };
     const variablesUpper: EditRuleLimitMutationVariables = {
       input: {
-        id: rule.ruleLimit[0].id,
+        id: rule.ruleLimit[0]?.id,
         number: Number(upper.value),
         limitType: 'UPPER',
         comparator: comparatorUpper.value,
@@ -207,7 +207,7 @@ const EditRuleItemForm = (props: Props) => {
     };
     const variablesLower: EditRuleLimitMutationVariables = {
       input: {
-        id: rule.ruleLimit[1].id,
+        id: rule.ruleLimit[1]?.id,
         number: Number(lower.value),
         limitType: 'LOWER',
         comparator: comparatorLower.value,
@@ -408,7 +408,9 @@ const EditRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="startTime"
-                    defaultValue={moment(rule.startDateTime).format('YYYY-MM-DDThh:mm')}
+                    defaultValue={moment(rule.startDateTime).format(
+                      'YYYY-MM-DDThh:mm',
+                    )}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />
@@ -419,7 +421,9 @@ const EditRuleItemForm = (props: Props) => {
                     id="datetime-local"
                     type="datetime-local"
                     name="endTime"
-                    defaultValue={moment(rule.endDateTime).format('YYYY-MM-DDThh:mm')}
+                    defaultValue={moment(rule.endDateTime).format(
+                      'YYYY-MM-DDThh:mm',
+                    )}
                     disabled={!checkedCheckbox}
                     onChange={handleChange}
                   />
