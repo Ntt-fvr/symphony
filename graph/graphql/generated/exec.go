@@ -756,9 +756,9 @@ type ComplexityRoot struct {
 		CounterformulaFk func(childComplexity int) int
 		ID               func(childComplexity int) int
 		KpiFk            func(childComplexity int) int
-		Name             func(childComplexity int) int
 		Status           func(childComplexity int) int
 		TechFk           func(childComplexity int) int
+		TextFormula      func(childComplexity int) int
 	}
 
 	GeneralFilter struct {
@@ -5116,13 +5116,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Formula.KpiFk(childComplexity), true
 
-	case "Formula.name":
-		if e.complexity.Formula.Name == nil {
-			break
-		}
-
-		return e.complexity.Formula.Name(childComplexity), true
-
 	case "Formula.status":
 		if e.complexity.Formula.Status == nil {
 			break
@@ -5136,6 +5129,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Formula.TechFk(childComplexity), true
+
+	case "Formula.textFormula":
+		if e.complexity.Formula.TextFormula == nil {
+			break
+		}
+
+		return e.complexity.Formula.TextFormula(childComplexity), true
 
 	case "GeneralFilter.boolValue":
 		if e.complexity.GeneralFilter.BoolValue == nil {
@@ -16826,6 +16826,7 @@ what filters should we apply on users
 enum UserFilterType {
   USER_NAME
   USER_STATUS
+  USER_ORGANIZATION
 }
 
 """
@@ -16939,6 +16940,7 @@ enum WorkOrderFilterType
   WORK_ORDER_PRIORITY
   LOCATION_INST
   LOCATION_INST_EXTERNAL_ID
+  WORK_ORDER_ORGANIZATION
 }
 
 input WorkOrderFilterInput
@@ -16976,6 +16978,10 @@ input ProjectFilterInput {
 
 enum CounterFilterType {
   NAME
+  EXTERNALID
+  NETWORKMANAGERSYSTEM
+  COUNTERFAMILY
+  VENDORFK
 }
 
 input CounterFilterInput {
@@ -19636,7 +19642,7 @@ input EditTechInput {
 
 type Formula implements Node {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
@@ -19644,7 +19650,7 @@ type Formula implements Node {
 }
 
 input AddFormulaInput {
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -19652,7 +19658,7 @@ input AddFormulaInput {
 
 input EditFormulaInput {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -19915,7 +19921,7 @@ input AddAlarmFilterInput {
   reason: String!
   user: String!
   creationTime: Time!  
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 input AlarmFilterInput {
@@ -19937,7 +19943,7 @@ input EditAlarmFilterInput {
   beginTime: Time!
   endTime: Time!
   reason: String! 
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 enum AlarmFilterFilterType {
@@ -20038,7 +20044,9 @@ input KqiFilterInput {
 }
 
 enum OrganizationFilterType {
+  ID
   NAME
+  DESCRIPTION
 }
 
 input OrganizationFilterInput {
@@ -20302,6 +20310,11 @@ enum RecommendationsFilterType {
   STATUS
   USED
   RUNBOOK
+  RECOMMENDATIONSSOURCE
+  RECOMMENDATIONSCATEGORY
+  USERCREATE
+  USERAPPROVE
+  VENDORRECOMMENDATIONS
 }
 
 input RecommendationsFilterInput {
@@ -40391,7 +40404,7 @@ func (ec *executionContext) _Formula_id(ctx context.Context, field graphql.Colle
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Formula_name(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
+func (ec *executionContext) _Formula_textFormula(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -40409,7 +40422,7 @@ func (ec *executionContext) _Formula_name(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.TextFormula, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -74513,7 +74526,7 @@ func (ec *executionContext) unmarshalInputAddAlarmFilterInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
-			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			it.AlarmStatus, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -75245,11 +75258,11 @@ func (ec *executionContext) unmarshalInputAddFormulaInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
+		case "textFormula":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("textFormula"))
+			it.TextFormula, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -78455,7 +78468,7 @@ func (ec *executionContext) unmarshalInputEditAlarmFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
-			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			it.AlarmStatus, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -79109,11 +79122,11 @@ func (ec *executionContext) unmarshalInputEditFormulaInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "name":
+		case "textFormula":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("textFormula"))
+			it.TextFormula, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -91054,8 +91067,8 @@ func (ec *executionContext) _Formula(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "name":
-			out.Values[i] = ec._Formula_name(ctx, field, obj)
+		case "textFormula":
+			out.Values[i] = ec._Formula_textFormula(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}

@@ -40,7 +40,7 @@ func (r mutationResolver) AddAlarmFilter(ctx context.Context, input models.AddAl
 		SetEndTime(input.EndTime).
 		SetReason(input.Reason).
 		SetUser(input.User).
-		SetAlarmStatusFkID(input.AlarmStatus).
+		SetNillableAlarmStatusFkID(input.AlarmStatus).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -78,13 +78,13 @@ func (r mutationResolver) EditAlarmFilter(ctx context.Context, input models.Edit
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	var statusid int
+	var statusid *int
 	var name, begin, end, network, enable, reason = et.Name, et.BeginTime, et.EndTime, et.NetworkResource, et.Enable, et.Reason
 	var status, err1 = et.AlarmStatusFk(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if status != nil {
-		statusid = status.ID
+		statusid = &status.ID
 	}
 
 	var change = false
@@ -104,8 +104,8 @@ func (r mutationResolver) EditAlarmFilter(ctx context.Context, input models.Edit
 		network = input.NetworkResource
 		change = true
 	}
-	if (status != nil && status.ID != input.AlarmStatus) || status == nil {
-		statusid = input.AlarmStatus
+	if input.AlarmStatus != nil && (status == nil || (status != nil && status.ID != *input.AlarmStatus)) {
+		*statusid = *input.AlarmStatus
 		change = true
 	}
 	if enable != input.Enable {
@@ -127,7 +127,7 @@ func (r mutationResolver) EditAlarmFilter(ctx context.Context, input models.Edit
 			SetBeginTime(begin).
 			SetEndTime(end).
 			SetReason(reason).
-			SetAlarmStatusFkID(statusid).
+			SetNillableAlarmStatusFkID(statusid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)

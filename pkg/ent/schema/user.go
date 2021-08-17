@@ -72,7 +72,7 @@ func (User) Edges() []ent.Edge {
 		edge.From("groups", UsersGroup.Type).
 			Ref("members"),
 		edge.From("organization", Organization.Type).
-			Ref("user_fk").Unique(),
+			Ref("user_fk").Unique().Annotations(entgql.OrderField("ORGANIZATION")),
 		edge.From("owned_work_orders", WorkOrder.Type).
 			Ref("owner"),
 		edge.From("assigned_work_orders", WorkOrder.Type).

@@ -1118,10 +1118,10 @@ func init() {
 	formula.DefaultUpdateTime = formulaDescUpdateTime.Default.(func() time.Time)
 	// formula.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	formula.UpdateDefaultUpdateTime = formulaDescUpdateTime.UpdateDefault.(func() time.Time)
-	// formulaDescName is the schema descriptor for name field.
-	formulaDescName := formulaFields[0].Descriptor()
-	// formula.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	formula.NameValidator = formulaDescName.Validators[0].(func(string) error)
+	// formulaDescTextFormula is the schema descriptor for textFormula field.
+	formulaDescTextFormula := formulaFields[0].Descriptor()
+	// formula.TextFormulaValidator is a validator for the "textFormula" field. It is called by the builders before save.
+	formula.TextFormulaValidator = formulaDescTextFormula.Validators[0].(func(string) error)
 	hyperlinkMixin := schema.Hyperlink{}.Mixin()
 	hyperlink.Policy = privacy.NewPolicies(schema.Hyperlink{})
 	hyperlink.Hooks[0] = func(next ent.Mutator) ent.Mutator {

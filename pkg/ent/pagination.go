@@ -3136,6 +3136,26 @@ var (
 			}
 		},
 	}
+	// CounterOrderFieldExternalId orders Counter by externalId.
+	CounterOrderFieldExternalId = &CounterOrderField{
+		field: counter.FieldExternalId,
+		toCursor: func(c *Counter) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.ExternalId,
+			}
+		},
+	}
+	// CounterOrderFieldNetworkManagerSystem orders Counter by networkManagerSystem.
+	CounterOrderFieldNetworkManagerSystem = &CounterOrderField{
+		field: counter.FieldNetworkManagerSystem,
+		toCursor: func(c *Counter) Cursor {
+			return Cursor{
+				ID:    c.ID,
+				Value: c.NetworkManagerSystem,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
@@ -3144,6 +3164,10 @@ func (f CounterOrderField) String() string {
 	switch f.field {
 	case counter.FieldName:
 		str = "NAME"
+	case counter.FieldExternalId:
+		str = "EXTERNALID"
+	case counter.FieldNetworkManagerSystem:
+		str = "NETWORKMANAGERSYSTEM"
 	}
 	return str
 }
@@ -3162,6 +3186,10 @@ func (f *CounterOrderField) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "NAME":
 		*f = *CounterOrderFieldName
+	case "EXTERNALID":
+		*f = *CounterOrderFieldExternalId
+	case "NETWORKMANAGERSYSTEM":
+		*f = *CounterOrderFieldNetworkManagerSystem
 	default:
 		return fmt.Errorf("%s is not a valid CounterOrderField", str)
 	}
@@ -9339,13 +9367,13 @@ func (f *FormulaQuery) Paginate(
 }
 
 var (
-	// FormulaOrderFieldName orders Formula by name.
-	FormulaOrderFieldName = &FormulaOrderField{
-		field: formula.FieldName,
+	// FormulaOrderFieldTextFormula orders Formula by textFormula.
+	FormulaOrderFieldTextFormula = &FormulaOrderField{
+		field: formula.FieldTextFormula,
 		toCursor: func(f *Formula) Cursor {
 			return Cursor{
 				ID:    f.ID,
-				Value: f.Name,
+				Value: f.TextFormula,
 			}
 		},
 	}
@@ -9355,8 +9383,8 @@ var (
 func (f FormulaOrderField) String() string {
 	var str string
 	switch f.field {
-	case formula.FieldName:
-		str = "NAME"
+	case formula.FieldTextFormula:
+		str = "TEXTFORMULA"
 	}
 	return str
 }
@@ -9373,8 +9401,8 @@ func (f *FormulaOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("FormulaOrderField %T must be a string", v)
 	}
 	switch str {
-	case "NAME":
-		*f = *FormulaOrderFieldName
+	case "TEXTFORMULA":
+		*f = *FormulaOrderFieldTextFormula
 	default:
 		return fmt.Errorf("%s is not a valid FormulaOrderField", str)
 	}

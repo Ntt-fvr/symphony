@@ -29726,7 +29726,7 @@ type FormulaMutation struct {
 	id                    *int
 	create_time           *time.Time
 	update_time           *time.Time
-	name                  *string
+	textFormula           *string
 	status                *bool
 	clearedFields         map[string]struct{}
 	tech                  *int
@@ -29894,41 +29894,41 @@ func (m *FormulaMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
-// SetName sets the name field.
-func (m *FormulaMutation) SetName(s string) {
-	m.name = &s
+// SetTextFormula sets the textFormula field.
+func (m *FormulaMutation) SetTextFormula(s string) {
+	m.textFormula = &s
 }
 
-// Name returns the name value in the mutation.
-func (m *FormulaMutation) Name() (r string, exists bool) {
-	v := m.name
+// TextFormula returns the textFormula value in the mutation.
+func (m *FormulaMutation) TextFormula() (r string, exists bool) {
+	v := m.textFormula
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldName returns the old name value of the Formula.
+// OldTextFormula returns the old textFormula value of the Formula.
 // If the Formula object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *FormulaMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *FormulaMutation) OldTextFormula(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldTextFormula is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+		return v, fmt.Errorf("OldTextFormula requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
+		return v, fmt.Errorf("querying old value for OldTextFormula: %w", err)
 	}
-	return oldValue.Name, nil
+	return oldValue.TextFormula, nil
 }
 
-// ResetName reset all changes of the "name" field.
-func (m *FormulaMutation) ResetName() {
-	m.name = nil
+// ResetTextFormula reset all changes of the "textFormula" field.
+func (m *FormulaMutation) ResetTextFormula() {
+	m.textFormula = nil
 }
 
 // SetStatus sets the status field.
@@ -30120,8 +30120,8 @@ func (m *FormulaMutation) Fields() []string {
 	if m.update_time != nil {
 		fields = append(fields, formula.FieldUpdateTime)
 	}
-	if m.name != nil {
-		fields = append(fields, formula.FieldName)
+	if m.textFormula != nil {
+		fields = append(fields, formula.FieldTextFormula)
 	}
 	if m.status != nil {
 		fields = append(fields, formula.FieldStatus)
@@ -30138,8 +30138,8 @@ func (m *FormulaMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case formula.FieldUpdateTime:
 		return m.UpdateTime()
-	case formula.FieldName:
-		return m.Name()
+	case formula.FieldTextFormula:
+		return m.TextFormula()
 	case formula.FieldStatus:
 		return m.Status()
 	}
@@ -30155,8 +30155,8 @@ func (m *FormulaMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreateTime(ctx)
 	case formula.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case formula.FieldName:
-		return m.OldName(ctx)
+	case formula.FieldTextFormula:
+		return m.OldTextFormula(ctx)
 	case formula.FieldStatus:
 		return m.OldStatus(ctx)
 	}
@@ -30182,12 +30182,12 @@ func (m *FormulaMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateTime(v)
 		return nil
-	case formula.FieldName:
+	case formula.FieldTextFormula:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetName(v)
+		m.SetTextFormula(v)
 		return nil
 	case formula.FieldStatus:
 		v, ok := value.(bool)
@@ -30252,8 +30252,8 @@ func (m *FormulaMutation) ResetField(name string) error {
 	case formula.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
-	case formula.FieldName:
-		m.ResetName()
+	case formula.FieldTextFormula:
+		m.ResetTextFormula()
 		return nil
 	case formula.FieldStatus:
 		m.ResetStatus()

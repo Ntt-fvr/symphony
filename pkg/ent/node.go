@@ -3233,12 +3233,12 @@ func (f *Formula) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(f.Name); err != nil {
+	if buf, err = json.Marshal(f.TextFormula); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "string",
-		Name:  "name",
+		Name:  "textFormula",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(f.Status); err != nil {

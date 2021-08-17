@@ -13,15 +13,28 @@ import (
 )
 
 func handleOrganizationFilter(q *ent.OrganizationQuery, filter *models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
-	if filter.FilterType == models.OrganizationFilterTypeName {
+	switch filter.FilterType {
+	case models.OrganizationFilterTypeName:
 		return organizationNameFilter(q, filter)
+	case models.OrganizationFilterTypeDescription:
+		return organizationDescriptionFilter(q, filter)
+
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
-
+func organizationDescriptionFilter(q *ent.OrganizationQuery, filter *models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
+	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
+		return q.Where(organization.DescriptionContains(*filter.StringValue)), nil
+	} else if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
+		return q.Where(organization.DescriptionEQ(*filter.StringValue)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
 func organizationNameFilter(q *ent.OrganizationQuery, filter *models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(organization.NameContainsFold(*filter.StringValue)), nil
+	} else if filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil {
+		return q.Where(organization.NameEQ(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

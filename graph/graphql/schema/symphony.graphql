@@ -4113,6 +4113,7 @@ what filters should we apply on users
 enum UserFilterType {
   USER_NAME
   USER_STATUS
+  USER_ORGANIZATION
 }
 
 """
@@ -4226,6 +4227,7 @@ enum WorkOrderFilterType
   WORK_ORDER_PRIORITY
   LOCATION_INST
   LOCATION_INST_EXTERNAL_ID
+  WORK_ORDER_ORGANIZATION
 }
 
 input WorkOrderFilterInput
@@ -4263,6 +4265,10 @@ input ProjectFilterInput {
 
 enum CounterFilterType {
   NAME
+  EXTERNALID
+  NETWORKMANAGERSYSTEM
+  COUNTERFAMILY
+  VENDORFK
 }
 
 input CounterFilterInput {
@@ -6923,7 +6929,7 @@ input EditTechInput {
 
 type Formula implements Node {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
@@ -6931,7 +6937,7 @@ type Formula implements Node {
 }
 
 input AddFormulaInput {
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -6939,7 +6945,7 @@ input AddFormulaInput {
 
 input EditFormulaInput {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -7202,7 +7208,7 @@ input AddAlarmFilterInput {
   reason: String!
   user: String!
   creationTime: Time!  
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 input AlarmFilterInput {
@@ -7224,7 +7230,7 @@ input EditAlarmFilterInput {
   beginTime: Time!
   endTime: Time!
   reason: String! 
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 enum AlarmFilterFilterType {
@@ -7325,7 +7331,9 @@ input KqiFilterInput {
 }
 
 enum OrganizationFilterType {
+  ID
   NAME
+  DESCRIPTION
 }
 
 input OrganizationFilterInput {
@@ -7589,6 +7597,11 @@ enum RecommendationsFilterType {
   STATUS
   USED
   RUNBOOK
+  RECOMMENDATIONSSOURCE
+  RECOMMENDATIONSCATEGORY
+  USERCREATE
+  USERAPPROVE
+  VENDORRECOMMENDATIONS
 }
 
 input RecommendationsFilterInput {

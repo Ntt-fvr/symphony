@@ -111,10 +111,10 @@ func UpdateTime(v time.Time) predicate.Formula {
 	})
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Formula {
+// TextFormula applies equality check predicate on the "textFormula" field. It's identical to TextFormulaEQ.
+func TextFormula(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldName), v))
+		s.Where(sql.EQ(s.C(FieldTextFormula), v))
 	})
 }
 
@@ -277,22 +277,22 @@ func UpdateTimeLTE(v time.Time) predicate.Formula {
 	})
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Formula {
+// TextFormulaEQ applies the EQ predicate on the "textFormula" field.
+func TextFormulaEQ(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldName), v))
+		s.Where(sql.EQ(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Formula {
+// TextFormulaNEQ applies the NEQ predicate on the "textFormula" field.
+func TextFormulaNEQ(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldName), v))
+		s.Where(sql.NEQ(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Formula {
+// TextFormulaIn applies the In predicate on the "textFormula" field.
+func TextFormulaIn(vs ...string) predicate.Formula {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -304,12 +304,12 @@ func NameIn(vs ...string) predicate.Formula {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldName), v...))
+		s.Where(sql.In(s.C(FieldTextFormula), v...))
 	})
 }
 
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Formula {
+// TextFormulaNotIn applies the NotIn predicate on the "textFormula" field.
+func TextFormulaNotIn(vs ...string) predicate.Formula {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -321,70 +321,70 @@ func NameNotIn(vs ...string) predicate.Formula {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldName), v...))
+		s.Where(sql.NotIn(s.C(FieldTextFormula), v...))
 	})
 }
 
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Formula {
+// TextFormulaGT applies the GT predicate on the "textFormula" field.
+func TextFormulaGT(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldName), v))
+		s.Where(sql.GT(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Formula {
+// TextFormulaGTE applies the GTE predicate on the "textFormula" field.
+func TextFormulaGTE(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldName), v))
+		s.Where(sql.GTE(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Formula {
+// TextFormulaLT applies the LT predicate on the "textFormula" field.
+func TextFormulaLT(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldName), v))
+		s.Where(sql.LT(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Formula {
+// TextFormulaLTE applies the LTE predicate on the "textFormula" field.
+func TextFormulaLTE(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldName), v))
+		s.Where(sql.LTE(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Formula {
+// TextFormulaContains applies the Contains predicate on the "textFormula" field.
+func TextFormulaContains(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldName), v))
+		s.Where(sql.Contains(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Formula {
+// TextFormulaHasPrefix applies the HasPrefix predicate on the "textFormula" field.
+func TextFormulaHasPrefix(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldName), v))
+		s.Where(sql.HasPrefix(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Formula {
+// TextFormulaHasSuffix applies the HasSuffix predicate on the "textFormula" field.
+func TextFormulaHasSuffix(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldName), v))
+		s.Where(sql.HasSuffix(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Formula {
+// TextFormulaEqualFold applies the EqualFold predicate on the "textFormula" field.
+func TextFormulaEqualFold(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldName), v))
+		s.Where(sql.EqualFold(s.C(FieldTextFormula), v))
 	})
 }
 
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Formula {
+// TextFormulaContainsFold applies the ContainsFold predicate on the "textFormula" field.
+func TextFormulaContainsFold(v string) predicate.Formula {
 	return predicate.Formula(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldName), v))
+		s.Where(sql.ContainsFold(s.C(FieldTextFormula), v))
 	})
 }
 
