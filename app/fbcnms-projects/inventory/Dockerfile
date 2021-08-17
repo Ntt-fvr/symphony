@@ -7,7 +7,6 @@ RUN apk add --no-cache curl python g++ make libx11 glew-dev libxi-dev
 COPY package.json babel.config.js /app/
 COPY fbcnms-packages /app/fbcnms-packages
 COPY fbcnms-projects/inventory /app/fbcnms-projects/inventory
-COPY @fbcnms /app/@fbcnms
 
 # Build static files
 WORKDIR /app/fbcnms-projects/inventory

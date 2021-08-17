@@ -246,9 +246,9 @@ const ProjectsTableView = (props: Props) => {
                       )
                     }
                     tooltip={
-                      row.properties[indexOfProperty].nodeValue?.name ?? ''
+                      row.properties[indexOfProperty].nodeValue.name ?? ''
                     }>
-                    {row.properties[indexOfProperty].nodeValue?.id}
+                    {row.properties[indexOfProperty].nodeValue.id}
                   </Button>
                 ) : (
                   getPropertyValue(row.properties[indexOfProperty])
