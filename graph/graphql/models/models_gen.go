@@ -1058,6 +1058,15 @@ type FlowInstanceFilterInput struct {
 	MaxDepth      *int                      `json:"maxDepth"`
 }
 
+type FormulaFilterInput struct {
+	FilterType  FormulaFilterType   `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type GeneralFilter struct {
 	FilterType    string              `json:"filterType"`
 	Key           string              `json:"key"`
@@ -1510,6 +1519,15 @@ type SurveyWiFiScanData struct {
 	Altitude     *float64 `json:"altitude"`
 	Heading      *float64 `json:"heading"`
 	Rssi         *float64 `json:"rssi"`
+}
+
+type TechFilterInput struct {
+	FilterType  TechFilterType      `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
 }
 
 type TechnicianCheckListItemInput struct {
@@ -2073,6 +2091,45 @@ func (e *FlowInstanceFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FlowInstanceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FormulaFilterType string
+
+const (
+	FormulaFilterTypeTextformula FormulaFilterType = "TEXTFORMULA"
+)
+
+var AllFormulaFilterType = []FormulaFilterType{
+	FormulaFilterTypeTextformula,
+}
+
+func (e FormulaFilterType) IsValid() bool {
+	switch e {
+	case FormulaFilterTypeTextformula:
+		return true
+	}
+	return false
+}
+
+func (e FormulaFilterType) String() string {
+	return string(e)
+}
+
+func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FormulaFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FormulaFilterType", str)
+	}
+	return nil
+}
+
+func (e FormulaFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2815,6 +2872,45 @@ func (e *SurveyStatus) UnmarshalGQL(v interface{}) error {
 }
 
 func (e SurveyStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TechFilterType string
+
+const (
+	TechFilterTypeName TechFilterType = "NAME"
+)
+
+var AllTechFilterType = []TechFilterType{
+	TechFilterTypeName,
+}
+
+func (e TechFilterType) IsValid() bool {
+	switch e {
+	case TechFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e TechFilterType) String() string {
+	return string(e)
+}
+
+func (e *TechFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TechFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TechFilterType", str)
+	}
+	return nil
+}
+
+func (e TechFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
