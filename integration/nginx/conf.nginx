@@ -20,7 +20,7 @@ http {
 
     sendfile        on;
     keepalive_timeout  65;
-
+    proxy_read_timeout 300;
     server {
         listen 80 default_server;
         server_name _;

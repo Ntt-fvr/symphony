@@ -175,7 +175,7 @@ func (m *importer) verifyOrCreateLocationHierarchy(ctx context.Context, l Import
 
 			if loc == nil {
 				if !ent.IsNotFound(err) {
-					return nil, errors.Wrapf(err, "querying or creating location name: %v", locName)
+					return nil, errors.Wrapf(err, "querying location name: %v", locName)
 				}
 				// no location but no error (dry run mode)
 				return nil, nil
