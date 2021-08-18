@@ -10,14 +10,13 @@
 
 import React, {useState} from 'react';
 
-// DESIGN SYSTEM //
-import type {RemoveRuleMutationVariables} from '../../mutations/__generated__/RemoveRuleMutation.graphql';
+import type {RemoveFormulaMutationVariables} from '../../mutations/__generated__/RemoveFormulaMutation.graphql';
 
 import Button from '@material-ui/core/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Paper from '@material-ui/core/Paper';
-import RemoveRuleMutation from '../../mutations/RemoveRuleMutation';
+import RemoveFormulaMutation from '../../mutations/RemoveFormulaMutation';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -28,8 +27,6 @@ import TableRow from '@material-ui/core/TableRow';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-import {types} from './ThresholdReducer';
-import {useDispatch} from './ThresholdProvider';
 import {withStyles} from '@material-ui/core/styles';
 
 const StyledTableCell = withStyles(() => ({
@@ -61,80 +58,36 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type RuleLimit = {
+type Formula = {
   id: string,
-  name: string,
-  limitType: string,
-  comparator: {
-    id: string,
+  textFormula: string,
+  status: true,
+  techFk: {
     name: string,
   },
-};
-
-type Rule = {
-  id: string,
-  name: string,
-  gracePeriod: string,
-  additionalInfo: string,
-  specificProblem: string,
-  eventTypeName: string,
-  startDateTime: string,
-  endDateTime: string,
-  threshold: {
-    id: string,
-    name: string,
-  },
-  ruleLimit: Array<RuleLimit>,
-  ruleType: {
-    name: string,
-  },
-  eventSeverity: {
-    id: string,
-    name: string,
-  },
-  status: boolean,
 };
 
 type Props = $ReadOnly<{|
-  rule: Array<Rule>,
-  editRule: void => void,
+  formulas: Array<Formula>,
+  parentEditCallback: any,
+  handleEditFormulaClick: any,
 |}>;
 
 export default function DenseTable(props: Props) {
-  const {rule, editRule} = props;
+  const {formulas, handleEditFormulaClick, parentEditCallback} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
 
-  const dispatch = useDispatch();
-
   const handleRemove = id => {
-    const variables: RemoveRuleMutationVariables = {
+    const variables: RemoveFormulaMutationVariables = {
       id: id,
     };
-    RemoveRuleMutation(variables);
+    RemoveFormulaMutation(variables);
   };
 
-  const handleClick = row => {
-    dispatch({
-      type: types.sendEditRule,
-      payload: {
-        id: row.id,
-        name: row.name,
-        status: row.status,
-        gracePeriod: row.gracePeriod,
-        additionalInfo: row.additionalInfo,
-        specificProblem: row.specificProblem,
-        eventTypeName: row.eventTypeName,
-        startDateTime: row.startDateTime,
-        endDateTime: row.endDateTime,
-        thresholdId: row.threshold.id,
-        thresholdName: row.threshold.name,
-        eventSeverityId: row.eventSeverity.id,
-        ruleLimit: row.ruleLimit,
-      },
-    });
-    editRule();
-  };
+  function handleEditCallback(editFormula: {}) {
+    parentEditCallback(editFormula);
+  }
 
   return (
     <Paper variant="outlined">
@@ -143,15 +96,14 @@ export default function DenseTable(props: Props) {
           <TableHead>
             <TableRow>
               <StyledTableCell>Enable</StyledTableCell>
-              <StyledTableCell>Rule Name</StyledTableCell>
-              <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell>Type of Rule</StyledTableCell>
+              <StyledTableCell>Id</StyledTableCell>
+              <StyledTableCell>Technology</StyledTableCell>
               <StyledTableCell>Delete</StyledTableCell>
               <StyledTableCell>Edit</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rule.map(row => (
+            {formulas.map(row => (
               <StyledTableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   <Switch
@@ -161,16 +113,15 @@ export default function DenseTable(props: Props) {
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.id}
                 </TableCell>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.ruleType.name}</TableCell>
+                <TableCell>{row.techFk?.name}</TableCell>
                 <TableCell>
                   <Button>
                     <DeleteOutlinedIcon
                       style={{color: DARK.D300}}
                       onClick={() => {
-                        handleRemove(row?.id);
+                        handleRemove(row.id);
                       }}
                     />
                   </Button>
@@ -179,7 +130,13 @@ export default function DenseTable(props: Props) {
                   <IconButton
                     icon={EditIcon}
                     onClick={() => {
-                      handleClick(row);
+                      handleEditCallback({
+                        formula: row.id,
+                        textFormula: row.textFormula,
+                        kpiId: row.kpiFk?.id,
+                        kpiFk: row.kpiFk?.name
+                      });
+                      handleEditFormulaClick();
                     }}
                   />
                 </TableCell>

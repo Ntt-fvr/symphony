@@ -332,6 +332,7 @@ const AddRuleItemForm = (props: Props) => {
                   label="Alarm type name"
                   required>
                   <TextInput
+                    autoComplete="off"
                     className={classes.textInput}
                     name="alarmType"
                     onChange={handleChange}

@@ -13,14 +13,11 @@ import React, {useState} from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 
-import {
-AlarmFilteringStatus
-} from './AlarmFilteringStatus';
-import AlarmFilteringFormCreate from './AlarmFilteringFormCreate';
+import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 
-import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeStyles} from '@material-ui/styles';
 
+import DateTimeFormat from '../../common/DateTimeFormat.js';
 import Paper from '@material-ui/core/Paper';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Table from '@material-ui/core/Table';
@@ -30,10 +27,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import DateTimeFormat from '../../common/DateTimeFormat.js';
-import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
-
-import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -68,10 +61,10 @@ type Props = $ReadOnly<{|
 |}>;
 
 const AlarmFilteringTable = (props: Props) => {
-  const {dataValues, onChange, edit} = props;
+  const {dataValues, edit} = props;
   const classes = useStyles();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [checked, setChecked] = useState();
 
   const handleChangePage = (event, newPage) => {
@@ -106,10 +99,10 @@ const AlarmFilteringTable = (props: Props) => {
                 <StyledTableRow tabIndex={-1} key={index}>
                   <TableCell>
                     <Switch
-                    title={''}
-                    checked={item.enable}
-                    onChange={setChecked}
-                  />
+                      title={''}
+                      checked={item.enable}
+                      onChange={setChecked}
+                    />
                   </TableCell>
                   <TableCell>
                     <Button color="primary" onClick={() => edit({item})}>
@@ -121,11 +114,10 @@ const AlarmFilteringTable = (props: Props) => {
                   </TableCell>
                   <TableCell>{item.networkResource}</TableCell>
                   <TableCell>
-                    <AlarmFilteringStatus 
+                    <AlarmFilteringStatus
                       creationDate={item.creationTime}
                       beginDate={item.beginTime}
                       endDate={item.endTime}
-                      valueButton={item.id}  
                     />
                   </TableCell>
                   <TableCell>
