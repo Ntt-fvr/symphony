@@ -12,11 +12,11 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import IconButton from '@symphony/design-system/components/IconButton';
+import IconButton from '@material-ui/core/IconButton'
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-
+import {DARK} from '@symphony/design-system/theme/symphony';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
@@ -120,6 +120,17 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
   },
 }));
+
+type Props = $ReadOnly<{|
+  returnFormEdit: () => void,
+  formValues: {
+    item: {
+      id: string,
+      name: string,
+    
+    },
+  },
+|}>;
 const handleRemove = () => {
   console.log('remove');
 };
@@ -145,7 +156,8 @@ const data = {
     ],
   },
 };
-const KqiFormEditTarget = props => {
+const KqiFormEditTarget = (props: Props) => {
+  const {returnFormEdit} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
 
@@ -160,11 +172,12 @@ const KqiFormEditTarget = props => {
           />
         </Grid>
         <Grid className={classes.delete} item xs={1}>
-          <IconButton
-            skin={'gray'}
-            icon={DeleteOutlinedIcon}
-            onClick={handleRemove}
-          />
+          <IconButton>
+            <DeleteOutlinedIcon
+              onClick={handleRemove}
+              style={{color: DARK.D300}}
+            />
+          </IconButton>
         </Grid>
         <Grid item xs={2}>
           <Grid container>
@@ -174,7 +187,7 @@ const KqiFormEditTarget = props => {
                   className={classes.option}
                   variant="outlined"
                   color="primary"
-                  onClick={props.returnFormEdit}>
+                  onClick={() => returnFormEdit()}>
                   Cancel
                 </Button>
               </FormField>
@@ -202,7 +215,7 @@ const KqiFormEditTarget = props => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField className={classes.formField} label="ID">
+                <FormField className={classes.formField} label="Target name">
                   <TextInput className={classes.textInput} />
                 </FormField>
               </Grid>
@@ -257,7 +270,7 @@ const KqiFormEditTarget = props => {
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField className={classes.formField} label="Description">
+                <FormField className={classes.formField} label="Impact">
                   <TextInput
                     className={classes.textInput}
                     type="multiline"

@@ -89,9 +89,9 @@ const KqiTable = (props: Props) => {
           </TableHead>
           <TableBody>
             {dataValues?.map((item, index) => (
-                <StyledTableRow key={item.id}>
+                <StyledTableRow key={index}>
                   <TableCell>
-                    <Button onClick={() => viewFormEdit()} variant="text">
+                    <Button onClick={() => viewFormEdit({item})} variant="text">
                       <Text
                         variant={'subtitle1'}
                         weight={'medium'}
