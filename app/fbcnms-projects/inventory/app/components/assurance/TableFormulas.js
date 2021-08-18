@@ -133,8 +133,9 @@ export default function DenseTable(props: Props) {
                       handleEditCallback({
                         formula: row.id,
                         textFormula: row.textFormula,
+                        tech: row.techFk?.id,
                         kpiId: row.kpiFk?.id,
-                        kpiFk: row.kpiFk?.name
+                        kpiFk: row.kpiFk?.name,
                       });
                       handleEditFormulaClick();
                     }}

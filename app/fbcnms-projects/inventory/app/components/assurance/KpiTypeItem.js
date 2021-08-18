@@ -94,6 +94,7 @@ type Formula = {
   textFormula: string,
   status: true,
   techFk: {
+    id: string,
     name: string,
   },
 };
@@ -155,8 +156,7 @@ export default function KpiTypeItem(props: Props) {
   function handleCallback() {
     parentCallback({
       kpi: id,
-      vendors: 'none',
-      technology: 'none',
+      technology: formulaFk[0].techFk?.id,
     });
   }
 

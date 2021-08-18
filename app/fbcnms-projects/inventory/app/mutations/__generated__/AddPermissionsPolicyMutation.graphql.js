@@ -63,6 +63,7 @@ export type WorkforcePermissionRuleInput = {|
   isAllowed: PermissionValue,
   projectTypeIds?: ?$ReadOnlyArray<string>,
   workOrderTypeIds?: ?$ReadOnlyArray<string>,
+  organizationIds?: ?$ReadOnlyArray<string>,
 |};
 export type WorkforceCUDInput = {|
   create?: ?BasicPermissionRuleInput,

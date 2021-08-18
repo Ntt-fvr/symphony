@@ -62,7 +62,6 @@ const useStyles = makeStyles(() => ({
 type Formula = {
   data: {
     kpi: string,
-    vendors: string,
     technology: string,
   },
 };
@@ -90,7 +89,7 @@ const AddFormulaDialog = (props: Props) => {
       input: {
         textFormula: textFormula.formula,
         status: true,
-        techFk: '270582939648',
+        techFk: dataFormula.data.technology,
         kpiFk: dataFormula.data.kpi,
       },
     };
@@ -115,9 +114,6 @@ const AddFormulaDialog = (props: Props) => {
       <DialogContent className={classes.dialogContent}>
         <Grid container spacing={2}>
           <Grid item xs={3}>
-            <Text weight="bold">Vendor: </Text>
-            <Text>{dataFormula.data.vendors}</Text>
-            <br />
             <Text weight="bold">Technology: </Text>
             <Text>{dataFormula.data.technology}</Text>
             <br />

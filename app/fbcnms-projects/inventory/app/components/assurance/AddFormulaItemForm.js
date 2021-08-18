@@ -14,7 +14,6 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 
 import type {AddFormulaItemFormQuery} from './__generated__/AddFormulaItemFormQuery.graphql';
 
@@ -68,6 +67,14 @@ const AddFormulaQuery = graphql`
       }
     }
     vendors {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    techs {
       edges {
         node {
           id
@@ -138,13 +145,18 @@ export default function AddFormulaItemForm(props: Props) {
         </Select>
       </FormField>
       <FormField className={classes.formField} label="Technology" required>
-        <TextInput
-          autoComplete="off"
-          className={classes.textInput}
+        <Select
+          className={classes.select}
+          disableUnderline
           name="technology"
-          type="string"
-          onChange={handleChange}
-        />
+          type="reset"
+          onChange={handleChange}>
+          {data.techs?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
+            </MenuItem>
+          ))}
+        </Select>
       </FormField>
       <FormField>
         <Button

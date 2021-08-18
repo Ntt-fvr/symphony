@@ -86,7 +86,7 @@ const EditFormulaDialog = (props: Props) => {
         id: dataFormula.data.formula,
         textFormula: textFormula.value,
         status: true,
-        techFk: '270582939648',
+        techFk: dataFormula.data.tech,
         kpiFk: dataFormula.data.kpiId,
       },
     };
@@ -116,6 +116,9 @@ const EditFormulaDialog = (props: Props) => {
             <br />
             <Text weight="bold">KPI: </Text>
             <Text>{dataFormula.data.kpiFk}</Text>
+            <br />
+            <Text weight="bold">Technology: </Text>
+            <Text>{dataFormula.data.tech}</Text>
           </Grid>
           <Grid item xs={9}>
             <FormField label="Formula">

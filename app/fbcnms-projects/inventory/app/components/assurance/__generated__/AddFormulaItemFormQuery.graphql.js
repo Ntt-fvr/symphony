@@ -32,6 +32,14 @@ export type AddFormulaItemFormQueryResponse = {|
       |}
     |}>
   |},
+  +techs: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type AddFormulaItemFormQuery = {|
   variables: AddFormulaItemFormQueryVariables,
@@ -51,6 +59,14 @@ query AddFormulaItemFormQuery {
     }
   }
   vendors {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  techs {
     edges {
       node {
         id
@@ -142,6 +158,38 @@ v1 = [
       }
     ],
     "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "TechConnection",
+    "kind": "LinkedField",
+    "name": "techs",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "TechEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Tech",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v0/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -162,16 +210,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9eeec41dae5884d2fca2afe549c564e5",
+    "cacheID": "f9929192c6cec2612095aa19cba4b6bc",
     "id": null,
     "metadata": {},
     "name": "AddFormulaItemFormQuery",
     "operationKind": "query",
-    "text": "query AddFormulaItemFormQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddFormulaItemFormQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  vendors {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  techs {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c88c2d7ab3ce97fc3e8a6dfc75af45cc';
+(node/*: any*/).hash = '0d901e1711014704d0c2e85d9ba09379';
 
 module.exports = node;
