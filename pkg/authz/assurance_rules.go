@@ -17,3 +17,20 @@ func AssuranceTemplatesWritePolicyRule() privacy.MutationRule {
 		return cudBasedRule(FromContext(ctx).AssurancePolicy.Templates, m)
 	})
 }
+
+/*// AssuranceTemplatesReadPolicyRule grants read permission to activity based on policy.
+func AssuranceTemplatesReadPolicyRule(a interface{}) privacy.QueryRule {
+	return privacy.QueryRuleFunc(func(ctx context.Context, q ent.Query) error {
+		var predicates []predicate.Item
+		woPredicate := workOrderReadPredicate(ctx)
+		if woPredicate != nil {
+			predicates = append(predicates,
+				a.Or(
+					a.Not(a.HasWorkOrder()),
+					a.HasWorkOrderWith(woPredicate)))
+		}
+
+		q.Where(predicates...)
+		return privacy.Skip
+	})
+}*/

@@ -55,9 +55,9 @@ func (fc *FormulaCreate) SetNillableUpdateTime(t *time.Time) *FormulaCreate {
 	return fc
 }
 
-// SetName sets the name field.
-func (fc *FormulaCreate) SetName(s string) *FormulaCreate {
-	fc.mutation.SetName(s)
+// SetTextFormula sets the textFormula field.
+func (fc *FormulaCreate) SetTextFormula(s string) *FormulaCreate {
+	fc.mutation.SetTextFormula(s)
 	return fc
 }
 
@@ -190,12 +190,12 @@ func (fc *FormulaCreate) check() error {
 	if _, ok := fc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
-	if _, ok := fc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	if _, ok := fc.mutation.TextFormula(); !ok {
+		return &ValidationError{Name: "textFormula", err: errors.New("ent: missing required field \"textFormula\"")}
 	}
-	if v, ok := fc.mutation.Name(); ok {
-		if err := formula.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+	if v, ok := fc.mutation.TextFormula(); ok {
+		if err := formula.TextFormulaValidator(v); err != nil {
+			return &ValidationError{Name: "textFormula", err: fmt.Errorf("ent: validator failed for field \"textFormula\": %w", err)}
 		}
 	}
 	if _, ok := fc.mutation.Status(); !ok {
@@ -244,13 +244,13 @@ func (fc *FormulaCreate) createSpec() (*Formula, *sqlgraph.CreateSpec) {
 		})
 		_node.UpdateTime = value
 	}
-	if value, ok := fc.mutation.Name(); ok {
+	if value, ok := fc.mutation.TextFormula(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: formula.FieldName,
+			Column: formula.FieldTextFormula,
 		})
-		_node.Name = value
+		_node.TextFormula = value
 	}
 	if value, ok := fc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

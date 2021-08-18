@@ -27,6 +27,9 @@ import type {RemoveKpiMutationVariables} from '../../mutations/__generated__/Rem
 import RemoveKpiMutation from '../../mutations/RemoveKpiMutation';
 
 // DESIGN SYSTEM //
+import AddFormulaDialog from './AddFormulaDialog';
+import AddFormulaItemForm from './AddFormulaItemForm';
+import EditFormulaDialog from './EditFormulaDialog';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -56,6 +59,19 @@ const KpiQuery = graphql`
             id
             name
           }
+          formulaFk {
+            id
+            textFormula
+            status
+            kpiFk {
+              id
+              name
+            }
+            techFk {
+              id
+              name
+            }
+          }
         }
       }
     }
@@ -72,6 +88,23 @@ const KpiQuery = graphql`
   }
 `;
 
+type Formula = {
+  id: string,
+  textFormula: string,
+  status: true,
+  techFk: {
+    name: string,
+  },
+};
+
+type FormulaForm = {
+  data: {
+    kpi: string,
+    vendors: string,
+    technology: string,
+  },
+};
+
 type Kpis = {
   item: {
     node: {
@@ -83,6 +116,7 @@ type Kpis = {
         name: string,
       },
       description: string,
+      formulaFk: Array<Formula>,
     },
   },
 };
@@ -92,13 +126,33 @@ const KpiTypes = () => {
 
   const [dataKpis, setDataKpis] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
+  const [dataEdit, setDataEdit] = useState<Kpis>({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [formulaForm, setFormulaForm] = useState<FormulaForm>({});
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [formulaEditForm, setFormulaEditForm] = useState<any>({});
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
       setDataKpis(data);
     });
   }, [dataKpis]);
+
+  const handleCallback = childData => {
+    setFormulaForm({data: childData});
+  };
+
+  const handleFormulaClick = () => {
+    setOpenDialog(true);
+  };
+
+  const handleEditCallback = childData => {
+    setFormulaEditForm({data: childData});
+  };
+
+  const handleEditFormulaClick = () => {
+    setOpenEditDialog(true);
+  };
 
   const handleRemove = id => {
     const variables: RemoveKpiMutationVariables = {
@@ -148,6 +202,10 @@ const KpiTypes = () => {
                 threshold={dataKpis.thresholds?.edges}
                 onChange={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
+                handleFormulaClick={handleFormulaClick}
+                parentCallback={handleCallback}
+                handleEditFormulaClick={handleEditFormulaClick}
+                parentEditCallback={handleEditCallback}
                 {...item.node}
               />
             ))}
@@ -155,8 +213,26 @@ const KpiTypes = () => {
         </Grid>
         <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
           <AddKpiItemForm kpiNames={dataKpis.kpis?.edges} />
+          <AddFormulaItemForm
+            parentCallback={handleCallback}
+            handleClick={handleFormulaClick}
+          />
         </Grid>
       </Grid>
+      {openDialog && (
+        <AddFormulaDialog
+          open={openDialog}
+          dataFormula={formulaForm}
+          onClose={() => setOpenDialog(false)}
+        />
+      )}
+      {openEditDialog && (
+        <EditFormulaDialog
+          open={openEditDialog}
+          dataFormula={formulaEditForm}
+          onClose={() => setOpenEditDialog(false)}
+        />
+      )}
     </div>
   );
 };

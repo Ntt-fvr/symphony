@@ -119,6 +119,7 @@ type WorkforcePermissionRule
   isAllowed: PermissionValue!
   projectTypeIds: [ID!]
   workOrderTypeIds: [ID!]
+  organizationIds: [ID!]
 }
 
 input BasicPermissionRuleInput
@@ -143,6 +144,7 @@ input WorkforcePermissionRuleInput
   isAllowed: PermissionValue!
   projectTypeIds: [ID!]
   workOrderTypeIds: [ID!]
+  organizationIds: [ID!]
 }
 
 type CUD
@@ -3892,6 +3894,138 @@ type KqiTargetEdge {
   """
   cursor: Cursor!
 }
+"""
+Properties by which formulas connections can be ordered.
+"""
+enum FormulaOrderField {
+  """
+  Order formulas by name.
+  """
+  NAME
+
+  """
+  Order formulas by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order formulas by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for formulas connections.
+"""
+input FormulaOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order formulas by.
+  """
+  field: FormulaOrderField
+}
+
+"""
+A connection to a list of formulas.
+"""
+type FormulaConnection {
+  """
+  Total formulas of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of formulas edges.
+  """
+  edges: [FormulaEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A formulas edge in a connection.
+"""
+type FormulaEdge {
+  """
+  The formulas at the end of the edge.
+  """
+  node: Formula
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Properties by which techs connections can be ordered.
+"""
+enum TechOrderField {
+  """
+  Order techs by name.
+  """
+  NAME
+
+  """
+  Order techs by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order techs by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for techs connections.
+"""
+input TechOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order techs by.
+  """
+  field: TechOrderField
+}
+
+"""
+A connection to a list of techs.
+"""
+type TechConnection {
+  """
+  Total techs of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of techs edges.
+  """
+  edges: [TechEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A techs edge in a connection.
+"""
+type TechEdge {
+  """
+  The techs at the end of the edge.
+  """
+  node: Tech
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -4113,6 +4247,7 @@ what filters should we apply on users
 enum UserFilterType {
   USER_NAME
   USER_STATUS
+  USER_ORGANIZATION
 }
 
 """
@@ -4226,6 +4361,7 @@ enum WorkOrderFilterType
   WORK_ORDER_PRIORITY
   LOCATION_INST
   LOCATION_INST_EXTERNAL_ID
+  WORK_ORDER_ORGANIZATION
 }
 
 input WorkOrderFilterInput
@@ -4263,6 +4399,10 @@ input ProjectFilterInput {
 
 enum CounterFilterType {
   NAME
+  EXTERNALID
+  NETWORKMANAGERSYSTEM
+  COUNTERFAMILY
+  VENDORFK
 }
 
 input CounterFilterInput {
@@ -4287,6 +4427,36 @@ input KpiFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
 }
+enum FormulaFilterType {  
+  TEXTFORMULA
+  
+}
+
+input FormulaFilterInput {
+  filterType: FormulaFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  
+}
+
+enum TechFilterType {
+  NAME
+  
+}
+
+input TechFilterInput {
+  filterType: TechFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  
+}
+
 
 """
 A connection to a list of customers.
@@ -6422,6 +6592,75 @@ type Query {
     
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
+     """
+  A list of formulas.
+  """
+  formulas(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned formulas.
+    """
+    orderBy: FormulaOrder
+
+    
+    #Filtering options for the returned formulas.
+    
+    filterBy: [FormulaFilterInput!]
+  ): FormulaConnection!
+
+    """
+  A list of techs.
+  """
+  techs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned techs.
+    """
+    orderBy: TechOrder
+
+    
+    #Filtering options for the returned techs.
+    
+    filterBy: [TechFilterInput!]
+  ): TechConnection!
 }
 
 type Mutation {
@@ -6923,7 +7162,7 @@ input EditTechInput {
 
 type Formula implements Node {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
@@ -6931,7 +7170,7 @@ type Formula implements Node {
 }
 
 input AddFormulaInput {
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -6939,7 +7178,7 @@ input AddFormulaInput {
 
 input EditFormulaInput {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -7202,7 +7441,7 @@ input AddAlarmFilterInput {
   reason: String!
   user: String!
   creationTime: Time!  
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 input AlarmFilterInput {
@@ -7224,7 +7463,7 @@ input EditAlarmFilterInput {
   beginTime: Time!
   endTime: Time!
   reason: String! 
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 enum AlarmFilterFilterType {
@@ -7325,7 +7564,9 @@ input KqiFilterInput {
 }
 
 enum OrganizationFilterType {
+  ID
   NAME
+  DESCRIPTION
 }
 
 input OrganizationFilterInput {
@@ -7589,6 +7830,11 @@ enum RecommendationsFilterType {
   STATUS
   USED
   RUNBOOK
+  RECOMMENDATIONSSOURCE
+  RECOMMENDATIONSCATEGORY
+  USERCREATE
+  USERAPPROVE
+  VENDORRECOMMENDATIONS
 }
 
 input RecommendationsFilterInput {

@@ -48,7 +48,7 @@ func (r mutationResolver) AddFormula(ctx context.Context, input models.AddFormul
 	client := r.ClientFrom(ctx)
 	typ, err := client.
 		Formula.Create().
-		SetName(input.Name).
+		SetTextFormula(input.TextFormula).
 		SetStatus(input.Status).
 		SetKpiID(input.KpiFk).
 		SetTechID(input.TechFk).
@@ -87,10 +87,10 @@ func (r mutationResolver) EditFormula(ctx context.Context, input models.EditForm
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	if input.Name != et.Name || input.Status != et.Status || input.KpiFk != et.Edges.Kpi.ID || input.TechFk != et.Edges.Tech.ID {
+	if input.TextFormula != et.TextFormula || input.Status != et.Status || input.KpiFk != et.Edges.Kpi.ID || input.TechFk != et.Edges.Tech.ID {
 		if et, err = client.Formula.
 			UpdateOne(et).
-			SetName(input.Name).
+			SetTextFormula(input.TextFormula).
 			SetStatus(input.Status).
 			SetKpiID(input.KpiFk).
 			SetTechID(input.TechFk).

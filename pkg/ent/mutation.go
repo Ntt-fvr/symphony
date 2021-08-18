@@ -29726,7 +29726,7 @@ type FormulaMutation struct {
 	id                    *int
 	create_time           *time.Time
 	update_time           *time.Time
-	name                  *string
+	textFormula           *string
 	status                *bool
 	clearedFields         map[string]struct{}
 	tech                  *int
@@ -29894,41 +29894,41 @@ func (m *FormulaMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
-// SetName sets the name field.
-func (m *FormulaMutation) SetName(s string) {
-	m.name = &s
+// SetTextFormula sets the textFormula field.
+func (m *FormulaMutation) SetTextFormula(s string) {
+	m.textFormula = &s
 }
 
-// Name returns the name value in the mutation.
-func (m *FormulaMutation) Name() (r string, exists bool) {
-	v := m.name
+// TextFormula returns the textFormula value in the mutation.
+func (m *FormulaMutation) TextFormula() (r string, exists bool) {
+	v := m.textFormula
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldName returns the old name value of the Formula.
+// OldTextFormula returns the old textFormula value of the Formula.
 // If the Formula object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *FormulaMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *FormulaMutation) OldTextFormula(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldTextFormula is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+		return v, fmt.Errorf("OldTextFormula requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
+		return v, fmt.Errorf("querying old value for OldTextFormula: %w", err)
 	}
-	return oldValue.Name, nil
+	return oldValue.TextFormula, nil
 }
 
-// ResetName reset all changes of the "name" field.
-func (m *FormulaMutation) ResetName() {
-	m.name = nil
+// ResetTextFormula reset all changes of the "textFormula" field.
+func (m *FormulaMutation) ResetTextFormula() {
+	m.textFormula = nil
 }
 
 // SetStatus sets the status field.
@@ -30120,8 +30120,8 @@ func (m *FormulaMutation) Fields() []string {
 	if m.update_time != nil {
 		fields = append(fields, formula.FieldUpdateTime)
 	}
-	if m.name != nil {
-		fields = append(fields, formula.FieldName)
+	if m.textFormula != nil {
+		fields = append(fields, formula.FieldTextFormula)
 	}
 	if m.status != nil {
 		fields = append(fields, formula.FieldStatus)
@@ -30138,8 +30138,8 @@ func (m *FormulaMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case formula.FieldUpdateTime:
 		return m.UpdateTime()
-	case formula.FieldName:
-		return m.Name()
+	case formula.FieldTextFormula:
+		return m.TextFormula()
 	case formula.FieldStatus:
 		return m.Status()
 	}
@@ -30155,8 +30155,8 @@ func (m *FormulaMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreateTime(ctx)
 	case formula.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case formula.FieldName:
-		return m.OldName(ctx)
+	case formula.FieldTextFormula:
+		return m.OldTextFormula(ctx)
 	case formula.FieldStatus:
 		return m.OldStatus(ctx)
 	}
@@ -30182,12 +30182,12 @@ func (m *FormulaMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateTime(v)
 		return nil
-	case formula.FieldName:
+	case formula.FieldTextFormula:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetName(v)
+		m.SetTextFormula(v)
 		return nil
 	case formula.FieldStatus:
 		v, ok := value.(bool)
@@ -30252,8 +30252,8 @@ func (m *FormulaMutation) ResetField(name string) error {
 	case formula.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
-	case formula.FieldName:
-		m.ResetName()
+	case formula.FieldTextFormula:
+		m.ResetTextFormula()
 		return nil
 	case formula.FieldStatus:
 		m.ResetStatus()
@@ -39879,6 +39879,9 @@ type OrganizationMutation struct {
 	work_order_fk        map[int]struct{}
 	removedwork_order_fk map[int]struct{}
 	clearedwork_order_fk bool
+	policies             map[int]struct{}
+	removedpolicies      map[int]struct{}
+	clearedpolicies      bool
 	done                 bool
 	oldValue             func(context.Context) (*Organization, error)
 	predicates           []predicate.Organization
@@ -40217,6 +40220,59 @@ func (m *OrganizationMutation) ResetWorkOrderFk() {
 	m.removedwork_order_fk = nil
 }
 
+// AddPolicyIDs adds the policies edge to PermissionsPolicy by ids.
+func (m *OrganizationMutation) AddPolicyIDs(ids ...int) {
+	if m.policies == nil {
+		m.policies = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.policies[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPolicies clears the policies edge to PermissionsPolicy.
+func (m *OrganizationMutation) ClearPolicies() {
+	m.clearedpolicies = true
+}
+
+// PoliciesCleared returns if the edge policies was cleared.
+func (m *OrganizationMutation) PoliciesCleared() bool {
+	return m.clearedpolicies
+}
+
+// RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
+func (m *OrganizationMutation) RemovePolicyIDs(ids ...int) {
+	if m.removedpolicies == nil {
+		m.removedpolicies = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedpolicies[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPolicies returns the removed ids of policies.
+func (m *OrganizationMutation) RemovedPoliciesIDs() (ids []int) {
+	for id := range m.removedpolicies {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PoliciesIDs returns the policies ids in the mutation.
+func (m *OrganizationMutation) PoliciesIDs() (ids []int) {
+	for id := range m.policies {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPolicies reset all changes of the "policies" edge.
+func (m *OrganizationMutation) ResetPolicies() {
+	m.policies = nil
+	m.clearedpolicies = false
+	m.removedpolicies = nil
+}
+
 // Op returns the operation name.
 func (m *OrganizationMutation) Op() Op {
 	return m.op
@@ -40383,12 +40439,15 @@ func (m *OrganizationMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user_fk != nil {
 		edges = append(edges, organization.EdgeUserFk)
 	}
 	if m.work_order_fk != nil {
 		edges = append(edges, organization.EdgeWorkOrderFk)
+	}
+	if m.policies != nil {
+		edges = append(edges, organization.EdgePolicies)
 	}
 	return edges
 }
@@ -40409,6 +40468,12 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgePolicies:
+		ids := make([]ent.Value, 0, len(m.policies))
+		for id := range m.policies {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -40416,12 +40481,15 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removeduser_fk != nil {
 		edges = append(edges, organization.EdgeUserFk)
 	}
 	if m.removedwork_order_fk != nil {
 		edges = append(edges, organization.EdgeWorkOrderFk)
+	}
+	if m.removedpolicies != nil {
+		edges = append(edges, organization.EdgePolicies)
 	}
 	return edges
 }
@@ -40442,6 +40510,12 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgePolicies:
+		ids := make([]ent.Value, 0, len(m.removedpolicies))
+		for id := range m.removedpolicies {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -40449,12 +40523,15 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser_fk {
 		edges = append(edges, organization.EdgeUserFk)
 	}
 	if m.clearedwork_order_fk {
 		edges = append(edges, organization.EdgeWorkOrderFk)
+	}
+	if m.clearedpolicies {
+		edges = append(edges, organization.EdgePolicies)
 	}
 	return edges
 }
@@ -40467,6 +40544,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.cleareduser_fk
 	case organization.EdgeWorkOrderFk:
 		return m.clearedwork_order_fk
+	case organization.EdgePolicies:
+		return m.clearedpolicies
 	}
 	return false
 }
@@ -40490,6 +40569,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	case organization.EdgeWorkOrderFk:
 		m.ResetWorkOrderFk()
 		return nil
+	case organization.EdgePolicies:
+		m.ResetPolicies()
+		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
 }
@@ -40498,25 +40580,28 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type PermissionsPolicyMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	create_time       *time.Time
-	update_time       *time.Time
-	name              *string
-	description       *string
-	is_global         *bool
-	inventory_policy  **models.InventoryPolicyInput
-	workforce_policy  **models.WorkforcePolicyInput
-	automation_policy **models.AutomationPolicyInput
-	assurance_policy  **models.AssurancePolicyInput
-	clearedFields     map[string]struct{}
-	groups            map[int]struct{}
-	removedgroups     map[int]struct{}
-	clearedgroups     bool
-	done              bool
-	oldValue          func(context.Context) (*PermissionsPolicy, error)
-	predicates        []predicate.PermissionsPolicy
+	op                  Op
+	typ                 string
+	id                  *int
+	create_time         *time.Time
+	update_time         *time.Time
+	name                *string
+	description         *string
+	is_global           *bool
+	inventory_policy    **models.InventoryPolicyInput
+	workforce_policy    **models.WorkforcePolicyInput
+	automation_policy   **models.AutomationPolicyInput
+	assurance_policy    **models.AssurancePolicyInput
+	clearedFields       map[string]struct{}
+	groups              map[int]struct{}
+	removedgroups       map[int]struct{}
+	clearedgroups       bool
+	organization        map[int]struct{}
+	removedorganization map[int]struct{}
+	clearedorganization bool
+	done                bool
+	oldValue            func(context.Context) (*PermissionsPolicy, error)
+	predicates          []predicate.PermissionsPolicy
 }
 
 var _ ent.Mutation = (*PermissionsPolicyMutation)(nil)
@@ -41062,6 +41147,59 @@ func (m *PermissionsPolicyMutation) ResetGroups() {
 	m.removedgroups = nil
 }
 
+// AddOrganizationIDs adds the organization edge to Organization by ids.
+func (m *PermissionsPolicyMutation) AddOrganizationIDs(ids ...int) {
+	if m.organization == nil {
+		m.organization = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.organization[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOrganization clears the organization edge to Organization.
+func (m *PermissionsPolicyMutation) ClearOrganization() {
+	m.clearedorganization = true
+}
+
+// OrganizationCleared returns if the edge organization was cleared.
+func (m *PermissionsPolicyMutation) OrganizationCleared() bool {
+	return m.clearedorganization
+}
+
+// RemoveOrganizationIDs removes the organization edge to Organization by ids.
+func (m *PermissionsPolicyMutation) RemoveOrganizationIDs(ids ...int) {
+	if m.removedorganization == nil {
+		m.removedorganization = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedorganization[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrganization returns the removed ids of organization.
+func (m *PermissionsPolicyMutation) RemovedOrganizationIDs() (ids []int) {
+	for id := range m.removedorganization {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OrganizationIDs returns the organization ids in the mutation.
+func (m *PermissionsPolicyMutation) OrganizationIDs() (ids []int) {
+	for id := range m.organization {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOrganization reset all changes of the "organization" edge.
+func (m *PermissionsPolicyMutation) ResetOrganization() {
+	m.organization = nil
+	m.clearedorganization = false
+	m.removedorganization = nil
+}
+
 // Op returns the operation name.
 func (m *PermissionsPolicyMutation) Op() Op {
 	return m.op
@@ -41352,9 +41490,12 @@ func (m *PermissionsPolicyMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PermissionsPolicyMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.groups != nil {
 		edges = append(edges, permissionspolicy.EdgeGroups)
+	}
+	if m.organization != nil {
+		edges = append(edges, permissionspolicy.EdgeOrganization)
 	}
 	return edges
 }
@@ -41369,6 +41510,12 @@ func (m *PermissionsPolicyMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case permissionspolicy.EdgeOrganization:
+		ids := make([]ent.Value, 0, len(m.organization))
+		for id := range m.organization {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -41376,9 +41523,12 @@ func (m *PermissionsPolicyMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PermissionsPolicyMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedgroups != nil {
 		edges = append(edges, permissionspolicy.EdgeGroups)
+	}
+	if m.removedorganization != nil {
+		edges = append(edges, permissionspolicy.EdgeOrganization)
 	}
 	return edges
 }
@@ -41393,6 +41543,12 @@ func (m *PermissionsPolicyMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case permissionspolicy.EdgeOrganization:
+		ids := make([]ent.Value, 0, len(m.removedorganization))
+		for id := range m.removedorganization {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -41400,9 +41556,12 @@ func (m *PermissionsPolicyMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PermissionsPolicyMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedgroups {
 		edges = append(edges, permissionspolicy.EdgeGroups)
+	}
+	if m.clearedorganization {
+		edges = append(edges, permissionspolicy.EdgeOrganization)
 	}
 	return edges
 }
@@ -41413,6 +41572,8 @@ func (m *PermissionsPolicyMutation) EdgeCleared(name string) bool {
 	switch name {
 	case permissionspolicy.EdgeGroups:
 		return m.clearedgroups
+	case permissionspolicy.EdgeOrganization:
+		return m.clearedorganization
 	}
 	return false
 }
@@ -41432,6 +41593,9 @@ func (m *PermissionsPolicyMutation) ResetEdge(name string) error {
 	switch name {
 	case permissionspolicy.EdgeGroups:
 		m.ResetGroups()
+		return nil
+	case permissionspolicy.EdgeOrganization:
+		m.ResetOrganization()
 		return nil
 	}
 	return fmt.Errorf("unknown PermissionsPolicy edge %s", name)

@@ -27,7 +27,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-
+import DateTimeFormat from '../../common/DateTimeFormat.js';
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
@@ -56,84 +56,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function createData(
-  id,
-  name,
-  category,
-  associatedTarget,
-  perspective,
-  source,
-  beginTime,
-  endTime,
-  iD,
-  icon,
-) {
-  return {
-    id,
-    name,
-    category,
-    associatedTarget,
-    perspective,
-    source,
-    beginTime,
-    endTime,
-    iD,
-    icon,
-  };
-}
+type Props = $ReadOnly<{|
+  viewFormEdit: () => void,
+  onChange: () => void,
+  dataValues: any,
+|}>;
 
-const data = [
-  createData(
-    123,
-    'TINE Retainability',
-    'Technology',
-    2,
-    'Aggregated',
-    1526735162,
-    '27/05/21     12:50',
-    '24/06/21     17:23',
-    1526735162,
-    '',
-  ),
-  createData(
-    456,
-    'TINE Retainability',
-    'Technology',
-    20,
-    'Aggregated',
-    '1526735162',
-    '27/05/21     12:50',
-    '24/06/21     17:23',
-    1526735162,
-    '',
-  ),
-  createData(
-    789,
-    'TINE Retainability',
-    'Technology',
-    5,
-    'Aggregated',
-    1526735162,
-    '27/05/21     12:50',
-    '24/06/21     17:23',
-    1526735162,
-    '',
-  ),
-  createData(
-    998,
-    'TINE Retainability',
-    'Technology',
-    5,
-    'Aggregated',
-    1526735162,
-    '27/05/21     12:50',
-    '24/06/21     17:23',
-    1526735162,
-    '',
-  ),
-];
-
-const KqiTable = props => {
+const KqiTable = (props: Props) => {
+  const {dataValues, viewFormEdit} = props;
   const classes = useStyles();
 
   return (
@@ -158,32 +88,30 @@ const KqiTable = props => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map(column => {
-              return (
-                <StyledTableRow key={column.id}>
+            {dataValues?.map((item, index) => (
+                <StyledTableRow key={index}>
                   <TableCell>
-                    <Button onClick={props.viewFormEdit} variant="text">
+                    <Button onClick={() => viewFormEdit({item})} variant="text">
                       <Text
                         variant={'subtitle1'}
                         weight={'medium'}
                         color={'primary'}>
-                        {column.name}
+                        {item.name}
                       </Text>
                     </Button>
                   </TableCell>
-                  <TableCell>{column.category}</TableCell>
+                  <TableCell>{item.kqiCategory.name}</TableCell>
                   <TableCell>
-                    <Indicator>{column.associatedTarget}</Indicator>
+                    <Indicator>1</Indicator>
                   </TableCell>
-                  <TableCell>{column.perspective}</TableCell>
-                  <TableCell>{column.source}</TableCell>
-                  <TableCell>{column.beginTime}</TableCell>
-                  <TableCell>{column.endTime}</TableCell>
-                  <TableCell>{column.iD}</TableCell>
-                  <TableCell>{column.icon}</TableCell>
+                  <TableCell>{item.kqiPerspective.name}</TableCell>
+                  <TableCell>{item.kqiSource.id}</TableCell>
+                  <TableCell>{DateTimeFormat.dateOnly(item.startDateTime)}</TableCell>
+                  <TableCell>{DateTimeFormat.dateOnly(item.endDateTime)}</TableCell>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.icon}</TableCell>
                 </StyledTableRow>
-              );
-            })}
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

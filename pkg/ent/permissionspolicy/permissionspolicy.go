@@ -38,6 +38,8 @@ const (
 
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
 
 	// Table holds the table name of the permissionspolicy in the database.
 	Table = "permissions_policies"
@@ -46,6 +48,11 @@ const (
 	// GroupsInverseTable is the table name for the UsersGroup entity.
 	// It exists in this package in order to avoid circular dependency with the "usersgroup" package.
 	GroupsInverseTable = "users_groups"
+	// OrganizationTable is the table the holds the organization relation/edge. The primary key declared below.
+	OrganizationTable = "organization_policies"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
 )
 
 // Columns holds all SQL columns for permissionspolicy fields.
@@ -66,6 +73,9 @@ var (
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
 	GroupsPrimaryKey = []string{"users_group_id", "permissions_policy_id"}
+	// OrganizationPrimaryKey and OrganizationColumn2 are the table columns denoting the
+	// primary key for the organization relation (M2M).
+	OrganizationPrimaryKey = []string{"organization_id", "permissions_policy_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -9,6 +9,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -46,6 +47,9 @@ func handleWorkOrderFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFil
 	}
 	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderPriority {
 		return priorityFilter(q, filter)
+	}
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderOrganization {
+		return organitationFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
@@ -170,6 +174,13 @@ func woLocationFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterIn
 			ps = append(ps, workorder.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
 		}
 		return q.Where(workorder.Or(ps...)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func organitationFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(workorder.HasOrganizationWith(organization.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

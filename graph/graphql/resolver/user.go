@@ -65,7 +65,8 @@ func (r mutationResolver) EditUser(ctx context.Context, input models.EditUserInp
 		SetNillableLastName(input.LastName).
 		SetNillableStatus(input.Status).
 		SetNillableRole(input.Role).
-		SetNillableDistanceUnit(input.DistanceUnit)
+		SetNillableDistanceUnit(input.DistanceUnit).
+		SetNillableOrganizationID(input.OrganizationFk)
 
 	return upd.Save(ctx)
 }

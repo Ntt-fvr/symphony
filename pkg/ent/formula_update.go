@@ -33,9 +33,9 @@ func (fu *FormulaUpdate) Where(ps ...predicate.Formula) *FormulaUpdate {
 	return fu
 }
 
-// SetName sets the name field.
-func (fu *FormulaUpdate) SetName(s string) *FormulaUpdate {
-	fu.mutation.SetName(s)
+// SetTextFormula sets the textFormula field.
+func (fu *FormulaUpdate) SetTextFormula(s string) *FormulaUpdate {
+	fu.mutation.SetTextFormula(s)
 	return fu
 }
 
@@ -204,9 +204,9 @@ func (fu *FormulaUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (fu *FormulaUpdate) check() error {
-	if v, ok := fu.mutation.Name(); ok {
-		if err := formula.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+	if v, ok := fu.mutation.TextFormula(); ok {
+		if err := formula.TextFormulaValidator(v); err != nil {
+			return &ValidationError{Name: "textFormula", err: fmt.Errorf("ent: validator failed for field \"textFormula\": %w", err)}
 		}
 	}
 	return nil
@@ -237,11 +237,11 @@ func (fu *FormulaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: formula.FieldUpdateTime,
 		})
 	}
-	if value, ok := fu.mutation.Name(); ok {
+	if value, ok := fu.mutation.TextFormula(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: formula.FieldName,
+			Column: formula.FieldTextFormula,
 		})
 	}
 	if value, ok := fu.mutation.Status(); ok {
@@ -393,9 +393,9 @@ type FormulaUpdateOne struct {
 	mutation *FormulaMutation
 }
 
-// SetName sets the name field.
-func (fuo *FormulaUpdateOne) SetName(s string) *FormulaUpdateOne {
-	fuo.mutation.SetName(s)
+// SetTextFormula sets the textFormula field.
+func (fuo *FormulaUpdateOne) SetTextFormula(s string) *FormulaUpdateOne {
+	fuo.mutation.SetTextFormula(s)
 	return fuo
 }
 
@@ -564,9 +564,9 @@ func (fuo *FormulaUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (fuo *FormulaUpdateOne) check() error {
-	if v, ok := fuo.mutation.Name(); ok {
-		if err := formula.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+	if v, ok := fuo.mutation.TextFormula(); ok {
+		if err := formula.TextFormulaValidator(v); err != nil {
+			return &ValidationError{Name: "textFormula", err: fmt.Errorf("ent: validator failed for field \"textFormula\": %w", err)}
 		}
 	}
 	return nil
@@ -595,11 +595,11 @@ func (fuo *FormulaUpdateOne) sqlSave(ctx context.Context) (_node *Formula, err e
 			Column: formula.FieldUpdateTime,
 		})
 	}
-	if value, ok := fuo.mutation.Name(); ok {
+	if value, ok := fuo.mutation.TextFormula(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: formula.FieldName,
+			Column: formula.FieldTextFormula,
 		})
 	}
 	if value, ok := fuo.mutation.Status(); ok {

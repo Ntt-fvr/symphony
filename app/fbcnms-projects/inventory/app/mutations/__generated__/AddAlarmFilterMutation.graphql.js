@@ -23,7 +23,7 @@ export type AddAlarmFilterInput = {|
   reason: string,
   user: string,
   creationTime: any,
-  alarmStatus: string,
+  alarmStatus?: ?string,
 |};
 export type AddAlarmFilterMutationVariables = {|
   input: AddAlarmFilterInput

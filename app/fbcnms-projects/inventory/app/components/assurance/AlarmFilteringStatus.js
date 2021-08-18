@@ -11,11 +11,9 @@
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
-import {graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useFormInput} from './common/useFormInput';
-import moment from 'moment';
+
 import classNames from 'classnames';
+import moment from 'moment';
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -39,81 +37,46 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const AlarmStatusQuery = graphql`
-  query AlarmFilteringStatusQuery {
-    alarmStatus {
-      edges {
-        node {
-          name
-          id
-        }
-      }
-    }
-  }
-`;
-
 type Props = $ReadOnly<{|
-  valueButton: string,
   creationDate: string,
   beginDate: string,
   endDate: string,
 |}>;
 
 export const AlarmFilteringStatus = (props: Props) => {
-  const {valueButton, creationDate, beginDate, endDate} = props;
+  const {creationDate, beginDate, endDate} = props;
   const classes = useStyles();
-  const dataStatus = useLazyLoadQuery<AlarmFilteringStatusQuery>(
-    AlarmStatusQuery,
-    {},
-  );
-  
-  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node)
-  
 
   return (
     <>
       {moment(creationDate).format() <= moment(beginDate).format() ||
-        (moment(creationDate).format() <= moment(endDate).format() &&
-          dataStatusResponse
-            .filter(item => item.name == 'Active')
-            .map(filteredItem => (
-              <Button
-              valueButton={filteredItem.id}
-                value={filteredItem.id}
-                variant="outlined"
-                name="alarmStatus"
-                className={classNames(classes.button, classes.buttonActive)}>
-                {filteredItem.name}
-              </Button>
-            )))}
-      {moment(creationDate).format() > moment(endDate).format() &&
-        dataStatusResponse
-          .filter(item => item.name == 'Closed')
-          .map(filteredItem => (
-            <Button
-            valueButton={filteredItem.id}
-              value={filteredItem.id}
-              variant="outlined"
-              weight="bold"
-              name="alarmStatus"
-              className={classNames(classes.button, classes.buttonClosed)}>
-              {filteredItem.name}
-            </Button>
-          ))}
+        (moment(creationDate).format() <= moment(endDate).format() && (
+          <Button
+            variant="outlined"
+            name="alarmStatus"
+            className={classNames(classes.button, classes.buttonActive)}>
+            {'Active'}
+          </Button>
+        ))}
+      {moment(creationDate).format() > moment(endDate).format() && (
+        <Button
+          variant="outlined"
+          weight="bold"
+          name="alarmStatus"
+          className={classNames(classes.button, classes.buttonClosed)}>
+          {'Closed'}
+        </Button>
+      )}
       {moment(creationDate).format() < moment(beginDate).format() &&
-        dataStatusResponse
-          .filter(item => item.name == 'Pending')
-          .map(filteredItem => (
-            <Button
-            valueButton={filteredItem.id}
-              value={filteredItem.id}
-              variant="outlined"
-              weight="bold"
-              name="alarmStatus"
-              className={classNames(classes.button, classes.buttonPending)}>
-              {filteredItem.name}
-            </Button>
-          ))}
+        moment(creationDate).format() < moment(endDate).format() && (
+          <Button
+            variant="outlined"
+            weight="bold"
+            name="alarmStatus"
+            className={classNames(classes.button, classes.buttonPending)}>
+            {'Pending'}
+          </Button>
+        )}
     </>
   );
 };

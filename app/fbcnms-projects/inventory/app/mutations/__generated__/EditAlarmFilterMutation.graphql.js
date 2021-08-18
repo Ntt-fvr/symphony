@@ -22,7 +22,7 @@ export type EditAlarmFilterInput = {|
   beginTime: any,
   endTime: any,
   reason: string,
-  alarmStatus: string,
+  alarmStatus?: ?string,
 |};
 export type EditAlarmFilterMutationVariables = {|
   input: EditAlarmFilterInput

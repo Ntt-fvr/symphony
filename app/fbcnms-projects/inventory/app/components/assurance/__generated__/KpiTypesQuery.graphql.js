@@ -27,6 +27,19 @@ export type KpiTypesQueryResponse = {|
           +id: string,
           +name: string,
         |},
+        +formulaFk: ?$ReadOnlyArray<?{|
+          +id: string,
+          +textFormula: string,
+          +status: boolean,
+          +kpiFk: {|
+            +id: string,
+            +name: string,
+          |},
+          +techFk: {|
+            +id: string,
+            +name: string,
+          |},
+        |}>,
       |}
     |}>
   |},
@@ -60,6 +73,19 @@ query KpiTypesQuery {
         domainFk {
           id
           name
+        }
+        formulaFk {
+          id
+          textFormula
+          status
+          kpiFk {
+            id
+            name
+          }
+          techFk {
+            id
+            name
+          }
         }
       }
     }
@@ -97,6 +123,17 @@ v1 = {
 v2 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+},
+v3 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v4 = {
+  "alias": null,
+  "args": null,
   "concreteType": "KpiConnection",
   "kind": "LinkedField",
   "name": "kpis",
@@ -120,13 +157,7 @@ v2 = {
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "status",
-              "storageKey": null
-            },
+            (v2/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -141,9 +172,46 @@ v2 = {
               "kind": "LinkedField",
               "name": "domainFk",
               "plural": false,
+              "selections": (v3/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "Formula",
+              "kind": "LinkedField",
+              "name": "formulaFk",
+              "plural": true,
               "selections": [
                 (v0/*: any*/),
-                (v1/*: any*/)
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "textFormula",
+                  "storageKey": null
+                },
+                (v2/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "Kpi",
+                  "kind": "LinkedField",
+                  "name": "kpiFk",
+                  "plural": false,
+                  "selections": (v3/*: any*/),
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "Tech",
+                  "kind": "LinkedField",
+                  "name": "techFk",
+                  "plural": false,
+                  "selections": (v3/*: any*/),
+                  "storageKey": null
+                }
               ],
               "storageKey": null
             }
@@ -163,7 +231,7 @@ return {
     "metadata": null,
     "name": "KpiTypesQuery",
     "selections": [
-      (v2/*: any*/),
+      (v4/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -220,7 +288,7 @@ return {
     "kind": "Operation",
     "name": "KpiTypesQuery",
     "selections": [
-      (v2/*: any*/),
+      (v4/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -272,16 +340,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "963450c9755d0914921eb2632798c3b5",
+    "cacheID": "552384b1ec34d70e37c8928b666a6b56",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9d1ee7ce2c4d6000395ae042b098a4a6';
+(node/*: any*/).hash = '79ff9a3173b3be46ce0416a4df08dd48';
 
 module.exports = node;

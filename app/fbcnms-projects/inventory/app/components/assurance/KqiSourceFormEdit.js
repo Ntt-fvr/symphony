@@ -7,6 +7,9 @@
  * @flow strict-local
  * @format
  */
+import type {EditKqiSourceMutationVariables} from '../../mutations/__generated__/EditKqiSourceMutation.graphql';
+
+import EditKqiSourceMutation from '../../mutations/EditKqiSourceMutation';
 
 import React from 'react';
 import fbt from 'fbt';
@@ -16,8 +19,9 @@ import Card from '@symphony/design-system/components/Card/Card';
 import ConfigureTitle from './common/ConfigureTitle';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+
+import {useFormInput} from './common/useFormInput';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -65,15 +69,42 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const KqiSourceFormEdit = props => {
+type Props = $ReadOnly<{|
+  formValues: {
+    id: string,
+    name: string,
+  },
+  hideKqiSourceFormEdit: void => void,
+  kqiSourcesNames: Array<string>,
+|}>;
+const KqiSourceFormEdit = (props: Props) => {
+  const {formValues, hideKqiSourceFormEdit, kqiSourcesNames} = props;
   const classes = useStyles();
 
-  function handleChange(e) {
-    console.log(e.target.value);
-  }
+  const id = useFormInput(formValues.id);
+  const name = useFormInput(formValues.name);
 
-  const handleRemove = () => {
-    console.log('REMOVE ALARM');
+  const inputFilter = () => {
+    return (
+      kqiSourcesNames?.filter(
+        item => item === name.value && item !== formValues.name,
+      ) || []
+    );
+  };
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kqi Source name existing'};
+    }
+  };
+  const handleClick = () => {
+    const variables: EditKqiSourceMutationVariables = {
+      input: {
+        id: formValues.id,
+        name: name.value,
+      },
+    };
+
+    EditKqiSourceMutation(variables);
   };
 
   return (
@@ -91,7 +122,7 @@ const KqiSourceFormEdit = props => {
                     className={classes.option}
                     variant="outlined"
                     color="primary"
-                    onClick={() => props.returnKqiSources()}>
+                    onClick={() => hideKqiSourceFormEdit()}>
                     Cancel
                   </Button>
                 </FormField>
@@ -102,7 +133,10 @@ const KqiSourceFormEdit = props => {
                     className={classes.option}
                     variant="contained"
                     color="primary"
-                    onClick={() => props.returnKqiSources()}>
+                    onClick={() => {
+                      hideKqiSourceFormEdit();
+                      handleClick();
+                    }}>
                     Save
                   </Button>
                 </FormField>
@@ -114,20 +148,27 @@ const KqiSourceFormEdit = props => {
           <Card>
             <Grid container>
               <Grid item xs={6}>
-                <FormField label="Name" className={classes.formField}>
+                <FormField
+                  label="Name"
+                  className={classes.formField}
+                  {...validationName()}
+                  required>
                   <TextInput
+                    {...name}
                     className={classes.textInput}
                     name="name"
-                    onChange={handleChange}
+                    autoComplete="off"
                   />
                 </FormField>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="ID">
                   <TextInput
+                    {...id}
                     className={classes.textInput}
                     name="iD"
-                    onChange={handleChange}
+                    autoComplete="off"
+                    disabled
                   />
                 </FormField>
               </Grid>

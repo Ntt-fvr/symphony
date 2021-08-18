@@ -90,6 +90,11 @@ router.get('/admin*', access(AccessRoles.SUPERUSER), handleReact('admin'));
 router.get('/automation*', access(AccessRoles.USER), handleReact('automation'));
 router.get('/inventory*', access(AccessRoles.USER), handleReact('inventory'));
 router.get('/assurance*', access(AccessRoles.USER), handleReact('assurance'));
+router.get(
+  '/fulfillment*',
+  access(AccessRoles.USER),
+  handleReact('fulfillment'),
+);
 router.get('/workorders*', access(AccessRoles.USER), handleReact('workorders'));
 router.get('/id*', access(AccessRoles.USER), handleReact('id'));
 router.use('/logger', require('@fbcnms/platform-server/logger/routes'));

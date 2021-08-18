@@ -23,8 +23,10 @@ func (Counter) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
-		field.String("externalId"),
-		field.String("networkManagerSystem"),
+		field.String("externalId").
+			Annotations(entgql.OrderField("EXTERNALID")),
+		field.String("networkManagerSystem").
+			Annotations(entgql.OrderField("NETWORKMANAGERSYSTEM")),
 	}
 }
 
@@ -33,10 +35,10 @@ func (Counter) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("counterfamily", CounterFamily.Type).
 			Ref("counterfamily").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("COUNTERFAMILY")),
 		edge.From("vendor", Vendor.Type).
 			Ref("vendor_fk").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("VENDORFK")),
 		edge.To("counter_fk", CounterFormula.Type).
 			Annotations(entgql.MapsTo("counter")),
 	}

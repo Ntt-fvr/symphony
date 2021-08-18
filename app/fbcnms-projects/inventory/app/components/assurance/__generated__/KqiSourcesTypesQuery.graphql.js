@@ -14,31 +14,31 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type EditAlarmFilteringItemFormQueryVariables = {||};
-export type EditAlarmFilteringItemFormQueryResponse = {|
-  +alarmStatus: {|
+export type KqiSourcesTypesQueryVariables = {||};
+export type KqiSourcesTypesQueryResponse = {|
+  +kqiSources: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +name: string,
         +id: string,
+        +name: string,
       |}
     |}>
   |}
 |};
-export type EditAlarmFilteringItemFormQuery = {|
-  variables: EditAlarmFilteringItemFormQueryVariables,
-  response: EditAlarmFilteringItemFormQueryResponse,
+export type KqiSourcesTypesQuery = {|
+  variables: KqiSourcesTypesQueryVariables,
+  response: KqiSourcesTypesQueryResponse,
 |};
 */
 
 
 /*
-query EditAlarmFilteringItemFormQuery {
-  alarmStatus {
+query KqiSourcesTypesQuery {
+  kqiSources {
     edges {
       node {
-        name
         id
+        name
       }
     }
   }
@@ -50,15 +50,15 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "AlarmStatusConnection",
+    "concreteType": "KqiSourceConnection",
     "kind": "LinkedField",
-    "name": "alarmStatus",
+    "name": "kqiSources",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "AlarmStatusEdge",
+        "concreteType": "KqiSourceEdge",
         "kind": "LinkedField",
         "name": "edges",
         "plural": true,
@@ -66,7 +66,7 @@ var v0 = [
           {
             "alias": null,
             "args": null,
-            "concreteType": "AlarmStatus",
+            "concreteType": "KqiSource",
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
@@ -75,14 +75,14 @@ var v0 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "name",
+                "name": "id",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "id",
+                "name": "name",
                 "storageKey": null
               }
             ],
@@ -100,7 +100,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditAlarmFilteringItemFormQuery",
+    "name": "KqiSourcesTypesQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -109,20 +109,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "EditAlarmFilteringItemFormQuery",
+    "name": "KqiSourcesTypesQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "fc8534040ab4e638e82c3b2e2ca81d0d",
+    "cacheID": "bd9a833d54a105a1f13e2fbd47b94b6f",
     "id": null,
     "metadata": {},
-    "name": "EditAlarmFilteringItemFormQuery",
+    "name": "KqiSourcesTypesQuery",
     "operationKind": "query",
-    "text": "query EditAlarmFilteringItemFormQuery {\n  alarmStatus {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query KqiSourcesTypesQuery {\n  kqiSources {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '47f9a2d63d2a4b196c945f68c1dee49c';
+(node/*: any*/).hash = '1b9274f6e21b3ebaf03930a2ee417716';
 
 module.exports = node;

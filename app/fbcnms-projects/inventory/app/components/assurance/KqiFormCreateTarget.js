@@ -24,6 +24,13 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
+import type {AddKqiTargetMutationVariables} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
+import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
+import moment from 'moment';
+import DateTimeFormat from '../../common/DateTimeFormat.js';
+import {useFormInput} from './common/useFormInput';
+import {graphql} from 'relay-runtime';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -114,32 +121,56 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
   },
 }));
-const data = {
-  counters: {
-    edges: [
-      {
-        node: {
-          id: '244813135872',
-          name: 'contador_family_7',
-          networkManagerSystem: 'hola bebe',
-          externalID: '123456789',
-        },
-      },
-      {
-        node: {
-          id: '244813135873',
-          name: 'contador_family_8',
-          networkManagerSystem: 'hola sergio',
-          externalID: '987654321',
-        },
-      },
-    ],
-  },
+
+type Props = $ReadOnly<{|
+  returnFormEdit: () => void
+|}>;
+
+
+type KqiTarget = {
+  id: string,
+  name: string,
+  impact: string,
+  frame: number,
+  alowedValidation: number,
+  initTime: string,
+  endTime: string,
+  status: boolean,
+  kqi: string
 };
 
-const KqiFormCreateTarget = props => {
+const KqiFormCreateTarget = (props: Props) => {
+  const {returnFormEdit} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
+  const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
+
+    function handleChange({target}) {
+    setKqiTarget({
+      data: {
+        ...KqiTarget.data,
+        [target.name]: target.value,
+      },
+    });
+  }
+
+  function handleClick() {
+    const variables: AddKqiTargetMutationVariables = {
+      input: {
+        name: KqiTarget.data.name,
+        impact: KqiTarget.data.impact,
+        status: checked,
+        initTime: moment(KqiTarget.data.initTime).format(),
+        endTime: moment(KqiTarget.data.endTime).format(),
+        frame: KqiTarget.data.frame,
+        alowedValidation:KqiTarget.data.alowedValidation,
+        kqi: KqiTarget.data.kqi
+      },
+    };
+    AddKqiTargetMutation(variables);
+    console.log("Hola soy data AddKqiTarget", variables);
+    // setTimeout(() => returnTableAlarm(), 1000)
+  }
 
   return (
     <div className={classes.root}>
@@ -157,7 +188,7 @@ const KqiFormCreateTarget = props => {
                   className={classes.option}
                   variant="outlined"
                   color="primary"
-                  onClick={props.returnFormEdit}>
+                  onClick={() => returnFormEdit()}>
                   Cancel
                 </Button>
               </FormField>
@@ -165,7 +196,7 @@ const KqiFormCreateTarget = props => {
             <Grid xs={6}>
               <FormField>
                 <Button
-                  onClick={props.returnFormEdit}
+                  onClick={handleClick}
                   className={classes.option}
                   variant="contained"
                   color="primary">
@@ -185,12 +216,16 @@ const KqiFormCreateTarget = props => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField className={classes.formField} label="ID">
-                  <TextInput className={classes.textInput} />
+                <FormField className={classes.formField} label="Target name">
+                  <TextInput
+                    name="name"
+                    className={classes.textInput}
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <FormField label="Comparator" className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
@@ -212,8 +247,8 @@ const KqiFormCreateTarget = props => {
                       />
                     </div>
                   </FormField>
-                </Grid>
-                <Grid item xs={6}>
+                </Grid>  */}
+                {/* <Grid item xs={6}>
                   <FormField
                     label="Warning comparator"
                     className={classes.formField}>
@@ -237,21 +272,28 @@ const KqiFormCreateTarget = props => {
                       />
                     </div>
                   </FormField>
-                </Grid>
+                </Grid> */}
               </Grid>
               <Grid item xs={6}>
-                <FormField className={classes.formField} label="Description">
+                <FormField className={classes.formField} label="Impact">
                   <TextInput
+                    name="impact"
                     className={classes.textInput}
                     type="multiline"
                     rows={3}
+                    onChange={handleChange}
                   />
                 </FormField>
               </Grid>
               <Grid className={classes.sectionSelects} container item xs={6}>
                 <FormField className={classes.formField} label="Periods">
                   <div className={classes.contPeriods}>
-                    <TextInput className={classes.periods} type="number" />
+                    <TextInput
+                      name="frame"
+                      className={classes.periods}
+                      type="number"
+                      onChange={handleChange}
+                    />
                   </div>
                 </FormField>
 
@@ -259,7 +301,12 @@ const KqiFormCreateTarget = props => {
                   className={classes.formField}
                   label="Allowed Varation">
                   <div className={classes.contPeriods}>
-                    <TextInput className={classes.periods} type="number" />
+                    <TextInput
+                      name="alowedValidation"
+                      className={classes.periods}
+                      type="number"
+                      onChange={handleChange}
+                    />
                   </div>
                 </FormField>
 
@@ -272,8 +319,10 @@ const KqiFormCreateTarget = props => {
                     </Text>
                     <div className={classes.contHours}>
                       <TextInput
+                        name="initTime"
                         suffix={'hrs'}
                         className={classes.activeHours}
+                        onChange={handleChange}
                       />
                     </div>
                     <Text variant="caption" className={classes.to}>
@@ -281,8 +330,10 @@ const KqiFormCreateTarget = props => {
                     </Text>
                     <div className={classes.contHours}>
                       <TextInput
+                        name="endTime"
                         suffix={'hrs'}
                         className={classes.activeHours}
+                        onChange={handleChange}
                       />
                     </div>
                   </div>

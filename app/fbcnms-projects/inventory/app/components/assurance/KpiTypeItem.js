@@ -11,6 +11,7 @@ import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddButton from './common/AddButton';
+import TableFormulas from './TableFormulas';
 
 // DESIGN SYSTEM //
 import type {EditKpiMutationVariables} from '../../mutations/__generated__/EditKpiMutation.graphql';
@@ -88,6 +89,16 @@ type KpiThreshold = {
   },
 };
 
+type Formula = {
+  id: string,
+  textFormula: string,
+  status: true,
+  techFk: {
+    id: string,
+    name: string,
+  },
+};
+
 type Props = $ReadOnly<{|
   id: string,
   name: string,
@@ -96,10 +107,15 @@ type Props = $ReadOnly<{|
     id: string,
     name: string,
   },
+  formulaFk: Array<Formula>,
   description: string,
   threshold: Array<KpiThreshold>,
   edit: void,
   onChange: void,
+  handleFormulaClick: void => void,
+  parentCallback: any,
+  handleEditFormulaClick: void => void,
+  parentEditCallback: any,
 |}>;
 
 export default function KpiTypeItem(props: Props) {
@@ -109,9 +125,14 @@ export default function KpiTypeItem(props: Props) {
     status,
     domainFk,
     description,
+    formulaFk,
     threshold,
     edit,
     onChange,
+    handleFormulaClick,
+    parentCallback,
+    handleEditFormulaClick,
+    parentEditCallback,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -131,6 +152,13 @@ export default function KpiTypeItem(props: Props) {
     };
     EditKpiMutation(variables);
   };
+
+  function handleCallback() {
+    parentCallback({
+      kpi: id,
+      technology: formulaFk[0].techFk?.id,
+    });
+  }
 
   return (
     <div className={classes.root}>
@@ -162,7 +190,14 @@ export default function KpiTypeItem(props: Props) {
           </Grid>
 
           <Grid xs={5} container justify="center" alignItems="center">
-            <AddButton textButton={'Add formula'} disabled={true} />
+            <AddButton
+              disabled={false}
+              textButton={'Add formula'}
+              onClick={() => {
+                handleCallback();
+                handleFormulaClick();
+              }}
+            />
           </Grid>
 
           <Grid xs={1} container justify="flex-end" alignItems="center">
@@ -180,9 +215,9 @@ export default function KpiTypeItem(props: Props) {
 
         <AccordionDetails>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
+            <Grid item xs={3}>
               <Grid container spacing={1}>
-                <Grid item xs={6}>
+                <Grid item xs={12}>
                   {`Associated threshold: `}
                   <Button variant="text">
                     <Text className={classes.threshold}>
@@ -192,15 +227,22 @@ export default function KpiTypeItem(props: Props) {
                     </Text>
                   </Button>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12}>
+                  {`ID: ${id}`}
+                </Grid>
+                <Grid item xs={12}>
                   {`Description: ${
                     description === '' ? 'No description' : description
                   }`}
                 </Grid>
-                <Grid item xs={12}>
-                  {`ID: ${id}`}
-                </Grid>
               </Grid>
+            </Grid>
+            <Grid item xs={9}>
+              <TableFormulas
+                formulas={formulaFk}
+                handleEditFormulaClick={handleEditFormulaClick}
+                parentEditCallback={parentEditCallback}
+              />
             </Grid>
           </Grid>
         </AccordionDetails>
