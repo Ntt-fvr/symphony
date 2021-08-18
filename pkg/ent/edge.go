@@ -1200,10 +1200,26 @@ func (o *Organization) WorkOrderFk(ctx context.Context) ([]*WorkOrder, error) {
 	return result, err
 }
 
+func (o *Organization) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
+	result, err := o.Edges.PoliciesOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryPolicies().All(ctx)
+	}
+	return result, err
+}
+
 func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
 		result, err = pp.QueryGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (pp *PermissionsPolicy) Organization(ctx context.Context) ([]*Organization, error) {
+	result, err := pp.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = pp.QueryOrganization().All(ctx)
 	}
 	return result, err
 }

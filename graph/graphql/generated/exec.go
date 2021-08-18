@@ -2069,6 +2069,7 @@ type ComplexityRoot struct {
 
 	WorkforcePermissionRule struct {
 		IsAllowed        func(childComplexity int) int
+		OrganizationIds  func(childComplexity int) int
 		ProjectTypeIds   func(childComplexity int) int
 		WorkOrderTypeIds func(childComplexity int) int
 	}
@@ -12587,6 +12588,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkforcePermissionRule.IsAllowed(childComplexity), true
 
+	case "WorkforcePermissionRule.organizationIds":
+		if e.complexity.WorkforcePermissionRule.OrganizationIds == nil {
+			break
+		}
+
+		return e.complexity.WorkforcePermissionRule.OrganizationIds(childComplexity), true
+
 	case "WorkforcePermissionRule.projectTypeIds":
 		if e.complexity.WorkforcePermissionRule.ProjectTypeIds == nil {
 			break
@@ -12824,6 +12832,7 @@ type WorkforcePermissionRule
   isAllowed: PermissionValue!
   projectTypeIds: [ID!]
   workOrderTypeIds: [ID!]
+  organizationIds: [ID!]
 }
 
 input BasicPermissionRuleInput
@@ -12848,6 +12857,7 @@ input WorkforcePermissionRuleInput
   isAllowed: PermissionValue!
   projectTypeIds: [ID!]
   workOrderTypeIds: [ID!]
+  organizationIds: [ID!]
 }
 
 type CUD
@@ -73115,6 +73125,38 @@ func (ec *executionContext) _WorkforcePermissionRule_workOrderTypeIds(ctx contex
 	return ec.marshalOID2ᚕintᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkforcePermissionRule_organizationIds(ctx context.Context, field graphql.CollectedField, obj *models2.WorkforcePermissionRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkforcePermissionRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationIds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]int)
+	fc.Result = res
+	return ec.marshalOID2ᚕintᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkforcePolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.WorkforcePolicy) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -86228,6 +86270,14 @@ func (ec *executionContext) unmarshalInputWorkforcePermissionRuleInput(ctx conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workOrderTypeIds"))
 			it.WorkOrderTypeIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIds"))
+			it.OrganizationIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -99825,6 +99875,8 @@ func (ec *executionContext) _WorkforcePermissionRule(ctx context.Context, sel as
 			out.Values[i] = ec._WorkforcePermissionRule_projectTypeIds(ctx, field, obj)
 		case "workOrderTypeIds":
 			out.Values[i] = ec._WorkforcePermissionRule_workOrderTypeIds(ctx, field, obj)
+		case "organizationIds":
+			out.Values[i] = ec._WorkforcePermissionRule_organizationIds(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

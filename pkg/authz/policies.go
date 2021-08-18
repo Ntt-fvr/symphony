@@ -88,9 +88,10 @@ func NewInventoryPolicy(writeAllowed bool) *models.InventoryPolicy {
 // NewWorkforcePolicy build a workforce policy based on general restriction on read,write
 func NewWorkforcePolicy(readAllowed, writeAllowed bool) *models.WorkforcePolicy {
 	return &models.WorkforcePolicy{
-		Read:      newWorkforcePermissionRule(readAllowed),
-		Data:      newWorkforceCUD(writeAllowed),
-		Templates: newCUD(writeAllowed),
+		Read:         newWorkforcePermissionRule(readAllowed),
+		Data:         newWorkforceCUD(writeAllowed),
+		Templates:    newCUD(writeAllowed),
+		Organization: newCUD(writeAllowed),
 	}
 }
 
@@ -169,12 +170,15 @@ func appendWorkforcePermissionRule(rule *models.WorkforcePermissionRule, addRule
 	case models.PermissionValueYes:
 		rule.WorkOrderTypeIds = nil
 		rule.ProjectTypeIds = nil
+		rule.OrganizationIds = nil
 	case models.PermissionValueNo:
 		rule.WorkOrderTypeIds = nil
 		rule.ProjectTypeIds = nil
+		rule.OrganizationIds = nil
 	case models.PermissionValueByCondition:
 		rule.WorkOrderTypeIds = append(rule.WorkOrderTypeIds, addRule.WorkOrderTypeIds...)
 		rule.ProjectTypeIds = append(rule.ProjectTypeIds, addRule.ProjectTypeIds...)
+		rule.OrganizationIds = append(rule.OrganizationIds, addRule.OrganizationIds...)
 	}
 	return rule
 }

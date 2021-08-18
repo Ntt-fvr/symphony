@@ -30,6 +30,8 @@ const (
 	EdgeUserFk = "user_fk"
 	// EdgeWorkOrderFk holds the string denoting the work_order_fk edge name in mutations.
 	EdgeWorkOrderFk = "work_order_fk"
+	// EdgePolicies holds the string denoting the policies edge name in mutations.
+	EdgePolicies = "policies"
 
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
@@ -47,6 +49,11 @@ const (
 	WorkOrderFkInverseTable = "work_orders"
 	// WorkOrderFkColumn is the table column denoting the work_order_fk relation/edge.
 	WorkOrderFkColumn = "organization_work_order_fk"
+	// PoliciesTable is the table the holds the policies relation/edge. The primary key declared below.
+	PoliciesTable = "organization_policies"
+	// PoliciesInverseTable is the table name for the PermissionsPolicy entity.
+	// It exists in this package in order to avoid circular dependency with the "permissionspolicy" package.
+	PoliciesInverseTable = "permissions_policies"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -57,6 +64,12 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 }
+
+var (
+	// PoliciesPrimaryKey and PoliciesColumn2 are the table columns denoting the
+	// primary key for the policies relation (M2M).
+	PoliciesPrimaryKey = []string{"organization_id", "permissions_policy_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

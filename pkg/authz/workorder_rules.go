@@ -11,6 +11,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -102,35 +103,45 @@ func workOrderCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *en
 		if !exists {
 			return false, errors.New("creating work order with no type")
 		}
-		return checkWorkforce(cud.Create, &typeID, nil), nil
+		return checkWorkforce(cud.Create, &typeID, nil, nil), nil
 	}
 	workOrderTypeID, err := getWorkOrderType(ctx, m)
 	if err != nil {
 		return false, err
 	}
 	if m.Op().Is(ent.OpUpdateOne) {
-		return checkWorkforce(cud.Update, workOrderTypeID, nil), nil
+		return checkWorkforce(cud.Update, workOrderTypeID, nil, nil), nil
 	}
-	return checkWorkforce(cud.Delete, workOrderTypeID, nil), nil
+	return checkWorkforce(cud.Delete, workOrderTypeID, nil, nil), nil
 }
 
 func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
-	var predicates []predicate.WorkOrder
+	var predicatesWo []predicate.WorkOrder
+	var predicatesOrg []predicate.WorkOrder
+	var predicatesPrj []predicate.WorkOrder
+	var predicatesFusion []predicate.WorkOrder
+	var predicatesReturns []predicate.WorkOrder
+
 	rule := FromContext(ctx).WorkforcePolicy.Read
 	switch rule.IsAllowed {
 	case models.PermissionValueYes:
 		return nil
 	case models.PermissionValueByCondition:
-		predicates = append(predicates,
-			workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
+		predicatesWo = append(predicatesWo, workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
+		if rule.OrganizationIds != nil {
+			predicatesFusion = append(predicatesFusion, workorder.Or(predicatesWo...))
+			predicatesOrg = append(predicatesOrg, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
+			predicatesFusion = append(predicatesFusion, workorder.Or(predicatesOrg...))
+			predicatesReturns = append(predicatesReturns, workorder.And(predicatesFusion...))
+		} else {
+			predicatesReturns = append(predicatesReturns, workorder.Or(predicatesWo...))
+		}
 	}
 	if v, exists := viewer.FromContext(ctx).(*viewer.UserViewer); exists {
-		predicates = append(predicates,
-			workorder.HasOwnerWith(user.ID(v.User().ID)),
-			workorder.HasAssigneeWith(user.ID(v.User().ID)),
-		)
+		predicatesPrj = append(predicatesPrj, workorder.HasOwnerWith(user.ID(v.User().ID)), workorder.HasAssigneeWith(user.ID(v.User().ID)))
+		predicatesReturns = append(predicatesReturns, workorder.Or(predicatesPrj...))
 	}
-	return workorder.Or(predicates...)
+	return workorder.Or(predicatesReturns...)
 }
 
 func isAssigneeChanged(ctx context.Context, m *ent.WorkOrderMutation) (bool, error) {
@@ -320,14 +331,14 @@ func WorkOrderWritePolicyRule() privacy.MutationRule {
 				return privacy.Denyf(err.Error())
 			}
 			if assigneeChanged {
-				allowed = allowed && checkWorkforce(cud.Assign, workOrderTypeID, nil)
+				allowed = allowed && checkWorkforce(cud.Assign, workOrderTypeID, nil, nil)
 			}
 			ownerChanged, err := isOwnerChanged(ctx, m)
 			if err != nil {
 				return privacy.Denyf(err.Error())
 			}
 			if ownerChanged {
-				allowed = allowed && checkWorkforce(cud.TransferOwnership, workOrderTypeID, nil)
+				allowed = allowed && checkWorkforce(cud.TransferOwnership, workOrderTypeID, nil, nil)
 			}
 		}
 		if allowed {

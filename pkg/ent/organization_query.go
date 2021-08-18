@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
+	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -33,6 +34,7 @@ type OrganizationQuery struct {
 	// eager-loading edges.
 	withUserFk      *UserQuery
 	withWorkOrderFk *WorkOrderQuery
+	withPolicies    *PermissionsPolicyQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -99,6 +101,28 @@ func (oq *OrganizationQuery) QueryWorkOrderFk() *WorkOrderQuery {
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.WorkOrderFkTable, organization.WorkOrderFkColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPolicies chains the current query on the policies edge.
+func (oq *OrganizationQuery) QueryPolicies() *PermissionsPolicyQuery {
+	query := &PermissionsPolicyQuery{config: oq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.PoliciesTable, organization.PoliciesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
@@ -284,6 +308,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		predicates:      append([]predicate.Organization{}, oq.predicates...),
 		withUserFk:      oq.withUserFk.Clone(),
 		withWorkOrderFk: oq.withWorkOrderFk.Clone(),
+		withPolicies:    oq.withPolicies.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -309,6 +334,17 @@ func (oq *OrganizationQuery) WithWorkOrderFk(opts ...func(*WorkOrderQuery)) *Org
 		opt(query)
 	}
 	oq.withWorkOrderFk = query
+	return oq
+}
+
+//  WithPolicies tells the query-builder to eager-loads the nodes that are connected to
+// the "policies" edge. The optional arguments used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithPolicies(opts ...func(*PermissionsPolicyQuery)) *OrganizationQuery {
+	query := &PermissionsPolicyQuery{config: oq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withPolicies = query
 	return oq
 }
 
@@ -381,9 +417,10 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context) ([]*Organization, error
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			oq.withUserFk != nil,
 			oq.withWorkOrderFk != nil,
+			oq.withPolicies != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -462,6 +499,70 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context) ([]*Organization, error
 				return nil, fmt.Errorf(`unexpected foreign-key "organization_work_order_fk" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.WorkOrderFk = append(node.Edges.WorkOrderFk, n)
+		}
+	}
+
+	if query := oq.withPolicies; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Organization, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Policies = []*PermissionsPolicy{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Organization)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   organization.PoliciesTable,
+				Columns: organization.PoliciesPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(organization.PoliciesPrimaryKey[0], fks...))
+			},
+
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				edgeids = append(edgeids, inValue)
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, oq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "policies": %v`, err)
+		}
+		query.Where(permissionspolicy.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "policies" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Policies = append(nodes[i].Edges.Policies, n)
+			}
 		}
 	}
 
