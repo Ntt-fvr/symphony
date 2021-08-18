@@ -39,9 +39,11 @@ type OrganizationEdges struct {
 	UserFk []*User
 	// WorkOrderFk holds the value of the work_order_fk edge.
 	WorkOrderFk []*WorkOrder
+	// Policies holds the value of the policies edge.
+	Policies []*PermissionsPolicy
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserFkOrErr returns the UserFk value or an error if the edge
@@ -60,6 +62,15 @@ func (e OrganizationEdges) WorkOrderFkOrErr() ([]*WorkOrder, error) {
 		return e.WorkOrderFk, nil
 	}
 	return nil, &NotLoadedError{edge: "work_order_fk"}
+}
+
+// PoliciesOrErr returns the Policies value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) PoliciesOrErr() ([]*PermissionsPolicy, error) {
+	if e.loadedTypes[2] {
+		return e.Policies, nil
+	}
+	return nil, &NotLoadedError{edge: "policies"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -116,6 +127,11 @@ func (o *Organization) QueryUserFk() *UserQuery {
 // QueryWorkOrderFk queries the work_order_fk edge of the Organization.
 func (o *Organization) QueryWorkOrderFk() *WorkOrderQuery {
 	return (&OrganizationClient{config: o.config}).QueryWorkOrderFk(o)
+}
+
+// QueryPolicies queries the policies edge of the Organization.
+func (o *Organization) QueryPolicies() *PermissionsPolicyQuery {
+	return (&OrganizationClient{config: o.config}).QueryPolicies(o)
 }
 
 // Update returns a builder for updating this Organization.

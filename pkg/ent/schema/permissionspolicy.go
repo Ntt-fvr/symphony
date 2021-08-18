@@ -44,6 +44,8 @@ func (PermissionsPolicy) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("groups", UsersGroup.Type).
 			Ref("policies"),
+		edge.From("organization", Organization.Type).
+			Ref("policies"),
 	}
 }
 

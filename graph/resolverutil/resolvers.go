@@ -376,3 +376,21 @@ func KqiTargetFilter(query *ent.KqiTargetQuery, filters []*models.KqiTargetFilte
 	}
 	return query, nil
 }
+func FormulaFilter(query *ent.FormulaQuery, filters []*models.FormulaFilterInput) (*ent.FormulaQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleFormulaFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func TechFilter(query *ent.TechQuery, filters []*models.TechFilterInput) (*ent.TechQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleTechFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}

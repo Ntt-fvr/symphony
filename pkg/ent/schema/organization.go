@@ -34,6 +34,7 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("user")),
 		edge.To("work_order_fk", WorkOrder.Type).
 			Annotations(entgql.MapsTo("workorder")),
+		edge.To("policies", PermissionsPolicy.Type),
 	}
 }
 

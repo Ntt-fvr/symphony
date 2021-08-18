@@ -17,6 +17,7 @@ type WorkforcePermissionRuleInput struct {
 	IsAllowed        PermissionValue `json:"isAllowed"`
 	ProjectTypeIds   []int           `json:"projectTypeIds"`
 	WorkOrderTypeIds []int           `json:"workOrderTypeIds"`
+	OrganizationIds  []int           `json:"organizationIds"`
 }
 
 type BasicCUDInput struct {
@@ -50,9 +51,10 @@ type InventoryPolicyInput struct {
 }
 
 type WorkforcePolicyInput struct {
-	Read      *WorkforcePermissionRuleInput `json:"read"`
-	Data      *WorkforceCUDInput            `json:"data"`
-	Templates *BasicCUDInput                `json:"templates"`
+	Read          *WorkforcePermissionRuleInput `json:"read"`
+	Data          *WorkforceCUDInput            `json:"data"`
+	Templates     *BasicCUDInput                `json:"templates"`
+	Organizations *BasicCUDInput                `json:"organization"`
 }
 
 type AutomationPolicyInput struct {

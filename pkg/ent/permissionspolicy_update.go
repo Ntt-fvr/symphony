@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
@@ -141,6 +142,21 @@ func (ppu *PermissionsPolicyUpdate) AddGroups(u ...*UsersGroup) *PermissionsPoli
 	return ppu.AddGroupIDs(ids...)
 }
 
+// AddOrganizationIDs adds the organization edge to Organization by ids.
+func (ppu *PermissionsPolicyUpdate) AddOrganizationIDs(ids ...int) *PermissionsPolicyUpdate {
+	ppu.mutation.AddOrganizationIDs(ids...)
+	return ppu
+}
+
+// AddOrganization adds the organization edges to Organization.
+func (ppu *PermissionsPolicyUpdate) AddOrganization(o ...*Organization) *PermissionsPolicyUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ppu.AddOrganizationIDs(ids...)
+}
+
 // Mutation returns the PermissionsPolicyMutation object of the builder.
 func (ppu *PermissionsPolicyUpdate) Mutation() *PermissionsPolicyMutation {
 	return ppu.mutation
@@ -165,6 +181,27 @@ func (ppu *PermissionsPolicyUpdate) RemoveGroups(u ...*UsersGroup) *PermissionsP
 		ids[i] = u[i].ID
 	}
 	return ppu.RemoveGroupIDs(ids...)
+}
+
+// ClearOrganization clears all "organization" edges to type Organization.
+func (ppu *PermissionsPolicyUpdate) ClearOrganization() *PermissionsPolicyUpdate {
+	ppu.mutation.ClearOrganization()
+	return ppu
+}
+
+// RemoveOrganizationIDs removes the organization edge to Organization by ids.
+func (ppu *PermissionsPolicyUpdate) RemoveOrganizationIDs(ids ...int) *PermissionsPolicyUpdate {
+	ppu.mutation.RemoveOrganizationIDs(ids...)
+	return ppu
+}
+
+// RemoveOrganization removes organization edges to Organization.
+func (ppu *PermissionsPolicyUpdate) RemoveOrganization(o ...*Organization) *PermissionsPolicyUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ppu.RemoveOrganizationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -407,6 +444,60 @@ func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ppu.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.RemovedOrganizationIDs(); len(nodes) > 0 && !ppu.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ppu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{permissionspolicy.Label}
@@ -534,6 +625,21 @@ func (ppuo *PermissionsPolicyUpdateOne) AddGroups(u ...*UsersGroup) *Permissions
 	return ppuo.AddGroupIDs(ids...)
 }
 
+// AddOrganizationIDs adds the organization edge to Organization by ids.
+func (ppuo *PermissionsPolicyUpdateOne) AddOrganizationIDs(ids ...int) *PermissionsPolicyUpdateOne {
+	ppuo.mutation.AddOrganizationIDs(ids...)
+	return ppuo
+}
+
+// AddOrganization adds the organization edges to Organization.
+func (ppuo *PermissionsPolicyUpdateOne) AddOrganization(o ...*Organization) *PermissionsPolicyUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ppuo.AddOrganizationIDs(ids...)
+}
+
 // Mutation returns the PermissionsPolicyMutation object of the builder.
 func (ppuo *PermissionsPolicyUpdateOne) Mutation() *PermissionsPolicyMutation {
 	return ppuo.mutation
@@ -558,6 +664,27 @@ func (ppuo *PermissionsPolicyUpdateOne) RemoveGroups(u ...*UsersGroup) *Permissi
 		ids[i] = u[i].ID
 	}
 	return ppuo.RemoveGroupIDs(ids...)
+}
+
+// ClearOrganization clears all "organization" edges to type Organization.
+func (ppuo *PermissionsPolicyUpdateOne) ClearOrganization() *PermissionsPolicyUpdateOne {
+	ppuo.mutation.ClearOrganization()
+	return ppuo
+}
+
+// RemoveOrganizationIDs removes the organization edge to Organization by ids.
+func (ppuo *PermissionsPolicyUpdateOne) RemoveOrganizationIDs(ids ...int) *PermissionsPolicyUpdateOne {
+	ppuo.mutation.RemoveOrganizationIDs(ids...)
+	return ppuo
+}
+
+// RemoveOrganization removes organization edges to Organization.
+func (ppuo *PermissionsPolicyUpdateOne) RemoveOrganization(o ...*Organization) *PermissionsPolicyUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ppuo.RemoveOrganizationIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -790,6 +917,60 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (_node *Per
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ppuo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.RemovedOrganizationIDs(); len(nodes) > 0 && !ppuo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

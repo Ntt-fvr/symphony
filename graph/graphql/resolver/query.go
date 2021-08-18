@@ -499,6 +499,44 @@ func (r queryResolver) Organizations(
 			),
 		)
 }
+func (r queryResolver) Formulas(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.FormulaOrder,
+	filterBy []*models.FormulaFilterInput,
+) (*ent.FormulaConnection, error) {
+	return r.ClientFrom(ctx).
+		Formula.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithFormulaOrder(orderBy),
+			ent.WithFormulaFilter(
+				func(query *ent.FormulaQuery) (*ent.FormulaQuery, error) {
+					return resolverutil.FormulaFilter(query, filterBy)
+				},
+			),
+		)
+}
+func (r queryResolver) Techs(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.TechOrder,
+	filterBy []*models.TechFilterInput,
+) (*ent.TechConnection, error) {
+	return r.ClientFrom(ctx).
+		Tech.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithTechOrder(orderBy),
+			ent.WithTechFilter(
+				func(query *ent.TechQuery) (*ent.TechQuery, error) {
+					return resolverutil.TechFilter(query, filterBy)
+				},
+			),
+		)
+}
 
 func (r queryResolver) RecommendationsSources(
 	ctx context.Context,
