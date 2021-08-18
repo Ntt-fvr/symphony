@@ -7,6 +7,10 @@ package importer
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -15,9 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"io"
-	"net/http"
-	"strings"
 )
 
 const minimalProjectLineLength = 5
@@ -161,7 +162,6 @@ func (m *importer) processExportedProject(w http.ResponseWriter, r *http.Request
 							}
 							errs = append(errs, ErrorLine{Line: numRows, Error: errTxt, Message: fmt.Sprintf("error while creating project  %q", name)})
 						}
-
 					}
 				}
 			}

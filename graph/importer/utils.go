@@ -371,9 +371,9 @@ func errorReturn(w http.ResponseWriter, msg string, log *zap.Logger, err error) 
 		http.Error(w, fmt.Sprintf("%s %q", msg, err), http.StatusBadRequest)
 	}
 }
-// parse and format a string date value
-func getformatDate(datStr string ) string {
 
+// parse and format a string date value
+func getformatDate(datStr string) string {
 	layout := "2006-01-02"
 
 	t, err := time.Parse("02/01/2006", datStr)
