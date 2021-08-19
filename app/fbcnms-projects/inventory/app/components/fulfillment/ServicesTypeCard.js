@@ -90,27 +90,28 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   serviceType?: string,
   serviceTypeRes?: string,
-  serviceID?: string,
+  serviceId?: string,
   serviceIdRes?: string,
   description?: string,
   descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
-  open: MouseEventHandler,
+  open?: MouseEventHandler,
 |}>;
 
 const ServiceTypeCard = (props: Props) => {
   const {
     serviceType,
-    serviceID,
+    serviceId,
     description,
     associatedServices,
     serviceTypeRes,
     serviceIdRes,
-    descriptionRes,
     associatedServicesRes,
+    descriptionRes,
     open,
   } = props;
+
   const classes = useStyles();
 
   return (
@@ -131,7 +132,7 @@ const ServiceTypeCard = (props: Props) => {
             className={classNames(classes.inline, classes.gridInner)}>
             <DynamicPropertyTypes
               className={classes.serviceId}
-              name={serviceID}
+              name={serviceId}
               txt={serviceIdRes}
             />
             <DynamicPropertyTypes name={description} txt={descriptionRes} />

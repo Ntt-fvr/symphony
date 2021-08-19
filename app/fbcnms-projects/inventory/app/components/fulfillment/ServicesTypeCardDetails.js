@@ -33,6 +33,7 @@ import {makeStyles} from '@material-ui/styles';
 
 import fbt from 'fbt';
 
+import ServicesTypes from './ServicesTypes';
 import symphony from '@symphony/design-system/theme/symphony';
 
 import ServicesRelatedCardDetailsInner from './ServicesRelatedCardDetailsInner';
@@ -44,22 +45,29 @@ const useStyles = makeStyles(() => ({
     '&. MuiAccordionSummary-content': {
       margin: '4px 0',
     },
-    border: '1px solid blue',
+    // border: '1px solid blue',
+  },
+  breadcrumbs: {
+    paddingBottom: '0',
+  },
+  header: {
+    marginBottom: '1.5rem',
   },
   card: {
     marginBottom: '7px',
+    // border: '1px solid red',
   },
   containerGrid2: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    border: '1px solid green',
+    // border: '1px solid green',
   },
   containerGrid3: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   insideContainer: {
     padding: '9px 15px',
@@ -78,7 +86,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   serviceId: {
     paddingLeft: '2rem',
@@ -115,28 +123,30 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   serviceType?: string,
   serviceTypeRes?: string,
-  serviceID?: string,
+  serviceId?: string,
   serviceIdRes?: string,
   description?: string,
   descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
-  onClose: () => void,
+  onClose?: () => void,
 |}>;
 
 const ServicesTypeCardDetails = (props: Props) => {
   const {
-    // serviceType,
-    serviceID,
+    serviceType,
+    serviceId,
     description,
-    // serviceTypeRes,
+    serviceTypeRes,
     serviceIdRes,
     descriptionRes,
-    onClose,
+    associatedServices,
+    associatedServicesRes,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [showEditCard, setShowEditCard] = useState(false);
+  const [returnServiceTypes, setReturnServiceTypes] = useState(false);
 
   const showServicesRelatedCardDetailsInner = () => {
     console.log('view');
@@ -146,27 +156,38 @@ const ServicesTypeCardDetails = (props: Props) => {
     return <ServicesRelatedCardDetailsInner />;
   }
 
+  const showServicesTypes = () => {
+    setReturnServiceTypes(true);
+  };
+  if (returnServiceTypes) {
+    return <ServicesTypes />;
+  }
+
   return (
     <div className={classes.root}>
-      <Breadcrumbs
-        breadcrumbs={[
-          {
-            id: 'Services',
-            name: 'Services',
-            onClick: onClose,
-          },
-          true
-            ? {
-                id: 'id',
-                name: 'CFS',
-              }
-            : {
-                id: 'CFS_ID_112',
-                name: `${fbt('CFS ID 112', '')}`,
-              },
-        ]}
-        size="large"
-      />
+      <Grid className={classes.header}>
+        <Breadcrumbs
+          className={classes.breadcrumbs}
+          breadcrumbs={[
+            {
+              id: 'Services',
+              name: 'Services',
+              onClick: () => showServicesTypes(),
+            },
+            true && {
+              id: 'id',
+              name: `CFS#1 ID 122`,
+            },
+          ]}
+          size="large"
+        />
+        <Text variant={'subtitle2'}>
+          {fbt(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+            '',
+          )}
+        </Text>
+      </Grid>
       <Accordion
         className={classes.card}
         container
@@ -184,7 +205,7 @@ const ServicesTypeCardDetails = (props: Props) => {
                   <LinearScaleIcon />
                 </div>
                 <Text variant={'h6'} weight={'bold'}>
-                  Service type CFS
+                  {serviceType} {serviceTypeRes}
                 </Text>
               </div>
             </Grid>
@@ -192,7 +213,7 @@ const ServicesTypeCardDetails = (props: Props) => {
             <Grid xs={6} className={classes.containerGrid2}>
               <DynamicPropertyTypes
                 className={classes.serviceId}
-                name={serviceID}
+                name={serviceId}
                 txt={serviceIdRes}
               />
               <DynamicPropertyTypes name={description} txt={descriptionRes} />
@@ -242,6 +263,10 @@ const ServicesTypeCardDetails = (props: Props) => {
         </AccordionDetails>
       </Accordion>
       <ServicesRelatedCardDetails
+        serviceType={serviceType}
+        serviceTypeRes={serviceTypeRes}
+        associatedServicesRes={associatedServicesRes}
+        associatedServices={associatedServices}
         viewDetails={() => showServicesRelatedCardDetailsInner()}
       />
     </div>

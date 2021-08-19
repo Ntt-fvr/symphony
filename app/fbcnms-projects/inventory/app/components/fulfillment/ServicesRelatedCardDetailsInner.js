@@ -30,9 +30,11 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 // import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
+import ServicesTypes from './ServicesTypes';
 import fbt from 'fbt';
-
 import symphony from '@symphony/design-system/theme/symphony';
+
+import ServicesTypeCardDetails from './ServicesTypeCardDetails';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -41,7 +43,10 @@ const useStyles = makeStyles(() => ({
     '&. MuiAccordionSummary-content': {
       margin: '4px 0',
     },
-    border: '1px solid blue',
+    // border: '1px solid blue',
+  },
+  header: {
+    marginBottom: '1.5rem',
   },
   card: {
     marginBottom: '7px',
@@ -50,13 +55,13 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    border: '1px solid green',
+    // border: '1px solid green',
   },
   containerGrid3: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   insideContainer: {
     padding: '9px 15px',
@@ -75,14 +80,14 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   serviceId: {
     paddingLeft: '2rem',
   },
   prueba: {
     margin: '0 70px',
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   associatedService: {
     paddingRight: '4rem',
@@ -113,52 +118,53 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = $ReadOnly<{|
-  serviceType?: string,
-  serviceTypeRes?: string,
-  serviceID?: string,
-  serviceIdRes?: string,
-  description?: string,
-  descriptionRes?: string,
-  associatedServices?: string,
-  associatedServicesRes?: string,
-  // onClose: () => void,
-|}>;
-
-const ServicesRelatedCardDetailsInner = (props: Props) => {
-  const {
-    // serviceType,
-    // serviceID,
-    // description,
-    // serviceTypeRes,
-    // serviceIdRes,
-    // descriptionRes,
-    // onClose,
-  } = props;
+const ServicesRelatedCardDetailsInner = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [returnServiceTypes, setReturnServiceTypes] = useState(false);
+  const [returnServiceAndRelated, setReturnServiceAndRelated] = useState(false);
 
+  const showServicesTypes = () => {
+    setReturnServiceTypes(true);
+  };
+  if (returnServiceTypes) {
+    return <ServicesTypes />;
+  }
+  const showServicesAndRelated = () => {
+    setReturnServiceAndRelated(true);
+  };
+  if (returnServiceAndRelated) {
+    return <ServicesTypeCardDetails />;
+  }
   return (
     <div className={classes.root}>
-      <Breadcrumbs
-        breadcrumbs={[
-          {
-            id: 'CFS_ID_112',
-            name: 'CFS ID 112',
-            // onClick: onClose,
-          },
-          true
-            ? {
-                id: 'RFS_ID_57',
-                name: 'RFS ID 57',
-              }
-            : {
-                id: 'CFS_ID_112',
-                name: `${fbt('CFS ID 112', '')}`,
-              },
-        ]}
-        size="large"
-      />
+      <Grid className={classes.header}>
+        <Breadcrumbs
+          breadcrumbs={[
+            {
+              id: 'initial',
+              name: 'Services',
+              onClick: () => showServicesTypes(),
+            },
+            {
+              id: 'id',
+              name: `CFS#1 ID 112`,
+              onClick: () => showServicesAndRelated(),
+            },
+            true && {
+              id: 'RFS_ID_57',
+              name: `RFS ID 57`,
+            },
+          ]}
+          size="large"
+        />
+        <Text variant={'subtitle2'}>
+          {fbt(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+            '',
+          )}
+        </Text>
+      </Grid>
       <Accordion
         className={classes.card}
         container

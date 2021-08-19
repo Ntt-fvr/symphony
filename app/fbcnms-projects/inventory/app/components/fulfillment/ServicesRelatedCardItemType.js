@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
   },
   insideContainer: {
     padding: '0px 20px 0px 0px',
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   bold: {
     fontWeight: 'bold',
@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
     margin: '2px 0',
     display: 'flex',
     alignItems: 'center',
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   serviceType: {
     justifyContent: 'flex-start',
@@ -79,30 +79,28 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '2rem',
   },
   inter: {
-    border: '1px solid red',
+    // border: '1px solid red',
   },
 }));
 
 type Props = $ReadOnly<{|
   serviceType?: string,
   serviceTypeRes?: string,
-  serviceID?: string,
-  serviceIdRes?: string,
-  description?: string,
-  descriptionRes?: string,
-  associatedServices?: string,
-  associatedServicesRes?: string,
+  serviceIdInter?: string,
+  serviceIdInterRes?: string,
+  descriptionInter?: string,
+  descriptionInterRes?: string,
   viewDetails?: MouseEventHandler,
 |}>;
 
 const ServicesRelatedCardItemType = (props: Props) => {
   const {
-    // serviceType,
-    // serviceID,
-    // description,
-    // serviceTypeRes,
-    // serviceIdRes,
-    // descriptionRes,
+    serviceType,
+    serviceTypeRes,
+    serviceIdInter,
+    serviceIdInterRes,
+    descriptionInter,
+    descriptionInterRes,
     viewDetails,
   } = props;
   const classes = useStyles();
@@ -114,19 +112,25 @@ const ServicesRelatedCardItemType = (props: Props) => {
           <Grid
             xs={3}
             className={classNames(classes.inside, classes.serviceType)}>
-            <DynamicPropertyTypes name={'Service type'} txt={'RFS'} />
+            <DynamicPropertyTypes name={serviceType} txt={serviceTypeRes} />
           </Grid>
 
           <Grid
             xs={3}
             className={classNames(classes.inside, classes.serviceId)}>
-            <DynamicPropertyTypes name={'ServiceID'} txt={'57'} />
+            <DynamicPropertyTypes
+              name={serviceIdInter}
+              txt={serviceIdInterRes}
+            />
           </Grid>
 
           <Grid
             xs={3}
             className={classNames(classes.inside, classes.Description)}>
-            <DynamicPropertyTypes name={'Description'} txt={'RFS Last Mile'} />
+            <DynamicPropertyTypes
+              name={descriptionInter}
+              txt={descriptionInterRes}
+            />
           </Grid>
           <Grid
             xs={3}

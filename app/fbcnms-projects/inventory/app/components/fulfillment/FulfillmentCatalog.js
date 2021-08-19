@@ -70,7 +70,6 @@ export default function FulfillmentCatalog() {
   const tabIndex =
     tabMatch == null ? -1 : tabBars.findIndex(el => el.id === tabMatch[1]);
   const [activeTabBar] = useState<number>(tabIndex !== -1 ? tabIndex : 0);
-  // setActiveTabBar(activeTabBar);
   useEffect(() => {
     history.push(
       `/fulfillment/fulfillmentCatalog/${tabBars[activeTabBar].path}`,

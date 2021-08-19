@@ -49,13 +49,13 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     paddingLeft: '2rem',
-    border: '1px solid green',
+    // border: '1px solid green',
   },
   containerGrid3: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   insideContainer: {
     padding: '9px 15px',
@@ -74,7 +74,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
-    border: '1px solid red',
+    // border: '1px solid red',
   },
   serviceId: {
     paddingLeft: '4rem',
@@ -108,28 +108,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const sIdInter = 'Service IDI';
+const sIdInterRes = '67';
+const sTinter = 'RFS';
+const descripInter = 'Description inter';
+const descripInterRes = 'RFS Last Mile Inter';
+
 type Props = $ReadOnly<{|
   serviceType?: string,
   serviceTypeRes?: string,
-  serviceID?: string,
-  serviceIdRes?: string,
-  description?: string,
-  descriptionRes?: string,
   associatedServices?: string,
   associatedServicesRes?: string,
   viewDetails?: MouseEventHandler,
 |}>;
-
 const ServicesRelatedCardDetails = (props: Props) => {
-  const {
-    // serviceType,
-    // serviceID,
-    // description,
-    // serviceTypeRes,
-    // serviceIdRes,
-    // descriptionRes,
-    viewDetails,
-  } = props;
+  const {serviceType, associatedServices, viewDetails} = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -158,7 +151,7 @@ const ServicesRelatedCardDetails = (props: Props) => {
             </Grid>
 
             <Grid xs={8} className={classes.containerGrid2}>
-              <DynamicPropertyTypes name={'RFS'} txt={'2'} />
+              <DynamicPropertyTypes name={associatedServices} txt={'2'} />
             </Grid>
           </Grid>
         </AccordionSummary>
@@ -166,10 +159,24 @@ const ServicesRelatedCardDetails = (props: Props) => {
         <AccordionDetails className={''}>
           <Grid container spacing={0}>
             <Grid xs={12}>
-              <ServicesRelatedCardItemType viewDetails={viewDetails} />
-              <ServicesRelatedCardItemType />
-              <ServicesRelatedCardItemType />
-              <ServicesRelatedCardItemType />
+              <ServicesRelatedCardItemType
+                serviceType={serviceType}
+                serviceTypeRes={sTinter}
+                serviceIdInter={sIdInter}
+                serviceIdInterRes={sIdInterRes}
+                descriptionInter={descripInter}
+                descriptionInterRes={descripInterRes}
+                viewDetails={viewDetails}
+              />
+              <ServicesRelatedCardItemType
+                serviceType={serviceType}
+                serviceTypeRes={'nombre'}
+                serviceIdInter={sIdInter}
+                serviceIdInterRes={'num'}
+                descriptionInter={descripInter}
+                descriptionInterRes={'nombre'}
+                viewDetails={viewDetails}
+              />
             </Grid>
           </Grid>
         </AccordionDetails>

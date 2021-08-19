@@ -55,7 +55,7 @@ const handleClickAdd = () => {
 };
 
 const st = 'Service type';
-const str = 'CFS';
+const str = 'CFS #1';
 const si = 'Service ID';
 const sir = '112';
 const de = 'Description';
@@ -76,7 +76,7 @@ const ServicesTypes = () => {
       <ServicesTypeCardDetails
         serviceType={st}
         serviceTypeRes={str}
-        serviceID={si}
+        serviceId={si}
         serviceIdRes={sir}
         description={de}
         descriptionRes={der}
@@ -108,13 +108,23 @@ const ServicesTypes = () => {
             <ServiceTypeCard
               serviceType={st}
               serviceTypeRes={str}
-              serviceID={si}
+              serviceId={si}
               serviceIdRes={sir}
               description={de}
               descriptionRes={der}
               associatedServices={as}
               associatedServicesRes={asr}
               open={() => showServicesTypeCardDetails()}
+            />
+            <ServiceTypeCard
+              serviceType={'st'}
+              serviceTypeRes={'str'}
+              serviceId={'si'}
+              serviceIdRes={'sir'}
+              description={'de'}
+              descriptionRes={'der'}
+              associatedServices={'as'}
+              associatedServicesRes={'asr'}
             />
           </List>
         </Grid>
