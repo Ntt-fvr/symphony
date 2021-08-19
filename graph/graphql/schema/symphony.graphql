@@ -4421,7 +4421,8 @@ input KpiFilterInput {
   stringSet: [String!]
 }
 enum FormulaFilterType {  
-  TEXTFORMULA
+  TEXTFORMULA  
+  STATUS
   
 }
 
@@ -4432,6 +4433,7 @@ input FormulaFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  boolValue: Boolean
   
 }
 

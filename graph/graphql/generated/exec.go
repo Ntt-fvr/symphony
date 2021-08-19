@@ -17254,7 +17254,8 @@ input KpiFilterInput {
   stringSet: [String!]
 }
 enum FormulaFilterType {  
-  TEXTFORMULA
+  TEXTFORMULA  
+  STATUS
   
 }
 
@@ -17265,6 +17266,7 @@ input FormulaFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  boolValue: Boolean
   
 }
 
@@ -82649,6 +82651,14 @@ func (ec *executionContext) unmarshalInputFormulaFilterInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
 			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "boolValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("boolValue"))
+			it.BoolValue, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}

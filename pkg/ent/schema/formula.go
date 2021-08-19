@@ -23,7 +23,8 @@ func (Formula) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("textFormula").NotEmpty().Unique().
 			Annotations(entgql.OrderField("TEXTFORMULA")),
-		field.Bool("status"),
+		field.Bool("status").
+			Annotations(entgql.OrderField("STATUS")),
 	}
 }
 

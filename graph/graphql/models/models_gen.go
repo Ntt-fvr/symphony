@@ -1065,6 +1065,7 @@ type FormulaFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
+	BoolValue   *bool               `json:"boolValue"`
 }
 
 type GeneralFilter struct {
@@ -2098,15 +2099,17 @@ type FormulaFilterType string
 
 const (
 	FormulaFilterTypeTextformula FormulaFilterType = "TEXTFORMULA"
+	FormulaFilterTypeStatus      FormulaFilterType = "STATUS"
 )
 
 var AllFormulaFilterType = []FormulaFilterType{
 	FormulaFilterTypeTextformula,
+	FormulaFilterTypeStatus,
 }
 
 func (e FormulaFilterType) IsValid() bool {
 	switch e {
-	case FormulaFilterTypeTextformula:
+	case FormulaFilterTypeTextformula, FormulaFilterTypeStatus:
 		return true
 	}
 	return false
