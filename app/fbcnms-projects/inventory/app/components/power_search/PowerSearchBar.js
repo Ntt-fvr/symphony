@@ -254,7 +254,7 @@ const PowerSearchBar = (props: Props) => {
               {footer}
             </Text>
           )}
-          {savedSearch && entity && (
+          {savedSearch && entity && entity !== 'PROJECT' && (
             <FilterBookmark filters={filterValues} entity={entity} />
           )}
           {exportPath && (
