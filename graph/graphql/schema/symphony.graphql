@@ -6950,6 +6950,7 @@ type Mutation {
   addRecommendations(input: AddRecommendationsInput!):Recommendations!
   editRecommendations(input: EditRecommendationsInput!): Recommendations!
   removeRecommendations(id: ID!): ID!
+  addRecommendationsList(input: AddRecommendationsListInput!): [Recommendations!]!
   addRecommendationsSources(input: AddRecommendationsSourcesInput!):RecommendationsSources!
   editRecommendationsSources(input: EditRecommendationsSourcesInput!): RecommendationsSources!
   removeRecommendationsSources(id: ID!): ID!
@@ -7766,7 +7767,7 @@ type Recommendations implements Node {
   alarmType: String!
   shortDescription: String!
   longDescription: String!
-  command: String!
+  command: String
   priority: Int!
   status: Boolean!
   runbook: String
@@ -7784,7 +7785,7 @@ input AddRecommendationsInput {
   alarmType: String!
   shortDescription: String!
   longDescription: String!
-  command: String!
+  command: String
   priority: Int!
   status: Boolean!
   runbook: String
@@ -7796,6 +7797,10 @@ input AddRecommendationsInput {
   vendor: ID!
 }
 
+input AddRecommendationsListInput {
+  recommendations: [AddRecommendationsInput!]!
+}
+
 input EditRecommendationsInput {
   id: ID!
   externalID: String!
@@ -7803,7 +7808,7 @@ input EditRecommendationsInput {
   alarmType: String!
   shortDescription: String!
   longDescription: String!
-  command: String!
+  command: String
   priority: Int!
   status: Boolean!
   runbook: String

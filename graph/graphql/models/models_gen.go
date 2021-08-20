@@ -324,7 +324,7 @@ type AddRecommendationsInput struct {
 	AlarmType               string  `json:"alarmType"`
 	ShortDescription        string  `json:"shortDescription"`
 	LongDescription         string  `json:"longDescription"`
-	Command                 string  `json:"command"`
+	Command                 *string `json:"command"`
 	Priority                int     `json:"priority"`
 	Status                  bool    `json:"status"`
 	Runbook                 *string `json:"runbook"`
@@ -334,6 +334,10 @@ type AddRecommendationsInput struct {
 	UserApprobed            *int    `json:"userApprobed"`
 	UserCreate              int     `json:"userCreate"`
 	Vendor                  int     `json:"vendor"`
+}
+
+type AddRecommendationsListInput struct {
+	Recommendations []*AddRecommendationsInput `json:"recommendations"`
 }
 
 type AddRecommendationsSourcesInput struct {
@@ -853,7 +857,7 @@ type EditRecommendationsInput struct {
 	AlarmType               string  `json:"alarmType"`
 	ShortDescription        string  `json:"shortDescription"`
 	LongDescription         string  `json:"longDescription"`
-	Command                 string  `json:"command"`
+	Command                 *string `json:"command"`
 	Priority                int     `json:"priority"`
 	Status                  bool    `json:"status"`
 	Runbook                 *string `json:"runbook"`

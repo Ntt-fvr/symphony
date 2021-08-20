@@ -31,7 +31,7 @@ func (Recommendations) Fields() []ent.Field {
 			Annotations(entgql.OrderField("SHORTDESCRIPTION")),
 		field.String("longDescription").
 			Annotations(entgql.OrderField("LONGDESCRIPTION")),
-		field.String("command").
+		field.String("command").Optional().Nillable().
 			Annotations(entgql.OrderField("COMMAND")),
 		field.Int("priority").
 			Annotations(entgql.OrderField("PRIORITY")),
