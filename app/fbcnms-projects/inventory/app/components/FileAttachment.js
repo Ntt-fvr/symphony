@@ -141,16 +141,13 @@ class FileAttachment extends React.Component<Props, State> {
 
   render() {
     const _setCategory = (value: string) => {
-      if (this.state.selectValue === '') {
-        if (this.props.onChecked)
-          this.props.onChecked({
-            type: 'valueIncrement',
-            file: this.props.file,
-            value: value,
-          });
+      if (this.props.onChecked) {
+        this.props.onChecked({
+          type: 'valueIncrement',
+          file: this.props.file,
+          value: value,
+        });
       }
-      this.setState({selectValue: value});
-      return;
     };
 
     const {classes, file} = this.props;
@@ -229,9 +226,13 @@ class FileAttachment extends React.Component<Props, State> {
                   label: x,
                 }))}
                 onChange={value => {
-                  _setCategory(value ? value : '');
+                  this.setState({selectValue: value}, () => {
+                    _setCategory(this.state.selectValue);
+                  });
                 }}
-                selectedValue={this.state.isChecked && this.state.selectValue}
+                selectedValue={
+                  this.state.isChecked ? this.state.selectValue : ''
+                }
               />
             </FormField>
           </TableCell>
