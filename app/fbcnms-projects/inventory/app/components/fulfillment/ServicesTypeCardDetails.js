@@ -18,15 +18,12 @@ import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-// import Button from '@symphony/design-system/components/Button';
-// import Card from '@symphony/design-system/components/Card/Card';
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
-import Text from '@symphony/design-system/components/Text';
-// import classNames from 'classnames';
 import ServicesRelatedCardDetails from './ServicesRelatedCardDetails';
+import Text from '@symphony/design-system/components/Text';
 import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
@@ -45,7 +42,6 @@ const useStyles = makeStyles(() => ({
     '&. MuiAccordionSummary-content': {
       margin: '4px 0',
     },
-    // border: '1px solid blue',
   },
   breadcrumbs: {
     paddingBottom: '0',
@@ -55,25 +51,16 @@ const useStyles = makeStyles(() => ({
   },
   card: {
     marginBottom: '7px',
-    // border: '1px solid red',
   },
-  containerGrid2: {
+  serviceIdDescription: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // border: '1px solid green',
   },
-  containerGrid3: {
+  buttonsDeleteEdit: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    // border: '1px solid red',
-  },
-  insideContainer: {
-    padding: '9px 15px',
-  },
-  view: {
-    marginLeft: '1rem',
   },
   editIcon: {
     margin: '0 2rem',
@@ -86,13 +73,9 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
-    // border: '1px solid red',
   },
   serviceId: {
     paddingLeft: '2rem',
-  },
-  associatedService: {
-    paddingRight: '4rem',
   },
   iconContainer: {
     borderRadius: '50%',
@@ -106,17 +89,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     ...symphony.typography.h5,
-  },
-  gridEnd: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flexGrow: 1,
-  },
-  gridInner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexGrow: 1,
   },
 }));
 
@@ -176,7 +148,7 @@ const ServicesTypeCardDetails = (props: Props) => {
             },
             true && {
               id: 'id',
-              name: `CFS#1 ID 122`,
+              name: `CFS ID 122`,
             },
           ]}
           size="large"
@@ -210,7 +182,7 @@ const ServicesTypeCardDetails = (props: Props) => {
               </div>
             </Grid>
 
-            <Grid xs={6} className={classes.containerGrid2}>
+            <Grid xs={6} className={classes.serviceIdDescription}>
               <DynamicPropertyTypes
                 className={classes.serviceId}
                 name={serviceId}
@@ -219,7 +191,7 @@ const ServicesTypeCardDetails = (props: Props) => {
               <DynamicPropertyTypes name={description} txt={descriptionRes} />
             </Grid>
 
-            <Grid xs={2} className={classes.containerGrid3}>
+            <Grid xs={2} className={classes.buttonsDeleteEdit}>
               <DeleteOutlinedIcon
                 className={classes.deleteIcon}
                 // onClick={handleRemove}

@@ -24,16 +24,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: '1',
     margin: '40px',
-    // border: '1px solid red',
   },
   paper: {
     padding: theme.spacing(2),
-  },
-  container: {
-    // border: '1px solid black',
-  },
-  containerTitle: {
-    // border: '1px solid orange',
   },
   title: {
     marginLeft: '0.3rem',
@@ -42,7 +35,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    // border: '1px solid orange',
   },
   button: {
     padding: '0 2rem',
@@ -55,7 +47,7 @@ const handleClickAdd = () => {
 };
 
 const st = 'Service type';
-const str = 'CFS #1';
+const str = 'CFS';
 const si = 'Service ID';
 const sir = '112';
 const de = 'Description';
@@ -87,8 +79,8 @@ const ServicesTypes = () => {
   }
   return (
     <div className={classes.root}>
-      <Grid container spacing={2} className={classes.container}>
-        <Grid item xs={10} className={classes.containerTitle}>
+      <Grid container spacing={2}>
+        <Grid item xs={10}>
           <ConfigureTitle
             className={classes.title}
             title={fbt('Service', '')}
@@ -117,13 +109,13 @@ const ServicesTypes = () => {
               open={() => showServicesTypeCardDetails()}
             />
             <ServiceTypeCard
-              serviceType={'st'}
+              serviceType={st}
               serviceTypeRes={'str'}
-              serviceId={'si'}
+              serviceId={si}
               serviceIdRes={'sir'}
-              description={'de'}
+              description={de}
               descriptionRes={'der'}
-              associatedServices={'as'}
+              associatedServices={as}
               associatedServicesRes={'asr'}
             />
           </List>

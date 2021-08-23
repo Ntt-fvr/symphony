@@ -15,19 +15,12 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-// import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-// import Button from '@symphony/design-system/components/Button';
-// import Card from '@symphony/design-system/components/Card/Card';
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
-// import IconButton from '@symphony/design-system/components/IconButton';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
-// import classNames from 'classnames';
-import {DARK} from '@symphony/design-system/theme/symphony';
-// import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 import ServicesTypes from './ServicesTypes';
@@ -43,7 +36,6 @@ const useStyles = makeStyles(() => ({
     '&. MuiAccordionSummary-content': {
       margin: '4px 0',
     },
-    // border: '1px solid blue',
   },
   header: {
     marginBottom: '1.5rem',
@@ -51,46 +43,21 @@ const useStyles = makeStyles(() => ({
   card: {
     marginBottom: '7px',
   },
-  containerGrid2: {
+  ServiceIdDescription: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // border: '1px solid green',
-  },
-  containerGrid3: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    // border: '1px solid red',
-  },
-  insideContainer: {
-    padding: '9px 15px',
-  },
-  view: {
-    marginLeft: '1rem',
-  },
-  editIcon: {
-    margin: '0 2rem',
-  },
-  deleteIcon: {
-    margin: '0px',
-    color: DARK.D300,
   },
   inline: {
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
-    // border: '1px solid red',
   },
   serviceId: {
     paddingLeft: '2rem',
   },
-  prueba: {
+  AccordionDetails: {
     margin: '0 70px',
-    // border: '1px solid red',
-  },
-  associatedService: {
-    paddingRight: '4rem',
   },
   iconContainer: {
     borderRadius: '50%',
@@ -104,17 +71,6 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     ...symphony.typography.h5,
-  },
-  gridEnd: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flexGrow: 1,
-  },
-  gridInner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexGrow: 1,
   },
 }));
 
@@ -148,7 +104,7 @@ const ServicesRelatedCardDetailsInner = () => {
             },
             {
               id: 'id',
-              name: `CFS#1 ID 112`,
+              name: `CFS ID 112`,
               onClick: () => showServicesAndRelated(),
             },
             true && {
@@ -187,7 +143,7 @@ const ServicesRelatedCardDetailsInner = () => {
               </div>
             </Grid>
 
-            <Grid xs={7} className={classes.containerGrid2}>
+            <Grid xs={7} className={classes.ServiceIdDescription}>
               <DynamicPropertyTypes
                 className={classes.serviceId}
                 name={'Service ID'}
@@ -201,7 +157,7 @@ const ServicesRelatedCardDetailsInner = () => {
           </Grid>
         </AccordionSummary>
 
-        <AccordionDetails className={classes.prueba}>
+        <AccordionDetails className={classes.AccordionDetails}>
           <Grid container spacing={0}>
             <Grid xs={6}>
               <DynamicPropertyTypes

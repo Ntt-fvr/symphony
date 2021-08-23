@@ -12,6 +12,7 @@ import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
 import React, {useEffect, useState} from 'react';
+import ServicesTypeCardDetails from './ServicesTypeCardDetails';
 import ServicesTypes from './ServicesTypes';
 // import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
@@ -85,6 +86,11 @@ export default function FulfillmentCatalog() {
               exact
               path={relativeUrl('/services')}
               component={ServicesTypes}
+            />
+            <Route
+              exact
+              path={relativeUrl('/servicesDetails')}
+              component={ServicesTypeCardDetails}
             />
             <Redirect
               from={relativeUrl('/fulfillment/fulfillmentCatalog')}

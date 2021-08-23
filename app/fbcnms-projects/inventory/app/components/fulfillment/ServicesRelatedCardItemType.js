@@ -14,14 +14,10 @@ import React from 'react';
 import Card from '@symphony/design-system/components/Card/Card';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import Button from '@symphony/design-system/components/Button';
-// import Card from '@symphony/design-system/components/Card/Card';
-// import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
-// import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {EditIcon} from '@symphony/design-system/icons';

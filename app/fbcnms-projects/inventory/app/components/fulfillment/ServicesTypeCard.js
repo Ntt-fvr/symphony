@@ -26,7 +26,6 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
-// import ServicesTypeCardDetails from './ServicesTypeCardDetails';
 import symphony from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({

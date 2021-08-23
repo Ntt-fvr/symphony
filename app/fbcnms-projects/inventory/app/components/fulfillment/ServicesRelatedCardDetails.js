@@ -14,19 +14,13 @@ import React, {useState} from 'react';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-// import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-// import Button from '@symphony/design-system/components/Button';
-// import Card from '@symphony/design-system/components/Card/Card';
 import DynamicPropertyTypes from './common/DynamicPropertyTypes';
 import Grid from '@material-ui/core/Grid';
-// import IconButton from '@symphony/design-system/components/IconButton';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import Text from '@symphony/design-system/components/Text';
-// import classNames from 'classnames';
 import {DARK} from '@symphony/design-system/theme/symphony';
-// import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 import ServicesRelatedCardItemType from './ServicesRelatedCardItemType';
