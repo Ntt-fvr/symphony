@@ -29,6 +29,7 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Switch from '@symphony/design-system/components/switch/Switch';
+import TableFormulas from './TableFormulas';
 import {Grid, MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -103,6 +104,15 @@ type Kpi = {
   },
 };
 
+type Formula = {
+  id: string,
+  textFormula: string,
+  status: true,
+  techFk: {
+    name: string,
+  },
+};
+
 type Props = $ReadOnly<{|
   formValues: {
     id: string,
@@ -113,6 +123,7 @@ type Props = $ReadOnly<{|
     },
     status: boolean,
     description: string,
+    formulaFk: Array<Formula>,
   },
   hideEditKpiForm: void => void,
   kpi: Array<Kpi>,
@@ -279,6 +290,12 @@ export const EditKpiItemForm = (props: Props) => {
                 </FormField>
               </Grid>
             </Grid>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
+          <Card>
+            <CardHeader>Formulas contained</CardHeader>
+            <TableFormulas formulas={formValues.formulaFk} />
           </Card>
         </Grid>
       </Grid>

@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 // COMPONENTS //
 import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
@@ -115,6 +115,21 @@ export default function AddCounterItemForm(props: Props) {
   const data = useLazyLoadQuery<AddCounterItemFormQuery>(AddCountersQuery, {});
   const names = counterNames?.map(item => item.node.name);
 
+  const handleDisable = useMemo(
+    () =>
+      !(
+        Object.values(counters.data).length === 5 &&
+        !Object.values(counters.data).some(item => item === '') &&
+        !names?.some(item => item === counters.data.name)
+      ),
+    [counters.data, names],
+  );
+
+  const handleHasError = useMemo(
+    () => names?.some(item => item === counters.data.name),
+    [names, counters.data.name],
+  );
+
   function handleChange({target}) {
     setCounters({
       data: {
@@ -134,7 +149,6 @@ export default function AddCounterItemForm(props: Props) {
         vendorFk: counters.data.vendor,
       },
     };
-
     setShowChecking(true);
     AddCounterMutation(variables);
   }
@@ -158,7 +172,7 @@ export default function AddCounterItemForm(props: Props) {
         className={classes.formField}
         label="Counter name"
         required
-        hasError={names?.some(item => item === counters.data.name)}
+        hasError={handleHasError}
         errorText={
           names?.some(item => item === counters.data.name)
             ? 'Counter name existing'
@@ -223,13 +237,7 @@ export default function AddCounterItemForm(props: Props) {
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={
-            !(
-              Object.values(counters.data).length === 5 &&
-              !Object.values(counters.data).some(item => item === '') &&
-              !names?.some(item => item === counters.data.name)
-            )
-          }>
+          disabled={handleDisable}>
           Add Counter
         </Button>
       </FormField>

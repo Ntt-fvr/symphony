@@ -1151,7 +1151,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "text_formula", Type: field.TypeString, Unique: true},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "kpi_formulakpi", Type: field.TypeInt, Nullable: true},
 		{Name: "tech_formulatech", Type: field.TypeInt, Nullable: true},
@@ -2896,6 +2896,33 @@ var (
 			},
 		},
 	}
+	// OrganizationPoliciesColumns holds the columns for the "organization_policies" table.
+	OrganizationPoliciesColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeInt},
+		{Name: "permissions_policy_id", Type: field.TypeInt},
+	}
+	// OrganizationPoliciesTable holds the schema information for the "organization_policies" table.
+	OrganizationPoliciesTable = &schema.Table{
+		Name:       "organization_policies",
+		Columns:    OrganizationPoliciesColumns,
+		PrimaryKey: []*schema.Column{OrganizationPoliciesColumns[0], OrganizationPoliciesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "organization_policies_organization_id",
+				Columns: []*schema.Column{OrganizationPoliciesColumns[0]},
+
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "organization_policies_permissions_policy_id",
+				Columns: []*schema.Column{OrganizationPoliciesColumns[1]},
+
+				RefColumns: []*schema.Column{PermissionsPoliciesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ServiceUpstreamColumns holds the columns for the "service_upstream" table.
 	ServiceUpstreamColumns = []*schema.Column{
 		{Name: "service_id", Type: field.TypeInt},
@@ -3201,6 +3228,7 @@ var (
 		WorkerTypesTable,
 		EquipmentPortDefinitionConnectedPortsTable,
 		ExitPointNextEntryPointsTable,
+		OrganizationPoliciesTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
 		ServicePortsTable,
@@ -3357,6 +3385,8 @@ func init() {
 	EquipmentPortDefinitionConnectedPortsTable.ForeignKeys[1].RefTable = EquipmentPortDefinitionsTable
 	ExitPointNextEntryPointsTable.ForeignKeys[0].RefTable = ExitPointsTable
 	ExitPointNextEntryPointsTable.ForeignKeys[1].RefTable = EntryPointsTable
+	OrganizationPoliciesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationPoliciesTable.ForeignKeys[1].RefTable = PermissionsPoliciesTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable

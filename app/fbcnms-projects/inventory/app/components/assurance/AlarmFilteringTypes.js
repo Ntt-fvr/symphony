@@ -129,19 +129,7 @@ const AlarmFilteringTypes = () => {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item xs={10}>
-          <PowerSearchBar
-            placeholder="Alarm Filter"
-            filterConfigs={[]}
-            searchConfig={[]}
-            filterValues={[]}
-            savedSearches={[]}
-            onFiltersChanged={filters => []}
-            getSelectedFilter={(filterConfig: prueba) => []}
-            exportPath={'/alarm_filtering'}
-            entity={'%future added value'}
-          />
-        </Grid>
+        <Grid item xs={10} />
         <Grid className={classes.addButton} item xs={2}>
           <FormField>
             <Button onClick={handleClickAdd} className={classes.button}>

@@ -71,7 +71,7 @@ type AddAlarmFilterInput struct {
 	Reason          string    `json:"reason"`
 	User            string    `json:"user"`
 	CreationTime    time.Time `json:"creationTime"`
-	AlarmStatus     int       `json:"alarmStatus"`
+	AlarmStatus     *int      `json:"alarmStatus"`
 }
 
 type AddAlarmStatusInput struct {
@@ -175,10 +175,10 @@ type AddFlowDraftInput struct {
 }
 
 type AddFormulaInput struct {
-	Name   string `json:"name"`
-	Status bool   `json:"status"`
-	TechFk int    `json:"techFk"`
-	KpiFk  int    `json:"kpiFk"`
+	TextFormula string `json:"textFormula"`
+	Status      bool   `json:"status"`
+	TechFk      int    `json:"techFk"`
+	KpiFk       int    `json:"kpiFk"`
 }
 
 type AddHyperlinkInput struct {
@@ -617,7 +617,7 @@ type EditAlarmFilterInput struct {
 	BeginTime       time.Time `json:"beginTime"`
 	EndTime         time.Time `json:"endTime"`
 	Reason          string    `json:"reason"`
-	AlarmStatus     int       `json:"alarmStatus"`
+	AlarmStatus     *int      `json:"alarmStatus"`
 }
 
 type EditAlarmStatusInput struct {
@@ -711,11 +711,11 @@ type EditFlowInstanceInput struct {
 }
 
 type EditFormulaInput struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Status bool   `json:"status"`
-	TechFk int    `json:"techFk"`
-	KpiFk  int    `json:"kpiFk"`
+	ID          int    `json:"id"`
+	TextFormula string `json:"textFormula"`
+	Status      bool   `json:"status"`
+	TechFk      int    `json:"techFk"`
+	KpiFk       int    `json:"kpiFk"`
 }
 
 type EditKpiInput struct {
@@ -1056,6 +1056,15 @@ type FlowInstanceFilterInput struct {
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
 	TimeValue     *time.Time                `json:"timeValue"`
 	MaxDepth      *int                      `json:"maxDepth"`
+}
+
+type FormulaFilterInput struct {
+	FilterType  FormulaFilterType   `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
 }
 
 type GeneralFilter struct {
@@ -1512,6 +1521,15 @@ type SurveyWiFiScanData struct {
 	Rssi         *float64 `json:"rssi"`
 }
 
+type TechFilterInput struct {
+	FilterType  TechFilterType      `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+}
+
 type TechnicianCheckListItemInput struct {
 	ID                 int                     `json:"id"`
 	SelectedEnumValues *string                 `json:"selectedEnumValues"`
@@ -1859,16 +1877,24 @@ func (e CounterFamilyFilterType) MarshalGQL(w io.Writer) {
 type CounterFilterType string
 
 const (
-	CounterFilterTypeName CounterFilterType = "NAME"
+	CounterFilterTypeName                 CounterFilterType = "NAME"
+	CounterFilterTypeExternalid           CounterFilterType = "EXTERNALID"
+	CounterFilterTypeNetworkmanagersystem CounterFilterType = "NETWORKMANAGERSYSTEM"
+	CounterFilterTypeCounterfamily        CounterFilterType = "COUNTERFAMILY"
+	CounterFilterTypeVendorfk             CounterFilterType = "VENDORFK"
 )
 
 var AllCounterFilterType = []CounterFilterType{
 	CounterFilterTypeName,
+	CounterFilterTypeExternalid,
+	CounterFilterTypeNetworkmanagersystem,
+	CounterFilterTypeCounterfamily,
+	CounterFilterTypeVendorfk,
 }
 
 func (e CounterFilterType) IsValid() bool {
 	switch e {
-	case CounterFilterTypeName:
+	case CounterFilterTypeName, CounterFilterTypeExternalid, CounterFilterTypeNetworkmanagersystem, CounterFilterTypeCounterfamily, CounterFilterTypeVendorfk:
 		return true
 	}
 	return false
@@ -2065,6 +2091,45 @@ func (e *FlowInstanceFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FlowInstanceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FormulaFilterType string
+
+const (
+	FormulaFilterTypeTextformula FormulaFilterType = "TEXTFORMULA"
+)
+
+var AllFormulaFilterType = []FormulaFilterType{
+	FormulaFilterTypeTextformula,
+}
+
+func (e FormulaFilterType) IsValid() bool {
+	switch e {
+	case FormulaFilterTypeTextformula:
+		return true
+	}
+	return false
+}
+
+func (e FormulaFilterType) String() string {
+	return string(e)
+}
+
+func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FormulaFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FormulaFilterType", str)
+	}
+	return nil
+}
+
+func (e FormulaFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2393,16 +2458,20 @@ func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
 type OrganizationFilterType string
 
 const (
-	OrganizationFilterTypeName OrganizationFilterType = "NAME"
+	OrganizationFilterTypeID          OrganizationFilterType = "ID"
+	OrganizationFilterTypeName        OrganizationFilterType = "NAME"
+	OrganizationFilterTypeDescription OrganizationFilterType = "DESCRIPTION"
 )
 
 var AllOrganizationFilterType = []OrganizationFilterType{
+	OrganizationFilterTypeID,
 	OrganizationFilterTypeName,
+	OrganizationFilterTypeDescription,
 }
 
 func (e OrganizationFilterType) IsValid() bool {
 	switch e {
-	case OrganizationFilterTypeName:
+	case OrganizationFilterTypeID, OrganizationFilterTypeName, OrganizationFilterTypeDescription:
 		return true
 	}
 	return false
@@ -2560,16 +2629,21 @@ func (e RecommendationsCategoryFilterType) MarshalGQL(w io.Writer) {
 type RecommendationsFilterType string
 
 const (
-	RecommendationsFilterTypeExternalid       RecommendationsFilterType = "EXTERNALID"
-	RecommendationsFilterTypeResource         RecommendationsFilterType = "RESOURCE"
-	RecommendationsFilterTypeAlarmtype        RecommendationsFilterType = "ALARMTYPE"
-	RecommendationsFilterTypeShortdescription RecommendationsFilterType = "SHORTDESCRIPTION"
-	RecommendationsFilterTypeLongdescription  RecommendationsFilterType = "LONGDESCRIPTION"
-	RecommendationsFilterTypeCommand          RecommendationsFilterType = "COMMAND"
-	RecommendationsFilterTypePriority         RecommendationsFilterType = "PRIORITY"
-	RecommendationsFilterTypeStatus           RecommendationsFilterType = "STATUS"
-	RecommendationsFilterTypeUsed             RecommendationsFilterType = "USED"
-	RecommendationsFilterTypeRunbook          RecommendationsFilterType = "RUNBOOK"
+	RecommendationsFilterTypeExternalid              RecommendationsFilterType = "EXTERNALID"
+	RecommendationsFilterTypeResource                RecommendationsFilterType = "RESOURCE"
+	RecommendationsFilterTypeAlarmtype               RecommendationsFilterType = "ALARMTYPE"
+	RecommendationsFilterTypeShortdescription        RecommendationsFilterType = "SHORTDESCRIPTION"
+	RecommendationsFilterTypeLongdescription         RecommendationsFilterType = "LONGDESCRIPTION"
+	RecommendationsFilterTypeCommand                 RecommendationsFilterType = "COMMAND"
+	RecommendationsFilterTypePriority                RecommendationsFilterType = "PRIORITY"
+	RecommendationsFilterTypeStatus                  RecommendationsFilterType = "STATUS"
+	RecommendationsFilterTypeUsed                    RecommendationsFilterType = "USED"
+	RecommendationsFilterTypeRunbook                 RecommendationsFilterType = "RUNBOOK"
+	RecommendationsFilterTypeRecommendationssource   RecommendationsFilterType = "RECOMMENDATIONSSOURCE"
+	RecommendationsFilterTypeRecommendationscategory RecommendationsFilterType = "RECOMMENDATIONSCATEGORY"
+	RecommendationsFilterTypeUsercreate              RecommendationsFilterType = "USERCREATE"
+	RecommendationsFilterTypeUserapprove             RecommendationsFilterType = "USERAPPROVE"
+	RecommendationsFilterTypeVendorrecommendations   RecommendationsFilterType = "VENDORRECOMMENDATIONS"
 )
 
 var AllRecommendationsFilterType = []RecommendationsFilterType{
@@ -2583,11 +2657,16 @@ var AllRecommendationsFilterType = []RecommendationsFilterType{
 	RecommendationsFilterTypeStatus,
 	RecommendationsFilterTypeUsed,
 	RecommendationsFilterTypeRunbook,
+	RecommendationsFilterTypeRecommendationssource,
+	RecommendationsFilterTypeRecommendationscategory,
+	RecommendationsFilterTypeUsercreate,
+	RecommendationsFilterTypeUserapprove,
+	RecommendationsFilterTypeVendorrecommendations,
 }
 
 func (e RecommendationsFilterType) IsValid() bool {
 	switch e {
-	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook:
+	case RecommendationsFilterTypeExternalid, RecommendationsFilterTypeResource, RecommendationsFilterTypeAlarmtype, RecommendationsFilterTypeShortdescription, RecommendationsFilterTypeLongdescription, RecommendationsFilterTypeCommand, RecommendationsFilterTypePriority, RecommendationsFilterTypeStatus, RecommendationsFilterTypeUsed, RecommendationsFilterTypeRunbook, RecommendationsFilterTypeRecommendationssource, RecommendationsFilterTypeRecommendationscategory, RecommendationsFilterTypeUsercreate, RecommendationsFilterTypeUserapprove, RecommendationsFilterTypeVendorrecommendations:
 		return true
 	}
 	return false
@@ -2796,6 +2875,45 @@ func (e SurveyStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type TechFilterType string
+
+const (
+	TechFilterTypeName TechFilterType = "NAME"
+)
+
+var AllTechFilterType = []TechFilterType{
+	TechFilterTypeName,
+}
+
+func (e TechFilterType) IsValid() bool {
+	switch e {
+	case TechFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e TechFilterType) String() string {
+	return string(e)
+}
+
+func (e *TechFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TechFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TechFilterType", str)
+	}
+	return nil
+}
+
+func (e TechFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type ThresholdFilterType string
 
 const (
@@ -2878,18 +2996,20 @@ func (e TopologyLinkType) MarshalGQL(w io.Writer) {
 type UserFilterType string
 
 const (
-	UserFilterTypeUserName   UserFilterType = "USER_NAME"
-	UserFilterTypeUserStatus UserFilterType = "USER_STATUS"
+	UserFilterTypeUserName         UserFilterType = "USER_NAME"
+	UserFilterTypeUserStatus       UserFilterType = "USER_STATUS"
+	UserFilterTypeUserOrganization UserFilterType = "USER_ORGANIZATION"
 )
 
 var AllUserFilterType = []UserFilterType{
 	UserFilterTypeUserName,
 	UserFilterTypeUserStatus,
+	UserFilterTypeUserOrganization,
 }
 
 func (e UserFilterType) IsValid() bool {
 	switch e {
-	case UserFilterTypeUserName, UserFilterTypeUserStatus:
+	case UserFilterTypeUserName, UserFilterTypeUserStatus, UserFilterTypeUserOrganization:
 		return true
 	}
 	return false

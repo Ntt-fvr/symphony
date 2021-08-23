@@ -756,9 +756,20 @@ type ComplexityRoot struct {
 		CounterformulaFk func(childComplexity int) int
 		ID               func(childComplexity int) int
 		KpiFk            func(childComplexity int) int
-		Name             func(childComplexity int) int
 		Status           func(childComplexity int) int
 		TechFk           func(childComplexity int) int
+		TextFormula      func(childComplexity int) int
+	}
+
+	FormulaConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	FormulaEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	GeneralFilter struct {
@@ -1420,6 +1431,7 @@ type ComplexityRoot struct {
 		FlowDrafts                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		FlowInstances             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
 		Flows                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		Formulas                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) int
 		Kpis                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
 		KqiCategories             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiCategoryOrder, filterBy []*models.KqiCategoryFilterInput) int
 		KqiPerspectives           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiPerspectiveOrder, filterBy []*models.KqiPerspectiveFilterInput) int
@@ -1449,6 +1461,7 @@ type ComplexityRoot struct {
 		ServiceTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Services                  func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
 		Surveys                   func(childComplexity int) int
+		Techs                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) int
 		Thresholds                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ThresholdOrder, filterBy []*models.ThresholdFilterInput) int
 		TriggerType               func(childComplexity int, id flowschema.TriggerTypeID) int
 		User                      func(childComplexity int, authID string) int
@@ -1791,6 +1804,17 @@ type ComplexityRoot struct {
 		Name     func(childComplexity int) int
 	}
 
+	TechConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	TechEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Threshold struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -2070,6 +2094,7 @@ type ComplexityRoot struct {
 
 	WorkforcePermissionRule struct {
 		IsAllowed        func(childComplexity int) int
+		OrganizationIds  func(childComplexity int) int
 		ProjectTypeIds   func(childComplexity int) int
 		WorkOrderTypeIds func(childComplexity int) int
 	}
@@ -2470,6 +2495,8 @@ type QueryResolver interface {
 	Recommendations(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) (*ent.RecommendationsConnection, error)
 	RecommendationsSources(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesConnection, error)
 	RecommendationsCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) (*ent.RecommendationsCategoryConnection, error)
+	Formulas(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) (*ent.FormulaConnection, error)
+	Techs(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) (*ent.TechConnection, error)
 }
 type RecommendationsResolver interface {
 	RecommendationsSources(ctx context.Context, obj *ent.Recommendations) (*ent.RecommendationsSources, error)
@@ -5116,13 +5143,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Formula.KpiFk(childComplexity), true
 
-	case "Formula.name":
-		if e.complexity.Formula.Name == nil {
-			break
-		}
-
-		return e.complexity.Formula.Name(childComplexity), true
-
 	case "Formula.status":
 		if e.complexity.Formula.Status == nil {
 			break
@@ -5136,6 +5156,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Formula.TechFk(childComplexity), true
+
+	case "Formula.textFormula":
+		if e.complexity.Formula.TextFormula == nil {
+			break
+		}
+
+		return e.complexity.Formula.TextFormula(childComplexity), true
+
+	case "FormulaConnection.edges":
+		if e.complexity.FormulaConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.FormulaConnection.Edges(childComplexity), true
+
+	case "FormulaConnection.pageInfo":
+		if e.complexity.FormulaConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.FormulaConnection.PageInfo(childComplexity), true
+
+	case "FormulaConnection.totalCount":
+		if e.complexity.FormulaConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.FormulaConnection.TotalCount(childComplexity), true
+
+	case "FormulaEdge.cursor":
+		if e.complexity.FormulaEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.FormulaEdge.Cursor(childComplexity), true
+
+	case "FormulaEdge.node":
+		if e.complexity.FormulaEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.FormulaEdge.Node(childComplexity), true
 
 	case "GeneralFilter.boolValue":
 		if e.complexity.GeneralFilter.BoolValue == nil {
@@ -9456,6 +9518,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Flows(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["name"].(*string)), true
 
+	case "Query.formulas":
+		if e.complexity.Query.Formulas == nil {
+			break
+		}
+
+		args, err := ec.field_Query_formulas_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Formulas(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.FormulaOrder), args["filterBy"].([]*models.FormulaFilterInput)), true
+
 	case "Query.kpis":
 		if e.complexity.Query.Kpis == nil {
 			break
@@ -9783,6 +9857,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Surveys(childComplexity), true
+
+	case "Query.techs":
+		if e.complexity.Query.Techs == nil {
+			break
+		}
+
+		args, err := ec.field_Query_techs_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Techs(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.TechOrder), args["filterBy"].([]*models.TechFilterInput)), true
 
 	case "Query.thresholds":
 		if e.complexity.Query.Thresholds == nil {
@@ -11437,6 +11523,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tech.Name(childComplexity), true
 
+	case "TechConnection.edges":
+		if e.complexity.TechConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.TechConnection.Edges(childComplexity), true
+
+	case "TechConnection.pageInfo":
+		if e.complexity.TechConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.TechConnection.PageInfo(childComplexity), true
+
+	case "TechConnection.totalCount":
+		if e.complexity.TechConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.TechConnection.TotalCount(childComplexity), true
+
+	case "TechEdge.cursor":
+		if e.complexity.TechEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.TechEdge.Cursor(childComplexity), true
+
+	case "TechEdge.node":
+		if e.complexity.TechEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.TechEdge.Node(childComplexity), true
+
 	case "Threshold.description":
 		if e.complexity.Threshold.Description == nil {
 			break
@@ -12595,6 +12716,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkforcePermissionRule.IsAllowed(childComplexity), true
 
+	case "WorkforcePermissionRule.organizationIds":
+		if e.complexity.WorkforcePermissionRule.OrganizationIds == nil {
+			break
+		}
+
+		return e.complexity.WorkforcePermissionRule.OrganizationIds(childComplexity), true
+
 	case "WorkforcePermissionRule.projectTypeIds":
 		if e.complexity.WorkforcePermissionRule.ProjectTypeIds == nil {
 			break
@@ -12832,6 +12960,7 @@ type WorkforcePermissionRule
   isAllowed: PermissionValue!
   projectTypeIds: [ID!]
   workOrderTypeIds: [ID!]
+  organizationIds: [ID!]
 }
 
 input BasicPermissionRuleInput
@@ -12856,6 +12985,7 @@ input WorkforcePermissionRuleInput
   isAllowed: PermissionValue!
   projectTypeIds: [ID!]
   workOrderTypeIds: [ID!]
+  organizationIds: [ID!]
 }
 
 type CUD
@@ -16605,6 +16735,138 @@ type KqiTargetEdge {
   """
   cursor: Cursor!
 }
+"""
+Properties by which formulas connections can be ordered.
+"""
+enum FormulaOrderField {
+  """
+  Order formulas by name.
+  """
+  NAME
+
+  """
+  Order formulas by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order formulas by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for formulas connections.
+"""
+input FormulaOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order formulas by.
+  """
+  field: FormulaOrderField
+}
+
+"""
+A connection to a list of formulas.
+"""
+type FormulaConnection {
+  """
+  Total formulas of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of formulas edges.
+  """
+  edges: [FormulaEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A formulas edge in a connection.
+"""
+type FormulaEdge {
+  """
+  The formulas at the end of the edge.
+  """
+  node: Formula
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Properties by which techs connections can be ordered.
+"""
+enum TechOrderField {
+  """
+  Order techs by name.
+  """
+  NAME
+
+  """
+  Order techs by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order techs by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for techs connections.
+"""
+input TechOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order techs by.
+  """
+  field: TechOrderField
+}
+
+"""
+A connection to a list of techs.
+"""
+type TechConnection {
+  """
+  Total techs of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of techs edges.
+  """
+  edges: [TechEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A techs edge in a connection.
+"""
+type TechEdge {
+  """
+  The techs at the end of the edge.
+  """
+  node: Tech
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
 
 enum ProjectPriority
   @goModel(
@@ -16826,6 +17088,7 @@ what filters should we apply on users
 enum UserFilterType {
   USER_NAME
   USER_STATUS
+  USER_ORGANIZATION
 }
 
 """
@@ -16939,6 +17202,7 @@ enum WorkOrderFilterType
   WORK_ORDER_PRIORITY
   LOCATION_INST
   LOCATION_INST_EXTERNAL_ID
+  WORK_ORDER_ORGANIZATION
 }
 
 input WorkOrderFilterInput
@@ -16976,6 +17240,10 @@ input ProjectFilterInput {
 
 enum CounterFilterType {
   NAME
+  EXTERNALID
+  NETWORKMANAGERSYSTEM
+  COUNTERFAMILY
+  VENDORFK
 }
 
 input CounterFilterInput {
@@ -17000,6 +17268,36 @@ input KpiFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
 }
+enum FormulaFilterType {  
+  TEXTFORMULA
+  
+}
+
+input FormulaFilterInput {
+  filterType: FormulaFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  
+}
+
+enum TechFilterType {
+  NAME
+  
+}
+
+input TechFilterInput {
+  filterType: TechFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+  
+}
+
 
 """
 A connection to a list of customers.
@@ -19135,6 +19433,75 @@ type Query {
     
     filterBy: [RecommendationsCategoryFilterInput!]
   ): RecommendationsCategoryConnection!
+     """
+  A list of formulas.
+  """
+  formulas(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned formulas.
+    """
+    orderBy: FormulaOrder
+
+    
+    #Filtering options for the returned formulas.
+    
+    filterBy: [FormulaFilterInput!]
+  ): FormulaConnection!
+
+    """
+  A list of techs.
+  """
+  techs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned techs.
+    """
+    orderBy: TechOrder
+
+    
+    #Filtering options for the returned techs.
+    
+    filterBy: [TechFilterInput!]
+  ): TechConnection!
 }
 
 type Mutation {
@@ -19636,7 +20003,7 @@ input EditTechInput {
 
 type Formula implements Node {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: Tech!
   kpiFk: Kpi!
@@ -19644,7 +20011,7 @@ type Formula implements Node {
 }
 
 input AddFormulaInput {
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -19652,7 +20019,7 @@ input AddFormulaInput {
 
 input EditFormulaInput {
   id: ID!
-  name: String!
+  textFormula: String!
   status: Boolean!
   techFk: ID!
   kpiFk: ID!
@@ -19915,7 +20282,7 @@ input AddAlarmFilterInput {
   reason: String!
   user: String!
   creationTime: Time!  
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 input AlarmFilterInput {
@@ -19937,7 +20304,7 @@ input EditAlarmFilterInput {
   beginTime: Time!
   endTime: Time!
   reason: String! 
-  alarmStatus: ID!
+  alarmStatus: ID
 }
 
 enum AlarmFilterFilterType {
@@ -20038,7 +20405,9 @@ input KqiFilterInput {
 }
 
 enum OrganizationFilterType {
+  ID
   NAME
+  DESCRIPTION
 }
 
 input OrganizationFilterInput {
@@ -20302,6 +20671,11 @@ enum RecommendationsFilterType {
   STATUS
   USED
   RUNBOOK
+  RECOMMENDATIONSSOURCE
+  RECOMMENDATIONSCATEGORY
+  USERCREATE
+  USERAPPROVE
+  VENDORRECOMMENDATIONS
 }
 
 input RecommendationsFilterInput {
@@ -25503,6 +25877,104 @@ func (ec *executionContext) field_Query_flows_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_formulas_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.FormulaOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOFormulaOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.FormulaFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOFormulaFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_kpis_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -27365,6 +27837,104 @@ func (ec *executionContext) field_Query_services_args(ctx context.Context, rawAr
 		}
 	}
 	args["filterBy"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_techs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.TechOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOTechOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.TechFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOTechFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -40391,7 +40961,7 @@ func (ec *executionContext) _Formula_id(ctx context.Context, field graphql.Colle
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Formula_name(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
+func (ec *executionContext) _Formula_textFormula(ctx context.Context, field graphql.CollectedField, obj *ent.Formula) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -40409,7 +40979,7 @@ func (ec *executionContext) _Formula_name(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.TextFormula, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -40561,6 +41131,178 @@ func (ec *executionContext) _Formula_counterformulaFk(ctx context.Context, field
 	res := resTmp.([]*ent.CounterFormula)
 	fc.Result = res
 	return ec.marshalOCounterFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCounterFormula(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormulaConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.FormulaConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormulaConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormulaConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.FormulaConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormulaConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.FormulaEdge)
+	fc.Result = res
+	return ec.marshalNFormulaEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormulaConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.FormulaConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormulaConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormulaEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.FormulaEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormulaEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Formula)
+	fc.Result = res
+	return ec.marshalOFormula2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormulaEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.FormulaEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormulaEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GeneralFilter_filterType(ctx context.Context, field graphql.CollectedField, obj *models.GeneralFilter) (ret graphql.Marshaler) {
@@ -59871,6 +60613,90 @@ func (ec *executionContext) _Query_RecommendationsCategories(ctx context.Context
 	return ec.marshalNRecommendationsCategoryConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsCategoryConnection(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_formulas(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_formulas_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Formulas(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.FormulaOrder), args["filterBy"].([]*models.FormulaFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.FormulaConnection)
+	fc.Result = res
+	return ec.marshalNFormulaConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_techs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_techs_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Techs(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.TechOrder), args["filterBy"].([]*models.TechFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.TechConnection)
+	fc.Result = res
+	return ec.marshalNTechConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechConnection(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -67436,6 +68262,178 @@ func (ec *executionContext) _Tech_domainFk(ctx context.Context, field graphql.Co
 	return ec.marshalNDomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _TechConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.TechConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TechConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TechConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.TechConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TechConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.TechEdge)
+	fc.Result = res
+	return ec.marshalNTechEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TechConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.TechConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TechConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TechEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.TechEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TechEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Tech)
+	fc.Result = res
+	return ec.marshalOTech2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TechEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.TechEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TechEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Threshold_id(ctx context.Context, field graphql.CollectedField, obj *ent.Threshold) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -73149,6 +74147,38 @@ func (ec *executionContext) _WorkforcePermissionRule_workOrderTypeIds(ctx contex
 	return ec.marshalOID2ᚕintᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkforcePermissionRule_organizationIds(ctx context.Context, field graphql.CollectedField, obj *models2.WorkforcePermissionRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WorkforcePermissionRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationIds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]int)
+	fc.Result = res
+	return ec.marshalOID2ᚕintᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkforcePolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.WorkforcePolicy) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -74513,7 +75543,7 @@ func (ec *executionContext) unmarshalInputAddAlarmFilterInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
-			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			it.AlarmStatus, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -75245,11 +76275,11 @@ func (ec *executionContext) unmarshalInputAddFormulaInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "name":
+		case "textFormula":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("textFormula"))
+			it.TextFormula, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -78455,7 +79485,7 @@ func (ec *executionContext) unmarshalInputEditAlarmFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alarmStatus"))
-			it.AlarmStatus, err = ec.unmarshalNID2int(ctx, v)
+			it.AlarmStatus, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -79109,11 +80139,11 @@ func (ec *executionContext) unmarshalInputEditFormulaInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "name":
+		case "textFormula":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("textFormula"))
+			it.TextFormula, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -81602,6 +82632,98 @@ func (ec *executionContext) unmarshalInputFlowInstanceOrder(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
 			it.Field, err = ec.unmarshalOFlowInstanceOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstanceOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputFormulaFilterInput(ctx context.Context, obj interface{}) (models.FormulaFilterInput, error) {
+	var it models.FormulaFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNFormulaFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputFormulaOrder(ctx context.Context, obj interface{}) (ent.FormulaOrder, error) {
+	var it ent.FormulaOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOFormulaOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -85235,6 +86357,98 @@ func (ec *executionContext) unmarshalInputSurveyWiFiScanData(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTechFilterInput(ctx context.Context, obj interface{}) (models.TechFilterInput, error) {
+	var it models.TechFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNTechFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTechOrder(ctx context.Context, obj interface{}) (ent.TechOrder, error) {
+	var it ent.TechOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOTechOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTechnicianCheckListItemInput(ctx context.Context, obj interface{}) (models.TechnicianCheckListItemInput, error) {
 	var it models.TechnicianCheckListItemInput
 	var asMap = obj.(map[string]interface{})
@@ -86262,6 +87476,14 @@ func (ec *executionContext) unmarshalInputWorkforcePermissionRuleInput(ctx conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workOrderTypeIds"))
 			it.WorkOrderTypeIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationIds":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIds"))
+			it.OrganizationIds, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -91054,8 +92276,8 @@ func (ec *executionContext) _Formula(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "name":
-			out.Values[i] = ec._Formula_name(ctx, field, obj)
+		case "textFormula":
+			out.Values[i] = ec._Formula_textFormula(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
@@ -91103,6 +92325,72 @@ func (ec *executionContext) _Formula(ctx context.Context, sel ast.SelectionSet, 
 				res = ec._Formula_counterformulaFk(ctx, field, obj)
 				return res
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var formulaConnectionImplementors = []string{"FormulaConnection"}
+
+func (ec *executionContext) _FormulaConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.FormulaConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, formulaConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FormulaConnection")
+		case "totalCount":
+			out.Values[i] = ec._FormulaConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._FormulaConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._FormulaConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var formulaEdgeImplementors = []string{"FormulaEdge"}
+
+func (ec *executionContext) _FormulaEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.FormulaEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, formulaEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FormulaEdge")
+		case "node":
+			out.Values[i] = ec._FormulaEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._FormulaEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -95832,6 +97120,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "formulas":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_formulas(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "techs":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_techs(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -97953,6 +99269,72 @@ func (ec *executionContext) _Tech(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var techConnectionImplementors = []string{"TechConnection"}
+
+func (ec *executionContext) _TechConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.TechConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, techConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TechConnection")
+		case "totalCount":
+			out.Values[i] = ec._TechConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._TechConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._TechConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var techEdgeImplementors = []string{"TechEdge"}
+
+func (ec *executionContext) _TechEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.TechEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, techEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TechEdge")
+		case "node":
+			out.Values[i] = ec._TechEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._TechEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var thresholdImplementors = []string{"Threshold", "Node"}
 
 func (ec *executionContext) _Threshold(ctx context.Context, sel ast.SelectionSet, obj *ent.Threshold) graphql.Marshaler {
@@ -99870,6 +101252,8 @@ func (ec *executionContext) _WorkforcePermissionRule(ctx context.Context, sel as
 			out.Values[i] = ec._WorkforcePermissionRule_projectTypeIds(ctx, field, obj)
 		case "workOrderTypeIds":
 			out.Values[i] = ec._WorkforcePermissionRule_workOrderTypeIds(ctx, field, obj)
+		case "organizationIds":
+			out.Values[i] = ec._WorkforcePermissionRule_organizationIds(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -103444,6 +104828,82 @@ func (ec *executionContext) marshalNFormula2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Formula(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNFormulaConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaConnection(ctx context.Context, sel ast.SelectionSet, v ent.FormulaConnection) graphql.Marshaler {
+	return ec._FormulaConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFormulaConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaConnection(ctx context.Context, sel ast.SelectionSet, v *ent.FormulaConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FormulaConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFormulaEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.FormulaEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFormulaEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNFormulaEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaEdge(ctx context.Context, sel ast.SelectionSet, v *ent.FormulaEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FormulaEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFormulaFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterInput(ctx context.Context, v interface{}) (*models.FormulaFilterInput, error) {
+	res, err := ec.unmarshalInputFormulaFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNFormulaFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterType(ctx context.Context, v interface{}) (models.FormulaFilterType, error) {
+	var res models.FormulaFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFormulaFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterType(ctx context.Context, sel ast.SelectionSet, v models.FormulaFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNGeneralFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGeneralFilterᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.GeneralFilter) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -106859,6 +108319,82 @@ func (ec *executionContext) marshalNTech2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 	return ec._Tech(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTechConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechConnection(ctx context.Context, sel ast.SelectionSet, v ent.TechConnection) graphql.Marshaler {
+	return ec._TechConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTechConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechConnection(ctx context.Context, sel ast.SelectionSet, v *ent.TechConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TechConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTechEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.TechEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTechEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTechEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechEdge(ctx context.Context, sel ast.SelectionSet, v *ent.TechEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TechEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTechFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterInput(ctx context.Context, v interface{}) (*models.TechFilterInput, error) {
+	res, err := ec.unmarshalInputTechFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNTechFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterType(ctx context.Context, v interface{}) (models.TechFilterType, error) {
+	var res models.TechFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTechFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterType(ctx context.Context, sel ast.SelectionSet, v models.TechFilterType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNTechnicianWorkOrderCheckOutInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckOutInput(ctx context.Context, v interface{}) (models.TechnicianWorkOrderCheckOutInput, error) {
 	res, err := ec.unmarshalInputTechnicianWorkOrderCheckOutInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -110176,6 +111712,54 @@ func (ec *executionContext) marshalOFormula2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Formula(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOFormulaFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.FormulaFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.FormulaFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFormulaFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOFormulaOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaOrder(ctx context.Context, v interface{}) (*ent.FormulaOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputFormulaOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOFormulaOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaOrderField(ctx context.Context, v interface{}) (*ent.FormulaOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.FormulaOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFormulaOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormulaOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.FormulaOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx context.Context, v interface{}) (*enum.FutureState, error) {
 	if v == nil {
 		return nil, nil
@@ -112476,6 +114060,61 @@ func (ec *executionContext) unmarshalOSurveyWiFiScanData2ᚖgithubᚗcomᚋfaceb
 	}
 	res, err := ec.unmarshalInputSurveyWiFiScanData(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTech2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTech(ctx context.Context, sel ast.SelectionSet, v *ent.Tech) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Tech(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTechFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.TechFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.TechFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTechFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOTechOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechOrder(ctx context.Context, v interface{}) (*ent.TechOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTechOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOTechOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechOrderField(ctx context.Context, v interface{}) (*ent.TechOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.TechOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTechOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.TechOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOTechnicianWorkOrderCheckInInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckInInput(ctx context.Context, v interface{}) (*models.TechnicianWorkOrderCheckInInput, error) {

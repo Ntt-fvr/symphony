@@ -170,7 +170,7 @@ export default function DenseTable(props: Props) {
                     <DeleteOutlinedIcon
                       style={{color: DARK.D300}}
                       onClick={() => {
-                        handleRemove(row.id);
+                        handleRemove(row?.id);
                       }}
                     />
                   </Button>

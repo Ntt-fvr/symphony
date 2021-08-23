@@ -21,8 +21,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
+	// FieldTextFormula holds the string denoting the textformula field in the database.
+	FieldTextFormula = "text_formula"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 
@@ -63,7 +63,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
-	FieldName,
+	FieldTextFormula,
 	FieldStatus,
 }
 
@@ -103,6 +103,6 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	UpdateDefaultUpdateTime func() time.Time
-	// NameValidator is a validator for the "name" field. It is called by the builders before save.
-	NameValidator func(string) error
+	// TextFormulaValidator is a validator for the "textFormula" field. It is called by the builders before save.
+	TextFormulaValidator func(string) error
 )

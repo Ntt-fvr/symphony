@@ -10,7 +10,7 @@
 import Button from '@symphony/design-system/components/Button';
 import {BLUE} from '@symphony/design-system/theme/symphony';
 
-import IconButton from '@symphony/design-system/components/IconButton';
+import IconButton from '@material-ui/core/IconButton'
 
 import React, {useState} from 'react';
 
@@ -19,6 +19,7 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 import {withStyles} from '@material-ui/core/styles';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import Text from '@symphony/design-system/components/Text';
 
 import {makeStyles} from '@material-ui/styles';
@@ -74,82 +75,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function createData(
-  id,
-  enable,
-  targetName,
-  comparator,
-  warningComparator,
-  periods,
-  allowedVariation,
-  activeHours,
-  deleteIcon,
-) {
-  return {
-    id,
-    enable,
-    targetName,
-    comparator,
-    warningComparator,
-    periods,
-    allowedVariation,
-    activeHours,
-    deleteIcon,
-  };
-}
 
-const data = [
-  createData(
-    123,
-    '',
-    'SLO TTLI Customer 1',
-    'NQE 0.04',
-    0.3,
-    1,
-    0.01,
-    '06-18',
-    '',
-  ),
-  createData(
-    456,
-    '',
-    'SLO TTLI Customer 1',
-    'NQE 0.04',
-    0.3,
-    1,
-    0.01,
-    '06-18',
-    '',
-  ),
-  createData(
-    789,
-    '',
-    'SLO TTLI Customer 1',
-    'NQE 0.04',
-    0.3,
-    1,
-    0.01,
-    '06-18',
-    '',
-  ),
-  createData(
-    998,
-    '',
-    'SLO TTLI Customer 1',
-    'NQE 0.04',
-    0.3,
-    1,
-    0.01,
-    '06-18',
-    '',
-  ),
-];
+
+type Props = $ReadOnly<{|
+  dataTableTargets: any,
+  create: () => void,
+  edit: () => void,
+|}>;
 
 const handleClick = () => {
   console.log('delete row');
 };
 
-const KqiTableAssociatedTarget = props => {
+const KqiTableAssociatedTarget = (props: Props) => {
+  const {dataTableTargets, create, edit} = props
+
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   return (
@@ -163,7 +103,7 @@ const KqiTableAssociatedTarget = props => {
           </Grid>
           <Grid xs={2}>
             <AddButton
-              onClick={props.create}
+              onClick={create}
               className={classes.plusButton}
               textButton={'Add targert'}
               disabled={false}
@@ -194,9 +134,8 @@ const KqiTableAssociatedTarget = props => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map(column => {
-              return (
-                <StyledTableRow key={column.id}>
+            {dataTableTargets.map((item, index) => (
+                <StyledTableRow key={index}>
                   <TableCell>
                     <Switch
                       checked={checked}
@@ -205,39 +144,38 @@ const KqiTableAssociatedTarget = props => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button onClick={props.edit} variant="text">
+                    <Button onClick={edit} variant="text">
                       <Text
                         variant={'subtitle1'}
                         weight={'medium'}
                         color={'primary'}>
-                        {column.targetName}
+                        {item.name}
                       </Text>
                     </Button>
                   </TableCell>
-                  <TableCell>{column.comparator}</TableCell>
+                  <TableCell>{item.comparator}</TableCell>
                   <TableCell className={classes.insideCenter}>
-                    {column.warningComparator}
+                    {item.warningComparator}
                   </TableCell>
                   <TableCell className={classes.insideCenter}>
-                    {column.periods}
+                    {item.frame}
                   </TableCell>
                   <TableCell className={classes.insideCenter}>
-                    {column.allowedVariation}
+                    {item.alowedValidation}
                   </TableCell>
                   <TableCell className={classes.insideCenter}>
-                    {column.activeHours}
+                    {item.activeHours}
                   </TableCell>
                   <TableCell className={classes.insideCenter}>
-                    <IconButton
-                      variant="text"
-                      skin={'gray'}
-                      icon={DeleteOutlinedIcon}
-                      onClick={handleClick}
-                    />
+                    <IconButton>
+                      <DeleteOutlinedIcon  
+                        onClick={handleClick}
+                        style={{ color: DARK.D300 }}
+                      />
+                    </IconButton>
                   </TableCell>
                 </StyledTableRow>
-              );
-            })}
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

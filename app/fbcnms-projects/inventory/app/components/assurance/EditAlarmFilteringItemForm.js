@@ -8,37 +8,33 @@
  * @format
  */
 
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
-import moment from 'moment';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
+import moment from 'moment';
 
-import AlarmFilteringAddDialog from './AlarmFilteringAddDialog';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import InventorySuspense from '../../common/InventorySuspense';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import IconButton from '@symphony/design-system/components/IconButton';
 
-import Switch from '@symphony/design-system/components/switch/Switch';
-import {useFormInput} from './common/useFormInput';
-import {makeStyles} from '@material-ui/styles';
 import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
 
-import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
+import Switch from '@symphony/design-system/components/switch/Switch';
+import {makeStyles} from '@material-ui/styles';
+import {useFormInput} from './common/useFormInput';
+
 import type {RemoveAlarmFilterMutationVariables} from '../../mutations/__generated__/RemoveAlarmFilterMutation.graphql';
 
+import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
+
 import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
-import {graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
-import classNames from 'classnames';
+import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -47,6 +43,9 @@ const useStyles = makeStyles(() => ({
   },
   formField: {
     margin: '0 43px 22px 0',
+  },
+  id: {
+    margin: '50px 43px 22px 0',
   },
   formFieldStatus: {
     marginTop: '1rem',
@@ -70,13 +69,13 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '2rem',
   },
   titleButtons: {
-  marginBottom: "1rem",
+    marginBottom: '1rem',
   },
   reason: {
     minHeight: '100px',
   },
   status: {
-    paddingTop: '40px',
+    marginTop: '74px',
   },
   time: {
     marginBottom: '20px',
@@ -103,7 +102,7 @@ const useStyles = makeStyles(() => ({
   textFieldDate: {
     height: '12px',
     border: '1px solid #D2DAE7',
-  }
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -127,35 +126,21 @@ type Props = $ReadOnly<{|
   },
 |}>;
 
-const AlarmStatusQuery = graphql`
-  query EditAlarmFilteringItemFormQuery {
-    alarmStatus {
-      edges {
-        node {
-          name
-          id
-        }
-      }
-    }
-  }
-`;
-
 const EditAlarmFilteringItemForm = (props: Props) => {
   const {closeEditForm, formValues} = props;
   const classes = useStyles();
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
   const networkResource = useFormInput(formValues.item.networkResource);
-  const beginTime = useFormInput(moment(formValues.item.beginTime).format("YYYY-MM-DDThh:mm"));
-  const endTime = useFormInput(moment(formValues.item.endTime).format("YYYY-MM-DDThh:mm"));
+  const beginTime = useFormInput(
+    moment(formValues.item.beginTime).format('YYYY-MM-DDThh:mm'),
+  );
+  const endTime = useFormInput(
+    moment(formValues.item.endTime).format('YYYY-MM-DDThh:mm'),
+  );
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
-  const user = useFormInput(formValues.item.user);
-  const alarmStatus = useFormInput(formValues.item.alarmStatus.id);
   const [checked, setChecked] = useState(formValues.item.enable);
-  const dataStatus = useLazyLoadQuery<EditAlarmFilteringItemFormQuery>( AlarmStatusQuery, {} );
-  const dataStatusResponse = dataStatus.alarmStatus?.edges.map((item, index) => item.node)
-  const valueId = useRef('')
 
   const handleRemove = id => {
     const variables: RemoveAlarmFilterMutationVariables = {
@@ -163,8 +148,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     };
     RemoveAlarmFilterMutation(variables);
   };
-  
-  
+
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
       input: {
@@ -175,7 +159,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         beginTime: moment(beginTime.value).format(),
         endTime: moment(endTime.value).format(),
         reason: reason.value,
-        alarmStatus: alarmStatus.value,
       },
     };
     EditAlarmFilterMutation(variables);
@@ -242,6 +225,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 <FormField className={classes.formField} label="Name">
                   <TextInput
                     {...name}
+                    autoComplete="off"
                     className={classes.textInput}
                     name="name"
                   />
@@ -253,6 +237,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   className={classes.formField}>
                   <TextInput
                     {...networkResource}
+                    autoComplete="off"
                     className={classes.textInput}
                     name="networkResource"
                   />
@@ -262,6 +247,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 <FormField className={classes.formField} label="Reason">
                   <TextInput
                     {...reason}
+                    autoComplete="off"
                     className={classes.textInput}
                     type="multiline"
                     rows={4}
@@ -277,6 +263,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="Start" className={classes.formField}>
                     <TextField
                       {...beginTime}
+                      autoComplete="off"
                       variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
@@ -288,6 +275,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="End" className={classes.formField}>
                     <TextField
                       {...endTime}
+                      autoComplete="off"
                       variant="outlined"
                       id="datetime-local"
                       type="datetime-local"
@@ -296,69 +284,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container xs={6} className={classes.status}>
-                <Grid xs={3}>
-                  <FormField label="Status" className={classes.formField}>
-                    {moment(formValues.item.creationTime).format() <=
-                      moment(formValues.item.beginTime).format() ||
-                      (moment(formValues.item.creationTime).format() <=
-                        moment(formValues.item.endTime).format() &&
-                        dataStatusResponse
-                          .filter(item => item.name == 'Active')
-                          .map(filteredItem => (
-                            <Button
-                              {...alarmStatus}
-                              value={(valueId.current = filteredItem.id)}
-                              variant="outlined"
-                              weight="bold"
-                              name="alarmStatus"
-                              className={classNames(
-                                classes.button,
-                                classes.buttonActive,
-                              )}>
-                              {filteredItem.name}
-                            </Button>
-                          )))}
-                    {moment(formValues.item.creationTime).format() >
-                      moment(formValues.item.endTime).format() &&
-                      dataStatusResponse
-                        .filter(item => item.name == 'Closed')
-                        .map(filteredItem => (
-                          <Button
-                            {...alarmStatus}
-                            value={(valueId.current = filteredItem.id)}
-                            variant="outlined"
-                            weight="bold"
-                            name="alarmStatus"
-                            className={classNames(
-                              classes.button,
-                              classes.buttonClosed,
-                            )}>
-                            {filteredItem.name}
-                          </Button>
-                        ))}
-                    {moment(formValues.item.creationTime).format() <
-                      moment(formValues.item.beginTime).format() &&
-                      dataStatusResponse
-                        .filter(item => item.name == 'Pending')
-                        .map(filteredItem => (
-                          <Button
-                            {...alarmStatus}
-                            value={(valueId.current = filteredItem.id)}
-                            variant="outlined"
-                            weight="bold"
-                            name="alarmStatus"
-                            className={classNames(
-                              classes.button,
-                              classes.buttonPending,
-                            )}>
-                            {filteredItem.name}
-                          </Button>
-                        ))}
-                  </FormField>
+              <Grid container xs={6}>
+                <Grid xs={3} className={classes.status}>
+                  <AlarmFilteringStatus
+                    creationDate={creationTime.value}
+                    beginDate={beginTime.value}
+                    endDate={endTime.value}
+                  />
                 </Grid>
                 <Grid xs={9}>
-                  <FormField label="ID" className={classes.formField}>
+                  <FormField label="ID" className={classes.id}>
                     <TextInput
                       className={classes.textInput}
                       name="id"

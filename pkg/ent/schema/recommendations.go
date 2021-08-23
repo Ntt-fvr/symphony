@@ -49,19 +49,19 @@ func (Recommendations) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("recomendation_sources", RecommendationsSources.Type).
 			Ref("recommendations").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("RECOMMENDATIONSSOURCE")),
 		edge.From("recomendation_category", RecommendationsCategory.Type).
 			Ref("recommendations").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("RECOMMENDATIONSCATEGORY")),
 		edge.From("UserCreate", User.Type).
 			Ref("User_create").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("USERCREATE")),
 		edge.From("UserApprobed", User.Type).
 			Ref("User_approved").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("USERAPPROVE")),
 		edge.From("vendors_recomendations", Vendor.Type).
 			Ref("vendors_recomendations").
-			Unique(),
+			Unique().Annotations(entgql.OrderField("VENDORRECOMMENDATIONS")),
 	}
 }
 
