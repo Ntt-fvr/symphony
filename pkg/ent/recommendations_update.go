@@ -70,6 +70,20 @@ func (ru *RecommendationsUpdate) SetCommand(s string) *RecommendationsUpdate {
 	return ru
 }
 
+// SetNillableCommand sets the command field if the given value is not nil.
+func (ru *RecommendationsUpdate) SetNillableCommand(s *string) *RecommendationsUpdate {
+	if s != nil {
+		ru.SetCommand(*s)
+	}
+	return ru
+}
+
+// ClearCommand clears the value of command.
+func (ru *RecommendationsUpdate) ClearCommand() *RecommendationsUpdate {
+	ru.mutation.ClearCommand()
+	return ru
+}
+
 // SetPriority sets the priority field.
 func (ru *RecommendationsUpdate) SetPriority(i int) *RecommendationsUpdate {
 	ru.mutation.ResetPriority()
@@ -393,6 +407,12 @@ func (ru *RecommendationsUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: recommendations.FieldCommand,
 		})
 	}
+	if ru.mutation.CommandCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: recommendations.FieldCommand,
+		})
+	}
 	if value, ok := ru.mutation.Priority(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -673,6 +693,20 @@ func (ruo *RecommendationsUpdateOne) SetLongDescription(s string) *Recommendatio
 // SetCommand sets the command field.
 func (ruo *RecommendationsUpdateOne) SetCommand(s string) *RecommendationsUpdateOne {
 	ruo.mutation.SetCommand(s)
+	return ruo
+}
+
+// SetNillableCommand sets the command field if the given value is not nil.
+func (ruo *RecommendationsUpdateOne) SetNillableCommand(s *string) *RecommendationsUpdateOne {
+	if s != nil {
+		ruo.SetCommand(*s)
+	}
+	return ruo
+}
+
+// ClearCommand clears the value of command.
+func (ruo *RecommendationsUpdateOne) ClearCommand() *RecommendationsUpdateOne {
+	ruo.mutation.ClearCommand()
 	return ruo
 }
 
@@ -994,6 +1028,12 @@ func (ruo *RecommendationsUpdateOne) sqlSave(ctx context.Context) (_node *Recomm
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
+			Column: recommendations.FieldCommand,
+		})
+	}
+	if ruo.mutation.CommandCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
 			Column: recommendations.FieldCommand,
 		})
 	}

@@ -17,6 +17,8 @@ func handleFormulaFilter(q *ent.FormulaQuery, filter *models.FormulaFilterInput)
 	switch filter.FilterType {
 	case models.FormulaFilterTypeTextformula:
 		return formulaTextformulaFilter(q, filter)
+	case models.FormulaFilterTypeStatus:
+		return formulaStatusFilter(q, filter)
 
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -25,6 +27,13 @@ func handleFormulaFilter(q *ent.FormulaQuery, filter *models.FormulaFilterInput)
 func formulaTextformulaFilter(q *ent.FormulaQuery, filter *models.FormulaFilterInput) (*ent.FormulaQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(formula.TextFormulaContainsFold(*filter.StringValue)), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func formulaStatusFilter(q *ent.FormulaQuery, filter *models.FormulaFilterInput) (*ent.FormulaQuery, error) {
+	if filter.Operator == enum.FilterOperatorIs && filter.BoolValue != nil {
+		return q.Where(formula.StatusEQ(*filter.BoolValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

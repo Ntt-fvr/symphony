@@ -39,7 +39,7 @@ type Recommendations struct {
 	// LongDescription holds the value of the "longDescription" field.
 	LongDescription string `json:"longDescription,omitempty"`
 	// Command holds the value of the "command" field.
-	Command string `json:"command,omitempty"`
+	Command *string `json:"command,omitempty"`
 	// Priority holds the value of the "priority" field.
 	Priority int `json:"priority,omitempty"`
 	// Status holds the value of the "status" field.
@@ -225,7 +225,8 @@ func (r *Recommendations) assignValues(values ...interface{}) error {
 	if value, ok := values[7].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field command", values[7])
 	} else if value.Valid {
-		r.Command = value.String
+		r.Command = new(string)
+		*r.Command = value.String
 	}
 	if value, ok := values[8].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field priority", values[8])
@@ -347,8 +348,10 @@ func (r *Recommendations) String() string {
 	builder.WriteString(r.ShortDescription)
 	builder.WriteString(", longDescription=")
 	builder.WriteString(r.LongDescription)
-	builder.WriteString(", command=")
-	builder.WriteString(r.Command)
+	if v := r.Command; v != nil {
+		builder.WriteString(", command=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", priority=")
 	builder.WriteString(fmt.Sprintf("%v", r.Priority))
 	builder.WriteString(", status=")

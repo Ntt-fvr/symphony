@@ -55,7 +55,7 @@ func (r mutationResolver) AddRecommendations(ctx context.Context, input models.A
 		SetAlarmType(input.AlarmType).
 		SetShortDescription(input.ShortDescription).
 		SetLongDescription(input.LongDescription).
-		SetCommand(input.Command).
+		SetNillableCommand(input.Command).
 		SetPriority(input.Priority).
 		SetStatus(input.Status).
 		SetNillableUsed(input.Used).
@@ -73,6 +73,21 @@ func (r mutationResolver) AddRecommendations(ctx context.Context, input models.A
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 	}
 	return typ, nil
+}
+
+func (r mutationResolver) AddRecommendationsList(ctx context.Context, input models.AddRecommendationsListInput) ([]*ent.Recommendations, error) {
+	var list []*ent.Recommendations
+	for _, recommendation := range input.Recommendations {
+		recommend, err := r.AddRecommendations(ctx, *recommendation)
+		if err != nil {
+			for _, deleting := range list {
+				r.RemoveRecommendations(ctx, deleting.ID)
+			}
+			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		}
+		list = append(list, recommend)
+	}
+	return list, nil
 }
 
 func (r mutationResolver) RemoveRecommendations(ctx context.Context, id int) (int, error) {
@@ -197,7 +212,7 @@ func (r mutationResolver) EditRecommendations(ctx context.Context, input models.
 			SetAlarmType(alarm).
 			SetShortDescription(short).
 			SetLongDescription(long).
-			SetCommand(command).
+			SetNillableCommand(input.Command).
 			SetPriority(priority).
 			SetStatus(input.Status).
 			SetNillableUsed(used).

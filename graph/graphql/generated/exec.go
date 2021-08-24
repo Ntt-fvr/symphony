@@ -1102,6 +1102,7 @@ type ComplexityRoot struct {
 		AddPermissionsPolicy                     func(childComplexity int, input models.AddPermissionsPolicyInput) int
 		AddRecommendations                       func(childComplexity int, input models.AddRecommendationsInput) int
 		AddRecommendationsCategory               func(childComplexity int, input models.AddRecommendationsCategoryInput) int
+		AddRecommendationsList                   func(childComplexity int, input models.AddRecommendationsListInput) int
 		AddRecommendationsSources                func(childComplexity int, input models.AddRecommendationsSourcesInput) int
 		AddReportFilter                          func(childComplexity int, input models.ReportFilterInput) int
 		AddRule                                  func(childComplexity int, input models.AddRuleInput) int
@@ -2414,6 +2415,7 @@ type MutationResolver interface {
 	AddRecommendations(ctx context.Context, input models.AddRecommendationsInput) (*ent.Recommendations, error)
 	EditRecommendations(ctx context.Context, input models.EditRecommendationsInput) (*ent.Recommendations, error)
 	RemoveRecommendations(ctx context.Context, id int) (int, error)
+	AddRecommendationsList(ctx context.Context, input models.AddRecommendationsListInput) ([]*ent.Recommendations, error)
 	AddRecommendationsSources(ctx context.Context, input models.AddRecommendationsSourcesInput) (*ent.RecommendationsSources, error)
 	EditRecommendationsSources(ctx context.Context, input models.EditRecommendationsSourcesInput) (*ent.RecommendationsSources, error)
 	RemoveRecommendationsSources(ctx context.Context, id int) (int, error)
@@ -6881,6 +6883,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddRecommendationsCategory(childComplexity, args["input"].(models.AddRecommendationsCategoryInput)), true
+
+	case "Mutation.addRecommendationsList":
+		if e.complexity.Mutation.AddRecommendationsList == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addRecommendationsList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddRecommendationsList(childComplexity, args["input"].(models.AddRecommendationsListInput)), true
 
 	case "Mutation.addRecommendationsSources":
 		if e.complexity.Mutation.AddRecommendationsSources == nil {
@@ -17269,7 +17283,8 @@ input KpiFilterInput {
   stringSet: [String!]
 }
 enum FormulaFilterType {  
-  TEXTFORMULA
+  TEXTFORMULA  
+  STATUS
   
 }
 
@@ -17280,6 +17295,7 @@ input FormulaFilterInput {
   idSet: [ID!]
   maxDepth: Int = 5
   stringSet: [String!]
+  boolValue: Boolean
   
 }
 
@@ -19796,6 +19812,7 @@ type Mutation {
   addRecommendations(input: AddRecommendationsInput!):Recommendations!
   editRecommendations(input: EditRecommendationsInput!): Recommendations!
   removeRecommendations(id: ID!): ID!
+  addRecommendationsList(input: AddRecommendationsListInput!): [Recommendations!]!
   addRecommendationsSources(input: AddRecommendationsSourcesInput!):RecommendationsSources!
   editRecommendationsSources(input: EditRecommendationsSourcesInput!): RecommendationsSources!
   removeRecommendationsSources(id: ID!): ID!
@@ -20612,7 +20629,7 @@ type Recommendations implements Node {
   alarmType: String!
   shortDescription: String!
   longDescription: String!
-  command: String!
+  command: String
   priority: Int!
   status: Boolean!
   runbook: String
@@ -20630,7 +20647,7 @@ input AddRecommendationsInput {
   alarmType: String!
   shortDescription: String!
   longDescription: String!
-  command: String!
+  command: String
   priority: Int!
   status: Boolean!
   runbook: String
@@ -20642,6 +20659,10 @@ input AddRecommendationsInput {
   vendor: ID!
 }
 
+input AddRecommendationsListInput {
+  recommendations: [AddRecommendationsInput!]!
+}
+
 input EditRecommendationsInput {
   id: ID!
   externalID: String!
@@ -20649,7 +20670,7 @@ input EditRecommendationsInput {
   alarmType: String!
   shortDescription: String!
   longDescription: String!
-  command: String!
+  command: String
   priority: Int!
   status: Boolean!
   runbook: String
@@ -21733,6 +21754,21 @@ func (ec *executionContext) field_Mutation_addRecommendationsCategory_args(ctx c
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddRecommendationsCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsCategoryInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addRecommendationsList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddRecommendationsListInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddRecommendationsListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsListInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -54475,6 +54511,48 @@ func (ec *executionContext) _Mutation_removeRecommendations(ctx context.Context,
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addRecommendationsList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addRecommendationsList_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddRecommendationsList(rctx, args["input"].(models.AddRecommendationsListInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Recommendations)
+	fc.Result = res
+	return ec.marshalNRecommendations2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addRecommendationsSources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -61003,14 +61081,11 @@ func (ec *executionContext) _Recommendations_command(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Recommendations_priority(ctx context.Context, field graphql.CollectedField, obj *ent.Recommendations) (ret graphql.Marshaler) {
@@ -77357,7 +77432,7 @@ func (ec *executionContext) unmarshalInputAddRecommendationsInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
-			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			it.Command, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -77430,6 +77505,26 @@ func (ec *executionContext) unmarshalInputAddRecommendationsInput(ctx context.Co
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vendor"))
 			it.Vendor, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddRecommendationsListInput(ctx context.Context, obj interface{}) (models.AddRecommendationsListInput, error) {
+	var it models.AddRecommendationsListInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "recommendations":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recommendations"))
+			it.Recommendations, err = ec.unmarshalNAddRecommendationsInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -81155,7 +81250,7 @@ func (ec *executionContext) unmarshalInputEditRecommendationsInput(ctx context.C
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
-			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			it.Command, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -82696,6 +82791,14 @@ func (ec *executionContext) unmarshalInputFormulaFilterInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
 			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "boolValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("boolValue"))
+			it.BoolValue, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -95272,6 +95375,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addRecommendationsList":
+			out.Values[i] = ec._Mutation_addRecommendationsList(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addRecommendationsSources":
 			out.Values[i] = ec._Mutation_addRecommendationsSources(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -97206,9 +97314,6 @@ func (ec *executionContext) _Recommendations(ctx context.Context, sel ast.Select
 			}
 		case "command":
 			out.Values[i] = ec._Recommendations_command(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "priority":
 			out.Values[i] = ec._Recommendations_priority(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -101811,6 +101916,37 @@ func (ec *executionContext) unmarshalNAddRecommendationsCategoryInput2githubᚗc
 
 func (ec *executionContext) unmarshalNAddRecommendationsInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInput(ctx context.Context, v interface{}) (models.AddRecommendationsInput, error) {
 	res, err := ec.unmarshalInputAddRecommendationsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddRecommendationsInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInputᚄ(ctx context.Context, v interface{}) ([]*models.AddRecommendationsInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.AddRecommendationsInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAddRecommendationsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNAddRecommendationsInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsInput(ctx context.Context, v interface{}) (*models.AddRecommendationsInput, error) {
+	res, err := ec.unmarshalInputAddRecommendationsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddRecommendationsListInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddRecommendationsListInput(ctx context.Context, v interface{}) (models.AddRecommendationsListInput, error) {
+	res, err := ec.unmarshalInputAddRecommendationsListInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -107064,6 +107200,43 @@ func (ec *executionContext) marshalNPythonPackage2ᚖgithubᚗcomᚋfacebookincu
 
 func (ec *executionContext) marshalNRecommendations2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx context.Context, sel ast.SelectionSet, v ent.Recommendations) graphql.Marshaler {
 	return ec._Recommendations(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecommendations2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendationsᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Recommendations) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalNRecommendations2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐRecommendations(ctx context.Context, sel ast.SelectionSet, v *ent.Recommendations) graphql.Marshaler {

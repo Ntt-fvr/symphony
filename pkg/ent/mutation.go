@@ -48953,7 +48953,7 @@ func (m *RecommendationsMutation) Command() (r string, exists bool) {
 // If the Recommendations object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *RecommendationsMutation) OldCommand(ctx context.Context) (v string, err error) {
+func (m *RecommendationsMutation) OldCommand(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCommand is allowed only on UpdateOne operations")
 	}
@@ -48967,9 +48967,22 @@ func (m *RecommendationsMutation) OldCommand(ctx context.Context) (v string, err
 	return oldValue.Command, nil
 }
 
+// ClearCommand clears the value of command.
+func (m *RecommendationsMutation) ClearCommand() {
+	m.command = nil
+	m.clearedFields[recommendations.FieldCommand] = struct{}{}
+}
+
+// CommandCleared returns if the field command was cleared in this mutation.
+func (m *RecommendationsMutation) CommandCleared() bool {
+	_, ok := m.clearedFields[recommendations.FieldCommand]
+	return ok
+}
+
 // ResetCommand reset all changes of the "command" field.
 func (m *RecommendationsMutation) ResetCommand() {
 	m.command = nil
+	delete(m.clearedFields, recommendations.FieldCommand)
 }
 
 // SetPriority sets the priority field.
@@ -49648,6 +49661,9 @@ func (m *RecommendationsMutation) AddField(name string, value ent.Value) error {
 // during this mutation.
 func (m *RecommendationsMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(recommendations.FieldCommand) {
+		fields = append(fields, recommendations.FieldCommand)
+	}
 	if m.FieldCleared(recommendations.FieldUsed) {
 		fields = append(fields, recommendations.FieldUsed)
 	}
@@ -49668,6 +49684,9 @@ func (m *RecommendationsMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *RecommendationsMutation) ClearField(name string) error {
 	switch name {
+	case recommendations.FieldCommand:
+		m.ClearCommand()
+		return nil
 	case recommendations.FieldUsed:
 		m.ClearUsed()
 		return nil
