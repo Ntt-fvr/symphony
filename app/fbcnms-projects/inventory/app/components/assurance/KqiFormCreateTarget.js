@@ -22,14 +22,15 @@ import {MenuItem, Select} from '@material-ui/core';
 
 import Switch from '@symphony/design-system/components/switch/Switch';
 
-import Text from '@symphony/design-system/components/Text';
-import {makeStyles} from '@material-ui/styles';
 import type {AddKqiTargetMutationVariables} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
+
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
-import moment from 'moment';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
-import {useFormInput} from './common/useFormInput';
+import Text from '@symphony/design-system/components/Text';
+import moment from 'moment';
 import {graphql} from 'relay-runtime';
+import {makeStyles} from '@material-ui/styles';
+import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
@@ -123,29 +124,30 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  returnFormEdit: () => void
+  idKqi: string,
+  returnFormEdit: () => void,
 |}>;
 
-
-type KqiTarget = {
-  id: string,
-  name: string,
-  impact: string,
-  frame: number,
-  alowedValidation: number,
-  initTime: string,
-  endTime: string,
-  status: boolean,
-  kqi: string
-};
+// type KqiTarget = {
+//   id: string,
+//   name: string,
+//   impact: string,
+//   frame: number,
+//   alowedValidation: number,
+//   initTime: string,
+//   endTime: string,
+//   status: boolean,
+//   kqi: string,
+// };
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit} = props;
+  const {returnFormEdit, idKqi} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
-
-    function handleChange({target}) {
+  console.log('***Form Target***');
+  console.log(idKqi);
+  function handleChange({target}) {
     setKqiTarget({
       data: {
         ...KqiTarget.data,
@@ -163,12 +165,12 @@ const KqiFormCreateTarget = (props: Props) => {
         initTime: moment(KqiTarget.data.initTime).format(),
         endTime: moment(KqiTarget.data.endTime).format(),
         frame: KqiTarget.data.frame,
-        alowedValidation:KqiTarget.data.alowedValidation,
-        kqi: KqiTarget.data.kqi
+        alowedValidation: KqiTarget.data.alowedValidation,
+        kqi: idKqi,
       },
     };
     AddKqiTargetMutation(variables);
-    console.log("Hola soy data AddKqiTarget", variables);
+    console.log('Hola soy data AddKqiTarget', variables);
     // setTimeout(() => returnTableAlarm(), 1000)
   }
 
