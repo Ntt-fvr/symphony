@@ -7690,7 +7690,7 @@ type KqiTarget implements Node {
   id: ID!
   name: String! 
   impact: String!
-  frame: Float!
+  period: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -7702,7 +7702,7 @@ type KqiTarget implements Node {
 input AddKqiTargetInput {
   name: String! 
   impact: String!
-  frame: Float!
+  period: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -7714,7 +7714,7 @@ input EditKqiTargetInput {
   id: ID!
   name: String! 
   impact: String!
-  frame: Float!
+  period: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
