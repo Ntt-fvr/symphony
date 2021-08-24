@@ -129,10 +129,13 @@ const useStyles = makeStyles(() => ({
     padding: '20px',
   },
   limitRangeInputs: {
-    margin: '26px 26px 20px 0',
+    margin: '0px 26px 20px 0',
   },
   limitRangeSelect: {
     margin: '0 20px 20px 26px',
+  },
+  titleLimit: {
+    marginLeft: '26px',
   },
   red: {
     border: '1px solid #FA383E',
@@ -181,7 +184,7 @@ const AddRuleItemForm = (props: Props) => {
   const [checked, setChecked] = useState(true);
   const [checkedCheckbox, setCheckedCheckbox] = useState(false);
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
-  const ruleTypeId = data.ruleTypes?.edges[0].node.id;
+  const ruleTypeId = data.ruleTypes?.edges[0].node?.id;
 
   function handleChange({target}) {
     setRule({
@@ -350,10 +353,11 @@ const AddRuleItemForm = (props: Props) => {
                         Limits Range
                       </Text>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
-                      <FormField
-                        className={classes.limitRangeSelect}
-                        label="Upper Target">
+                    <Grid item xs={12} sm={12}>
+                      <Text className={classes.titleLimit}>Upper limit</Text>
+                    </Grid>
+                    <Grid item xs={8} sm={8} lg={6} xl={6}>
+                      <FormField className={classes.limitRangeSelect}>
                         <Select
                           className={classes.selectUpper}
                           disableUnderline
@@ -367,7 +371,7 @@ const AddRuleItemForm = (props: Props) => {
                         </Select>
                       </FormField>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                    <Grid item xs={4} sm={4} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
                           type="number"
@@ -378,10 +382,11 @@ const AddRuleItemForm = (props: Props) => {
                         />
                       </FormField>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
-                      <FormField
-                        className={classes.limitRangeSelect}
-                        label="Lower Target">
+                    <Grid item xs={12} sm={12}>
+                      <Text className={classes.titleLimit}>Lower limit</Text>
+                    </Grid>
+                    <Grid item xs={8} sm={8} lg={6} xl={6}>
+                      <FormField className={classes.limitRangeSelect}>
                         <Select
                           className={classes.selectLower}
                           disableUnderline
@@ -395,7 +400,7 @@ const AddRuleItemForm = (props: Props) => {
                         </Select>
                       </FormField>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                    <Grid item xs={4} sm={4} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
                           type="number"

@@ -11,6 +11,7 @@ import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
+import KqiSourcesTypes from './KqiSourcesTypes';
 import KqiTypes from './KqiTypes';
 import React, {useEffect, useState} from 'react';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
@@ -20,7 +21,6 @@ import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
-import KqiSourcesTypes from "./KqiSourcesTypes";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,7 +72,7 @@ export default function ServiceQualityMonitoring() {
       },
       path: 'kqi',
     },
-  ]
+  ];
 
   const tabMatch = location.pathname.match(/([^\/]*)\/*$/);
   const tabIndex =
@@ -82,10 +82,15 @@ export default function ServiceQualityMonitoring() {
   );
 
   useEffect(() => {
-    ServerLogger.info(LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED, {
-      id: tabBars[activeTabBar].id,
-    });
-    history.push(`/assurance/service_quality_monitoring/${tabBars[activeTabBar].path}`);
+    ServerLogger.info(
+      LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED,
+      {
+        id: tabBars[activeTabBar].id,
+      },
+    );
+    history.push(
+      `/assurance/service_quality_monitoring/${tabBars[activeTabBar].path}`,
+    );
   }, [activeTabBar, history]);
 
   return (
@@ -105,11 +110,7 @@ export default function ServiceQualityMonitoring() {
               path={relativeUrl('/kqi_sources')}
               component={KqiSourcesTypes}
             />
-            <Route
-              exact
-              path={relativeUrl('/kqi')}
-              component={KqiTypes}
-            />
+            <Route exact path={relativeUrl('/kqi')} component={KqiTypes} />
             <Redirect
               from={relativeUrl('/assurance/service_quality_monitoring')}
               to={relativeUrl('/kqi_sources')}

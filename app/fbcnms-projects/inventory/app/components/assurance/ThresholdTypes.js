@@ -186,7 +186,7 @@ const ThresholdTypes = () => {
   };
 
   const thresholdNames = dataThreshold.thresholds?.edges.map(
-    item => item.node.name,
+    item => item?.node.name,
   );
 
   if (showEditCard) {
@@ -194,7 +194,7 @@ const ThresholdTypes = () => {
       <ThresholdProvider>
         <EditThresholdItemForm
           thresholdNames={thresholdNames}
-          formValues={dataEdit.item.node}
+          formValues={dataEdit?.item.node}
           hideEditThresholdForm={hideEditThresholdForm}
           editRule={() => {
             showEditRuleItemForm(dataEdit);
@@ -224,11 +224,11 @@ const ThresholdTypes = () => {
               {dataThreshold.thresholds?.edges.map((item, index) => (
                 <ThresholdTypeItem
                   key={index}
-                  handleRemove={() => handleRemove(item.node.id)}
+                  handleRemove={() => handleRemove(item.node?.id)}
                   edit={() => showEditThresholdItemForm({item})}
                   addRule={() => showAddRuleItemForm({item})}
                   editRule={() => showEditRuleItemForm({item})}
-                  {...item.node}
+                  {...item?.node}
                 />
               ))}
             </List>

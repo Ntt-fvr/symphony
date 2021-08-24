@@ -156,7 +156,7 @@ export default function KpiTypeItem(props: Props) {
   function handleCallback() {
     parentCallback({
       kpi: id,
-      technology: formulaFk[0].techFk?.id,
+      technology: formulaFk[0]?.techFk?.id,
     });
   }
 
