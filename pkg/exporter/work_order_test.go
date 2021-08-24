@@ -183,7 +183,9 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
+				wo.QueryTemplate().OnlyX(ctx).Name,
 				workorder.StatusClosed.String(),
+				GetStringDate(wo.CloseDate),
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),
@@ -200,7 +202,9 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO2",
 				"",
+				wo.QueryTemplate().OnlyX(ctx).Name,
 				workorder.StatusPlanned.String(),
+				"",
 				"tester2@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityMedium.String(),
@@ -252,7 +256,9 @@ func TestExportWOWithFilters(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
+				wo.QueryTemplate().OnlyX(ctx).Name,
 				workorder.StatusClosed.String(),
+				GetStringDate(wo.CloseDate),
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),
