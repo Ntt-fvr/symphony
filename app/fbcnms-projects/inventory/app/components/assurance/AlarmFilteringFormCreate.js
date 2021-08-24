@@ -50,6 +50,12 @@ const useStyles = makeStyles(() => ({
     height: '36px',
     alignSelf: 'flex-end',
   },
+  cancel: {
+    width: '111px',
+    height: '36px',
+    marginRight: '70px',
+    alignSelf: 'flex-end',
+  },
   delete: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -141,16 +147,16 @@ const AlarmFilteringFormCreate = (props: Props) => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid container className={classes.titleButtons} alignItems="center">
-          <Grid xs={9}>
+          <Grid xs={7} sm={9} lg={11} xl={11}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Create Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid xs={3} container>
-            <Grid xs={8}>
+          <Grid xs={5} sm={3} lg={1} xl={1} container>
+            <Grid xs={6}>
               <FormField>
                 <Button
-                  className={classes.option}
+                  className={classes.cancel}
                   variant="outlined"
                   color="primary"
                   onClick={() => returnTableAlarm()}>
@@ -158,7 +164,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </Button>
               </FormField>
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={6}>
               <FormField>
                 <Button
                   onClick={() => setDialogOpen(true)}
@@ -176,12 +182,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
             <Grid container>
               <Grid xs={1}>
                 <FormField label="Enabled">
-                  <Switch
-                    title={''}
-                    checked={checked}
-                    onChange={setChecked}
-                    onClick={handleClick}
-                  />
+                  <Switch title={''} checked={checked} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid xs={11}>

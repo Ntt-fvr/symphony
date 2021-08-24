@@ -59,8 +59,7 @@ const useStyles = makeStyles(() => ({
     alignSelf: 'flex-end',
   },
   delete: {
-    display: 'flex',
-    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
   },
   title: {
     marginLeft: '10px',
@@ -79,6 +78,11 @@ const useStyles = makeStyles(() => ({
   },
   time: {
     marginBottom: '20px',
+  },
+  cancel: {
+    width: '111px',
+    height: '36px',
+    alignSelf: 'center',
   },
   button: {
     width: '111px',
@@ -168,27 +172,26 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid container className={classes.titleButtons} alignItems="center">
-          <Grid xs={9}>
+          <Grid xs={7} sm={9} lg={9} xl={10}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid xs={1}>
+          <Grid className={classes.delete} xs={1} sm={1} lg={1} xl={1}>
             <DeleteOutlinedIcon
               icon={DeleteOutlinedIcon}
-              className={classes.delete}
               onClick={() => {
                 handleRemove(formValues.item.id);
                 closeEditForm();
               }}
             />
           </Grid>
-          <Grid xs={2}>
+          <Grid xs={3} sm={2} lg={2} xl={1}>
             <Grid container>
               <Grid xs={6}>
                 <FormField>
                   <Button
-                    className={classes.option}
+                    className={classes.cancel}
                     variant="outlined"
                     color="primary"
                     onClick={() => closeEditForm()}>
