@@ -128,7 +128,10 @@ const useStyles = makeStyles(() => ({
     padding: '20px',
   },
   limitRangeInputs: {
-    margin: '26px 26px 20px 0',
+    margin: '0px 26px 20px 0',
+  },
+  titleLimit: {
+    marginLeft: '26px',
   },
   limitRangeSelect: {
     margin: '0 20px 20px 26px',
@@ -333,10 +336,11 @@ const EditRuleItemForm = (props: Props) => {
                         Limits Range
                       </Text>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
-                      <FormField
-                        className={classes.limitRangeSelect}
-                        label="Upper Target">
+                    <Grid item xs={12} sm={12}>
+                      <Text className={classes.titleLimit}>Upper limit</Text>
+                    </Grid>
+                    <Grid item xs={8} sm={8} lg={6} xl={6}>
+                      <FormField className={classes.limitRangeSelect}>
                         <Select
                           {...comparatorUpper}
                           className={classes.selectUpper}
@@ -350,7 +354,7 @@ const EditRuleItemForm = (props: Props) => {
                         </Select>
                       </FormField>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                    <Grid item xs={4} sm={4} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
                           {...upper}
@@ -361,10 +365,11 @@ const EditRuleItemForm = (props: Props) => {
                         />
                       </FormField>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
-                      <FormField
-                        className={classes.limitRangeSelect}
-                        label="Lower Target">
+                    <Grid item xs={12} sm={12}>
+                      <Text className={classes.titleLimit}>Upper limit</Text>
+                    </Grid>
+                    <Grid item xs={8} sm={8} lg={6} xl={6}>
+                      <FormField className={classes.limitRangeSelect}>
                         <Select
                           {...comparatorLower}
                           className={classes.selectLower}
@@ -378,7 +383,7 @@ const EditRuleItemForm = (props: Props) => {
                         </Select>
                       </FormField>
                     </Grid>
-                    <Grid item xs={6} sm={6} lg={6} xl={6}>
+                    <Grid item xs={4} sm={4} lg={6} xl={6}>
                       <FormField className={classes.limitRangeInputs}>
                         <TextInput
                           {...lower}

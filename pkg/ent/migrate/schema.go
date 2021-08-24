@@ -1967,7 +1967,7 @@ var (
 		{Name: "alarm_type", Type: field.TypeString},
 		{Name: "short_description", Type: field.TypeString},
 		{Name: "long_description", Type: field.TypeString},
-		{Name: "command", Type: field.TypeString},
+		{Name: "command", Type: field.TypeString, Nullable: true},
 		{Name: "priority", Type: field.TypeInt},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "used", Type: field.TypeInt, Nullable: true},

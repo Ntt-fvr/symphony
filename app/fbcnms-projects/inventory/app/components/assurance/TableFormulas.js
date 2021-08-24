@@ -104,24 +104,24 @@ export default function DenseTable(props: Props) {
           </TableHead>
           <TableBody>
             {formulas.map(row => (
-              <StyledTableRow key={row.id}>
+              <StyledTableRow key={row?.id}>
                 <TableCell component="th" scope="row">
                   <Switch
                     title={''}
-                    checked={row.status}
+                    checked={row?.status}
                     onChange={setChecked}
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.id}
+                  {row?.id}
                 </TableCell>
-                <TableCell>{row.techFk?.name}</TableCell>
+                <TableCell>{row?.techFk?.name}</TableCell>
                 <TableCell>
                   <Button>
                     <DeleteOutlinedIcon
                       style={{color: DARK.D300}}
                       onClick={() => {
-                        handleRemove(row.id);
+                        handleRemove(row?.id);
                       }}
                     />
                   </Button>
@@ -131,8 +131,8 @@ export default function DenseTable(props: Props) {
                     icon={EditIcon}
                     onClick={() => {
                       handleEditCallback({
-                        formula: row.id,
-                        textFormula: row.textFormula,
+                        formula: row?.id,
+                        textFormula: row?.textFormula,
                         tech: row.techFk?.id,
                         kpiId: row.kpiFk?.id,
                         kpiFk: row.kpiFk?.name,

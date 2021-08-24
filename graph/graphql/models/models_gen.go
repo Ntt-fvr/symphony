@@ -324,7 +324,7 @@ type AddRecommendationsInput struct {
 	AlarmType               string  `json:"alarmType"`
 	ShortDescription        string  `json:"shortDescription"`
 	LongDescription         string  `json:"longDescription"`
-	Command                 string  `json:"command"`
+	Command                 *string `json:"command"`
 	Priority                int     `json:"priority"`
 	Status                  bool    `json:"status"`
 	Runbook                 *string `json:"runbook"`
@@ -334,6 +334,10 @@ type AddRecommendationsInput struct {
 	UserApprobed            *int    `json:"userApprobed"`
 	UserCreate              int     `json:"userCreate"`
 	Vendor                  int     `json:"vendor"`
+}
+
+type AddRecommendationsListInput struct {
+	Recommendations []*AddRecommendationsInput `json:"recommendations"`
 }
 
 type AddRecommendationsSourcesInput struct {
@@ -853,7 +857,7 @@ type EditRecommendationsInput struct {
 	AlarmType               string  `json:"alarmType"`
 	ShortDescription        string  `json:"shortDescription"`
 	LongDescription         string  `json:"longDescription"`
-	Command                 string  `json:"command"`
+	Command                 *string `json:"command"`
 	Priority                int     `json:"priority"`
 	Status                  bool    `json:"status"`
 	Runbook                 *string `json:"runbook"`
@@ -1065,6 +1069,7 @@ type FormulaFilterInput struct {
 	IDSet       []int               `json:"idSet"`
 	MaxDepth    *int                `json:"maxDepth"`
 	StringSet   []string            `json:"stringSet"`
+	BoolValue   *bool               `json:"boolValue"`
 }
 
 type GeneralFilter struct {
@@ -2098,15 +2103,17 @@ type FormulaFilterType string
 
 const (
 	FormulaFilterTypeTextformula FormulaFilterType = "TEXTFORMULA"
+	FormulaFilterTypeStatus      FormulaFilterType = "STATUS"
 )
 
 var AllFormulaFilterType = []FormulaFilterType{
 	FormulaFilterTypeTextformula,
+	FormulaFilterTypeStatus,
 }
 
 func (e FormulaFilterType) IsValid() bool {
 	switch e {
-	case FormulaFilterTypeTextformula:
+	case FormulaFilterTypeTextformula, FormulaFilterTypeStatus:
 		return true
 	}
 	return false

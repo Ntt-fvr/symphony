@@ -985,6 +985,20 @@ func CommandHasSuffix(v string) predicate.Recommendations {
 	})
 }
 
+// CommandIsNil applies the IsNil predicate on the "command" field.
+func CommandIsNil() predicate.Recommendations {
+	return predicate.Recommendations(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCommand)))
+	})
+}
+
+// CommandNotNil applies the NotNil predicate on the "command" field.
+func CommandNotNil() predicate.Recommendations {
+	return predicate.Recommendations(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCommand)))
+	})
+}
+
 // CommandEqualFold applies the EqualFold predicate on the "command" field.
 func CommandEqualFold(v string) predicate.Recommendations {
 	return predicate.Recommendations(func(s *sql.Selector) {

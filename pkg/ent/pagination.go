@@ -9377,6 +9377,16 @@ var (
 			}
 		},
 	}
+	// FormulaOrderFieldStatus orders Formula by status.
+	FormulaOrderFieldStatus = &FormulaOrderField{
+		field: formula.FieldStatus,
+		toCursor: func(f *Formula) Cursor {
+			return Cursor{
+				ID:    f.ID,
+				Value: f.Status,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
@@ -9385,6 +9395,8 @@ func (f FormulaOrderField) String() string {
 	switch f.field {
 	case formula.FieldTextFormula:
 		str = "TEXTFORMULA"
+	case formula.FieldStatus:
+		str = "STATUS"
 	}
 	return str
 }
@@ -9403,6 +9415,8 @@ func (f *FormulaOrderField) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "TEXTFORMULA":
 		*f = *FormulaOrderFieldTextFormula
+	case "STATUS":
+		*f = *FormulaOrderFieldStatus
 	default:
 		return fmt.Errorf("%s is not a valid FormulaOrderField", str)
 	}

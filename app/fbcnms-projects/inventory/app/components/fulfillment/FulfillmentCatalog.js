@@ -11,11 +11,12 @@ import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
 import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import InventorySuspense from '../../common/InventorySuspense';
-import ServicesTypes from './ServicesTypes';
 import React, {useEffect, useState} from 'react';
-import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
+import ServicesTypeCardDetails from './ServicesTypeCardDetails';
+import ServicesTypes from './ServicesTypes';
+// import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+// import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router';
@@ -69,26 +70,15 @@ export default function FulfillmentCatalog() {
   const tabMatch = location.pathname.match(/([^\/]*)\/*$/);
   const tabIndex =
     tabMatch == null ? -1 : tabBars.findIndex(el => el.id === tabMatch[1]);
-  const [activeTabBar, setActiveTabBar] = useState<number>(
-    tabIndex !== -1 ? tabIndex : 0,
-  );
-
+  const [activeTabBar] = useState<number>(tabIndex !== -1 ? tabIndex : 0);
   useEffect(() => {
-    ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED, {
-      id: tabBars[activeTabBar].id,
-    });
-    history.push(`/fulfillment/fulfillmentCatalog/${tabBars[activeTabBar].path}`);
+    history.push(
+      `/fulfillment/fulfillmentCatalog/${tabBars[activeTabBar].path}`,
+    );
   }, [activeTabBar, history]);
 
   return (
     <div className={classes.root}>
-      <TabsBar
-        spread={true}
-        size="large"
-        tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
-        onChange={setActiveTabBar}
-      />
       <InventoryErrorBoundary>
         <InventorySuspense>
           <Switch>
@@ -96,6 +86,11 @@ export default function FulfillmentCatalog() {
               exact
               path={relativeUrl('/services')}
               component={ServicesTypes}
+            />
+            <Route
+              exact
+              path={relativeUrl('/servicesDetails')}
+              component={ServicesTypeCardDetails}
             />
             <Redirect
               from={relativeUrl('/fulfillment/fulfillmentCatalog')}

@@ -92,6 +92,14 @@ func (rc *RecommendationsCreate) SetCommand(s string) *RecommendationsCreate {
 	return rc
 }
 
+// SetNillableCommand sets the command field if the given value is not nil.
+func (rc *RecommendationsCreate) SetNillableCommand(s *string) *RecommendationsCreate {
+	if s != nil {
+		rc.SetCommand(*s)
+	}
+	return rc
+}
+
 // SetPriority sets the priority field.
 func (rc *RecommendationsCreate) SetPriority(i int) *RecommendationsCreate {
 	rc.mutation.SetPriority(i)
@@ -312,9 +320,6 @@ func (rc *RecommendationsCreate) check() error {
 	if _, ok := rc.mutation.LongDescription(); !ok {
 		return &ValidationError{Name: "longDescription", err: errors.New("ent: missing required field \"longDescription\"")}
 	}
-	if _, ok := rc.mutation.Command(); !ok {
-		return &ValidationError{Name: "command", err: errors.New("ent: missing required field \"command\"")}
-	}
 	if _, ok := rc.mutation.Priority(); !ok {
 		return &ValidationError{Name: "priority", err: errors.New("ent: missing required field \"priority\"")}
 	}
@@ -410,7 +415,7 @@ func (rc *RecommendationsCreate) createSpec() (*Recommendations, *sqlgraph.Creat
 			Value:  value,
 			Column: recommendations.FieldCommand,
 		})
-		_node.Command = value
+		_node.Command = &value
 	}
 	if value, ok := rc.mutation.Priority(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

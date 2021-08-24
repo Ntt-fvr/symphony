@@ -264,7 +264,6 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
           {prefix}
           <Clickable
             className={`${classes.clickable} clickable`}
-            // className={classes.clickable}
             onClick={onClick}
             onMouseDown={onMouseDown}
             disabled={disabled}>
