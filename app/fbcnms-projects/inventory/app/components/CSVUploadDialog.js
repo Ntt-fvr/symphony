@@ -125,6 +125,8 @@ const CSVUploadDialog = (props: Props) => {
   const [linesToSkip, setLinesToSkip] = useState([]);
   const [entity, setEntity] = useState(null);
   const [files, setFiles] = useState([]);
+  const [verifyBeforeCommit, setVerifyBeforeCommit] = useState(false);
+
 
   const [messageToDisplay, setMessageToDisplay] = useState<?MessageType>({
     text: null,
@@ -176,6 +178,14 @@ const CSVUploadDialog = (props: Props) => {
     setLinesToSkip(errors);
   };
 
+   const onWarningOnly = (msg: string) => {
+    setMessageToDisplay({
+      text: msg,
+      type: 'warning',
+    });
+    generalEndProcess();
+  };
+
   const onAbort = () => {
     setMessageToDisplay({
       text: null,
@@ -191,6 +201,9 @@ const CSVUploadDialog = (props: Props) => {
   };
 
   const getImportScripts = context => {
+    if (mode === 'projects') {
+      return uploadProjects
+    } 
     const deprecatedImportsEnabled =
       context && context.isFeatureEnabled('deprecated_imports');
     return deprecatedImportsEnabled
@@ -199,8 +212,7 @@ const CSVUploadDialog = (props: Props) => {
   };
 
   const getUploadPath = currentEntity => {
-    const importScripts =
-      mode === 'projects' ? uploadProjects : getImportScripts();
+    const importScripts = getImportScripts();
     const path = importScripts
       .filter(obj => obj.entity == currentEntity)
       .map(obj => obj.uploadPath);
@@ -249,9 +261,24 @@ const CSVUploadDialog = (props: Props) => {
       const summary = responseData.summary;
       setErrors(responseData.errors ?? []);
 
-      if (
-        responseData.errors == null ||
-        (responseData.errors != null && !verifyBefore) ||
+      if (summary && summary.successLines === 0 && summary.allLines > 0)
+      {
+        onWarningOnly(
+          fbt(
+            'Uploaded ' +
+              fbt.param('number of saved lines', summary.successLines) +
+              ' of ' +
+              fbt.param('number of all lines', summary.allLines) +
+              ' ' +
+              fbt.param('type that was saved', currentEntity) +
+              ' items. ',
+            'message for a Warning import',
+          ),
+        );
+        return;
+      }
+      
+      if ((responseData.errors != null && !verifyBefore) ||
         (responseData.summary.committed && summary.successLines > 0)
       ) {
         onSuccess(
@@ -286,14 +313,16 @@ const CSVUploadDialog = (props: Props) => {
         return;
       }
     } catch (error) {
-      if (error.response.status === 504) {
+      if (error.response.status === 504 || error.response.status === 502) {
         onFail(
           fbt(
-            'File failed to upload as it is too big. Please try upload in smaller chuncks',
+            'File failed to upload as it is too big. Please try upload in smaller chuncks. Some rows may have been uploaded',
             'upload timeout message',
           ),
         );
-      } else {
+        return;
+      } 
+      else {
         const message = error.response?.data;
         onFail(message);
       }
@@ -307,8 +336,11 @@ const CSVUploadDialog = (props: Props) => {
     if (!f || f.length === 0) {
       return;
     }
-    const verifyBeforeCommit =
-      deprecatedUploadsParams.find(e => e.entity == entity) == null;
+    console.log(`['projects'].includes(mode)`, ['projects'].includes(mode));
+    const verifyBeforeCommit = mode === 'projects' ? false : deprecatedUploadsParams.find(e => e.entity == entity) == null;
+    setVerifyBeforeCommit(verifyBeforeCommit);
+    console.log('entity', entity);
+    console.log('verifyBeforeCommit', verifyBeforeCommit);
     uploadFile(verifyBeforeCommit, f, entity);
   };
 
@@ -342,23 +374,20 @@ const CSVUploadDialog = (props: Props) => {
         <>
           <DialogError message={messageToDisplay.text} color={'warning'} />
           <UploadErrorsList errors={errors} />
-          <UploadAnywayDialog onAbort={onAbort} onUpload={onContinueAnyway} />
+          { verifyBeforeCommit ?
+            (
+              <UploadAnywayDialog onAbort={onAbort} onUpload={onContinueAnyway} />
+            ) : (
+              <DialogActions>
+                <Button onClick={onAbort} skin="primary">
+                  OK
+                </Button>
+              </DialogActions>
+            )
+          }
         </>
       )}
-      {['success', 'warning'].includes(messageToDisplay?.type) ? null : mode &&
-        mode === 'projects' ? (
-        <div className={classes.uploadContent}>
-          {uploadProjects.map(entity => (
-            <CSVFileUpload
-              key={entity.uploadPath}
-              button={<Button variant="text">{entity.text}</Button>}
-              entity={entity.entity}
-              onFileChanged={(e, entity) => onFilePicked(e, entity)}
-              uploadPath={entity.uploadPath}
-            />
-          ))}
-        </div>
-      ) : (
+      {['success', 'warning'].includes(messageToDisplay?.type) ? null : (
         <div className={classes.uploadContent}>
           {importScripts.map(entity => (
             <CSVFileUpload
