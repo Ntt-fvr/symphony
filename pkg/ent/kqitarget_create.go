@@ -60,9 +60,9 @@ func (ktc *KqiTargetCreate) SetName(s string) *KqiTargetCreate {
 	return ktc
 }
 
-// SetFrame sets the frame field.
-func (ktc *KqiTargetCreate) SetFrame(f float64) *KqiTargetCreate {
-	ktc.mutation.SetFrame(f)
+// SetPeriod sets the period field.
+func (ktc *KqiTargetCreate) SetPeriod(f float64) *KqiTargetCreate {
+	ktc.mutation.SetPeriod(f)
 	return ktc
 }
 
@@ -208,8 +208,8 @@ func (ktc *KqiTargetCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
-	if _, ok := ktc.mutation.Frame(); !ok {
-		return &ValidationError{Name: "frame", err: errors.New("ent: missing required field \"frame\"")}
+	if _, ok := ktc.mutation.Period(); !ok {
+		return &ValidationError{Name: "period", err: errors.New("ent: missing required field \"period\"")}
 	}
 	if _, ok := ktc.mutation.AlowedValidation(); !ok {
 		return &ValidationError{Name: "alowedValidation", err: errors.New("ent: missing required field \"alowedValidation\"")}
@@ -277,13 +277,13 @@ func (ktc *KqiTargetCreate) createSpec() (*KqiTarget, *sqlgraph.CreateSpec) {
 		})
 		_node.Name = value
 	}
-	if value, ok := ktc.mutation.Frame(); ok {
+	if value, ok := ktc.mutation.Period(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldFrame,
+			Column: kqitarget.FieldPeriod,
 		})
-		_node.Frame = value
+		_node.Period = value
 	}
 	if value, ok := ktc.mutation.AlowedValidation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

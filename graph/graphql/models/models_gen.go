@@ -242,7 +242,7 @@ type AddKqiSourceInput struct {
 type AddKqiTargetInput struct {
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
-	Frame            float64   `json:"frame"`
+	Period           float64   `json:"period"`
 	AlowedValidation float64   `json:"alowedValidation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
@@ -324,7 +324,7 @@ type AddRecommendationsInput struct {
 	AlarmType               string  `json:"alarmType"`
 	ShortDescription        string  `json:"shortDescription"`
 	LongDescription         string  `json:"longDescription"`
-	Command                 string  `json:"command"`
+	Command                 *string `json:"command"`
 	Priority                int     `json:"priority"`
 	Status                  bool    `json:"status"`
 	Runbook                 *string `json:"runbook"`
@@ -334,6 +334,10 @@ type AddRecommendationsInput struct {
 	UserApprobed            *int    `json:"userApprobed"`
 	UserCreate              int     `json:"userCreate"`
 	Vendor                  int     `json:"vendor"`
+}
+
+type AddRecommendationsListInput struct {
+	Recommendations []*AddRecommendationsInput `json:"recommendations"`
 }
 
 type AddRecommendationsSourcesInput struct {
@@ -766,7 +770,7 @@ type EditKqiTargetInput struct {
 	ID               int       `json:"id"`
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
-	Frame            float64   `json:"frame"`
+	Period           float64   `json:"period"`
 	AlowedValidation float64   `json:"alowedValidation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
@@ -853,7 +857,7 @@ type EditRecommendationsInput struct {
 	AlarmType               string  `json:"alarmType"`
 	ShortDescription        string  `json:"shortDescription"`
 	LongDescription         string  `json:"longDescription"`
-	Command                 string  `json:"command"`
+	Command                 *string `json:"command"`
 	Priority                int     `json:"priority"`
 	Status                  bool    `json:"status"`
 	Runbook                 *string `json:"runbook"`
@@ -1056,6 +1060,16 @@ type FlowInstanceFilterInput struct {
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
 	TimeValue     *time.Time                `json:"timeValue"`
 	MaxDepth      *int                      `json:"maxDepth"`
+}
+
+type FormulaFilterInput struct {
+	FilterType  FormulaFilterType   `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
+	BoolValue   *bool               `json:"boolValue"`
 }
 
 type GeneralFilter struct {
@@ -1510,6 +1524,15 @@ type SurveyWiFiScanData struct {
 	Altitude     *float64 `json:"altitude"`
 	Heading      *float64 `json:"heading"`
 	Rssi         *float64 `json:"rssi"`
+}
+
+type TechFilterInput struct {
+	FilterType  TechFilterType      `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
 }
 
 type TechnicianCheckListItemInput struct {
@@ -2073,6 +2096,47 @@ func (e *FlowInstanceFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FlowInstanceFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FormulaFilterType string
+
+const (
+	FormulaFilterTypeTextformula FormulaFilterType = "TEXTFORMULA"
+	FormulaFilterTypeStatus      FormulaFilterType = "STATUS"
+)
+
+var AllFormulaFilterType = []FormulaFilterType{
+	FormulaFilterTypeTextformula,
+	FormulaFilterTypeStatus,
+}
+
+func (e FormulaFilterType) IsValid() bool {
+	switch e {
+	case FormulaFilterTypeTextformula, FormulaFilterTypeStatus:
+		return true
+	}
+	return false
+}
+
+func (e FormulaFilterType) String() string {
+	return string(e)
+}
+
+func (e *FormulaFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FormulaFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FormulaFilterType", str)
+	}
+	return nil
+}
+
+func (e FormulaFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2815,6 +2879,45 @@ func (e *SurveyStatus) UnmarshalGQL(v interface{}) error {
 }
 
 func (e SurveyStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TechFilterType string
+
+const (
+	TechFilterTypeName TechFilterType = "NAME"
+)
+
+var AllTechFilterType = []TechFilterType{
+	TechFilterTypeName,
+}
+
+func (e TechFilterType) IsValid() bool {
+	switch e {
+	case TechFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e TechFilterType) String() string {
+	return string(e)
+}
+
+func (e *TechFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TechFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TechFilterType", str)
+	}
+	return nil
+}
+
+func (e TechFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -3791,12 +3791,12 @@ func (kt *KqiTarget) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(kt.Frame); err != nil {
+	if buf, err = json.Marshal(kt.Period); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
 		Type:  "float64",
-		Name:  "frame",
+		Name:  "period",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(kt.AlowedValidation); err != nil {
