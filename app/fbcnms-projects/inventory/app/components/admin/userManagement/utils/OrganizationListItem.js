@@ -75,6 +75,7 @@ export default function OrganizationListItem(props: Props) {
         item: user,
         isMember,
       }}
+      readonly
       className={className}
       assigmentButton={assigmentButton}
       onAssignToggle={() => toggleAssigment(user, !isMember)}>

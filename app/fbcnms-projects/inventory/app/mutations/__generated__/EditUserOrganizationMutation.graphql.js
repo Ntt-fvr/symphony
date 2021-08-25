@@ -28,10 +28,10 @@ export type EditUserInput = {|
   distanceUnit?: ?DistanceUnit,
   organizationFk?: ?string,
 |};
-export type EditUserMutationVariables = {|
+export type EditUserOrganizationMutationVariables = {|
   input: EditUserInput
 |};
-export type EditUserMutationResponse = {|
+export type EditUserOrganizationMutationResponse = {|
   +editUser: {|
     +id: string,
     +authID: string,
@@ -173,17 +173,22 @@ export type EditUserMutationResponse = {|
         |},
       |}>,
     |}>,
+    +organizationFk: ?{|
+      +id: string,
+      +name: string,
+      +description: string,
+    |},
   |}
 |};
-export type EditUserMutation = {|
-  variables: EditUserMutationVariables,
-  response: EditUserMutationResponse,
+export type EditUserOrganizationMutation = {|
+  variables: EditUserOrganizationMutationVariables,
+  response: EditUserOrganizationMutationResponse,
 |};
 */
 
 
 /*
-mutation EditUserMutation(
+mutation EditUserOrganizationMutation(
   $input: EditUserInput!
 ) {
   editUser(input: $input) {
@@ -324,6 +329,11 @@ mutation EditUserMutation(
           }
         }
       }
+    }
+    organizationFk {
+      id
+      name
+      description
     }
   }
 }
@@ -756,6 +766,20 @@ v13 = [
           }
         ],
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Organization",
+        "kind": "LinkedField",
+        "name": "organizationFk",
+        "plural": false,
+        "selections": [
+          (v1/*: any*/),
+          (v8/*: any*/),
+          (v9/*: any*/)
+        ],
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -766,7 +790,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditUserMutation",
+    "name": "EditUserOrganizationMutation",
     "selections": (v13/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -775,20 +799,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EditUserMutation",
+    "name": "EditUserOrganizationMutation",
     "selections": (v13/*: any*/)
   },
   "params": {
-    "cacheID": "630b86b1965597b61045148fef33600b",
+    "cacheID": "2401132e3dc45fbb932ec4f3667438d3",
     "id": null,
     "metadata": {},
-    "name": "EditUserMutation",
+    "name": "EditUserOrganizationMutation",
     "operationKind": "mutation",
-    "text": "mutation EditUserMutation(\n  $input: EditUserInput!\n) {\n  editUser(input: $input) {\n    id\n    authID\n    firstName\n    lastName\n    email\n    status\n    role\n    groups {\n      id\n      name\n      description\n      status\n      members {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n      }\n      policies {\n        id\n        name\n        description\n        isGlobal\n        policy {\n          __typename\n          ... on InventoryPolicy {\n            read {\n              isAllowed\n            }\n            location {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n                locationTypeIds\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipment {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipmentType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            locationType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            portType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            serviceType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n          }\n          ... on WorkforcePolicy {\n            read {\n              isAllowed\n              projectTypeIds\n              workOrderTypeIds\n            }\n            templates {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            data {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n              assign {\n                isAllowed\n              }\n              transferOwnership {\n                isAllowed\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation EditUserOrganizationMutation(\n  $input: EditUserInput!\n) {\n  editUser(input: $input) {\n    id\n    authID\n    firstName\n    lastName\n    email\n    status\n    role\n    groups {\n      id\n      name\n      description\n      status\n      members {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n      }\n      policies {\n        id\n        name\n        description\n        isGlobal\n        policy {\n          __typename\n          ... on InventoryPolicy {\n            read {\n              isAllowed\n            }\n            location {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n                locationTypeIds\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipment {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipmentType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            locationType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            portType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            serviceType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n          }\n          ... on WorkforcePolicy {\n            read {\n              isAllowed\n              projectTypeIds\n              workOrderTypeIds\n            }\n            templates {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            data {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n              assign {\n                isAllowed\n              }\n              transferOwnership {\n                isAllowed\n              }\n            }\n          }\n        }\n      }\n    }\n    organizationFk {\n      id\n      name\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a2b06ae4f4fc49a01f3a862dbd2b0ea6';
+(node/*: any*/).hash = 'ad906bfe3915c0d369a1ebd7a7ea1d28';
 
 module.exports = node;

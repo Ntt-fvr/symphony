@@ -12,8 +12,8 @@ export const ORGANIZATION_SUBHEADER = fbt(
   'Subheader for view showing system groups and organizations',
 );
 
-const OrganizationsView = () => {
-  return <OrganizationsTable />;
+const OrganizationsView = ({ ...rest }) => {
+  return <OrganizationsTable {...rest}/>;
 }
 
 export default OrganizationsView;

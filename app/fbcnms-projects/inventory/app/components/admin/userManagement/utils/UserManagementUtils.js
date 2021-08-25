@@ -50,6 +50,13 @@ graphql`
     status
   }
 `;
+graphql`
+  fragment UserManagementUtils_organization on Organization {
+    id
+    name
+    description
+  }
+`;
 
 graphql`
   fragment UserManagementUtils_group on UsersGroup {

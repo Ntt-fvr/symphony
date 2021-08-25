@@ -101,14 +101,11 @@ export default function OrganizationsMembersList(props: Props) {
   console.log(organization);
   return (
     <OrganizationMembersList
-      users={userSearch.isEmptySearchTerm ? organization.members : userSearch.results}
+      users={
+        userSearch.isEmptySearchTerm ? organization.members : userSearch.results
+      }
       organization={organization}
       onChange={onChange}
-      assigmentButton={
-        userSearch.isEmptySearchTerm
-          ? TOGGLE_BUTTON_DISPLAY.onHover
-          : TOGGLE_BUTTON_DISPLAY.always
-      }
       emptyState={emptyState}
     />
   );

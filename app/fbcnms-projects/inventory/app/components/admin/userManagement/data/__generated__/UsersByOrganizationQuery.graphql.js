@@ -52,10 +52,10 @@ export type PropertyTypeInput = {|
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
 |};
-export type UserSearchContextQueryVariables = {|
-  filters: $ReadOnlyArray<UserFilterInput>
+export type UsersByOrganizationQueryVariables = {|
+  filterBy?: ?$ReadOnlyArray<UserFilterInput>
 |};
-export type UserSearchContextQueryResponse = {|
+export type UsersByOrganizationQueryResponse = {|
   +users: ?{|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
@@ -203,18 +203,18 @@ export type UserSearchContextQueryResponse = {|
     |}>
   |}
 |};
-export type UserSearchContextQuery = {|
-  variables: UserSearchContextQueryVariables,
-  response: UserSearchContextQueryResponse,
+export type UsersByOrganizationQuery = {|
+  variables: UsersByOrganizationQueryVariables,
+  response: UsersByOrganizationQueryResponse,
 |};
 */
 
 
 /*
-query UserSearchContextQuery(
-  $filters: [UserFilterInput!]!
+query UsersByOrganizationQuery(
+  $filterBy: [UserFilterInput!]
 ) {
-  users(first: 500, filterBy: $filters) {
+  users(filterBy: $filterBy) {
     edges {
       node {
         id
@@ -366,7 +366,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "filters"
+    "name": "filterBy"
   }
 ],
 v1 = {
@@ -481,12 +481,7 @@ v13 = [
       {
         "kind": "Variable",
         "name": "filterBy",
-        "variableName": "filters"
-      },
-      {
-        "kind": "Literal",
-        "name": "first",
-        "value": 500
+        "variableName": "filterBy"
       }
     ],
     "concreteType": "UserConnection",
@@ -825,7 +820,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserSearchContextQuery",
+    "name": "UsersByOrganizationQuery",
     "selections": (v13/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -834,20 +829,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "UserSearchContextQuery",
+    "name": "UsersByOrganizationQuery",
     "selections": (v13/*: any*/)
   },
   "params": {
-    "cacheID": "b574e285f3e5bb12d5c7eb0d34cb706c",
+    "cacheID": "116abb58a8a50cbf8ddabf50f0fd2243",
     "id": null,
     "metadata": {},
-    "name": "UserSearchContextQuery",
+    "name": "UsersByOrganizationQuery",
     "operationKind": "query",
-    "text": "query UserSearchContextQuery(\n  $filters: [UserFilterInput!]!\n) {\n  users(first: 500, filterBy: $filters) {\n    edges {\n      node {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n        groups {\n          id\n          name\n          description\n          status\n          members {\n            id\n            authID\n            firstName\n            lastName\n            email\n            status\n            role\n          }\n          policies {\n            id\n            name\n            description\n            isGlobal\n            policy {\n              __typename\n              ... on InventoryPolicy {\n                read {\n                  isAllowed\n                }\n                location {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                    locationTypeIds\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                equipment {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                equipmentType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                locationType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                portType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                serviceType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n              }\n              ... on WorkforcePolicy {\n                read {\n                  isAllowed\n                  projectTypeIds\n                  workOrderTypeIds\n                }\n                templates {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                data {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                  assign {\n                    isAllowed\n                  }\n                  transferOwnership {\n                    isAllowed\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query UsersByOrganizationQuery(\n  $filterBy: [UserFilterInput!]\n) {\n  users(filterBy: $filterBy) {\n    edges {\n      node {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n        groups {\n          id\n          name\n          description\n          status\n          members {\n            id\n            authID\n            firstName\n            lastName\n            email\n            status\n            role\n          }\n          policies {\n            id\n            name\n            description\n            isGlobal\n            policy {\n              __typename\n              ... on InventoryPolicy {\n                read {\n                  isAllowed\n                }\n                location {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                    locationTypeIds\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                equipment {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                equipmentType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                locationType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                portType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                serviceType {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n              }\n              ... on WorkforcePolicy {\n                read {\n                  isAllowed\n                  projectTypeIds\n                  workOrderTypeIds\n                }\n                templates {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                }\n                data {\n                  create {\n                    isAllowed\n                  }\n                  update {\n                    isAllowed\n                  }\n                  delete {\n                    isAllowed\n                  }\n                  assign {\n                    isAllowed\n                  }\n                  transferOwnership {\n                    isAllowed\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bcf8fa5196184a9a972736065128c4c6';
+(node/*: any*/).hash = '0ba1e57e092127651cffe4bc5dfe8e4a';
 
 module.exports = node;

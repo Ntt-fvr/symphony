@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
     paddingBottom: '5px',
   },
   text: {
-    whiteSpace: "normal",
+    whiteSpace: 'normal',
   },
   title: {
     marginBottom: '16px',
@@ -99,7 +99,10 @@ function SearchBar(
       {!userSearch.isEmptySearchTerm ? null : (
         <div className={classes.usersListHeader}>
           {organization.members.length > 0 ? (
-            <Text className={classes.text} variant="subtitle2" useEllipsis={true}>
+            <Text
+              className={classes.text}
+              variant="subtitle2"
+              useEllipsis={true}>
               <fbt desc="">
                 <fbt:plural count={organization.members.length} showCount="yes">
                   Members
@@ -115,6 +118,7 @@ function SearchBar(
 
 export default function OrganizationsMembersPane(props: Props) {
   const {organization, onChange, className} = props;
+  const [members, setMembers] = React.useState([]);
   const classes = useStyles();
 
   const title = useMemo(
@@ -131,16 +135,17 @@ export default function OrganizationsMembersPane(props: Props) {
     () => (
       <div className={classes.subtitle}>
         <Text variant="body2" color="gray">
-          <fbt desc="">
-            View users to organization
-          </fbt>
+          <fbt desc="">View users to organization</fbt>
         </Text>
       </div>
     ),
     [],
   );
 
-  const searchBar = useMemo(() => <SearchBar organization={organization} />, [organization]);
+  const searchBar = useMemo(
+    () => <SearchBar organization={{...organization, members}} />,
+    [organization],
+  );
 
   const header = useMemo(
     () => ({
@@ -156,7 +161,10 @@ export default function OrganizationsMembersPane(props: Props) {
     <Card className={classNames(classes.root, className)} margins="none">
       <UserSearchContextProvider>
         <ViewContainer header={header}>
-          <OrganizationsMembersList organization={organization} onChange={onChange} />
+          <OrganizationsMembersList
+            organization={{...organization, members}}
+            onChange={onChange}
+          />
         </ViewContainer>
       </UserSearchContextProvider>
     </Card>

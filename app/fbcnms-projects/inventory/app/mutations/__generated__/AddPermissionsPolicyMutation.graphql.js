@@ -25,6 +25,7 @@ export type AddPermissionsPolicyInput = {|
   inventoryInput?: ?InventoryPolicyInput,
   workforceInput?: ?WorkforcePolicyInput,
   automationInput?: ?AutomationPolicyInput,
+  assuranceInput?: ?AssurancePolicyInput,
   groups?: ?$ReadOnlyArray<string>,
 |};
 export type InventoryPolicyInput = {|
@@ -62,6 +63,7 @@ export type WorkforcePermissionRuleInput = {|
   isAllowed: PermissionValue,
   projectTypeIds?: ?$ReadOnlyArray<string>,
   workOrderTypeIds?: ?$ReadOnlyArray<string>,
+  organizationIds?: ?$ReadOnlyArray<string>,
 |};
 export type WorkforceCUDInput = {|
   create?: ?BasicPermissionRuleInput,
@@ -71,6 +73,10 @@ export type WorkforceCUDInput = {|
   transferOwnership?: ?BasicPermissionRuleInput,
 |};
 export type AutomationPolicyInput = {|
+  read?: ?BasicPermissionRuleInput,
+  templates?: ?BasicCUDInput,
+|};
+export type AssurancePolicyInput = {|
   read?: ?BasicPermissionRuleInput,
   templates?: ?BasicCUDInput,
 |};

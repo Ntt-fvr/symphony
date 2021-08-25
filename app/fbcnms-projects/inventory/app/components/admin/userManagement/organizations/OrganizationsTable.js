@@ -1,15 +1,34 @@
+/**
+ * Copyright 2004-present Facebook. All Rights Reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ * @format
+ */
+
+import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
+
 import * as React from 'react';
-import {makeStyles} from '@material-ui/core';
-import {useRouter} from '@fbcnms/ui/hooks';
-import Text from '@symphony/design-system/components/Text';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
 import Table from '@symphony/design-system/components/Table/Table';
-import withSuspense from '../../../../common/withSuspense';
-import {Organization, useOrganizations} from '../data/Organizations';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import symphony from '@symphony/design-system/theme/symphony';
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '@material-ui/icons/Edit';
+import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import withSuspense from '../../../../common/withSuspense';
+import {
+  Organization,
+  deleteOrganization,
+  useOrganizations,
+} from '../data/Organizations';
+import {makeStyles} from '@material-ui/core';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
+import {useHistory} from 'react-router-dom';
+import {useUsersOrganization} from '../data/Users';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,38 +55,47 @@ const org2OrganizationTableRow: Organization => OrganizationTableRow = organizat
   data: organization,
 });
 
-function OrganizationsTable() {
-  const {history} = useRouter();
+function OrganizationsTable(props) {
   const classes = useStyles();
   const organizations = useOrganizations();
+  const organizationsWithMembers = useUsersOrganization(organizations || []);
+  const history = useHistory();
+  const enqueueSnackbar = useEnqueueSnackbar();
+
   const organizationsTableData = React.useMemo(
-    () => organizations.map(org2OrganizationTableRow),
-    [organizations],
+    () => organizationsWithMembers.map(org2OrganizationTableRow),
+    [organizationsWithMembers],
   );
+  const onClose = React.useCallback(() => {
+    history.go(0);
+  }, [history]);
 
   const handleOnEdit = React.useCallback(orgId => {
     if (orgId != null) {
       history.push(`organization/${orgId}`);
     }
   });
-
-  const handleOnDelete = (orgId) => {
+  const handleError = React.useCallback(
+    (error: string) => {
+      enqueueSnackbar(error, {variant: 'error'});
+    },
+    [enqueueSnackbar],
+  );
+  const handleOnDelete = orgId => {
     if (orgId == null) {
       return;
     }
     props
       .confirm(
-        <fbt desc="">
-          Are you sure you want to delete this organization?
-        </fbt>,
+        <fbt desc="">Are you sure you want to delete this organization?</fbt>,
       )
       .then(confirm => {
         if (!confirm) {
           return;
         }
-        return onClose();
+        deleteOrganization(orgId).then(onClose).catch(handleError);
       });
-  }
+  };
 
   const columns = React.useMemo(() => {
     const returnCols = [
@@ -117,7 +145,9 @@ function OrganizationsTable() {
           <fbt desc="Delete column header in organizations table">Delete</fbt>
         ),
         render: orgRow => (
-          <IconButton color="primary" onClick={()=>handleOnDelete(orgRow.data.id)}>
+          <IconButton
+            color="primary"
+            onClick={() => handleOnDelete(orgRow.data.id)}>
             <DeleteIcon />
           </IconButton>
         ),
@@ -137,4 +167,4 @@ function OrganizationsTable() {
   );
 }
 
-export default withSuspense(OrganizationsTable);
+export default withSuspense(withAlert(OrganizationsTable));

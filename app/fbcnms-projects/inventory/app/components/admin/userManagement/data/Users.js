@@ -30,6 +30,7 @@ import {USER_ROLES} from '../utils/UserManagementUtils';
 import {UserRoles} from '@fbcnms/auth/types';
 import {getGraphError} from '../../../../common/EntUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {Organization} from './Organizations';
 
 export type User = OptionalRefTypeWrapper<user>;
 export type UserBase = OptionalRefTypeWrapper<user_base>;
@@ -46,10 +47,47 @@ const usersQuery = graphql`
   }
 `;
 
+const usersByOrganizationQuery = graphql`
+  query UsersByOrganizationQuery($filterBy: [UserFilterInput!]) {
+    users(filterBy: $filterBy) {
+      edges {
+        node {
+          ...UserManagementUtils_user @relay(mask: false)
+        }
+      }
+    }
+  }
+`;
+
 export function useUsers(): $ReadOnlyArray<User> {
   const data = useLazyLoadQuery<UsersQuery>(usersQuery, {});
   const usersData = data.users?.edges || [];
   return usersData.map(p => p.node).filter(Boolean);
+}
+
+export function useUsersOrganization(
+  organizations: [Organization],
+): $ReadOnlyArray<User> {
+  const data = organizations.map(org => {
+    const filterBy = [
+      {
+        filterType: 'USER_ORGANIZATION',
+        operator: 'IS_ONE_OF',
+        idSet: [org.id],
+      },
+    ];
+    const members = useLazyLoadQuery<UsersByOrganizationQuery>(
+      usersByOrganizationQuery,
+      {filterBy},
+    );
+    const usersData = members.users?.edges || [];
+
+    return {
+      ...org,
+      members: usersData.map(p => p.node).filter(Boolean),
+    };
+  });
+  return data;
 }
 
 function roleToNodeRole(role: UserRole): number {

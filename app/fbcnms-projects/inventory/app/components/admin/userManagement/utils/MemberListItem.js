@@ -42,10 +42,11 @@ type Props<T> = $ReadOnly<{|
   ...AssigenmentButtonProp,
   onAssignToggle: () => Promise<void> | void,
   children: React.Node,
+  readonly?: Boolean,
 |}>;
 
 export default function MemberListItem<T>(props: Props<T>) {
-  const {member, assigmentButton, onAssignToggle, children, className} = props;
+  const {member, assigmentButton, onAssignToggle, children, className, readonly} = props;
   const classes = useStyles();
 
   const toggleButton = {
@@ -75,7 +76,7 @@ export default function MemberListItem<T>(props: Props<T>) {
     },
   };
   return (
-    <ListItem className={className} toggleButton={toggleButton}>
+    <ListItem className={className} toggleButton={!readonly ? toggleButton : null}>
       <div className={classes.itemDetails}>{children}</div>
     </ListItem>
   );

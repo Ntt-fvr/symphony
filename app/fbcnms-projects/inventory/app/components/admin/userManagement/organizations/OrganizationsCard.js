@@ -19,22 +19,27 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import InventoryErrorBoundary from '../../../../common/InventoryErrorBoundary';
-import Strings from '@fbcnms/strings/Strings';
-import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import OrganizationsDetailsPane from './OrganizationsDetailsPane';
 import OrganizationsMembersPane from './OrganizationsMembersPane';
+import Strings from '@fbcnms/strings/Strings';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import withSuspense from '../../../../common/withSuspense';
 import {NEW_DIALOG_PARAM} from '../utils/UserManagementUtils';
 import {ORGANIZATION_HEADER} from './OrganizationsView';
+import {
+  addOrganization,
+  deleteOrganization,
+  editOrganization,
+  useOrganization,
+} from '../data/Organizations';
 import {generateTempId} from '../../../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useRouteMatch} from 'react-router-dom';
-import {useOrganization, addOrganization, editOrganization} from '../data/Organizations';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -67,7 +72,6 @@ function OrganizationsCard(props: Props) {
 
   const organizationId = match.params.id;
   const fetchedOrganization = useOrganization(organizationId || '');
-  console.log(fetchedOrganization);
 
   const isOnNewOrganization = organizationId === NEW_DIALOG_PARAM;
   const [organization, setOrganization] = useState<?Organization>(
@@ -119,7 +123,9 @@ function OrganizationsCard(props: Props) {
       },
       {
         id: 'organizationName',
-        name: isOnNewOrganization ? `${fbt('New Organization', '')}` : organization?.name || '',
+        name: isOnNewOrganization
+          ? `${fbt('New Organization', '')}`
+          : organization?.name || '',
       },
     ];
     const actions = [
@@ -134,7 +140,9 @@ function OrganizationsCard(props: Props) {
             if (organization == null) {
               return;
             }
-            const saveAction = isOnNewOrganization ? addOrganization : editOrganization;
+            const saveAction = isOnNewOrganization
+              ? addOrganization
+              : editOrganization;
             saveAction(organization).then(onClose).catch(handleError);
           }}>
           {Strings.common.saveButton}
@@ -174,7 +182,14 @@ function OrganizationsCard(props: Props) {
       subtitle: fbt('Manage organization details', ''),
       actionButtons: actions,
     };
-  }, [organization, handleError, isOnNewOrganization, onClose, props, redirectToOrganizationsView]);
+  }, [
+    organization,
+    handleError,
+    isOnNewOrganization,
+    onClose,
+    props,
+    redirectToOrganizationsView,
+  ]);
 
   if (organization == null) {
     return null;
@@ -187,10 +202,18 @@ function OrganizationsCard(props: Props) {
             item
             xs={8}
             className={classNames(classes.container, classes.vertical)}>
-            <OrganizationsDetailsPane organization={organization} onChange={setOrganization} />
+            <OrganizationsDetailsPane
+              organization={organization}
+              onChange={setOrganization}
+            />
           </Grid>
           <Grid item xs={4} className={classes.container}>
-            <OrganizationsMembersPane organization={organization} onChange={setOrganization} />
+            {!isOnNewOrganization && (
+              <OrganizationsMembersPane
+                organization={organization}
+                onChange={setOrganization}
+              />
+            )}
           </Grid>
         </Grid>
       </ViewContainer>
