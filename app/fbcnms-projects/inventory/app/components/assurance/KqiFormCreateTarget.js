@@ -12,26 +12,26 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import {MenuItem, Select} from '@material-ui/core';
+// import {MenuItem, Select} from '@material-ui/core';
 
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import type {AddKqiTargetMutationVariables} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
 
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
-import DateTimeFormat from '../../common/DateTimeFormat.js';
+// import DateTimeFormat from '../../common/DateTimeFormat.js';
 import Text from '@symphony/design-system/components/Text';
 import moment from 'moment';
-import {graphql} from 'relay-runtime';
+// import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {useFormInput} from './common/useFormInput';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+// import {useFormInput} from './common/useFormInput';
+// import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -145,8 +145,7 @@ const KqiFormCreateTarget = (props: Props) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
-  console.log('***Form Target***');
-  console.log(idKqi);
+
   function handleChange({target}) {
     setKqiTarget({
       data: {

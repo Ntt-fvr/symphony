@@ -87,12 +87,11 @@ const handleClick = () => {
 };
 
 const KqiTableAssociatedTarget = (props: Props) => {
-  const {dataTableTargets, create, edit, idKqi} = props;
+  const {dataTableTargets, create, edit} = props;
 
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
-  console.log('Tabla Targets');
-  console.log(idKqi);
+
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>

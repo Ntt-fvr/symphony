@@ -41,9 +41,9 @@ import EditKqiMutation from '../../mutations/EditKqiMutation';
 
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
-import {graphql} from 'relay-runtime';
+// import {graphql} from 'relay-runtime';
 import {useFormInput} from './common/useFormInput';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+// import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
