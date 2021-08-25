@@ -173,6 +173,53 @@ func (wou *WorkOrderUpdate) ClearCloseDate() *WorkOrderUpdate {
 	return wou
 }
 
+// SetDuration sets the duration field.
+func (wou *WorkOrderUpdate) SetDuration(f float64) *WorkOrderUpdate {
+	wou.mutation.ResetDuration()
+	wou.mutation.SetDuration(f)
+	return wou
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableDuration(f *float64) *WorkOrderUpdate {
+	if f != nil {
+		wou.SetDuration(*f)
+	}
+	return wou
+}
+
+// AddDuration adds f to duration.
+func (wou *WorkOrderUpdate) AddDuration(f float64) *WorkOrderUpdate {
+	wou.mutation.AddDuration(f)
+	return wou
+}
+
+// ClearDuration clears the value of duration.
+func (wou *WorkOrderUpdate) ClearDuration() *WorkOrderUpdate {
+	wou.mutation.ClearDuration()
+	return wou
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (wou *WorkOrderUpdate) SetSchedulledAt(t time.Time) *WorkOrderUpdate {
+	wou.mutation.SetSchedulledAt(t)
+	return wou
+}
+
+// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableSchedulledAt(t *time.Time) *WorkOrderUpdate {
+	if t != nil {
+		wou.SetSchedulledAt(*t)
+	}
+	return wou
+}
+
+// ClearSchedulledAt clears the value of schedulled_at.
+func (wou *WorkOrderUpdate) ClearSchedulledAt() *WorkOrderUpdate {
+	wou.mutation.ClearSchedulledAt()
+	return wou
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (wou *WorkOrderUpdate) SetTypeID(id int) *WorkOrderUpdate {
 	wou.mutation.SetTypeID(id)
@@ -843,6 +890,39 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldCloseDate,
+		})
+	}
+	if value, ok := wou.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wou.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if wou.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wou.mutation.SchedulledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if wou.mutation.SchedulledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldSchedulledAt,
 		})
 	}
 	if wou.mutation.TypeCleared() {
@@ -1686,6 +1766,53 @@ func (wouo *WorkOrderUpdateOne) ClearCloseDate() *WorkOrderUpdateOne {
 	return wouo
 }
 
+// SetDuration sets the duration field.
+func (wouo *WorkOrderUpdateOne) SetDuration(f float64) *WorkOrderUpdateOne {
+	wouo.mutation.ResetDuration()
+	wouo.mutation.SetDuration(f)
+	return wouo
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableDuration(f *float64) *WorkOrderUpdateOne {
+	if f != nil {
+		wouo.SetDuration(*f)
+	}
+	return wouo
+}
+
+// AddDuration adds f to duration.
+func (wouo *WorkOrderUpdateOne) AddDuration(f float64) *WorkOrderUpdateOne {
+	wouo.mutation.AddDuration(f)
+	return wouo
+}
+
+// ClearDuration clears the value of duration.
+func (wouo *WorkOrderUpdateOne) ClearDuration() *WorkOrderUpdateOne {
+	wouo.mutation.ClearDuration()
+	return wouo
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (wouo *WorkOrderUpdateOne) SetSchedulledAt(t time.Time) *WorkOrderUpdateOne {
+	wouo.mutation.SetSchedulledAt(t)
+	return wouo
+}
+
+// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableSchedulledAt(t *time.Time) *WorkOrderUpdateOne {
+	if t != nil {
+		wouo.SetSchedulledAt(*t)
+	}
+	return wouo
+}
+
+// ClearSchedulledAt clears the value of schedulled_at.
+func (wouo *WorkOrderUpdateOne) ClearSchedulledAt() *WorkOrderUpdateOne {
+	wouo.mutation.ClearSchedulledAt()
+	return wouo
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (wouo *WorkOrderUpdateOne) SetTypeID(id int) *WorkOrderUpdateOne {
 	wouo.mutation.SetTypeID(id)
@@ -2354,6 +2481,39 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldCloseDate,
+		})
+	}
+	if value, ok := wouo.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wouo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if wouo.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workorder.FieldDuration,
+		})
+	}
+	if value, ok := wouo.mutation.SchedulledAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if wouo.mutation.SchedulledAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldSchedulledAt,
 		})
 	}
 	if wouo.mutation.TypeCleared() {

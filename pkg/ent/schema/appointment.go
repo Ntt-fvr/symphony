@@ -6,6 +6,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
 // Appointment defines de appointment schema
@@ -16,7 +17,9 @@ type Appointment struct {
 // Fields returns Appointment fields.
 func (Appointment) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("appointment_date"),
+		field.Time("start"),
+		field.Time("end"),
+		field.Float("duration"),
 		field.Enum("status").
 			NamedValues(
 				"Active", "ACTIVE",
@@ -43,13 +46,8 @@ func (Appointment) Edges() []ent.Edge {
 
 func (Appointment) Policy() ent.Policy {
 	return authz.NewPolicy(
-		authz.WithQueryRules(
-			authz.WorkOrderReadPolicyRule(),
-		),
 		authz.WithMutationRules(
-			authz.WorkOrderWritePolicyRule(),
-			authz.AllowWorkOrderOwnerWrite(),
-			authz.AllowWorkOrderAssigneeWrite(),
+			privacy.AlwaysAllowRule(),
 		),
 	)
 }

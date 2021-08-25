@@ -67,6 +67,7 @@ type AddAppointmentInput struct {
 	AssigneeID  int       `json:"assigneeID"`
 	WorkorderID int       `json:"workorderID"`
 	Date        time.Time `json:"date"`
+	Duration    float64   `json:"duration"`
 }
 
 type AddBlockInstanceInput struct {
@@ -236,6 +237,7 @@ type AddWorkOrderInput struct {
 	Index               *int                      `json:"index"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
+	Duration            *float64                  `json:"duration"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -244,6 +246,7 @@ type AddWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+	Duration                     *float64                            `json:"duration"`
 }
 
 type AddWorkerTypeInput struct {
@@ -360,6 +363,7 @@ type EditAppointmentInput struct {
 	AssigneeID  int       `json:"assigneeID"`
 	WorkorderID int       `json:"workorderID"`
 	Date        time.Time `json:"date"`
+	Duration    float64   `json:"duration"`
 }
 
 type EditBlockInput struct {
@@ -504,6 +508,7 @@ type EditWorkOrderInput struct {
 	CheckList           []*CheckListItemInput     `json:"checkList"`
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	LocationID          *int                      `json:"locationId"`
+	Duration            *float64                  `json:"duration"`
 }
 
 type EditWorkOrderTypeInput struct {
@@ -513,6 +518,7 @@ type EditWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+	Duration                     *float64                            `json:"duration"`
 }
 
 type EditWorkerTypeInput struct {
@@ -993,6 +999,18 @@ type UpdateUserGroupsInput struct {
 	RemoveGroupIds []int `json:"removeGroupIds"`
 }
 
+type UserAvailability struct {
+	User          *ent.User `json:"user"`
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
+}
+
+type UserAvailabilityFilterInput struct {
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
+	Duration      float64   `json:"duration"`
+}
+
 type UserFilterInput struct {
 	FilterType    UserFilterType            `json:"filterType"`
 	Operator      enum.FilterOperator       `json:"operator"`
@@ -1465,18 +1483,20 @@ func (e TopologyLinkType) MarshalGQL(w io.Writer) {
 type UserFilterType string
 
 const (
-	UserFilterTypeUserName   UserFilterType = "USER_NAME"
-	UserFilterTypeUserStatus UserFilterType = "USER_STATUS"
+	UserFilterTypeUserName         UserFilterType = "USER_NAME"
+	UserFilterTypeUserStatus       UserFilterType = "USER_STATUS"
+	UserFilterTypeUserAvailability UserFilterType = "USER_AVAILABILITY"
 )
 
 var AllUserFilterType = []UserFilterType{
 	UserFilterTypeUserName,
 	UserFilterTypeUserStatus,
+	UserFilterTypeUserAvailability,
 }
 
 func (e UserFilterType) IsValid() bool {
 	switch e {
-	case UserFilterTypeUserName, UserFilterTypeUserStatus:
+	case UserFilterTypeUserName, UserFilterTypeUserStatus, UserFilterTypeUserAvailability:
 		return true
 	}
 	return false

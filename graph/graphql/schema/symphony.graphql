@@ -726,6 +726,7 @@ input AddWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input EditWorkOrderTypeInput {
@@ -736,6 +737,7 @@ input EditWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input AddWorkOrderInput {
@@ -752,6 +754,7 @@ input AddWorkOrderInput {
   index: Int
   status: WorkOrderStatus
   priority: WorkOrderPriority
+  duration: Float
 }
 
 input EditWorkOrderInput {
@@ -769,6 +772,7 @@ input EditWorkOrderInput {
   checkList: [CheckListItemInput!]
   checkListCategories: [CheckListCategoryInput!]
   locationId: ID
+  duration: Float
 }
 
 input TechnicianCheckListItemInput {
@@ -1879,6 +1883,7 @@ type WorkOrderTemplate {
   propertyTypes: [PropertyType]!
   checkListCategoryDefinitions: [CheckListCategoryDefinition!]!
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 """
@@ -1892,6 +1897,7 @@ type WorkOrderType implements Node {
   numberOfWorkOrders: Int!
   checkListCategoryDefinitions: [CheckListCategoryDefinition!]!
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 """
@@ -1925,6 +1931,7 @@ type WorkOrder implements Node & NamedNode {
   checkListCategories: [CheckListCategory!]!
   hyperlinks: [Hyperlink!]!
   closeDate: Time
+  duration: Float
 }
 
 """
@@ -2638,6 +2645,7 @@ what filters should we apply on users
 enum UserFilterType {
   USER_NAME
   USER_STATUS
+  USER_AVAILABILITY
 }
 
 """
@@ -4184,6 +4192,20 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): WorkerTypeConnection!
+  appointments(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): AppointmentConnection!
+  usersAvailability(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+    filterBy: [UserFilterInput!]
+    slotFilterBy: UserAvailabilityFilterInput!
+  ): [UserAvailability!]
 }
 
 type Mutation {
@@ -4415,8 +4437,8 @@ type Mutation {
 
   ): Equipment!
   addAppointment(input: AddAppointmentInput!): Appointment!
-  #editAppointment(input: EditAppointmentInput!): Appointment!
-
+  editAppointment(input: EditAppointmentInput!): Appointment!
+  removeAppointment(id: ID!): ID!
 }
 
 """
@@ -4529,7 +4551,9 @@ type Appointment implements Node {
   creationDate: Time!
   assignee: User!
   workOrder: WorkOrder!
-  appointmentDate: Time!
+  start: Time!
+  end: Time!
+  duration: Float!
 }
 
 input AddAppointmentInput {
@@ -4537,6 +4561,7 @@ input AddAppointmentInput {
   assigneeID: ID!
   workorderID: ID!
   date: Time!
+  duration: Float!
 }
 
 input EditAppointmentInput {
@@ -4544,4 +4569,18 @@ input EditAppointmentInput {
   assigneeID: ID!
   workorderID: ID!
   date: Time!
+  duration: Float!
+}
+
+type UserAvailability {
+  user: User!
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+
+input UserAvailabilityFilterInput {
+#  Userfilters: [UserFilterInput]
+  slotStartDate: Time!
+  slotEndDate: Time!
+  duration: Float!
 }

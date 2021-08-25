@@ -31,6 +31,9 @@ func (WorkOrderTemplateMixin) Fields() []ent.Field {
 		field.Bool("assignee_can_complete_work_order").
 			Optional().
 			Default(true),
+		field.Float("duration").
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -160,6 +163,12 @@ func (WorkOrder) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("CLOSED_AT"),
 			),
+		field.Float("duration").
+			Optional().
+			Nillable(),
+		field.Time("schedulled_at").
+			Optional().
+			Nillable(),
 	}
 }
 

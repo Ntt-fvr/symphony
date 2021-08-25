@@ -33,9 +33,28 @@ func (au *AppointmentUpdate) Where(ps ...predicate.Appointment) *AppointmentUpda
 	return au
 }
 
-// SetAppointmentDate sets the appointment_date field.
-func (au *AppointmentUpdate) SetAppointmentDate(t time.Time) *AppointmentUpdate {
-	au.mutation.SetAppointmentDate(t)
+// SetStart sets the start field.
+func (au *AppointmentUpdate) SetStart(t time.Time) *AppointmentUpdate {
+	au.mutation.SetStart(t)
+	return au
+}
+
+// SetEnd sets the end field.
+func (au *AppointmentUpdate) SetEnd(t time.Time) *AppointmentUpdate {
+	au.mutation.SetEnd(t)
+	return au
+}
+
+// SetDuration sets the duration field.
+func (au *AppointmentUpdate) SetDuration(f float64) *AppointmentUpdate {
+	au.mutation.ResetDuration()
+	au.mutation.SetDuration(f)
+	return au
+}
+
+// AddDuration adds f to duration.
+func (au *AppointmentUpdate) AddDuration(f float64) *AppointmentUpdate {
+	au.mutation.AddDuration(f)
 	return au
 }
 
@@ -215,11 +234,32 @@ func (au *AppointmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: appointment.FieldUpdateTime,
 		})
 	}
-	if value, ok := au.mutation.AppointmentDate(); ok {
+	if value, ok := au.mutation.Start(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: appointment.FieldAppointmentDate,
+			Column: appointment.FieldStart,
+		})
+	}
+	if value, ok := au.mutation.End(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appointment.FieldEnd,
+		})
+	}
+	if value, ok := au.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: appointment.FieldDuration,
+		})
+	}
+	if value, ok := au.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: appointment.FieldDuration,
 		})
 	}
 	if value, ok := au.mutation.Status(); ok {
@@ -324,9 +364,28 @@ type AppointmentUpdateOne struct {
 	mutation *AppointmentMutation
 }
 
-// SetAppointmentDate sets the appointment_date field.
-func (auo *AppointmentUpdateOne) SetAppointmentDate(t time.Time) *AppointmentUpdateOne {
-	auo.mutation.SetAppointmentDate(t)
+// SetStart sets the start field.
+func (auo *AppointmentUpdateOne) SetStart(t time.Time) *AppointmentUpdateOne {
+	auo.mutation.SetStart(t)
+	return auo
+}
+
+// SetEnd sets the end field.
+func (auo *AppointmentUpdateOne) SetEnd(t time.Time) *AppointmentUpdateOne {
+	auo.mutation.SetEnd(t)
+	return auo
+}
+
+// SetDuration sets the duration field.
+func (auo *AppointmentUpdateOne) SetDuration(f float64) *AppointmentUpdateOne {
+	auo.mutation.ResetDuration()
+	auo.mutation.SetDuration(f)
+	return auo
+}
+
+// AddDuration adds f to duration.
+func (auo *AppointmentUpdateOne) AddDuration(f float64) *AppointmentUpdateOne {
+	auo.mutation.AddDuration(f)
 	return auo
 }
 
@@ -504,11 +563,32 @@ func (auo *AppointmentUpdateOne) sqlSave(ctx context.Context) (_node *Appointmen
 			Column: appointment.FieldUpdateTime,
 		})
 	}
-	if value, ok := auo.mutation.AppointmentDate(); ok {
+	if value, ok := auo.mutation.Start(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: appointment.FieldAppointmentDate,
+			Column: appointment.FieldStart,
+		})
+	}
+	if value, ok := auo.mutation.End(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appointment.FieldEnd,
+		})
+	}
+	if value, ok := auo.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: appointment.FieldDuration,
+		})
+	}
+	if value, ok := auo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: appointment.FieldDuration,
 		})
 	}
 	if value, ok := auo.mutation.Status(); ok {

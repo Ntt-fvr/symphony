@@ -139,7 +139,8 @@ func (r mutationResolver) internalAddWorkOrder(
 		SetNillableDescription(input.Description).
 		SetCreationDate(time.Now()).
 		SetNillableIndex(input.Index).
-		SetNillableAssigneeID(input.AssigneeID)
+		SetNillableAssigneeID(input.AssigneeID).
+		SetNillableDuration(input.Duration)
 	if input.OwnerID != nil {
 		mutation = mutation.SetOwnerID(*input.OwnerID)
 	} else {
@@ -200,7 +201,8 @@ func (r mutationResolver) EditWorkOrder(
 		SetNillableDescription(input.Description).
 		SetNillableIndex(input.Index).
 		SetNillableStatus(input.Status).
-		SetNillablePriority(input.Priority)
+		SetNillablePriority(input.Priority).
+		SetNillableDuration(input.Duration)
 
 	if input.AssigneeID != nil {
 		mutation.SetAssigneeID(*input.AssigneeID)
@@ -561,6 +563,7 @@ func (r mutationResolver) AddWorkOrderType(
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
 		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder).
+		SetNillableDuration(input.Duration).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -604,7 +607,8 @@ func (r mutationResolver) EditWorkOrderType(
 		UpdateOneID(input.ID).
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
-		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder)
+		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder).
+		SetNillableDuration(input.Duration)
 	currentCategories, err := wot.QueryCheckListCategoryDefinitions().IDs(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "querying checklist category definitions: id=%q", wot.ID)

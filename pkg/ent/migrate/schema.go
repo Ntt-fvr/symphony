@@ -52,7 +52,9 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "appointment_date", Type: field.TypeTime},
+		{Name: "start", Type: field.TypeTime},
+		{Name: "end", Type: field.TypeTime},
+		{Name: "duration", Type: field.TypeFloat64},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "CANCELLED"}, Default: "ACTIVE"},
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "user_appointment", Type: field.TypeInt, Nullable: true},
@@ -66,14 +68,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "appointments_users_appointment",
-				Columns: []*schema.Column{AppointmentsColumns[6]},
+				Columns: []*schema.Column{AppointmentsColumns[8]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "appointments_work_orders_appointment",
-				Columns: []*schema.Column{AppointmentsColumns[7]},
+				Columns: []*schema.Column{AppointmentsColumns[9]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1996,6 +1998,8 @@ var (
 		{Name: "creation_date", Type: field.TypeTime},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "close_date", Type: field.TypeTime, Nullable: true},
+		{Name: "duration", Type: field.TypeFloat64, Nullable: true},
+		{Name: "schedulled_at", Type: field.TypeTime, Nullable: true},
 		{Name: "project_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_type", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template", Type: field.TypeInt, Nullable: true},
@@ -2011,42 +2015,42 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "work_orders_projects_work_orders",
-				Columns: []*schema.Column{WorkOrdersColumns[11]},
+				Columns: []*schema.Column{WorkOrdersColumns[13]},
 
 				RefColumns: []*schema.Column{ProjectsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_types_type",
-				Columns: []*schema.Column{WorkOrdersColumns[12]},
+				Columns: []*schema.Column{WorkOrdersColumns[14]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_work_order_templates_template",
-				Columns: []*schema.Column{WorkOrdersColumns[13]},
+				Columns: []*schema.Column{WorkOrdersColumns[15]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_locations_location",
-				Columns: []*schema.Column{WorkOrdersColumns[14]},
+				Columns: []*schema.Column{WorkOrdersColumns[16]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_owner",
-				Columns: []*schema.Column{WorkOrdersColumns[15]},
+				Columns: []*schema.Column{WorkOrdersColumns[17]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_orders_users_assignee",
-				Columns: []*schema.Column{WorkOrdersColumns[16]},
+				Columns: []*schema.Column{WorkOrdersColumns[18]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2122,6 +2126,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "assignee_can_complete_work_order", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "duration", Type: field.TypeFloat64, Nullable: true},
 		{Name: "work_order_template_type", Type: field.TypeInt, Nullable: true},
 	}
 	// WorkOrderTemplatesTable holds the schema information for the "work_order_templates" table.
@@ -2132,7 +2137,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "work_order_templates_work_order_types_type",
-				Columns: []*schema.Column{WorkOrderTemplatesColumns[6]},
+				Columns: []*schema.Column{WorkOrderTemplatesColumns[7]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2147,6 +2152,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "assignee_can_complete_work_order", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "duration", Type: field.TypeFloat64, Nullable: true},
 	}
 	// WorkOrderTypesTable holds the schema information for the "work_order_types" table.
 	WorkOrderTypesTable = &schema.Table{

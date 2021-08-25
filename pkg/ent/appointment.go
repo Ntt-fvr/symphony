@@ -26,8 +26,12 @@ type Appointment struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// AppointmentDate holds the value of the "appointment_date" field.
-	AppointmentDate time.Time `json:"appointment_date,omitempty"`
+	// Start holds the value of the "start" field.
+	Start time.Time `json:"start,omitempty"`
+	// End holds the value of the "end" field.
+	End time.Time `json:"end,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration float64 `json:"duration,omitempty"`
 	// Status holds the value of the "status" field.
 	Status appointment.Status `json:"status,omitempty"`
 	// CreationDate holds the value of the "creation_date" field.
@@ -81,12 +85,14 @@ func (e AppointmentEdges) AssigneeOrErr() (*User, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Appointment) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{},  // id
-		&sql.NullTime{},   // create_time
-		&sql.NullTime{},   // update_time
-		&sql.NullTime{},   // appointment_date
-		&sql.NullString{}, // status
-		&sql.NullTime{},   // creation_date
+		&sql.NullInt64{},   // id
+		&sql.NullTime{},    // create_time
+		&sql.NullTime{},    // update_time
+		&sql.NullTime{},    // start
+		&sql.NullTime{},    // end
+		&sql.NullFloat64{}, // duration
+		&sql.NullString{},  // status
+		&sql.NullTime{},    // creation_date
 	}
 }
 
@@ -121,21 +127,31 @@ func (a *Appointment) assignValues(values ...interface{}) error {
 		a.UpdateTime = value.Time
 	}
 	if value, ok := values[2].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field appointment_date", values[2])
+		return fmt.Errorf("unexpected type %T for field start", values[2])
 	} else if value.Valid {
-		a.AppointmentDate = value.Time
+		a.Start = value.Time
 	}
-	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field status", values[3])
+	if value, ok := values[3].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field end", values[3])
+	} else if value.Valid {
+		a.End = value.Time
+	}
+	if value, ok := values[4].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field duration", values[4])
+	} else if value.Valid {
+		a.Duration = value.Float64
+	}
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[5])
 	} else if value.Valid {
 		a.Status = appointment.Status(value.String)
 	}
-	if value, ok := values[4].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field creation_date", values[4])
+	if value, ok := values[6].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field creation_date", values[6])
 	} else if value.Valid {
 		a.CreationDate = value.Time
 	}
-	values = values[5:]
+	values = values[7:]
 	if len(values) == len(appointment.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field user_appointment", value)
@@ -190,8 +206,12 @@ func (a *Appointment) String() string {
 	builder.WriteString(a.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(a.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", appointment_date=")
-	builder.WriteString(a.AppointmentDate.Format(time.ANSIC))
+	builder.WriteString(", start=")
+	builder.WriteString(a.Start.Format(time.ANSIC))
+	builder.WriteString(", end=")
+	builder.WriteString(a.End.Format(time.ANSIC))
+	builder.WriteString(", duration=")
+	builder.WriteString(fmt.Sprintf("%v", a.Duration))
 	builder.WriteString(", status=")
 	builder.WriteString(fmt.Sprintf("%v", a.Status))
 	builder.WriteString(", creation_date=")

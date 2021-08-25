@@ -162,6 +162,34 @@ func (woc *WorkOrderCreate) SetNillableCloseDate(t *time.Time) *WorkOrderCreate 
 	return woc
 }
 
+// SetDuration sets the duration field.
+func (woc *WorkOrderCreate) SetDuration(f float64) *WorkOrderCreate {
+	woc.mutation.SetDuration(f)
+	return woc
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableDuration(f *float64) *WorkOrderCreate {
+	if f != nil {
+		woc.SetDuration(*f)
+	}
+	return woc
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (woc *WorkOrderCreate) SetSchedulledAt(t time.Time) *WorkOrderCreate {
+	woc.mutation.SetSchedulledAt(t)
+	return woc
+}
+
+// SetNillableSchedulledAt sets the schedulled_at field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableSchedulledAt(t *time.Time) *WorkOrderCreate {
+	if t != nil {
+		woc.SetSchedulledAt(*t)
+	}
+	return woc
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (woc *WorkOrderCreate) SetTypeID(id int) *WorkOrderCreate {
 	woc.mutation.SetTypeID(id)
@@ -617,6 +645,22 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Column: workorder.FieldCloseDate,
 		})
 		_node.CloseDate = &value
+	}
+	if value, ok := woc.mutation.Duration(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workorder.FieldDuration,
+		})
+		_node.Duration = &value
+	}
+	if value, ok := woc.mutation.SchedulledAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldSchedulledAt,
+		})
+		_node.SchedulledAt = &value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

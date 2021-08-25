@@ -54,9 +54,21 @@ func (ac *AppointmentCreate) SetNillableUpdateTime(t *time.Time) *AppointmentCre
 	return ac
 }
 
-// SetAppointmentDate sets the appointment_date field.
-func (ac *AppointmentCreate) SetAppointmentDate(t time.Time) *AppointmentCreate {
-	ac.mutation.SetAppointmentDate(t)
+// SetStart sets the start field.
+func (ac *AppointmentCreate) SetStart(t time.Time) *AppointmentCreate {
+	ac.mutation.SetStart(t)
+	return ac
+}
+
+// SetEnd sets the end field.
+func (ac *AppointmentCreate) SetEnd(t time.Time) *AppointmentCreate {
+	ac.mutation.SetEnd(t)
+	return ac
+}
+
+// SetDuration sets the duration field.
+func (ac *AppointmentCreate) SetDuration(f float64) *AppointmentCreate {
+	ac.mutation.SetDuration(f)
 	return ac
 }
 
@@ -192,8 +204,14 @@ func (ac *AppointmentCreate) check() error {
 	if _, ok := ac.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
-	if _, ok := ac.mutation.AppointmentDate(); !ok {
-		return &ValidationError{Name: "appointment_date", err: errors.New("ent: missing required field \"appointment_date\"")}
+	if _, ok := ac.mutation.Start(); !ok {
+		return &ValidationError{Name: "start", err: errors.New("ent: missing required field \"start\"")}
+	}
+	if _, ok := ac.mutation.End(); !ok {
+		return &ValidationError{Name: "end", err: errors.New("ent: missing required field \"end\"")}
+	}
+	if _, ok := ac.mutation.Duration(); !ok {
+		return &ValidationError{Name: "duration", err: errors.New("ent: missing required field \"duration\"")}
 	}
 	if _, ok := ac.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
@@ -249,13 +267,29 @@ func (ac *AppointmentCreate) createSpec() (*Appointment, *sqlgraph.CreateSpec) {
 		})
 		_node.UpdateTime = value
 	}
-	if value, ok := ac.mutation.AppointmentDate(); ok {
+	if value, ok := ac.mutation.Start(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: appointment.FieldAppointmentDate,
+			Column: appointment.FieldStart,
 		})
-		_node.AppointmentDate = value
+		_node.Start = value
+	}
+	if value, ok := ac.mutation.End(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appointment.FieldEnd,
+		})
+		_node.End = value
+	}
+	if value, ok := ac.mutation.Duration(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: appointment.FieldDuration,
+		})
+		_node.Duration = value
 	}
 	if value, ok := ac.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

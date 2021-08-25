@@ -24,8 +24,12 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldAppointmentDate holds the string denoting the appointment_date field in the database.
-	FieldAppointmentDate = "appointment_date"
+	// FieldStart holds the string denoting the start field in the database.
+	FieldStart = "start"
+	// FieldEnd holds the string denoting the end field in the database.
+	FieldEnd = "end"
+	// FieldDuration holds the string denoting the duration field in the database.
+	FieldDuration = "duration"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldCreationDate holds the string denoting the creation_date field in the database.
@@ -59,7 +63,9 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
-	FieldAppointmentDate,
+	FieldStart,
+	FieldEnd,
+	FieldDuration,
 	FieldStatus,
 	FieldCreationDate,
 }

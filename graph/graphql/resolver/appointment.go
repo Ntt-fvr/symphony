@@ -7,10 +7,14 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/pkg/errors"
 )
 
@@ -39,12 +43,15 @@ func (appointmentResolver) WorkOrder(ctx context.Context, appointment *ent.Appoi
 func (r mutationResolver) AddAppointment(
 	ctx context.Context, input models.AddAppointmentInput,
 ) (*ent.Appointment, error) {
+	sd, _ := time.ParseDuration(strconv.FormatFloat(input.Duration, 'f', -1, 64) + "h")
 	a, err := r.ClientFrom(ctx).
 		Appointment.Create().
 		SetAssigneeID(input.AssigneeID).
 		SetWorkorderID(input.WorkorderID).
 		SetCreationDate(time.Now()).
-		SetAppointmentDate(input.Date).
+		SetStart(input.Date).
+		SetEnd(input.Date.Add(sd)).
+		SetDuration(input.Duration).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("creating appointment: %w", err)
@@ -60,13 +67,53 @@ func (r mutationResolver) EditAppointment(
 	if err != nil {
 		return nil, errors.Wrap(err, "querying appointment")
 	}
+	sd, _ := time.ParseDuration(strconv.FormatFloat(input.Duration, 'f', -1, 64) + "h")
 	mutation := client.Appointment.
 		UpdateOne(a).
 		SetAssigneeID(input.AssigneeID).
 		SetWorkorderID(input.WorkorderID).
-		SetAppointmentDate(input.Date)
+		SetStart(input.Date).
+		SetEnd(input.Date.Add(sd)).
+		SetDuration(input.Duration)
 
 	return mutation.Save(ctx)
+}
+
+func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, error) {
+	client := r.ClientFrom(ctx)
+	t, err := client.Appointment.Query().
+		Where(
+			appointment.ID(id),
+		).
+		Only(ctx)
+	if err != nil {
+		return id, errors.Wrapf(err, "querying appointment: id=%q", id)
+	}
+	wo, err := client.WorkOrder.Query().
+		Where(workorder.HasAppointmentWith(appointment.ID(id))).
+		Only(ctx)
+
+	if err != nil {
+		return id, errors.Wrap(err, "querying workorder")
+	}
+
+	wo.Update().ClearAppointment().Exec(ctx)
+
+	u, err := client.User.Query().
+		Where(user.HasAppointmentWith(appointment.ID(id))).
+		Only(ctx)
+
+	u.Update().ClearAppointment().Exec(ctx)
+
+	if err := client.Appointment.DeleteOne(t).Exec(ctx); err != nil {
+		return id, errors.Wrap(err, "deleting appointment type")
+	}
+	return id, nil
+}
+
+func (appointmentResolver) AppointmentDate(ctx context.Context, appointment *ent.Appointment) (*time.Time, error) {
+	s := appointment.Start
+	return &s, nil
 }
 
 //*/

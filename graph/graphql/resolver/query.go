@@ -10,11 +10,14 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strconv"
+	"time"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
@@ -581,4 +584,92 @@ func (r queryResolver) getNextConnectedPortWithLink(ctx context.Context, port *e
 func (r queryResolver) WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error) {
 	return r.ClientFrom(ctx).WorkerType.Query().
 		Paginate(ctx, after, first, before, last)
+}
+
+func (r queryResolver) Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.AppointmentConnection, error) {
+	return r.ClientFrom(ctx).Appointment.Query().
+		Paginate(ctx, after, first, before, last)
+}
+
+func (r queryResolver) UsersAvailability(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	filterBy []*models.UserFilterInput,
+	slotFilterBy models.UserAvailabilityFilterInput) ([]*models.UserAvailability, error) {
+	query := r.ClientFrom(ctx).User.Query()
+	query, err := resolverutil.UserFilter(query, filterBy)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		users []*models.UserAvailability
+		uas   *models.UserAvailability
+		prev  *ent.Appointment
+	)
+
+	sd, _ := time.ParseDuration(strconv.FormatFloat(slotFilterBy.Duration, 'f', -1, 64) + "h")
+	nsd, _ := time.ParseDuration("-" + strconv.FormatFloat(slotFilterBy.Duration, 'f', -1, 64) + "h")
+
+	u := query.AllX(ctx)
+
+	for _, us := range u {
+		qaps := r.ClientFrom(ctx).Debug().User.QueryAppointment(us).
+			Where(appointment.Or(
+				appointment.And(
+					appointment.StartLTE(slotFilterBy.SlotStartDate),
+					appointment.EndGT(slotFilterBy.SlotStartDate)),
+				appointment.And(
+					appointment.StartGTE(slotFilterBy.SlotStartDate),
+					appointment.StartLTE(slotFilterBy.SlotEndDate)))).Order(ent.Asc(appointment.FieldStart))
+
+		aps := qaps.AllX(ctx)
+		naps, err := qaps.Count(ctx)
+
+		if err != nil {
+			return nil, err
+		}
+
+		i := 0
+		uas = nil
+
+		for _, a := range aps {
+			i++
+			if i == 1 {
+				if resolverutil.GE(a.Start.Add(nsd), slotFilterBy.SlotStartDate) {
+					uas = &models.UserAvailability{
+						User:          us,
+						SlotStartDate: slotFilterBy.SlotStartDate,
+						SlotEndDate:   slotFilterBy.SlotStartDate.Add(sd),
+					}
+					break
+				}
+				prev = a
+			} else {
+				if resolverutil.GE(a.Start.Add(nsd), prev.End) {
+					uas = &models.UserAvailability{
+						User:          us,
+						SlotStartDate: prev.End,
+						SlotEndDate:   prev.End.Add(sd),
+					}
+					break
+				} else if i == naps {
+					uas = &models.UserAvailability{
+						User:          us,
+						SlotStartDate: a.End,
+						SlotEndDate:   a.End.Add(sd),
+					}
+					break
+				}
+				prev = a
+			}
+		}
+
+		if uas != nil {
+			users = append(users, uas)
+		}
+	}
+
+	return users, nil
 }

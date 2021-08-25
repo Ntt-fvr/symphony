@@ -45,6 +45,10 @@ type WorkOrder struct {
 	Index int `json:"index,omitempty"`
 	// CloseDate holds the value of the "close_date" field.
 	CloseDate *time.Time `json:"close_date,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration *float64 `json:"duration,omitempty"`
+	// SchedulledAt holds the value of the "schedulled_at" field.
+	SchedulledAt *time.Time `json:"schedulled_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
 	Edges               WorkOrderEdges `json:"edges"`
@@ -261,17 +265,19 @@ func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*WorkOrder) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{},  // id
-		&sql.NullTime{},   // create_time
-		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // name
-		&sql.NullString{}, // status
-		&sql.NullString{}, // priority
-		&sql.NullString{}, // description
-		&sql.NullTime{},   // install_date
-		&sql.NullTime{},   // creation_date
-		&sql.NullInt64{},  // index
-		&sql.NullTime{},   // close_date
+		&sql.NullInt64{},   // id
+		&sql.NullTime{},    // create_time
+		&sql.NullTime{},    // update_time
+		&sql.NullString{},  // name
+		&sql.NullString{},  // status
+		&sql.NullString{},  // priority
+		&sql.NullString{},  // description
+		&sql.NullTime{},    // install_date
+		&sql.NullTime{},    // creation_date
+		&sql.NullInt64{},   // index
+		&sql.NullTime{},    // close_date
+		&sql.NullFloat64{}, // duration
+		&sql.NullTime{},    // schedulled_at
 	}
 }
 
@@ -352,7 +358,19 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		wo.CloseDate = new(time.Time)
 		*wo.CloseDate = value.Time
 	}
-	values = values[10:]
+	if value, ok := values[10].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field duration", values[10])
+	} else if value.Valid {
+		wo.Duration = new(float64)
+		*wo.Duration = value.Float64
+	}
+	if value, ok := values[11].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field schedulled_at", values[11])
+	} else if value.Valid {
+		wo.SchedulledAt = new(time.Time)
+		*wo.SchedulledAt = value.Time
+	}
+	values = values[12:]
 	if len(values) == len(workorder.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_work_orders", value)
@@ -516,6 +534,14 @@ func (wo *WorkOrder) String() string {
 	builder.WriteString(fmt.Sprintf("%v", wo.Index))
 	if v := wo.CloseDate; v != nil {
 		builder.WriteString(", close_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	if v := wo.Duration; v != nil {
+		builder.WriteString(", duration=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := wo.SchedulledAt; v != nil {
+		builder.WriteString(", schedulled_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteByte(')')

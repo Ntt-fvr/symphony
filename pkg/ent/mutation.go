@@ -968,7 +968,10 @@ type AppointmentMutation struct {
 	id               *int
 	create_time      *time.Time
 	update_time      *time.Time
-	appointment_date *time.Time
+	start            *time.Time
+	end              *time.Time
+	duration         *float64
+	addduration      *float64
 	status           *appointment.Status
 	creation_date    *time.Time
 	clearedFields    map[string]struct{}
@@ -1134,41 +1137,135 @@ func (m *AppointmentMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
-// SetAppointmentDate sets the appointment_date field.
-func (m *AppointmentMutation) SetAppointmentDate(t time.Time) {
-	m.appointment_date = &t
+// SetStart sets the start field.
+func (m *AppointmentMutation) SetStart(t time.Time) {
+	m.start = &t
 }
 
-// AppointmentDate returns the appointment_date value in the mutation.
-func (m *AppointmentMutation) AppointmentDate() (r time.Time, exists bool) {
-	v := m.appointment_date
+// Start returns the start value in the mutation.
+func (m *AppointmentMutation) Start() (r time.Time, exists bool) {
+	v := m.start
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAppointmentDate returns the old appointment_date value of the Appointment.
+// OldStart returns the old start value of the Appointment.
 // If the Appointment object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *AppointmentMutation) OldAppointmentDate(ctx context.Context) (v time.Time, err error) {
+func (m *AppointmentMutation) OldStart(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldAppointmentDate is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldStart is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldAppointmentDate requires an ID field in the mutation")
+		return v, fmt.Errorf("OldStart requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppointmentDate: %w", err)
+		return v, fmt.Errorf("querying old value for OldStart: %w", err)
 	}
-	return oldValue.AppointmentDate, nil
+	return oldValue.Start, nil
 }
 
-// ResetAppointmentDate reset all changes of the "appointment_date" field.
-func (m *AppointmentMutation) ResetAppointmentDate() {
-	m.appointment_date = nil
+// ResetStart reset all changes of the "start" field.
+func (m *AppointmentMutation) ResetStart() {
+	m.start = nil
+}
+
+// SetEnd sets the end field.
+func (m *AppointmentMutation) SetEnd(t time.Time) {
+	m.end = &t
+}
+
+// End returns the end value in the mutation.
+func (m *AppointmentMutation) End() (r time.Time, exists bool) {
+	v := m.end
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnd returns the old end value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldEnd(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnd is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnd requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnd: %w", err)
+	}
+	return oldValue.End, nil
+}
+
+// ResetEnd reset all changes of the "end" field.
+func (m *AppointmentMutation) ResetEnd() {
+	m.end = nil
+}
+
+// SetDuration sets the duration field.
+func (m *AppointmentMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *AppointmentMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldDuration(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *AppointmentMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *AppointmentMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *AppointmentMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
 }
 
 // SetStatus sets the status field.
@@ -1337,15 +1434,21 @@ func (m *AppointmentMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *AppointmentMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, appointment.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, appointment.FieldUpdateTime)
 	}
-	if m.appointment_date != nil {
-		fields = append(fields, appointment.FieldAppointmentDate)
+	if m.start != nil {
+		fields = append(fields, appointment.FieldStart)
+	}
+	if m.end != nil {
+		fields = append(fields, appointment.FieldEnd)
+	}
+	if m.duration != nil {
+		fields = append(fields, appointment.FieldDuration)
 	}
 	if m.status != nil {
 		fields = append(fields, appointment.FieldStatus)
@@ -1365,8 +1468,12 @@ func (m *AppointmentMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case appointment.FieldUpdateTime:
 		return m.UpdateTime()
-	case appointment.FieldAppointmentDate:
-		return m.AppointmentDate()
+	case appointment.FieldStart:
+		return m.Start()
+	case appointment.FieldEnd:
+		return m.End()
+	case appointment.FieldDuration:
+		return m.Duration()
 	case appointment.FieldStatus:
 		return m.Status()
 	case appointment.FieldCreationDate:
@@ -1384,8 +1491,12 @@ func (m *AppointmentMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldCreateTime(ctx)
 	case appointment.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case appointment.FieldAppointmentDate:
-		return m.OldAppointmentDate(ctx)
+	case appointment.FieldStart:
+		return m.OldStart(ctx)
+	case appointment.FieldEnd:
+		return m.OldEnd(ctx)
+	case appointment.FieldDuration:
+		return m.OldDuration(ctx)
 	case appointment.FieldStatus:
 		return m.OldStatus(ctx)
 	case appointment.FieldCreationDate:
@@ -1413,12 +1524,26 @@ func (m *AppointmentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateTime(v)
 		return nil
-	case appointment.FieldAppointmentDate:
+	case appointment.FieldStart:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAppointmentDate(v)
+		m.SetStart(v)
+		return nil
+	case appointment.FieldEnd:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnd(v)
+		return nil
+	case appointment.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
 		return nil
 	case appointment.FieldStatus:
 		v, ok := value.(appointment.Status)
@@ -1441,13 +1566,21 @@ func (m *AppointmentMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *AppointmentMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addduration != nil {
+		fields = append(fields, appointment.FieldDuration)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *AppointmentMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case appointment.FieldDuration:
+		return m.AddedDuration()
+	}
 	return nil, false
 }
 
@@ -1456,6 +1589,13 @@ func (m *AppointmentMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *AppointmentMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case appointment.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Appointment numeric field %s", name)
 }
@@ -1490,8 +1630,14 @@ func (m *AppointmentMutation) ResetField(name string) error {
 	case appointment.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
-	case appointment.FieldAppointmentDate:
-		m.ResetAppointmentDate()
+	case appointment.FieldStart:
+		m.ResetStart()
+		return nil
+	case appointment.FieldEnd:
+		m.ResetEnd()
+		return nil
+	case appointment.FieldDuration:
+		m.ResetDuration()
 		return nil
 	case appointment.FieldStatus:
 		m.ResetStatus()
@@ -51869,6 +52015,9 @@ type WorkOrderMutation struct {
 	index                        *int
 	addindex                     *int
 	close_date                   *time.Time
+	duration                     *float64
+	addduration                  *float64
+	schedulled_at                *time.Time
 	clearedFields                map[string]struct{}
 	_type                        *int
 	cleared_type                 bool
@@ -52434,6 +52583,127 @@ func (m *WorkOrderMutation) CloseDateCleared() bool {
 func (m *WorkOrderMutation) ResetCloseDate() {
 	m.close_date = nil
 	delete(m.clearedFields, workorder.FieldCloseDate)
+}
+
+// SetDuration sets the duration field.
+func (m *WorkOrderMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *WorkOrderMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldDuration(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *WorkOrderMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *WorkOrderMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of duration.
+func (m *WorkOrderMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[workorder.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the field duration was cleared in this mutation.
+func (m *WorkOrderMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldDuration]
+	return ok
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *WorkOrderMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, workorder.FieldDuration)
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (m *WorkOrderMutation) SetSchedulledAt(t time.Time) {
+	m.schedulled_at = &t
+}
+
+// SchedulledAt returns the schedulled_at value in the mutation.
+func (m *WorkOrderMutation) SchedulledAt() (r time.Time, exists bool) {
+	v := m.schedulled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSchedulledAt returns the old schedulled_at value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldSchedulledAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSchedulledAt is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSchedulledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSchedulledAt: %w", err)
+	}
+	return oldValue.SchedulledAt, nil
+}
+
+// ClearSchedulledAt clears the value of schedulled_at.
+func (m *WorkOrderMutation) ClearSchedulledAt() {
+	m.schedulled_at = nil
+	m.clearedFields[workorder.FieldSchedulledAt] = struct{}{}
+}
+
+// SchedulledAtCleared returns if the field schedulled_at was cleared in this mutation.
+func (m *WorkOrderMutation) SchedulledAtCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldSchedulledAt]
+	return ok
+}
+
+// ResetSchedulledAt reset all changes of the "schedulled_at" field.
+func (m *WorkOrderMutation) ResetSchedulledAt() {
+	m.schedulled_at = nil
+	delete(m.clearedFields, workorder.FieldSchedulledAt)
 }
 
 // SetTypeID sets the type edge to WorkOrderType by id.
@@ -53161,7 +53431,7 @@ func (m *WorkOrderMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.create_time != nil {
 		fields = append(fields, workorder.FieldCreateTime)
 	}
@@ -53192,6 +53462,12 @@ func (m *WorkOrderMutation) Fields() []string {
 	if m.close_date != nil {
 		fields = append(fields, workorder.FieldCloseDate)
 	}
+	if m.duration != nil {
+		fields = append(fields, workorder.FieldDuration)
+	}
+	if m.schedulled_at != nil {
+		fields = append(fields, workorder.FieldSchedulledAt)
+	}
 	return fields
 }
 
@@ -53220,6 +53496,10 @@ func (m *WorkOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Index()
 	case workorder.FieldCloseDate:
 		return m.CloseDate()
+	case workorder.FieldDuration:
+		return m.Duration()
+	case workorder.FieldSchedulledAt:
+		return m.SchedulledAt()
 	}
 	return nil, false
 }
@@ -53249,6 +53529,10 @@ func (m *WorkOrderMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldIndex(ctx)
 	case workorder.FieldCloseDate:
 		return m.OldCloseDate(ctx)
+	case workorder.FieldDuration:
+		return m.OldDuration(ctx)
+	case workorder.FieldSchedulledAt:
+		return m.OldSchedulledAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -53328,6 +53612,20 @@ func (m *WorkOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCloseDate(v)
 		return nil
+	case workorder.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
+	case workorder.FieldSchedulledAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSchedulledAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -53339,6 +53637,9 @@ func (m *WorkOrderMutation) AddedFields() []string {
 	if m.addindex != nil {
 		fields = append(fields, workorder.FieldIndex)
 	}
+	if m.addduration != nil {
+		fields = append(fields, workorder.FieldDuration)
+	}
 	return fields
 }
 
@@ -53349,6 +53650,8 @@ func (m *WorkOrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case workorder.FieldIndex:
 		return m.AddedIndex()
+	case workorder.FieldDuration:
+		return m.AddedDuration()
 	}
 	return nil, false
 }
@@ -53364,6 +53667,13 @@ func (m *WorkOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddIndex(v)
+		return nil
+	case workorder.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder numeric field %s", name)
@@ -53384,6 +53694,12 @@ func (m *WorkOrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(workorder.FieldCloseDate) {
 		fields = append(fields, workorder.FieldCloseDate)
+	}
+	if m.FieldCleared(workorder.FieldDuration) {
+		fields = append(fields, workorder.FieldDuration)
+	}
+	if m.FieldCleared(workorder.FieldSchedulledAt) {
+		fields = append(fields, workorder.FieldSchedulledAt)
 	}
 	return fields
 }
@@ -53410,6 +53726,12 @@ func (m *WorkOrderMutation) ClearField(name string) error {
 		return nil
 	case workorder.FieldCloseDate:
 		m.ClearCloseDate()
+		return nil
+	case workorder.FieldDuration:
+		m.ClearDuration()
+		return nil
+	case workorder.FieldSchedulledAt:
+		m.ClearSchedulledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder nullable field %s", name)
@@ -53449,6 +53771,12 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 		return nil
 	case workorder.FieldCloseDate:
 		m.ResetCloseDate()
+		return nil
+	case workorder.FieldDuration:
+		m.ResetDuration()
+		return nil
+	case workorder.FieldSchedulledAt:
+		m.ResetSchedulledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)
@@ -54520,6 +54848,8 @@ type WorkOrderTemplateMutation struct {
 	name                                   *string
 	description                            *string
 	assignee_can_complete_work_order       *bool
+	duration                               *float64
+	addduration                            *float64
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
@@ -54824,6 +55154,77 @@ func (m *WorkOrderTemplateMutation) ResetAssigneeCanCompleteWorkOrder() {
 	delete(m.clearedFields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
 }
 
+// SetDuration sets the duration field.
+func (m *WorkOrderTemplateMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *WorkOrderTemplateMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the WorkOrderTemplate.
+// If the WorkOrderTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTemplateMutation) OldDuration(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *WorkOrderTemplateMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *WorkOrderTemplateMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of duration.
+func (m *WorkOrderTemplateMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[workordertemplate.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the field duration was cleared in this mutation.
+func (m *WorkOrderTemplateMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[workordertemplate.FieldDuration]
+	return ok
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *WorkOrderTemplateMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, workordertemplate.FieldDuration)
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (m *WorkOrderTemplateMutation) AddPropertyTypeIDs(ids ...int) {
 	if m.property_types == nil {
@@ -54983,7 +55384,7 @@ func (m *WorkOrderTemplateMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, workordertemplate.FieldCreateTime)
 	}
@@ -54998,6 +55399,9 @@ func (m *WorkOrderTemplateMutation) Fields() []string {
 	}
 	if m.assignee_can_complete_work_order != nil {
 		fields = append(fields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.duration != nil {
+		fields = append(fields, workordertemplate.FieldDuration)
 	}
 	return fields
 }
@@ -55017,6 +55421,8 @@ func (m *WorkOrderTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		return m.AssigneeCanCompleteWorkOrder()
+	case workordertemplate.FieldDuration:
+		return m.Duration()
 	}
 	return nil, false
 }
@@ -55036,6 +55442,8 @@ func (m *WorkOrderTemplateMutation) OldField(ctx context.Context, name string) (
 		return m.OldDescription(ctx)
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		return m.OldAssigneeCanCompleteWorkOrder(ctx)
+	case workordertemplate.FieldDuration:
+		return m.OldDuration(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrderTemplate field %s", name)
 }
@@ -55080,6 +55488,13 @@ func (m *WorkOrderTemplateMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetAssigneeCanCompleteWorkOrder(v)
 		return nil
+	case workordertemplate.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate field %s", name)
 }
@@ -55087,13 +55502,21 @@ func (m *WorkOrderTemplateMutation) SetField(name string, value ent.Value) error
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *WorkOrderTemplateMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addduration != nil {
+		fields = append(fields, workordertemplate.FieldDuration)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *WorkOrderTemplateMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case workordertemplate.FieldDuration:
+		return m.AddedDuration()
+	}
 	return nil, false
 }
 
@@ -55102,6 +55525,13 @@ func (m *WorkOrderTemplateMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *WorkOrderTemplateMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case workordertemplate.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate numeric field %s", name)
 }
@@ -55115,6 +55545,9 @@ func (m *WorkOrderTemplateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(workordertemplate.FieldAssigneeCanCompleteWorkOrder) {
 		fields = append(fields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.FieldCleared(workordertemplate.FieldDuration) {
+		fields = append(fields, workordertemplate.FieldDuration)
 	}
 	return fields
 }
@@ -55135,6 +55568,9 @@ func (m *WorkOrderTemplateMutation) ClearField(name string) error {
 		return nil
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		m.ClearAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertemplate.FieldDuration:
+		m.ClearDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate nullable field %s", name)
@@ -55159,6 +55595,9 @@ func (m *WorkOrderTemplateMutation) ResetField(name string) error {
 		return nil
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		m.ResetAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertemplate.FieldDuration:
+		m.ResetDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate field %s", name)
@@ -55308,6 +55747,8 @@ type WorkOrderTypeMutation struct {
 	name                                   *string
 	description                            *string
 	assignee_can_complete_work_order       *bool
+	duration                               *float64
+	addduration                            *float64
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
@@ -55616,6 +56057,77 @@ func (m *WorkOrderTypeMutation) ResetAssigneeCanCompleteWorkOrder() {
 	delete(m.clearedFields, workordertype.FieldAssigneeCanCompleteWorkOrder)
 }
 
+// SetDuration sets the duration field.
+func (m *WorkOrderTypeMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *WorkOrderTypeMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the WorkOrderType.
+// If the WorkOrderType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTypeMutation) OldDuration(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *WorkOrderTypeMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *WorkOrderTypeMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of duration.
+func (m *WorkOrderTypeMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[workordertype.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the field duration was cleared in this mutation.
+func (m *WorkOrderTypeMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[workordertype.FieldDuration]
+	return ok
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *WorkOrderTypeMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, workordertype.FieldDuration)
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (m *WorkOrderTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	if m.property_types == nil {
@@ -55842,7 +56354,7 @@ func (m *WorkOrderTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTypeMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, workordertype.FieldCreateTime)
 	}
@@ -55857,6 +56369,9 @@ func (m *WorkOrderTypeMutation) Fields() []string {
 	}
 	if m.assignee_can_complete_work_order != nil {
 		fields = append(fields, workordertype.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.duration != nil {
+		fields = append(fields, workordertype.FieldDuration)
 	}
 	return fields
 }
@@ -55876,6 +56391,8 @@ func (m *WorkOrderTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		return m.AssigneeCanCompleteWorkOrder()
+	case workordertype.FieldDuration:
+		return m.Duration()
 	}
 	return nil, false
 }
@@ -55895,6 +56412,8 @@ func (m *WorkOrderTypeMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldDescription(ctx)
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		return m.OldAssigneeCanCompleteWorkOrder(ctx)
+	case workordertype.FieldDuration:
+		return m.OldDuration(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrderType field %s", name)
 }
@@ -55939,6 +56458,13 @@ func (m *WorkOrderTypeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAssigneeCanCompleteWorkOrder(v)
 		return nil
+	case workordertype.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType field %s", name)
 }
@@ -55946,13 +56472,21 @@ func (m *WorkOrderTypeMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *WorkOrderTypeMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addduration != nil {
+		fields = append(fields, workordertype.FieldDuration)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *WorkOrderTypeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case workordertype.FieldDuration:
+		return m.AddedDuration()
+	}
 	return nil, false
 }
 
@@ -55961,6 +56495,13 @@ func (m *WorkOrderTypeMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *WorkOrderTypeMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case workordertype.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType numeric field %s", name)
 }
@@ -55974,6 +56515,9 @@ func (m *WorkOrderTypeMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(workordertype.FieldAssigneeCanCompleteWorkOrder) {
 		fields = append(fields, workordertype.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.FieldCleared(workordertype.FieldDuration) {
+		fields = append(fields, workordertype.FieldDuration)
 	}
 	return fields
 }
@@ -55994,6 +56538,9 @@ func (m *WorkOrderTypeMutation) ClearField(name string) error {
 		return nil
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		m.ClearAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertype.FieldDuration:
+		m.ClearDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType nullable field %s", name)
@@ -56018,6 +56565,9 @@ func (m *WorkOrderTypeMutation) ResetField(name string) error {
 		return nil
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		m.ResetAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertype.FieldDuration:
+		m.ResetDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType field %s", name)

@@ -197,7 +197,7 @@ func (a *Appointment) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     a.ID,
 		Type:   "Appointment",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 7),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -217,18 +217,34 @@ func (a *Appointment) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(a.AppointmentDate); err != nil {
+	if buf, err = json.Marshal(a.Start); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
 		Type:  "time.Time",
-		Name:  "appointment_date",
+		Name:  "start",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.End); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "time.Time",
+		Name:  "end",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "duration",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(a.Status); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "appointment.Status",
 		Name:  "status",
 		Value: string(buf),
@@ -236,7 +252,7 @@ func (a *Appointment) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(a.CreationDate); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "time.Time",
 		Name:  "creation_date",
 		Value: string(buf),
@@ -5539,7 +5555,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wo.ID,
 		Type:   "WorkOrder",
-		Fields: make([]*Field, 10),
+		Fields: make([]*Field, 12),
 		Edges:  make([]*Edge, 15),
 	}
 	var buf []byte
@@ -5621,6 +5637,22 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[9] = &Field{
 		Type:  "time.Time",
 		Name:  "close_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "float64",
+		Name:  "duration",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.SchedulledAt); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "time.Time",
+		Name:  "schedulled_at",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -5845,7 +5877,7 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderTemplate",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -5889,6 +5921,14 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(wot.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "duration",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "PropertyType",
 		Name: "property_types",
@@ -5926,7 +5966,7 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderType",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -5968,6 +6008,14 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "bool",
 		Name:  "assignee_can_complete_work_order",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "duration",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

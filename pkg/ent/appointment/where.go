@@ -111,10 +111,24 @@ func UpdateTime(v time.Time) predicate.Appointment {
 	})
 }
 
-// AppointmentDate applies equality check predicate on the "appointment_date" field. It's identical to AppointmentDateEQ.
-func AppointmentDate(v time.Time) predicate.Appointment {
+// Start applies equality check predicate on the "start" field. It's identical to StartEQ.
+func Start(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAppointmentDate), v))
+		s.Where(sql.EQ(s.C(FieldStart), v))
+	})
+}
+
+// End applies equality check predicate on the "end" field. It's identical to EndEQ.
+func End(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnd), v))
+	})
+}
+
+// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
+func Duration(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDuration), v))
 	})
 }
 
@@ -277,22 +291,22 @@ func UpdateTimeLTE(v time.Time) predicate.Appointment {
 	})
 }
 
-// AppointmentDateEQ applies the EQ predicate on the "appointment_date" field.
-func AppointmentDateEQ(v time.Time) predicate.Appointment {
+// StartEQ applies the EQ predicate on the "start" field.
+func StartEQ(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAppointmentDate), v))
+		s.Where(sql.EQ(s.C(FieldStart), v))
 	})
 }
 
-// AppointmentDateNEQ applies the NEQ predicate on the "appointment_date" field.
-func AppointmentDateNEQ(v time.Time) predicate.Appointment {
+// StartNEQ applies the NEQ predicate on the "start" field.
+func StartNEQ(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAppointmentDate), v))
+		s.Where(sql.NEQ(s.C(FieldStart), v))
 	})
 }
 
-// AppointmentDateIn applies the In predicate on the "appointment_date" field.
-func AppointmentDateIn(vs ...time.Time) predicate.Appointment {
+// StartIn applies the In predicate on the "start" field.
+func StartIn(vs ...time.Time) predicate.Appointment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -304,12 +318,12 @@ func AppointmentDateIn(vs ...time.Time) predicate.Appointment {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldAppointmentDate), v...))
+		s.Where(sql.In(s.C(FieldStart), v...))
 	})
 }
 
-// AppointmentDateNotIn applies the NotIn predicate on the "appointment_date" field.
-func AppointmentDateNotIn(vs ...time.Time) predicate.Appointment {
+// StartNotIn applies the NotIn predicate on the "start" field.
+func StartNotIn(vs ...time.Time) predicate.Appointment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -321,35 +335,187 @@ func AppointmentDateNotIn(vs ...time.Time) predicate.Appointment {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldAppointmentDate), v...))
+		s.Where(sql.NotIn(s.C(FieldStart), v...))
 	})
 }
 
-// AppointmentDateGT applies the GT predicate on the "appointment_date" field.
-func AppointmentDateGT(v time.Time) predicate.Appointment {
+// StartGT applies the GT predicate on the "start" field.
+func StartGT(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAppointmentDate), v))
+		s.Where(sql.GT(s.C(FieldStart), v))
 	})
 }
 
-// AppointmentDateGTE applies the GTE predicate on the "appointment_date" field.
-func AppointmentDateGTE(v time.Time) predicate.Appointment {
+// StartGTE applies the GTE predicate on the "start" field.
+func StartGTE(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAppointmentDate), v))
+		s.Where(sql.GTE(s.C(FieldStart), v))
 	})
 }
 
-// AppointmentDateLT applies the LT predicate on the "appointment_date" field.
-func AppointmentDateLT(v time.Time) predicate.Appointment {
+// StartLT applies the LT predicate on the "start" field.
+func StartLT(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAppointmentDate), v))
+		s.Where(sql.LT(s.C(FieldStart), v))
 	})
 }
 
-// AppointmentDateLTE applies the LTE predicate on the "appointment_date" field.
-func AppointmentDateLTE(v time.Time) predicate.Appointment {
+// StartLTE applies the LTE predicate on the "start" field.
+func StartLTE(v time.Time) predicate.Appointment {
 	return predicate.Appointment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAppointmentDate), v))
+		s.Where(sql.LTE(s.C(FieldStart), v))
+	})
+}
+
+// EndEQ applies the EQ predicate on the "end" field.
+func EndEQ(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnd), v))
+	})
+}
+
+// EndNEQ applies the NEQ predicate on the "end" field.
+func EndNEQ(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnd), v))
+	})
+}
+
+// EndIn applies the In predicate on the "end" field.
+func EndIn(vs ...time.Time) predicate.Appointment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Appointment(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldEnd), v...))
+	})
+}
+
+// EndNotIn applies the NotIn predicate on the "end" field.
+func EndNotIn(vs ...time.Time) predicate.Appointment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Appointment(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldEnd), v...))
+	})
+}
+
+// EndGT applies the GT predicate on the "end" field.
+func EndGT(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEnd), v))
+	})
+}
+
+// EndGTE applies the GTE predicate on the "end" field.
+func EndGTE(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEnd), v))
+	})
+}
+
+// EndLT applies the LT predicate on the "end" field.
+func EndLT(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEnd), v))
+	})
+}
+
+// EndLTE applies the LTE predicate on the "end" field.
+func EndLTE(v time.Time) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEnd), v))
+	})
+}
+
+// DurationEQ applies the EQ predicate on the "duration" field.
+func DurationEQ(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDuration), v))
+	})
+}
+
+// DurationNEQ applies the NEQ predicate on the "duration" field.
+func DurationNEQ(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDuration), v))
+	})
+}
+
+// DurationIn applies the In predicate on the "duration" field.
+func DurationIn(vs ...float64) predicate.Appointment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Appointment(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDuration), v...))
+	})
+}
+
+// DurationNotIn applies the NotIn predicate on the "duration" field.
+func DurationNotIn(vs ...float64) predicate.Appointment {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Appointment(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDuration), v...))
+	})
+}
+
+// DurationGT applies the GT predicate on the "duration" field.
+func DurationGT(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDuration), v))
+	})
+}
+
+// DurationGTE applies the GTE predicate on the "duration" field.
+func DurationGTE(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDuration), v))
+	})
+}
+
+// DurationLT applies the LT predicate on the "duration" field.
+func DurationLT(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDuration), v))
+	})
+}
+
+// DurationLTE applies the LTE predicate on the "duration" field.
+func DurationLTE(v float64) predicate.Appointment {
+	return predicate.Appointment(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDuration), v))
 	})
 }
 
