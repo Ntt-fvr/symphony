@@ -14,7 +14,7 @@ export const AssuranceNavListItems = () => {
     <NavListItem
       key={1}
       label="Performance Catalog"
-      path={relativeUrl('/performance/counters_types')}
+      path={relativeUrl('/performance')}
       icon={<SummarizeIcon />}
       onClick={() => {
         ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED);
@@ -23,7 +23,7 @@ export const AssuranceNavListItems = () => {
     <NavListItem
       key={2}
       label="Fault Management"
-      path={relativeUrl('/fault_management/alarm_filtering')}
+      path={relativeUrl('/fault_management/alarm_admission')}
       icon={<ManageAccountsIcon />}
       onClick={() => {
         ServerLogger.info(LogEvents.FAULT_MANAGEMENT_TAB_NAVIGATION_CLICKED);
@@ -39,6 +39,7 @@ export const AssuranceNavListItems = () => {
           LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED,
         );
       }}
+      hidden
     />,
   ];
 };

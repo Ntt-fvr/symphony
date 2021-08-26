@@ -64,10 +64,6 @@ function AssuranceMain() {
                   path={relativeUrl('/fault_management')}
                   component={FaultManagement}
                 />
-                <Route
-                  path={relativeUrl('/service_quality')}
-                  component={ServiceQuality}
-                />
                 <Redirect
                   from="/assurance"
                   to={relativeUrl('/performance/counters_types')}
