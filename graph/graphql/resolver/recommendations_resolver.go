@@ -77,11 +77,13 @@ func (r mutationResolver) AddRecommendations(ctx context.Context, input models.A
 
 func (r mutationResolver) AddRecommendationsList(ctx context.Context, input models.AddRecommendationsListInput) ([]*ent.Recommendations, error) {
 	var list []*ent.Recommendations
+	logger := r.logger.For(ctx)
 	for _, recommendation := range input.Recommendations {
 		recommend, err := r.AddRecommendations(ctx, *recommendation)
 		if err != nil {
 			for _, deleting := range list {
-				r.RemoveRecommendations(ctx, deleting.ID)
+				_, e := r.RemoveRecommendations(ctx, deleting.ID)
+				logger.Info("recommendation removed " + fmt.Sprint(e))
 			}
 			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
 		}

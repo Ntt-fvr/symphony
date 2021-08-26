@@ -90,15 +90,15 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	var domainId int
+	var domainID int
 	var domain, err1 = et.Domain(ctx)
 	if err1 != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if domain != nil {
-		domainId = domain.ID
+		domainID = domain.ID
 	}
 
-	if input.Name != et.Name || input.DomainFk != domainId || input.Status != et.Status || input.Description != et.Description {
+	if input.Name != et.Name || input.DomainFk != domainID || input.Status != et.Status || input.Description != et.Description {
 		if et, err = client.Kpi.
 			UpdateOne(et).
 			SetName(input.Name).
