@@ -24,6 +24,22 @@ func (a *Activity) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 	return result, MaskNotFound(err)
 }
 
+func (af *AlarmFilter) AlarmStatusFk(ctx context.Context) (*AlarmStatus, error) {
+	result, err := af.Edges.AlarmStatusFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = af.QueryAlarmStatusFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (as *AlarmStatus) AlarmStatusFk(ctx context.Context) ([]*AlarmFilter, error) {
+	result, err := as.Edges.AlarmStatusFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = as.QueryAlarmStatusFk().All(ctx)
+	}
+	return result, err
+}
+
 func (b *Block) Flow(ctx context.Context) (*Flow, error) {
 	result, err := b.Edges.FlowOrErr()
 	if IsNotLoaded(err) {
@@ -224,10 +240,90 @@ func (c *Comment) Project(ctx context.Context) (*Project, error) {
 	return result, MaskNotFound(err)
 }
 
+func (c *Comparator) Comparatorrulelimit(ctx context.Context) ([]*RuleLimit, error) {
+	result, err := c.Edges.ComparatorrulelimitOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryComparatorrulelimit().All(ctx)
+	}
+	return result, err
+}
+
+func (c *Comparator) Comparatorkqitargetfk(ctx context.Context) ([]*KqiComparator, error) {
+	result, err := c.Edges.ComparatorkqitargetfkOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryComparatorkqitargetfk().All(ctx)
+	}
+	return result, err
+}
+
+func (c *Counter) Counterfamily(ctx context.Context) (*CounterFamily, error) {
+	result, err := c.Edges.CounterfamilyOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryCounterfamily().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Counter) Vendor(ctx context.Context) (*Vendor, error) {
+	result, err := c.Edges.VendorOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryVendor().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Counter) CounterFk(ctx context.Context) ([]*CounterFormula, error) {
+	result, err := c.Edges.CounterFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryCounterFk().All(ctx)
+	}
+	return result, err
+}
+
+func (cf *CounterFamily) Counterfamily(ctx context.Context) ([]*Counter, error) {
+	result, err := cf.Edges.CounterfamilyOrErr()
+	if IsNotLoaded(err) {
+		result, err = cf.QueryCounterfamily().All(ctx)
+	}
+	return result, err
+}
+
+func (cf *CounterFormula) Formula(ctx context.Context) (*Formula, error) {
+	result, err := cf.Edges.FormulaOrErr()
+	if IsNotLoaded(err) {
+		result, err = cf.QueryFormula().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (cf *CounterFormula) Counter(ctx context.Context) (*Counter, error) {
+	result, err := cf.Edges.CounterOrErr()
+	if IsNotLoaded(err) {
+		result, err = cf.QueryCounter().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (c *Customer) Services(ctx context.Context) ([]*Service, error) {
 	result, err := c.Edges.ServicesOrErr()
 	if IsNotLoaded(err) {
 		result, err = c.QueryServices().All(ctx)
+	}
+	return result, err
+}
+
+func (d *Domain) Techdomain(ctx context.Context) ([]*Tech, error) {
+	result, err := d.Edges.TechdomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = d.QueryTechdomain().All(ctx)
+	}
+	return result, err
+}
+
+func (d *Domain) Kpidomain(ctx context.Context) ([]*Kpi, error) {
+	result, err := d.Edges.KpidomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = d.QueryKpidomain().All(ctx)
 	}
 	return result, err
 }
@@ -528,6 +624,14 @@ func (et *EquipmentType) ServiceEndpointDefinitions(ctx context.Context) ([]*Ser
 	return result, err
 }
 
+func (es *EventSeverity) Eventseverityrule(ctx context.Context) ([]*Rule, error) {
+	result, err := es.Edges.EventseverityruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = es.QueryEventseverityrule().All(ctx)
+	}
+	return result, err
+}
+
 func (ep *ExitPoint) NextEntryPoints(ctx context.Context) ([]*EntryPoint, error) {
 	result, err := ep.Edges.NextEntryPointsOrErr()
 	if IsNotLoaded(err) {
@@ -628,6 +732,14 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	result, err := f.Edges.SurveyQuestionOrErr()
 	if IsNotLoaded(err) {
 		result, err = f.QuerySurveyQuestion().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := fct.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = fct.QueryLocationType().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -736,6 +848,30 @@ func (fi *FlowInstance) ParentSubflowBlock(ctx context.Context) (*BlockInstance,
 	return result, MaskNotFound(err)
 }
 
+func (f *Formula) Tech(ctx context.Context) (*Tech, error) {
+	result, err := f.Edges.TechOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryTech().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (f *Formula) Kpi(ctx context.Context) (*Kpi, error) {
+	result, err := f.Edges.KpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryKpi().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (f *Formula) Counterformula(ctx context.Context) ([]*CounterFormula, error) {
+	result, err := f.Edges.CounterformulaOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryCounterformula().All(ctx)
+	}
+	return result, err
+}
+
 func (h *Hyperlink) Equipment(ctx context.Context) (*Equipment, error) {
 	result, err := h.Edges.EquipmentOrErr()
 	if IsNotLoaded(err) {
@@ -758,6 +894,134 @@ func (h *Hyperlink) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 		result, err = h.QueryWorkOrder().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (k *Kpi) Domain(ctx context.Context) (*Domain, error) {
+	result, err := k.Edges.DomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryDomain().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kpi) Formulakpi(ctx context.Context) ([]*Formula, error) {
+	result, err := k.Edges.FormulakpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryFormulakpi().All(ctx)
+	}
+	return result, err
+}
+
+func (k *Kpi) Thresholdkpi(ctx context.Context) (*Threshold, error) {
+	result, err := k.Edges.ThresholdkpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryThresholdkpi().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiCategoryFk(ctx context.Context) (*KqiCategory, error) {
+	result, err := k.Edges.KqiCategoryFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiCategoryFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiPerspectiveFk(ctx context.Context) (*KqiPerspective, error) {
+	result, err := k.Edges.KqiPerspectiveFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiPerspectiveFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiSourceFk(ctx context.Context) (*KqiSource, error) {
+	result, err := k.Edges.KqiSourceFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiSourceFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiTemporalFrequencyFk(ctx context.Context) (*KqiTemporalFrequency, error) {
+	result, err := k.Edges.KqiTemporalFrequencyFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiTemporalFrequencyFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (k *Kqi) KqiTargetFk(ctx context.Context) ([]*KqiTarget, error) {
+	result, err := k.Edges.KqiTargetFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKqiTargetFk().All(ctx)
+	}
+	return result, err
+}
+
+func (kc *KqiCategory) KqiCategoryFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := kc.Edges.KqiCategoryFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kc.QueryKqiCategoryFk().All(ctx)
+	}
+	return result, err
+}
+
+func (kc *KqiComparator) Comparatorkqitargetfk(ctx context.Context) (*Comparator, error) {
+	result, err := kc.Edges.ComparatorkqitargetfkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kc.QueryComparatorkqitargetfk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (kc *KqiComparator) Kqitargetcomparatorfk(ctx context.Context) (*KqiTarget, error) {
+	result, err := kc.Edges.KqitargetcomparatorfkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kc.QueryKqitargetcomparatorfk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (kp *KqiPerspective) KqiPerspectiveFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := kp.Edges.KqiPerspectiveFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kp.QueryKqiPerspectiveFk().All(ctx)
+	}
+	return result, err
+}
+
+func (ks *KqiSource) KqiSourceFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := ks.Edges.KqiSourceFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = ks.QueryKqiSourceFk().All(ctx)
+	}
+	return result, err
+}
+
+func (kt *KqiTarget) KqiTargetFk(ctx context.Context) (*Kqi, error) {
+	result, err := kt.Edges.KqiTargetFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kt.QueryKqiTargetFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (kt *KqiTarget) Kqitargetcomparatorfk(ctx context.Context) ([]*KqiComparator, error) {
+	result, err := kt.Edges.KqitargetcomparatorfkOrErr()
+	if IsNotLoaded(err) {
+		result, err = kt.QueryKqitargetcomparatorfk().All(ctx)
+	}
+	return result, err
+}
+
+func (ktf *KqiTemporalFrequency) KqiTemporalFrequencyFk(ctx context.Context) ([]*Kqi, error) {
+	result, err := ktf.Edges.KqiTemporalFrequencyFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = ktf.QueryKqiTemporalFrequencyFk().All(ctx)
+	}
+	return result, err
 }
 
 func (l *Link) Ports(ctx context.Context) ([]*EquipmentPort, error) {
@@ -904,6 +1168,14 @@ func (lt *LocationType) PropertyTypes(ctx context.Context) ([]*PropertyType, err
 	return result, err
 }
 
+func (lt *LocationType) FileCategoryType(ctx context.Context) ([]*FileCategoryType, error) {
+	result, err := lt.Edges.FileCategoryTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryFileCategoryType().All(ctx)
+	}
+	return result, err
+}
+
 func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*SurveyTemplateCategory, error) {
 	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
@@ -912,10 +1184,42 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	return result, err
 }
 
+func (o *Organization) UserFk(ctx context.Context) ([]*User, error) {
+	result, err := o.Edges.UserFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryUserFk().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) WorkOrderFk(ctx context.Context) ([]*WorkOrder, error) {
+	result, err := o.Edges.WorkOrderFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryWorkOrderFk().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
+	result, err := o.Edges.PoliciesOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryPolicies().All(ctx)
+	}
+	return result, err
+}
+
 func (pp *PermissionsPolicy) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := pp.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
 		result, err = pp.QueryGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (pp *PermissionsPolicy) Organization(ctx context.Context) ([]*Organization, error) {
+	result, err := pp.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = pp.QueryOrganization().All(ctx)
 	}
 	return result, err
 }
@@ -1224,6 +1528,118 @@ func (pt *PropertyType) WorkerType(ctx context.Context) (*WorkerType, error) {
 	return result, MaskNotFound(err)
 }
 
+func (r *Recommendations) RecomendationSources(ctx context.Context) (*RecommendationsSources, error) {
+	result, err := r.Edges.RecomendationSourcesOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRecomendationSources().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) RecomendationCategory(ctx context.Context) (*RecommendationsCategory, error) {
+	result, err := r.Edges.RecomendationCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRecomendationCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) UserCreate(ctx context.Context) (*User, error) {
+	result, err := r.Edges.UserCreateOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryUserCreate().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) UserApprobed(ctx context.Context) (*User, error) {
+	result, err := r.Edges.UserApprobedOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryUserApprobed().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Recommendations) VendorsRecomendations(ctx context.Context) (*Vendor, error) {
+	result, err := r.Edges.VendorsRecomendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryVendorsRecomendations().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rc *RecommendationsCategory) Recommendations(ctx context.Context) ([]*Recommendations, error) {
+	result, err := rc.Edges.RecommendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = rc.QueryRecommendations().All(ctx)
+	}
+	return result, err
+}
+
+func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recommendations, error) {
+	result, err := rs.Edges.RecommendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = rs.QueryRecommendations().All(ctx)
+	}
+	return result, err
+}
+
+func (r *Rule) Ruletype(ctx context.Context) (*RuleType, error) {
+	result, err := r.Edges.RuletypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRuletype().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Rule) Eventseverity(ctx context.Context) (*EventSeverity, error) {
+	result, err := r.Edges.EventseverityOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryEventseverity().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Rule) Threshold(ctx context.Context) (*Threshold, error) {
+	result, err := r.Edges.ThresholdOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryThreshold().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (r *Rule) Rulelimitrule(ctx context.Context) ([]*RuleLimit, error) {
+	result, err := r.Edges.RulelimitruleOrErr()
+	if IsNotLoaded(err) {
+		result, err = r.QueryRulelimitrule().All(ctx)
+	}
+	return result, err
+}
+
+func (rl *RuleLimit) Comparator(ctx context.Context) (*Comparator, error) {
+	result, err := rl.Edges.ComparatorOrErr()
+	if IsNotLoaded(err) {
+		result, err = rl.QueryComparator().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rl *RuleLimit) Rule(ctx context.Context) (*Rule, error) {
+	result, err := rl.Edges.RuleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rl.QueryRule().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rt *RuleType) Ruletyperule(ctx context.Context) ([]*Rule, error) {
+	result, err := rt.Edges.RuletyperuleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryRuletyperule().All(ctx)
+	}
+	return result, err
+}
+
 func (s *Service) Type(ctx context.Context) (*ServiceType, error) {
 	result, err := s.Edges.TypeOrErr()
 	if IsNotLoaded(err) {
@@ -1504,6 +1920,38 @@ func (swfs *SurveyWiFiScan) Location(ctx context.Context) (*Location, error) {
 	return result, MaskNotFound(err)
 }
 
+func (t *Tech) Domain(ctx context.Context) (*Domain, error) {
+	result, err := t.Edges.DomainOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryDomain().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (t *Tech) Formulatech(ctx context.Context) ([]*Formula, error) {
+	result, err := t.Edges.FormulatechOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryFormulatech().All(ctx)
+	}
+	return result, err
+}
+
+func (t *Threshold) Kpi(ctx context.Context) (*Kpi, error) {
+	result, err := t.Edges.KpiOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryKpi().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (t *Threshold) Rulethreshold(ctx context.Context) ([]*Rule, error) {
+	result, err := t.Edges.RulethresholdOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryRulethreshold().All(ctx)
+	}
+	return result, err
+}
+
 func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	result, err := u.Edges.ProfilePhotoOrErr()
 	if IsNotLoaded(err) {
@@ -1512,12 +1960,36 @@ func (u *User) ProfilePhoto(ctx context.Context) (*File, error) {
 	return result, MaskNotFound(err)
 }
 
+func (u *User) UserCreate(ctx context.Context) ([]*Recommendations, error) {
+	result, err := u.Edges.UserCreateOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserCreate().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) UserApproved(ctx context.Context) ([]*Recommendations, error) {
+	result, err := u.Edges.UserApprovedOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserApproved().All(ctx)
+	}
+	return result, err
+}
+
 func (u *User) Groups(ctx context.Context) ([]*UsersGroup, error) {
 	result, err := u.Edges.GroupsOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QueryGroups().All(ctx)
 	}
 	return result, err
+}
+
+func (u *User) Organization(ctx context.Context) (*Organization, error) {
+	result, err := u.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (u *User) OwnedWorkOrders(ctx context.Context) ([]*WorkOrder, error) {
@@ -1576,6 +2048,22 @@ func (ug *UsersGroup) Features(ctx context.Context) ([]*Feature, error) {
 	return result, err
 }
 
+func (v *Vendor) VendorFk(ctx context.Context) ([]*Counter, error) {
+	result, err := v.Edges.VendorFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = v.QueryVendorFk().All(ctx)
+	}
+	return result, err
+}
+
+func (v *Vendor) VendorsRecomendations(ctx context.Context) ([]*Recommendations, error) {
+	result, err := v.Edges.VendorsRecomendationsOrErr()
+	if IsNotLoaded(err) {
+		result, err = v.QueryVendorsRecomendations().All(ctx)
+	}
+	return result, err
+}
+
 func (wo *WorkOrder) Type(ctx context.Context) (*WorkOrderType, error) {
 	result, err := wo.Edges.TypeOrErr()
 	if IsNotLoaded(err) {
@@ -1606,6 +2094,14 @@ func (wo *WorkOrder) Links(ctx context.Context) ([]*Link, error) {
 		result, err = wo.QueryLinks().All(ctx)
 	}
 	return result, err
+}
+
+func (wo *WorkOrder) Organization(ctx context.Context) (*Organization, error) {
+	result, err := wo.Edges.OrganizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryOrganization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (wo *WorkOrder) Files(ctx context.Context) ([]*File, error) {

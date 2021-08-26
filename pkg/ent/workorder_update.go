@@ -23,6 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
@@ -240,6 +241,25 @@ func (wou *WorkOrderUpdate) AddLinks(l ...*Link) *WorkOrderUpdate {
 	return wou.AddLinkIDs(ids...)
 }
 
+// SetOrganizationID sets the organization edge to Organization by id.
+func (wou *WorkOrderUpdate) SetOrganizationID(id int) *WorkOrderUpdate {
+	wou.mutation.SetOrganizationID(id)
+	return wou
+}
+
+// SetNillableOrganizationID sets the organization edge to Organization by id if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableOrganizationID(id *int) *WorkOrderUpdate {
+	if id != nil {
+		wou = wou.SetOrganizationID(*id)
+	}
+	return wou
+}
+
+// SetOrganization sets the organization edge to Organization.
+func (wou *WorkOrderUpdate) SetOrganization(o *Organization) *WorkOrderUpdate {
+	return wou.SetOrganizationID(o.ID)
+}
+
 // AddFileIDs adds the files edge to File by ids.
 func (wou *WorkOrderUpdate) AddFileIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.AddFileIDs(ids...)
@@ -455,6 +475,12 @@ func (wou *WorkOrderUpdate) RemoveLinks(l ...*Link) *WorkOrderUpdate {
 		ids[i] = l[i].ID
 	}
 	return wou.RemoveLinkIDs(ids...)
+}
+
+// ClearOrganization clears the "organization" edge to type Organization.
+func (wou *WorkOrderUpdate) ClearOrganization() *WorkOrderUpdate {
+	wou.mutation.ClearOrganization()
+	return wou
 }
 
 // ClearFiles clears all "files" edges to type File.
@@ -978,6 +1004,41 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: link.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wou.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.OrganizationTable,
+			Columns: []string{workorder.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.OrganizationTable,
+			Columns: []string{workorder.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}
@@ -1663,6 +1724,25 @@ func (wouo *WorkOrderUpdateOne) AddLinks(l ...*Link) *WorkOrderUpdateOne {
 	return wouo.AddLinkIDs(ids...)
 }
 
+// SetOrganizationID sets the organization edge to Organization by id.
+func (wouo *WorkOrderUpdateOne) SetOrganizationID(id int) *WorkOrderUpdateOne {
+	wouo.mutation.SetOrganizationID(id)
+	return wouo
+}
+
+// SetNillableOrganizationID sets the organization edge to Organization by id if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableOrganizationID(id *int) *WorkOrderUpdateOne {
+	if id != nil {
+		wouo = wouo.SetOrganizationID(*id)
+	}
+	return wouo
+}
+
+// SetOrganization sets the organization edge to Organization.
+func (wouo *WorkOrderUpdateOne) SetOrganization(o *Organization) *WorkOrderUpdateOne {
+	return wouo.SetOrganizationID(o.ID)
+}
+
 // AddFileIDs adds the files edge to File by ids.
 func (wouo *WorkOrderUpdateOne) AddFileIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.AddFileIDs(ids...)
@@ -1878,6 +1958,12 @@ func (wouo *WorkOrderUpdateOne) RemoveLinks(l ...*Link) *WorkOrderUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return wouo.RemoveLinkIDs(ids...)
+}
+
+// ClearOrganization clears the "organization" edge to type Organization.
+func (wouo *WorkOrderUpdateOne) ClearOrganization() *WorkOrderUpdateOne {
+	wouo.mutation.ClearOrganization()
+	return wouo
 }
 
 // ClearFiles clears all "files" edges to type File.
@@ -2399,6 +2485,41 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: link.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wouo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.OrganizationTable,
+			Columns: []string{workorder.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorder.OrganizationTable,
+			Columns: []string{workorder.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

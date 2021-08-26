@@ -15,8 +15,10 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/recommendations"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -156,6 +158,36 @@ func (uu *UserUpdate) SetProfilePhoto(f *File) *UserUpdate {
 	return uu.SetProfilePhotoID(f.ID)
 }
 
+// AddUserCreateIDs adds the User_create edge to Recommendations by ids.
+func (uu *UserUpdate) AddUserCreateIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddUserCreateIDs(ids...)
+	return uu
+}
+
+// AddUserCreate adds the User_create edges to Recommendations.
+func (uu *UserUpdate) AddUserCreate(r ...*Recommendations) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddUserCreateIDs(ids...)
+}
+
+// AddUserApprovedIDs adds the User_approved edge to Recommendations by ids.
+func (uu *UserUpdate) AddUserApprovedIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddUserApprovedIDs(ids...)
+	return uu
+}
+
+// AddUserApproved adds the User_approved edges to Recommendations.
+func (uu *UserUpdate) AddUserApproved(r ...*Recommendations) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddUserApprovedIDs(ids...)
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (uu *UserUpdate) AddGroupIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddGroupIDs(ids...)
@@ -169,6 +201,25 @@ func (uu *UserUpdate) AddGroups(u ...*UsersGroup) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.AddGroupIDs(ids...)
+}
+
+// SetOrganizationID sets the organization edge to Organization by id.
+func (uu *UserUpdate) SetOrganizationID(id int) *UserUpdate {
+	uu.mutation.SetOrganizationID(id)
+	return uu
+}
+
+// SetNillableOrganizationID sets the organization edge to Organization by id if the given value is not nil.
+func (uu *UserUpdate) SetNillableOrganizationID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetOrganizationID(*id)
+	}
+	return uu
+}
+
+// SetOrganization sets the organization edge to Organization.
+func (uu *UserUpdate) SetOrganization(o *Organization) *UserUpdate {
+	return uu.SetOrganizationID(o.ID)
 }
 
 // AddOwnedWorkOrderIDs adds the owned_work_orders edge to WorkOrder by ids.
@@ -242,6 +293,48 @@ func (uu *UserUpdate) ClearProfilePhoto() *UserUpdate {
 	return uu
 }
 
+// ClearUserCreate clears all "User_create" edges to type Recommendations.
+func (uu *UserUpdate) ClearUserCreate() *UserUpdate {
+	uu.mutation.ClearUserCreate()
+	return uu
+}
+
+// RemoveUserCreateIDs removes the User_create edge to Recommendations by ids.
+func (uu *UserUpdate) RemoveUserCreateIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveUserCreateIDs(ids...)
+	return uu
+}
+
+// RemoveUserCreate removes User_create edges to Recommendations.
+func (uu *UserUpdate) RemoveUserCreate(r ...*Recommendations) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveUserCreateIDs(ids...)
+}
+
+// ClearUserApproved clears all "User_approved" edges to type Recommendations.
+func (uu *UserUpdate) ClearUserApproved() *UserUpdate {
+	uu.mutation.ClearUserApproved()
+	return uu
+}
+
+// RemoveUserApprovedIDs removes the User_approved edge to Recommendations by ids.
+func (uu *UserUpdate) RemoveUserApprovedIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveUserApprovedIDs(ids...)
+	return uu
+}
+
+// RemoveUserApproved removes User_approved edges to Recommendations.
+func (uu *UserUpdate) RemoveUserApproved(r ...*Recommendations) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveUserApprovedIDs(ids...)
+}
+
 // ClearGroups clears all "groups" edges to type UsersGroup.
 func (uu *UserUpdate) ClearGroups() *UserUpdate {
 	uu.mutation.ClearGroups()
@@ -261,6 +354,12 @@ func (uu *UserUpdate) RemoveGroups(u ...*UsersGroup) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.RemoveGroupIDs(ids...)
+}
+
+// ClearOrganization clears the "organization" edge to type Organization.
+func (uu *UserUpdate) ClearOrganization() *UserUpdate {
+	uu.mutation.ClearOrganization()
+	return uu
 }
 
 // ClearOwnedWorkOrders clears all "owned_work_orders" edges to type WorkOrder.
@@ -568,6 +667,114 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.UserCreateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUserCreateIDs(); len(nodes) > 0 && !uu.mutation.UserCreateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UserCreateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.UserApprovedCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUserApprovedIDs(); len(nodes) > 0 && !uu.mutation.UserApprovedCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UserApprovedIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -614,6 +821,41 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganizationTable,
+			Columns: []string{user.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganizationTable,
+			Columns: []string{user.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}
@@ -977,6 +1219,36 @@ func (uuo *UserUpdateOne) SetProfilePhoto(f *File) *UserUpdateOne {
 	return uuo.SetProfilePhotoID(f.ID)
 }
 
+// AddUserCreateIDs adds the User_create edge to Recommendations by ids.
+func (uuo *UserUpdateOne) AddUserCreateIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddUserCreateIDs(ids...)
+	return uuo
+}
+
+// AddUserCreate adds the User_create edges to Recommendations.
+func (uuo *UserUpdateOne) AddUserCreate(r ...*Recommendations) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddUserCreateIDs(ids...)
+}
+
+// AddUserApprovedIDs adds the User_approved edge to Recommendations by ids.
+func (uuo *UserUpdateOne) AddUserApprovedIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddUserApprovedIDs(ids...)
+	return uuo
+}
+
+// AddUserApproved adds the User_approved edges to Recommendations.
+func (uuo *UserUpdateOne) AddUserApproved(r ...*Recommendations) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddUserApprovedIDs(ids...)
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (uuo *UserUpdateOne) AddGroupIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddGroupIDs(ids...)
@@ -990,6 +1262,25 @@ func (uuo *UserUpdateOne) AddGroups(u ...*UsersGroup) *UserUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return uuo.AddGroupIDs(ids...)
+}
+
+// SetOrganizationID sets the organization edge to Organization by id.
+func (uuo *UserUpdateOne) SetOrganizationID(id int) *UserUpdateOne {
+	uuo.mutation.SetOrganizationID(id)
+	return uuo
+}
+
+// SetNillableOrganizationID sets the organization edge to Organization by id if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableOrganizationID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetOrganizationID(*id)
+	}
+	return uuo
+}
+
+// SetOrganization sets the organization edge to Organization.
+func (uuo *UserUpdateOne) SetOrganization(o *Organization) *UserUpdateOne {
+	return uuo.SetOrganizationID(o.ID)
 }
 
 // AddOwnedWorkOrderIDs adds the owned_work_orders edge to WorkOrder by ids.
@@ -1063,6 +1354,48 @@ func (uuo *UserUpdateOne) ClearProfilePhoto() *UserUpdateOne {
 	return uuo
 }
 
+// ClearUserCreate clears all "User_create" edges to type Recommendations.
+func (uuo *UserUpdateOne) ClearUserCreate() *UserUpdateOne {
+	uuo.mutation.ClearUserCreate()
+	return uuo
+}
+
+// RemoveUserCreateIDs removes the User_create edge to Recommendations by ids.
+func (uuo *UserUpdateOne) RemoveUserCreateIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveUserCreateIDs(ids...)
+	return uuo
+}
+
+// RemoveUserCreate removes User_create edges to Recommendations.
+func (uuo *UserUpdateOne) RemoveUserCreate(r ...*Recommendations) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveUserCreateIDs(ids...)
+}
+
+// ClearUserApproved clears all "User_approved" edges to type Recommendations.
+func (uuo *UserUpdateOne) ClearUserApproved() *UserUpdateOne {
+	uuo.mutation.ClearUserApproved()
+	return uuo
+}
+
+// RemoveUserApprovedIDs removes the User_approved edge to Recommendations by ids.
+func (uuo *UserUpdateOne) RemoveUserApprovedIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveUserApprovedIDs(ids...)
+	return uuo
+}
+
+// RemoveUserApproved removes User_approved edges to Recommendations.
+func (uuo *UserUpdateOne) RemoveUserApproved(r ...*Recommendations) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveUserApprovedIDs(ids...)
+}
+
 // ClearGroups clears all "groups" edges to type UsersGroup.
 func (uuo *UserUpdateOne) ClearGroups() *UserUpdateOne {
 	uuo.mutation.ClearGroups()
@@ -1082,6 +1415,12 @@ func (uuo *UserUpdateOne) RemoveGroups(u ...*UsersGroup) *UserUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return uuo.RemoveGroupIDs(ids...)
+}
+
+// ClearOrganization clears the "organization" edge to type Organization.
+func (uuo *UserUpdateOne) ClearOrganization() *UserUpdateOne {
+	uuo.mutation.ClearOrganization()
+	return uuo
 }
 
 // ClearOwnedWorkOrders clears all "owned_work_orders" edges to type WorkOrder.
@@ -1387,6 +1726,114 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uuo.mutation.UserCreateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUserCreateIDs(); len(nodes) > 0 && !uuo.mutation.UserCreateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UserCreateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCreateTable,
+			Columns: []string{user.UserCreateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UserApprovedCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUserApprovedIDs(); len(nodes) > 0 && !uuo.mutation.UserApprovedCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UserApprovedIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserApprovedTable,
+			Columns: []string{user.UserApprovedColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: recommendations.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uuo.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -1433,6 +1880,41 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganizationTable,
+			Columns: []string{user.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganizationTable,
+			Columns: []string{user.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

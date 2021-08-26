@@ -34,6 +34,8 @@ func (PermissionsPolicy) Fields() []ent.Field {
 			Optional(),
 		field.JSON("automation_policy", &models.AutomationPolicyInput{}).
 			Optional(),
+		field.JSON("assurance_policy", &models.AssurancePolicyInput{}).
+			Optional(),
 	}
 }
 
@@ -41,6 +43,8 @@ func (PermissionsPolicy) Fields() []ent.Field {
 func (PermissionsPolicy) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("groups", UsersGroup.Type).
+			Ref("policies"),
+		edge.From("organization", Organization.Type).
 			Ref("policies"),
 	}
 }

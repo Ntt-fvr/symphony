@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 )
@@ -106,6 +107,12 @@ func (ppc *PermissionsPolicyCreate) SetAutomationPolicy(mpi *models.AutomationPo
 	return ppc
 }
 
+// SetAssurancePolicy sets the assurance_policy field.
+func (ppc *PermissionsPolicyCreate) SetAssurancePolicy(mpi *models.AssurancePolicyInput) *PermissionsPolicyCreate {
+	ppc.mutation.SetAssurancePolicy(mpi)
+	return ppc
+}
+
 // AddGroupIDs adds the groups edge to UsersGroup by ids.
 func (ppc *PermissionsPolicyCreate) AddGroupIDs(ids ...int) *PermissionsPolicyCreate {
 	ppc.mutation.AddGroupIDs(ids...)
@@ -119,6 +126,21 @@ func (ppc *PermissionsPolicyCreate) AddGroups(u ...*UsersGroup) *PermissionsPoli
 		ids[i] = u[i].ID
 	}
 	return ppc.AddGroupIDs(ids...)
+}
+
+// AddOrganizationIDs adds the organization edge to Organization by ids.
+func (ppc *PermissionsPolicyCreate) AddOrganizationIDs(ids ...int) *PermissionsPolicyCreate {
+	ppc.mutation.AddOrganizationIDs(ids...)
+	return ppc
+}
+
+// AddOrganization adds the organization edges to Organization.
+func (ppc *PermissionsPolicyCreate) AddOrganization(o ...*Organization) *PermissionsPolicyCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ppc.AddOrganizationIDs(ids...)
 }
 
 // Mutation returns the PermissionsPolicyMutation object of the builder.
@@ -294,6 +316,14 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 		})
 		_node.AutomationPolicy = value
 	}
+	if value, ok := ppc.mutation.AssurancePolicy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: permissionspolicy.FieldAssurancePolicy,
+		})
+		_node.AssurancePolicy = value
+	}
 	if nodes := ppc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -305,6 +335,25 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ppc.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.OrganizationTable,
+			Columns: permissionspolicy.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
 				},
 			},
 		}

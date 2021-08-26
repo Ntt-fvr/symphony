@@ -285,6 +285,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 		permissions := authz.EmptyPermissions()
 		permissions.WorkforcePolicy.Read.IsAllowed = models.PermissionValueByCondition
 		permissions.WorkforcePolicy.Read.WorkOrderTypeIds = []int{workOrderType.ID}
+		permissions.WorkforcePolicy.Read.OrganizationIds = []int{workOrderType.ID}
 		permissionsContext := viewertest.NewContext(
 			context.Background(),
 			c,
@@ -293,7 +294,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
-		require.Equal(t, 1, count)
+		require.Equal(t, 0, count)
 	})
 	t.Run("FullPermissions", func(t *testing.T) {
 		permissions := authz.EmptyPermissions()
