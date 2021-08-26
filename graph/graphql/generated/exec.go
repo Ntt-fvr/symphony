@@ -1036,7 +1036,7 @@ type ComplexityRoot struct {
 		TriggerType              func(childComplexity int, id flowschema.TriggerTypeID) int
 		User                     func(childComplexity int, authID string) int
 		Users                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
-		UsersAvailability        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput, slotFilterBy models.UserAvailabilityFilterInput) int
+		UsersAvailability        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput) int
 		UsersGroups              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
 		Vertex                   func(childComplexity int, id int) int
 		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1753,7 +1753,7 @@ type QueryResolver interface {
 	FlowInstances(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) (*ent.FlowInstanceConnection, error)
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 	Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.AppointmentConnection, error)
-	UsersAvailability(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput, slotFilterBy models.UserAvailabilityFilterInput) ([]*models.UserAvailability, error)
+	UsersAvailability(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput) ([]*models.UserAvailability, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -6843,7 +6843,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.UsersAvailability(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UserFilterInput), args["slotFilterBy"].(models.UserAvailabilityFilterInput)), true
+		return e.complexity.Query.UsersAvailability(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UserFilterInput), args["slotFilterBy"].(models.SlotFilterInput)), true
 
 	case "Query.usersGroups":
 		if e.complexity.Query.UsersGroups == nil {
@@ -13351,7 +13351,7 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
     filterBy: [UserFilterInput!]
-    slotFilterBy: UserAvailabilityFilterInput!
+    slotFilterBy: SlotFilterInput!
   ): [UserAvailability!]
 }
 
@@ -13725,7 +13725,7 @@ type UserAvailability {
   slotEndDate: Time!
 }
 
-input UserAvailabilityFilterInput {
+input SlotFilterInput {
 #  Userfilters: [UserFilterInput]
   slotStartDate: Time!
   slotEndDate: Time!
@@ -17917,10 +17917,10 @@ func (ec *executionContext) field_Query_usersAvailability_args(ctx context.Conte
 		}
 	}
 	args["filterBy"] = arg4
-	var arg5 models.UserAvailabilityFilterInput
+	var arg5 models.SlotFilterInput
 	if tmp, ok := rawArgs["slotFilterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotFilterBy"))
-		arg5, err = ec.unmarshalNUserAvailabilityFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserAvailabilityFilterInput(ctx, tmp)
+		arg5, err = ec.unmarshalNSlotFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -40708,7 +40708,7 @@ func (ec *executionContext) _Query_usersAvailability(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UsersAvailability(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UserFilterInput), args["slotFilterBy"].(models.UserAvailabilityFilterInput))
+		return ec.resolvers.Query().UsersAvailability(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UserFilterInput), args["slotFilterBy"].(models.SlotFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -58153,6 +58153,42 @@ func (ec *executionContext) unmarshalInputServiceTypeEditData(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSlotFilterInput(ctx context.Context, obj interface{}) (models.SlotFilterInput, error) {
+	var it models.SlotFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "slotStartDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotStartDate"))
+			it.SlotStartDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "slotEndDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotEndDate"))
+			it.SlotEndDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputStartBlockInput(ctx context.Context, obj interface{}) (models.StartBlockInput, error) {
 	var it models.StartBlockInput
 	var asMap = obj.(map[string]interface{})
@@ -59232,42 +59268,6 @@ func (ec *executionContext) unmarshalInputUpdateUserGroupsInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeGroupIds"))
 			it.RemoveGroupIds, err = ec.unmarshalNID2ᚕintᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputUserAvailabilityFilterInput(ctx context.Context, obj interface{}) (models.UserAvailabilityFilterInput, error) {
-	var it models.UserAvailabilityFilterInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "slotStartDate":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotStartDate"))
-			it.SlotStartDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "slotEndDate":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotEndDate"))
-			it.SlotEndDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "duration":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
-			it.Duration, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -74090,6 +74090,11 @@ func (ec *executionContext) unmarshalNServiceTypeEditData2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNSlotFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx context.Context, v interface{}) (models.SlotFilterInput, error) {
+	res, err := ec.unmarshalInputSlotFilterInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNStartBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐStartBlockInput(ctx context.Context, v interface{}) (models.StartBlockInput, error) {
 	res, err := ec.unmarshalInputStartBlockInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -74723,11 +74728,6 @@ func (ec *executionContext) marshalNUserAvailability2ᚖgithubᚗcomᚋfacebooki
 		return graphql.Null
 	}
 	return ec._UserAvailability(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNUserAvailabilityFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserAvailabilityFilterInput(ctx context.Context, v interface{}) (models.UserAvailabilityFilterInput, error) {
-	res, err := ec.unmarshalInputUserAvailabilityFilterInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUserEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUserEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.UserEdge) graphql.Marshaler {

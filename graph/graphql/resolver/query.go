@@ -596,7 +596,7 @@ func (r queryResolver) UsersAvailability(
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
 	filterBy []*models.UserFilterInput,
-	slotFilterBy models.UserAvailabilityFilterInput) ([]*models.UserAvailability, error) {
+	slotFilterBy models.SlotFilterInput) ([]*models.UserAvailability, error) {
 	query := r.ClientFrom(ctx).User.Query()
 	query, err := resolverutil.UserFilter(query, filterBy)
 	if err != nil {

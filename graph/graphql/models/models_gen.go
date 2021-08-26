@@ -801,6 +801,12 @@ type ServiceTypeEditData struct {
 	Endpoints   []*ServiceEndpointDefinitionInput `json:"endpoints"`
 }
 
+type SlotFilterInput struct {
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
+	Duration      float64   `json:"duration"`
+}
+
 type StartBlock struct {
 	ParamDefinitions []*flowschema.VariableDefinition `json:"paramDefinitions"`
 	ExitPoint        *ent.ExitPoint                   `json:"exitPoint"`
@@ -1003,12 +1009,6 @@ type UserAvailability struct {
 	User          *ent.User `json:"user"`
 	SlotStartDate time.Time `json:"slotStartDate"`
 	SlotEndDate   time.Time `json:"slotEndDate"`
-}
-
-type UserAvailabilityFilterInput struct {
-	SlotStartDate time.Time `json:"slotStartDate"`
-	SlotEndDate   time.Time `json:"slotEndDate"`
-	Duration      float64   `json:"duration"`
 }
 
 type UserFilterInput struct {

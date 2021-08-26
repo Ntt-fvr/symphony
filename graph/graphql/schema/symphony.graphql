@@ -4204,7 +4204,7 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
     filterBy: [UserFilterInput!]
-    slotFilterBy: UserAvailabilityFilterInput!
+    slotFilterBy: SlotFilterInput!
   ): [UserAvailability!]
 }
 
@@ -4578,7 +4578,7 @@ type UserAvailability {
   slotEndDate: Time!
 }
 
-input UserAvailabilityFilterInput {
+input SlotFilterInput {
 #  Userfilters: [UserFilterInput]
   slotStartDate: Time!
   slotEndDate: Time!

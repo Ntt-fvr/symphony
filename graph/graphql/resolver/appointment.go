@@ -81,7 +81,7 @@ func (r mutationResolver) EditAppointment(
 
 func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, error) {
 	client := r.ClientFrom(ctx)
-	t, err := client.Appointment.Query().
+	a, err := client.Appointment.Query().
 		Where(
 			appointment.ID(id),
 		).
@@ -97,44 +97,16 @@ func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, e
 		return id, errors.Wrap(err, "querying workorder")
 	}
 
-	wo.Update().ClearAppointment().Exec(ctx)
+	wo.Update().RemoveAppointment(a).Exec(ctx)
 
 	u, err := client.User.Query().
 		Where(user.HasAppointmentWith(appointment.ID(id))).
 		Only(ctx)
 
-	u.Update().ClearAppointment().Exec(ctx)
+	u.Update().RemoveAppointment(a).Exec(ctx)
 
-	if err := client.Appointment.DeleteOne(t).Exec(ctx); err != nil {
+	if err := client.Appointment.DeleteOne(a).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "deleting appointment type")
 	}
 	return id, nil
 }
-
-func (appointmentResolver) AppointmentDate(ctx context.Context, appointment *ent.Appointment) (*time.Time, error) {
-	s := appointment.Start
-	return &s, nil
-}
-
-//*/
-
-/*
-
-	if input.OwnerID != nil {
-		mutation = mutation.SetAssigneeID(*input.OwnerID)
-	} else {
-		v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
-		if !ok {
-			return nil, gqlerror.Errorf("could not be executed in automation")
-		}
-		mutation = mutation.SetOwner(v.User())
-	}
-
-*/
-/*
-	if input.AssigneeID != nil {
-		mutation.SetAssigneeID(*input.AssigneeID)
-	} else {
-		mutation.ClearAssignee()
-	}
-*/
