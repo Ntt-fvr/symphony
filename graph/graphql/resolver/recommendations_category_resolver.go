@@ -15,7 +15,9 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
+/*
 type recommendationsCategoryResolver struct{}
+
 
 func (recommendationsCategoryResolver) Recommendations(ctx context.Context, recommendationsCategory *ent.RecommendationsCategory) ([]*ent.Recommendations, error) {
 	variable, err := recommendationsCategory.Recommendations(ctx)
@@ -26,7 +28,7 @@ func (recommendationsCategoryResolver) Recommendations(ctx context.Context, reco
 		return variable, nil
 	}
 }
-
+*/
 func (r mutationResolver) AddRecommendationsCategory(ctx context.Context, input models.AddRecommendationsCategoryInput) (*ent.RecommendationsCategory, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

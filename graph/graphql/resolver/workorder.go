@@ -61,7 +61,7 @@ func (r workOrderResolver) Activities(ctx context.Context, obj *ent.WorkOrder, f
 func (workOrderResolver) OrganizationFk(ctx context.Context, workOrder *ent.WorkOrder) (*ent.Organization, error) {
 	variable, err := workOrder.Organization(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
