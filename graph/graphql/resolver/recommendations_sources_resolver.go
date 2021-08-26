@@ -1,5 +1,5 @@
 // Copyright (c) 2004-present Facebook All rights reserved.
-// Use of this sources code is governed by a BSD-style
+// Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 package resolver
@@ -15,6 +15,7 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
+/*
 type recommendationsSourcesResolver struct{}
 
 func (recommendationsSourcesResolver) Recommendations(ctx context.Context, recommendationsSources *ent.RecommendationsSources) ([]*ent.Recommendations, error) {
@@ -26,7 +27,7 @@ func (recommendationsSourcesResolver) Recommendations(ctx context.Context, recom
 		return variable, nil
 	}
 }
-
+*/
 func (r mutationResolver) AddRecommendationsSources(ctx context.Context, input models.AddRecommendationsSourcesInput) (*ent.RecommendationsSources, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

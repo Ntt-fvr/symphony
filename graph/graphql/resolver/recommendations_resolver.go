@@ -21,7 +21,7 @@ func (recommendationsResolver) RecommendationsSources(ctx context.Context, recom
 	variable, err := recommendations.RecomendationSources(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -31,7 +31,7 @@ func (recommendationsResolver) RecommendationsCategory(ctx context.Context, reco
 	variable, err := recommendations.RecomendationCategory(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -40,7 +40,7 @@ func (recommendationsResolver) RecommendationsCategory(ctx context.Context, reco
 func (recommendationsResolver) Vendor(ctx context.Context, recommendations *ent.Recommendations) (*ent.Vendor, error) {
 	variable, err := recommendations.VendorsRecomendations(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on proces: %w", err)
 	} else {
 		return variable, nil
 	}
@@ -68,9 +68,9 @@ func (r mutationResolver) AddRecommendations(ctx context.Context, input models.A
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on proces: %w", err)
 	}
 	return typ, nil
 }
@@ -85,7 +85,7 @@ func (r mutationResolver) AddRecommendationsList(ctx context.Context, input mode
 				_, e := r.RemoveRecommendations(ctx, deleting.ID)
 				logger.Info("recommendation removed " + fmt.Sprint(e))
 			}
-			return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+			return nil, fmt.Errorf("has occurred error on proces: %w", err)
 		}
 		list = append(list, recommend)
 	}
@@ -100,23 +100,24 @@ func (r mutationResolver) RemoveRecommendations(ctx context.Context, id int) (in
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on proces: %w", err)
 	}
 	// TODO: borrar o editar los edges relacionados
 	if err := client.Recommendations.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on proces: %w")
 	}
 	return id, nil
 }
 
+// nolint: funlen
 func (r mutationResolver) EditRecommendations(ctx context.Context, input models.EditRecommendationsInput) (*ent.Recommendations, error) {
 	client := r.ClientFrom(ctx)
 	et, err := client.Recommendations.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on proces: %w", err)
 	}
 	var vendorid, categoryid, sourceid int
 	var approvedid *int
@@ -125,25 +126,25 @@ func (r mutationResolver) EditRecommendations(ctx context.Context, input models.
 		et.Priority, et.Command, et.Status, et.Runbook, et.Used
 	var vendor, err1 = et.VendorsRecomendations(ctx)
 	if err1 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err1, "has occurred error on proces: %w")
 	} else if vendor != nil {
 		vendorid = vendor.ID
 	}
 	var userApprobed, err2 = et.UserApprobed(ctx)
 	if err2 != nil {
-		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err2, "has occurred error on proces: %w")
 	} else if userApprobed != nil {
 		approvedid = &userApprobed.ID
 	}
 	var recommendationsCategory, err3 = et.RecomendationCategory(ctx)
 	if err3 != nil {
-		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err3, "has occurred error on proces: %w")
 	} else if recommendationsCategory != nil {
 		categoryid = recommendationsCategory.ID
 	}
 	var recommendationsSources, err4 = et.RecomendationSources(ctx)
 	if err3 != nil {
-		return nil, errors.Wrap(err4, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err4, "has occurred error on proces: %w")
 	} else if recommendationsSources != nil {
 		sourceid = recommendationsSources.ID
 	}
@@ -214,9 +215,9 @@ func (r mutationResolver) EditRecommendations(ctx context.Context, input models.
 			SetAlarmType(alarm).
 			SetShortDescription(short).
 			SetLongDescription(long).
-			SetNillableCommand(input.Command).
+			SetNillableCommand(command).
 			SetPriority(priority).
-			SetStatus(input.Status).
+			SetStatus(status).
 			SetNillableUsed(used).
 			SetNillableRunbook(rumbook).
 			SetRecomendationSourcesID(sourceid).
@@ -225,9 +226,9 @@ func (r mutationResolver) EditRecommendations(ctx context.Context, input models.
 			SetVendorsRecomendationsID(vendorid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on proces: %w")
 		}
 	}
 

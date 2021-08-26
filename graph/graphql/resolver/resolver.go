@@ -254,10 +254,10 @@ func (r resolver) RuleType() generated.RuleTypeResolver {
 	return ruleTypeResolver{}
 }
 
-/*
 func (r resolver) RuleLimit() generated.RuleLimitResolver {
 	return ruleLimitResolver{}
-}*/
+}
+
 func (r resolver) EventSeverity() generated.EventSeverityResolver {
 	return eventSeverityResolver{}
 }
@@ -291,15 +291,23 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 
 /**************************************************************************************************/
 /************************* RECOMMENDATIONS ********************************************************/
-/*func (r resolver) RecommendationsCategory() generated.RecommendationsCategoryResolver {
+/*
+func (r resolver) RecommendationsCategory() generated.RecommendationsCategoryResolver {
 	return recommendationsCategoryResolver{}
 }
 
 func (r resolver) RecommendationsSources() generated.RecommendationsSourcesResolver {
 	return recommendationsSourcesResolver{}
-}*/
+}
+*/
+//*/
 func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
 
+/*
+func (r resolver) Organization() generated.OrganizationResolver {
+	return organizationResolver{}
+}
+*/
 /**************************************************************************************************/
