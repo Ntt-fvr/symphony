@@ -15,8 +15,6 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type domainResolver struct{}
-
 func (r mutationResolver) AddDomain(ctx context.Context, input models.AddDomainInput) (*ent.Domain, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.

@@ -206,14 +206,6 @@ func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
 
-/*func (r resolver) Domain() generated.DomainResolver {
-	return domainResolver{}
-}
-
-func (r resolver) CounterFamily() generated.CounterFamilyResolver {
-	return counterFamilyResolver{}
-}*/
-
 func (r resolver) Vendor() generated.VendorResolver {
 	return vendorResolver{}
 }
