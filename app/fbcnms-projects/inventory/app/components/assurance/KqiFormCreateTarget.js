@@ -169,8 +169,7 @@ const KqiFormCreateTarget = (props: Props) => {
       },
     };
     AddKqiTargetMutation(variables);
-    console.log('Hola soy data AddKqiTarget', variables);
-    // setTimeout(() => returnTableAlarm(), 1000)
+    console.log(variables);
   }
 
   return (
@@ -197,7 +196,10 @@ const KqiFormCreateTarget = (props: Props) => {
             <Grid xs={6}>
               <FormField>
                 <Button
-                  onClick={handleClick}
+                  onClick={() => {
+                    returnFormEdit();
+                    handleClick();
+                  }}
                   className={classes.option}
                   variant="contained"
                   color="primary">

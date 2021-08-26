@@ -30,19 +30,19 @@ const mutation = graphql`
       initTime
       endTime
       status
-      # kqiComparator {
-      #   id
-      #   number
-      #   comparatorType
-      #   kqiTargetFk {
-      #     id
-      #     name
-      #   }
-      #   comparatorFk {
-      #     id
-      #     name
-      #   }
-      # }
+      kqiComparator {
+        id
+        number
+        comparatorType
+        kqiTargetFk {
+          id
+          name
+        }
+        comparatorFk {
+          id
+          name
+        }
+      }
     }
   }
 `;

@@ -8,7 +8,10 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery, graphql} from 'relay-runtime';
+
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -184,11 +187,31 @@ type Props = $ReadOnly<{|
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
   returnTableKqi: () => void,
 |}>;
+const TargetQuery = graphql`
+  query KqiFormEditQuery {
+    kqiTargets {
+      edges {
+        node {
+          id
+          name
+          impact
+          frame
+          alowedValidation
+          initTime
+          endTime
+          status
+          kqi {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
 
 const KqiFormEdit = (props: Props) => {
   const {
     formValues,
-    dataKqiTargets,
     dataPerspectives,
     dataSources,
     dataCategories,
@@ -213,8 +236,22 @@ const KqiFormEdit = (props: Props) => {
   const kqiTemporalFrequency = useFormInput(
     formValues.item.kqiTemporalFrequency.id,
   );
-  console.log('Form Edit');
-  console.log(formValues);
+  const [items, setItems] = useState({});
+
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, TargetQuery, {}).then(data => {
+      setItems(data);
+    });
+  }, [items]);
+  // const daticos = items?.kqiTargets?.edges?.filter(
+  //   kqi => kqi.node.kqi.id === formValues.item.id,
+  // );
+  // console.log('Daticos');
+  // console.log(formValues.item.id);
+  // console.log('-----------');
+  // console.log(daticos);
+  // console.log('***********');
+  // console.log(formValues.item.id);
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
       id: id,
@@ -464,7 +501,8 @@ const KqiFormEdit = (props: Props) => {
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
           idKqi={formValues.item.id}
-          dataTableTargets={dataKqiTargets}
+          // daticos={daticos}
+          // dataTableTargets={dataKqiTargets}
           create={() => showFormCreateTarget()}
           edit={() => showFormEditTarget()}
         />

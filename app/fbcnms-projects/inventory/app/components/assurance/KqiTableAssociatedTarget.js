@@ -12,7 +12,9 @@ import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import IconButton from '@material-ui/core/IconButton';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery, graphql} from 'relay-runtime';
 
 import AddButton from './common/AddButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -75,9 +77,32 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const KqiQuery = graphql`
+  query KqiTableAssociatedTargetQuery {
+    kqiTargets {
+      edges {
+        node {
+          id
+          name
+          impact
+          frame
+          alowedValidation
+          initTime
+          endTime
+          status
+          kqi {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
 type Props = $ReadOnly<{|
+  // daticos: Array<any>,
   idKqi: string,
-  dataTableTargets: any,
+  // dataTableTargets: any,
   create: () => void,
   edit: () => void,
 |}>;
@@ -87,11 +112,24 @@ const handleClick = () => {
 };
 
 const KqiTableAssociatedTarget = (props: Props) => {
-  const {dataTableTargets, create, edit} = props;
+  const {create, edit, idKqi} = props;
+  const [items, setItems] = useState({});
 
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
+      setItems(data);
+    });
+  }, [items]);
 
+  const tg = items?.kqiTargets?.edges;
+  const dati = tg?.filter(kqi => kqi.node.kqi.id === idKqi);
+  console.log(idKqi);
+  console.log('Tabla Target');
+  console.log(dati);
+  // console.log('oooooooooooo');
+  // console.log(items);
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -134,8 +172,8 @@ const KqiTableAssociatedTarget = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataTableTargets.map((item, index) => (
-              <StyledTableRow key={index}>
+            {dati?.map(item => (
+              <StyledTableRow key={item.node.id}>
                 <TableCell>
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </TableCell>
@@ -145,22 +183,22 @@ const KqiTableAssociatedTarget = (props: Props) => {
                       variant={'subtitle1'}
                       weight={'medium'}
                       color={'primary'}>
-                      {item.name}
+                      {item.node.name}
                     </Text>
                   </Button>
                 </TableCell>
-                <TableCell>{item.comparator}</TableCell>
+                <TableCell>{item.node.comparator}</TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.warningComparator}
+                  {item.node.warningComparator}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.frame}
+                  {item.node.frame}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.alowedValidation}
+                  {item.node.alowedValidation}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.activeHours}
+                  {item.node.activeHours}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>
@@ -179,3 +217,4 @@ const KqiTableAssociatedTarget = (props: Props) => {
   );
 };
 export default KqiTableAssociatedTarget;
+// items.kqiTargets?.edges
