@@ -22,9 +22,9 @@ func (comparatorResolver) RuleLimit(ctx context.Context, comparator *ent.Compara
 
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
+
 }
 
 func (r mutationResolver) AddComparator(ctx context.Context, input models.AddComparatorInput) (*ent.Comparator, error) {

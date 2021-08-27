@@ -254,10 +254,11 @@ func (r resolver) RuleType() generated.RuleTypeResolver {
 	return ruleTypeResolver{}
 }
 
+/*
 func (r resolver) RuleLimit() generated.RuleLimitResolver {
 	return ruleLimitResolver{}
 }
-
+*/
 func (r resolver) EventSeverity() generated.EventSeverityResolver {
 	return eventSeverityResolver{}
 }

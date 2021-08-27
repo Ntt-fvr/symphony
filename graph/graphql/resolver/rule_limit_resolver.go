@@ -15,6 +15,7 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
+/*
 type ruleLimitResolver struct{}
 
 func (ruleLimitResolver) Comparator(ctx context.Context, ruleLimit *ent.RuleLimit) (*ent.Comparator, error) {
@@ -36,7 +37,7 @@ func (ruleLimitResolver) Rule(ctx context.Context, ruleLimit *ent.RuleLimit) (*e
 		return variable, nil
 	}
 }
-
+*/
 func (r mutationResolver) AddRuleLimit(ctx context.Context, input models.AddRuleLimitInput) (*ent.RuleLimit, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.
