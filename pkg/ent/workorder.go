@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -47,13 +48,14 @@ type WorkOrder struct {
 	CloseDate *time.Time `json:"close_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
-	Edges               WorkOrderEdges `json:"edges"`
-	project_work_orders *int
-	work_order_type     *int
-	work_order_template *int
-	work_order_location *int
-	work_order_owner    *int
-	work_order_assignee *int
+	Edges                      WorkOrderEdges `json:"edges"`
+	organization_work_order_fk *int
+	project_work_orders        *int
+	work_order_type            *int
+	work_order_template        *int
+	work_order_location        *int
+	work_order_owner           *int
+	work_order_assignee        *int
 }
 
 // WorkOrderEdges holds the relations/edges for other nodes in the graph.
@@ -66,6 +68,8 @@ type WorkOrderEdges struct {
 	Equipment []*Equipment
 	// Links holds the value of the links edge.
 	Links []*Link
+	// Organization holds the value of the organization edge.
+	Organization *Organization
 	// Files holds the value of the files edge.
 	Files []*File
 	// Hyperlinks holds the value of the hyperlinks edge.
@@ -88,7 +92,7 @@ type WorkOrderEdges struct {
 	Assignee *User
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [14]bool
+	loadedTypes [15]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -137,10 +141,24 @@ func (e WorkOrderEdges) LinksOrErr() ([]*Link, error) {
 	return nil, &NotLoadedError{edge: "links"}
 }
 
+// OrganizationOrErr returns the Organization value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e WorkOrderEdges) OrganizationOrErr() (*Organization, error) {
+	if e.loadedTypes[4] {
+		if e.Organization == nil {
+			// The edge organization was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Organization, nil
+	}
+	return nil, &NotLoadedError{edge: "organization"}
+}
+
 // FilesOrErr returns the Files value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) FilesOrErr() ([]*File, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.Files, nil
 	}
 	return nil, &NotLoadedError{edge: "files"}
@@ -149,7 +167,7 @@ func (e WorkOrderEdges) FilesOrErr() ([]*File, error) {
 // HyperlinksOrErr returns the Hyperlinks value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) HyperlinksOrErr() ([]*Hyperlink, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.Hyperlinks, nil
 	}
 	return nil, &NotLoadedError{edge: "hyperlinks"}
@@ -158,7 +176,7 @@ func (e WorkOrderEdges) HyperlinksOrErr() ([]*Hyperlink, error) {
 // LocationOrErr returns the Location value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e WorkOrderEdges) LocationOrErr() (*Location, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		if e.Location == nil {
 			// The edge location was loaded in eager-loading,
 			// but was not found.
@@ -172,7 +190,7 @@ func (e WorkOrderEdges) LocationOrErr() (*Location, error) {
 // CommentsOrErr returns the Comments value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) CommentsOrErr() ([]*Comment, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.Comments, nil
 	}
 	return nil, &NotLoadedError{edge: "comments"}
@@ -181,7 +199,7 @@ func (e WorkOrderEdges) CommentsOrErr() ([]*Comment, error) {
 // ActivitiesOrErr returns the Activities value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) ActivitiesOrErr() ([]*Activity, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Activities, nil
 	}
 	return nil, &NotLoadedError{edge: "activities"}
@@ -190,7 +208,7 @@ func (e WorkOrderEdges) ActivitiesOrErr() ([]*Activity, error) {
 // PropertiesOrErr returns the Properties value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) PropertiesOrErr() ([]*Property, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.Properties, nil
 	}
 	return nil, &NotLoadedError{edge: "properties"}
@@ -199,7 +217,7 @@ func (e WorkOrderEdges) PropertiesOrErr() ([]*Property, error) {
 // CheckListCategoriesOrErr returns the CheckListCategories value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) CheckListCategoriesOrErr() ([]*CheckListCategory, error) {
-	if e.loadedTypes[10] {
+	if e.loadedTypes[11] {
 		return e.CheckListCategories, nil
 	}
 	return nil, &NotLoadedError{edge: "check_list_categories"}
@@ -208,7 +226,7 @@ func (e WorkOrderEdges) CheckListCategoriesOrErr() ([]*CheckListCategory, error)
 // ProjectOrErr returns the Project value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e WorkOrderEdges) ProjectOrErr() (*Project, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[12] {
 		if e.Project == nil {
 			// The edge project was loaded in eager-loading,
 			// but was not found.
@@ -222,7 +240,7 @@ func (e WorkOrderEdges) ProjectOrErr() (*Project, error) {
 // OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e WorkOrderEdges) OwnerOrErr() (*User, error) {
-	if e.loadedTypes[12] {
+	if e.loadedTypes[13] {
 		if e.Owner == nil {
 			// The edge owner was loaded in eager-loading,
 			// but was not found.
@@ -236,7 +254,7 @@ func (e WorkOrderEdges) OwnerOrErr() (*User, error) {
 // AssigneeOrErr returns the Assignee value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e WorkOrderEdges) AssigneeOrErr() (*User, error) {
-	if e.loadedTypes[13] {
+	if e.loadedTypes[14] {
 		if e.Assignee == nil {
 			// The edge assignee was loaded in eager-loading,
 			// but was not found.
@@ -267,6 +285,7 @@ func (*WorkOrder) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*WorkOrder) fkValues() []interface{} {
 	return []interface{}{
+		&sql.NullInt64{}, // organization_work_order_fk
 		&sql.NullInt64{}, // project_work_orders
 		&sql.NullInt64{}, // work_order_type
 		&sql.NullInt64{}, // work_order_template
@@ -344,36 +363,42 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 	values = values[10:]
 	if len(values) == len(workorder.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field organization_work_order_fk", value)
+		} else if value.Valid {
+			wo.organization_work_order_fk = new(int)
+			*wo.organization_work_order_fk = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_work_orders", value)
 		} else if value.Valid {
 			wo.project_work_orders = new(int)
 			*wo.project_work_orders = int(value.Int64)
 		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
+		if value, ok := values[2].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_type", value)
 		} else if value.Valid {
 			wo.work_order_type = new(int)
 			*wo.work_order_type = int(value.Int64)
 		}
-		if value, ok := values[2].(*sql.NullInt64); !ok {
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template", value)
 		} else if value.Valid {
 			wo.work_order_template = new(int)
 			*wo.work_order_template = int(value.Int64)
 		}
-		if value, ok := values[3].(*sql.NullInt64); !ok {
+		if value, ok := values[4].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_location", value)
 		} else if value.Valid {
 			wo.work_order_location = new(int)
 			*wo.work_order_location = int(value.Int64)
 		}
-		if value, ok := values[4].(*sql.NullInt64); !ok {
+		if value, ok := values[5].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_owner", value)
 		} else if value.Valid {
 			wo.work_order_owner = new(int)
 			*wo.work_order_owner = int(value.Int64)
 		}
-		if value, ok := values[5].(*sql.NullInt64); !ok {
+		if value, ok := values[6].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_assignee", value)
 		} else if value.Valid {
 			wo.work_order_assignee = new(int)
@@ -401,6 +426,11 @@ func (wo *WorkOrder) QueryEquipment() *EquipmentQuery {
 // QueryLinks queries the links edge of the WorkOrder.
 func (wo *WorkOrder) QueryLinks() *LinkQuery {
 	return (&WorkOrderClient{config: wo.config}).QueryLinks(wo)
+}
+
+// QueryOrganization queries the organization edge of the WorkOrder.
+func (wo *WorkOrder) QueryOrganization() *OrganizationQuery {
+	return (&WorkOrderClient{config: wo.config}).QueryOrganization(wo)
 }
 
 // QueryFiles queries the files edge of the WorkOrder.

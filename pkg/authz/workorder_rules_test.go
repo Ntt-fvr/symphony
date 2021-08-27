@@ -27,16 +27,26 @@ func prepareWOData(ctx context.Context, c *ent.Client, setWorkOrderType func(wc 
 	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderTypeName := uuid.New().String()
 	workOrderName := uuid.New().String()
+	organizationName := uuid.New().String()
 	workOrderTypeMutation := c.WorkOrderType.Create().
 		SetName(workOrderTypeName)
 	if setWorkOrderType != nil {
 		setWorkOrderType(workOrderTypeMutation)
 	}
 	workOrderType := workOrderTypeMutation.SaveX(ctx)
+
+	organization := c.Organization.Create().
+		SetCreateTime(time.Now()).
+		SetDescription(organizationName).
+		SetName(organizationName).
+		SetUpdateTime(time.Now()).
+		SaveX(ctx)
+
 	workOrder := c.WorkOrder.Create().
 		SetName(workOrderName).
 		SetType(workOrderType).
 		SetOwner(u).
+		SetOrganizationID(organization.ID).
 		SetCreationDate(time.Now()).
 		SaveX(ctx)
 	return workOrderType, workOrder
@@ -285,6 +295,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 		permissions := authz.EmptyPermissions()
 		permissions.WorkforcePolicy.Read.IsAllowed = models.PermissionValueByCondition
 		permissions.WorkforcePolicy.Read.WorkOrderTypeIds = []int{workOrderType.ID}
+		permissions.WorkforcePolicy.Read.OrganizationIds = []int{workOrderType.ID}
 		permissionsContext := viewertest.NewContext(
 			context.Background(),
 			c,
@@ -293,7 +304,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
-		require.Equal(t, 1, count)
+		require.Equal(t, 0, count)
 	})
 	t.Run("FullPermissions", func(t *testing.T) {
 		permissions := authz.EmptyPermissions()

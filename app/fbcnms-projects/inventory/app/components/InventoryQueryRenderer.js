@@ -10,7 +10,7 @@
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, {useState} from 'react';
-import RelayEnvironemnt from '../common/RelayEnvironment.js';
+import RelayEnvironment from '../common/RelayEnvironment.js';
 import {QueryRenderer} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useSnackbar} from '@fbcnms/ui/hooks';
@@ -36,7 +36,7 @@ const InventoryQueryRenderer = (compProps: Props) => {
 
   return (
     <QueryRenderer
-      environment={RelayEnvironemnt}
+      environment={RelayEnvironment}
       query={query}
       variables={variables}
       render={({error, props}) => {

@@ -38,6 +38,8 @@ type PermissionsPolicy struct {
 	WorkforcePolicy *models.WorkforcePolicyInput `json:"workforce_policy,omitempty"`
 	// AutomationPolicy holds the value of the "automation_policy" field.
 	AutomationPolicy *models.AutomationPolicyInput `json:"automation_policy,omitempty"`
+	// AssurancePolicy holds the value of the "assurance_policy" field.
+	AssurancePolicy *models.AssurancePolicyInput `json:"assurance_policy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PermissionsPolicyQuery when eager-loading is set.
 	Edges PermissionsPolicyEdges `json:"edges"`
@@ -47,9 +49,11 @@ type PermissionsPolicy struct {
 type PermissionsPolicyEdges struct {
 	// Groups holds the value of the groups edge.
 	Groups []*UsersGroup
+	// Organization holds the value of the organization edge.
+	Organization []*Organization
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // GroupsOrErr returns the Groups value or an error if the edge
@@ -59,6 +63,15 @@ func (e PermissionsPolicyEdges) GroupsOrErr() ([]*UsersGroup, error) {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
+}
+
+// OrganizationOrErr returns the Organization value or an error if the edge
+// was not loaded in eager-loading.
+func (e PermissionsPolicyEdges) OrganizationOrErr() ([]*Organization, error) {
+	if e.loadedTypes[1] {
+		return e.Organization, nil
+	}
+	return nil, &NotLoadedError{edge: "organization"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -73,6 +86,7 @@ func (*PermissionsPolicy) scanValues() []interface{} {
 		&[]byte{},         // inventory_policy
 		&[]byte{},         // workforce_policy
 		&[]byte{},         // automation_policy
+		&[]byte{},         // assurance_policy
 	}
 }
 
@@ -137,12 +151,25 @@ func (pp *PermissionsPolicy) assignValues(values ...interface{}) error {
 			return fmt.Errorf("unmarshal field automation_policy: %v", err)
 		}
 	}
+
+	if value, ok := values[8].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field assurance_policy", values[8])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &pp.AssurancePolicy); err != nil {
+			return fmt.Errorf("unmarshal field assurance_policy: %v", err)
+		}
+	}
 	return nil
 }
 
 // QueryGroups queries the groups edge of the PermissionsPolicy.
 func (pp *PermissionsPolicy) QueryGroups() *UsersGroupQuery {
 	return (&PermissionsPolicyClient{config: pp.config}).QueryGroups(pp)
+}
+
+// QueryOrganization queries the organization edge of the PermissionsPolicy.
+func (pp *PermissionsPolicy) QueryOrganization() *OrganizationQuery {
+	return (&PermissionsPolicyClient{config: pp.config}).QueryOrganization(pp)
 }
 
 // Update returns a builder for updating this PermissionsPolicy.
@@ -184,6 +211,8 @@ func (pp *PermissionsPolicy) String() string {
 	builder.WriteString(fmt.Sprintf("%v", pp.WorkforcePolicy))
 	builder.WriteString(", automation_policy=")
 	builder.WriteString(fmt.Sprintf("%v", pp.AutomationPolicy))
+	builder.WriteString(", assurance_policy=")
+	builder.WriteString(fmt.Sprintf("%v", pp.AssurancePolicy))
 	builder.WriteByte(')')
 	return builder.String()
 }

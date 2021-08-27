@@ -313,6 +313,7 @@ const (
 	WorkOrderFilterTypeWorkOrderPriority      WorkOrderFilterType = "WORK_ORDER_PRIORITY"
 	WorkOrderFilterTypeLocationInst           WorkOrderFilterType = "LOCATION_INST"
 	WorkOrderFilterTypeLocationInstExternalID WorkOrderFilterType = "LOCATION_INST_EXTERNAL_ID"
+	WorkOrderFilterTypeWorkOrderOrganization  WorkOrderFilterType = "WORK_ORDER_ORGANIZATION"
 )
 
 func (w WorkOrderFilterType) IsValid() bool {

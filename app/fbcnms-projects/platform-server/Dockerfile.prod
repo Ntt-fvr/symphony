@@ -38,7 +38,7 @@ COPY fbcnms-projects/platform-server .
 COPY @fbcnms /app/@fbcnms
 
 # Install server dependencies
-RUN yarn install --production=true --frozen-lockfile --network-timeout 600000 && yarn cache clean
+RUN yarn install --frozen-lockfile --production=true --network-timeout 600000 && yarn cache clean
 
 # Copy compiled UI components
 COPY --from=ui /app/fbcnms-projects/inventory/static/dist /app/fbcnms-projects/platform-server/static/dist

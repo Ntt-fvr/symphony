@@ -9,6 +9,7 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -21,9 +22,18 @@ func handleUserFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.Us
 		return userNameFilter(q, filter)
 	case models.UserFilterTypeUserStatus:
 		return userStatusFilter(q, filter)
+	case models.UserFilterTypeUserOrganization:
+		return userOrganizationFilter(q, filter)
 	default:
 		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
+}
+
+func userOrganizationFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.UserQuery, error) {
+	if filter.Operator == enum.FilterOperatorIsOneOf && filter.IDSet != nil {
+		return q.Where(user.HasOrganizationWith(organization.IDIn(filter.IDSet...))), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func userStatusFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.UserQuery, error) {

@@ -49,6 +49,8 @@ const (
 	EdgeEquipment = "equipment"
 	// EdgeLinks holds the string denoting the links edge name in mutations.
 	EdgeLinks = "links"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
 	// EdgeFiles holds the string denoting the files edge name in mutations.
 	EdgeFiles = "files"
 	// EdgeHyperlinks holds the string denoting the hyperlinks edge name in mutations.
@@ -100,6 +102,13 @@ const (
 	LinksInverseTable = "links"
 	// LinksColumn is the table column denoting the links relation/edge.
 	LinksColumn = "link_work_order"
+	// OrganizationTable is the table the holds the organization relation/edge.
+	OrganizationTable = "work_orders"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
+	// OrganizationColumn is the table column denoting the organization relation/edge.
+	OrganizationColumn = "organization_work_order_fk"
 	// FilesTable is the table the holds the files relation/edge.
 	FilesTable = "files"
 	// FilesInverseTable is the table name for the File entity.
@@ -189,6 +198,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrder type.
 var ForeignKeys = []string{
+	"organization_work_order_fk",
 	"project_work_orders",
 	"work_order_type",
 	"work_order_template",

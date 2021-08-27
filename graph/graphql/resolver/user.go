@@ -37,6 +37,13 @@ func (userResolver) Name(_ context.Context, user *ent.User) (string, error) {
 	}
 	return user.Email, nil
 }
+func (userResolver) OrganizationFk(ctx context.Context, user *ent.User) (*ent.Organization, error) {
+	variable, err := user.Organization(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return variable, nil
+}
 
 func (r mutationResolver) EditUser(ctx context.Context, input models.EditUserInput) (*ent.User, error) {
 	client := ent.FromContext(ctx)
@@ -57,7 +64,8 @@ func (r mutationResolver) EditUser(ctx context.Context, input models.EditUserInp
 		SetNillableLastName(input.LastName).
 		SetNillableStatus(input.Status).
 		SetNillableRole(input.Role).
-		SetNillableDistanceUnit(input.DistanceUnit)
+		SetNillableDistanceUnit(input.DistanceUnit).
+		SetNillableOrganizationID(input.OrganizationFk)
 
 	return upd.Save(ctx)
 }
