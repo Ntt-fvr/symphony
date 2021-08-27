@@ -90,10 +90,12 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 		require.NoError(t, err)
 		require.Zero(t, count)
 	})
+	organization, _ := wo1.Organization(ctx)
 	t.Run("PartialPermissions", func(t *testing.T) {
 		permissions := authz.EmptyPermissions()
 		permissions.WorkforcePolicy.Read.IsAllowed = models.PermissionValueByCondition
 		permissions.WorkforcePolicy.Read.WorkOrderTypeIds = []int{woType1.ID}
+		permissions.WorkforcePolicy.Read.OrganizationIds = []int{organization.ID}
 		permissionsContext := viewertest.NewContext(
 			context.Background(),
 			c,
@@ -126,9 +128,16 @@ func TestWorkOrderActivityPolicyRule(t *testing.T) {
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
+	organization := c.Organization.Create().
+		SetCreateTime(time.Now()).
+		SetDescription("Organization").
+		SetName("Organization").
+		SetUpdateTime(time.Now()).
+		SaveX(ctx)
 	workOrder := c.WorkOrder.Create().
 		SetName("workOrder").
 		SetType(workOrderType).
+		SetOrganizationID(organization.ID).
 		SetOwner(u).
 		SetCreationDate(time.Now()).
 		SaveX(ctx)

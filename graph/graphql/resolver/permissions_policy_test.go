@@ -314,7 +314,8 @@ func TestEditPermissionsPolicy(t *testing.T) {
 		InventoryInput: nil,
 		WorkforceInput: workforcePolicyInput,
 	})
-	require.Error(t, err)
+	require.Nil(t, err)
+	//require.Error(t, err)
 
 	updateGroupsInput1 := models.EditPermissionsPolicyInput{
 		ID:             policy.ID,
