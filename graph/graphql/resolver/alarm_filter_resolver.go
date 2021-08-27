@@ -22,9 +22,9 @@ func (alarmFilterResolver) AlarmStatus(ctx context.Context, alarmFilter *ent.Ala
 
 	if err != nil {
 		return nil, fmt.Errorf("has occurred error on proces: %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
+
 }
 
 func (r mutationResolver) AddAlarmFilter(ctx context.Context, input models.AddAlarmFilterInput) (*ent.AlarmFilter, error) {

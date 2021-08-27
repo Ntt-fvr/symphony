@@ -21,9 +21,9 @@ func (alarmStatusResolver) AlarmFilter(ctx context.Context, alarmStatus *ent.Ala
 	variable, err := alarmStatus.AlarmStatusFk(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
+
 }
 func (r mutationResolver) AddAlarmStatus(ctx context.Context, input models.AddAlarmStatusInput) (*ent.AlarmStatus, error) {
 	client := r.ClientFrom(ctx)
