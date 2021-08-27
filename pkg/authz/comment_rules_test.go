@@ -201,10 +201,17 @@ func TestWorkOrderCommentPolicyRule(t *testing.T) {
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
+	organization := c.Organization.Create().
+		SetCreateTime(time.Now()).
+		SetDescription("Organization").
+		SetName("Organization").
+		SetUpdateTime(time.Now()).
+		SaveX(ctx)
 	workOrder := c.WorkOrder.Create().
 		SetName("workOrder").
 		SetType(workOrderType).
 		SetOwner(u).
+		SetOrganizationID(organization.ID).
 		SetCreationDate(time.Now()).
 		SaveX(ctx)
 
