@@ -59,7 +59,7 @@ func (r mutationResolver) RemoveCounter(ctx context.Context, id int) (int, error
 	if err != nil {
 		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	//TODO: borrar o editar los edges relacionados
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.Counter.DeleteOne(t).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "has occurred error on process: %v")
