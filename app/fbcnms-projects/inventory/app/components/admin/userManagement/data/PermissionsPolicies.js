@@ -124,6 +124,7 @@ export type WorkforceReadPermissionRule = $ReadOnly<{|
   isAllowed: PermissionValue,
   projectTypeIds: ?$ReadOnlyArray<string>,
   workOrderTypeIds: ?$ReadOnlyArray<string>,
+  organizationIds: ?$ReadOnlyArray<string>,
 |}>;
 
 export type WorkforcePolicy = $ReadOnly<{|
@@ -173,6 +174,7 @@ function tryGettingWorkforcePolicy(
 function permissionsPolicy2PermissionsPolicyInput(
   policy: PermissionsPolicy,
 ): AddPermissionsPolicyInput {
+  console.log(policy);
   return {
     name: policy.name,
     description: policy.description,
@@ -298,10 +300,12 @@ export function locationPolicyCUDRule2LocationPolicyCUDRuleInput(
 function workforceReadPermissionRule2WorkforcePermissionRuleInput(
   policyRule?: ?WorkforceReadPermissionRule,
 ): WorkforcePermissionRuleInput {
+  console.log(policyRule);
   return {
     isAllowed: parsePermissionValue(policyRule?.isAllowed),
     projectTypeIds: policyRule?.projectTypeIds,
     workOrderTypeIds: policyRule?.workOrderTypeIds,
+    organizationIds: policyRule?.organizationIds,
   };
 }
 
@@ -407,6 +411,7 @@ function response2PermissionsPolicies(
 export function addPermissionsPolicy(
   newPolicyValue: PermissionsPolicy,
 ): Promise<PermissionsPolicy> {
+  console.log(newPolicyValue);
   return new Promise<PermissionsPolicy>((resolve, reject) => {
     const callbacks: MutationCallbacks<AddPermissionsPolicyMutationResponse> = {
       onCompleted: (response, errors) => {

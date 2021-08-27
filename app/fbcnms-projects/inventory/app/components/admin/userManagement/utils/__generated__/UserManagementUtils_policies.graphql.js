@@ -104,6 +104,7 @@ export type UserManagementUtils_policies = {|
       +isAllowed: PermissionValue,
       +projectTypeIds: ?$ReadOnlyArray<string>,
       +workOrderTypeIds: ?$ReadOnlyArray<string>,
+      +organizationIds: ?$ReadOnlyArray<string>,
     |},
     +templates: {|
       +create: {|
@@ -235,6 +236,7 @@ export type UserManagementUtils_policies = {|
           +isAllowed: PermissionValue,
           +projectTypeIds: ?$ReadOnlyArray<string>,
           +workOrderTypeIds: ?$ReadOnlyArray<string>,
+          +organizationIds: ?$ReadOnlyArray<string>,
         |},
         +templates: {|
           +create: {|
@@ -509,6 +511,13 @@ v7 = {
               "args": null,
               "kind": "ScalarField",
               "name": "workOrderTypeIds",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "organizationIds",
               "storageKey": null
             }
           ],

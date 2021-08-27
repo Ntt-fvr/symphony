@@ -151,6 +151,7 @@ graphql`
       isAllowed
       projectTypeIds
       workOrderTypeIds
+      organizationIds
     }
     templates {
       create {

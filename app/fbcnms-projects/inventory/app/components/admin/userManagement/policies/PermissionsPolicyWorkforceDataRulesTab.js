@@ -8,32 +8,33 @@
  * @format
  */
 
+import {makeStyles} from '@material-ui/styles';
+import Switch from '@symphony/design-system/components/switch/Switch';
+import Text from '@symphony/design-system/components/Text';
+import symphony from '@symphony/design-system/theme/symphony';
+import classNames from 'classnames';
+import fbt from 'fbt';
+import {debounce} from 'lodash';
+import * as React from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import type {
   BasicPermissionRule,
   WorkforceCUDPermissions,
-  WorkforcePolicy,
+  WorkforcePolicy
 } from '../data/PermissionsPolicies';
-
-import * as React from 'react';
-import HierarchicalCheckbox, {
-  HIERARCHICAL_RELATION,
-} from '../utils/HierarchicalCheckbox';
-import PermissionsPolicyRulesSection, {
-  DataRuleTitle,
-} from './PermissionsPolicyRulesSection';
-import PermissionsPolicyWorkforceDataRulesSpecification from './PermissionsPolicyWorkforceDataRulesSpecification';
-import Switch from '@symphony/design-system/components/switch/Switch';
-import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
-import fbt from 'fbt';
-import symphony from '@symphony/design-system/theme/symphony';
 import {
   bool2PermissionRuleValue,
-  permissionRuleValue2Bool,
+  permissionRuleValue2Bool
 } from '../data/PermissionsPolicies';
-import {debounce} from 'lodash';
-import {makeStyles} from '@material-ui/styles';
-import {useCallback, useEffect, useState} from 'react';
+import HierarchicalCheckbox, {
+  HIERARCHICAL_RELATION
+} from '../utils/HierarchicalCheckbox';
+import PermissionsPolicyRulesSection, {
+  DataRuleTitle
+} from './PermissionsPolicyRulesSection';
+import PermissionsPolicyWorkforceDataRulesSpecification from './PermissionsPolicyWorkforceDataRulesSpecification';
+import PermissionsPolicyWorkforceOrganizationSpecification from './PermissionsPolicyWorkforceOrganizationSpecification';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -238,12 +239,15 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
     [onChange],
   );
 
+  const onOrgChange = null;
+
   if (policy == null) {
     return null;
   }
 
   const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
   const isDisabled = onChange == null;
+  const orgIsDisabled = onOrgChange == null;
 
   return (
     <div className={classNames(classes.root, className)}>
@@ -288,6 +292,25 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
           })
         }
       />
+
+      <Switch
+        className={classNames(classes.readRule, classes.rule)}
+        title={fbt('View work orders form multiple organizations', '')}
+        checked={readAllowed}
+        disabled={isDisabled}
+        onChange={checked =>
+          callOnChange({
+            ...policy,
+            read: {
+              ...policy.read,
+              isAllowed: bool2PermissionRuleValue(checked),
+            },
+          })
+        }
+
+      />
+
+      <PermissionsPolicyWorkforceOrganizationSpecification disabled={orgIsDisabled} policy={policy} onChange={callOnChange.bind(this)} />
     </div>
   );
 }

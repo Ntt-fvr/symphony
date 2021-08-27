@@ -101,6 +101,7 @@ export type UserManagementUtils_policies_base = {|
       +isAllowed: PermissionValue,
       +projectTypeIds: ?$ReadOnlyArray<string>,
       +workOrderTypeIds: ?$ReadOnlyArray<string>,
+      +organizationIds: ?$ReadOnlyArray<string>,
     |},
     +templates: {|
       +create: {|
@@ -379,6 +380,13 @@ return {
                   "args": null,
                   "kind": "ScalarField",
                   "name": "workOrderTypeIds",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "organizationIds",
                   "storageKey": null
                 }
               ],
