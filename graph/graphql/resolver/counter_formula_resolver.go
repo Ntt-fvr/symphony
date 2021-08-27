@@ -21,18 +21,16 @@ func (counterFormulaResolver) CounterFk(ctx context.Context, counterFormula *ent
 	variable, err := counterFormula.Counter(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
 }
 
 func (counterFormulaResolver) FormulaFk(ctx context.Context, counterFormula *ent.CounterFormula) (*ent.Formula, error) {
 	variable, err := counterFormula.Formula(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) AddCounterFormula(ctx context.Context, input models.AddCounterFormulaInput) (*ent.CounterFormula, error) {

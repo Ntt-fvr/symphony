@@ -20,7 +20,7 @@ type alarmStatusResolver struct{}
 func (alarmStatusResolver) AlarmFilter(ctx context.Context, alarmStatus *ent.AlarmStatus) ([]*ent.AlarmFilter, error) {
 	variable, err := alarmStatus.AlarmStatusFk(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
 
@@ -33,9 +33,9 @@ func (r mutationResolver) AddAlarmStatus(ctx context.Context, input models.AddAl
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -48,12 +48,12 @@ func (r mutationResolver) RemoveAlarmStatus(ctx context.Context, id int) (int, e
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.AlarmStatus.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %w")
 	}
 	return id, nil
 }
@@ -63,9 +63,9 @@ func (r mutationResolver) EditAlarmStatus(ctx context.Context, input models.Edit
 	et, err := client.AlarmStatus.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	if input.Name != et.Name {
 
@@ -74,9 +74,9 @@ func (r mutationResolver) EditAlarmStatus(ctx context.Context, input models.Edit
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %w")
 		}
 	}
 	return et, nil

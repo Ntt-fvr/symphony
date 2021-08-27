@@ -21,7 +21,7 @@ func (comparatorResolver) RuleLimit(ctx context.Context, comparator *ent.Compara
 	variable, err := comparator.Comparatorrulelimit(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
 
@@ -35,9 +35,9 @@ func (r mutationResolver) AddComparator(ctx context.Context, input models.AddCom
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -50,12 +50,12 @@ func (r mutationResolver) RemoveComparator(ctx context.Context, id int) (int, er
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Comparator.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %w")
 	}
 	return id, nil
 }
@@ -65,9 +65,9 @@ func (r mutationResolver) EditComparator(ctx context.Context, input models.EditC
 	et, err := client.Comparator.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	if input.Name != et.Name {
 
@@ -76,9 +76,9 @@ func (r mutationResolver) EditComparator(ctx context.Context, input models.EditC
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %w")
 		}
 	}
 	return et, nil
