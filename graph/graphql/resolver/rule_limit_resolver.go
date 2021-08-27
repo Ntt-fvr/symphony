@@ -72,8 +72,10 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 
 	var rule2, erro2 = et.Rule(ctx)
 	var rule int
-	if erro2 == nil && &rule2.ID != nil {
-		rule = rule2.ID
+	if erro2 == nil {
+		if rule2 != nil {
+			rule = rule2.ID
+		}
 	} else {
 		return nil, errors.Wrap(erro2, "has occurred error on process: %v")
 	}
