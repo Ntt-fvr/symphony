@@ -87,13 +87,13 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		}
 		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
 	}
-	var kqiId int
+	var kqiID int
 	var init, end, frame, allowed, status, impact, name = et.InitTime, et.EndTime, et.Frame, et.AlowedValidation, et.Status, et.Impact, et.Name
 	var kqi, err1 = et.KqiTargetFk(ctx)
 	if err1 != nil {
 		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
 	} else if kqi != nil {
-		kqiId = kqi.ID
+		kqiID = kqi.ID
 	}
 
 	var change = false
@@ -128,7 +128,7 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		change = true
 	}
 	if (kqi != nil && kqi.ID != input.Kqi) || kqi == nil {
-		kqiId = input.Kqi
+		kqiID = input.Kqi
 		change = true
 	}
 
@@ -143,7 +143,7 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 			SetAlowedValidation(allowed).
 			SetStatus(status).
 			SetImpact(impact).
-			SetKqiTargetFkID(kqiId).
+			SetKqiTargetFkID(kqiID).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
 				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)

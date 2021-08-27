@@ -15,19 +15,6 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-/*
-type recommendationsSourcesResolver struct{}
-
-func (recommendationsSourcesResolver) Recommendations(ctx context.Context, recommendationsSources *ent.RecommendationsSources) ([]*ent.Recommendations, error) {
-	variable, err := recommendationsSources.Recommendations(ctx)
-
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-*/
 func (r mutationResolver) AddRecommendationsSources(ctx context.Context, input models.AddRecommendationsSourcesInput) (*ent.RecommendationsSources, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.
@@ -36,9 +23,9 @@ func (r mutationResolver) AddRecommendationsSources(ctx context.Context, input m
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -51,12 +38,12 @@ func (r mutationResolver) RemoveRecommendationsSources(ctx context.Context, id i
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.RecommendationsSources.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %w")
 	}
 	return id, nil
 }
@@ -66,9 +53,9 @@ func (r mutationResolver) EditRecommendationsSources(ctx context.Context, input 
 	et, err := client.RecommendationsSources.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	if input.Name != et.Name {
 
@@ -77,9 +64,9 @@ func (r mutationResolver) EditRecommendationsSources(ctx context.Context, input 
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %w")
 		}
 	}
 	return et, nil

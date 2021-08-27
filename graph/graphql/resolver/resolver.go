@@ -290,25 +290,6 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 	return kqiComparatorResolver{}
 }
 
-/**************************************************************************************************/
-/************************* RECOMMENDATIONS ********************************************************/
-/*
-func (r resolver) RecommendationsCategory() generated.RecommendationsCategoryResolver {
-	return recommendationsCategoryResolver{}
-}
-
-func (r resolver) RecommendationsSources() generated.RecommendationsSourcesResolver {
-	return recommendationsSourcesResolver{}
-}
-*/
-//*/
 func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
-
-/*
-func (r resolver) Organization() generated.OrganizationResolver {
-	return organizationResolver{}
-}
-*/
-/**************************************************************************************************/

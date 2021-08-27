@@ -61,10 +61,9 @@ func (r workOrderResolver) Activities(ctx context.Context, obj *ent.WorkOrder, f
 func (workOrderResolver) OrganizationFk(ctx context.Context, workOrder *ent.WorkOrder) (*ent.Organization, error) {
 	variable, err := workOrder.Organization(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has occurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (workOrderResolver) EquipmentToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error) {

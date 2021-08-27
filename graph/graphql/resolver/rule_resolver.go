@@ -176,7 +176,7 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			SetEndDateTime(end).
 			SetThresholdID(thresholdid).
 			SetRuletypeID(rtypeid).
-			SetStatus(input.Status).
+			SetStatus(status).
 			SetNillableEventTypeName(tpe).
 			SetNillableSpecificProblem(problem).
 			SetNillableAdditionalInfo(info).

@@ -15,26 +15,6 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-/*
-type organizationResolver struct{}
-
-func (organizationResolver) UserFk(ctx context.Context, organization *ent.Organization) ([]*ent.User, error) {
-	variable, err := organization.UserFk(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has occurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-func (organizationResolver) WorkOrderFk(ctx context.Context, organization *ent.Organization) ([]*ent.WorkOrder, error) {
-	variable, err := organization.WorkOrderFk(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("has occurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-*/
 func (r mutationResolver) AddOrganization(ctx context.Context, input models.AddOrganizationInput) (*ent.Organization, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.
@@ -44,9 +24,9 @@ func (r mutationResolver) AddOrganization(ctx context.Context, input models.AddO
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, fmt.Errorf("has occurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -59,12 +39,12 @@ func (r mutationResolver) RemoveOrganization(ctx context.Context, id int) (int, 
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has occurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Organization.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has occurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %w")
 	}
 	return id, nil
 }
@@ -74,9 +54,9 @@ func (r mutationResolver) EditOrganization(ctx context.Context, input models.Edi
 	et, err := client.Organization.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 		}
-		return nil, errors.Wrapf(err, "has occurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
 	}
 	if input.Name != et.Name || input.Description != et.Description {
 		if et, err = client.Organization.
@@ -85,9 +65,9 @@ func (r mutationResolver) EditOrganization(ctx context.Context, input models.Edi
 			SetDescription(input.Description).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
 			}
-			return nil, errors.Wrap(err, "has occurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %w")
 		}
 	}
 	return et, nil
