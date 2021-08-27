@@ -20,7 +20,7 @@ type counterFormulaResolver struct{}
 func (counterFormulaResolver) CounterFk(ctx context.Context, counterFormula *ent.CounterFormula) (*ent.Counter, error) {
 	variable, err := counterFormula.Counter(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
 }
@@ -28,7 +28,7 @@ func (counterFormulaResolver) CounterFk(ctx context.Context, counterFormula *ent
 func (counterFormulaResolver) FormulaFk(ctx context.Context, counterFormula *ent.CounterFormula) (*ent.Formula, error) {
 	variable, err := counterFormula.Formula(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
 }
@@ -42,9 +42,9 @@ func (r mutationResolver) AddCounterFormula(ctx context.Context, input models.Ad
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -54,7 +54,7 @@ func (r mutationResolver) EditCounterFormula(ctx context.Context, input models.E
 	et, err := client.CounterFormula.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
 		return nil, errors.Wrapf(err, "updating counter: id=%q", input.ID)
 	}
@@ -62,13 +62,13 @@ func (r mutationResolver) EditCounterFormula(ctx context.Context, input models.E
 	var formulaid, counterid int
 	var formula, err1 = et.Formula(ctx)
 	if err1 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err1, "has occurred error on process: %v")
 	} else if formula != nil {
 		formulaid = formula.ID
 	}
 	var counter, err2 = et.Counter(ctx)
 	if err1 != nil {
-		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err2, "has occurred error on process: %v")
 	} else if counter != nil {
 		counterid = counter.ID
 	}
@@ -83,9 +83,9 @@ func (r mutationResolver) EditCounterFormula(ctx context.Context, input models.E
 			SetMandatory(input.Mandatory).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil
@@ -99,11 +99,11 @@ func (r mutationResolver) RemoveCounterFormula(ctx context.Context, id int) (int
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 
 	if err := client.CounterFormula.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }

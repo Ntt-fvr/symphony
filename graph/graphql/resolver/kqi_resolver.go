@@ -51,7 +51,6 @@ func (kqiResolver) KqiTemporalFrequency(ctx context.Context, kqi *ent.Kqi) (*ent
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
-
 }
 
 func (kqiResolver) KqiTarget(ctx context.Context, kqi *ent.Kqi) ([]*ent.KqiTarget, error) {
@@ -79,7 +78,7 @@ func (r mutationResolver) AddKqi(ctx context.Context, input models.AddKqiInput) 
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
@@ -94,12 +93,12 @@ func (r mutationResolver) RemoveKqi(ctx context.Context, id int) (int, error) {
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Kqi.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has occurred error on process: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -109,35 +108,35 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 	et, err := client.Kqi.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var categoryid, perspectiveid, temporalFrequencyid, kqiSourceID int
 	var name, start, end, formula, description = et.Name, et.StartDateTime, et.EndDateTime, et.Formula, et.Description
 
 	var category, err1 = et.KqiCategoryFk(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err1, "has occurred error on process: %w")
+		return nil, errors.Wrap(err1, "has occurred error on process: %v")
 	} else if category != nil {
 		categoryid = category.ID
 	}
 	var perspective, err2 = et.KqiPerspectiveFk(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err2, "has occurred error on process: %w")
+		return nil, errors.Wrap(err2, "has occurred error on process: %v")
 	} else if perspective != nil {
 		perspectiveid = perspective.ID
 	}
 	var temporal, err3 = et.KqiTemporalFrequencyFk(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err3, "has occurred error on process: %w")
+		return nil, errors.Wrap(err3, "has occurred error on process: %v")
 	} else if temporal != nil {
 		temporalFrequencyid = temporal.ID
 	}
 
 	var source, err4 = et.KqiSourceFk(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err4, "has occurred error on process: %w")
+		return nil, errors.Wrap(err4, "has occurred error on process: %v")
 	} else if source != nil {
 		kqiSourceID = source.ID
 	}
@@ -181,7 +180,6 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 	}
 
 	if change {
-
 		if et, err = client.Kqi.
 			UpdateOne(et).
 			SetName(name).
@@ -195,9 +193,9 @@ func (r mutationResolver) EditKqi(ctx context.Context, input models.EditKqiInput
 			SetKqiTemporalFrequencyFkID(temporalFrequencyid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has occurred error on process: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

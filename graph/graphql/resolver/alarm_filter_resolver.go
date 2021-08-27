@@ -24,7 +24,6 @@ func (alarmFilterResolver) AlarmStatus(ctx context.Context, alarmFilter *ent.Ala
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
-
 }
 
 func (r mutationResolver) AddAlarmFilter(ctx context.Context, input models.AddAlarmFilterInput) (*ent.AlarmFilter, error) {
@@ -44,7 +43,7 @@ func (r mutationResolver) AddAlarmFilter(ctx context.Context, input models.AddAl
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
@@ -59,12 +58,12 @@ func (r mutationResolver) RemoveAlarmFilter(ctx context.Context, id int) (int, e
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.AlarmFilter.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has occurred error on process: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -74,15 +73,15 @@ func (r mutationResolver) EditAlarmFilter(ctx context.Context, input models.Edit
 	et, err := client.AlarmFilter.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var statusid *int
 	var name, begin, end, network, enable, reason = et.Name, et.BeginTime, et.EndTime, et.NetworkResource, et.Enable, et.Reason
 	var status, err1 = et.AlarmStatusFk(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err1, "has occurred error on process: %w")
+		return nil, errors.Wrap(err1, "has occurred error on process: %v")
 	} else if status != nil {
 		statusid = &status.ID
 	}
@@ -118,7 +117,6 @@ func (r mutationResolver) EditAlarmFilter(ctx context.Context, input models.Edit
 	}
 
 	if change {
-
 		if et, err = client.AlarmFilter.
 			UpdateOne(et).
 			SetName(name).
@@ -130,9 +128,9 @@ func (r mutationResolver) EditAlarmFilter(ctx context.Context, input models.Edit
 			SetNillableAlarmStatusFkID(statusid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has occurred error on process: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

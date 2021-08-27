@@ -13,13 +13,11 @@ import (
 )
 
 func handleFormulaFilter(q *ent.FormulaQuery, filter *models.FormulaFilterInput) (*ent.FormulaQuery, error) {
-
 	switch filter.FilterType {
 	case models.FormulaFilterTypeTextformula:
 		return formulaTextformulaFilter(q, filter)
 	case models.FormulaFilterTypeStatus:
 		return formulaStatusFilter(q, filter)
-
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }

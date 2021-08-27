@@ -26,7 +26,7 @@ func (r mutationResolver) AddRuleLimit(ctx context.Context, input models.AddRule
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
@@ -41,12 +41,12 @@ func (r mutationResolver) RemoveRuleLimit(ctx context.Context, id int) (int, err
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.RuleLimit.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has occurred error on process: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -56,9 +56,9 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	et, err := client.RuleLimit.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 
 	var number, limit = et.Number, et.LimitType
@@ -67,15 +67,15 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	if erro == nil && comparator2 != nil {
 		comparator = comparator2.ID
 	} else {
-		return nil, errors.Wrap(erro, "has occurred error on process: %w")
+		return nil, errors.Wrap(erro, "has occurred error on process: %v")
 	}
 
 	var rule2, erro2 = et.Rule(ctx)
 	var rule int
-	if erro2 == nil && rule2 != nil {
+	if erro2 == nil && &rule2.ID != nil {
 		rule = rule2.ID
 	} else {
-		return nil, errors.Wrap(erro2, "has occurred error on process: %w")
+		return nil, errors.Wrap(erro2, "has occurred error on process: %v")
 	}
 
 	var change = false
@@ -97,7 +97,6 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 	}
 
 	if change {
-
 		if et, err = client.RuleLimit.
 			UpdateOne(et).
 			SetNumber(number).
@@ -106,9 +105,9 @@ func (r mutationResolver) EditRuleLimit(ctx context.Context, input models.EditRu
 			SetRuleID(rule).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has occurred error on process: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

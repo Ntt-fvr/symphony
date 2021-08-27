@@ -21,10 +21,9 @@ func (vendorResolver) VendorRecommendations(ctx context.Context, vendor *ent.Ven
 	variable, err := vendor.VendorsRecomendations(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorInput) (*ent.Vendor, error) {
@@ -35,9 +34,9 @@ func (r mutationResolver) AddVendor(ctx context.Context, input models.AddVendorI
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -50,11 +49,11 @@ func (r mutationResolver) RemoveVendor(ctx context.Context, id int) (int, error)
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	// TODO: borrar o editar los edges relacionados
 	if err := client.Vendor.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -64,9 +63,9 @@ func (r mutationResolver) EditVendor(ctx context.Context, input models.EditVendo
 	et, err := client.Vendor.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name {
 		if et, err = client.Vendor.
@@ -74,9 +73,9 @@ func (r mutationResolver) EditVendor(ctx context.Context, input models.EditVendo
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 
