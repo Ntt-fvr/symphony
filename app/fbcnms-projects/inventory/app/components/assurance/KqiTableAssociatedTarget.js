@@ -125,9 +125,9 @@ const KqiTableAssociatedTarget = (props: Props) => {
 
   const tg = items?.kqiTargets?.edges;
   const dati = tg?.filter(kqi => kqi.node.kqi.id === idKqi);
-  console.log(idKqi);
-  console.log('Tabla Target');
-  console.log(dati);
+  // console.log(idKqi);
+  // console.log('Tabla Target');
+  // console.log(dati);
   // console.log('oooooooooooo');
   // console.log(items);
   return (
@@ -178,7 +178,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </TableCell>
                 <TableCell>
-                  <Button onClick={edit} variant="text">
+                  <Button onClick={() => edit()} variant="text">
                     <Text
                       variant={'subtitle1'}
                       weight={'medium'}

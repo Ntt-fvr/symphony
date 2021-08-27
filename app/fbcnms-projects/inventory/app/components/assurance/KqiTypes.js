@@ -189,7 +189,7 @@ const KqiTypes = () => {
       setDataKqi(data);
     });
   }, [dataKqi]);
-
+  console.log(dataKqi);
   const handleClick = () => {
     setShowFormCreate(true);
   };

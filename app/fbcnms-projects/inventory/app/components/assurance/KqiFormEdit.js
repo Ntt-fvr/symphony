@@ -179,7 +179,23 @@ type Props = $ReadOnly<{|
       },
     },
   },
-
+  kqiTargets: {
+    edges: {
+      node: {
+        id: string,
+        name: string,
+        impact: string,
+        frame: string,
+        alowedValidation: string,
+        initTime: string,
+        endTime: string,
+        status: boolean,
+        kqi: {
+          id: string,
+        },
+      },
+    },
+  },
   dataKqiTargets: any,
   dataPerspectives: Array<KqiPerspectives>,
   dataSources: Array<KqiSources>,
@@ -187,6 +203,7 @@ type Props = $ReadOnly<{|
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
   returnTableKqi: () => void,
 |}>;
+
 const TargetQuery = graphql`
   query KqiFormEditQuery {
     kqiTargets {
@@ -212,6 +229,7 @@ const TargetQuery = graphql`
 const KqiFormEdit = (props: Props) => {
   const {
     formValues,
+    kqiTargets,
     dataPerspectives,
     dataSources,
     dataCategories,
@@ -243,15 +261,16 @@ const KqiFormEdit = (props: Props) => {
       setItems(data);
     });
   }, [items]);
-  // const daticos = items?.kqiTargets?.edges?.filter(
-  //   kqi => kqi.node.kqi.id === formValues.item.id,
-  // );
+  const daticos = items?.kqiTargets?.edges?.filter(
+    kqi => kqi.node.kqi.id === formValues.item.id,
+  );
+  // const prueba = {daticos};
   // console.log('Daticos');
-  // console.log(formValues.item.id);
+  // console.log({...daticos});
   // console.log('-----------');
-  // console.log(daticos);
-  // console.log('***********');
   // console.log(formValues.item.id);
+  // console.log('***********');
+
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
       id: id,
@@ -295,7 +314,10 @@ const KqiFormEdit = (props: Props) => {
 
   if (showEditTarget) {
     return (
-      <KqiFormEditTarget returnFormEdit={() => setShowEditTarget(false)} />
+      <KqiFormEditTarget
+        datos={daticos}
+        returnFormEdit={() => setShowEditTarget(false)}
+      />
     );
   }
 

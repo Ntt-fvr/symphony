@@ -12,16 +12,16 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import IconButton from '@material-ui/core/IconButton'
+import IconButton from '@material-ui/core/IconButton';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import {DARK} from '@symphony/design-system/theme/symphony';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {MenuItem, Select} from '@material-ui/core';
 
 import classNames from 'classnames';
@@ -123,43 +123,19 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   returnFormEdit: () => void,
-  formValues: {
-    item: {
-      id: string,
-      name: string,
-    
-    },
-  },
+  datos: Array<any>,
 |}>;
 const handleRemove = () => {
   console.log('remove');
 };
-const data = {
-  counters: {
-    edges: [
-      {
-        node: {
-          id: '244813135872',
-          name: 'contador_family_7',
-          networkManagerSystem: 'hola bebe',
-          externalID: '123456789',
-        },
-      },
-      {
-        node: {
-          id: '244813135873',
-          name: 'contador_family_8',
-          networkManagerSystem: 'hola sergio',
-          externalID: '987654321',
-        },
-      },
-    ],
-  },
-};
+
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit} = props;
+  const {returnFormEdit, datos} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
+  console.log('DATOS');
+  console.log(datos?.map(node => node));
+  console.log('----------');
 
   return (
     <div className={classes.root}>
@@ -220,7 +196,7 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <FormField label="Comparator" className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
@@ -267,7 +243,7 @@ const KqiFormEditTarget = (props: Props) => {
                       />
                     </div>
                   </FormField>
-                </Grid>
+                </Grid> */}
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Impact">
