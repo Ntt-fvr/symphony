@@ -166,7 +166,6 @@ func (mutationResolver) EditPermissionsPolicy(
 		upd.SetAutomationPolicy(input.AutomationInput)
 	case input.AssuranceInput != nil && p.AssurancePolicy != nil:
 		upd.SetAssurancePolicy(input.AssuranceInput)
-
 	}
 	p, err = upd.Save(ctx)
 

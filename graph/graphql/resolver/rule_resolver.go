@@ -21,29 +21,26 @@ func (ruleResolver) RuleLimit(ctx context.Context, rule *ent.Rule) ([]*ent.RuleL
 	variable, err := rule.Rulelimitrule(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 func (ruleResolver) RuleType(ctx context.Context, rule *ent.Rule) (*ent.RuleType, error) {
 	variable, err := rule.Ruletype(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (ruleResolver) EventSeverity(ctx context.Context, rule *ent.Rule) (*ent.EventSeverity, error) {
 	variable, err := rule.Eventseverity(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput) (*ent.Rule, error) {
@@ -64,9 +61,9 @@ func (r mutationResolver) AddRule(ctx context.Context, input models.AddRuleInput
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -79,12 +76,12 @@ func (r mutationResolver) RemoveRule(ctx context.Context, id int) (int, error) {
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Rule.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -94,28 +91,28 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 	et, err := client.Rule.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var eventSeverityid, rtypeid, thresholdid int
 	var name, start, end, grace, tpe, problem, info, status = et.Name, et.StartDateTime, et.EndDateTime, et.GracePeriod,
 		et.EventTypeName, et.SpecificProblem, et.AdditionalInfo, et.Status
 	var event, err1 = et.Eventseverity(ctx)
 	if err1 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err1, "has occurred error on process: %w")
 	} else if event != nil {
 		eventSeverityid = event.ID
 	}
 	var rtype, err2 = et.Ruletype(ctx)
 	if err2 != nil {
-		return nil, errors.Wrap(err2, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err2, "has occurred error on process: %w")
 	} else if rtype != nil {
 		rtypeid = rtype.ID
 	}
 	var threshold, err3 = et.Threshold(ctx)
 	if err3 != nil {
-		return nil, errors.Wrap(err3, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err3, "has occurred error on process: %w")
 	} else if threshold != nil {
 		thresholdid = threshold.ID
 	}
@@ -167,7 +164,6 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 	}
 
 	if change {
-
 		if et, err = client.Rule.
 			UpdateOne(et).
 			SetName(name).
@@ -183,9 +179,9 @@ func (r mutationResolver) EditRule(ctx context.Context, input models.EditRuleInp
 			SetEventseverityID(eventSeverityid).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

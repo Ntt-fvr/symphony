@@ -23,9 +23,9 @@ func (r mutationResolver) AddDomain(ctx context.Context, input models.AddDomainI
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has occurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -38,12 +38,12 @@ func (r mutationResolver) RemoveDomain(ctx context.Context, id int) (int, error)
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has occurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Domain.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has occurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -53,9 +53,9 @@ func (r mutationResolver) EditDomain(ctx context.Context, input models.EditDomai
 	et, err := client.Domain.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has occurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name {
 		if et, err = client.Domain.
@@ -63,9 +63,9 @@ func (r mutationResolver) EditDomain(ctx context.Context, input models.EditDomai
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has occurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

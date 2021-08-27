@@ -34,7 +34,6 @@ func userOrganizationFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*
 		return q.Where(user.HasOrganizationWith(organization.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-
 }
 
 func userStatusFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.UserQuery, error) {

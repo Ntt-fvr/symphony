@@ -24,7 +24,6 @@ func (comparatorResolver) RuleLimit(ctx context.Context, comparator *ent.Compara
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return variable, nil
-
 }
 
 func (r mutationResolver) AddComparator(ctx context.Context, input models.AddComparatorInput) (*ent.Comparator, error) {
@@ -35,7 +34,7 @@ func (r mutationResolver) AddComparator(ctx context.Context, input models.AddCom
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
 		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
@@ -50,12 +49,12 @@ func (r mutationResolver) RemoveComparator(ctx context.Context, id int) (int, er
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	//TODO: borrar o editar los edges relacionados
 
 	if err := client.Comparator.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has occurred error on process: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -65,20 +64,19 @@ func (r mutationResolver) EditComparator(ctx context.Context, input models.EditC
 	et, err := client.Comparator.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has occurred error on process: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name {
-
 		if et, err = client.Comparator.
 			UpdateOne(et).
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has occurred error on process: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has occurred error on process: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil
