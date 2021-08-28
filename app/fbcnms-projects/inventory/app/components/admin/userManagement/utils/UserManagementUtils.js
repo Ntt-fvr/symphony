@@ -30,6 +30,11 @@ graphql`
     email
     status
     role
+    organizationFk {
+      id
+      name
+      description
+    }
   }
 `;
 

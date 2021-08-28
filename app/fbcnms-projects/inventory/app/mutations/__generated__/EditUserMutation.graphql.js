@@ -40,6 +40,11 @@ export type EditUserMutationResponse = {|
     +email: string,
     +status: UserStatus,
     +role: UserRole,
+    +organizationFk: ?{|
+      +id: string,
+      +name: string,
+      +description: string,
+    |},
     +groups: $ReadOnlyArray<?{|
       +id: string,
       +name: string,
@@ -53,6 +58,11 @@ export type EditUserMutationResponse = {|
         +email: string,
         +status: UserStatus,
         +role: UserRole,
+        +organizationFk: ?{|
+          +id: string,
+          +name: string,
+          +description: string,
+        |},
       |}>,
       +policies: $ReadOnlyArray<{|
         +id: string,
@@ -195,6 +205,11 @@ mutation EditUserMutation(
     email
     status
     role
+    organizationFk {
+      id
+      name
+      description
+    }
     groups {
       id
       name
@@ -208,6 +223,11 @@ mutation EditUserMutation(
         email
         status
         role
+        organizationFk {
+          id
+          name
+          description
+        }
       }
       policies {
         id
@@ -405,14 +425,28 @@ v9 = {
 v10 = {
   "alias": null,
   "args": null,
+  "concreteType": "Organization",
+  "kind": "LinkedField",
+  "name": "organizationFk",
+  "plural": false,
+  "selections": [
+    (v1/*: any*/),
+    (v8/*: any*/),
+    (v9/*: any*/)
+  ],
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
   "kind": "ScalarField",
   "name": "isAllowed",
   "storageKey": null
 },
-v11 = [
-  (v10/*: any*/)
-],
 v12 = [
+  (v11/*: any*/)
+],
+v13 = [
   {
     "alias": null,
     "args": null,
@@ -420,7 +454,7 @@ v12 = [
     "kind": "LinkedField",
     "name": "create",
     "plural": false,
-    "selections": (v11/*: any*/),
+    "selections": (v12/*: any*/),
     "storageKey": null
   },
   {
@@ -430,7 +464,7 @@ v12 = [
     "kind": "LinkedField",
     "name": "update",
     "plural": false,
-    "selections": (v11/*: any*/),
+    "selections": (v12/*: any*/),
     "storageKey": null
   },
   {
@@ -440,11 +474,11 @@ v12 = [
     "kind": "LinkedField",
     "name": "delete",
     "plural": false,
-    "selections": (v11/*: any*/),
+    "selections": (v12/*: any*/),
     "storageKey": null
   }
 ],
-v13 = [
+v14 = [
   {
     "alias": null,
     "args": [
@@ -466,6 +500,7 @@ v13 = [
       (v5/*: any*/),
       (v6/*: any*/),
       (v7/*: any*/),
+      (v10/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -492,7 +527,8 @@ v13 = [
               (v4/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
-              (v7/*: any*/)
+              (v7/*: any*/),
+              (v10/*: any*/)
             ],
             "storageKey": null
           },
@@ -539,7 +575,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "read",
                         "plural": false,
-                        "selections": (v11/*: any*/),
+                        "selections": (v12/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -557,7 +593,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "create",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -568,7 +604,7 @@ v13 = [
                             "name": "update",
                             "plural": false,
                             "selections": [
-                              (v10/*: any*/),
+                              (v11/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -586,7 +622,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "delete",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           }
                         ],
@@ -599,7 +635,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "equipment",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v13/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -609,7 +645,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "equipmentType",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v13/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -619,7 +655,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "locationType",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v13/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -629,7 +665,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "portType",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v13/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -639,7 +675,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "serviceType",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v13/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -657,7 +693,7 @@ v13 = [
                         "name": "read",
                         "plural": false,
                         "selections": [
-                          (v10/*: any*/),
+                          (v11/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -689,7 +725,7 @@ v13 = [
                         "kind": "LinkedField",
                         "name": "templates",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v13/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -707,7 +743,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "create",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -717,7 +753,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "update",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -727,7 +763,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "delete",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -737,7 +773,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "assign",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -747,7 +783,7 @@ v13 = [
                             "kind": "LinkedField",
                             "name": "transferOwnership",
                             "plural": false,
-                            "selections": (v11/*: any*/),
+                            "selections": (v12/*: any*/),
                             "storageKey": null
                           }
                         ],
@@ -776,7 +812,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "EditUserMutation",
-    "selections": (v13/*: any*/),
+    "selections": (v14/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -785,15 +821,15 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditUserMutation",
-    "selections": (v13/*: any*/)
+    "selections": (v14/*: any*/)
   },
   "params": {
-    "cacheID": "64a2e93d8db6fe2d0c65c3ca127fbcaf",
+    "cacheID": "97208e4da477660b912c7c2798cb21ee",
     "id": null,
     "metadata": {},
     "name": "EditUserMutation",
     "operationKind": "mutation",
-    "text": "mutation EditUserMutation(\n  $input: EditUserInput!\n) {\n  editUser(input: $input) {\n    id\n    authID\n    firstName\n    lastName\n    email\n    status\n    role\n    groups {\n      id\n      name\n      description\n      status\n      members {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n      }\n      policies {\n        id\n        name\n        description\n        isGlobal\n        policy {\n          __typename\n          ... on InventoryPolicy {\n            read {\n              isAllowed\n            }\n            location {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n                locationTypeIds\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipment {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipmentType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            locationType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            portType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            serviceType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n          }\n          ... on WorkforcePolicy {\n            read {\n              isAllowed\n              projectTypeIds\n              workOrderTypeIds\n              organizationIds\n            }\n            templates {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            data {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n              assign {\n                isAllowed\n              }\n              transferOwnership {\n                isAllowed\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation EditUserMutation(\n  $input: EditUserInput!\n) {\n  editUser(input: $input) {\n    id\n    authID\n    firstName\n    lastName\n    email\n    status\n    role\n    organizationFk {\n      id\n      name\n      description\n    }\n    groups {\n      id\n      name\n      description\n      status\n      members {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n        organizationFk {\n          id\n          name\n          description\n        }\n      }\n      policies {\n        id\n        name\n        description\n        isGlobal\n        policy {\n          __typename\n          ... on InventoryPolicy {\n            read {\n              isAllowed\n            }\n            location {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n                locationTypeIds\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipment {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipmentType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            locationType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            portType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            serviceType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n          }\n          ... on WorkforcePolicy {\n            read {\n              isAllowed\n              projectTypeIds\n              workOrderTypeIds\n              organizationIds\n            }\n            templates {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            data {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n              assign {\n                isAllowed\n              }\n              transferOwnership {\n                isAllowed\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

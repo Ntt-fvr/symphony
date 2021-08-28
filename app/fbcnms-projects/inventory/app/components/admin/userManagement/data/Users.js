@@ -26,11 +26,11 @@ import axios from 'axios';
 import nullthrows from 'nullthrows';
 import {ConnectionHandler, fetchQuery, graphql} from 'relay-runtime';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
+import {Organization} from './Organizations';
 import {USER_ROLES} from '../utils/UserManagementUtils';
 import {UserRoles} from '@fbcnms/auth/types';
 import {getGraphError} from '../../../../common/EntUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {Organization} from './Organizations';
 
 export type User = OptionalRefTypeWrapper<user>;
 export type UserBase = OptionalRefTypeWrapper<user_base>;
@@ -102,6 +102,7 @@ function createNewUserInPlatformServer(
     email: newUserValue.authID,
     password,
     role: roleToNodeRole(newUserValue.role),
+    organizationFk: newUserValue.organizationFk,
     networkIDs: [],
   };
   return axios
@@ -231,6 +232,7 @@ export function editUser(
           lastName: newUserValue.lastName,
           role: newUserValue.role,
           status: newUserValue.status,
+          organizationFk: newUserValue.organizationFk,
         },
       },
       callbacks,

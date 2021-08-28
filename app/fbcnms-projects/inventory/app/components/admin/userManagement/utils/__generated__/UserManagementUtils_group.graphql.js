@@ -34,6 +34,11 @@ export type UserManagementUtils_group = {|
     +email: string,
     +status: UserStatus,
     +role: UserRole,
+    +organizationFk: ?{|
+      +id: string,
+      +name: string,
+      +description: string,
+    |},
   |}>,
   +policies: $ReadOnlyArray<{|
     +id: string,
@@ -289,6 +294,20 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "role",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Organization",
+          "kind": "LinkedField",
+          "name": "organizationFk",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/),
+            (v1/*: any*/),
+            (v2/*: any*/)
+          ],
           "storageKey": null
         }
       ],

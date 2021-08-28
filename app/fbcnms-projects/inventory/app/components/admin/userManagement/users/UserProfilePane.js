@@ -19,6 +19,7 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import FormFieldTextInput from '../utils/FormFieldTextInput';
 import Grid from '@material-ui/core/Grid';
+import Select from '@symphony/design-system/components/Select/Select';
 import Text from '@symphony/design-system/components/Text';
 import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
@@ -31,6 +32,7 @@ import {SQUARE_DIMENSION_PX} from '@symphony/design-system/components/Experiment
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {useMessageShowingContext} from '@symphony/design-system/components/Dialog/MessageShowingContext';
+import {useOrganizations} from '../data/Organizations';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -162,6 +164,7 @@ function isSameUserDetails(userA: ?User, userB: ?User) {
 
 export default function UserProfilePane(props: Props) {
   const {user: propUser, onChange} = props;
+  const organizations = useOrganizations();
   const classes = useStyles();
   const {isFeatureEnabled} = useContext(AppContext);
   const userManagementDevMode = isFeatureEnabled('user_management_dev');
@@ -184,7 +187,7 @@ export default function UserProfilePane(props: Props) {
     if (user == null) {
       return;
     }
-    onChange(user);
+    onChange({...user, organizationFk: user.organizationFk?.id || ''});
   }, [onChange, user]);
 
   const revertChanges = useCallback(() => {
@@ -206,6 +209,16 @@ export default function UserProfilePane(props: Props) {
           },
     [userDataChanged],
   );
+
+  const organizationOptions = useMemo(() => {
+    return organizations.map(org => {
+      return {
+        value: org.id,
+        label: org.name,
+        key: org.id,
+      };
+    });
+  }, [organizations]);
 
   if (user == null) {
     return null;
@@ -417,6 +430,35 @@ export default function UserProfilePane(props: Props) {
               }
             }}
           />
+          <div className={classes.sectionHeader}>
+            <Text variant="subtitle1">
+              <fbt desc="">User organization</fbt>
+            </Text>
+            <Grid container spacing={2}>
+              <Grid key="first_name" item xs={12} sm={6} lg={4} xl={4}>
+                <FormField
+                  label="Organization"
+                  required={true}
+                  validation={{
+                    id: 'organization',
+                    value: user.organizationFk?.id || '',
+                  }}>
+                  <Select
+                    options={organizationOptions}
+                    selectedValue={user.organizationFk?.id || ''}
+                    onChange={organizationFk =>
+                      setUser(currentUser => ({
+                        ...currentUser,
+                        organizationFk: organizations.find(
+                          org => org.id === organizationFk,
+                        ),
+                      }))
+                    }
+                  />
+                </FormField>
+              </Grid>
+            </Grid>
+          </div>
         </div>
         <div className={classes.bottomBar}>
           <FormAction {...formButtonsDisablingProps}>

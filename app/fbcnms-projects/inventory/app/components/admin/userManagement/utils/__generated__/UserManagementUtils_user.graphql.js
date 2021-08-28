@@ -29,6 +29,11 @@ export type UserManagementUtils_user = {|
   +email: string,
   +status: UserStatus,
   +role: UserRole,
+  +organizationFk: ?{|
+    +id: string,
+    +name: string,
+    +description: string,
+  |},
   +groups: $ReadOnlyArray<?{|
     +id: string,
     +name: string,
@@ -42,6 +47,11 @@ export type UserManagementUtils_user = {|
       +email: string,
       +status: UserStatus,
       +role: UserRole,
+      +organizationFk: ?{|
+        +id: string,
+        +name: string,
+        +description: string,
+      |},
     |}>,
     +policies: $ReadOnlyArray<{|
       +id: string,
@@ -241,14 +251,28 @@ v8 = {
 v9 = {
   "alias": null,
   "args": null,
+  "concreteType": "Organization",
+  "kind": "LinkedField",
+  "name": "organizationFk",
+  "plural": false,
+  "selections": [
+    (v0/*: any*/),
+    (v7/*: any*/),
+    (v8/*: any*/)
+  ],
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
   "kind": "ScalarField",
   "name": "isAllowed",
   "storageKey": null
 },
-v10 = [
-  (v9/*: any*/)
-],
 v11 = [
+  (v10/*: any*/)
+],
+v12 = [
   {
     "alias": null,
     "args": null,
@@ -256,7 +280,7 @@ v11 = [
     "kind": "LinkedField",
     "name": "create",
     "plural": false,
-    "selections": (v10/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   },
   {
@@ -266,7 +290,7 @@ v11 = [
     "kind": "LinkedField",
     "name": "update",
     "plural": false,
-    "selections": (v10/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   },
   {
@@ -276,7 +300,7 @@ v11 = [
     "kind": "LinkedField",
     "name": "delete",
     "plural": false,
-    "selections": (v10/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   }
 ];
@@ -293,6 +317,7 @@ return {
     (v4/*: any*/),
     (v5/*: any*/),
     (v6/*: any*/),
+    (v9/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -319,7 +344,8 @@ return {
             (v3/*: any*/),
             (v4/*: any*/),
             (v5/*: any*/),
-            (v6/*: any*/)
+            (v6/*: any*/),
+            (v9/*: any*/)
           ],
           "storageKey": null
         },
@@ -366,7 +392,7 @@ return {
                       "kind": "LinkedField",
                       "name": "read",
                       "plural": false,
-                      "selections": (v10/*: any*/),
+                      "selections": (v11/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -384,7 +410,7 @@ return {
                           "kind": "LinkedField",
                           "name": "create",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         },
                         {
@@ -395,7 +421,7 @@ return {
                           "name": "update",
                           "plural": false,
                           "selections": [
-                            (v9/*: any*/),
+                            (v10/*: any*/),
                             {
                               "alias": null,
                               "args": null,
@@ -413,7 +439,7 @@ return {
                           "kind": "LinkedField",
                           "name": "delete",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         }
                       ],
@@ -426,7 +452,7 @@ return {
                       "kind": "LinkedField",
                       "name": "equipment",
                       "plural": false,
-                      "selections": (v11/*: any*/),
+                      "selections": (v12/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -436,7 +462,7 @@ return {
                       "kind": "LinkedField",
                       "name": "equipmentType",
                       "plural": false,
-                      "selections": (v11/*: any*/),
+                      "selections": (v12/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -446,7 +472,7 @@ return {
                       "kind": "LinkedField",
                       "name": "locationType",
                       "plural": false,
-                      "selections": (v11/*: any*/),
+                      "selections": (v12/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -456,7 +482,7 @@ return {
                       "kind": "LinkedField",
                       "name": "portType",
                       "plural": false,
-                      "selections": (v11/*: any*/),
+                      "selections": (v12/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -466,7 +492,7 @@ return {
                       "kind": "LinkedField",
                       "name": "serviceType",
                       "plural": false,
-                      "selections": (v11/*: any*/),
+                      "selections": (v12/*: any*/),
                       "storageKey": null
                     }
                   ],
@@ -484,7 +510,7 @@ return {
                       "name": "read",
                       "plural": false,
                       "selections": [
-                        (v9/*: any*/),
+                        (v10/*: any*/),
                         {
                           "alias": null,
                           "args": null,
@@ -516,7 +542,7 @@ return {
                       "kind": "LinkedField",
                       "name": "templates",
                       "plural": false,
-                      "selections": (v11/*: any*/),
+                      "selections": (v12/*: any*/),
                       "storageKey": null
                     },
                     {
@@ -534,7 +560,7 @@ return {
                           "kind": "LinkedField",
                           "name": "create",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         },
                         {
@@ -544,7 +570,7 @@ return {
                           "kind": "LinkedField",
                           "name": "update",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         },
                         {
@@ -554,7 +580,7 @@ return {
                           "kind": "LinkedField",
                           "name": "delete",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         },
                         {
@@ -564,7 +590,7 @@ return {
                           "kind": "LinkedField",
                           "name": "assign",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         },
                         {
@@ -574,7 +600,7 @@ return {
                           "kind": "LinkedField",
                           "name": "transferOwnership",
                           "plural": false,
-                          "selections": (v10/*: any*/),
+                          "selections": (v11/*: any*/),
                           "storageKey": null
                         }
                       ],
