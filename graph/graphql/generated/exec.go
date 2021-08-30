@@ -645,6 +645,7 @@ type ComplexityRoot struct {
 		StoreKey    func(childComplexity int) int
 		Type        func(childComplexity int) int
 		UploadedAt  func(childComplexity int) int
+		WorkOrder   func(childComplexity int) int
 	}
 
 	FileCategoryType struct {
@@ -913,13 +914,13 @@ type ComplexityRoot struct {
 	KqiTarget struct {
 		AlowedValidation func(childComplexity int) int
 		EndTime          func(childComplexity int) int
+		Frame            func(childComplexity int) int
 		ID               func(childComplexity int) int
 		Impact           func(childComplexity int) int
 		InitTime         func(childComplexity int) int
 		Kqi              func(childComplexity int) int
 		KqiComparator    func(childComplexity int) int
 		Name             func(childComplexity int) int
-		Period           func(childComplexity int) int
 		Status           func(childComplexity int) int
 	}
 
@@ -4682,6 +4683,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.File.UploadedAt(childComplexity), true
 
+	case "File.workorder":
+		if e.complexity.File.WorkOrder == nil {
+			break
+		}
+
+		return e.complexity.File.WorkOrder(childComplexity), true
+
 	case "FileCategoryType.id":
 		if e.complexity.FileCategoryType.ID == nil {
 			break
@@ -5760,6 +5768,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.KqiTarget.EndTime(childComplexity), true
 
+	case "KqiTarget.frame":
+		if e.complexity.KqiTarget.Frame == nil {
+			break
+		}
+
+		return e.complexity.KqiTarget.Frame(childComplexity), true
+
 	case "KqiTarget.id":
 		if e.complexity.KqiTarget.ID == nil {
 			break
@@ -5801,13 +5816,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.KqiTarget.Name(childComplexity), true
-
-	case "KqiTarget.period":
-		if e.complexity.KqiTarget.Period == nil {
-			break
-		}
-
-		return e.complexity.KqiTarget.Period(childComplexity), true
 
 	case "KqiTarget.status":
 		if e.complexity.KqiTarget.Status == nil {
@@ -13380,6 +13388,7 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
+  workorder: WorkOrder
 }
 
 type Hyperlink implements Node {
@@ -15306,7 +15315,13 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
+
+  """
+  Order projects by property type.
+  """
+  PROPERTY
 }
+
 
 """
 Ordering options for project connections.
@@ -20537,7 +20552,7 @@ type KqiTarget implements Node {
   id: ID!
   name: String! 
   impact: String!
-  period: Float!
+  frame: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -20549,7 +20564,7 @@ type KqiTarget implements Node {
 input AddKqiTargetInput {
   name: String! 
   impact: String!
-  period: Float!
+  frame: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -20561,7 +20576,7 @@ input EditKqiTargetInput {
   id: ID!
   name: String! 
   impact: String!
-  period: Float!
+  frame: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -38784,6 +38799,38 @@ func (ec *executionContext) _File_annotation(ctx context.Context, field graphql.
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _File_workorder(ctx context.Context, field graphql.CollectedField, obj *ent.File) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "File",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkOrder(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrder)
+	fc.Result = res
+	return ec.marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _FileCategoryType_id(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -44110,7 +44157,7 @@ func (ec *executionContext) _KqiTarget_impact(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _KqiTarget_period(ctx context.Context, field graphql.CollectedField, obj *ent.KqiTarget) (ret graphql.Marshaler) {
+func (ec *executionContext) _KqiTarget_frame(ctx context.Context, field graphql.CollectedField, obj *ent.KqiTarget) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -44128,7 +44175,7 @@ func (ec *executionContext) _KqiTarget_period(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Period, nil
+		return obj.Frame, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -76731,11 +76778,11 @@ func (ec *executionContext) unmarshalInputAddKqiTargetInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "period":
+		case "frame":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("period"))
-			it.Period, err = ec.unmarshalNFloat2float64(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("frame"))
+			it.Frame, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -80535,11 +80582,11 @@ func (ec *executionContext) unmarshalInputEditKqiTargetInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "period":
+		case "frame":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("period"))
-			it.Period, err = ec.unmarshalNFloat2float64(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("frame"))
+			it.Frame, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -91566,12 +91613,12 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._File_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "fileName":
 			out.Values[i] = ec._File_fileName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "sizeInBytes":
 			out.Values[i] = ec._File_sizeInBytes(ctx, field, obj)
@@ -91589,6 +91636,17 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._File_category(ctx, field, obj)
 		case "annotation":
 			out.Values[i] = ec._File_annotation(ctx, field, obj)
+		case "workorder":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._File_workorder(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -93371,8 +93429,8 @@ func (ec *executionContext) _KqiTarget(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "period":
-			out.Values[i] = ec._KqiTarget_period(ctx, field, obj)
+		case "frame":
+			out.Values[i] = ec._KqiTarget_frame(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}

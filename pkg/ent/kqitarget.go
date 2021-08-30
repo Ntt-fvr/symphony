@@ -27,8 +27,8 @@ type KqiTarget struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// Period holds the value of the "period" field.
-	Period float64 `json:"period,omitempty"`
+	// Frame holds the value of the "frame" field.
+	Frame float64 `json:"frame,omitempty"`
 	// AlowedValidation holds the value of the "alowedValidation" field.
 	AlowedValidation float64 `json:"alowedValidation,omitempty"`
 	// InitTime holds the value of the "initTime" field.
@@ -86,7 +86,7 @@ func (*KqiTarget) scanValues() []interface{} {
 		&sql.NullTime{},    // create_time
 		&sql.NullTime{},    // update_time
 		&sql.NullString{},  // name
-		&sql.NullFloat64{}, // period
+		&sql.NullFloat64{}, // frame
 		&sql.NullFloat64{}, // alowedValidation
 		&sql.NullTime{},    // initTime
 		&sql.NullTime{},    // endTime
@@ -130,9 +130,9 @@ func (kt *KqiTarget) assignValues(values ...interface{}) error {
 		kt.Name = value.String
 	}
 	if value, ok := values[3].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field period", values[3])
+		return fmt.Errorf("unexpected type %T for field frame", values[3])
 	} else if value.Valid {
-		kt.Period = value.Float64
+		kt.Frame = value.Float64
 	}
 	if value, ok := values[4].(*sql.NullFloat64); !ok {
 		return fmt.Errorf("unexpected type %T for field alowedValidation", values[4])
@@ -210,8 +210,8 @@ func (kt *KqiTarget) String() string {
 	builder.WriteString(kt.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(kt.Name)
-	builder.WriteString(", period=")
-	builder.WriteString(fmt.Sprintf("%v", kt.Period))
+	builder.WriteString(", frame=")
+	builder.WriteString(fmt.Sprintf("%v", kt.Frame))
 	builder.WriteString(", alowedValidation=")
 	builder.WriteString(fmt.Sprintf("%v", kt.AlowedValidation))
 	builder.WriteString(", initTime=")

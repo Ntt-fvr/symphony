@@ -15,6 +15,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -101,7 +102,13 @@ func getPropInput(propertyType ent.PropertyType, value string) (*models.Property
 		}, nil
 	}
 	switch typ {
-	case "date", "email", "string", "enum", "datetime_local":
+	case "date":
+		value = getformatDate(value)
+		return &models.PropertyInput{
+			PropertyTypeID: propertyType.ID,
+			StringValue:    &value,
+		}, nil
+	case "email", "string", "enum", "datetime_local":
 		return &models.PropertyInput{
 			PropertyTypeID: propertyType.ID,
 			StringValue:    &value,
@@ -363,4 +370,28 @@ func errorReturn(w http.ResponseWriter, msg string, log *zap.Logger, err error) 
 	} else {
 		http.Error(w, fmt.Sprintf("%s %q", msg, err), http.StatusBadRequest)
 	}
+}
+
+// parse and format a string date value
+func getformatDate(datStr string) string {
+	layout := "2006-01-02"
+
+	t, err := time.Parse("02/01/2006", datStr)
+	if err == nil {
+		return t.Format(layout)
+	}
+	t, err = time.Parse("2/1/2006", datStr)
+	if err == nil {
+		return t.Format(layout)
+	}
+	t, err = time.Parse("02/1/2006", datStr)
+	if err == nil {
+		return t.Format(layout)
+	}
+	t, err = time.Parse("2/01/2006", datStr)
+	if err == nil {
+		return t.Format(layout)
+	}
+
+	return datStr
 }

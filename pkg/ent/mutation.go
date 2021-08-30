@@ -34925,8 +34925,8 @@ type KqiTargetMutation struct {
 	create_time                  *time.Time
 	update_time                  *time.Time
 	name                         *string
-	period                       *float64
-	addperiod                    *float64
+	frame                        *float64
+	addframe                     *float64
 	alowedValidation             *float64
 	addalowedValidation          *float64
 	initTime                     *time.Time
@@ -35134,61 +35134,61 @@ func (m *KqiTargetMutation) ResetName() {
 	m.name = nil
 }
 
-// SetPeriod sets the period field.
-func (m *KqiTargetMutation) SetPeriod(f float64) {
-	m.period = &f
-	m.addperiod = nil
+// SetFrame sets the frame field.
+func (m *KqiTargetMutation) SetFrame(f float64) {
+	m.frame = &f
+	m.addframe = nil
 }
 
-// Period returns the period value in the mutation.
-func (m *KqiTargetMutation) Period() (r float64, exists bool) {
-	v := m.period
+// Frame returns the frame value in the mutation.
+func (m *KqiTargetMutation) Frame() (r float64, exists bool) {
+	v := m.frame
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPeriod returns the old period value of the KqiTarget.
+// OldFrame returns the old frame value of the KqiTarget.
 // If the KqiTarget object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *KqiTargetMutation) OldPeriod(ctx context.Context) (v float64, err error) {
+func (m *KqiTargetMutation) OldFrame(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPeriod is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldFrame is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPeriod requires an ID field in the mutation")
+		return v, fmt.Errorf("OldFrame requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPeriod: %w", err)
+		return v, fmt.Errorf("querying old value for OldFrame: %w", err)
 	}
-	return oldValue.Period, nil
+	return oldValue.Frame, nil
 }
 
-// AddPeriod adds f to period.
-func (m *KqiTargetMutation) AddPeriod(f float64) {
-	if m.addperiod != nil {
-		*m.addperiod += f
+// AddFrame adds f to frame.
+func (m *KqiTargetMutation) AddFrame(f float64) {
+	if m.addframe != nil {
+		*m.addframe += f
 	} else {
-		m.addperiod = &f
+		m.addframe = &f
 	}
 }
 
-// AddedPeriod returns the value that was added to the period field in this mutation.
-func (m *KqiTargetMutation) AddedPeriod() (r float64, exists bool) {
-	v := m.addperiod
+// AddedFrame returns the value that was added to the frame field in this mutation.
+func (m *KqiTargetMutation) AddedFrame() (r float64, exists bool) {
+	v := m.addframe
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetPeriod reset all changes of the "period" field.
-func (m *KqiTargetMutation) ResetPeriod() {
-	m.period = nil
-	m.addperiod = nil
+// ResetFrame reset all changes of the "frame" field.
+func (m *KqiTargetMutation) ResetFrame() {
+	m.frame = nil
+	m.addframe = nil
 }
 
 // SetAlowedValidation sets the alowedValidation field.
@@ -35512,8 +35512,8 @@ func (m *KqiTargetMutation) Fields() []string {
 	if m.name != nil {
 		fields = append(fields, kqitarget.FieldName)
 	}
-	if m.period != nil {
-		fields = append(fields, kqitarget.FieldPeriod)
+	if m.frame != nil {
+		fields = append(fields, kqitarget.FieldFrame)
 	}
 	if m.alowedValidation != nil {
 		fields = append(fields, kqitarget.FieldAlowedValidation)
@@ -35544,8 +35544,8 @@ func (m *KqiTargetMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case kqitarget.FieldName:
 		return m.Name()
-	case kqitarget.FieldPeriod:
-		return m.Period()
+	case kqitarget.FieldFrame:
+		return m.Frame()
 	case kqitarget.FieldAlowedValidation:
 		return m.AlowedValidation()
 	case kqitarget.FieldInitTime:
@@ -35571,8 +35571,8 @@ func (m *KqiTargetMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldUpdateTime(ctx)
 	case kqitarget.FieldName:
 		return m.OldName(ctx)
-	case kqitarget.FieldPeriod:
-		return m.OldPeriod(ctx)
+	case kqitarget.FieldFrame:
+		return m.OldFrame(ctx)
 	case kqitarget.FieldAlowedValidation:
 		return m.OldAlowedValidation(ctx)
 	case kqitarget.FieldInitTime:
@@ -35613,12 +35613,12 @@ func (m *KqiTargetMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case kqitarget.FieldPeriod:
+	case kqitarget.FieldFrame:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPeriod(v)
+		m.SetFrame(v)
 		return nil
 	case kqitarget.FieldAlowedValidation:
 		v, ok := value.(float64)
@@ -35663,8 +35663,8 @@ func (m *KqiTargetMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *KqiTargetMutation) AddedFields() []string {
 	var fields []string
-	if m.addperiod != nil {
-		fields = append(fields, kqitarget.FieldPeriod)
+	if m.addframe != nil {
+		fields = append(fields, kqitarget.FieldFrame)
 	}
 	if m.addalowedValidation != nil {
 		fields = append(fields, kqitarget.FieldAlowedValidation)
@@ -35677,8 +35677,8 @@ func (m *KqiTargetMutation) AddedFields() []string {
 // that this field was not set, or was not define in the schema.
 func (m *KqiTargetMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case kqitarget.FieldPeriod:
-		return m.AddedPeriod()
+	case kqitarget.FieldFrame:
+		return m.AddedFrame()
 	case kqitarget.FieldAlowedValidation:
 		return m.AddedAlowedValidation()
 	}
@@ -35690,12 +35690,12 @@ func (m *KqiTargetMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *KqiTargetMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case kqitarget.FieldPeriod:
+	case kqitarget.FieldFrame:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddPeriod(v)
+		m.AddFrame(v)
 		return nil
 	case kqitarget.FieldAlowedValidation:
 		v, ok := value.(float64)
@@ -35741,8 +35741,8 @@ func (m *KqiTargetMutation) ResetField(name string) error {
 	case kqitarget.FieldName:
 		m.ResetName()
 		return nil
-	case kqitarget.FieldPeriod:
-		m.ResetPeriod()
+	case kqitarget.FieldFrame:
+		m.ResetFrame()
 		return nil
 	case kqitarget.FieldAlowedValidation:
 		m.ResetAlowedValidation()

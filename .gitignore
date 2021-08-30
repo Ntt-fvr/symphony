@@ -60,6 +60,10 @@ override.tf.json
 
 # .idea
 .idea/
+.flowconfig
+
+# yarn
+yarn.lock
 
 ## Python
 __pycache__

@@ -533,6 +533,7 @@ type File implements Node {
   storeKey: String
   category: String
   annotation: String
+  workorder: WorkOrder
 }
 
 type Hyperlink implements Node {
@@ -2459,7 +2460,13 @@ enum ProjectOrderField {
   Order projects by priority.
   """
   PRIORITY
+
+  """
+  Order projects by property type.
+  """
+  PROPERTY
 }
+
 
 """
 Ordering options for project connections.
@@ -7690,7 +7697,7 @@ type KqiTarget implements Node {
   id: ID!
   name: String! 
   impact: String!
-  period: Float!
+  frame: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -7702,7 +7709,7 @@ type KqiTarget implements Node {
 input AddKqiTargetInput {
   name: String! 
   impact: String!
-  period: Float!
+  frame: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!
@@ -7714,7 +7721,7 @@ input EditKqiTargetInput {
   id: ID!
   name: String! 
   impact: String!
-  period: Float!
+  frame: Float!
   alowedValidation: Float!
   initTime: Time!
   endTime: Time!

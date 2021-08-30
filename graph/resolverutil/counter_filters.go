@@ -15,7 +15,6 @@ import (
 )
 
 func handleCounterFilter(q *ent.CounterQuery, filter *models.CounterFilterInput) (*ent.CounterQuery, error) {
-
 	switch filter.FilterType {
 	case models.CounterFilterTypeName:
 		return counterNameFilter(q, filter)

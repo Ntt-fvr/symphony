@@ -44,7 +44,7 @@ const useStyles = makeStyles(() => ({
     border: `1px solid ${symphony.palette.D100}`,
     borderRadius: '4px',
     display: 'flex',
-    minHeight: '32px',
+    minHeight: '36px',
     boxSizing: 'border-box',
     backgroundColor: symphony.palette.white,
     '&$hasFocus': {
@@ -84,11 +84,11 @@ const useStyles = makeStyles(() => ({
     border: 0,
     outline: 0,
     background: 'transparent',
-    minWidth: '48px',
-    flexBasis: '48px',
+    minWidth: '20px',
+    flexBasis: '20px',
     flexGrow: 1,
     flexShrink: 1,
-    padding: '5px 8px',
+    padding: '5px 2px',
     ...symphony.typography.body2,
     '&::placeholder': {
       color: symphony.palette.D400,
@@ -107,7 +107,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     marginRight: '-2px',
-    marginLeft: '8px',
+    marginLeft: '2px',
   },
   processingIndicator: {
     position: 'absolute',
@@ -143,6 +143,7 @@ type FocusEventFn<T: HTMLElement> = (FocusEvent<T>) => void;
 
 type Props = $ReadOnly<{|
   /** Input type. See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types */
+  autoComplete?: string,
   type?: string,
   name?: string,
   value?: string | number,
@@ -168,6 +169,7 @@ type Props = $ReadOnly<{|
 
 function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
   const {
+    autoComplete = 'on',
     autoFocus = false,
     className,
     containerClassName,
@@ -249,7 +251,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
     <div className={classNames(classes.root, className)}>
       <div
         className={classNames(
-          classes.inputContainer,
+          `${classes.inputContainer} inputContainer`,
           {
             [classes.multilineInputContainer]: isMultiline,
             [classes.hasFocus]: hasFocus,
@@ -261,7 +263,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
         <InputContext.Provider value={{disabled, value: value ?? ''}}>
           {prefix}
           <Clickable
-            className={classes.clickable}
+            className={`${classes.clickable} clickable`}
             onClick={onClick}
             onMouseDown={onMouseDown}
             disabled={disabled}>
@@ -282,6 +284,7 @@ function TextInput(props: Props, forwardedRef: TRefFor<HTMLInputElement>) {
                 {...rest}
                 type={type}
                 className={classes.input}
+                autoComplete={autoComplete}
                 disabled={disabled}
                 onFocus={onInputFocused}
                 onBlur={onInputBlurred}

@@ -13,10 +13,8 @@ import (
 )
 
 func handleTechFilter(q *ent.TechQuery, filter *models.TechFilterInput) (*ent.TechQuery, error) {
-	switch filter.FilterType {
-	case models.TechFilterTypeName:
+	if filter.FilterType == models.TechFilterTypeName {
 		return techNameFilter(q, filter)
-
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
