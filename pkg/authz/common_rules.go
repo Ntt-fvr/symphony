@@ -60,7 +60,13 @@ func privacyDecision(allowed bool) error {
 func checkWorkforce(r *models.WorkforcePermissionRule, workOrderTypeID *int, projectTypeID *int, woOrganizationID *int) bool {
 	switch r.IsAllowed {
 	case models.PermissionValueYes:
-		return true
+		if woOrganizationID != nil {
+			for _, typeInterID := range r.OrganizationIds {
+				if typeInterID == *woOrganizationID {
+					return true
+				}
+			}
+		}
 	case models.PermissionValueByCondition:
 		if workOrderTypeID != nil {
 			for _, typeID := range r.WorkOrderTypeIds {
