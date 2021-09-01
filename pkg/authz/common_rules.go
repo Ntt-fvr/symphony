@@ -130,10 +130,10 @@ func allowOrSkipWorkOrder(ctx context.Context, p *models.PermissionSettings, wo 
 	if err != nil {
 		return privacy.Denyf("cannot fetch work order type id: %w", err)
 	}
-	organizationID, err := wo.QueryOrganization().OnlyID(ctx)
-	if err != nil {
+	organizationID, _ := wo.QueryOrganization().OnlyID(ctx)
+	/*if err != nil {
 		return privacy.Denyf("cannot fetch organization type id: %w", err)
-	}
+	}*/
 	return privacyDecision(
 		checkWorkforce(
 			p.WorkforcePolicy.Data.Update, &workOrderTypeID, nil, &organizationID,
