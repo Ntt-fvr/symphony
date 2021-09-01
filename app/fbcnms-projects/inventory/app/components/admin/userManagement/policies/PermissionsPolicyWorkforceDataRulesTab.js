@@ -8,33 +8,34 @@
  * @format
  */
 
-import {makeStyles} from '@material-ui/styles';
-import Switch from '@symphony/design-system/components/switch/Switch';
-import Text from '@symphony/design-system/components/Text';
-import symphony from '@symphony/design-system/theme/symphony';
-import classNames from 'classnames';
-import fbt from 'fbt';
-import {debounce} from 'lodash';
-import * as React from 'react';
-import {useCallback, useEffect, useState} from 'react';
 import type {
   BasicPermissionRule,
   WorkforceCUDPermissions,
-  WorkforcePolicy
+  WorkforcePolicy,
 } from '../data/PermissionsPolicies';
-import {
-  bool2PermissionRuleValue,
-  permissionRuleValue2Bool
-} from '../data/PermissionsPolicies';
+
+import * as React from 'react';
 import HierarchicalCheckbox, {
-  HIERARCHICAL_RELATION
+  HIERARCHICAL_RELATION,
 } from '../utils/HierarchicalCheckbox';
 import PermissionsPolicyRulesSection, {
-  DataRuleTitle
+  DataRuleTitle,
 } from './PermissionsPolicyRulesSection';
 import PermissionsPolicyWorkforceDataRulesSpecification from './PermissionsPolicyWorkforceDataRulesSpecification';
 import PermissionsPolicyWorkforceOrganizationSpecification from './PermissionsPolicyWorkforceOrganizationSpecification';
-
+import Switch from '@symphony/design-system/components/switch/Switch';
+import Text from '@symphony/design-system/components/Text';
+import classNames from 'classnames';
+import fbt from 'fbt';
+import symphony from '@symphony/design-system/theme/symphony';
+import {
+  bool2PermissionRuleValue,
+  permissionRuleValue2Bool,
+} from '../data/PermissionsPolicies';
+import {debounce} from 'lodash';
+import {makeStyles} from '@material-ui/styles';
+import {useCallback, useEffect, useState} from 'react';
+import {useMainContext} from '../../../MainContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -228,6 +229,21 @@ type Props = $ReadOnly<{|
 export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
   const {policy, onChange, className} = props;
   const classes = useStyles();
+  const [enableOrganization, setEnableOrganization] = useState(false);
+  const {me} = useMainContext();
+
+  useEffect(() => {
+    if (policy?.read.organizationIds && readAllowed) {
+      setEnableOrganization(true);
+    }
+  }, [policy]);
+
+  if (policy == null) {
+    return null;
+  }
+
+  const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
+  const isDisabled = onChange == null;
 
   const callOnChange = useCallback(
     (updatedPolicy: WorkforcePolicy) => {
@@ -238,16 +254,9 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
     },
     [onChange],
   );
-
-  const onOrgChange = null;
-
-  if (policy == null) {
-    return null;
-  }
-
-  const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
-  const isDisabled = onChange == null;
-  const orgIsDisabled = onOrgChange == null;
+  const handleOnOrganizationSwitchChange = useCallback(() => {
+    setEnableOrganization(!enableOrganization);
+  }, [enableOrganization, setEnableOrganization, onChange]);
 
   return (
     <div className={classNames(classes.root, className)}>
@@ -285,6 +294,7 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
       <WorkforceDataRulesSection
         disabled={isDisabled || !readAllowed}
         rule={policy.data}
+        View
         onChange={data =>
           callOnChange({
             ...policy,
@@ -296,21 +306,28 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
       <Switch
         className={classNames(classes.readRule, classes.rule)}
         title={fbt('View work orders form multiple organizations', '')}
-        checked={readAllowed}
-        disabled={isDisabled}
-        onChange={checked =>
-          callOnChange({
-            ...policy,
-            read: {
-              ...policy.read,
-              isAllowed: bool2PermissionRuleValue(checked),
-            },
-          })
-        }
-
+        checked={enableOrganization}
+        disabled={isDisabled || !readAllowed}
+        onChange={handleOnOrganizationSwitchChange}
       />
 
-      <PermissionsPolicyWorkforceOrganizationSpecification disabled={orgIsDisabled} policy={policy} onChange={callOnChange.bind(this)} />
+      <PermissionsPolicyWorkforceOrganizationSpecification
+        disabled={!enableOrganization}
+        userOrganization={me.user.organizationFk}
+        policy={{
+          ...policy,
+          read: {
+            ...policy.read,
+            organizationIds:
+              isDisabled || !readAllowed
+                ? null
+                : enableOrganization
+                ? policy.read.organizationIds
+                : [me.user.organizationFk.id],
+          },
+        }}
+        onChange={callOnChange.bind(this)}
+      />
     </div>
   );
 }

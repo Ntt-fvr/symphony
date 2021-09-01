@@ -68,6 +68,7 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   policy: ?WorkforcePolicy,
+  defaultOrganization?: Organization,
   disabled?: ?boolean,
   onChange?: WorkforcePolicy => void,
 |}>;
@@ -79,6 +80,7 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
     label: org.name,
     key: org.id,
   }));
+
   const [selectedOrganizations, setSelectedOrganizations] = useState([]);
   const classes = useStyles();
 
@@ -114,6 +116,8 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
         <FormField>
           <FormControl variant="outlined">
             <Select
+              displayEmpty={true}
+              disabled={disabled}
               className={classes.orgSelection}
               multiple
               value={selectedOrganizations}

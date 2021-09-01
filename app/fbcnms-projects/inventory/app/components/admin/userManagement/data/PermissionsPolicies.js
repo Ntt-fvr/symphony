@@ -174,7 +174,6 @@ function tryGettingWorkforcePolicy(
 function permissionsPolicy2PermissionsPolicyInput(
   policy: PermissionsPolicy,
 ): AddPermissionsPolicyInput {
-  console.log(policy);
   return {
     name: policy.name,
     description: policy.description,
@@ -300,7 +299,6 @@ export function locationPolicyCUDRule2LocationPolicyCUDRuleInput(
 function workforceReadPermissionRule2WorkforcePermissionRuleInput(
   policyRule?: ?WorkforceReadPermissionRule,
 ): WorkforcePermissionRuleInput {
-  console.log(policyRule);
   return {
     isAllowed: parsePermissionValue(policyRule?.isAllowed),
     projectTypeIds: policyRule?.projectTypeIds,

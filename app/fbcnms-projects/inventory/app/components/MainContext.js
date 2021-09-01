@@ -69,6 +69,11 @@ const meQuery = graphql`
         email
         firstName
         lastName
+        organizationFk {
+          id
+          name
+          description
+        }
       }
       permissions {
         adminPolicy {
