@@ -23,8 +23,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldFrame holds the string denoting the frame field in the database.
-	FieldFrame = "frame"
+	// FieldPeriod holds the string denoting the period field in the database.
+	FieldPeriod = "period"
 	// FieldAlowedValidation holds the string denoting the alowedvalidation field in the database.
 	FieldAlowedValidation = "alowed_validation"
 	// FieldInitTime holds the string denoting the inittime field in the database.
@@ -65,7 +65,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
-	FieldFrame,
+	FieldPeriod,
 	FieldAlowedValidation,
 	FieldInitTime,
 	FieldEndTime,
