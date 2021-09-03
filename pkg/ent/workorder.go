@@ -49,6 +49,8 @@ type WorkOrder struct {
 	Duration *float64 `json:"duration,omitempty"`
 	// SchedulledAt holds the value of the "schedulled_at" field.
 	SchedulledAt *time.Time `json:"schedulled_at,omitempty"`
+	// DueDate holds the value of the "due_date" field.
+	DueDate *time.Time `json:"due_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
 	Edges               WorkOrderEdges `json:"edges"`
@@ -278,6 +280,7 @@ func (*WorkOrder) scanValues() []interface{} {
 		&sql.NullTime{},    // close_date
 		&sql.NullFloat64{}, // duration
 		&sql.NullTime{},    // schedulled_at
+		&sql.NullTime{},    // due_date
 	}
 }
 
@@ -370,7 +373,13 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 		wo.SchedulledAt = new(time.Time)
 		*wo.SchedulledAt = value.Time
 	}
-	values = values[12:]
+	if value, ok := values[12].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field due_date", values[12])
+	} else if value.Valid {
+		wo.DueDate = new(time.Time)
+		*wo.DueDate = value.Time
+	}
+	values = values[13:]
 	if len(values) == len(workorder.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_work_orders", value)
@@ -542,6 +551,10 @@ func (wo *WorkOrder) String() string {
 	}
 	if v := wo.SchedulledAt; v != nil {
 		builder.WriteString(", schedulled_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	if v := wo.DueDate; v != nil {
+		builder.WriteString(", due_date=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteByte(')')

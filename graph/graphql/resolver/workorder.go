@@ -140,7 +140,8 @@ func (r mutationResolver) internalAddWorkOrder(
 		SetCreationDate(time.Now()).
 		SetNillableIndex(input.Index).
 		SetNillableAssigneeID(input.AssigneeID).
-		SetNillableDuration(input.Duration)
+		SetNillableDuration(input.Duration).
+		SetNillableDueDate(input.DueDate)
 	if input.OwnerID != nil {
 		mutation = mutation.SetOwnerID(*input.OwnerID)
 	} else {
@@ -202,7 +203,8 @@ func (r mutationResolver) EditWorkOrder(
 		SetNillableIndex(input.Index).
 		SetNillableStatus(input.Status).
 		SetNillablePriority(input.Priority).
-		SetNillableDuration(input.Duration)
+		SetNillableDuration(input.Duration).
+		SetNillableDueDate(input.DueDate)
 
 	if input.AssigneeID != nil {
 		mutation.SetAssigneeID(*input.AssigneeID)
@@ -324,7 +326,7 @@ func (r mutationResolver) createOrUpdateCheckListCategory(
 	mutation := cl.UpdateOneID(clc.ID)
 	addedCLIds, deletedCLIds, err := r.createOrUpdateCheckListItems(ctx, clc, clInput.CheckList)
 	if err != nil {
-		return nil, errors.Wrap(err, "updating check list category items")
+		return nil, errors.Wrap(err, " items")
 	}
 	return mutation.
 		RemoveCheckListItemIDs(deletedCLIds...).

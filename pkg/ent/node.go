@@ -5555,7 +5555,7 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wo.ID,
 		Type:   "WorkOrder",
-		Fields: make([]*Field, 12),
+		Fields: make([]*Field, 13),
 		Edges:  make([]*Edge, 15),
 	}
 	var buf []byte
@@ -5653,6 +5653,14 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[11] = &Field{
 		Type:  "time.Time",
 		Name:  "schedulled_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.DueDate); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "time.Time",
+		Name:  "due_date",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{

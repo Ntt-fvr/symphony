@@ -190,6 +190,20 @@ func (woc *WorkOrderCreate) SetNillableSchedulledAt(t *time.Time) *WorkOrderCrea
 	return woc
 }
 
+// SetDueDate sets the due_date field.
+func (woc *WorkOrderCreate) SetDueDate(t time.Time) *WorkOrderCreate {
+	woc.mutation.SetDueDate(t)
+	return woc
+}
+
+// SetNillableDueDate sets the due_date field if the given value is not nil.
+func (woc *WorkOrderCreate) SetNillableDueDate(t *time.Time) *WorkOrderCreate {
+	if t != nil {
+		woc.SetDueDate(*t)
+	}
+	return woc
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (woc *WorkOrderCreate) SetTypeID(id int) *WorkOrderCreate {
 	woc.mutation.SetTypeID(id)
@@ -661,6 +675,14 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Column: workorder.FieldSchedulledAt,
 		})
 		_node.SchedulledAt = &value
+	}
+	if value, ok := woc.mutation.DueDate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldDueDate,
+		})
+		_node.DueDate = &value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

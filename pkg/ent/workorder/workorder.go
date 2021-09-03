@@ -44,6 +44,8 @@ const (
 	FieldDuration = "duration"
 	// FieldSchedulledAt holds the string denoting the schedulled_at field in the database.
 	FieldSchedulledAt = "schedulled_at"
+	// FieldDueDate holds the string denoting the due_date field in the database.
+	FieldDueDate = "due_date"
 
 	// EdgeType holds the string denoting the type edge name in mutations.
 	EdgeType = "type"
@@ -200,6 +202,7 @@ var Columns = []string{
 	FieldCloseDate,
 	FieldDuration,
 	FieldSchedulledAt,
+	FieldDueDate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrder type.

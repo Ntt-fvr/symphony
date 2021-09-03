@@ -52018,6 +52018,7 @@ type WorkOrderMutation struct {
 	duration                     *float64
 	addduration                  *float64
 	schedulled_at                *time.Time
+	due_date                     *time.Time
 	clearedFields                map[string]struct{}
 	_type                        *int
 	cleared_type                 bool
@@ -52704,6 +52705,56 @@ func (m *WorkOrderMutation) SchedulledAtCleared() bool {
 func (m *WorkOrderMutation) ResetSchedulledAt() {
 	m.schedulled_at = nil
 	delete(m.clearedFields, workorder.FieldSchedulledAt)
+}
+
+// SetDueDate sets the due_date field.
+func (m *WorkOrderMutation) SetDueDate(t time.Time) {
+	m.due_date = &t
+}
+
+// DueDate returns the due_date value in the mutation.
+func (m *WorkOrderMutation) DueDate() (r time.Time, exists bool) {
+	v := m.due_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDueDate returns the old due_date value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldDueDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDueDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDueDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDueDate: %w", err)
+	}
+	return oldValue.DueDate, nil
+}
+
+// ClearDueDate clears the value of due_date.
+func (m *WorkOrderMutation) ClearDueDate() {
+	m.due_date = nil
+	m.clearedFields[workorder.FieldDueDate] = struct{}{}
+}
+
+// DueDateCleared returns if the field due_date was cleared in this mutation.
+func (m *WorkOrderMutation) DueDateCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldDueDate]
+	return ok
+}
+
+// ResetDueDate reset all changes of the "due_date" field.
+func (m *WorkOrderMutation) ResetDueDate() {
+	m.due_date = nil
+	delete(m.clearedFields, workorder.FieldDueDate)
 }
 
 // SetTypeID sets the type edge to WorkOrderType by id.
@@ -53431,7 +53482,7 @@ func (m *WorkOrderMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.create_time != nil {
 		fields = append(fields, workorder.FieldCreateTime)
 	}
@@ -53468,6 +53519,9 @@ func (m *WorkOrderMutation) Fields() []string {
 	if m.schedulled_at != nil {
 		fields = append(fields, workorder.FieldSchedulledAt)
 	}
+	if m.due_date != nil {
+		fields = append(fields, workorder.FieldDueDate)
+	}
 	return fields
 }
 
@@ -53500,6 +53554,8 @@ func (m *WorkOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Duration()
 	case workorder.FieldSchedulledAt:
 		return m.SchedulledAt()
+	case workorder.FieldDueDate:
+		return m.DueDate()
 	}
 	return nil, false
 }
@@ -53533,6 +53589,8 @@ func (m *WorkOrderMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldDuration(ctx)
 	case workorder.FieldSchedulledAt:
 		return m.OldSchedulledAt(ctx)
+	case workorder.FieldDueDate:
+		return m.OldDueDate(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -53626,6 +53684,13 @@ func (m *WorkOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSchedulledAt(v)
 		return nil
+	case workorder.FieldDueDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDueDate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -53701,6 +53766,9 @@ func (m *WorkOrderMutation) ClearedFields() []string {
 	if m.FieldCleared(workorder.FieldSchedulledAt) {
 		fields = append(fields, workorder.FieldSchedulledAt)
 	}
+	if m.FieldCleared(workorder.FieldDueDate) {
+		fields = append(fields, workorder.FieldDueDate)
+	}
 	return fields
 }
 
@@ -53732,6 +53800,9 @@ func (m *WorkOrderMutation) ClearField(name string) error {
 		return nil
 	case workorder.FieldSchedulledAt:
 		m.ClearSchedulledAt()
+		return nil
+	case workorder.FieldDueDate:
+		m.ClearDueDate()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder nullable field %s", name)
@@ -53777,6 +53848,9 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 		return nil
 	case workorder.FieldSchedulledAt:
 		m.ResetSchedulledAt()
+		return nil
+	case workorder.FieldDueDate:
+		m.ResetDueDate()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)

@@ -755,6 +755,7 @@ input AddWorkOrderInput {
   status: WorkOrderStatus
   priority: WorkOrderPriority
   duration: Float
+  dueDate: Time
 }
 
 input EditWorkOrderInput {
@@ -773,6 +774,7 @@ input EditWorkOrderInput {
   checkListCategories: [CheckListCategoryInput!]
   locationId: ID
   duration: Float
+  dueDate: Time
 }
 
 input TechnicianCheckListItemInput {
@@ -4197,14 +4199,13 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
+    slotFilterBy: SlotFilterInput
   ): AppointmentConnection!
   usersAvailability(
-    after: Cursor
-    first: Int @numberValue(min: 0)
-    before: Cursor
-    last: Int @numberValue(min: 0)
     filterBy: [UserFilterInput!]
     slotFilterBy: SlotFilterInput!
+    duration: Float!
+    regularHours: RegularHoursInput!
   ): [UserAvailability!]
 }
 
@@ -4579,8 +4580,14 @@ type UserAvailability {
 }
 
 input SlotFilterInput {
-#  Userfilters: [UserFilterInput]
   slotStartDate: Time!
   slotEndDate: Time!
-  duration: Float!
+}
+
+input RegularHoursInput {
+  workdayStartHour: Int!
+  workdayStartMinute: Int!
+  workdayEndHour: Int!
+  workdayEndMinute: Int!
+  timezone: String!
 }

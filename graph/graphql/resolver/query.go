@@ -586,17 +586,31 @@ func (r queryResolver) WorkerTypes(ctx context.Context, after *ent.Cursor, first
 		Paginate(ctx, after, first, before, last)
 }
 
-func (r queryResolver) Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.AppointmentConnection, error) {
+func (r queryResolver) Appointments(
+	ctx context.Context,
+	after *ent.Cursor,
+	first *int,
+	before *ent.Cursor,
+	last *int,
+	slotFilterBy *models.SlotFilterInput) (*ent.AppointmentConnection, error) {
 	return r.ClientFrom(ctx).Appointment.Query().
-		Paginate(ctx, after, first, before, last)
+		Paginate(ctx, after, first, before, last,
+			// ent.WithProjectOrder(orderBy),
+			ent.WithAppointmentFilter(
+				func(query *ent.AppointmentQuery) (*ent.AppointmentQuery, error) {
+					return resolverutil.SlotFilter(query, slotFilterBy)
+				},
+			),
+		)
 }
 
+// nolint: funlen
 func (r queryResolver) UsersAvailability(
 	ctx context.Context,
-	after *ent.Cursor, first *int,
-	before *ent.Cursor, last *int,
 	filterBy []*models.UserFilterInput,
-	slotFilterBy models.SlotFilterInput) ([]*models.UserAvailability, error) {
+	slotFilterBy models.SlotFilterInput,
+	duration float64,
+	regularHours models.RegularHoursInput) ([]*models.UserAvailability, error) {
 	query := r.ClientFrom(ctx).User.Query()
 	query, err := resolverutil.UserFilter(query, filterBy)
 	if err != nil {
@@ -605,17 +619,25 @@ func (r queryResolver) UsersAvailability(
 
 	var (
 		users []*models.UserAvailability
-		uas   *models.UserAvailability
 		prev  *ent.Appointment
 	)
 
-	sd, _ := time.ParseDuration(strconv.FormatFloat(slotFilterBy.Duration, 'f', -1, 64) + "h")
-	nsd, _ := time.ParseDuration("-" + strconv.FormatFloat(slotFilterBy.Duration, 'f', -1, 64) + "h")
+	SH := regularHours.WorkdayStartHour
+	SM := regularHours.WorkdayStartMinute
+	EH := regularHours.WorkdayEndHour
+	EM := regularHours.WorkdayEndMinute
+	UTC, _ := time.LoadLocation("")
+	y, m, d := slotFilterBy.SlotStartDate.Date()
+	offSet, _ := time.ParseDuration(regularHours.Timezone)
+	dswt := time.Date(y, m, d, SH, SM, 0, 0, UTC).Add(offSet)
+
+	sd, _ := time.ParseDuration(strconv.FormatFloat(duration, 'f', -1, 64) + "h")
+	nsd, _ := time.ParseDuration("-" + strconv.FormatFloat(duration, 'f', -1, 64) + "h")
 
 	u := query.AllX(ctx)
 
 	for _, us := range u {
-		qaps := r.ClientFrom(ctx).Debug().User.QueryAppointment(us).
+		qaps := r.ClientFrom(ctx).User.QueryAppointment(us).
 			Where(appointment.Or(
 				appointment.And(
 					appointment.StartLTE(slotFilterBy.SlotStartDate),
@@ -631,45 +653,66 @@ func (r queryResolver) UsersAvailability(
 			return nil, err
 		}
 
-		i := 0
-		uas = nil
-
-		for _, a := range aps {
-			i++
-			if i == 1 {
-				if resolverutil.GE(a.Start.Add(nsd), slotFilterBy.SlotStartDate) {
-					uas = &models.UserAvailability{
-						User:          us,
-						SlotStartDate: slotFilterBy.SlotStartDate,
-						SlotEndDate:   slotFilterBy.SlotStartDate.Add(sd),
+		if naps == 0 {
+			if resolverutil.IsWorkTime(slotFilterBy.SlotStartDate, SH, SM, EH, EM) && resolverutil.IsWorkTime(slotFilterBy.SlotStartDate.Add(sd), SH, SM, EH, EM) {
+				users = append(users, &models.UserAvailability{
+					User:          us,
+					SlotStartDate: slotFilterBy.SlotStartDate,
+					SlotEndDate:   slotFilterBy.SlotStartDate.Add(sd),
+				})
+			} else if resolverutil.LE(dswt.Add(sd), slotFilterBy.SlotEndDate) {
+				users = append(users, &models.UserAvailability{
+					User:          us,
+					SlotStartDate: dswt,
+					SlotEndDate:   dswt.Add(sd),
+				})
+			}
+		} else {
+			i := 0
+			for _, a := range aps {
+				i++
+				uast := a.Start.Add(nsd)
+				y, m, d := a.Start.Date()
+				dswt := time.Date(y, m, d, SH, SM, 0, 0, UTC).Add(offSet)
+				if i == 1 {
+					if resolverutil.GE(uast, slotFilterBy.SlotStartDate) {
+						if resolverutil.IsWorkTime(slotFilterBy.SlotStartDate, SH, SM, EH, EM) && resolverutil.IsWorkTime(slotFilterBy.SlotStartDate.Add(sd), SH, SM, EH, EM) {
+							users = append(users, &models.UserAvailability{
+								User:          us,
+								SlotStartDate: slotFilterBy.SlotStartDate,
+								SlotEndDate:   slotFilterBy.SlotStartDate.Add(sd),
+							})
+							break
+						}
+					} else if resolverutil.GE(uast, dswt) {
+						users = append(users, &models.UserAvailability{
+							User:          us,
+							SlotStartDate: dswt,
+							SlotEndDate:   dswt.Add(sd),
+						})
+						break
 					}
-					break
+					prev = a
+				} else {
+					if resolverutil.GE(uast, prev.End) && resolverutil.IsWorkTime(prev.End.Add(sd), SH, SM, EH, EM) {
+						users = append(users, &models.UserAvailability{
+							User:          us,
+							SlotStartDate: prev.End,
+							SlotEndDate:   prev.End.Add(sd),
+						})
+						break
+					} else if i == naps && resolverutil.IsWorkTime(a.End.Add(sd), SH, SM, EH, EM) {
+						users = append(users, &models.UserAvailability{
+							User:          us,
+							SlotStartDate: a.End,
+							SlotEndDate:   a.End.Add(sd),
+						})
+						break
+					}
+					prev = a
 				}
-				prev = a
-			} else {
-				if resolverutil.GE(a.Start.Add(nsd), prev.End) {
-					uas = &models.UserAvailability{
-						User:          us,
-						SlotStartDate: prev.End,
-						SlotEndDate:   prev.End.Add(sd),
-					}
-					break
-				} else if i == naps {
-					uas = &models.UserAvailability{
-						User:          us,
-						SlotStartDate: a.End,
-						SlotEndDate:   a.End.Add(sd),
-					}
-					break
-				}
-				prev = a
 			}
 		}
-
-		if uas != nil {
-			users = append(users, uas)
-		}
 	}
-
 	return users, nil
 }

@@ -238,6 +238,7 @@ type AddWorkOrderInput struct {
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
 	Duration            *float64                  `json:"duration"`
+	DueDate             *time.Time                `json:"dueDate"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -509,6 +510,7 @@ type EditWorkOrderInput struct {
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	LocationID          *int                      `json:"locationId"`
 	Duration            *float64                  `json:"duration"`
+	DueDate             *time.Time                `json:"dueDate"`
 }
 
 type EditWorkOrderTypeInput struct {
@@ -725,6 +727,14 @@ type PythonPackage struct {
 	HasBreakingChange bool      `json:"hasBreakingChange"`
 }
 
+type RegularHoursInput struct {
+	WorkdayStartHour   int    `json:"workdayStartHour"`
+	WorkdayStartMinute int    `json:"workdayStartMinute"`
+	WorkdayEndHour     int    `json:"workdayEndHour"`
+	WorkdayEndMinute   int    `json:"workdayEndMinute"`
+	Timezone           string `json:"timezone"`
+}
+
 type ReportFilterInput struct {
 	Name    string                `json:"name"`
 	Entity  FilterEntity          `json:"entity"`
@@ -804,7 +814,6 @@ type ServiceTypeEditData struct {
 type SlotFilterInput struct {
 	SlotStartDate time.Time `json:"slotStartDate"`
 	SlotEndDate   time.Time `json:"slotEndDate"`
-	Duration      float64   `json:"duration"`
 }
 
 type StartBlock struct {

@@ -24,20 +24,18 @@ func (appointmentResolver) Assignee(ctx context.Context, appointment *ent.Appoin
 	assignee, err := appointment.Assignee(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return assignee, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return assignee, nil
 }
 
 func (appointmentResolver) WorkOrder(ctx context.Context, appointment *ent.Appointment) (*ent.WorkOrder, error) {
 	wo, err := appointment.Workorder(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return wo, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return wo, nil
 }
 
 func (r mutationResolver) AddAppointment(
@@ -94,7 +92,7 @@ func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, e
 		Only(ctx)
 
 	if err != nil {
-		return id, errors.Wrap(err, "querying workorder")
+		return id, errors.Wrap(err, "querying appointment workorder")
 	}
 
 	wo.Update().RemoveAppointment(a).Exec(ctx)
@@ -102,6 +100,10 @@ func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, e
 	u, err := client.User.Query().
 		Where(user.HasAppointmentWith(appointment.ID(id))).
 		Only(ctx)
+
+	if err != nil {
+		return id, errors.Wrap(err, "querying appointment user")
+	}
 
 	u.Update().RemoveAppointment(a).Exec(ctx)
 

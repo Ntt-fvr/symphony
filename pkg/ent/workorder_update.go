@@ -220,6 +220,26 @@ func (wou *WorkOrderUpdate) ClearSchedulledAt() *WorkOrderUpdate {
 	return wou
 }
 
+// SetDueDate sets the due_date field.
+func (wou *WorkOrderUpdate) SetDueDate(t time.Time) *WorkOrderUpdate {
+	wou.mutation.SetDueDate(t)
+	return wou
+}
+
+// SetNillableDueDate sets the due_date field if the given value is not nil.
+func (wou *WorkOrderUpdate) SetNillableDueDate(t *time.Time) *WorkOrderUpdate {
+	if t != nil {
+		wou.SetDueDate(*t)
+	}
+	return wou
+}
+
+// ClearDueDate clears the value of due_date.
+func (wou *WorkOrderUpdate) ClearDueDate() *WorkOrderUpdate {
+	wou.mutation.ClearDueDate()
+	return wou
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (wou *WorkOrderUpdate) SetTypeID(id int) *WorkOrderUpdate {
 	wou.mutation.SetTypeID(id)
@@ -923,6 +943,19 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if value, ok := wou.mutation.DueDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldDueDate,
+		})
+	}
+	if wou.mutation.DueDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldDueDate,
 		})
 	}
 	if wou.mutation.TypeCleared() {
@@ -1813,6 +1846,26 @@ func (wouo *WorkOrderUpdateOne) ClearSchedulledAt() *WorkOrderUpdateOne {
 	return wouo
 }
 
+// SetDueDate sets the due_date field.
+func (wouo *WorkOrderUpdateOne) SetDueDate(t time.Time) *WorkOrderUpdateOne {
+	wouo.mutation.SetDueDate(t)
+	return wouo
+}
+
+// SetNillableDueDate sets the due_date field if the given value is not nil.
+func (wouo *WorkOrderUpdateOne) SetNillableDueDate(t *time.Time) *WorkOrderUpdateOne {
+	if t != nil {
+		wouo.SetDueDate(*t)
+	}
+	return wouo
+}
+
+// ClearDueDate clears the value of due_date.
+func (wouo *WorkOrderUpdateOne) ClearDueDate() *WorkOrderUpdateOne {
+	wouo.mutation.ClearDueDate()
+	return wouo
+}
+
 // SetTypeID sets the type edge to WorkOrderType by id.
 func (wouo *WorkOrderUpdateOne) SetTypeID(id int) *WorkOrderUpdateOne {
 	wouo.mutation.SetTypeID(id)
@@ -2514,6 +2567,19 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Column: workorder.FieldSchedulledAt,
+		})
+	}
+	if value, ok := wouo.mutation.DueDate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workorder.FieldDueDate,
+		})
+	}
+	if wouo.mutation.DueDateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: workorder.FieldDueDate,
 		})
 	}
 	if wouo.mutation.TypeCleared() {

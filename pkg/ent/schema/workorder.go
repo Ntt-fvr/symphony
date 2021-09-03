@@ -169,6 +169,9 @@ func (WorkOrder) Fields() []ent.Field {
 		field.Time("schedulled_at").
 			Optional().
 			Nillable(),
+		field.Time("due_date").
+			Optional().
+			Nillable(),
 	}
 }
 
