@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -489,6 +490,33 @@ func init() {
 	customerDescExternalID := customerFields[1].Descriptor()
 	// customer.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
 	customer.ExternalIDValidator = customerDescExternalID.Validators[0].(func(string) error)
+	documentcategoryMixin := schema.DocumentCategory{}.Mixin()
+	documentcategory.Policy = privacy.NewPolicies(schema.DocumentCategory{})
+	documentcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := documentcategory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	documentcategoryMixinFields0 := documentcategoryMixin[0].Fields()
+	documentcategoryFields := schema.DocumentCategory{}.Fields()
+	_ = documentcategoryFields
+	// documentcategoryDescCreateTime is the schema descriptor for create_time field.
+	documentcategoryDescCreateTime := documentcategoryMixinFields0[0].Descriptor()
+	// documentcategory.DefaultCreateTime holds the default value on creation for the create_time field.
+	documentcategory.DefaultCreateTime = documentcategoryDescCreateTime.Default.(func() time.Time)
+	// documentcategoryDescUpdateTime is the schema descriptor for update_time field.
+	documentcategoryDescUpdateTime := documentcategoryMixinFields0[1].Descriptor()
+	// documentcategory.DefaultUpdateTime holds the default value on creation for the update_time field.
+	documentcategory.DefaultUpdateTime = documentcategoryDescUpdateTime.Default.(func() time.Time)
+	// documentcategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	documentcategory.UpdateDefaultUpdateTime = documentcategoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// documentcategoryDescName is the schema descriptor for name field.
+	documentcategoryDescName := documentcategoryFields[0].Descriptor()
+	// documentcategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	documentcategory.NameValidator = documentcategoryDescName.Validators[0].(func(string) error)
 	domainMixin := schema.Domain{}.Mixin()
 	domain.Policy = privacy.NewPolicies(schema.Domain{})
 	domain.Hooks[0] = func(next ent.Mutator) ent.Mutator {

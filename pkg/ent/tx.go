@@ -46,6 +46,8 @@ type Tx struct {
 	CounterFormula *CounterFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// DocumentCategory is the client for interacting with the DocumentCategory builders.
+	DocumentCategory *DocumentCategoryClient
 	// Domain is the client for interacting with the Domain builders.
 	Domain *DomainClient
 	// EntryPoint is the client for interacting with the EntryPoint builders.
@@ -336,6 +338,7 @@ func (tx *Tx) init() {
 	tx.CounterFamily = NewCounterFamilyClient(tx.config)
 	tx.CounterFormula = NewCounterFormulaClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
+	tx.DocumentCategory = NewDocumentCategoryClient(tx.config)
 	tx.Domain = NewDomainClient(tx.config)
 	tx.EntryPoint = NewEntryPointClient(tx.config)
 	tx.Equipment = NewEquipmentClient(tx.config)

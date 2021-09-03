@@ -21,6 +21,11 @@ type LocationPermissionRule struct {
 	LocationTypeIds []int           `json:"locationTypeIds"`
 }
 
+type CategoryDocumentPermissionRule struct {
+	IsAllowed       PermissionValue `json:"isAllowed"`
+	CategoryDocumentsNames []string           `json:"CategoryDocumentsNames"`
+}
+
 type WorkforcePermissionRule struct {
 	IsAllowed        PermissionValue `json:"isAllowed"`
 	ProjectTypeIds   []int           `json:"projectTypeIds"`

@@ -33,6 +33,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -3915,6 +3916,225 @@ var DefaultCustomerOrder = &CustomerOrder{
 		field: customer.FieldID,
 		toCursor: func(c *Customer) Cursor {
 			return Cursor{ID: c.ID}
+		},
+	},
+}
+
+// DocumentCategoryEdge is the edge representation of DocumentCategory.
+type DocumentCategoryEdge struct {
+	Node   *DocumentCategory `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// DocumentCategoryConnection is the connection containing edges to DocumentCategory.
+type DocumentCategoryConnection struct {
+	Edges      []*DocumentCategoryEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+// DocumentCategoryPaginateOption enables pagination customization.
+type DocumentCategoryPaginateOption func(*documentCategoryPager) error
+
+// WithDocumentCategoryOrder configures pagination ordering.
+func WithDocumentCategoryOrder(order *DocumentCategoryOrder) DocumentCategoryPaginateOption {
+	if order == nil {
+		order = DefaultDocumentCategoryOrder
+	}
+	o := *order
+	return func(pager *documentCategoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultDocumentCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithDocumentCategoryFilter configures pagination filter.
+func WithDocumentCategoryFilter(filter func(*DocumentCategoryQuery) (*DocumentCategoryQuery, error)) DocumentCategoryPaginateOption {
+	return func(pager *documentCategoryPager) error {
+		if filter == nil {
+			return errors.New("DocumentCategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type documentCategoryPager struct {
+	order  *DocumentCategoryOrder
+	filter func(*DocumentCategoryQuery) (*DocumentCategoryQuery, error)
+}
+
+func newDocumentCategoryPager(opts []DocumentCategoryPaginateOption) (*documentCategoryPager, error) {
+	pager := &documentCategoryPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultDocumentCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *documentCategoryPager) applyFilter(query *DocumentCategoryQuery) (*DocumentCategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *documentCategoryPager) toCursor(dc *DocumentCategory) Cursor {
+	return p.order.Field.toCursor(dc)
+}
+
+func (p *documentCategoryPager) applyCursors(query *DocumentCategoryQuery, after, before *Cursor) *DocumentCategoryQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultDocumentCategoryOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *documentCategoryPager) applyOrder(query *DocumentCategoryQuery, reverse bool) *DocumentCategoryQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultDocumentCategoryOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultDocumentCategoryOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to DocumentCategory.
+func (dc *DocumentCategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...DocumentCategoryPaginateOption,
+) (*DocumentCategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newDocumentCategoryPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if dc, err = pager.applyFilter(dc); err != nil {
+		return nil, err
+	}
+
+	conn := &DocumentCategoryConnection{Edges: []*DocumentCategoryEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := dc.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := dc.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	dc = pager.applyCursors(dc, after, before)
+	dc = pager.applyOrder(dc, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		dc = dc.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		dc = dc.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := dc.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *DocumentCategory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *DocumentCategory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *DocumentCategory {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*DocumentCategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &DocumentCategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// DocumentCategoryOrderField defines the ordering field of DocumentCategory.
+type DocumentCategoryOrderField struct {
+	field    string
+	toCursor func(*DocumentCategory) Cursor
+}
+
+// DocumentCategoryOrder defines the ordering of DocumentCategory.
+type DocumentCategoryOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *DocumentCategoryOrderField `json:"field"`
+}
+
+// DefaultDocumentCategoryOrder is the default ordering of DocumentCategory.
+var DefaultDocumentCategoryOrder = &DocumentCategoryOrder{
+	Direction: OrderDirectionAsc,
+	Field: &DocumentCategoryOrderField{
+		field: documentcategory.FieldID,
+		toCursor: func(dc *DocumentCategory) Cursor {
+			return Cursor{ID: dc.ID}
 		},
 	},
 }

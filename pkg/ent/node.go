@@ -32,6 +32,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -1367,6 +1368,59 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = c.QueryServices().
 		Select(service.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (dc *DocumentCategory) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     dc.ID,
+		Type:   "DocumentCategory",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(dc.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(dc.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(dc.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(dc.Index); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "int",
+		Name:  "index",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "LocationType",
+		Name: "location_type",
+	}
+	node.Edges[0].IDs, err = dc.QueryLocationType().
+		Select(locationtype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -4174,7 +4228,7 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     lt.ID,
 		Type:   "LocationType",
 		Fields: make([]*Field, 7),
-		Edges:  make([]*Edge, 4),
+		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(lt.CreateTime); err != nil {
@@ -4269,6 +4323,16 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[3].IDs, err = lt.QuerySurveyTemplateCategories().
 		Select(surveytemplatecategory.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		Type: "DocumentCategory",
+		Name: "document_category",
+	}
+	node.Edges[4].IDs, err = lt.QueryDocumentCategory().
+		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8139,6 +8203,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Customer.Query().
 			Where(customer.ID(id)).
 			CollectFields(ctx, "Customer").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case documentcategory.Table:
+		n, err := c.DocumentCategory.Query().
+			Where(documentcategory.ID(id)).
+			CollectFields(ctx, "DocumentCategory").
 			Only(ctx)
 		if err != nil {
 			return nil, err

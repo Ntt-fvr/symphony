@@ -516,6 +516,11 @@ export default withStyles(styles)(
               isMandatory
               isInstanceProperty
             }
+            documentCategories {
+              id
+              name,
+              index
+            }
             surveyTemplateCategories {
               id
               categoryTitle

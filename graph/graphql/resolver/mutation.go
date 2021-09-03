@@ -657,10 +657,36 @@ func (r mutationResolver) AddLocationType(
 	}, input.Properties...); err != nil {
 		return nil, err
 	}
-	if _, err := r.AddSurveyTemplateCategories(ctx, typ.ID, input.SurveyTemplateCategories...); err != nil {
+	if err := r.AddDocumentCategories(ctx, typ.ID ,input.DocumentCategories...); err != nil {
+		return nil, err
+	}
+		if _, err := r.AddSurveyTemplateCategories(ctx, typ.ID, input.SurveyTemplateCategories...); err != nil {
 		return nil, err
 	}
 	return typ, nil
+}
+
+func (r mutationResolver) AddDocumentCategories(
+	ctx context.Context, locationTypeID int, inputs ...*pkgmodels.DocumentCategoryInput,
+) error {
+	var (
+		client   = r.ClientFrom(ctx).DocumentCategory
+		builders = make([]*ent.DocumentCategoryCreate, len(inputs))
+	)
+	for i, input := range inputs {
+		builders[i] = client.Create().
+			SetName(input.Name).
+			SetIndex(input.Index).
+			SetLocationTypeID(locationTypeID)
+	}
+	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
+		r.logger.For(ctx).
+			Error("cannot create document Categories",
+				zap.Error(err),
+			)
+		return err
+	}
+	return nil
 }
 
 func (r mutationResolver) AddEquipmentPorts(ctx context.Context, et *ent.EquipmentType, e *ent.Equipment) ([]*ent.EquipmentPort, error) {
@@ -2562,6 +2588,12 @@ func (r mutationResolver) EditLocationType(
 			return nil, err
 		}
 	}
+
+	for _, input := range input.DocumentCategories {
+		 if err := r.updateDocumentCategory(ctx, input); err != nil {
+		 	return nil, err
+		 }
+	}
 	return typ, nil
 }
 
@@ -2994,6 +3026,18 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	if err := query.Exec(ctx); err != nil {
 		return errors.Wrap(err, "updating property type")
 	}
+	return nil
+}
+
+
+func (r mutationResolver) updateDocumentCategory(ctx context.Context, input *pkgmodels.DocumentCategoryInput) error {
+	if err := r.ClientFrom(ctx).DocumentCategory.
+		UpdateOneID(*input.ID).
+		SetName(input.Name).
+		SetIndex(input.Index).
+		Exec(ctx); err != nil {
+			return errors.Wrap(err, "updating Category Document: " + input.Name)
+		}
 	return nil
 }
 

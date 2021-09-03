@@ -11,7 +11,14 @@
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
-    "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
+    "[javascript]": {
+        "editor.defaultFormatter": "flowtype.flow-for-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "flowtype.flow-for-vscode"
+    },
     "javascript.format.enable": false,
     "typescript.validate.enable": false,
+
+
 }

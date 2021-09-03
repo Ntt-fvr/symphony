@@ -106,7 +106,7 @@ services:
       - "graph"
       - "--db-url=mysql://root:root@mysql:3306/?charset=utf8&parseTime=true&interpolateParams=true"
       - "--wait-for-db"
-      - "--tenant=fb-test"
+      - "--tenant=ipt"
     networks:
       - private
     depends_on:
