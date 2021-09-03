@@ -46,9 +46,11 @@ func (DocumentCategory) Indexes() []ent.Index {
 // Policy returns location policy.
 func (DocumentCategory) Policy() ent.Policy {
 	return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.DocumentCategoryReadPolicyRule(),
+			),
 		authz.WithMutationRules(
 			authz.DocumentCategoryWritePolicyRule(),
 		),
 	)
 }
-

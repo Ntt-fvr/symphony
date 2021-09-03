@@ -6,46 +6,50 @@ package authz
 
 import (
 	"context"
-
+	"encoding/json"
+	"fmt"
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/location"
-	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-func CategoryDocumentCudBasedRule(ctx context.Context, cud *models.LocationCud, m *ent.LocationMutation) error {
+func DocumentCategoryCudBasedRule(ctx context.Context, cud *models.DocumentCategoryCud, m *ent.DocumentCategoryMutation) error {
+
+	fmt.Println("DocumentCategoryCud", FromContext(ctx).InventoryPolicy)
+	InventoryPolicy, _ := json.Marshal(FromContext(ctx).InventoryPolicy)
+	fmt.Println(string(InventoryPolicy),"---------", InventoryPolicy)
+
+	fmt.Println("DocumentCategoryMutation", m)
+	mutation, _ := json.Marshal(m)
+	fmt.Println(string(mutation),"---------", mutation)
+	return privacy.Allow
 	if m.Op().Is(ent.OpCreate) {
-		typeID, exists := m.TypeID()
+		name, exists := m.Name()
 		if !exists {
-			return privacy.Denyf("creating location with no type")
+			return privacy.Denyf("creating document category with no Name")
 		}
-		return allowOrSkipLocations(cud.Create, typeID)
+		return allowOrSkipDocumentCategories(cud.Create, name)
 	}
-	id, exists := m.ID()
+	name, exists := m.Name()
 	if !exists {
 		return privacy.Skip
 	}
-	locationTypeID, err := m.Client().LocationType.Query().
-		Where(locationtype.HasLocationsWith(location.ID(id))).
-		OnlyID(ctx)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return privacy.Skip
-		}
-		return privacy.Denyf("failed to fetch location type id: %w", err)
-	}
+
 	if m.Op().Is(ent.OpUpdateOne) {
-		return allowOrSkipLocations(cud.Update, locationTypeID)
+		return allowOrSkipDocumentCategories(cud.Update, name)
 	}
-	return allowOrSkipLocations(cud.Delete, locationTypeID)
+	return allowOrSkipDocumentCategories(cud.Delete, name)
 }
 
 // DocumentCategoryWritePolicyRule grants write permission to Category Document based on policy.
 func DocumentCategoryWritePolicyRule() privacy.MutationRule {
-	return privacy.LocationMutationRuleFunc(func(ctx context.Context, m *ent.LocationMutation) error {
-		return locationCudBasedRule(ctx, FromContext(ctx).InventoryPolicy.Location, m)
+	return privacy.DocumentCategoryMutationRuleFunc(func(ctx context.Context, m *ent.DocumentCategoryMutation) error {
+		return DocumentCategoryCudBasedRule(ctx, FromContext(ctx).InventoryPolicy.DocumentCategory, m)
 	})
 }
 
-
+func DocumentCategoryReadPolicyRule() privacy.QueryRule {
+	return privacy.DocumentCategoryQueryRuleFunc(func(ctx context.Context, q *ent.DocumentCategoryQuery) error {
+		return privacy.Allow
+	})
+}
