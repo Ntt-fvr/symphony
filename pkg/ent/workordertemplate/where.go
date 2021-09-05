@@ -132,6 +132,13 @@ func AssigneeCanCompleteWorkOrder(v bool) predicate.WorkOrderTemplate {
 	})
 }
 
+// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
+func Duration(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDuration), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.WorkOrderTemplate {
 	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
@@ -545,6 +552,96 @@ func AssigneeCanCompleteWorkOrderIsNil() predicate.WorkOrderTemplate {
 func AssigneeCanCompleteWorkOrderNotNil() predicate.WorkOrderTemplate {
 	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldAssigneeCanCompleteWorkOrder)))
+	})
+}
+
+// DurationEQ applies the EQ predicate on the "duration" field.
+func DurationEQ(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDuration), v))
+	})
+}
+
+// DurationNEQ applies the NEQ predicate on the "duration" field.
+func DurationNEQ(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDuration), v))
+	})
+}
+
+// DurationIn applies the In predicate on the "duration" field.
+func DurationIn(vs ...float64) predicate.WorkOrderTemplate {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDuration), v...))
+	})
+}
+
+// DurationNotIn applies the NotIn predicate on the "duration" field.
+func DurationNotIn(vs ...float64) predicate.WorkOrderTemplate {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDuration), v...))
+	})
+}
+
+// DurationGT applies the GT predicate on the "duration" field.
+func DurationGT(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDuration), v))
+	})
+}
+
+// DurationGTE applies the GTE predicate on the "duration" field.
+func DurationGTE(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDuration), v))
+	})
+}
+
+// DurationLT applies the LT predicate on the "duration" field.
+func DurationLT(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDuration), v))
+	})
+}
+
+// DurationLTE applies the LTE predicate on the "duration" field.
+func DurationLTE(v float64) predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDuration), v))
+	})
+}
+
+// DurationIsNil applies the IsNil predicate on the "duration" field.
+func DurationIsNil() predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDuration)))
+	})
+}
+
+// DurationNotNil applies the NotNil predicate on the "duration" field.
+func DurationNotNil() predicate.WorkOrderTemplate {
+	return predicate.WorkOrderTemplate(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDuration)))
 	})
 }
 

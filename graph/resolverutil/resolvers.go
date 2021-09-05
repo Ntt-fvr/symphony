@@ -7,10 +7,13 @@ package resolverutil
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/pkg/errors"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func UserFilter(query *ent.UserQuery, filters []*models.UserFilterInput) (*ent.UserQuery, error) {
@@ -447,4 +450,32 @@ func ResourceRelationshipFilter(query *ent.ResourceRelationshipQuery, filters []
 		}
 	}
 	return query, nil
+}
+func validateSlot(startDate time.Time, endDate time.Time) (err error) {
+	/*switch {
+	case startDate == nil || endDate == nil:
+		err = &gqlerror.Error{
+			Message: "Passing both `first` and `last` to paginate a connection is not supported.",
+		}
+	case startDate.After(endDate):*/
+	if startDate.After(endDate) {
+		err = &gqlerror.Error{
+			Message: "Slot `endDate` must be after `startDate`",
+		}
+	}
+	return err
+}
+
+func SlotFilter(query *ent.AppointmentQuery, filter *models.SlotFilterInput) (*ent.AppointmentQuery, error) {
+	if err := validateSlot(filter.SlotStartDate, filter.SlotEndDate); err != nil {
+		return nil, err
+	}
+
+	return query.Where(appointment.Or(
+		appointment.And(
+			appointment.StartLTE(filter.SlotStartDate),
+			appointment.EndGT(filter.SlotStartDate)),
+		appointment.And(
+			appointment.StartGTE(filter.SlotStartDate),
+			appointment.StartLTE(filter.SlotEndDate)))).Order(ent.Asc(appointment.FieldStart)), nil
 }
