@@ -95,7 +95,9 @@ func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, e
 		return id, errors.Wrap(err, "querying appointment workorder")
 	}
 
-	wo.Update().RemoveAppointment(a).Exec(ctx)
+	if err := wo.Update().RemoveAppointment(a).Exec(ctx); err != nil {
+		return id, errors.Wrap(err, "removing appointment workorder")
+	}
 
 	u, err := client.User.Query().
 		Where(user.HasAppointmentWith(appointment.ID(id))).
@@ -105,7 +107,9 @@ func (r mutationResolver) RemoveAppointment(ctx context.Context, id int) (int, e
 		return id, errors.Wrap(err, "querying appointment user")
 	}
 
-	u.Update().RemoveAppointment(a).Exec(ctx)
+	if err := u.Update().RemoveAppointment(a).Exec(ctx); err != nil {
+		return id, errors.Wrap(err, "removing appointment user")
+	}
 
 	if err := client.Appointment.DeleteOne(a).Exec(ctx); err != nil {
 		return id, errors.Wrap(err, "deleting appointment type")

@@ -13349,10 +13349,6 @@ type Query {
     slotFilterBy: SlotFilterInput
   ): AppointmentConnection!
   usersAvailability(
-    #after: Cursor
-    #first: Int @numberValue(min: 0)
-    #before: Cursor
-    #last: Int @numberValue(min: 0)
     filterBy: [UserFilterInput!]
     slotFilterBy: SlotFilterInput!
     duration: Float!
@@ -13733,7 +13729,6 @@ type UserAvailability {
 input SlotFilterInput {
   slotStartDate: Time!
   slotEndDate: Time!
-  #duration: Float!
 }
 
 input RegularHoursInput {
@@ -13741,7 +13736,7 @@ input RegularHoursInput {
   workdayStartMinute: Int!
   workdayEndHour: Int!
   workdayEndMinute: Int!
-  timezone: String!
+  timezone: String
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -57720,7 +57715,7 @@ func (ec *executionContext) unmarshalInputRegularHoursInput(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timezone"))
-			it.Timezone, err = ec.unmarshalNString2string(ctx, v)
+			it.Timezone, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

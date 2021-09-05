@@ -4589,5 +4589,5 @@ input RegularHoursInput {
   workdayStartMinute: Int!
   workdayEndHour: Int!
   workdayEndMinute: Int!
-  timezone: String!
+  timezone: String
 }

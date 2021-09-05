@@ -728,11 +728,11 @@ type PythonPackage struct {
 }
 
 type RegularHoursInput struct {
-	WorkdayStartHour   int    `json:"workdayStartHour"`
-	WorkdayStartMinute int    `json:"workdayStartMinute"`
-	WorkdayEndHour     int    `json:"workdayEndHour"`
-	WorkdayEndMinute   int    `json:"workdayEndMinute"`
-	Timezone           string `json:"timezone"`
+	WorkdayStartHour   int     `json:"workdayStartHour"`
+	WorkdayStartMinute int     `json:"workdayStartMinute"`
+	WorkdayEndHour     int     `json:"workdayEndHour"`
+	WorkdayEndMinute   int     `json:"workdayEndMinute"`
+	Timezone           *string `json:"timezone"`
 }
 
 type ReportFilterInput struct {
