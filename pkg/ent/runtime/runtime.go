@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -192,6 +193,29 @@ func init() {
 	alarmstatusDescName := alarmstatusFields[0].Descriptor()
 	// alarmstatus.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	alarmstatus.NameValidator = alarmstatusDescName.Validators[0].(func(string) error)
+	appointmentMixin := schema.Appointment{}.Mixin()
+	appointment.Policy = privacy.NewPolicies(schema.Appointment{})
+	appointment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := appointment.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	appointmentMixinFields0 := appointmentMixin[0].Fields()
+	appointmentFields := schema.Appointment{}.Fields()
+	_ = appointmentFields
+	// appointmentDescCreateTime is the schema descriptor for create_time field.
+	appointmentDescCreateTime := appointmentMixinFields0[0].Descriptor()
+	// appointment.DefaultCreateTime holds the default value on creation for the create_time field.
+	appointment.DefaultCreateTime = appointmentDescCreateTime.Default.(func() time.Time)
+	// appointmentDescUpdateTime is the schema descriptor for update_time field.
+	appointmentDescUpdateTime := appointmentMixinFields0[1].Descriptor()
+	// appointment.DefaultUpdateTime holds the default value on creation for the update_time field.
+	appointment.DefaultUpdateTime = appointmentDescUpdateTime.Default.(func() time.Time)
+	// appointment.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	appointment.UpdateDefaultUpdateTime = appointmentDescUpdateTime.UpdateDefault.(func() time.Time)
 	blockMixin := schema.Block{}.Mixin()
 	block.Policy = privacy.NewPolicies(schema.Block{})
 	block.Hooks[0] = func(next ent.Mutator) ent.Mutator {

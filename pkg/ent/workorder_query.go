@@ -886,7 +886,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		nodes       = []*WorkOrder{}
 		withFKs     = woq.withFKs
 		_spec       = woq.querySpec()
-		loadedTypes = [15]bool{
+		loadedTypes = [16]bool{
 			woq.withType != nil,
 			woq.withTemplate != nil,
 			woq.withEquipment != nil,

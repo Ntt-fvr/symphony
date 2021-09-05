@@ -25,6 +25,12 @@ func (c *AlarmStatusClient) Instantiate(as *AlarmStatus) *AlarmStatus {
 }
 
 // Instantiate entity configuration.
+func (c *AppointmentClient) Instantiate(a *Appointment) *Appointment {
+	a.config = c.config
+	return a
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b

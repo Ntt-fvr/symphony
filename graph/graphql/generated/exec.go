@@ -206,6 +206,27 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	Appointment struct {
+		Assignee     func(childComplexity int) int
+		CreationDate func(childComplexity int) int
+		Duration     func(childComplexity int) int
+		End          func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Start        func(childComplexity int) int
+		Workorder    func(childComplexity int) int
+	}
+
+	AppointmentConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	AppointmentEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	AssurancePolicy struct {
 		Read      func(childComplexity int) int
 		Templates func(childComplexity int) int
@@ -1066,6 +1087,7 @@ type ComplexityRoot struct {
 		AddActionBlock                           func(childComplexity int, flowDraftID int, input models.ActionBlockInput) int
 		AddAlarmFilter                           func(childComplexity int, input models.AddAlarmFilterInput) int
 		AddAlarmStatus                           func(childComplexity int, input models.AddAlarmStatusInput) int
+		AddAppointment                           func(childComplexity int, input models.AddAppointmentInput) int
 		AddBlockInstance                         func(childComplexity int, flowInstanceID int, input models.AddBlockInstanceInput) int
 		AddBulkServiceLinksAndPorts              func(childComplexity int, input *models.AddBulkServiceLinksAndPortsInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
@@ -1149,6 +1171,7 @@ type ComplexityRoot struct {
 		DeleteUsersGroup                         func(childComplexity int, id int) int
 		EditAlarmFilter                          func(childComplexity int, input models.EditAlarmFilterInput) int
 		EditAlarmStatus                          func(childComplexity int, input models.EditAlarmStatusInput) int
+		EditAppointment                          func(childComplexity int, input models.EditAppointmentInput) int
 		EditBlock                                func(childComplexity int, input models.EditBlockInput) int
 		EditBlockInstance                        func(childComplexity int, input models.EditBlockInstanceInput) int
 		EditComparator                           func(childComplexity int, input models.EditComparatorInput) int
@@ -1211,6 +1234,7 @@ type ComplexityRoot struct {
 		PublishFlow                              func(childComplexity int, input models.PublishFlowInput) int
 		RemoveAlarmFilter                        func(childComplexity int, id int) int
 		RemoveAlarmStatus                        func(childComplexity int, id int) int
+		RemoveAppointment                        func(childComplexity int, id int) int
 		RemoveComparator                         func(childComplexity int, id int) int
 		RemoveCounter                            func(childComplexity int, id int) int
 		RemoveCounterFamily                      func(childComplexity int, id int) int
@@ -1437,6 +1461,7 @@ type ComplexityRoot struct {
 		ActionType                        func(childComplexity int, id flowschema.ActionTypeID) int
 		AlarmFilters                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
 		AlarmStatus                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmStatusOrder, filterBy []*models.AlarmStatusFilterInput) int
+		Appointments                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) int
 		Comparators                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) int
 		CounterFamilies                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) int
 		Counters                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
@@ -1492,6 +1517,7 @@ type ComplexityRoot struct {
 		TriggerType                       func(childComplexity int, id flowschema.TriggerTypeID) int
 		User                              func(childComplexity int, authID string) int
 		Users                             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
+		UsersAvailability                 func(childComplexity int, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput, duration float64, regularHours models.RegularHoursInput) int
 		UsersGroups                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
 		Vendors                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) int
 		Vertex                            func(childComplexity int, id int) int
@@ -1989,6 +2015,12 @@ type ComplexityRoot struct {
 		ProfilePhoto   func(childComplexity int) int
 		Role           func(childComplexity int) int
 		Status         func(childComplexity int) int
+	}
+
+	UserAvailability struct {
+		SlotEndDate   func(childComplexity int) int
+		SlotStartDate func(childComplexity int) int
+		User          func(childComplexity int) int
 	}
 
 	UserConnection struct {
@@ -2556,6 +2588,9 @@ type MutationResolver interface {
 	AddRecommendationsCategory(ctx context.Context, input models.AddRecommendationsCategoryInput) (*ent.RecommendationsCategory, error)
 	EditRecommendationsCategory(ctx context.Context, input models.EditRecommendationsCategoryInput) (*ent.RecommendationsCategory, error)
 	RemoveRecommendationsCategory(ctx context.Context, id int) (int, error)
+	AddAppointment(ctx context.Context, input models.AddAppointmentInput) (*ent.Appointment, error)
+	EditAppointment(ctx context.Context, input models.EditAppointmentInput) (*ent.Appointment, error)
+	RemoveAppointment(ctx context.Context, id int) (int, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models2.SystemPolicy, error)
@@ -2638,6 +2673,8 @@ type QueryResolver interface {
 	ResourceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) (*ent.ResourceTypeConnection, error)
 	ResourceRelationshipTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipTypeOrder, filterBy []*models.ResourceRelationshipTypeFilterInput) (*ent.ResourceRelationshipTypeConnection, error)
 	ResourceRelationshipMultiplicitys(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipMultiplicityOrder, filterBy []*models.ResourceRelationshipMultiplicityFilterInput) (*ent.ResourceRelationshipMultiplicityConnection, error)
+	Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) (*ent.AppointmentConnection, error)
+	UsersAvailability(ctx context.Context, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput, duration float64, regularHours models.RegularHoursInput) ([]*models.UserAvailability, error)
 }
 type RecommendationsResolver interface {
 	RecommendationsSources(ctx context.Context, obj *ent.Recommendations) (*ent.RecommendationsSources, error)
@@ -3067,6 +3104,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AlarmStatusEdge.Node(childComplexity), true
+
+	case "Appointment.assignee":
+		if e.complexity.Appointment.Assignee == nil {
+			break
+		}
+
+		return e.complexity.Appointment.Assignee(childComplexity), true
+
+	case "Appointment.creationDate":
+		if e.complexity.Appointment.CreationDate == nil {
+			break
+		}
+
+		return e.complexity.Appointment.CreationDate(childComplexity), true
+
+	case "Appointment.duration":
+		if e.complexity.Appointment.Duration == nil {
+			break
+		}
+
+		return e.complexity.Appointment.Duration(childComplexity), true
+
+	case "Appointment.end":
+		if e.complexity.Appointment.End == nil {
+			break
+		}
+
+		return e.complexity.Appointment.End(childComplexity), true
+
+	case "Appointment.id":
+		if e.complexity.Appointment.ID == nil {
+			break
+		}
+
+		return e.complexity.Appointment.ID(childComplexity), true
+
+	case "Appointment.start":
+		if e.complexity.Appointment.Start == nil {
+			break
+		}
+
+		return e.complexity.Appointment.Start(childComplexity), true
+
+	case "Appointment.workOrder":
+		if e.complexity.Appointment.Workorder == nil {
+			break
+		}
+
+		return e.complexity.Appointment.Workorder(childComplexity), true
+
+	case "AppointmentConnection.edges":
+		if e.complexity.AppointmentConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.AppointmentConnection.Edges(childComplexity), true
+
+	case "AppointmentConnection.pageInfo":
+		if e.complexity.AppointmentConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.AppointmentConnection.PageInfo(childComplexity), true
+
+	case "AppointmentConnection.totalCount":
+		if e.complexity.AppointmentConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.AppointmentConnection.TotalCount(childComplexity), true
+
+	case "AppointmentEdge.cursor":
+		if e.complexity.AppointmentEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.AppointmentEdge.Cursor(childComplexity), true
+
+	case "AppointmentEdge.node":
+		if e.complexity.AppointmentEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.AppointmentEdge.Node(childComplexity), true
 
 	case "AssurancePolicy.read":
 		if e.complexity.AssurancePolicy.Read == nil {
@@ -6575,6 +6696,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddAlarmStatus(childComplexity, args["input"].(models.AddAlarmStatusInput)), true
 
+	case "Mutation.addAppointment":
+		if e.complexity.Mutation.AddAppointment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addAppointment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddAppointment(childComplexity, args["input"].(models.AddAppointmentInput)), true
+
 	case "Mutation.addBlockInstance":
 		if e.complexity.Mutation.AddBlockInstance == nil {
 			break
@@ -7571,6 +7704,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditAlarmStatus(childComplexity, args["input"].(models.EditAlarmStatusInput)), true
 
+	case "Mutation.editAppointment":
+		if e.complexity.Mutation.EditAppointment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editAppointment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditAppointment(childComplexity, args["input"].(models.EditAppointmentInput)), true
+
 	case "Mutation.editBlock":
 		if e.complexity.Mutation.EditBlock == nil {
 			break
@@ -8314,6 +8459,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveAlarmStatus(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeAppointment":
+		if e.complexity.Mutation.RemoveAppointment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeAppointment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveAppointment(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeComparator":
 		if e.complexity.Mutation.RemoveComparator == nil {
@@ -9715,6 +9872,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.AlarmStatus(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.AlarmStatusOrder), args["filterBy"].([]*models.AlarmStatusFilterInput)), true
 
+	case "Query.appointments":
+		if e.complexity.Query.Appointments == nil {
+			break
+		}
+
+		args, err := ec.field_Query_appointments_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Appointments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["slotFilterBy"].(*models.SlotFilterInput)), true
+
 	case "Query.comparators":
 		if e.complexity.Query.Comparators == nil {
 			break
@@ -10354,6 +10523,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Users(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.UserFilterInput)), true
+
+	case "Query.usersAvailability":
+		if e.complexity.Query.UsersAvailability == nil {
+			break
+		}
+
+		args, err := ec.field_Query_usersAvailability_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UsersAvailability(childComplexity, args["filterBy"].([]*models.UserFilterInput), args["slotFilterBy"].(models.SlotFilterInput), args["duration"].(float64), args["regularHours"].(models.RegularHoursInput)), true
 
 	case "Query.usersGroups":
 		if e.complexity.Query.UsersGroups == nil {
@@ -12541,6 +12722,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Status(childComplexity), true
 
+	case "UserAvailability.slotEndDate":
+		if e.complexity.UserAvailability.SlotEndDate == nil {
+			break
+		}
+
+		return e.complexity.UserAvailability.SlotEndDate(childComplexity), true
+
+	case "UserAvailability.slotStartDate":
+		if e.complexity.UserAvailability.SlotStartDate == nil {
+			break
+		}
+
+		return e.complexity.UserAvailability.SlotStartDate(childComplexity), true
+
+	case "UserAvailability.user":
+		if e.complexity.UserAvailability.User == nil {
+			break
+		}
+
+		return e.complexity.UserAvailability.User(childComplexity), true
+
 	case "UserConnection.edges":
 		if e.complexity.UserConnection.Edges == nil {
 			break
@@ -14332,6 +14534,7 @@ input AddWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input EditWorkOrderTypeInput {
@@ -14342,6 +14545,7 @@ input EditWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input AddWorkOrderInput {
@@ -14359,6 +14563,8 @@ input AddWorkOrderInput {
   organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
+  duration: Float
+  dueDate: Time
 }
 
 input EditWorkOrderInput {
@@ -14377,6 +14583,8 @@ input EditWorkOrderInput {
   checkList: [CheckListItemInput!]
   checkListCategories: [CheckListCategoryInput!]
   locationId: ID
+  duration: Float
+  dueDate: Time
 }
 
 input TechnicianCheckListItemInput {
@@ -20798,7 +21006,19 @@ type Query {
     
     filterBy: [ResourceRelationshipMultiplicityFilterInput!]
   ): ResourceRelationshipMultiplicityConnection!
-  
+  appointments(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+    slotFilterBy: SlotFilterInput
+  ): AppointmentConnection!
+  usersAvailability(
+    filterBy: [UserFilterInput!]
+    slotFilterBy: SlotFilterInput!
+    duration: Float!
+    regularHours: RegularHoursInput!
+  ): [UserAvailability!]
 }
 
 type Mutation {
@@ -21118,6 +21338,9 @@ type Mutation {
   addRecommendationsCategory(input: AddRecommendationsCategoryInput!):RecommendationsCategory!
   editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory!
   removeRecommendationsCategory(id: ID!): ID!
+  addAppointment(input: AddAppointmentInput!): Appointment!
+  editAppointment(input: EditAppointmentInput!): Appointment!
+  removeAppointment(id: ID!): ID!
 }
 
 """
@@ -22213,7 +22436,107 @@ input ResourceRelationshipFilterInput {
   stringSet: [String!]
   
 }
-`, BuiltIn: false},
+
+## scheduling
+"""
+A connection to a list of appoinments.
+"""
+type AppointmentConnection {
+  """
+  Total count of appoinments in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of project edges.
+  """
+  edges: [AppointmentEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+"""
+A project edge in a connection.
+"""
+type AppointmentEdge {
+  """
+  The project at the end of the edge.
+  """
+  node: Appointment
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Properties by which project connections can be ordered.
+"""
+enum AppointmentOrderField {
+  """
+  Order appoinments by date.
+  """
+  DATE
+  """
+  Order appoinments by creation time.
+  """
+  CREATED_AT
+  """
+  Order appoinments by update time.
+  """
+  UPDATED_AT
+}
+"""
+Ordering options for project connections.
+"""
+input AppointmentOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+  """
+  The field to order appoinments by.
+  """
+  field: AppointmentOrderField
+}
+type Appointment implements Node {
+  id: ID!
+  creationDate: Time!
+  assignee: User!
+  workOrder: WorkOrder!
+  start: Time!
+  end: Time!
+  duration: Float!
+}
+input AddAppointmentInput {
+  creatorId: ID
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
+  duration: Float!
+}
+input EditAppointmentInput {
+  id: ID!
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
+  duration: Float!
+}
+type UserAvailability {
+  user: User!
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+input SlotFilterInput {
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+input RegularHoursInput {
+  workdayStartHour: Int!
+  workdayStartMinute: Int!
+  workdayEndHour: Int!
+  workdayEndMinute: Int!
+  timezone: String
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -22594,6 +22917,21 @@ func (ec *executionContext) field_Mutation_addAlarmStatus_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddAlarmStatusInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAlarmStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addAppointment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddAppointmentInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddAppointmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAppointmentInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -23991,6 +24329,21 @@ func (ec *executionContext) field_Mutation_editAlarmStatus_args(ctx context.Cont
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editAppointment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditAppointmentInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditAppointmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAppointmentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editBlockInstance_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -24952,6 +25305,21 @@ func (ec *executionContext) field_Mutation_removeAlarmFilter_args(ctx context.Co
 }
 
 func (ec *executionContext) field_Mutation_removeAlarmStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeAppointment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -26332,6 +26700,95 @@ func (ec *executionContext) field_Query_alarmStatus_args(ctx context.Context, ra
 		}
 	}
 	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_appointments_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *models.SlotFilterInput
+	if tmp, ok := rawArgs["slotFilterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotFilterBy"))
+		arg4, err = ec.unmarshalOSlotFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slotFilterBy"] = arg4
 	return args, nil
 }
 
@@ -30311,6 +30768,48 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_usersAvailability_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*models.UserFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg0, err = ec.unmarshalOUserFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg0
+	var arg1 models.SlotFilterInput
+	if tmp, ok := rawArgs["slotFilterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotFilterBy"))
+		arg1, err = ec.unmarshalNSlotFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slotFilterBy"] = arg1
+	var arg2 float64
+	if tmp, ok := rawArgs["duration"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+		arg2, err = ec.unmarshalNFloat2float64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["duration"] = arg2
+	var arg3 models.RegularHoursInput
+	if tmp, ok := rawArgs["regularHours"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("regularHours"))
+		arg3, err = ec.unmarshalNRegularHoursInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRegularHoursInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["regularHours"] = arg3
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_usersGroups_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -32406,6 +32905,423 @@ func (ec *executionContext) _AlarmStatusEdge_cursor(ctx context.Context, field g
 	}()
 	fc := &graphql.FieldContext{
 		Object:     "AlarmStatusEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_id(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_creationDate(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreationDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_assignee(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Assignee(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_workOrder(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Workorder(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.WorkOrder)
+	fc.Result = res
+	return ec.marshalNWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_start(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Start, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_end(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.End, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Appointment_duration(ctx context.Context, field graphql.CollectedField, obj *ent.Appointment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Appointment",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Duration, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AppointmentConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.AppointmentConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AppointmentConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AppointmentConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.AppointmentConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AppointmentConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.AppointmentEdge)
+	fc.Result = res
+	return ec.marshalNAppointmentEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AppointmentConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.AppointmentConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AppointmentConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AppointmentEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.AppointmentEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AppointmentEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Appointment)
+	fc.Result = res
+	return ec.marshalOAppointment2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AppointmentEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.AppointmentEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AppointmentEdge",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -57770,6 +58686,132 @@ func (ec *executionContext) _Mutation_removeRecommendationsCategory(ctx context.
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addAppointment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addAppointment_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddAppointment(rctx, args["input"].(models.AddAppointmentInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Appointment)
+	fc.Result = res
+	return ec.marshalNAppointment2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editAppointment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editAppointment_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditAppointment(rctx, args["input"].(models.EditAppointmentInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Appointment)
+	fc.Result = res
+	return ec.marshalNAppointment2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeAppointment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeAppointment_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveAppointment(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _NetworkTopology_nodes(ctx context.Context, field graphql.CollectedField, obj *models.NetworkTopology) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -63948,6 +64990,87 @@ func (ec *executionContext) _Query_resourceRelationshipMultiplicitys(ctx context
 	res := resTmp.(*ent.ResourceRelationshipMultiplicityConnection)
 	fc.Result = res
 	return ec.marshalNResourceRelationshipMultiplicityConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceRelationshipMultiplicityConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_appointments(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_appointments_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Appointments(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["slotFilterBy"].(*models.SlotFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AppointmentConnection)
+	fc.Result = res
+	return ec.marshalNAppointmentConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_usersAvailability(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_usersAvailability_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UsersAvailability(rctx, args["filterBy"].([]*models.UserFilterInput), args["slotFilterBy"].(models.SlotFilterInput), args["duration"].(float64), args["regularHours"].(models.RegularHoursInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.UserAvailability)
+	fc.Result = res
+	return ec.marshalOUserAvailability2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserAvailabilityᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -74360,6 +75483,111 @@ func (ec *executionContext) _User_organizationFk(ctx context.Context, field grap
 	return ec.marshalOOrganization2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrganization(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _UserAvailability_user(ctx context.Context, field graphql.CollectedField, obj *models.UserAvailability) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserAvailability",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserAvailability_slotStartDate(ctx context.Context, field graphql.CollectedField, obj *models.UserAvailability) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserAvailability",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SlotStartDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserAvailability_slotEndDate(ctx context.Context, field graphql.CollectedField, obj *models.UserAvailability) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserAvailability",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SlotEndDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _UserConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.UserConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -80292,6 +81520,58 @@ func (ec *executionContext) unmarshalInputAddAlarmStatusInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddAppointmentInput(ctx context.Context, obj interface{}) (models.AddAppointmentInput, error) {
+	var it models.AddAppointmentInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "creatorId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creatorId"))
+			it.CreatorID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "assigneeID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assigneeID"))
+			it.AssigneeID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workorderID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workorderID"))
+			it.WorkorderID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "date":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			it.Date, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddBlockInstanceInput(ctx context.Context, obj interface{}) (models.AddBlockInstanceInput, error) {
 	var it models.AddBlockInstanceInput
 	var asMap = obj.(map[string]interface{})
@@ -82828,6 +84108,22 @@ func (ec *executionContext) unmarshalInputAddWorkOrderInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "dueDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dueDate"))
+			it.DueDate, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -82903,6 +84199,14 @@ func (ec *executionContext) unmarshalInputAddWorkOrderTypeInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assigneeCanCompleteWorkOrder"))
 			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -83253,6 +84557,34 @@ func (ec *executionContext) unmarshalInputAlarmStatusOrder(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
 			it.Field, err = ec.unmarshalOAlarmStatusOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatusOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAppointmentOrder(ctx context.Context, obj interface{}) (ent.AppointmentOrder, error) {
+	var it ent.AppointmentOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOAppointmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -84421,6 +85753,58 @@ func (ec *executionContext) unmarshalInputEditAlarmStatusInput(ctx context.Conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEditAppointmentInput(ctx context.Context, obj interface{}) (models.EditAppointmentInput, error) {
+	var it models.EditAppointmentInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "assigneeID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assigneeID"))
+			it.AssigneeID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workorderID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workorderID"))
+			it.WorkorderID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "date":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			it.Date, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -86958,6 +88342,22 @@ func (ec *executionContext) unmarshalInputEditWorkOrderInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "dueDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dueDate"))
+			it.DueDate, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -87041,6 +88441,14 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assigneeCanCompleteWorkOrder"))
 			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "duration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
+			it.Duration, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -90024,6 +91432,58 @@ func (ec *executionContext) unmarshalInputRecommendationsSourcesOrder(ctx contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputRegularHoursInput(ctx context.Context, obj interface{}) (models.RegularHoursInput, error) {
+	var it models.RegularHoursInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "workdayStartHour":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workdayStartHour"))
+			it.WorkdayStartHour, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workdayStartMinute":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workdayStartMinute"))
+			it.WorkdayStartMinute, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workdayEndHour":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workdayEndHour"))
+			it.WorkdayEndHour, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workdayEndMinute":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workdayEndMinute"))
+			it.WorkdayEndMinute, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timezone":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timezone"))
+			it.Timezone, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputReportFilterInput(ctx context.Context, obj interface{}) (models.ReportFilterInput, error) {
 	var it models.ReportFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -91215,6 +92675,34 @@ func (ec *executionContext) unmarshalInputServiceTypeEditData(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endpoints"))
 			it.Endpoints, err = ec.unmarshalOServiceEndpointDefinitionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceEndpointDefinitionInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSlotFilterInput(ctx context.Context, obj interface{}) (models.SlotFilterInput, error) {
+	var it models.SlotFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "slotStartDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotStartDate"))
+			it.SlotStartDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "slotEndDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotEndDate"))
+			it.SlotEndDate, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -93711,6 +95199,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._ResourceRelationship(ctx, sel, obj)
+	case *ent.Appointment:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Appointment(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -94201,6 +95694,147 @@ func (ec *executionContext) _AlarmStatusEdge(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._AlarmStatusEdge_node(ctx, field, obj)
 		case "cursor":
 			out.Values[i] = ec._AlarmStatusEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var appointmentImplementors = []string{"Appointment", "Node"}
+
+func (ec *executionContext) _Appointment(ctx context.Context, sel ast.SelectionSet, obj *ent.Appointment) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, appointmentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Appointment")
+		case "id":
+			out.Values[i] = ec._Appointment_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "creationDate":
+			out.Values[i] = ec._Appointment_creationDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "assignee":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Appointment_assignee(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "workOrder":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Appointment_workOrder(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "start":
+			out.Values[i] = ec._Appointment_start(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "end":
+			out.Values[i] = ec._Appointment_end(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "duration":
+			out.Values[i] = ec._Appointment_duration(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var appointmentConnectionImplementors = []string{"AppointmentConnection"}
+
+func (ec *executionContext) _AppointmentConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.AppointmentConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, appointmentConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AppointmentConnection")
+		case "totalCount":
+			out.Values[i] = ec._AppointmentConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._AppointmentConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._AppointmentConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var appointmentEdgeImplementors = []string{"AppointmentEdge"}
+
+func (ec *executionContext) _AppointmentEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.AppointmentEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, appointmentEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AppointmentEdge")
+		case "node":
+			out.Values[i] = ec._AppointmentEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._AppointmentEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -101082,6 +102716,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addAppointment":
+			out.Values[i] = ec._Mutation_addAppointment(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editAppointment":
+			out.Values[i] = ec._Mutation_editAppointment(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeAppointment":
+			out.Values[i] = ec._Mutation_removeAppointment(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -102996,6 +104645,31 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			})
+		case "appointments":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_appointments(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "usersAvailability":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_usersAvailability(ctx, field)
 				return res
 			})
 		case "__type":
@@ -106163,6 +107837,43 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var userAvailabilityImplementors = []string{"UserAvailability"}
+
+func (ec *executionContext) _UserAvailability(ctx context.Context, sel ast.SelectionSet, obj *models.UserAvailability) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userAvailabilityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserAvailability")
+		case "user":
+			out.Values[i] = ec._UserAvailability_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "slotStartDate":
+			out.Values[i] = ec._UserAvailability_slotStartDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "slotEndDate":
+			out.Values[i] = ec._UserAvailability_slotEndDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var userConnectionImplementors = []string{"UserConnection"}
 
 func (ec *executionContext) _UserConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.UserConnection) graphql.Marshaler {
@@ -108085,6 +109796,11 @@ func (ec *executionContext) unmarshalNAddAlarmStatusInput2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddAppointmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddAppointmentInput(ctx context.Context, v interface{}) (models.AddAppointmentInput, error) {
+	res, err := ec.unmarshalInputAddAppointmentInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddBlockInstanceInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddBlockInstanceInput(ctx context.Context, v interface{}) (models.AddBlockInstanceInput, error) {
 	res, err := ec.unmarshalInputAddBlockInstanceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -108564,6 +110280,81 @@ func (ec *executionContext) unmarshalNAlarmStatusFilterType2githubᚗcomᚋfaceb
 
 func (ec *executionContext) marshalNAlarmStatusFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAlarmStatusFilterType(ctx context.Context, sel ast.SelectionSet, v models.AlarmStatusFilterType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNAppointment2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx context.Context, sel ast.SelectionSet, v ent.Appointment) graphql.Marshaler {
+	return ec._Appointment(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAppointment2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx context.Context, sel ast.SelectionSet, v *ent.Appointment) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Appointment(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAppointmentConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentConnection(ctx context.Context, sel ast.SelectionSet, v ent.AppointmentConnection) graphql.Marshaler {
+	return ec._AppointmentConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAppointmentConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentConnection(ctx context.Context, sel ast.SelectionSet, v *ent.AppointmentConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AppointmentConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAppointmentEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.AppointmentEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAppointmentEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNAppointmentEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AppointmentEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AppointmentEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNAssurancePolicy2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐAssurancePolicy(ctx context.Context, sel ast.SelectionSet, v *models2.AssurancePolicy) graphql.Marshaler {
@@ -109768,6 +111559,11 @@ func (ec *executionContext) unmarshalNEditAlarmFilterInput2githubᚗcomᚋfacebo
 
 func (ec *executionContext) unmarshalNEditAlarmStatusInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAlarmStatusInput(ctx context.Context, v interface{}) (models.EditAlarmStatusInput, error) {
 	res, err := ec.unmarshalInputEditAlarmStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditAppointmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditAppointmentInput(ctx context.Context, v interface{}) (models.EditAppointmentInput, error) {
+	res, err := ec.unmarshalInputEditAppointmentInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -113901,6 +115697,11 @@ func (ec *executionContext) marshalNRecommendationsSourcesFilterType2githubᚗco
 	return v
 }
 
+func (ec *executionContext) unmarshalNRegularHoursInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐRegularHoursInput(ctx context.Context, v interface{}) (models.RegularHoursInput, error) {
+	res, err := ec.unmarshalInputRegularHoursInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNReportFilter2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReportFilter(ctx context.Context, sel ast.SelectionSet, v ent.ReportFilter) graphql.Marshaler {
 	return ec._ReportFilter(ctx, sel, &v)
 }
@@ -114938,6 +116739,11 @@ func (ec *executionContext) unmarshalNServiceTypeEditData2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNSlotFilterInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx context.Context, v interface{}) (models.SlotFilterInput, error) {
+	res, err := ec.unmarshalInputSlotFilterInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNStartBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐStartBlockInput(ctx context.Context, v interface{}) (models.StartBlockInput, error) {
 	res, err := ec.unmarshalInputStartBlockInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -115741,6 +117547,16 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserAvailability2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserAvailability(ctx context.Context, sel ast.SelectionSet, v *models.UserAvailability) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._UserAvailability(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUserEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUserEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.UserEdge) graphql.Marshaler {
@@ -117190,6 +119006,29 @@ func (ec *executionContext) unmarshalOAlarmStatusOrderField2ᚖgithubᚗcomᚋfa
 }
 
 func (ec *executionContext) marshalOAlarmStatusOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAlarmStatusOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.AlarmStatusOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalOAppointment2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointment(ctx context.Context, sel ast.SelectionSet, v *ent.Appointment) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Appointment(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAppointmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentOrderField(ctx context.Context, v interface{}) (*ent.AppointmentOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.AppointmentOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAppointmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐAppointmentOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.AppointmentOrderField) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -120814,6 +122653,14 @@ func (ec *executionContext) marshalOServiceTypeConnection2ᚖgithubᚗcomᚋface
 	return ec._ServiceTypeConnection(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOSlotFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSlotFilterInput(ctx context.Context, v interface{}) (*models.SlotFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSlotFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOStartBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐStartBlockInput(ctx context.Context, v interface{}) (*models.StartBlockInput, error) {
 	if v == nil {
 		return nil, nil
@@ -121582,6 +123429,46 @@ func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUserAvailability2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserAvailabilityᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.UserAvailability) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserAvailability2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐUserAvailability(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOUserConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUserConnection(ctx context.Context, sel ast.SelectionSet, v *ent.UserConnection) graphql.Marshaler {

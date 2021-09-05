@@ -19,6 +19,9 @@ type AlarmFilter func(*sql.Selector)
 // AlarmStatus is the predicate function for alarmstatus builders.
 type AlarmStatus func(*sql.Selector)
 
+// Appointment is the predicate function for appointment builders.
+type Appointment func(*sql.Selector)
+
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 

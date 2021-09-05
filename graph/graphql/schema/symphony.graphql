@@ -753,6 +753,7 @@ input AddWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input EditWorkOrderTypeInput {
@@ -763,6 +764,7 @@ input EditWorkOrderTypeInput {
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
   assigneeCanCompleteWorkOrder: Boolean
+  duration: Float
 }
 
 input AddWorkOrderInput {
@@ -780,6 +782,8 @@ input AddWorkOrderInput {
   organizationFk:ID
   status: WorkOrderStatus
   priority: WorkOrderPriority
+  duration: Float
+  dueDate: Time
 }
 
 input EditWorkOrderInput {
@@ -798,6 +802,8 @@ input EditWorkOrderInput {
   checkList: [CheckListItemInput!]
   checkListCategories: [CheckListCategoryInput!]
   locationId: ID
+  duration: Float
+  dueDate: Time
 }
 
 input TechnicianCheckListItemInput {
@@ -7219,7 +7225,19 @@ type Query {
     
     filterBy: [ResourceRelationshipMultiplicityFilterInput!]
   ): ResourceRelationshipMultiplicityConnection!
-  
+  appointments(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+    slotFilterBy: SlotFilterInput
+  ): AppointmentConnection!
+  usersAvailability(
+    filterBy: [UserFilterInput!]
+    slotFilterBy: SlotFilterInput!
+    duration: Float!
+    regularHours: RegularHoursInput!
+  ): [UserAvailability!]
 }
 
 type Mutation {
@@ -7539,6 +7557,9 @@ type Mutation {
   addRecommendationsCategory(input: AddRecommendationsCategoryInput!):RecommendationsCategory!
   editRecommendationsCategory(input: EditRecommendationsCategoryInput!): RecommendationsCategory!
   removeRecommendationsCategory(id: ID!): ID!
+  addAppointment(input: AddAppointmentInput!): Appointment!
+  editAppointment(input: EditAppointmentInput!): Appointment!
+  removeAppointment(id: ID!): ID!
 }
 
 """
@@ -8633,4 +8654,105 @@ input ResourceRelationshipFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
   
+}
+
+## scheduling
+"""
+A connection to a list of appoinments.
+"""
+type AppointmentConnection {
+  """
+  Total count of appoinments in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of project edges.
+  """
+  edges: [AppointmentEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+"""
+A project edge in a connection.
+"""
+type AppointmentEdge {
+  """
+  The project at the end of the edge.
+  """
+  node: Appointment
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Properties by which project connections can be ordered.
+"""
+enum AppointmentOrderField {
+  """
+  Order appoinments by date.
+  """
+  DATE
+  """
+  Order appoinments by creation time.
+  """
+  CREATED_AT
+  """
+  Order appoinments by update time.
+  """
+  UPDATED_AT
+}
+"""
+Ordering options for project connections.
+"""
+input AppointmentOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+  """
+  The field to order appoinments by.
+  """
+  field: AppointmentOrderField
+}
+type Appointment implements Node {
+  id: ID!
+  creationDate: Time!
+  assignee: User!
+  workOrder: WorkOrder!
+  start: Time!
+  end: Time!
+  duration: Float!
+}
+input AddAppointmentInput {
+  creatorId: ID
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
+  duration: Float!
+}
+input EditAppointmentInput {
+  id: ID!
+  assigneeID: ID!
+  workorderID: ID!
+  date: Time!
+  duration: Float!
+}
+type UserAvailability {
+  user: User!
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+input SlotFilterInput {
+  slotStartDate: Time!
+  slotEndDate: Time!
+}
+input RegularHoursInput {
+  workdayStartHour: Int!
+  workdayStartMinute: Int!
+  workdayEndHour: Int!
+  workdayEndMinute: Int!
+  timezone: String
 }

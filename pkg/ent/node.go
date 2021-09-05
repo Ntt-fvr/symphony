@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -365,6 +366,93 @@ func (as *AlarmStatus) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = as.QueryAlarmStatusFk().
 		Select(alarmfilter.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (a *Appointment) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     a.ID,
+		Type:   "Appointment",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(a.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Start); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "time.Time",
+		Name:  "start",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.End); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "time.Time",
+		Name:  "end",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "float64",
+		Name:  "duration",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "appointment.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.CreationDate); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "time.Time",
+		Name:  "creation_date",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "WorkOrder",
+		Name: "workorder",
+	}
+	node.Edges[0].IDs, err = a.QueryWorkorder().
+		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "User",
+		Name: "assignee",
+	}
+	node.Edges[1].IDs, err = a.QueryAssignee().
+		Select(user.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -7507,7 +7595,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 9),
+		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -7672,6 +7760,16 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[9] = &Edge{
+		Type: "Appointment",
+		Name: "appointment",
+	}
+	node.Edges[9].IDs, err = u.QueryAppointment().
+		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -7815,8 +7913,8 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wo.ID,
 		Type:   "WorkOrder",
-		Fields: make([]*Field, 10),
-		Edges:  make([]*Edge, 15),
+		Fields: make([]*Field, 13),
+		Edges:  make([]*Edge, 16),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wo.CreateTime); err != nil {
@@ -7897,6 +7995,30 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[9] = &Field{
 		Type:  "time.Time",
 		Name:  "close_date",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[10] = &Field{
+		Type:  "float64",
+		Name:  "duration",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.SchedulledAt); err != nil {
+		return nil, err
+	}
+	node.Fields[11] = &Field{
+		Type:  "time.Time",
+		Name:  "schedulled_at",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wo.DueDate); err != nil {
+		return nil, err
+	}
+	node.Fields[12] = &Field{
+		Type:  "time.Time",
+		Name:  "due_date",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -8049,6 +8171,16 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
+	node.Edges[15] = &Edge{
+		Type: "Appointment",
+		Name: "appointment",
+	}
+	node.Edges[15].IDs, err = wo.QueryAppointment().
+		Select(appointment.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return node, nil
 }
 
@@ -8121,7 +8253,7 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderTemplate",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -8165,6 +8297,14 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(wot.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "duration",
+		Value: string(buf),
+	}
 	node.Edges[0] = &Edge{
 		Type: "PropertyType",
 		Name: "property_types",
@@ -8202,7 +8342,7 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderType",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -8244,6 +8384,14 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "bool",
 		Name:  "assignee_can_complete_work_order",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.Duration); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "float64",
+		Name:  "duration",
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
@@ -8419,6 +8567,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.AlarmStatus.Query().
 			Where(alarmstatus.ID(id)).
 			CollectFields(ctx, "AlarmStatus").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case appointment.Table:
+		n, err := c.Appointment.Query().
+			Where(appointment.ID(id)).
+			CollectFields(ctx, "Appointment").
 			Only(ctx)
 		if err != nil {
 			return nil, err

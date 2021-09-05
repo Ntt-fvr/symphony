@@ -78,6 +78,14 @@ type AddAlarmStatusInput struct {
 	Name string `json:"name"`
 }
 
+type AddAppointmentInput struct {
+	CreatorID   *int      `json:"creatorId"`
+	AssigneeID  int       `json:"assigneeID"`
+	WorkorderID int       `json:"workorderID"`
+	Date        time.Time `json:"date"`
+	Duration    float64   `json:"duration"`
+}
+
 type AddBlockInstanceInput struct {
 	Status    *blockinstance.Status       `json:"status"`
 	Inputs    []*flowschema.VariableValue `json:"inputs"`
@@ -444,6 +452,8 @@ type AddWorkOrderInput struct {
 	OrganizationFk      *int                      `json:"organizationFk"`
 	Status              *workorder.Status         `json:"status"`
 	Priority            *workorder.Priority       `json:"priority"`
+	Duration            *float64                  `json:"duration"`
+	DueDate             *time.Time                `json:"dueDate"`
 }
 
 type AddWorkOrderTypeInput struct {
@@ -452,6 +462,7 @@ type AddWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+	Duration                     *float64                            `json:"duration"`
 }
 
 type AddWorkerTypeInput struct {
@@ -657,6 +668,14 @@ type EditAlarmFilterInput struct {
 type EditAlarmStatusInput struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type EditAppointmentInput struct {
+	ID          int       `json:"id"`
+	AssigneeID  int       `json:"assigneeID"`
+	WorkorderID int       `json:"workorderID"`
+	Date        time.Time `json:"date"`
+	Duration    float64   `json:"duration"`
 }
 
 type EditBlockInput struct {
@@ -1025,6 +1044,8 @@ type EditWorkOrderInput struct {
 	CheckList           []*CheckListItemInput     `json:"checkList"`
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	LocationID          *int                      `json:"locationId"`
+	Duration            *float64                  `json:"duration"`
+	DueDate             *time.Time                `json:"dueDate"`
 }
 
 type EditWorkOrderTypeInput struct {
@@ -1034,6 +1055,7 @@ type EditWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+	Duration                     *float64                            `json:"duration"`
 }
 
 type EditWorkerTypeInput struct {
@@ -1360,6 +1382,14 @@ type RecommendationsSourcesFilterInput struct {
 	StringSet   []string                         `json:"stringSet"`
 }
 
+type RegularHoursInput struct {
+	WorkdayStartHour   int     `json:"workdayStartHour"`
+	WorkdayStartMinute int     `json:"workdayStartMinute"`
+	WorkdayEndHour     int     `json:"workdayEndHour"`
+	WorkdayEndMinute   int     `json:"workdayEndMinute"`
+	Timezone           *string `json:"timezone"`
+}
+
 type ReportFilterInput struct {
 	Name    string                `json:"name"`
 	Entity  FilterEntity          `json:"entity"`
@@ -1516,6 +1546,11 @@ type ServiceTypeEditData struct {
 	HasCustomer bool                              `json:"hasCustomer"`
 	Properties  []*models.PropertyTypeInput       `json:"properties"`
 	Endpoints   []*ServiceEndpointDefinitionInput `json:"endpoints"`
+}
+
+type SlotFilterInput struct {
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
 }
 
 type StartBlock struct {
@@ -1740,6 +1775,12 @@ type UpdateUserGroupsInput struct {
 	ID             int   `json:"id"`
 	AddGroupIds    []int `json:"addGroupIds"`
 	RemoveGroupIds []int `json:"removeGroupIds"`
+}
+
+type UserAvailability struct {
+	User          *ent.User `json:"user"`
+	SlotStartDate time.Time `json:"slotStartDate"`
+	SlotEndDate   time.Time `json:"slotEndDate"`
 }
 
 type UserFilterInput struct {

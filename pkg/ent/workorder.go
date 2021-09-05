@@ -100,7 +100,7 @@ type WorkOrderEdges struct {
 	Appointment []*Appointment
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [15]bool
+	loadedTypes [16]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -276,7 +276,7 @@ func (e WorkOrderEdges) AssigneeOrErr() (*User, error) {
 // AppointmentOrErr returns the Appointment value or an error if the edge
 // was not loaded in eager-loading.
 func (e WorkOrderEdges) AppointmentOrErr() ([]*Appointment, error) {
-	if e.loadedTypes[14] {
+	if e.loadedTypes[15] {
 		return e.Appointment, nil
 	}
 	return nil, &NotLoadedError{edge: "appointment"}

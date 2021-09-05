@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmfilter"
 	"github.com/facebookincubator/symphony/pkg/ent/alarmstatus"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -123,6 +124,7 @@ const (
 	TypeActivity                         = "Activity"
 	TypeAlarmFilter                      = "AlarmFilter"
 	TypeAlarmStatus                      = "AlarmStatus"
+	TypeAppointment                      = "Appointment"
 	TypeBlock                            = "Block"
 	TypeBlockInstance                    = "BlockInstance"
 	TypeCheckListCategory                = "CheckListCategory"
@@ -2377,6 +2379,794 @@ func (m *AlarmStatusMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown AlarmStatus edge %s", name)
+}
+
+// AppointmentMutation represents an operation that mutate the Appointments
+// nodes in the graph.
+type AppointmentMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	create_time      *time.Time
+	update_time      *time.Time
+	start            *time.Time
+	end              *time.Time
+	duration         *float64
+	addduration      *float64
+	status           *appointment.Status
+	creation_date    *time.Time
+	clearedFields    map[string]struct{}
+	workorder        *int
+	clearedworkorder bool
+	assignee         *int
+	clearedassignee  bool
+	done             bool
+	oldValue         func(context.Context) (*Appointment, error)
+	predicates       []predicate.Appointment
+}
+
+var _ ent.Mutation = (*AppointmentMutation)(nil)
+
+// appointmentOption allows to manage the mutation configuration using functional options.
+type appointmentOption func(*AppointmentMutation)
+
+// newAppointmentMutation creates new mutation for Appointment.
+func newAppointmentMutation(c config, op Op, opts ...appointmentOption) *AppointmentMutation {
+	m := &AppointmentMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppointment,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppointmentID sets the id field of the mutation.
+func withAppointmentID(id int) appointmentOption {
+	return func(m *AppointmentMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Appointment
+		)
+		m.oldValue = func(ctx context.Context) (*Appointment, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Appointment.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppointment sets the old Appointment of the mutation.
+func withAppointment(node *Appointment) appointmentOption {
+	return func(m *AppointmentMutation) {
+		m.oldValue = func(context.Context) (*Appointment, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppointmentMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppointmentMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *AppointmentMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *AppointmentMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *AppointmentMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *AppointmentMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *AppointmentMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *AppointmentMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *AppointmentMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetStart sets the start field.
+func (m *AppointmentMutation) SetStart(t time.Time) {
+	m.start = &t
+}
+
+// Start returns the start value in the mutation.
+func (m *AppointmentMutation) Start() (r time.Time, exists bool) {
+	v := m.start
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStart returns the old start value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldStart(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStart is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStart requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStart: %w", err)
+	}
+	return oldValue.Start, nil
+}
+
+// ResetStart reset all changes of the "start" field.
+func (m *AppointmentMutation) ResetStart() {
+	m.start = nil
+}
+
+// SetEnd sets the end field.
+func (m *AppointmentMutation) SetEnd(t time.Time) {
+	m.end = &t
+}
+
+// End returns the end value in the mutation.
+func (m *AppointmentMutation) End() (r time.Time, exists bool) {
+	v := m.end
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnd returns the old end value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldEnd(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnd is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnd requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnd: %w", err)
+	}
+	return oldValue.End, nil
+}
+
+// ResetEnd reset all changes of the "end" field.
+func (m *AppointmentMutation) ResetEnd() {
+	m.end = nil
+}
+
+// SetDuration sets the duration field.
+func (m *AppointmentMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *AppointmentMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldDuration(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *AppointmentMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *AppointmentMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *AppointmentMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+}
+
+// SetStatus sets the status field.
+func (m *AppointmentMutation) SetStatus(a appointment.Status) {
+	m.status = &a
+}
+
+// Status returns the status value in the mutation.
+func (m *AppointmentMutation) Status() (r appointment.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldStatus(ctx context.Context) (v appointment.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *AppointmentMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetCreationDate sets the creation_date field.
+func (m *AppointmentMutation) SetCreationDate(t time.Time) {
+	m.creation_date = &t
+}
+
+// CreationDate returns the creation_date value in the mutation.
+func (m *AppointmentMutation) CreationDate() (r time.Time, exists bool) {
+	v := m.creation_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreationDate returns the old creation_date value of the Appointment.
+// If the Appointment object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *AppointmentMutation) OldCreationDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreationDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreationDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreationDate: %w", err)
+	}
+	return oldValue.CreationDate, nil
+}
+
+// ResetCreationDate reset all changes of the "creation_date" field.
+func (m *AppointmentMutation) ResetCreationDate() {
+	m.creation_date = nil
+}
+
+// SetWorkorderID sets the workorder edge to WorkOrder by id.
+func (m *AppointmentMutation) SetWorkorderID(id int) {
+	m.workorder = &id
+}
+
+// ClearWorkorder clears the workorder edge to WorkOrder.
+func (m *AppointmentMutation) ClearWorkorder() {
+	m.clearedworkorder = true
+}
+
+// WorkorderCleared returns if the edge workorder was cleared.
+func (m *AppointmentMutation) WorkorderCleared() bool {
+	return m.clearedworkorder
+}
+
+// WorkorderID returns the workorder id in the mutation.
+func (m *AppointmentMutation) WorkorderID() (id int, exists bool) {
+	if m.workorder != nil {
+		return *m.workorder, true
+	}
+	return
+}
+
+// WorkorderIDs returns the workorder ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// WorkorderID instead. It exists only for internal usage by the builders.
+func (m *AppointmentMutation) WorkorderIDs() (ids []int) {
+	if id := m.workorder; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetWorkorder reset all changes of the "workorder" edge.
+func (m *AppointmentMutation) ResetWorkorder() {
+	m.workorder = nil
+	m.clearedworkorder = false
+}
+
+// SetAssigneeID sets the assignee edge to User by id.
+func (m *AppointmentMutation) SetAssigneeID(id int) {
+	m.assignee = &id
+}
+
+// ClearAssignee clears the assignee edge to User.
+func (m *AppointmentMutation) ClearAssignee() {
+	m.clearedassignee = true
+}
+
+// AssigneeCleared returns if the edge assignee was cleared.
+func (m *AppointmentMutation) AssigneeCleared() bool {
+	return m.clearedassignee
+}
+
+// AssigneeID returns the assignee id in the mutation.
+func (m *AppointmentMutation) AssigneeID() (id int, exists bool) {
+	if m.assignee != nil {
+		return *m.assignee, true
+	}
+	return
+}
+
+// AssigneeIDs returns the assignee ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// AssigneeID instead. It exists only for internal usage by the builders.
+func (m *AppointmentMutation) AssigneeIDs() (ids []int) {
+	if id := m.assignee; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAssignee reset all changes of the "assignee" edge.
+func (m *AppointmentMutation) ResetAssignee() {
+	m.assignee = nil
+	m.clearedassignee = false
+}
+
+// Op returns the operation name.
+func (m *AppointmentMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Appointment).
+func (m *AppointmentMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *AppointmentMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.create_time != nil {
+		fields = append(fields, appointment.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, appointment.FieldUpdateTime)
+	}
+	if m.start != nil {
+		fields = append(fields, appointment.FieldStart)
+	}
+	if m.end != nil {
+		fields = append(fields, appointment.FieldEnd)
+	}
+	if m.duration != nil {
+		fields = append(fields, appointment.FieldDuration)
+	}
+	if m.status != nil {
+		fields = append(fields, appointment.FieldStatus)
+	}
+	if m.creation_date != nil {
+		fields = append(fields, appointment.FieldCreationDate)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *AppointmentMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case appointment.FieldCreateTime:
+		return m.CreateTime()
+	case appointment.FieldUpdateTime:
+		return m.UpdateTime()
+	case appointment.FieldStart:
+		return m.Start()
+	case appointment.FieldEnd:
+		return m.End()
+	case appointment.FieldDuration:
+		return m.Duration()
+	case appointment.FieldStatus:
+		return m.Status()
+	case appointment.FieldCreationDate:
+		return m.CreationDate()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *AppointmentMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case appointment.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case appointment.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case appointment.FieldStart:
+		return m.OldStart(ctx)
+	case appointment.FieldEnd:
+		return m.OldEnd(ctx)
+	case appointment.FieldDuration:
+		return m.OldDuration(ctx)
+	case appointment.FieldStatus:
+		return m.OldStatus(ctx)
+	case appointment.FieldCreationDate:
+		return m.OldCreationDate(ctx)
+	}
+	return nil, fmt.Errorf("unknown Appointment field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AppointmentMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case appointment.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case appointment.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case appointment.FieldStart:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStart(v)
+		return nil
+	case appointment.FieldEnd:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnd(v)
+		return nil
+	case appointment.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
+	case appointment.FieldStatus:
+		v, ok := value.(appointment.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case appointment.FieldCreationDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreationDate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Appointment field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *AppointmentMutation) AddedFields() []string {
+	var fields []string
+	if m.addduration != nil {
+		fields = append(fields, appointment.FieldDuration)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *AppointmentMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case appointment.FieldDuration:
+		return m.AddedDuration()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AppointmentMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case appointment.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Appointment numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *AppointmentMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *AppointmentMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppointmentMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Appointment nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *AppointmentMutation) ResetField(name string) error {
+	switch name {
+	case appointment.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case appointment.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case appointment.FieldStart:
+		m.ResetStart()
+		return nil
+	case appointment.FieldEnd:
+		m.ResetEnd()
+		return nil
+	case appointment.FieldDuration:
+		m.ResetDuration()
+		return nil
+	case appointment.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case appointment.FieldCreationDate:
+		m.ResetCreationDate()
+		return nil
+	}
+	return fmt.Errorf("unknown Appointment field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *AppointmentMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.workorder != nil {
+		edges = append(edges, appointment.EdgeWorkorder)
+	}
+	if m.assignee != nil {
+		edges = append(edges, appointment.EdgeAssignee)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *AppointmentMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case appointment.EdgeWorkorder:
+		if id := m.workorder; id != nil {
+			return []ent.Value{*id}
+		}
+	case appointment.EdgeAssignee:
+		if id := m.assignee; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *AppointmentMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *AppointmentMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *AppointmentMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedworkorder {
+		edges = append(edges, appointment.EdgeWorkorder)
+	}
+	if m.clearedassignee {
+		edges = append(edges, appointment.EdgeAssignee)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *AppointmentMutation) EdgeCleared(name string) bool {
+	switch name {
+	case appointment.EdgeWorkorder:
+		return m.clearedworkorder
+	case appointment.EdgeAssignee:
+		return m.clearedassignee
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *AppointmentMutation) ClearEdge(name string) error {
+	switch name {
+	case appointment.EdgeWorkorder:
+		m.ClearWorkorder()
+		return nil
+	case appointment.EdgeAssignee:
+		m.ClearAssignee()
+		return nil
+	}
+	return fmt.Errorf("unknown Appointment unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *AppointmentMutation) ResetEdge(name string) error {
+	switch name {
+	case appointment.EdgeWorkorder:
+		m.ResetWorkorder()
+		return nil
+	case appointment.EdgeAssignee:
+		m.ResetAssignee()
+		return nil
+	}
+	return fmt.Errorf("unknown Appointment edge %s", name)
 }
 
 // BlockMutation represents an operation that mutate the Blocks
@@ -70823,6 +71613,9 @@ type UserMutation struct {
 	features                    map[int]struct{}
 	removedfeatures             map[int]struct{}
 	clearedfeatures             bool
+	appointment                 map[int]struct{}
+	removedappointment          map[int]struct{}
+	clearedappointment          bool
 	done                        bool
 	oldValue                    func(context.Context) (*User, error)
 	predicates                  []predicate.User
@@ -71728,6 +72521,59 @@ func (m *UserMutation) ResetFeatures() {
 	m.removedfeatures = nil
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (m *UserMutation) AddAppointmentIDs(ids ...int) {
+	if m.appointment == nil {
+		m.appointment = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.appointment[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppointment clears the appointment edge to Appointment.
+func (m *UserMutation) ClearAppointment() {
+	m.clearedappointment = true
+}
+
+// AppointmentCleared returns if the edge appointment was cleared.
+func (m *UserMutation) AppointmentCleared() bool {
+	return m.clearedappointment
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (m *UserMutation) RemoveAppointmentIDs(ids ...int) {
+	if m.removedappointment == nil {
+		m.removedappointment = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedappointment[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppointment returns the removed ids of appointment.
+func (m *UserMutation) RemovedAppointmentIDs() (ids []int) {
+	for id := range m.removedappointment {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppointmentIDs returns the appointment ids in the mutation.
+func (m *UserMutation) AppointmentIDs() (ids []int) {
+	for id := range m.appointment {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppointment reset all changes of the "appointment" edge.
+func (m *UserMutation) ResetAppointment() {
+	m.appointment = nil
+	m.clearedappointment = false
+	m.removedappointment = nil
+}
+
 // Op returns the operation name.
 func (m *UserMutation) Op() Op {
 	return m.op
@@ -72000,7 +72846,7 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.profile_photo != nil {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -72027,6 +72873,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.features != nil {
 		edges = append(edges, user.EdgeFeatures)
+	}
+	if m.appointment != nil {
+		edges = append(edges, user.EdgeAppointment)
 	}
 	return edges
 }
@@ -72085,6 +72934,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAppointment:
+		ids := make([]ent.Value, 0, len(m.appointment))
+		for id := range m.appointment {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -72092,7 +72947,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.removed_User_create != nil {
 		edges = append(edges, user.EdgeUserCreate)
 	}
@@ -72113,6 +72968,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedfeatures != nil {
 		edges = append(edges, user.EdgeFeatures)
+	}
+	if m.removedappointment != nil {
+		edges = append(edges, user.EdgeAppointment)
 	}
 	return edges
 }
@@ -72163,6 +73021,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAppointment:
+		ids := make([]ent.Value, 0, len(m.removedappointment))
+		for id := range m.removedappointment {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -72170,7 +73034,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedprofile_photo {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -72198,6 +73062,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedfeatures {
 		edges = append(edges, user.EdgeFeatures)
 	}
+	if m.clearedappointment {
+		edges = append(edges, user.EdgeAppointment)
+	}
 	return edges
 }
 
@@ -72223,6 +73090,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedcreated_projects
 	case user.EdgeFeatures:
 		return m.clearedfeatures
+	case user.EdgeAppointment:
+		return m.clearedappointment
 	}
 	return false
 }
@@ -72272,6 +73141,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeFeatures:
 		m.ResetFeatures()
+		return nil
+	case user.EdgeAppointment:
+		m.ResetAppointment()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
@@ -73665,6 +74537,10 @@ type WorkOrderMutation struct {
 	index                        *int
 	addindex                     *int
 	close_date                   *time.Time
+	duration                     *float64
+	addduration                  *float64
+	schedulled_at                *time.Time
+	due_date                     *time.Time
 	clearedFields                map[string]struct{}
 	_type                        *int
 	cleared_type                 bool
@@ -73704,6 +74580,9 @@ type WorkOrderMutation struct {
 	clearedowner                 bool
 	assignee                     *int
 	clearedassignee              bool
+	appointment                  map[int]struct{}
+	removedappointment           map[int]struct{}
+	clearedappointment           bool
 	done                         bool
 	oldValue                     func(context.Context) (*WorkOrder, error)
 	predicates                   []predicate.WorkOrder
@@ -74229,6 +75108,177 @@ func (m *WorkOrderMutation) CloseDateCleared() bool {
 func (m *WorkOrderMutation) ResetCloseDate() {
 	m.close_date = nil
 	delete(m.clearedFields, workorder.FieldCloseDate)
+}
+
+// SetDuration sets the duration field.
+func (m *WorkOrderMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *WorkOrderMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldDuration(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *WorkOrderMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *WorkOrderMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of duration.
+func (m *WorkOrderMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[workorder.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the field duration was cleared in this mutation.
+func (m *WorkOrderMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldDuration]
+	return ok
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *WorkOrderMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, workorder.FieldDuration)
+}
+
+// SetSchedulledAt sets the schedulled_at field.
+func (m *WorkOrderMutation) SetSchedulledAt(t time.Time) {
+	m.schedulled_at = &t
+}
+
+// SchedulledAt returns the schedulled_at value in the mutation.
+func (m *WorkOrderMutation) SchedulledAt() (r time.Time, exists bool) {
+	v := m.schedulled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSchedulledAt returns the old schedulled_at value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldSchedulledAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSchedulledAt is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSchedulledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSchedulledAt: %w", err)
+	}
+	return oldValue.SchedulledAt, nil
+}
+
+// ClearSchedulledAt clears the value of schedulled_at.
+func (m *WorkOrderMutation) ClearSchedulledAt() {
+	m.schedulled_at = nil
+	m.clearedFields[workorder.FieldSchedulledAt] = struct{}{}
+}
+
+// SchedulledAtCleared returns if the field schedulled_at was cleared in this mutation.
+func (m *WorkOrderMutation) SchedulledAtCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldSchedulledAt]
+	return ok
+}
+
+// ResetSchedulledAt reset all changes of the "schedulled_at" field.
+func (m *WorkOrderMutation) ResetSchedulledAt() {
+	m.schedulled_at = nil
+	delete(m.clearedFields, workorder.FieldSchedulledAt)
+}
+
+// SetDueDate sets the due_date field.
+func (m *WorkOrderMutation) SetDueDate(t time.Time) {
+	m.due_date = &t
+}
+
+// DueDate returns the due_date value in the mutation.
+func (m *WorkOrderMutation) DueDate() (r time.Time, exists bool) {
+	v := m.due_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDueDate returns the old due_date value of the WorkOrder.
+// If the WorkOrder object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderMutation) OldDueDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDueDate is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDueDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDueDate: %w", err)
+	}
+	return oldValue.DueDate, nil
+}
+
+// ClearDueDate clears the value of due_date.
+func (m *WorkOrderMutation) ClearDueDate() {
+	m.due_date = nil
+	m.clearedFields[workorder.FieldDueDate] = struct{}{}
+}
+
+// DueDateCleared returns if the field due_date was cleared in this mutation.
+func (m *WorkOrderMutation) DueDateCleared() bool {
+	_, ok := m.clearedFields[workorder.FieldDueDate]
+	return ok
+}
+
+// ResetDueDate reset all changes of the "due_date" field.
+func (m *WorkOrderMutation) ResetDueDate() {
+	m.due_date = nil
+	delete(m.clearedFields, workorder.FieldDueDate)
 }
 
 // SetTypeID sets the type edge to WorkOrderType by id.
@@ -74928,6 +75978,59 @@ func (m *WorkOrderMutation) ResetAssignee() {
 	m.clearedassignee = false
 }
 
+// AddAppointmentIDs adds the appointment edge to Appointment by ids.
+func (m *WorkOrderMutation) AddAppointmentIDs(ids ...int) {
+	if m.appointment == nil {
+		m.appointment = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.appointment[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppointment clears the appointment edge to Appointment.
+func (m *WorkOrderMutation) ClearAppointment() {
+	m.clearedappointment = true
+}
+
+// AppointmentCleared returns if the edge appointment was cleared.
+func (m *WorkOrderMutation) AppointmentCleared() bool {
+	return m.clearedappointment
+}
+
+// RemoveAppointmentIDs removes the appointment edge to Appointment by ids.
+func (m *WorkOrderMutation) RemoveAppointmentIDs(ids ...int) {
+	if m.removedappointment == nil {
+		m.removedappointment = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedappointment[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppointment returns the removed ids of appointment.
+func (m *WorkOrderMutation) RemovedAppointmentIDs() (ids []int) {
+	for id := range m.removedappointment {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppointmentIDs returns the appointment ids in the mutation.
+func (m *WorkOrderMutation) AppointmentIDs() (ids []int) {
+	for id := range m.appointment {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppointment reset all changes of the "appointment" edge.
+func (m *WorkOrderMutation) ResetAppointment() {
+	m.appointment = nil
+	m.clearedappointment = false
+	m.removedappointment = nil
+}
+
 // Op returns the operation name.
 func (m *WorkOrderMutation) Op() Op {
 	return m.op
@@ -74942,7 +76045,7 @@ func (m *WorkOrderMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 13)
 	if m.create_time != nil {
 		fields = append(fields, workorder.FieldCreateTime)
 	}
@@ -74973,6 +76076,15 @@ func (m *WorkOrderMutation) Fields() []string {
 	if m.close_date != nil {
 		fields = append(fields, workorder.FieldCloseDate)
 	}
+	if m.duration != nil {
+		fields = append(fields, workorder.FieldDuration)
+	}
+	if m.schedulled_at != nil {
+		fields = append(fields, workorder.FieldSchedulledAt)
+	}
+	if m.due_date != nil {
+		fields = append(fields, workorder.FieldDueDate)
+	}
 	return fields
 }
 
@@ -75001,6 +76113,12 @@ func (m *WorkOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Index()
 	case workorder.FieldCloseDate:
 		return m.CloseDate()
+	case workorder.FieldDuration:
+		return m.Duration()
+	case workorder.FieldSchedulledAt:
+		return m.SchedulledAt()
+	case workorder.FieldDueDate:
+		return m.DueDate()
 	}
 	return nil, false
 }
@@ -75030,6 +76148,12 @@ func (m *WorkOrderMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldIndex(ctx)
 	case workorder.FieldCloseDate:
 		return m.OldCloseDate(ctx)
+	case workorder.FieldDuration:
+		return m.OldDuration(ctx)
+	case workorder.FieldSchedulledAt:
+		return m.OldSchedulledAt(ctx)
+	case workorder.FieldDueDate:
+		return m.OldDueDate(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -75109,6 +76233,27 @@ func (m *WorkOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCloseDate(v)
 		return nil
+	case workorder.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
+	case workorder.FieldSchedulledAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSchedulledAt(v)
+		return nil
+	case workorder.FieldDueDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDueDate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -75120,6 +76265,9 @@ func (m *WorkOrderMutation) AddedFields() []string {
 	if m.addindex != nil {
 		fields = append(fields, workorder.FieldIndex)
 	}
+	if m.addduration != nil {
+		fields = append(fields, workorder.FieldDuration)
+	}
 	return fields
 }
 
@@ -75130,6 +76278,8 @@ func (m *WorkOrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case workorder.FieldIndex:
 		return m.AddedIndex()
+	case workorder.FieldDuration:
+		return m.AddedDuration()
 	}
 	return nil, false
 }
@@ -75145,6 +76295,13 @@ func (m *WorkOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddIndex(v)
+		return nil
+	case workorder.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder numeric field %s", name)
@@ -75165,6 +76322,15 @@ func (m *WorkOrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(workorder.FieldCloseDate) {
 		fields = append(fields, workorder.FieldCloseDate)
+	}
+	if m.FieldCleared(workorder.FieldDuration) {
+		fields = append(fields, workorder.FieldDuration)
+	}
+	if m.FieldCleared(workorder.FieldSchedulledAt) {
+		fields = append(fields, workorder.FieldSchedulledAt)
+	}
+	if m.FieldCleared(workorder.FieldDueDate) {
+		fields = append(fields, workorder.FieldDueDate)
 	}
 	return fields
 }
@@ -75191,6 +76357,15 @@ func (m *WorkOrderMutation) ClearField(name string) error {
 		return nil
 	case workorder.FieldCloseDate:
 		m.ClearCloseDate()
+		return nil
+	case workorder.FieldDuration:
+		m.ClearDuration()
+		return nil
+	case workorder.FieldSchedulledAt:
+		m.ClearSchedulledAt()
+		return nil
+	case workorder.FieldDueDate:
+		m.ClearDueDate()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder nullable field %s", name)
@@ -75231,6 +76406,15 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 	case workorder.FieldCloseDate:
 		m.ResetCloseDate()
 		return nil
+	case workorder.FieldDuration:
+		m.ResetDuration()
+		return nil
+	case workorder.FieldSchedulledAt:
+		m.ResetSchedulledAt()
+		return nil
+	case workorder.FieldDueDate:
+		m.ResetDueDate()
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder field %s", name)
 }
@@ -75238,7 +76422,7 @@ func (m *WorkOrderMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *WorkOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 15)
+	edges := make([]string, 0, 16)
 	if m._type != nil {
 		edges = append(edges, workorder.EdgeType)
 	}
@@ -75283,6 +76467,9 @@ func (m *WorkOrderMutation) AddedEdges() []string {
 	}
 	if m.assignee != nil {
 		edges = append(edges, workorder.EdgeAssignee)
+	}
+	if m.appointment != nil {
+		edges = append(edges, workorder.EdgeAppointment)
 	}
 	return edges
 }
@@ -75367,6 +76554,12 @@ func (m *WorkOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.assignee; id != nil {
 			return []ent.Value{*id}
 		}
+	case workorder.EdgeAppointment:
+		ids := make([]ent.Value, 0, len(m.appointment))
+		for id := range m.appointment {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -75374,7 +76567,7 @@ func (m *WorkOrderMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *WorkOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 15)
+	edges := make([]string, 0, 16)
 	if m.removedequipment != nil {
 		edges = append(edges, workorder.EdgeEquipment)
 	}
@@ -75398,6 +76591,9 @@ func (m *WorkOrderMutation) RemovedEdges() []string {
 	}
 	if m.removedcheck_list_categories != nil {
 		edges = append(edges, workorder.EdgeCheckListCategories)
+	}
+	if m.removedappointment != nil {
+		edges = append(edges, workorder.EdgeAppointment)
 	}
 	return edges
 }
@@ -75454,6 +76650,12 @@ func (m *WorkOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case workorder.EdgeAppointment:
+		ids := make([]ent.Value, 0, len(m.removedappointment))
+		for id := range m.removedappointment {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -75461,7 +76663,7 @@ func (m *WorkOrderMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *WorkOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 15)
+	edges := make([]string, 0, 16)
 	if m.cleared_type {
 		edges = append(edges, workorder.EdgeType)
 	}
@@ -75507,6 +76709,9 @@ func (m *WorkOrderMutation) ClearedEdges() []string {
 	if m.clearedassignee {
 		edges = append(edges, workorder.EdgeAssignee)
 	}
+	if m.clearedappointment {
+		edges = append(edges, workorder.EdgeAppointment)
+	}
 	return edges
 }
 
@@ -75544,6 +76749,8 @@ func (m *WorkOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedowner
 	case workorder.EdgeAssignee:
 		return m.clearedassignee
+	case workorder.EdgeAppointment:
+		return m.clearedappointment
 	}
 	return false
 }
@@ -75626,6 +76833,9 @@ func (m *WorkOrderMutation) ResetEdge(name string) error {
 		return nil
 	case workorder.EdgeAssignee:
 		m.ResetAssignee()
+		return nil
+	case workorder.EdgeAppointment:
+		m.ResetAppointment()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrder edge %s", name)
@@ -76293,6 +77503,8 @@ type WorkOrderTemplateMutation struct {
 	name                                   *string
 	description                            *string
 	assignee_can_complete_work_order       *bool
+	duration                               *float64
+	addduration                            *float64
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
@@ -76597,6 +77809,77 @@ func (m *WorkOrderTemplateMutation) ResetAssigneeCanCompleteWorkOrder() {
 	delete(m.clearedFields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
 }
 
+// SetDuration sets the duration field.
+func (m *WorkOrderTemplateMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *WorkOrderTemplateMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the WorkOrderTemplate.
+// If the WorkOrderTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTemplateMutation) OldDuration(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *WorkOrderTemplateMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *WorkOrderTemplateMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of duration.
+func (m *WorkOrderTemplateMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[workordertemplate.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the field duration was cleared in this mutation.
+func (m *WorkOrderTemplateMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[workordertemplate.FieldDuration]
+	return ok
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *WorkOrderTemplateMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, workordertemplate.FieldDuration)
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (m *WorkOrderTemplateMutation) AddPropertyTypeIDs(ids ...int) {
 	if m.property_types == nil {
@@ -76756,7 +78039,7 @@ func (m *WorkOrderTemplateMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, workordertemplate.FieldCreateTime)
 	}
@@ -76771,6 +78054,9 @@ func (m *WorkOrderTemplateMutation) Fields() []string {
 	}
 	if m.assignee_can_complete_work_order != nil {
 		fields = append(fields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.duration != nil {
+		fields = append(fields, workordertemplate.FieldDuration)
 	}
 	return fields
 }
@@ -76790,6 +78076,8 @@ func (m *WorkOrderTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		return m.AssigneeCanCompleteWorkOrder()
+	case workordertemplate.FieldDuration:
+		return m.Duration()
 	}
 	return nil, false
 }
@@ -76809,6 +78097,8 @@ func (m *WorkOrderTemplateMutation) OldField(ctx context.Context, name string) (
 		return m.OldDescription(ctx)
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		return m.OldAssigneeCanCompleteWorkOrder(ctx)
+	case workordertemplate.FieldDuration:
+		return m.OldDuration(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrderTemplate field %s", name)
 }
@@ -76853,6 +78143,13 @@ func (m *WorkOrderTemplateMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetAssigneeCanCompleteWorkOrder(v)
 		return nil
+	case workordertemplate.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate field %s", name)
 }
@@ -76860,13 +78157,21 @@ func (m *WorkOrderTemplateMutation) SetField(name string, value ent.Value) error
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *WorkOrderTemplateMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addduration != nil {
+		fields = append(fields, workordertemplate.FieldDuration)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *WorkOrderTemplateMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case workordertemplate.FieldDuration:
+		return m.AddedDuration()
+	}
 	return nil, false
 }
 
@@ -76875,6 +78180,13 @@ func (m *WorkOrderTemplateMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *WorkOrderTemplateMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case workordertemplate.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate numeric field %s", name)
 }
@@ -76888,6 +78200,9 @@ func (m *WorkOrderTemplateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(workordertemplate.FieldAssigneeCanCompleteWorkOrder) {
 		fields = append(fields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.FieldCleared(workordertemplate.FieldDuration) {
+		fields = append(fields, workordertemplate.FieldDuration)
 	}
 	return fields
 }
@@ -76908,6 +78223,9 @@ func (m *WorkOrderTemplateMutation) ClearField(name string) error {
 		return nil
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		m.ClearAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertemplate.FieldDuration:
+		m.ClearDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate nullable field %s", name)
@@ -76932,6 +78250,9 @@ func (m *WorkOrderTemplateMutation) ResetField(name string) error {
 		return nil
 	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
 		m.ResetAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertemplate.FieldDuration:
+		m.ResetDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate field %s", name)
@@ -77081,6 +78402,8 @@ type WorkOrderTypeMutation struct {
 	name                                   *string
 	description                            *string
 	assignee_can_complete_work_order       *bool
+	duration                               *float64
+	addduration                            *float64
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
@@ -77389,6 +78712,77 @@ func (m *WorkOrderTypeMutation) ResetAssigneeCanCompleteWorkOrder() {
 	delete(m.clearedFields, workordertype.FieldAssigneeCanCompleteWorkOrder)
 }
 
+// SetDuration sets the duration field.
+func (m *WorkOrderTypeMutation) SetDuration(f float64) {
+	m.duration = &f
+	m.addduration = nil
+}
+
+// Duration returns the duration value in the mutation.
+func (m *WorkOrderTypeMutation) Duration() (r float64, exists bool) {
+	v := m.duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDuration returns the old duration value of the WorkOrderType.
+// If the WorkOrderType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTypeMutation) OldDuration(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
+	}
+	return oldValue.Duration, nil
+}
+
+// AddDuration adds f to duration.
+func (m *WorkOrderTypeMutation) AddDuration(f float64) {
+	if m.addduration != nil {
+		*m.addduration += f
+	} else {
+		m.addduration = &f
+	}
+}
+
+// AddedDuration returns the value that was added to the duration field in this mutation.
+func (m *WorkOrderTypeMutation) AddedDuration() (r float64, exists bool) {
+	v := m.addduration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDuration clears the value of duration.
+func (m *WorkOrderTypeMutation) ClearDuration() {
+	m.duration = nil
+	m.addduration = nil
+	m.clearedFields[workordertype.FieldDuration] = struct{}{}
+}
+
+// DurationCleared returns if the field duration was cleared in this mutation.
+func (m *WorkOrderTypeMutation) DurationCleared() bool {
+	_, ok := m.clearedFields[workordertype.FieldDuration]
+	return ok
+}
+
+// ResetDuration reset all changes of the "duration" field.
+func (m *WorkOrderTypeMutation) ResetDuration() {
+	m.duration = nil
+	m.addduration = nil
+	delete(m.clearedFields, workordertype.FieldDuration)
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (m *WorkOrderTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	if m.property_types == nil {
@@ -77615,7 +79009,7 @@ func (m *WorkOrderTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTypeMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, workordertype.FieldCreateTime)
 	}
@@ -77630,6 +79024,9 @@ func (m *WorkOrderTypeMutation) Fields() []string {
 	}
 	if m.assignee_can_complete_work_order != nil {
 		fields = append(fields, workordertype.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.duration != nil {
+		fields = append(fields, workordertype.FieldDuration)
 	}
 	return fields
 }
@@ -77649,6 +79046,8 @@ func (m *WorkOrderTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		return m.AssigneeCanCompleteWorkOrder()
+	case workordertype.FieldDuration:
+		return m.Duration()
 	}
 	return nil, false
 }
@@ -77668,6 +79067,8 @@ func (m *WorkOrderTypeMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldDescription(ctx)
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		return m.OldAssigneeCanCompleteWorkOrder(ctx)
+	case workordertype.FieldDuration:
+		return m.OldDuration(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrderType field %s", name)
 }
@@ -77712,6 +79113,13 @@ func (m *WorkOrderTypeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAssigneeCanCompleteWorkOrder(v)
 		return nil
+	case workordertype.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType field %s", name)
 }
@@ -77719,13 +79127,21 @@ func (m *WorkOrderTypeMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *WorkOrderTypeMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addduration != nil {
+		fields = append(fields, workordertype.FieldDuration)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *WorkOrderTypeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case workordertype.FieldDuration:
+		return m.AddedDuration()
+	}
 	return nil, false
 }
 
@@ -77734,6 +79150,13 @@ func (m *WorkOrderTypeMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *WorkOrderTypeMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case workordertype.FieldDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDuration(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType numeric field %s", name)
 }
@@ -77747,6 +79170,9 @@ func (m *WorkOrderTypeMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(workordertype.FieldAssigneeCanCompleteWorkOrder) {
 		fields = append(fields, workordertype.FieldAssigneeCanCompleteWorkOrder)
+	}
+	if m.FieldCleared(workordertype.FieldDuration) {
+		fields = append(fields, workordertype.FieldDuration)
 	}
 	return fields
 }
@@ -77767,6 +79193,9 @@ func (m *WorkOrderTypeMutation) ClearField(name string) error {
 		return nil
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		m.ClearAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertype.FieldDuration:
+		m.ClearDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType nullable field %s", name)
@@ -77791,6 +79220,9 @@ func (m *WorkOrderTypeMutation) ResetField(name string) error {
 		return nil
 	case workordertype.FieldAssigneeCanCompleteWorkOrder:
 		m.ResetAssigneeCanCompleteWorkOrder()
+		return nil
+	case workordertype.FieldDuration:
+		m.ResetDuration()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType field %s", name)
