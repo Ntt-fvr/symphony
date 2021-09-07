@@ -25,6 +25,38 @@ func (a *ActivityQuery) collectField(ctx *graphql.OperationContext, field graphq
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (af *AlarmFilterQuery) CollectFields(ctx context.Context, satisfies ...string) *AlarmFilterQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		af = af.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return af
+}
+
+func (af *AlarmFilterQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AlarmFilterQuery {
+	return af
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (as *AlarmStatusQuery) CollectFields(ctx context.Context, satisfies ...string) *AlarmStatusQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		as = as.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return as
+}
+
+func (as *AlarmStatusQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AlarmStatusQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "alarmFilter":
+			as = as.WithAlarmStatusFk(func(query *AlarmFilterQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return as
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		b = b.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -109,6 +141,82 @@ func (c *CommentQuery) collectField(ctx *graphql.OperationContext, field graphql
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (c *ComparatorQuery) CollectFields(ctx context.Context, satisfies ...string) *ComparatorQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return c
+}
+
+func (c *ComparatorQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ComparatorQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqicomparator":
+			c = c.WithComparatorkqitargetfk(func(query *KqiComparatorQuery) {
+				query.collectField(ctx, field)
+			})
+		case "rulelimit":
+			c = c.WithComparatorrulelimit(func(query *RuleLimitQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return c
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (c *CounterQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return c
+}
+
+func (c *CounterQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CounterQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "counter":
+			c = c.WithCounterFk(func(query *CounterFormulaQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return c
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (cf *CounterFamilyQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterFamilyQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		cf = cf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return cf
+}
+
+func (cf *CounterFamilyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CounterFamilyQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "counter":
+			cf = cf.WithCounterfamily(func(query *CounterQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return cf
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (cf *CounterFormulaQuery) CollectFields(ctx context.Context, satisfies ...string) *CounterFormulaQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		cf = cf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return cf
+}
+
+func (cf *CounterFormulaQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CounterFormulaQuery {
+	return cf
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (c *CustomerQuery) CollectFields(ctx context.Context, satisfies ...string) *CustomerQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		c = c.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -118,6 +226,30 @@ func (c *CustomerQuery) CollectFields(ctx context.Context, satisfies ...string) 
 
 func (c *CustomerQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *CustomerQuery {
 	return c
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (d *DomainQuery) CollectFields(ctx context.Context, satisfies ...string) *DomainQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		d = d.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return d
+}
+
+func (d *DomainQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *DomainQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kpi":
+			d = d.WithKpidomain(func(query *KpiQuery) {
+				query.collectField(ctx, field)
+			})
+		case "tech":
+			d = d.WithTechdomain(func(query *TechQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return d
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -373,6 +505,26 @@ func (et *EquipmentTypeQuery) collectField(ctx *graphql.OperationContext, field 
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (es *EventSeverityQuery) CollectFields(ctx context.Context, satisfies ...string) *EventSeverityQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		es = es.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return es
+}
+
+func (es *EventSeverityQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *EventSeverityQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "rule":
+			es = es.WithEventseverityrule(func(query *RuleQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return es
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (ep *ExitPointQuery) CollectFields(ctx context.Context, satisfies ...string) *ExitPointQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		ep = ep.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -430,6 +582,18 @@ func (f *FileQuery) CollectFields(ctx context.Context, satisfies ...string) *Fil
 
 func (f *FileQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FileQuery {
 	return f
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (fct *FileCategoryTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *FileCategoryTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		fct = fct.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return fct
+}
+
+func (fct *FileCategoryTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FileCategoryTypeQuery {
+	return fct
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -541,6 +705,26 @@ func (fi *FlowInstanceQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (f *FormulaQuery) CollectFields(ctx context.Context, satisfies ...string) *FormulaQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		f = f.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return f
+}
+
+func (f *FormulaQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FormulaQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "counter_formula":
+			f = f.WithCounterformula(func(query *CounterFormulaQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return f
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (h *HyperlinkQuery) CollectFields(ctx context.Context, satisfies ...string) *HyperlinkQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		h = h.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -550,6 +734,162 @@ func (h *HyperlinkQuery) CollectFields(ctx context.Context, satisfies ...string)
 
 func (h *HyperlinkQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *HyperlinkQuery {
 	return h
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (k *KpiQuery) CollectFields(ctx context.Context, satisfies ...string) *KpiQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		k = k.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return k
+}
+
+func (k *KpiQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KpiQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "formula":
+			k = k.WithFormulakpi(func(query *FormulaQuery) {
+				query.collectField(ctx, field)
+			})
+		case "threshold":
+			k = k.WithThresholdkpi(func(query *ThresholdQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return k
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (k *KqiQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		k = k.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return k
+}
+
+func (k *KqiQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqiTarget":
+			k = k.WithKqiTargetFk(func(query *KqiTargetQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return k
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kc *KqiCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kc = kc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kc
+}
+
+func (kc *KqiCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			kc = kc.WithKqiCategoryFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return kc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kc *KqiComparatorQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiComparatorQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kc = kc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kc
+}
+
+func (kc *KqiComparatorQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiComparatorQuery {
+	return kc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kp *KqiPerspectiveQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiPerspectiveQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kp = kp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kp
+}
+
+func (kp *KqiPerspectiveQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiPerspectiveQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			kp = kp.WithKqiPerspectiveFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return kp
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ks *KqiSourceQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiSourceQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ks = ks.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ks
+}
+
+func (ks *KqiSourceQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiSourceQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			ks = ks.WithKqiSourceFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return ks
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kt *KqiTargetQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTargetQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kt = kt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kt
+}
+
+func (kt *KqiTargetQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTargetQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqicomparator":
+			kt = kt.WithKqitargetcomparatorfk(func(query *KqiComparatorQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return kt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ktf *KqiTemporalFrequencyQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiTemporalFrequencyQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		ktf = ktf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return ktf
+}
+
+func (ktf *KqiTemporalFrequencyQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KqiTemporalFrequencyQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kqi":
+			ktf = ktf.WithKqiTemporalFrequencyFk(func(query *KqiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return ktf
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -639,6 +979,10 @@ func (lt *LocationTypeQuery) CollectFields(ctx context.Context, satisfies ...str
 func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *LocationTypeQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
+		case "fileCategoryType":
+			lt = lt.WithFileCategoryType(func(query *FileCategoryTypeQuery) {
+				query.collectField(ctx, field)
+			})
 		case "locations":
 			lt = lt.WithLocations(func(query *LocationQuery) {
 				query.collectField(ctx, field)
@@ -654,6 +998,30 @@ func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field g
 		}
 	}
 	return lt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...string) *OrganizationQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		o = o.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return o
+}
+
+func (o *OrganizationQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *OrganizationQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			o = o.WithUserFk(func(query *UserQuery) {
+				query.collectField(ctx, field)
+			})
+		case "workorder":
+			o = o.WithWorkOrderFk(func(query *WorkOrderQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return o
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -809,6 +1177,58 @@ func (pt *PropertyTypeQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (r *RecommendationsQuery) CollectFields(ctx context.Context, satisfies ...string) *RecommendationsQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		r = r.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return r
+}
+
+func (r *RecommendationsQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RecommendationsQuery {
+	return r
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rc *RecommendationsCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *RecommendationsCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rc = rc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rc
+}
+
+func (rc *RecommendationsCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RecommendationsCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "recomendation_category":
+			rc = rc.WithRecommendations(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rs *RecommendationsSourcesQuery) CollectFields(ctx context.Context, satisfies ...string) *RecommendationsSourcesQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rs = rs.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rs
+}
+
+func (rs *RecommendationsSourcesQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RecommendationsSourcesQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "recomendation_source":
+			rs = rs.WithRecommendations(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rs
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rf *ReportFilterQuery) CollectFields(ctx context.Context, satisfies ...string) *ReportFilterQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		rf = rf.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -818,6 +1238,58 @@ func (rf *ReportFilterQuery) CollectFields(ctx context.Context, satisfies ...str
 
 func (rf *ReportFilterQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ReportFilterQuery {
 	return rf
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (r *RuleQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		r = r.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return r
+}
+
+func (r *RuleQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "ruleLimit":
+			r = r.WithRulelimitrule(func(query *RuleLimitQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return r
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rl *RuleLimitQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleLimitQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rl = rl.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rl
+}
+
+func (rl *RuleLimitQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleLimitQuery {
+	return rl
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rt *RuleTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *RuleTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rt = rt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rt
+}
+
+func (rt *RuleTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *RuleTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "rule":
+			rt = rt.WithRuletyperule(func(query *RuleQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rt
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -941,6 +1413,46 @@ func (swfs *SurveyWiFiScanQuery) collectField(ctx *graphql.OperationContext, fie
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (t *TechQuery) CollectFields(ctx context.Context, satisfies ...string) *TechQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		t = t.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return t
+}
+
+func (t *TechQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *TechQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "formula":
+			t = t.WithFormulatech(func(query *FormulaQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return t
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (t *ThresholdQuery) CollectFields(ctx context.Context, satisfies ...string) *ThresholdQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		t = t.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return t
+}
+
+func (t *ThresholdQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ThresholdQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "rule":
+			t = t.WithRulethreshold(func(query *RuleQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return t
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) *UserQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		u = u.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -949,6 +1461,18 @@ func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) *Use
 }
 
 func (u *UserQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *UserQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "UserApprobed":
+			u = u.WithUserApproved(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		case "UserCreate":
+			u = u.WithUserCreate(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return u
 }
 
@@ -962,6 +1486,30 @@ func (ug *UsersGroupQuery) CollectFields(ctx context.Context, satisfies ...strin
 
 func (ug *UsersGroupQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *UsersGroupQuery {
 	return ug
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (v *VendorQuery) CollectFields(ctx context.Context, satisfies ...string) *VendorQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		v = v.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return v
+}
+
+func (v *VendorQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *VendorQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "vendor":
+			v = v.WithVendorFk(func(query *CounterQuery) {
+				query.collectField(ctx, field)
+			})
+		case "vendors_recomendations":
+			v = v.WithVendorsRecomendations(func(query *RecommendationsQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return v
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

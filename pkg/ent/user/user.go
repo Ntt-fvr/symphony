@@ -41,8 +41,14 @@ const (
 
 	// EdgeProfilePhoto holds the string denoting the profile_photo edge name in mutations.
 	EdgeProfilePhoto = "profile_photo"
+	// EdgeUserCreate holds the string denoting the user_create edge name in mutations.
+	EdgeUserCreate = "User_create"
+	// EdgeUserApproved holds the string denoting the user_approved edge name in mutations.
+	EdgeUserApproved = "User_approved"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
 	// EdgeOwnedWorkOrders holds the string denoting the owned_work_orders edge name in mutations.
 	EdgeOwnedWorkOrders = "owned_work_orders"
 	// EdgeAssignedWorkOrders holds the string denoting the assigned_work_orders edge name in mutations.
@@ -61,11 +67,32 @@ const (
 	ProfilePhotoInverseTable = "files"
 	// ProfilePhotoColumn is the table column denoting the profile_photo relation/edge.
 	ProfilePhotoColumn = "user_profile_photo"
+	// UserCreateTable is the table the holds the User_create relation/edge.
+	UserCreateTable = "recommendations"
+	// UserCreateInverseTable is the table name for the Recommendations entity.
+	// It exists in this package in order to avoid circular dependency with the "recommendations" package.
+	UserCreateInverseTable = "recommendations"
+	// UserCreateColumn is the table column denoting the User_create relation/edge.
+	UserCreateColumn = "user_user_create"
+	// UserApprovedTable is the table the holds the User_approved relation/edge.
+	UserApprovedTable = "recommendations"
+	// UserApprovedInverseTable is the table name for the Recommendations entity.
+	// It exists in this package in order to avoid circular dependency with the "recommendations" package.
+	UserApprovedInverseTable = "recommendations"
+	// UserApprovedColumn is the table column denoting the User_approved relation/edge.
+	UserApprovedColumn = "user_user_approved"
 	// GroupsTable is the table the holds the groups relation/edge. The primary key declared below.
 	GroupsTable = "users_group_members"
 	// GroupsInverseTable is the table name for the UsersGroup entity.
 	// It exists in this package in order to avoid circular dependency with the "usersgroup" package.
 	GroupsInverseTable = "users_groups"
+	// OrganizationTable is the table the holds the organization relation/edge.
+	OrganizationTable = "users"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
+	// OrganizationColumn is the table column denoting the organization relation/edge.
+	OrganizationColumn = "organization_user_fk"
 	// OwnedWorkOrdersTable is the table the holds the owned_work_orders relation/edge.
 	OwnedWorkOrdersTable = "work_orders"
 	// OwnedWorkOrdersInverseTable is the table name for the WorkOrder entity.
@@ -108,6 +135,11 @@ var Columns = []string{
 	FieldDistanceUnit,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the User type.
+var ForeignKeys = []string{
+	"organization_user_fk",
+}
+
 var (
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
@@ -121,6 +153,11 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

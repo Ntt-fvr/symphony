@@ -12,6 +12,7 @@ import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
+import PerformanceCatalog from './assurance/PerformanceCatalog';
 import Configure from '../pages/Configure';
 import EquipmentComparisonView from './comparison_view/EquipmentComparisonView';
 import ExpandButtonContext from './context/ExpandButtonContext';
@@ -69,6 +70,7 @@ function Index() {
       <AppContent>
         <Switch>
           <Route path={relativeUrl('/configure')} component={Configure} />
+          <Route path={relativeUrl('/assurance')} component={PerformanceCatalog} />
           <Route path={relativeUrl('/inventory')} component={Inventory} />
           <Route path={relativeUrl('/map')} component={LocationsMap} />
           <Route
@@ -82,6 +84,11 @@ function Index() {
           <Route path={relativeUrl('/services')} component={ServicesMain} />
           <Redirect exact from="/" to={relativeUrl('/inventory')} />
           <Redirect exact from="/inventory" to={relativeUrl('/inventory')} />
+          <Redirect
+            exact
+            from="/assurance/performance"
+            to={relativeUrl('/counters_types')}
+          />
         </Switch>
       </AppContent>
     </div>

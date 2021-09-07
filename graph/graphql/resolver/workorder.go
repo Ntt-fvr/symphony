@@ -58,6 +58,13 @@ func (r workOrderResolver) Activities(ctx context.Context, obj *ent.WorkOrder, f
 
 	return obj.QueryActivities().All(ctx)
 }
+func (workOrderResolver) OrganizationFk(ctx context.Context, workOrder *ent.WorkOrder) (*ent.Organization, error) {
+	variable, err := workOrder.Organization(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
+	}
+	return variable, nil
+}
 
 func (workOrderResolver) EquipmentToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error) {
 	return obj.QueryEquipment().Where(equipment.FutureStateEQ(enum.FutureStateInstall)).All(ctx)
@@ -139,7 +146,8 @@ func (r mutationResolver) internalAddWorkOrder(
 		SetNillableDescription(input.Description).
 		SetCreationDate(time.Now()).
 		SetNillableIndex(input.Index).
-		SetNillableAssigneeID(input.AssigneeID)
+		SetNillableAssigneeID(input.AssigneeID).
+		SetNillableOrganizationID(input.OrganizationFk)
 	if input.OwnerID != nil {
 		mutation = mutation.SetOwnerID(*input.OwnerID)
 	} else {
@@ -200,7 +208,8 @@ func (r mutationResolver) EditWorkOrder(
 		SetNillableDescription(input.Description).
 		SetNillableIndex(input.Index).
 		SetNillableStatus(input.Status).
-		SetNillablePriority(input.Priority)
+		SetNillablePriority(input.Priority).
+		SetNillableOrganizationID(input.OrganizationFk)
 
 	if input.AssigneeID != nil {
 		mutation.SetAssigneeID(*input.AssigneeID)

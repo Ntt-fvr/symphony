@@ -24,6 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
@@ -46,6 +47,7 @@ type WorkOrderQuery struct {
 	withTemplate            *WorkOrderTemplateQuery
 	withEquipment           *EquipmentQuery
 	withLinks               *LinkQuery
+	withOrganization        *OrganizationQuery
 	withFiles               *FileQuery
 	withHyperlinks          *HyperlinkQuery
 	withLocation            *LocationQuery
@@ -167,6 +169,28 @@ func (woq *WorkOrderQuery) QueryLinks() *LinkQuery {
 			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, workorder.LinksTable, workorder.LinksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrganization chains the current query on the organization edge.
+func (woq *WorkOrderQuery) QueryOrganization() *OrganizationQuery {
+	query := &OrganizationQuery{config: woq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := woq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, workorder.OrganizationTable, workorder.OrganizationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(woq.driver.Dialect(), step)
 		return fromU, nil
@@ -574,6 +598,7 @@ func (woq *WorkOrderQuery) Clone() *WorkOrderQuery {
 		withTemplate:            woq.withTemplate.Clone(),
 		withEquipment:           woq.withEquipment.Clone(),
 		withLinks:               woq.withLinks.Clone(),
+		withOrganization:        woq.withOrganization.Clone(),
 		withFiles:               woq.withFiles.Clone(),
 		withHyperlinks:          woq.withHyperlinks.Clone(),
 		withLocation:            woq.withLocation.Clone(),
@@ -631,6 +656,17 @@ func (woq *WorkOrderQuery) WithLinks(opts ...func(*LinkQuery)) *WorkOrderQuery {
 		opt(query)
 	}
 	woq.withLinks = query
+	return woq
+}
+
+//  WithOrganization tells the query-builder to eager-loads the nodes that are connected to
+// the "organization" edge. The optional arguments used to configure the query builder of the edge.
+func (woq *WorkOrderQuery) WithOrganization(opts ...func(*OrganizationQuery)) *WorkOrderQuery {
+	query := &OrganizationQuery{config: woq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	woq.withOrganization = query
 	return woq
 }
 
@@ -814,11 +850,12 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		nodes       = []*WorkOrder{}
 		withFKs     = woq.withFKs
 		_spec       = woq.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [15]bool{
 			woq.withType != nil,
 			woq.withTemplate != nil,
 			woq.withEquipment != nil,
 			woq.withLinks != nil,
+			woq.withOrganization != nil,
 			woq.withFiles != nil,
 			woq.withHyperlinks != nil,
 			woq.withLocation != nil,
@@ -831,7 +868,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 			woq.withAssignee != nil,
 		}
 	)
-	if woq.withType != nil || woq.withTemplate != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
+	if woq.withType != nil || woq.withTemplate != nil || woq.withOrganization != nil || woq.withLocation != nil || woq.withProject != nil || woq.withOwner != nil || woq.withAssignee != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -966,6 +1003,31 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "link_work_order" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Links = append(node.Edges.Links, n)
+		}
+	}
+
+	if query := woq.withOrganization; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*WorkOrder)
+		for i := range nodes {
+			if fk := nodes[i].organization_work_order_fk; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(organization.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "organization_work_order_fk" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Organization = n
+			}
 		}
 	}
 

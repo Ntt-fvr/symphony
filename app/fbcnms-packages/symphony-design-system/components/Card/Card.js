@@ -53,6 +53,7 @@ type Margins = $Keys<typeof CARD_MARGINS>;
 export const CARD_VARIANTS = {
   standard: 'standard',
   message: 'message',
+  none: 'none',
 };
 type Variants = $Keys<typeof CARD_VARIANTS>;
 

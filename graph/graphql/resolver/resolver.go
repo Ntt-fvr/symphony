@@ -138,6 +138,10 @@ func (r resolver) Property() generated.PropertyResolver {
 	return propertyResolver{}
 }
 
+func (r resolver) FileCategoryType() generated.FileCategoryTypeResolver {
+	return fileCategoryTypeResolver{}
+}
+
 func (resolver) Service() generated.ServiceResolver {
 	return serviceResolver{}
 }
@@ -200,4 +204,92 @@ func (r resolver) VariableExpression() generated.VariableExpressionResolver {
 
 func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
+}
+
+func (r resolver) Vendor() generated.VendorResolver {
+	return vendorResolver{}
+}
+
+func (r resolver) Tech() generated.TechResolver {
+	return techResolver{}
+}
+
+func (r resolver) Kpi() generated.KpiResolver {
+	return kpiResolver{}
+}
+
+func (r resolver) CounterFormula() generated.CounterFormulaResolver {
+	return counterFormulaResolver{}
+}
+
+func (r resolver) Counter() generated.CounterResolver {
+	return counterResolver{}
+}
+
+func (r resolver) Formula() generated.FormulaResolver {
+	return formulaResolver{}
+}
+
+func (r resolver) AlarmFilter() generated.AlarmFilterResolver {
+	return alarmFilterResolver{}
+}
+
+func (r resolver) AlarmStatus() generated.AlarmStatusResolver {
+	return alarmStatusResolver{}
+}
+
+func (r resolver) Comparator() generated.ComparatorResolver {
+	return comparatorResolver{}
+}
+
+func (r resolver) Threshold() generated.ThresholdResolver {
+	return thresholdResolver{}
+}
+
+func (r resolver) Rule() generated.RuleResolver {
+	return ruleResolver{}
+}
+
+func (r resolver) RuleType() generated.RuleTypeResolver {
+	return ruleTypeResolver{}
+}
+
+/*
+func (r resolver) RuleLimit() generated.RuleLimitResolver {
+	return ruleLimitResolver{}
+}
+*/
+func (r resolver) EventSeverity() generated.EventSeverityResolver {
+	return eventSeverityResolver{}
+}
+
+func (r resolver) KqiCategory() generated.KqiCategoryResolver {
+	return kqiCategoryResolver{}
+}
+
+func (r resolver) KqiPerspective() generated.KqiPerspectiveResolver {
+	return kqiPerspectiveResolver{}
+}
+
+func (r resolver) KqiTemporalFrequency() generated.KqiTemporalFrequencyResolver {
+	return kqiTemporalFrequencyResolver{}
+}
+
+func (r resolver) KqiSource() generated.KqiSourceResolver {
+	return kqiSourceResolver{}
+}
+
+func (r resolver) Kqi() generated.KqiResolver {
+	return kqiResolver{}
+}
+func (r resolver) KqiTarget() generated.KqiTargetResolver {
+	return kqiTargetResolver{}
+}
+
+func (r resolver) KqiComparator() generated.KqiComparatorResolver {
+	return kqiComparatorResolver{}
+}
+
+func (r resolver) Recommendations() generated.RecommendationsResolver {
+	return recommendationsResolver{}
 }

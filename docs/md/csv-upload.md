@@ -9,7 +9,7 @@ title: Importing Inventory Data
 
 The following must be defined manually before uploading inventory data via CSV:
 
-- Locations Types - using the Catalog (1), verify that the location types are defined by their order, under the LOCATIONS tab (2), drag and drop the location types to arrange them in a hierarchical order - from largest to smallest.
+- Locations Types - using the PerformanceCatalog (1), verify that the location types are defined by their order, under the LOCATIONS tab (2), drag and drop the location types to arrange them in a hierarchical order - from largest to smallest.
 <p align="center">
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Inventory+management/Importing+data/Figure+1.png' width=800> <br>
 Figure 1: Locations 
@@ -71,7 +71,7 @@ Figure 4: External ID Column
 
 A Property is editable as long as the corresponding Equipment Type supports it.
 
-Correspondence can be verified under Catalog/EQUIPMENT/Equipment Types (5).
+Correspondence can be verified under PerformanceCatalog/EQUIPMENT/Equipment Types (5).
 <p align="center">
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Inventory+management/Importing+data/Figure+5.png' width=1000> <br>
 Figure 5: Properties
@@ -191,7 +191,7 @@ Figure 13: Port ID Column
 
 Properties are editable as long as the corresponding Port Type supports it.
 
-Correspondence can be verified under Catalog/PORTS/Port Types/Port Properties (3).
+Correspondence can be verified under PerformanceCatalog/PORTS/Port Types/Port Properties (3).
 
 **note** Link properties under Port Type are not supported
 <p align="center">
@@ -287,7 +287,7 @@ Figure 21: Link ID Column
 
 Properties are editable (2) as long as the corresponding Port Type supports it.
 
-The correspondence can be verified under Catalog/Port Types/Link Properties (3).
+The correspondence can be verified under PerformanceCatalog/Port Types/Link Properties (3).
 
 **note** Port properties under Port Type are not supported
 <p align="center">
@@ -527,7 +527,7 @@ Fill/edit the following fields in the CSV:
 
 - Service ID - an internal id of the service in inventory, must be unique.
 - Service Name - must be unique.
-- Service Type - a name of the type of the service (defined in Catalog/SERVICES/Service Type).
+- Service Type - a name of the type of the service (defined in PerformanceCatalog/SERVICES/Service Type).
 - Service External ID - used to identify the service in other systems (CRM for example), unique, can be empty.
 - Customer Name - must be unique, can be empty.
 - Customer External ID - used to identify the customer in other systems (CRM for example), unique, can be empty.

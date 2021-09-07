@@ -29,7 +29,6 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {formatFileSize} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
-
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Select from '@symphony/design-system/components/Select/Select';
 import Strings from '../common/InventoryStrings';
@@ -138,21 +137,17 @@ class FileAttachment extends React.Component<Props, State> {
         }
       }
     });
-  }
+  };
 
   render() {
-
     const _setCategory = (value: string) => {
-      if (this.state.selectValue === '') {
-        if (this.props.onChecked)
-          this.props.onChecked({
-            type: 'valueIncrement',
-            file: this.props.file,
-            value: value,
-          });
+      if (this.props.onChecked) {
+        this.props.onChecked({
+          type: 'valueIncrement',
+          file: this.props.file,
+          value: value,
+        });
       }
-      this.setState({selectValue: value});
-      return;
     };
 
     const {classes, file} = this.props;
@@ -169,6 +164,9 @@ class FileAttachment extends React.Component<Props, State> {
             {file.category}
           </TableCell>
         )}
+        <TableCell padding="none" component="th" scope="row">
+          {file.annotation}
+        </TableCell>
         <TableCell padding="none" component="th" scope="row">
           <div className={classes.nameCell}>
             <div className={classes.thumbnail}>
@@ -228,9 +226,13 @@ class FileAttachment extends React.Component<Props, State> {
                   label: x,
                 }))}
                 onChange={value => {
-                  _setCategory(value ? value : '');
+                  this.setState({selectValue: value}, () => {
+                    _setCategory(this.state.selectValue);
+                  });
                 }}
-                selectedValue={this.state.isChecked && this.state.selectValue}
+                selectedValue={
+                  this.state.isChecked ? this.state.selectValue : ''
+                }
               />
             </FormField>
           </TableCell>
@@ -270,6 +272,7 @@ export default withStyles(styles)(
         fileType
         storeKey
         category
+        annotation
         ...ImageDialog_img
       }
     `,

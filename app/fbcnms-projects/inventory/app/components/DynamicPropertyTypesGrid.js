@@ -25,6 +25,7 @@ const useStyles = makeStyles(_theme => ({
     minWidth: '50%',
     paddingRight: '16px',
     marginBottom: '12px',
+    border: '1px solid red',
   },
 }));
 
@@ -52,7 +53,7 @@ const DynamicPropertyTypesGrid = (props: Props) => {
 export default createFragmentContainer(DynamicPropertyTypesGrid, {
   propertyTypes: graphql`
     fragment DynamicPropertyTypesGrid_propertyTypes on PropertyType
-      @relay(plural: true) {
+    @relay(plural: true) {
       ...PropertyTypeFormField_propertyType
       id
       index

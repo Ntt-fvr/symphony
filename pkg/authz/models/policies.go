@@ -25,6 +25,7 @@ type WorkforcePermissionRule struct {
 	IsAllowed        PermissionValue `json:"isAllowed"`
 	ProjectTypeIds   []int           `json:"projectTypeIds"`
 	WorkOrderTypeIds []int           `json:"workOrderTypeIds"`
+	OrganizationIds  []int           `json:"organizationIds"`
 }
 
 type Cud struct {
@@ -62,12 +63,18 @@ type InventoryPolicy struct {
 }
 
 type WorkforcePolicy struct {
-	Read      *WorkforcePermissionRule `json:"read"`
-	Data      *WorkforceCud            `json:"data"`
-	Templates *Cud                     `json:"templates"`
+	Read         *WorkforcePermissionRule `json:"read"`
+	Data         *WorkforceCud            `json:"data"`
+	Templates    *Cud                     `json:"templates"`
+	Organization *Cud                     `json:"organization"`
 }
 
 type AutomationPolicy struct {
+	Read      *BasicPermissionRule `json:"read"`
+	Templates *Cud                 `json:"templates"`
+}
+
+type AssurancePolicy struct {
 	Read      *BasicPermissionRule `json:"read"`
 	Templates *Cud                 `json:"templates"`
 }
@@ -77,6 +84,7 @@ type PermissionSettings struct {
 	InventoryPolicy  *InventoryPolicy      `json:"inventoryPolicy"`
 	WorkforcePolicy  *WorkforcePolicy      `json:"workforcePolicy"`
 	AutomationPolicy *AutomationPolicy     `json:"automationPolicy"`
+	AssurancePolicy  *AssurancePolicy      `json:"assurancePolicy"`
 }
 
 type SystemPolicy interface {
@@ -86,3 +94,4 @@ type SystemPolicy interface {
 func (InventoryPolicy) IsSystemPolicy()  {}
 func (WorkforcePolicy) IsSystemPolicy()  {}
 func (AutomationPolicy) IsSystemPolicy() {}
+func (AssurancePolicy) IsSystemPolicy()  {}

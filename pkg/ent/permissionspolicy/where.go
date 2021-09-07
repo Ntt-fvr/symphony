@@ -590,6 +590,20 @@ func AutomationPolicyNotNil() predicate.PermissionsPolicy {
 	})
 }
 
+// AssurancePolicyIsNil applies the IsNil predicate on the "assurance_policy" field.
+func AssurancePolicyIsNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAssurancePolicy)))
+	})
+}
+
+// AssurancePolicyNotNil applies the NotNil predicate on the "assurance_policy" field.
+func AssurancePolicyNotNil() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAssurancePolicy)))
+	})
+}
+
 // HasGroups applies the HasEdge predicate on the "groups" edge.
 func HasGroups() predicate.PermissionsPolicy {
 	return predicate.PermissionsPolicy(func(s *sql.Selector) {
@@ -609,6 +623,34 @@ func HasGroupsWith(preds ...predicate.UsersGroup) predicate.PermissionsPolicy {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(GroupsInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, GroupsTable, GroupsPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOrganization applies the HasEdge predicate on the "organization" edge.
+func HasOrganization() predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OrganizationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, OrganizationTable, OrganizationPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOrganizationWith applies the HasEdge predicate on the "organization" edge with a given conditions (other predicates).
+func HasOrganizationWith(preds ...predicate.Organization) predicate.PermissionsPolicy {
+	return predicate.PermissionsPolicy(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OrganizationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, OrganizationTable, OrganizationPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

@@ -18,6 +18,10 @@ type Tx struct {
 	config
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
+	// AlarmFilter is the client for interacting with the AlarmFilter builders.
+	AlarmFilter *AlarmFilterClient
+	// AlarmStatus is the client for interacting with the AlarmStatus builders.
+	AlarmStatus *AlarmStatusClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
 	// BlockInstance is the client for interacting with the BlockInstance builders.
@@ -32,8 +36,18 @@ type Tx struct {
 	CheckListItemDefinition *CheckListItemDefinitionClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// Comparator is the client for interacting with the Comparator builders.
+	Comparator *ComparatorClient
+	// Counter is the client for interacting with the Counter builders.
+	Counter *CounterClient
+	// CounterFamily is the client for interacting with the CounterFamily builders.
+	CounterFamily *CounterFamilyClient
+	// CounterFormula is the client for interacting with the CounterFormula builders.
+	CounterFormula *CounterFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
+	// Domain is the client for interacting with the Domain builders.
+	Domain *DomainClient
 	// EntryPoint is the client for interacting with the EntryPoint builders.
 	EntryPoint *EntryPointClient
 	// Equipment is the client for interacting with the Equipment builders.
@@ -52,6 +66,8 @@ type Tx struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
+	// EventSeverity is the client for interacting with the EventSeverity builders.
+	EventSeverity *EventSeverityClient
 	// ExitPoint is the client for interacting with the ExitPoint builders.
 	ExitPoint *ExitPointClient
 	// ExportTask is the client for interacting with the ExportTask builders.
@@ -60,6 +76,8 @@ type Tx struct {
 	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FileCategoryType is the client for interacting with the FileCategoryType builders.
+	FileCategoryType *FileCategoryTypeClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
 	FloorPlan *FloorPlanClient
 	// FloorPlanReferencePoint is the client for interacting with the FloorPlanReferencePoint builders.
@@ -74,14 +92,34 @@ type Tx struct {
 	FlowExecutionTemplate *FlowExecutionTemplateClient
 	// FlowInstance is the client for interacting with the FlowInstance builders.
 	FlowInstance *FlowInstanceClient
+	// Formula is the client for interacting with the Formula builders.
+	Formula *FormulaClient
 	// Hyperlink is the client for interacting with the Hyperlink builders.
 	Hyperlink *HyperlinkClient
+	// Kpi is the client for interacting with the Kpi builders.
+	Kpi *KpiClient
+	// Kqi is the client for interacting with the Kqi builders.
+	Kqi *KqiClient
+	// KqiCategory is the client for interacting with the KqiCategory builders.
+	KqiCategory *KqiCategoryClient
+	// KqiComparator is the client for interacting with the KqiComparator builders.
+	KqiComparator *KqiComparatorClient
+	// KqiPerspective is the client for interacting with the KqiPerspective builders.
+	KqiPerspective *KqiPerspectiveClient
+	// KqiSource is the client for interacting with the KqiSource builders.
+	KqiSource *KqiSourceClient
+	// KqiTarget is the client for interacting with the KqiTarget builders.
+	KqiTarget *KqiTargetClient
+	// KqiTemporalFrequency is the client for interacting with the KqiTemporalFrequency builders.
+	KqiTemporalFrequency *KqiTemporalFrequencyClient
 	// Link is the client for interacting with the Link builders.
 	Link *LinkClient
 	// Location is the client for interacting with the Location builders.
 	Location *LocationClient
 	// LocationType is the client for interacting with the LocationType builders.
 	LocationType *LocationTypeClient
+	// Organization is the client for interacting with the Organization builders.
+	Organization *OrganizationClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
@@ -94,8 +132,20 @@ type Tx struct {
 	Property *PropertyClient
 	// PropertyType is the client for interacting with the PropertyType builders.
 	PropertyType *PropertyTypeClient
+	// Recommendations is the client for interacting with the Recommendations builders.
+	Recommendations *RecommendationsClient
+	// RecommendationsCategory is the client for interacting with the RecommendationsCategory builders.
+	RecommendationsCategory *RecommendationsCategoryClient
+	// RecommendationsSources is the client for interacting with the RecommendationsSources builders.
+	RecommendationsSources *RecommendationsSourcesClient
 	// ReportFilter is the client for interacting with the ReportFilter builders.
 	ReportFilter *ReportFilterClient
+	// Rule is the client for interacting with the Rule builders.
+	Rule *RuleClient
+	// RuleLimit is the client for interacting with the RuleLimit builders.
+	RuleLimit *RuleLimitClient
+	// RuleType is the client for interacting with the RuleType builders.
+	RuleType *RuleTypeClient
 	// Service is the client for interacting with the Service builders.
 	Service *ServiceClient
 	// ServiceEndpoint is the client for interacting with the ServiceEndpoint builders.
@@ -116,10 +166,16 @@ type Tx struct {
 	SurveyTemplateQuestion *SurveyTemplateQuestionClient
 	// SurveyWiFiScan is the client for interacting with the SurveyWiFiScan builders.
 	SurveyWiFiScan *SurveyWiFiScanClient
+	// Tech is the client for interacting with the Tech builders.
+	Tech *TechClient
+	// Threshold is the client for interacting with the Threshold builders.
+	Threshold *ThresholdClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UsersGroup is the client for interacting with the UsersGroup builders.
 	UsersGroup *UsersGroupClient
+	// Vendor is the client for interacting with the Vendor builders.
+	Vendor *VendorClient
 	// WorkOrder is the client for interacting with the WorkOrder builders.
 	WorkOrder *WorkOrderClient
 	// WorkOrderDefinition is the client for interacting with the WorkOrderDefinition builders.
@@ -266,6 +322,8 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Activity = NewActivityClient(tx.config)
+	tx.AlarmFilter = NewAlarmFilterClient(tx.config)
+	tx.AlarmStatus = NewAlarmStatusClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)
@@ -273,7 +331,12 @@ func (tx *Tx) init() {
 	tx.CheckListItem = NewCheckListItemClient(tx.config)
 	tx.CheckListItemDefinition = NewCheckListItemDefinitionClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
+	tx.Comparator = NewComparatorClient(tx.config)
+	tx.Counter = NewCounterClient(tx.config)
+	tx.CounterFamily = NewCounterFamilyClient(tx.config)
+	tx.CounterFormula = NewCounterFormulaClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
+	tx.Domain = NewDomainClient(tx.config)
 	tx.EntryPoint = NewEntryPointClient(tx.config)
 	tx.Equipment = NewEquipmentClient(tx.config)
 	tx.EquipmentCategory = NewEquipmentCategoryClient(tx.config)
@@ -283,10 +346,12 @@ func (tx *Tx) init() {
 	tx.EquipmentPosition = NewEquipmentPositionClient(tx.config)
 	tx.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(tx.config)
 	tx.EquipmentType = NewEquipmentTypeClient(tx.config)
+	tx.EventSeverity = NewEventSeverityClient(tx.config)
 	tx.ExitPoint = NewExitPointClient(tx.config)
 	tx.ExportTask = NewExportTaskClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
 	tx.File = NewFileClient(tx.config)
+	tx.FileCategoryType = NewFileCategoryTypeClient(tx.config)
 	tx.FloorPlan = NewFloorPlanClient(tx.config)
 	tx.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(tx.config)
 	tx.FloorPlanScale = NewFloorPlanScaleClient(tx.config)
@@ -294,17 +359,33 @@ func (tx *Tx) init() {
 	tx.FlowDraft = NewFlowDraftClient(tx.config)
 	tx.FlowExecutionTemplate = NewFlowExecutionTemplateClient(tx.config)
 	tx.FlowInstance = NewFlowInstanceClient(tx.config)
+	tx.Formula = NewFormulaClient(tx.config)
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
+	tx.Kpi = NewKpiClient(tx.config)
+	tx.Kqi = NewKqiClient(tx.config)
+	tx.KqiCategory = NewKqiCategoryClient(tx.config)
+	tx.KqiComparator = NewKqiComparatorClient(tx.config)
+	tx.KqiPerspective = NewKqiPerspectiveClient(tx.config)
+	tx.KqiSource = NewKqiSourceClient(tx.config)
+	tx.KqiTarget = NewKqiTargetClient(tx.config)
+	tx.KqiTemporalFrequency = NewKqiTemporalFrequencyClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.LocationType = NewLocationTypeClient(tx.config)
+	tx.Organization = NewOrganizationClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectTemplate = NewProjectTemplateClient(tx.config)
 	tx.ProjectType = NewProjectTypeClient(tx.config)
 	tx.Property = NewPropertyClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)
+	tx.Recommendations = NewRecommendationsClient(tx.config)
+	tx.RecommendationsCategory = NewRecommendationsCategoryClient(tx.config)
+	tx.RecommendationsSources = NewRecommendationsSourcesClient(tx.config)
 	tx.ReportFilter = NewReportFilterClient(tx.config)
+	tx.Rule = NewRuleClient(tx.config)
+	tx.RuleLimit = NewRuleLimitClient(tx.config)
+	tx.RuleType = NewRuleTypeClient(tx.config)
 	tx.Service = NewServiceClient(tx.config)
 	tx.ServiceEndpoint = NewServiceEndpointClient(tx.config)
 	tx.ServiceEndpointDefinition = NewServiceEndpointDefinitionClient(tx.config)
@@ -315,8 +396,11 @@ func (tx *Tx) init() {
 	tx.SurveyTemplateCategory = NewSurveyTemplateCategoryClient(tx.config)
 	tx.SurveyTemplateQuestion = NewSurveyTemplateQuestionClient(tx.config)
 	tx.SurveyWiFiScan = NewSurveyWiFiScanClient(tx.config)
+	tx.Tech = NewTechClient(tx.config)
+	tx.Threshold = NewThresholdClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UsersGroup = NewUsersGroupClient(tx.config)
+	tx.Vendor = NewVendorClient(tx.config)
 	tx.WorkOrder = NewWorkOrderClient(tx.config)
 	tx.WorkOrderDefinition = NewWorkOrderDefinitionClient(tx.config)
 	tx.WorkOrderTemplate = NewWorkOrderTemplateClient(tx.config)
