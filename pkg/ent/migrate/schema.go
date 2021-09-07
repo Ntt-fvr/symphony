@@ -2145,6 +2145,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "location_type_resource_relationship_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "resource_relationship_multiplicity_resource_relationship_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "resource_relationship_type_resource_relationship_fk", Type: field.TypeInt, Nullable: true},
@@ -2159,35 +2160,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "resource_relationships_location_types_resource_relationship_fk",
-				Columns: []*schema.Column{ResourceRelationshipsColumns[3]},
+				Columns: []*schema.Column{ResourceRelationshipsColumns[4]},
 
 				RefColumns: []*schema.Column{LocationTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "resource_relationships_resource_relationship_multiplicities_resource_relationship_fk",
-				Columns: []*schema.Column{ResourceRelationshipsColumns[4]},
+				Columns: []*schema.Column{ResourceRelationshipsColumns[5]},
 
 				RefColumns: []*schema.Column{ResourceRelationshipMultiplicitiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "resource_relationships_resource_relationship_types_resource_relationship_fk",
-				Columns: []*schema.Column{ResourceRelationshipsColumns[5]},
+				Columns: []*schema.Column{ResourceRelationshipsColumns[6]},
 
 				RefColumns: []*schema.Column{ResourceRelationshipTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "resource_relationships_resource_types_resource_relationship_fk_a",
-				Columns: []*schema.Column{ResourceRelationshipsColumns[6]},
+				Columns: []*schema.Column{ResourceRelationshipsColumns[7]},
 
 				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "resource_relationships_resource_types_resource_relationship_fk_b",
-				Columns: []*schema.Column{ResourceRelationshipsColumns[7]},
+				Columns: []*schema.Column{ResourceRelationshipsColumns[8]},
 
 				RefColumns: []*schema.Column{ResourceTypesColumns[0]},
 				OnDelete:   schema.SetNull,

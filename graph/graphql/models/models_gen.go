@@ -353,11 +353,12 @@ type AddRecommendationsSourcesInput struct {
 }
 
 type AddResourceRelationshipInput struct {
-	ResourceRelationshipTypeFk         int  `json:"resourceRelationshipTypeFk"`
-	ResourceRelationshipMultiplicityFk int  `json:"resourceRelationshipMultiplicityFk"`
-	LocationTypeFk                     *int `json:"locationTypeFk"`
-	ResourceTypeFkA                    int  `json:"resourceTypeFkA"`
-	ResourceTypeFkB                    *int `json:"resourceTypeFkB"`
+	Name                               string `json:"name"`
+	ResourceRelationshipTypeFk         int    `json:"resourceRelationshipTypeFk"`
+	ResourceRelationshipMultiplicityFk int    `json:"resourceRelationshipMultiplicityFk"`
+	LocationTypeFk                     *int   `json:"locationTypeFk"`
+	ResourceTypeFkA                    int    `json:"resourceTypeFkA"`
+	ResourceTypeFkB                    *int   `json:"resourceTypeFkB"`
 }
 
 type AddResourceRelationshipMultiplicityInput struct {
@@ -928,12 +929,13 @@ type EditReportFilterInput struct {
 }
 
 type EditResourceRelationshipInput struct {
-	ID                                 int  `json:"id"`
-	ResourceRelationshipMultiplicityFk int  `json:"resourceRelationshipMultiplicityFk"`
-	ResourceRelationshipTypeFk         int  `json:"resourceRelationshipTypeFk"`
-	LocationTypeFk                     *int `json:"locationTypeFk"`
-	ResourceTypeFkA                    int  `json:"resourceTypeFkA"`
-	ResourceTypeFkB                    *int `json:"resourceTypeFkB"`
+	ID                                 int    `json:"id"`
+	Name                               string `json:"name"`
+	ResourceRelationshipMultiplicityFk int    `json:"resourceRelationshipMultiplicityFk"`
+	ResourceRelationshipTypeFk         int    `json:"resourceRelationshipTypeFk"`
+	LocationTypeFk                     *int   `json:"locationTypeFk"`
+	ResourceTypeFkA                    int    `json:"resourceTypeFkA"`
+	ResourceTypeFkB                    *int   `json:"resourceTypeFkB"`
 }
 
 type EditResourceRelationshipMultiplicityInput struct {
@@ -2903,18 +2905,18 @@ func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 type ResourceRelationshipFilterType string
 
 const (
-	ResourceRelationshipFilterTypeID            ResourceRelationshipFilterType = "ID"
-	ResourceRelationshipFilterTypeResourcetypea ResourceRelationshipFilterType = "RESOURCETYPEA"
+	ResourceRelationshipFilterTypeID   ResourceRelationshipFilterType = "ID"
+	ResourceRelationshipFilterTypeName ResourceRelationshipFilterType = "NAME"
 )
 
 var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
 	ResourceRelationshipFilterTypeID,
-	ResourceRelationshipFilterTypeResourcetypea,
+	ResourceRelationshipFilterTypeName,
 }
 
 func (e ResourceRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeResourcetypea:
+	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName:
 		return true
 	}
 	return false

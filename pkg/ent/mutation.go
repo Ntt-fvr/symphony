@@ -52293,6 +52293,7 @@ type ResourceRelationshipMutation struct {
 	id                                           *int
 	create_time                                  *time.Time
 	update_time                                  *time.Time
+	name                                         *string
 	clearedFields                                map[string]struct{}
 	resourcetypea                                *int
 	clearedresourcetypea                         bool
@@ -52460,6 +52461,43 @@ func (m *ResourceRelationshipMutation) OldUpdateTime(ctx context.Context) (v tim
 // ResetUpdateTime reset all changes of the "update_time" field.
 func (m *ResourceRelationshipMutation) ResetUpdateTime() {
 	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *ResourceRelationshipMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *ResourceRelationshipMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the ResourceRelationship.
+// If the ResourceRelationship object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ResourceRelationshipMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *ResourceRelationshipMutation) ResetName() {
+	m.name = nil
 }
 
 // SetResourcetypeaID sets the resourcetypea edge to ResourceType by id.
@@ -52671,12 +52709,15 @@ func (m *ResourceRelationshipMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ResourceRelationshipMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.create_time != nil {
 		fields = append(fields, resourcerelationship.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, resourcerelationship.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, resourcerelationship.FieldName)
 	}
 	return fields
 }
@@ -52690,6 +52731,8 @@ func (m *ResourceRelationshipMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case resourcerelationship.FieldUpdateTime:
 		return m.UpdateTime()
+	case resourcerelationship.FieldName:
+		return m.Name()
 	}
 	return nil, false
 }
@@ -52703,6 +52746,8 @@ func (m *ResourceRelationshipMutation) OldField(ctx context.Context, name string
 		return m.OldCreateTime(ctx)
 	case resourcerelationship.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
+	case resourcerelationship.FieldName:
+		return m.OldName(ctx)
 	}
 	return nil, fmt.Errorf("unknown ResourceRelationship field %s", name)
 }
@@ -52725,6 +52770,13 @@ func (m *ResourceRelationshipMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
+		return nil
+	case resourcerelationship.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceRelationship field %s", name)
@@ -52781,6 +52833,9 @@ func (m *ResourceRelationshipMutation) ResetField(name string) error {
 		return nil
 	case resourcerelationship.FieldUpdateTime:
 		m.ResetUpdateTime()
+		return nil
+	case resourcerelationship.FieldName:
+		m.ResetName()
 		return nil
 	}
 	return fmt.Errorf("unknown ResourceRelationship field %s", name)

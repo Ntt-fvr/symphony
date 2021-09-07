@@ -15675,6 +15675,49 @@ func (rr *ResourceRelationshipQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// ResourceRelationshipOrderFieldName orders ResourceRelationship by name.
+	ResourceRelationshipOrderFieldName = &ResourceRelationshipOrderField{
+		field: resourcerelationship.FieldName,
+		toCursor: func(rr *ResourceRelationship) Cursor {
+			return Cursor{
+				ID:    rr.ID,
+				Value: rr.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ResourceRelationshipOrderField) String() string {
+	var str string
+	switch f.field {
+	case resourcerelationship.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ResourceRelationshipOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ResourceRelationshipOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ResourceRelationshipOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *ResourceRelationshipOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid ResourceRelationshipOrderField", str)
+	}
+	return nil
+}
+
 // ResourceRelationshipOrderField defines the ordering field of ResourceRelationship.
 type ResourceRelationshipOrderField struct {
 	field    string
