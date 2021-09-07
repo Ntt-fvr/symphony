@@ -3361,3 +3361,10 @@ func (r mutationResolver) MoveEquipmentToLocation(
 	}
 	return e, nil
 }
+
+func (r mutationResolver) RemoveDocumentCategory(ctx context.Context, id int) (int, error) {
+	if err := r.ClientFrom(ctx).DocumentCategory.DeleteOneID(id).Exec(ctx); err != nil {
+		return id, errors.Wrap(err, "removing document category")
+	}
+	return id, nil
+}

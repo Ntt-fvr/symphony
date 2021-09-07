@@ -6696,6 +6696,7 @@ type Mutation {
   addLocationType(input: AddLocationTypeInput!): LocationType!
   editLocationType(input: EditLocationTypeInput!): LocationType!
   removeLocationType(id: ID!): ID!
+  removeDocumentCategory(id: ID!): ID!
   addEquipment(input: AddEquipmentInput!): Equipment!
   editEquipment(input: EditEquipmentInput!): Equipment!
   removeEquipment(id: ID!, workOrderId: ID): ID!

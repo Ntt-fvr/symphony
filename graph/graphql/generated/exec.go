@@ -1209,6 +1209,7 @@ type ComplexityRoot struct {
 		RemoveCounterFamily                      func(childComplexity int, id int) int
 		RemoveCounterFormula                     func(childComplexity int, id int) int
 		RemoveCustomer                           func(childComplexity int, id int) int
+		RemoveDocumentCategory                   func(childComplexity int, id int) int
 		RemoveDomain                             func(childComplexity int, id int) int
 		RemoveEquipment                          func(childComplexity int, id int, workOrderID *int) int
 		RemoveEquipmentFromPosition              func(childComplexity int, positionID int, workOrderID *int) int
@@ -2260,6 +2261,7 @@ type MutationResolver interface {
 	AddLocationType(ctx context.Context, input models.AddLocationTypeInput) (*ent.LocationType, error)
 	EditLocationType(ctx context.Context, input models.EditLocationTypeInput) (*ent.LocationType, error)
 	RemoveLocationType(ctx context.Context, id int) (int, error)
+	RemoveDocumentCategory(ctx context.Context, id int) (int, error)
 	AddEquipment(ctx context.Context, input models.AddEquipmentInput) (*ent.Equipment, error)
 	EditEquipment(ctx context.Context, input models.EditEquipmentInput) (*ent.Equipment, error)
 	RemoveEquipment(ctx context.Context, id int, workOrderID *int) (int, error)
@@ -8120,6 +8122,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveCustomer(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeDocumentCategory":
+		if e.complexity.Mutation.RemoveDocumentCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeDocumentCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveDocumentCategory(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeDomain":
 		if e.complexity.Mutation.RemoveDomain == nil {
@@ -19588,6 +19602,7 @@ type Mutation {
   addLocationType(input: AddLocationTypeInput!): LocationType!
   editLocationType(input: EditLocationTypeInput!): LocationType!
   removeLocationType(id: ID!): ID!
+  removeDocumentCategory(id: ID!): ID!
   addEquipment(input: AddEquipmentInput!): Equipment!
   editEquipment(input: EditEquipmentInput!): Equipment!
   removeEquipment(id: ID!, workOrderId: ID): ID!
@@ -23453,6 +23468,21 @@ func (ec *executionContext) field_Mutation_removeCounter_args(ctx context.Contex
 }
 
 func (ec *executionContext) field_Mutation_removeCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeDocumentCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -47808,6 +47838,48 @@ func (ec *executionContext) _Mutation_removeLocationType(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().RemoveLocationType(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeDocumentCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeDocumentCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveDocumentCategory(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -94855,6 +94927,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "removeLocationType":
 			out.Values[i] = ec._Mutation_removeLocationType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeDocumentCategory":
+			out.Values[i] = ec._Mutation_removeDocumentCategory(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
