@@ -12,7 +12,7 @@ import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import Text from '@symphony/design-system/components/Text';
 
-import React, {useState} from 'react';
+import React from 'react';
 
 import Indicator from './KqiIndicator';
 import {withStyles} from '@material-ui/core/styles';

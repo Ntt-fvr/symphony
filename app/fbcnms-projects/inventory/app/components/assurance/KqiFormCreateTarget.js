@@ -12,25 +12,26 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import {MenuItem, Select} from '@material-ui/core';
+// import {MenuItem, Select} from '@material-ui/core';
 
 import Switch from '@symphony/design-system/components/switch/Switch';
 
-import Text from '@symphony/design-system/components/Text';
-import {makeStyles} from '@material-ui/styles';
 import type {AddKqiTargetMutationVariables} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
+
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
+// import DateTimeFormat from '../../common/DateTimeFormat.js';
+import Text from '@symphony/design-system/components/Text';
 import moment from 'moment';
-import DateTimeFormat from '../../common/DateTimeFormat.js';
-import {useFormInput} from './common/useFormInput';
-import {graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+// import {graphql} from 'relay-runtime';
+import {makeStyles} from '@material-ui/styles';
+// import {useFormInput} from './common/useFormInput';
+// import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -123,29 +124,29 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  returnFormEdit: () => void
+  idKqi: string,
+  returnFormEdit: () => void,
 |}>;
 
-
-type KqiTarget = {
-  id: string,
-  name: string,
-  impact: string,
-  frame: number,
-  alowedValidation: number,
-  initTime: string,
-  endTime: string,
-  status: boolean,
-  kqi: string
-};
+// type KqiTarget = {
+//   id: string,
+//   name: string,
+//   impact: string,
+//   frame: number,
+//   alowedValidation: number,
+//   initTime: string,
+//   endTime: string,
+//   status: boolean,
+//   kqi: string,
+// };
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit} = props;
+  const {returnFormEdit, idKqi} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
 
-    function handleChange({target}) {
+  function handleChange({target}) {
     setKqiTarget({
       data: {
         ...KqiTarget.data,
@@ -163,13 +164,12 @@ const KqiFormCreateTarget = (props: Props) => {
         initTime: moment(KqiTarget.data.initTime).format(),
         endTime: moment(KqiTarget.data.endTime).format(),
         frame: KqiTarget.data.frame,
-        alowedValidation:KqiTarget.data.alowedValidation,
-        kqi: KqiTarget.data.kqi
+        alowedValidation: KqiTarget.data.alowedValidation,
+        kqi: idKqi,
       },
     };
     AddKqiTargetMutation(variables);
-    console.log("Hola soy data AddKqiTarget", variables);
-    // setTimeout(() => returnTableAlarm(), 1000)
+    console.log(variables);
   }
 
   return (
@@ -196,7 +196,10 @@ const KqiFormCreateTarget = (props: Props) => {
             <Grid xs={6}>
               <FormField>
                 <Button
-                  onClick={handleClick}
+                  onClick={() => {
+                    returnFormEdit();
+                    handleClick();
+                  }}
                   className={classes.option}
                   variant="contained"
                   color="primary">
