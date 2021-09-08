@@ -58,7 +58,6 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   viewFormEdit: () => void,
-  onChange: () => void,
   dataValues: any,
 |}>;
 

@@ -101,36 +101,6 @@ const KqiQuery = graphql`
         }
       }
     }
-    kqiTargets {
-      edges {
-        node {
-          id
-          name
-          impact
-          frame
-          alowedValidation
-          initTime
-          endTime
-          status
-          kqi {
-            id
-            name
-          }
-          kqiComparator {
-            kqiTargetFk {
-              id
-              name
-            }
-            comparatorFk {
-              id
-              name
-            }
-            number
-            comparatorType
-          }
-        }
-      }
-    }
   }
 `;
 
@@ -184,12 +154,13 @@ const KqiTypes = () => {
     item => item.node,
   );
 
+
   useEffect(() => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
-  }, [dataKqi]);
-  console.log(dataKqi);
+  }, []);
+  
   const handleClick = () => {
     setShowFormCreate(true);
   };
@@ -212,13 +183,12 @@ const KqiTypes = () => {
   if (showFormEdit) {
     return (
       <KqiFormEdit
-        dataKqiTargets={dataResponseKqiTargets}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
         dataTemporalFrequencies={dataResponseTemporalFrequencies}
-        returnTableKqi={() => setShowFormEdit(false)}
         formValues={dataEdit}
+        returnTableKqi={() => setShowFormEdit(false)}
       />
     );
   }

@@ -77,34 +77,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const KqiQuery = graphql`
-  query KqiTableAssociatedTargetQuery {
-    kqiTargets {
-      edges {
-        node {
-          id
-          name
-          impact
-          frame
-          alowedValidation
-          initTime
-          endTime
-          status
-          kqi {
-            id
-          }
-        }
-      }
-    }
-  }
-`;
-
 type Props = $ReadOnly<{|
-  // daticos: Array<any>,
-  idKqi: string,
-  // dataTableTargets: any,
   create: () => void,
   edit: () => void,
+  tableTargets: any
 |}>;
 
 const handleClick = () => {
@@ -112,24 +88,12 @@ const handleClick = () => {
 };
 
 const KqiTableAssociatedTarget = (props: Props) => {
-  const {create, edit, idKqi} = props;
+  const {create, edit, tableTargets} = props;
   const [items, setItems] = useState({});
 
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
-  useEffect(() => {
-    fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
-      setItems(data);
-    });
-  }, [items]);
+  const [checked, setChecked] = useState(true);  
 
-  const tg = items?.kqiTargets?.edges;
-  const dati = tg?.filter(kqi => kqi.node.kqi.id === idKqi);
-  // console.log(idKqi);
-  // console.log('Tabla Target');
-  // console.log(dati);
-  // console.log('oooooooooooo');
-  // console.log(items);
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -172,8 +136,8 @@ const KqiTableAssociatedTarget = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dati?.map(item => (
-              <StyledTableRow key={item.node.id}>
+            {tableTargets?.map(item => (
+              <StyledTableRow key={item.id}>
                 <TableCell>
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </TableCell>
@@ -187,9 +151,9 @@ const KqiTableAssociatedTarget = (props: Props) => {
                     </Text>
                   </Button>
                 </TableCell>
-                <TableCell>{item.node.comparator}</TableCell>
+                <TableCell>{item.comparator}</TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.warningComparator}
+                  {item.warningComparator}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   {item.node.frame}
@@ -198,7 +162,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   {item.node.alowedValidation}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.activeHours}
+                  {item.activeHours}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>
@@ -217,4 +181,4 @@ const KqiTableAssociatedTarget = (props: Props) => {
   );
 };
 export default KqiTableAssociatedTarget;
-// items.kqiTargets?.edges
+

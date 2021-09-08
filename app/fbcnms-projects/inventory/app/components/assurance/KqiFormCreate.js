@@ -9,28 +9,20 @@
  */
 
 import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
-
 import React, {useState} from 'react';
 import fbt from 'fbt';
-
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
-
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import {MenuItem, Select} from '@material-ui/core';
-
 import Text from '@symphony/design-system/components/Text';
-
 import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
-
 import moment from 'moment';
-
 import AddKqiMutation from '../../mutations/AddKqiMutation';
-// import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -110,28 +102,6 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
-// const data = {
-//   counters: {
-//     edges: [
-//       {
-//         node: {
-//           id: '244813135872',
-//           name: 'contador_family_7',
-//           networkManagerSystem: 'hola bebe',
-//           externalID: '123456789',
-//         },
-//       },
-//       {
-//         node: {
-//           id: '244813135873',
-//           name: 'contador_family_8',
-//           networkManagerSystem: 'hola sergio',
-//           externalID: '987654321',
-//         },
-//       },
-//     ],
-//   },
-// };
 
 type KqiPerspectives = {
   id: string,
@@ -153,20 +123,20 @@ type KqiTemporalFrequency = {
   name: string,
 };
 
-// type Kqis = {
-//   data: {
-//     id: string,
-//     name: string,
-//     description: string,
-//     formula: string,
-//     startDateTime: string,
-//     endDateTime: string,
-//     kqiCategory: string,
-//     kqiPerspective: string,
-//     kqiSource: string,
-//     kqiTemporalFrequency: string
-//   }
-// }
+type Kqis = {
+  data: {
+    id: string,
+    name: string,
+    description: string,
+    formula: string,
+    startDateTime: string,
+    endDateTime: string,
+    kqiCategory: string,
+    kqiPerspective: string,
+    kqiSource: string,
+    kqiTemporalFrequency: string
+  }
+}
 
 type Props = $ReadOnly<{|
   returnTableKqi: () => void,

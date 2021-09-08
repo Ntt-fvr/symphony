@@ -123,19 +123,15 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   returnFormEdit: () => void,
-  datos: Array<any>,
 |}>;
 const handleRemove = () => {
   console.log('remove');
 };
 
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit, datos} = props;
+  const {returnFormEdit} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
-  console.log('DATOS');
-  console.log(datos?.map(node => node));
-  console.log('----------');
 
   return (
     <div className={classes.root}>
@@ -196,7 +192,7 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                {/* <Grid item xs={6}>
+                <Grid item xs={6}>
                   <FormField label="Comparator" className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
@@ -243,7 +239,7 @@ const KqiFormEditTarget = (props: Props) => {
                       />
                     </div>
                   </FormField>
-                </Grid> */}
+                </Grid>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Impact">

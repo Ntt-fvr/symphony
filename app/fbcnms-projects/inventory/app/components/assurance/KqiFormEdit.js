@@ -179,24 +179,7 @@ type Props = $ReadOnly<{|
       },
     },
   },
-  kqiTargets: {
-    edges: {
-      node: {
-        id: string,
-        name: string,
-        impact: string,
-        frame: string,
-        alowedValidation: string,
-        initTime: string,
-        endTime: string,
-        status: boolean,
-        kqi: {
-          id: string,
-        },
-      },
-    },
-  },
-  dataKqiTargets: any,
+
   dataPerspectives: Array<KqiPerspectives>,
   dataSources: Array<KqiSources>,
   dataCategories: Array<KqiCategories>,
@@ -219,17 +202,39 @@ const TargetQuery = graphql`
           status
           kqi {
             id
+            name
+          }
+          kqiComparator {
+            kqiTargetFk {
+              id
+              name
+            }
+            comparatorFk {
+              id
+              name
+            }
+            number
+            comparatorType
           }
         }
       }
     }
+    comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    
+
   }
 `;
 
 const KqiFormEdit = (props: Props) => {
   const {
     formValues,
-    kqiTargets,
     dataPerspectives,
     dataSources,
     dataCategories,
@@ -260,16 +265,15 @@ const KqiFormEdit = (props: Props) => {
     fetchQuery(RelayEnvironment, TargetQuery, {}).then(data => {
       setItems(data);
     });
-  }, [items]);
-  const daticos = items?.kqiTargets?.edges?.filter(
+  }, []);
+  
+  const filterKqiTargetsById = items?.kqiTargets?.edges?.filter(
     kqi => kqi.node.kqi.id === formValues.item.id,
   );
-  // const prueba = {daticos};
-  // console.log('Daticos');
-  // console.log({...daticos});
-  // console.log('-----------');
-  // console.log(formValues.item.id);
-  // console.log('***********');
+
+  const dataResponseComparators = items.comparators?.edges.map(
+    item => item.node,
+  );
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -294,6 +298,7 @@ const KqiFormEdit = (props: Props) => {
       },
     };
     EditKqiMutation(variables);
+    returnTableKqi();
   };
 
   const showFormCreateTarget = () => {
@@ -304,6 +309,7 @@ const KqiFormEdit = (props: Props) => {
     return (
       <KqiFormCreateTarget
         idKqi={formValues.item.id}
+        dataComparator={dataResponseComparators}
         returnFormEdit={() => setShowCreateTarget(false)}
       />
     );
@@ -315,7 +321,6 @@ const KqiFormEdit = (props: Props) => {
   if (showEditTarget) {
     return (
       <KqiFormEditTarget
-        datos={daticos}
         returnFormEdit={() => setShowEditTarget(false)}
       />
     );
@@ -368,7 +373,6 @@ const KqiFormEdit = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-
         <Grid item xs={12}>
           <Card>
             <Grid container spacing={1} className={classes.insideContainer}>
@@ -486,7 +490,6 @@ const KqiFormEdit = (props: Props) => {
                     className={classes.formField}>
                     <div className={classes.formFieldTf}>
                       <Text variant={'caption'}>Repeat every</Text>
-
                       <Select
                         {...kqiTemporalFrequency}
                         className={classNames(
@@ -522,9 +525,7 @@ const KqiFormEdit = (props: Props) => {
       </Grid>
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
-          idKqi={formValues.item.id}
-          // daticos={daticos}
-          // dataTableTargets={dataKqiTargets}
+          tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}
           edit={() => showFormEditTarget()}
         />
