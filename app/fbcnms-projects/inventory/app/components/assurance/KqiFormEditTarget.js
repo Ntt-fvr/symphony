@@ -259,7 +259,7 @@ const KqiFormEditTarget = (props: Props) => {
 
                 <FormField
                   className={classes.formField}
-                  label="Allowed Varation">
+                  label="Allowed Variation">
                   <div className={classes.contPeriods}>
                     <TextInput className={classes.periods} type="number" />
                   </div>

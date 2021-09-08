@@ -321,7 +321,7 @@ const KqiFormCreateTarget = (props: Props) => {
 
                 <FormField
                   className={classes.formField}
-                  label="Allowed Varation">
+                  label="Allowed Variation">
                   <div className={classes.contPeriods}>
                     <TextInput
                       name="alowedValidation"
