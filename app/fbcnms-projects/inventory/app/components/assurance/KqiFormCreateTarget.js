@@ -124,17 +124,7 @@ type Props = $ReadOnly<{|
   dataComparator: Array<Comparator>,
 |}>;
 
-// type KqiTarget = {
-//   id: string,
-//   name: string,
-//   impact: string,
-//   frame: number,
-//   alowedValidation: number,
-//   initTime: string,
-//   endTime: string,
-//   status: boolean,
-//   kqi: string,
-// };
+
 
 const KqiFormCreateTarget = (props: Props) => {
   const {returnFormEdit, idKqi, dataComparator} = props;

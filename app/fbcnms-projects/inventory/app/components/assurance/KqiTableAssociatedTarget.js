@@ -35,6 +35,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
+import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -83,9 +85,6 @@ type Props = $ReadOnly<{|
   tableTargets: any
 |}>;
 
-const handleClick = () => {
-  console.log('delete row');
-};
 
 const KqiTableAssociatedTarget = (props: Props) => {
   const {create, edit, tableTargets} = props;
@@ -94,6 +93,13 @@ const KqiTableAssociatedTarget = (props: Props) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(true);  
 
+  const handleRemove = id => {
+    const variables: RemoveKqiTargetMutationVariables = {
+      id: id,
+    };
+    RemoveKqiTargetMutation(variables);
+  };
+  
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -136,13 +142,13 @@ const KqiTableAssociatedTarget = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableTargets?.map(item => (
-              <StyledTableRow key={item.id}>
+            {tableTargets?.map((item, index) => (
+              <StyledTableRow key={index}>
                 <TableCell>
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => edit()} variant="text">
+                  <Button onClick={() => edit({item})} variant="text">
                     <Text
                       variant={'subtitle1'}
                       weight={'medium'}
@@ -167,7 +173,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                 <TableCell className={classes.insideCenter}>
                   <IconButton>
                     <DeleteOutlinedIcon
-                      onClick={handleClick}
+                      onClick={() => handleRemove(item.node.id)}
                       style={{color: DARK.D300}}
                     />
                   </IconButton>

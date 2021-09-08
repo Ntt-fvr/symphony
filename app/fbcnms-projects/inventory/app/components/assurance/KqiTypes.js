@@ -159,7 +159,7 @@ const KqiTypes = () => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
-  }, []);
+  }, [dataKqi]);
   
   const handleClick = () => {
     setShowFormCreate(true);
