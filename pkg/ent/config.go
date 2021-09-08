@@ -43,6 +43,7 @@ type hooks struct {
 	CounterFamily               []ent.Hook
 	CounterFormula              []ent.Hook
 	Customer                    []ent.Hook
+	DocumentCategory            []ent.Hook
 	Domain                      []ent.Hook
 	EntryPoint                  []ent.Hook
 	Equipment                   []ent.Hook

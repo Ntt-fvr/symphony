@@ -420,6 +420,12 @@ type ComplexityRoot struct {
 		ExitPoint func(childComplexity int) int
 	}
 
+	DocumentCategory struct {
+		ID    func(childComplexity int) int
+		Index func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
 	Domain struct {
 		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
@@ -1036,6 +1042,7 @@ type ComplexityRoot struct {
 	}
 
 	LocationType struct {
+		DocumentCategories       func(childComplexity int) int
 		FileCategoryType         func(childComplexity int) int
 		ID                       func(childComplexity int) int
 		Index                    func(childComplexity int) int
@@ -1202,6 +1209,7 @@ type ComplexityRoot struct {
 		RemoveCounterFamily                      func(childComplexity int, id int) int
 		RemoveCounterFormula                     func(childComplexity int, id int) int
 		RemoveCustomer                           func(childComplexity int, id int) int
+		RemoveDocumentCategory                   func(childComplexity int, id int) int
 		RemoveDomain                             func(childComplexity int, id int) int
 		RemoveEquipment                          func(childComplexity int, id int, workOrderID *int) int
 		RemoveEquipmentFromPosition              func(childComplexity int, positionID int, workOrderID *int) int
@@ -2235,6 +2243,8 @@ type LocationResolver interface {
 	DistanceKm(ctx context.Context, obj *ent.Location, latitude float64, longitude float64) (float64, error)
 }
 type LocationTypeResolver interface {
+	DocumentCategories(ctx context.Context, obj *ent.LocationType) ([]*ent.DocumentCategory, error)
+
 	NumberOfLocations(ctx context.Context, obj *ent.LocationType) (int, error)
 	Locations(ctx context.Context, obj *ent.LocationType, enforceHasLatLong *bool) (*ent.LocationConnection, error)
 }
@@ -2251,6 +2261,7 @@ type MutationResolver interface {
 	AddLocationType(ctx context.Context, input models.AddLocationTypeInput) (*ent.LocationType, error)
 	EditLocationType(ctx context.Context, input models.EditLocationTypeInput) (*ent.LocationType, error)
 	RemoveLocationType(ctx context.Context, id int) (int, error)
+	RemoveDocumentCategory(ctx context.Context, id int) (int, error)
 	AddEquipment(ctx context.Context, input models.AddEquipmentInput) (*ent.Equipment, error)
 	EditEquipment(ctx context.Context, input models.EditEquipmentInput) (*ent.Equipment, error)
 	RemoveEquipment(ctx context.Context, id int, workOrderID *int) (int, error)
@@ -3760,6 +3771,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DecisionRoute.ExitPoint(childComplexity), true
+
+	case "DocumentCategory.id":
+		if e.complexity.DocumentCategory.ID == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategory.ID(childComplexity), true
+
+	case "DocumentCategory.index":
+		if e.complexity.DocumentCategory.Index == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategory.Index(childComplexity), true
+
+	case "DocumentCategory.name":
+		if e.complexity.DocumentCategory.Name == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategory.Name(childComplexity), true
 
 	case "Domain.id":
 		if e.complexity.Domain.ID == nil {
@@ -6275,6 +6307,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LocationSearchResult.Locations(childComplexity), true
 
+	case "LocationType.documentCategories":
+		if e.complexity.LocationType.DocumentCategories == nil {
+			break
+		}
+
+		return e.complexity.LocationType.DocumentCategories(childComplexity), true
+
 	case "LocationType.fileCategoryType":
 		if e.complexity.LocationType.FileCategoryType == nil {
 			break
@@ -8083,6 +8122,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveCustomer(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeDocumentCategory":
+		if e.complexity.Mutation.RemoveDocumentCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeDocumentCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveDocumentCategory(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeDomain":
 		if e.complexity.Mutation.RemoveDomain == nil {
@@ -13325,6 +13376,7 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
+  documentCategories: [DocumentCategory]!
   fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
@@ -13338,6 +13390,7 @@ input AddLocationTypeInput {
   mapZoomLevel: Int
   isSite: Boolean
   fileCategoriesType: [FileCategoryTypeInput!]
+  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
@@ -13350,8 +13403,18 @@ input EditLocationTypeInput {
   mapZoomLevel: Int
   isSite: Boolean
   fileCategoriesType: [FileCategoryTypeInput!]
+  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
+}
+
+input DocumentCategoryInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.DocumentCategoryInput"
+) {
+  id: ID
+  name: String!
+  index: Int!
 }
 
 type NetworkTopology {
@@ -14392,6 +14455,12 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+}
+
+type DocumentCategory implements Node {
+  id: ID!
+  name: String
+  index: Int
 }
 
 input PropertyTypeInput
@@ -19533,6 +19602,7 @@ type Mutation {
   addLocationType(input: AddLocationTypeInput!): LocationType!
   editLocationType(input: EditLocationTypeInput!): LocationType!
   removeLocationType(id: ID!): ID!
+  removeDocumentCategory(id: ID!): ID!
   addEquipment(input: AddEquipmentInput!): Equipment!
   editEquipment(input: EditEquipmentInput!): Equipment!
   removeEquipment(id: ID!, workOrderId: ID): ID!
@@ -23398,6 +23468,21 @@ func (ec *executionContext) field_Mutation_removeCounter_args(ctx context.Contex
 }
 
 func (ec *executionContext) field_Mutation_removeCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeDocumentCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -34313,6 +34398,105 @@ func (ec *executionContext) _DecisionRoute_exitPoint(ctx context.Context, field 
 	res := resTmp.(*ent.ExitPoint)
 	fc.Result = res
 	return ec.marshalOExitPoint2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐExitPoint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategory_name(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategory_index(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Index, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Domain_id(ctx context.Context, field graphql.CollectedField, obj *ent.Domain) (ret graphql.Marshaler) {
@@ -46818,6 +47002,41 @@ func (ec *executionContext) _LocationType_propertyTypes(ctx context.Context, fie
 	return ec.marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _LocationType_documentCategories(ctx context.Context, field graphql.CollectedField, obj *ent.LocationType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LocationType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.LocationType().DocumentCategories(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.DocumentCategory)
+	fc.Result = res
+	return ec.marshalNDocumentCategory2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _LocationType_fileCategoryType(ctx context.Context, field graphql.CollectedField, obj *ent.LocationType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -47619,6 +47838,48 @@ func (ec *executionContext) _Mutation_removeLocationType(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().RemoveLocationType(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeDocumentCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeDocumentCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveDocumentCategory(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -77036,6 +77297,14 @@ func (ec *executionContext) unmarshalInputAddLocationTypeInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
+		case "documentCategories":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentCategories"))
+			it.DocumentCategories, err = ec.unmarshalODocumentCategoryInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐDocumentCategoryInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "properties":
 			var err error
 
@@ -79394,6 +79663,42 @@ func (ec *executionContext) unmarshalInputDecisionRouteInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDocumentCategoryInput(ctx context.Context, obj interface{}) (models1.DocumentCategoryInput, error) {
+	var it models1.DocumentCategoryInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "index":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
+			it.Index, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDomainFilterInput(ctx context.Context, obj interface{}) (models.DomainFilterInput, error) {
 	var it models.DomainFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -80811,6 +81116,14 @@ func (ec *executionContext) unmarshalInputEditLocationTypeInput(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileCategoriesType"))
 			it.FileCategoriesType, err = ec.unmarshalOFileCategoryTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "documentCategories":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentCategories"))
+			it.DocumentCategories, err = ec.unmarshalODocumentCategoryInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐDocumentCategoryInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -87834,6 +88147,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._PropertyType(ctx, sel, obj)
+	case *ent.DocumentCategory:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._DocumentCategory(ctx, sel, obj)
 	case *ent.Property:
 		if obj == nil {
 			return graphql.Null
@@ -90016,6 +90334,37 @@ func (ec *executionContext) _DecisionRoute(ctx context.Context, sel ast.Selectio
 			out.Values[i] = graphql.MarshalString("DecisionRoute")
 		case "exitPoint":
 			out.Values[i] = ec._DecisionRoute_exitPoint(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var documentCategoryImplementors = []string{"DocumentCategory", "Node"}
+
+func (ec *executionContext) _DocumentCategory(ctx context.Context, sel ast.SelectionSet, obj *ent.DocumentCategory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentCategoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentCategory")
+		case "id":
+			out.Values[i] = ec._DocumentCategory_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._DocumentCategory_name(ctx, field, obj)
+		case "index":
+			out.Values[i] = ec._DocumentCategory_index(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -94365,6 +94714,20 @@ func (ec *executionContext) _LocationType(ctx context.Context, sel ast.Selection
 				}
 				return res
 			})
+		case "documentCategories":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._LocationType_documentCategories(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "fileCategoryType":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -94564,6 +94927,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "removeLocationType":
 			out.Values[i] = ec._Mutation_removeLocationType(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeDocumentCategory":
+			out.Values[i] = ec._Mutation_removeDocumentCategory(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -103258,6 +103626,48 @@ func (ec *executionContext) marshalNDiscoveryMethod2githubᚗcomᚋfacebookincub
 	return v
 }
 
+func (ec *executionContext) marshalNDocumentCategory2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx context.Context, sel ast.SelectionSet, v []*ent.DocumentCategory) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalODocumentCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) unmarshalNDocumentCategoryInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐDocumentCategoryInput(ctx context.Context, v interface{}) (*models1.DocumentCategoryInput, error) {
+	res, err := ec.unmarshalInputDocumentCategoryInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNDomain2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx context.Context, sel ast.SelectionSet, v ent.Domain) graphql.Marshaler {
 	return ec._Domain(ctx, sel, &v)
 }
@@ -110975,6 +111385,37 @@ func (ec *executionContext) marshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincub
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalODocumentCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx context.Context, sel ast.SelectionSet, v *ent.DocumentCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DocumentCategory(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODocumentCategoryInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐDocumentCategoryInputᚄ(ctx context.Context, v interface{}) ([]*models1.DocumentCategoryInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models1.DocumentCategoryInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNDocumentCategoryInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐDocumentCategoryInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalODomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx context.Context, sel ast.SelectionSet, v *ent.Domain) graphql.Marshaler {

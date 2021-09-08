@@ -468,6 +468,37 @@ var (
 		PrimaryKey:  []*schema.Column{CustomersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// DocumentCategoriesColumns holds the columns for the "document_categories" table.
+	DocumentCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "index", Type: field.TypeInt},
+		{Name: "location_type_document_category", Type: field.TypeInt, Nullable: true},
+	}
+	// DocumentCategoriesTable holds the schema information for the "document_categories" table.
+	DocumentCategoriesTable = &schema.Table{
+		Name:       "document_categories",
+		Columns:    DocumentCategoriesColumns,
+		PrimaryKey: []*schema.Column{DocumentCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "document_categories_location_types_document_category",
+				Columns: []*schema.Column{DocumentCategoriesColumns[5]},
+
+				RefColumns: []*schema.Column{LocationTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "documentcategory_name_location_type_document_category",
+				Unique:  true,
+				Columns: []*schema.Column{DocumentCategoriesColumns[3], DocumentCategoriesColumns[5]},
+			},
+		},
+	}
 	// DomainsColumns holds the columns for the "domains" table.
 	DomainsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3156,6 +3187,7 @@ var (
 		CounterFamiliesTable,
 		CounterFormulasTable,
 		CustomersTable,
+		DocumentCategoriesTable,
 		DomainsTable,
 		EntryPointsTable,
 		EquipmentTable,
@@ -3263,6 +3295,7 @@ func init() {
 	CountersTable.ForeignKeys[1].RefTable = VendorsTable
 	CounterFormulasTable.ForeignKeys[0].RefTable = CountersTable
 	CounterFormulasTable.ForeignKeys[1].RefTable = FormulasTable
+	DocumentCategoriesTable.ForeignKeys[0].RefTable = LocationTypesTable
 	EntryPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	EquipmentTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTable.ForeignKeys[1].RefTable = WorkOrdersTable
