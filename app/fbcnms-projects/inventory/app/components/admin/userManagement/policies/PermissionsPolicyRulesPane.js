@@ -15,6 +15,8 @@ import * as React from 'react';
 import Card from '@symphony/design-system/components/Card/Card';
 import PermissionsPolicyInventoryCatalogRulesTab from './PermissionsPolicyInventoryCatalogRulesTab';
 import PermissionsPolicyInventoryDataRulesTab from './PermissionsPolicyInventoryDataRulesTab';
+import PermissionsPolicyInventoryDocumentRulesTab from './PermissionsPolicyInventoryDocumentRulesTab';
+
 import PermissionsPolicyWorkforceDataRulesTab from './PermissionsPolicyWorkforceDataRulesTab';
 import PermissionsPolicyWorkforceTemplatesRulesTab from './PermissionsPolicyWorkforceTemplatesRulesTab';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
@@ -88,6 +90,17 @@ export default function PermissionsPolicyRulesPane(props: Props) {
             },
             view: (
               <PermissionsPolicyInventoryCatalogRulesTab
+                policy={policy.inventoryRules}
+                onChange={callOnInventoryChange}
+              />
+            ),
+          },
+          {
+            tab: {
+              label: `${fbt('Documents', '')}`,
+            },
+            view: (
+              <PermissionsPolicyInventoryDocumentRulesTab
                 policy={policy.inventoryRules}
                 onChange={callOnInventoryChange}
               />

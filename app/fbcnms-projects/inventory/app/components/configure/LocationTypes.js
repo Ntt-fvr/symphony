@@ -128,7 +128,7 @@ const LocationTypes = () => {
     editingLocationType,
     setEditingLocationType,
   ] = useState<?ResponseLocationType>(null);
-  const [showAddEditCard, setShowAddEditCard] = useState(false);
+  const [showAddEditCard, setShowAddEditCard] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const enqueueSnackbar = useEnqueueSnackbar();
 
@@ -196,6 +196,7 @@ const LocationTypes = () => {
     }
 
     ServerLogger.info(LogEvents.LOCATION_TYPE_REORDERED);
+
     const items = reorder(locationTypesData, source.index, destination.index);
     const newItems = items.map((locTyp: ResponseLocationType, i) => ({
       ...locTyp,
@@ -203,6 +204,7 @@ const LocationTypes = () => {
     }));
     saveOrder(newItems);
   };
+  console.log(locationTypesData);
 
   return (
     <FormContextProvider
