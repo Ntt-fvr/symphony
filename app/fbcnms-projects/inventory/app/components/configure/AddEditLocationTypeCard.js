@@ -225,6 +225,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       mapZoomLevel,
       propertyTypes,
       surveyTemplateCategories,
+      documentCategories,
     } = this.state.editingLocationType;
 
     return {
@@ -243,6 +244,9 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
               category.surveyTemplateQuestions || []
             ).map(this.deleteTempId),
           })),
+        documentCategories: documentCategories
+          .filter(propType => !!propType.name)
+          .map(this.deleteTempId),
       },
     };
   };
