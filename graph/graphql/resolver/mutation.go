@@ -2590,7 +2590,7 @@ func (r mutationResolver) EditLocationType(
 	}
 
 	for _, input := range input.DocumentCategories {
-		 if err := r.updateDocumentCategory(ctx, input); err != nil {
+		 if err := r.updateDocumentCategory(ctx, typ.ID, input); err != nil {
 		 	return nil, err
 		 }
 	}
@@ -3030,14 +3030,27 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 }
 
 
-func (r mutationResolver) updateDocumentCategory(ctx context.Context, input *pkgmodels.DocumentCategoryInput) error {
-	if err := r.ClientFrom(ctx).DocumentCategory.
-		UpdateOneID(*input.ID).
-		SetName(input.Name).
-		SetIndex(input.Index).
-		Exec(ctx); err != nil {
-			return errors.Wrap(err, "updating Category Document: " + input.Name)
+func (r mutationResolver) updateDocumentCategory(ctx context.Context,locationTypeID int, input *pkgmodels.DocumentCategoryInput) error {
+	if input.ID == nil {
+		dci := []*pkgmodels.DocumentCategoryInput{input}
+		if err := r.AddDocumentCategories(ctx, locationTypeID, dci...); err != nil {
+			if ent.IsConstraintError(err) {
+				return gqlerror.Errorf("There's already a saved document category with that name. Please choose a different name.")
+			}
+			return errors.Wrap(err, "creating Category Document: " + input.Name)
 		}
+	} else {
+		if err := r.ClientFrom(ctx).DocumentCategory.
+			UpdateOneID(*input.ID).
+			SetName(input.Name).
+			SetIndex(input.Index).
+			Exec(ctx); err != nil {
+				if ent.IsConstraintError(err) {
+					return gqlerror.Errorf("There's already a saved document category with that name. Please choose a different name.")
+				}
+				return errors.Wrap(err, "updating Category Document: " + input.Name)
+			}
+	}
 	return nil
 }
 

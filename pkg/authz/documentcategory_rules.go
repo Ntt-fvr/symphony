@@ -15,11 +15,14 @@ import (
 
 func DocumentCategoryCudBasedRule(ctx context.Context, cud *models.DocumentCategoryCud, m *ent.DocumentCategoryMutation) error {
 
-	fmt.Println("DocumentCategoryCud", FromContext(ctx).InventoryPolicy)
 	InventoryPolicy, _ := json.Marshal(FromContext(ctx).InventoryPolicy)
-	fmt.Println(string(InventoryPolicy),"---------", InventoryPolicy)
+	fmt.Println("InventoryPolicy", string(InventoryPolicy))
 
-	fmt.Println("DocumentCategoryMutation", m)
+	n1, _ := m.Name()
+	n2, _ := m.ID()
+	n3, _ := m.Index()
+
+	fmt.Println("DocumentCategoryMutation", n1, "---", n2, "---", n3 )
 	mutation, _ := json.Marshal(m)
 	fmt.Println(string(mutation),"---------", mutation)
 	return privacy.Allow

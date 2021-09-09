@@ -426,6 +426,19 @@ type ComplexityRoot struct {
 		Name  func(childComplexity int) int
 	}
 
+	DocumentCategoryCud struct {
+		Create func(childComplexity int) int
+		Delete func(childComplexity int) int
+		Read   func(childComplexity int) int
+		Update func(childComplexity int) int
+	}
+
+	DocumentCategoryPermissionRule struct {
+		DocumentCategoyIds   func(childComplexity int) int
+		DocumentCategoyNames func(childComplexity int) int
+		IsAllowed            func(childComplexity int) int
+	}
+
 	Domain struct {
 		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
@@ -803,13 +816,14 @@ type ComplexityRoot struct {
 	}
 
 	InventoryPolicy struct {
-		Equipment     func(childComplexity int) int
-		EquipmentType func(childComplexity int) int
-		Location      func(childComplexity int) int
-		LocationType  func(childComplexity int) int
-		PortType      func(childComplexity int) int
-		Read          func(childComplexity int) int
-		ServiceType   func(childComplexity int) int
+		DocumentCategory func(childComplexity int) int
+		Equipment        func(childComplexity int) int
+		EquipmentType    func(childComplexity int) int
+		Location         func(childComplexity int) int
+		LocationType     func(childComplexity int) int
+		PortType         func(childComplexity int) int
+		Read             func(childComplexity int) int
+		ServiceType      func(childComplexity int) int
 	}
 
 	Kpi struct {
@@ -3793,6 +3807,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DocumentCategory.Name(childComplexity), true
 
+	case "DocumentCategoryCUD.Create":
+		if e.complexity.DocumentCategoryCud.Create == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryCud.Create(childComplexity), true
+
+	case "DocumentCategoryCUD.Delete":
+		if e.complexity.DocumentCategoryCud.Delete == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryCud.Delete(childComplexity), true
+
+	case "DocumentCategoryCUD.Read":
+		if e.complexity.DocumentCategoryCud.Read == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryCud.Read(childComplexity), true
+
+	case "DocumentCategoryCUD.Update":
+		if e.complexity.DocumentCategoryCud.Update == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryCud.Update(childComplexity), true
+
+	case "DocumentCategoryPermissionRule.DocumentCategoyIds":
+		if e.complexity.DocumentCategoryPermissionRule.DocumentCategoyIds == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryPermissionRule.DocumentCategoyIds(childComplexity), true
+
+	case "DocumentCategoryPermissionRule.DocumentCategoyNames":
+		if e.complexity.DocumentCategoryPermissionRule.DocumentCategoyNames == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryPermissionRule.DocumentCategoyNames(childComplexity), true
+
+	case "DocumentCategoryPermissionRule.isAllowed":
+		if e.complexity.DocumentCategoryPermissionRule.IsAllowed == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryPermissionRule.IsAllowed(childComplexity), true
+
 	case "Domain.id":
 		if e.complexity.Domain.ID == nil {
 			break
@@ -5337,6 +5400,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Hyperlink.URL(childComplexity), true
+
+	case "InventoryPolicy.DocumentCategory":
+		if e.complexity.InventoryPolicy.DocumentCategory == nil {
+			break
+		}
+
+		return e.complexity.InventoryPolicy.DocumentCategory(childComplexity), true
 
 	case "InventoryPolicy.equipment":
 		if e.complexity.InventoryPolicy.Equipment == nil {
@@ -13018,6 +13088,15 @@ type LocationPermissionRule
   locationTypeIds: [ID!]
 }
 
+type DocumentCategoryPermissionRule
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRule"
+) {
+  isAllowed: PermissionValue!
+  DocumentCategoyIds: [ID!]
+  DocumentCategoyNames: [String!]
+}
+
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -13069,6 +13148,16 @@ type LocationCUD
   create: LocationPermissionRule!
   update: LocationPermissionRule!
   delete: LocationPermissionRule!
+}
+
+type DocumentCategoryCUD
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
+) {
+  Read  : DocumentCategoryPermissionRule
+  Create: DocumentCategoryPermissionRule
+  Update: DocumentCategoryPermissionRule
+  Delete: DocumentCategoryPermissionRule
 }
 
 input BasicCUDInput
@@ -13134,6 +13223,7 @@ type InventoryPolicy
   ) {
   read: BasicPermissionRule!
   location: LocationCUD!
+  DocumentCategory: DocumentCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -34499,6 +34589,233 @@ func (ec *executionContext) _DocumentCategory_index(ctx context.Context, field g
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _DocumentCategoryCUD_Read(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryCud) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryCUD",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Read, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models2.DocumentCategoryPermissionRule)
+	fc.Result = res
+	return ec.marshalODocumentCategoryPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryCUD_Create(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryCud) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryCUD",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Create, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models2.DocumentCategoryPermissionRule)
+	fc.Result = res
+	return ec.marshalODocumentCategoryPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryCUD_Update(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryCud) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryCUD",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Update, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models2.DocumentCategoryPermissionRule)
+	fc.Result = res
+	return ec.marshalODocumentCategoryPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryCUD_Delete(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryCud) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryCUD",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Delete, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models2.DocumentCategoryPermissionRule)
+	fc.Result = res
+	return ec.marshalODocumentCategoryPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryPermissionRule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryPermissionRule_isAllowed(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryPermissionRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryPermissionRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsAllowed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models2.PermissionValue)
+	fc.Result = res
+	return ec.marshalNPermissionValue2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐPermissionValue(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryPermissionRule_DocumentCategoyIds(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryPermissionRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryPermissionRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentCategoyIds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]int)
+	fc.Result = res
+	return ec.marshalOID2ᚕintᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryPermissionRule_DocumentCategoyNames(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryPermissionRule) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryPermissionRule",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentCategoyNames, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Domain_id(ctx context.Context, field graphql.CollectedField, obj *ent.Domain) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -42094,6 +42411,41 @@ func (ec *executionContext) _InventoryPolicy_location(ctx context.Context, field
 	res := resTmp.(*models2.LocationCud)
 	fc.Result = res
 	return ec.marshalNLocationCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐLocationCud(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InventoryPolicy_DocumentCategory(ctx context.Context, field graphql.CollectedField, obj *models2.InventoryPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "InventoryPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentCategory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models2.DocumentCategoryCud)
+	fc.Result = res
+	return ec.marshalNDocumentCategoryCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryCud(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _InventoryPolicy_equipment(ctx context.Context, field graphql.CollectedField, obj *models2.InventoryPolicy) (ret graphql.Marshaler) {
@@ -90376,6 +90728,67 @@ func (ec *executionContext) _DocumentCategory(ctx context.Context, sel ast.Selec
 	return out
 }
 
+var documentCategoryCUDImplementors = []string{"DocumentCategoryCUD"}
+
+func (ec *executionContext) _DocumentCategoryCUD(ctx context.Context, sel ast.SelectionSet, obj *models2.DocumentCategoryCud) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentCategoryCUDImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentCategoryCUD")
+		case "Read":
+			out.Values[i] = ec._DocumentCategoryCUD_Read(ctx, field, obj)
+		case "Create":
+			out.Values[i] = ec._DocumentCategoryCUD_Create(ctx, field, obj)
+		case "Update":
+			out.Values[i] = ec._DocumentCategoryCUD_Update(ctx, field, obj)
+		case "Delete":
+			out.Values[i] = ec._DocumentCategoryCUD_Delete(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var documentCategoryPermissionRuleImplementors = []string{"DocumentCategoryPermissionRule"}
+
+func (ec *executionContext) _DocumentCategoryPermissionRule(ctx context.Context, sel ast.SelectionSet, obj *models2.DocumentCategoryPermissionRule) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentCategoryPermissionRuleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentCategoryPermissionRule")
+		case "isAllowed":
+			out.Values[i] = ec._DocumentCategoryPermissionRule_isAllowed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "DocumentCategoyIds":
+			out.Values[i] = ec._DocumentCategoryPermissionRule_DocumentCategoyIds(ctx, field, obj)
+		case "DocumentCategoyNames":
+			out.Values[i] = ec._DocumentCategoryPermissionRule_DocumentCategoyNames(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var domainImplementors = []string{"Domain", "Node"}
 
 func (ec *executionContext) _Domain(ctx context.Context, sel ast.SelectionSet, obj *ent.Domain) graphql.Marshaler {
@@ -92989,6 +93402,11 @@ func (ec *executionContext) _InventoryPolicy(ctx context.Context, sel ast.Select
 			}
 		case "location":
 			out.Values[i] = ec._InventoryPolicy_location(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "DocumentCategory":
+			out.Values[i] = ec._InventoryPolicy_DocumentCategory(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -103663,6 +104081,16 @@ func (ec *executionContext) marshalNDocumentCategory2ᚕᚖgithubᚗcomᚋfacebo
 	return ret
 }
 
+func (ec *executionContext) marshalNDocumentCategoryCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryCud(ctx context.Context, sel ast.SelectionSet, v *models2.DocumentCategoryCud) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentCategoryCUD(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNDocumentCategoryInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐDocumentCategoryInput(ctx context.Context, v interface{}) (*models1.DocumentCategoryInput, error) {
 	res, err := ec.unmarshalInputDocumentCategoryInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -111416,6 +111844,13 @@ func (ec *executionContext) unmarshalODocumentCategoryInput2ᚕᚖgithubᚗcom�
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) marshalODocumentCategoryPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐDocumentCategoryPermissionRule(ctx context.Context, sel ast.SelectionSet, v *models2.DocumentCategoryPermissionRule) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DocumentCategoryPermissionRule(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalODomain2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDomain(ctx context.Context, sel ast.SelectionSet, v *ent.Domain) graphql.Marshaler {
