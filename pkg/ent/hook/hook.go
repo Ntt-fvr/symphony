@@ -559,6 +559,19 @@ func (f KpiFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	return f(ctx, mv)
 }
 
+// The KpiCategoryFunc type is an adapter to allow the use of ordinary
+// function as KpiCategory mutator.
+type KpiCategoryFunc func(context.Context, *ent.KpiCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f KpiCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.KpiCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KpiCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The KqiFunc type is an adapter to allow the use of ordinary
 // function as Kqi mutator.
 type KqiFunc func(context.Context, *ent.KqiMutation) (ent.Value, error)

@@ -55,6 +55,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
@@ -163,6 +164,7 @@ const (
 	TypeFormula                          = "Formula"
 	TypeHyperlink                        = "Hyperlink"
 	TypeKpi                              = "Kpi"
+	TypeKpiCategory                      = "KpiCategory"
 	TypeKqi                              = "Kqi"
 	TypeKqiCategory                      = "KqiCategory"
 	TypeKqiComparator                    = "KqiComparator"
@@ -31945,6 +31947,8 @@ type KpiMutation struct {
 	clearedFields       map[string]struct{}
 	domain              *int
 	cleareddomain       bool
+	_KpiCategory        *int
+	cleared_KpiCategory bool
 	formulakpi          map[int]struct{}
 	removedformulakpi   map[int]struct{}
 	clearedformulakpi   bool
@@ -32258,6 +32262,45 @@ func (m *KpiMutation) ResetDomain() {
 	m.cleareddomain = false
 }
 
+// SetKpiCategoryID sets the KpiCategory edge to KpiCategory by id.
+func (m *KpiMutation) SetKpiCategoryID(id int) {
+	m._KpiCategory = &id
+}
+
+// ClearKpiCategory clears the KpiCategory edge to KpiCategory.
+func (m *KpiMutation) ClearKpiCategory() {
+	m.cleared_KpiCategory = true
+}
+
+// KpiCategoryCleared returns if the edge KpiCategory was cleared.
+func (m *KpiMutation) KpiCategoryCleared() bool {
+	return m.cleared_KpiCategory
+}
+
+// KpiCategoryID returns the KpiCategory id in the mutation.
+func (m *KpiMutation) KpiCategoryID() (id int, exists bool) {
+	if m._KpiCategory != nil {
+		return *m._KpiCategory, true
+	}
+	return
+}
+
+// KpiCategoryIDs returns the KpiCategory ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// KpiCategoryID instead. It exists only for internal usage by the builders.
+func (m *KpiMutation) KpiCategoryIDs() (ids []int) {
+	if id := m._KpiCategory; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetKpiCategory reset all changes of the "KpiCategory" edge.
+func (m *KpiMutation) ResetKpiCategory() {
+	m._KpiCategory = nil
+	m.cleared_KpiCategory = false
+}
+
 // AddFormulakpiIDs adds the formulakpi edge to Formula by ids.
 func (m *KpiMutation) AddFormulakpiIDs(ids ...int) {
 	if m.formulakpi == nil {
@@ -32533,9 +32576,12 @@ func (m *KpiMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *KpiMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.domain != nil {
 		edges = append(edges, kpi.EdgeDomain)
+	}
+	if m._KpiCategory != nil {
+		edges = append(edges, kpi.EdgeKpiCategory)
 	}
 	if m.formulakpi != nil {
 		edges = append(edges, kpi.EdgeFormulakpi)
@@ -32552,6 +32598,10 @@ func (m *KpiMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case kpi.EdgeDomain:
 		if id := m.domain; id != nil {
+			return []ent.Value{*id}
+		}
+	case kpi.EdgeKpiCategory:
+		if id := m._KpiCategory; id != nil {
 			return []ent.Value{*id}
 		}
 	case kpi.EdgeFormulakpi:
@@ -32571,7 +32621,7 @@ func (m *KpiMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *KpiMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedformulakpi != nil {
 		edges = append(edges, kpi.EdgeFormulakpi)
 	}
@@ -32595,9 +32645,12 @@ func (m *KpiMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *KpiMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareddomain {
 		edges = append(edges, kpi.EdgeDomain)
+	}
+	if m.cleared_KpiCategory {
+		edges = append(edges, kpi.EdgeKpiCategory)
 	}
 	if m.clearedformulakpi {
 		edges = append(edges, kpi.EdgeFormulakpi)
@@ -32614,6 +32667,8 @@ func (m *KpiMutation) EdgeCleared(name string) bool {
 	switch name {
 	case kpi.EdgeDomain:
 		return m.cleareddomain
+	case kpi.EdgeKpiCategory:
+		return m.cleared_KpiCategory
 	case kpi.EdgeFormulakpi:
 		return m.clearedformulakpi
 	case kpi.EdgeThresholdkpi:
@@ -32628,6 +32683,9 @@ func (m *KpiMutation) ClearEdge(name string) error {
 	switch name {
 	case kpi.EdgeDomain:
 		m.ClearDomain()
+		return nil
+	case kpi.EdgeKpiCategory:
+		m.ClearKpiCategory()
 		return nil
 	case kpi.EdgeThresholdkpi:
 		m.ClearThresholdkpi()
@@ -32644,6 +32702,9 @@ func (m *KpiMutation) ResetEdge(name string) error {
 	case kpi.EdgeDomain:
 		m.ResetDomain()
 		return nil
+	case kpi.EdgeKpiCategory:
+		m.ResetKpiCategory()
+		return nil
 	case kpi.EdgeFormulakpi:
 		m.ResetFormulakpi()
 		return nil
@@ -32652,6 +32713,502 @@ func (m *KpiMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Kpi edge %s", name)
+}
+
+// KpiCategoryMutation represents an operation that mutate the KpiCategories
+// nodes in the graph.
+type KpiCategoryMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *int
+	create_time        *time.Time
+	update_time        *time.Time
+	name               *string
+	clearedFields      map[string]struct{}
+	kpicategory        map[int]struct{}
+	removedkpicategory map[int]struct{}
+	clearedkpicategory bool
+	done               bool
+	oldValue           func(context.Context) (*KpiCategory, error)
+	predicates         []predicate.KpiCategory
+}
+
+var _ ent.Mutation = (*KpiCategoryMutation)(nil)
+
+// kpicategoryOption allows to manage the mutation configuration using functional options.
+type kpicategoryOption func(*KpiCategoryMutation)
+
+// newKpiCategoryMutation creates new mutation for KpiCategory.
+func newKpiCategoryMutation(c config, op Op, opts ...kpicategoryOption) *KpiCategoryMutation {
+	m := &KpiCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeKpiCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withKpiCategoryID sets the id field of the mutation.
+func withKpiCategoryID(id int) kpicategoryOption {
+	return func(m *KpiCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *KpiCategory
+		)
+		m.oldValue = func(ctx context.Context) (*KpiCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().KpiCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withKpiCategory sets the old KpiCategory of the mutation.
+func withKpiCategory(node *KpiCategory) kpicategoryOption {
+	return func(m *KpiCategoryMutation) {
+		m.oldValue = func(context.Context) (*KpiCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m KpiCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m KpiCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *KpiCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *KpiCategoryMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *KpiCategoryMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the KpiCategory.
+// If the KpiCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *KpiCategoryMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *KpiCategoryMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *KpiCategoryMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *KpiCategoryMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the KpiCategory.
+// If the KpiCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *KpiCategoryMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *KpiCategoryMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *KpiCategoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *KpiCategoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the KpiCategory.
+// If the KpiCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *KpiCategoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *KpiCategoryMutation) ResetName() {
+	m.name = nil
+}
+
+// AddKpicategoryIDs adds the kpicategory edge to Kpi by ids.
+func (m *KpiCategoryMutation) AddKpicategoryIDs(ids ...int) {
+	if m.kpicategory == nil {
+		m.kpicategory = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.kpicategory[ids[i]] = struct{}{}
+	}
+}
+
+// ClearKpicategory clears the kpicategory edge to Kpi.
+func (m *KpiCategoryMutation) ClearKpicategory() {
+	m.clearedkpicategory = true
+}
+
+// KpicategoryCleared returns if the edge kpicategory was cleared.
+func (m *KpiCategoryMutation) KpicategoryCleared() bool {
+	return m.clearedkpicategory
+}
+
+// RemoveKpicategoryIDs removes the kpicategory edge to Kpi by ids.
+func (m *KpiCategoryMutation) RemoveKpicategoryIDs(ids ...int) {
+	if m.removedkpicategory == nil {
+		m.removedkpicategory = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedkpicategory[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedKpicategory returns the removed ids of kpicategory.
+func (m *KpiCategoryMutation) RemovedKpicategoryIDs() (ids []int) {
+	for id := range m.removedkpicategory {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// KpicategoryIDs returns the kpicategory ids in the mutation.
+func (m *KpiCategoryMutation) KpicategoryIDs() (ids []int) {
+	for id := range m.kpicategory {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetKpicategory reset all changes of the "kpicategory" edge.
+func (m *KpiCategoryMutation) ResetKpicategory() {
+	m.kpicategory = nil
+	m.clearedkpicategory = false
+	m.removedkpicategory = nil
+}
+
+// Op returns the operation name.
+func (m *KpiCategoryMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (KpiCategory).
+func (m *KpiCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *KpiCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, kpicategory.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, kpicategory.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, kpicategory.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *KpiCategoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case kpicategory.FieldCreateTime:
+		return m.CreateTime()
+	case kpicategory.FieldUpdateTime:
+		return m.UpdateTime()
+	case kpicategory.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *KpiCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case kpicategory.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case kpicategory.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case kpicategory.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown KpiCategory field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *KpiCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case kpicategory.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case kpicategory.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case kpicategory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown KpiCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *KpiCategoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *KpiCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *KpiCategoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown KpiCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *KpiCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *KpiCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *KpiCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown KpiCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *KpiCategoryMutation) ResetField(name string) error {
+	switch name {
+	case kpicategory.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case kpicategory.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case kpicategory.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown KpiCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *KpiCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.kpicategory != nil {
+		edges = append(edges, kpicategory.EdgeKpicategory)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *KpiCategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case kpicategory.EdgeKpicategory:
+		ids := make([]ent.Value, 0, len(m.kpicategory))
+		for id := range m.kpicategory {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *KpiCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedkpicategory != nil {
+		edges = append(edges, kpicategory.EdgeKpicategory)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *KpiCategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case kpicategory.EdgeKpicategory:
+		ids := make([]ent.Value, 0, len(m.removedkpicategory))
+		for id := range m.removedkpicategory {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *KpiCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedkpicategory {
+		edges = append(edges, kpicategory.EdgeKpicategory)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *KpiCategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case kpicategory.EdgeKpicategory:
+		return m.clearedkpicategory
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *KpiCategoryMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown KpiCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *KpiCategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case kpicategory.EdgeKpicategory:
+		m.ResetKpicategory()
+		return nil
+	}
+	return fmt.Errorf("unknown KpiCategory edge %s", name)
 }
 
 // KqiMutation represents an operation that mutate the Kqis

@@ -59,6 +59,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
@@ -3462,7 +3463,7 @@ func (k *Kpi) Node(ctx context.Context) (node *Node, err error) {
 		ID:     k.ID,
 		Type:   "Kpi",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(k.CreateTime); err != nil {
@@ -3516,21 +3517,76 @@ func (k *Kpi) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "Formula",
-		Name: "formulakpi",
+		Type: "KpiCategory",
+		Name: "KpiCategory",
 	}
-	node.Edges[1].IDs, err = k.QueryFormulakpi().
-		Select(formula.FieldID).
+	node.Edges[1].IDs, err = k.QueryKpiCategory().
+		Select(kpicategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
+		Type: "Formula",
+		Name: "formulakpi",
+	}
+	node.Edges[2].IDs, err = k.QueryFormulakpi().
+		Select(formula.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
 		Type: "Threshold",
 		Name: "thresholdkpi",
 	}
-	node.Edges[2].IDs, err = k.QueryThresholdkpi().
+	node.Edges[3].IDs, err = k.QueryThresholdkpi().
 		Select(threshold.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (kc *KpiCategory) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     kc.ID,
+		Type:   "KpiCategory",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(kc.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kc.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(kc.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Kpi",
+		Name: "kpicategory",
+	}
+	node.Edges[0].IDs, err = kc.QueryKpicategory().
+		Select(kpi.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -8926,6 +8982,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Kpi.Query().
 			Where(kpi.ID(id)).
 			CollectFields(ctx, "Kpi").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case kpicategory.Table:
+		n, err := c.KpiCategory.Query().
+			Where(kpicategory.ID(id)).
+			CollectFields(ctx, "KpiCategory").
 			Only(ctx)
 		if err != nil {
 			return nil, err

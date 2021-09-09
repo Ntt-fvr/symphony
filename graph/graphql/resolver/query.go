@@ -305,7 +305,25 @@ func (r queryResolver) Kpis(
 			),
 		)
 }
-
+func (r queryResolver) KpiCategories(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.KpiCategoryOrder,
+	filterBy []*models.KpiCategoryFilterInput,
+) (*ent.KpiCategoryConnection, error) {
+	return r.ClientFrom(ctx).
+		KpiCategory.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithKpiCategoryOrder(orderBy),
+			ent.WithKpiCategoryFilter(
+				func(query *ent.KpiCategoryQuery) (*ent.KpiCategoryQuery, error) {
+					return resolverutil.KpiCategoryFilter(query, filterBy)
+				},
+			),
+		)
+}
 func (r queryResolver) Thresholds(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
@@ -598,6 +616,7 @@ func (r queryResolver) ResourceTypes(
 			),
 		)
 }
+
 func (r queryResolver) ResourceRelationshipTypes(
 	ctx context.Context,
 	after *ent.Cursor, first *int,

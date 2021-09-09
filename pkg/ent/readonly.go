@@ -64,6 +64,7 @@ func (c *Client) ReadOnly() *Client {
 		Formula:                          NewFormulaClient(cfg),
 		Hyperlink:                        NewHyperlinkClient(cfg),
 		Kpi:                              NewKpiClient(cfg),
+		KpiCategory:                      NewKpiCategoryClient(cfg),
 		Kqi:                              NewKqiClient(cfg),
 		KqiCategory:                      NewKqiCategoryClient(cfg),
 		KqiComparator:                    NewKqiComparatorClient(cfg),

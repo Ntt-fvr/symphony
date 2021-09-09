@@ -1263,6 +1263,7 @@ var (
 		{Name: "description", Type: field.TypeString},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "domain_kpidomain", Type: field.TypeInt, Nullable: true},
+		{Name: "kpi_category_kpicategory", Type: field.TypeInt, Nullable: true},
 	}
 	// KpisTable holds the schema information for the "kpis" table.
 	KpisTable = &schema.Table{
@@ -1277,7 +1278,28 @@ var (
 				RefColumns: []*schema.Column{DomainsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
+			{
+				Symbol:  "kpis_kpi_categories_kpicategory",
+				Columns: []*schema.Column{KpisColumns[7]},
+
+				RefColumns: []*schema.Column{KpiCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
 		},
+	}
+	// KpiCategoriesColumns holds the columns for the "kpi_categories" table.
+	KpiCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// KpiCategoriesTable holds the schema information for the "kpi_categories" table.
+	KpiCategoriesTable = &schema.Table{
+		Name:        "kpi_categories",
+		Columns:     KpiCategoriesColumns,
+		PrimaryKey:  []*schema.Column{KpiCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// KqisColumns holds the columns for the "kqis" table.
 	KqisColumns = []*schema.Column{
@@ -3398,6 +3420,7 @@ var (
 		FormulasTable,
 		HyperlinksTable,
 		KpisTable,
+		KpiCategoriesTable,
 		KqisTable,
 		KqiCategoriesTable,
 		KqiComparatorsTable,
@@ -3525,6 +3548,7 @@ func init() {
 	HyperlinksTable.ForeignKeys[1].RefTable = LocationsTable
 	HyperlinksTable.ForeignKeys[2].RefTable = WorkOrdersTable
 	KpisTable.ForeignKeys[0].RefTable = DomainsTable
+	KpisTable.ForeignKeys[1].RefTable = KpiCategoriesTable
 	KqisTable.ForeignKeys[0].RefTable = KqiCategoriesTable
 	KqisTable.ForeignKeys[1].RefTable = KqiPerspectivesTable
 	KqisTable.ForeignKeys[2].RefTable = KqiSourcesTable

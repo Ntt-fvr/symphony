@@ -259,6 +259,12 @@ func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
 }
 
 // Instantiate entity configuration.
+func (c *KpiCategoryClient) Instantiate(kc *KpiCategory) *KpiCategory {
+	kc.config = c.config
+	return kc
+}
+
+// Instantiate entity configuration.
 func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
 	k.config = c.config
 	return k

@@ -209,11 +209,16 @@ type AddImageInput struct {
 	Annotation  *string     `json:"annotation"`
 }
 
+type AddKpiCategoryInput struct {
+	Name string `json:"name"`
+}
+
 type AddKpiInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DomainFk    int    `json:"domainFk"`
-	Status      bool   `json:"status"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	DomainFk      int    `json:"domainFk"`
+	KpiCategoryFk int    `json:"kpiCategoryFK"`
+	Status        bool   `json:"status"`
 }
 
 type AddKqiCategoryInput struct {
@@ -772,12 +777,18 @@ type EditFormulaInput struct {
 	KpiFk       int    `json:"kpiFk"`
 }
 
+type EditKpiCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditKpiInput struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DomainFk    int    `json:"domainFk"`
-	Status      bool   `json:"status"`
+	ID            int    `json:"id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	DomainFk      int    `json:"domainFk"`
+	KpiCategoryFk int    `json:"kpiCategoryFK"`
+	Status        bool   `json:"status"`
 }
 
 type EditKqiCategoryInput struct {
@@ -1211,6 +1222,15 @@ type ImportFlowDraftInput struct {
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
 	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
+}
+
+type KpiCategoryFilterInput struct {
+	FilterType  KpiCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
 }
 
 type KpiFilterInput struct {
@@ -2349,6 +2369,45 @@ func (e *ImageEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ImageEntity) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type KpiCategoryFilterType string
+
+const (
+	KpiCategoryFilterTypeName KpiCategoryFilterType = "NAME"
+)
+
+var AllKpiCategoryFilterType = []KpiCategoryFilterType{
+	KpiCategoryFilterTypeName,
+}
+
+func (e KpiCategoryFilterType) IsValid() bool {
+	switch e {
+	case KpiCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KpiCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *KpiCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KpiCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KpiCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e KpiCategoryFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

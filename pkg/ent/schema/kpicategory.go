@@ -14,38 +14,28 @@ import (
 )
 
 // Counter defines the property type schema.
-type Kpi struct {
+type KpiCategory struct {
 	schema
 }
 
 // Counter returns property type counter.
-func (Kpi) Fields() []ent.Field {
+func (KpiCategory) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().
 			Annotations(entgql.OrderField("NAME")),
-		field.String("description").NotEmpty(),
-		field.Bool("status"),
 	}
 }
 
-// Edges returns kpi type edges.
-func (Kpi) Edges() []ent.Edge {
+// Edges returns property type edges.
+func (KpiCategory) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("domain", Domain.Type).
-			Ref("kpidomain").
-			Unique(),
-		edge.From("KpiCategory", KpiCategory.Type).
-			Ref("kpicategory").
-			Unique(),
-		edge.To("formulakpi", Formula.Type).
-			Annotations(entgql.MapsTo("formula")),
-		edge.To("thresholdkpi", Threshold.Type).
-			Annotations(entgql.MapsTo("threshold")).Unique(),
+		edge.To("kpicategory", Kpi.Type).
+			Annotations(entgql.MapsTo("kpi")),
 	}
 }
 
 // Policy returns entity policy.
-func (Kpi) Policy() ent.Policy {
+func (KpiCategory) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

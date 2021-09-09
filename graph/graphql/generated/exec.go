@@ -830,13 +830,30 @@ type ComplexityRoot struct {
 	}
 
 	Kpi struct {
-		Description func(childComplexity int) int
-		DomainFk    func(childComplexity int) int
-		FormulaFk   func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Status      func(childComplexity int) int
-		Threshold   func(childComplexity int) int
+		Description   func(childComplexity int) int
+		DomainFk      func(childComplexity int) int
+		FormulaFk     func(childComplexity int) int
+		ID            func(childComplexity int) int
+		KpiCategoryFk func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		Threshold     func(childComplexity int) int
+	}
+
+	KpiCategory struct {
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
+	}
+
+	KpiCategoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	KpiCategoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	KpiConnection struct {
@@ -1112,6 +1129,7 @@ type ComplexityRoot struct {
 		AddHyperlink                             func(childComplexity int, input models.AddHyperlinkInput) int
 		AddImage                                 func(childComplexity int, input models.AddImageInput) int
 		AddKpi                                   func(childComplexity int, input models.AddKpiInput) int
+		AddKpiCategory                           func(childComplexity int, input models.AddKpiCategoryInput) int
 		AddKqi                                   func(childComplexity int, input models.AddKqiInput) int
 		AddKqiCategory                           func(childComplexity int, input models.AddKqiCategoryInput) int
 		AddKqiComparator                         func(childComplexity int, input models.AddKqiComparatorInput) int
@@ -1187,6 +1205,7 @@ type ComplexityRoot struct {
 		EditFlowInstance                         func(childComplexity int, input *models.EditFlowInstanceInput) int
 		EditFormula                              func(childComplexity int, input models.EditFormulaInput) int
 		EditKpi                                  func(childComplexity int, input models.EditKpiInput) int
+		EditKpiCategory                          func(childComplexity int, input models.EditKpiCategoryInput) int
 		EditKqi                                  func(childComplexity int, input models.EditKqiInput) int
 		EditKqiCategory                          func(childComplexity int, input models.EditKqiCategoryInput) int
 		EditKqiComparator                        func(childComplexity int, input models.EditKqiComparatorInput) int
@@ -1248,6 +1267,7 @@ type ComplexityRoot struct {
 		RemoveEventSeverity                      func(childComplexity int, id int) int
 		RemoveFormula                            func(childComplexity int, id int) int
 		RemoveKpi                                func(childComplexity int, id int) int
+		RemoveKpiCategory                        func(childComplexity int, id int) int
 		RemoveKqi                                func(childComplexity int, id int) int
 		RemoveKqiCategory                        func(childComplexity int, id int) int
 		RemoveKqiComparator                      func(childComplexity int, id int) int
@@ -1478,6 +1498,7 @@ type ComplexityRoot struct {
 		FlowInstances                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
 		Flows                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
 		Formulas                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) int
+		KpiCategories                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiCategoryOrder, filterBy []*models.KpiCategoryFilterInput) int
 		Kpis                               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
 		KqiCategories                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiCategoryOrder, filterBy []*models.KqiCategoryFilterInput) int
 		KqiPerspectives                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiPerspectiveOrder, filterBy []*models.KqiPerspectiveFilterInput) int
@@ -2354,6 +2375,7 @@ type KpiResolver interface {
 
 	DomainFk(ctx context.Context, obj *ent.Kpi) (*ent.Domain, error)
 	FormulaFk(ctx context.Context, obj *ent.Kpi) ([]*ent.Formula, error)
+	KpiCategoryFk(ctx context.Context, obj *ent.Kpi) (*ent.KpiCategory, error)
 }
 type KqiResolver interface {
 	KqiCategory(ctx context.Context, obj *ent.Kqi) (*ent.KqiCategory, error)
@@ -2516,6 +2538,9 @@ type MutationResolver interface {
 	AddKpi(ctx context.Context, input models.AddKpiInput) (*ent.Kpi, error)
 	EditKpi(ctx context.Context, input models.EditKpiInput) (*ent.Kpi, error)
 	RemoveKpi(ctx context.Context, id int) (int, error)
+	AddKpiCategory(ctx context.Context, input models.AddKpiCategoryInput) (*ent.KpiCategory, error)
+	EditKpiCategory(ctx context.Context, input models.EditKpiCategoryInput) (*ent.KpiCategory, error)
+	RemoveKpiCategory(ctx context.Context, id int) (int, error)
 	AddDomain(ctx context.Context, input models.AddDomainInput) (*ent.Domain, error)
 	EditDomain(ctx context.Context, input models.EditDomainInput) (*ent.Domain, error)
 	RemoveDomain(ctx context.Context, id int) (int, error)
@@ -2660,6 +2685,7 @@ type QueryResolver interface {
 	WorkerTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkerTypeConnection, error)
 	Counters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) (*ent.CounterConnection, error)
 	Kpis(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) (*ent.KpiConnection, error)
+	KpiCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiCategoryOrder, filterBy []*models.KpiCategoryFilterInput) (*ent.KpiCategoryConnection, error)
 	Thresholds(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ThresholdOrder, filterBy []*models.ThresholdFilterInput) (*ent.ThresholdConnection, error)
 	AlarmFilters(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) (*ent.AlarmFilterConnection, error)
 	Domains(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) (*ent.DomainConnection, error)
@@ -5665,6 +5691,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Kpi.ID(childComplexity), true
 
+	case "Kpi.kpiCategoryFK":
+		if e.complexity.Kpi.KpiCategoryFk == nil {
+			break
+		}
+
+		return e.complexity.Kpi.KpiCategoryFk(childComplexity), true
+
 	case "Kpi.name":
 		if e.complexity.Kpi.Name == nil {
 			break
@@ -5685,6 +5718,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Kpi.Threshold(childComplexity), true
+
+	case "KpiCategory.id":
+		if e.complexity.KpiCategory.ID == nil {
+			break
+		}
+
+		return e.complexity.KpiCategory.ID(childComplexity), true
+
+	case "KpiCategory.name":
+		if e.complexity.KpiCategory.Name == nil {
+			break
+		}
+
+		return e.complexity.KpiCategory.Name(childComplexity), true
+
+	case "KpiCategoryConnection.edges":
+		if e.complexity.KpiCategoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.KpiCategoryConnection.Edges(childComplexity), true
+
+	case "KpiCategoryConnection.pageInfo":
+		if e.complexity.KpiCategoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.KpiCategoryConnection.PageInfo(childComplexity), true
+
+	case "KpiCategoryConnection.totalCount":
+		if e.complexity.KpiCategoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.KpiCategoryConnection.TotalCount(childComplexity), true
+
+	case "KpiCategoryEdge.cursor":
+		if e.complexity.KpiCategoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.KpiCategoryEdge.Cursor(childComplexity), true
+
+	case "KpiCategoryEdge.node":
+		if e.complexity.KpiCategoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.KpiCategoryEdge.Node(childComplexity), true
 
 	case "KpiConnection.edges":
 		if e.complexity.KpiConnection.Edges == nil {
@@ -7010,6 +7092,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddKpi(childComplexity, args["input"].(models.AddKpiInput)), true
 
+	case "Mutation.addKpiCategory":
+		if e.complexity.Mutation.AddKpiCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addKpiCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddKpiCategory(childComplexity, args["input"].(models.AddKpiCategoryInput)), true
+
 	case "Mutation.addKqi":
 		if e.complexity.Mutation.AddKqi == nil {
 			break
@@ -7910,6 +8004,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditKpi(childComplexity, args["input"].(models.EditKpiInput)), true
 
+	case "Mutation.editKpiCategory":
+		if e.complexity.Mutation.EditKpiCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_editKpiCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditKpiCategory(childComplexity, args["input"].(models.EditKpiCategoryInput)), true
+
 	case "Mutation.editKqi":
 		if e.complexity.Mutation.EditKqi == nil {
 			break
@@ -8641,6 +8747,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveKpi(childComplexity, args["id"].(int)), true
+
+	case "Mutation.removeKpiCategory":
+		if e.complexity.Mutation.RemoveKpiCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeKpiCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveKpiCategory(childComplexity, args["id"].(int)), true
 
 	case "Mutation.removeKqi":
 		if e.complexity.Mutation.RemoveKqi == nil {
@@ -10089,6 +10207,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Formulas(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.FormulaOrder), args["filterBy"].([]*models.FormulaFilterInput)), true
+
+	case "Query.kpiCategories":
+		if e.complexity.Query.KpiCategories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_kpiCategories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.KpiCategories(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.KpiCategoryOrder), args["filterBy"].([]*models.KpiCategoryFilterInput)), true
 
 	case "Query.kpis":
 		if e.complexity.Query.Kpis == nil {
@@ -16516,6 +16646,73 @@ type KpiEdge {
   """
   cursor: Cursor!
 }
+"""
+Properties by which kpiCategoriess connections can be ordered.
+"""
+enum KpiCategoryOrderField {
+  """
+  Order kpiCategoriess by name.
+  """
+  NAME
+
+  """
+  Order kpiCategoriess by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order kpiCategoriess by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for kpiCategoriess connections.
+"""
+input KpiCategoryOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order kpiCategoriess by.
+  """
+  field: KpiCategoryOrderField
+}
+
+"""
+A connection to a list of kpiCategoriess.
+"""
+type KpiCategoryConnection {
+  """
+  Total kpiCategoriess of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of kpiCategoriess edges.
+  """
+  edges: [KpiCategoryEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A kpiCategoriess edge in a connection.
+"""
+type KpiCategoryEdge {
+  """
+  The kpiCategoriess at the end of the edge.
+  """
+  node: KpiCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
 
 """
 Properties by which Threshold connections can be ordered.
@@ -17188,7 +17385,7 @@ type KqiEdge {
   """
   cursor: Cursor!
 }
-################################ conection Organization ###############################################
+
 """
 Properties by which Organization connections can be ordered.
 """
@@ -17256,7 +17453,7 @@ type OrganizationEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendations ###############################################
+
 """
 Properties by which Recommendations connections can be ordered.
 """
@@ -17324,7 +17521,7 @@ type RecommendationsEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendationsSources ###############################################
+
 """
 Properties by which RecommendationsSources connections can be ordered.
 """
@@ -17392,7 +17589,7 @@ type RecommendationsSourcesEdge {
   cursor: Cursor!
 }
 
-################################ conection recommendationsCategory ###############################################
+
 """
 Properties by which RecommendationsCategory connections can be ordered.
 """
@@ -17928,7 +18125,7 @@ type TechEdge {
 }
 
 
-################################ conection ResourceTypeClass ###############################################
+
 """
 Properties by which ResourceTypeClass connections can be ordered.
 """
@@ -18196,7 +18393,7 @@ type ResourceRelationshipTypeEdge {
   """
   cursor: Cursor!
 }
-################################ conection ResourceRelationshipMultiplicity ###############################################
+
 """
 Properties by which ResourceRelationshipMultiplicity connections can be ordered.
 """
@@ -18329,6 +18526,8 @@ type ResourceRelationshipEdge {
   """
   cursor: Cursor!
 }
+
+
 enum ProjectPriority
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
@@ -20230,6 +20429,43 @@ type Query {
     
     filterBy: [KpiFilterInput!]
   ): KpiConnection!
+  """
+  A list of kpiCategories.
+  """
+  kpiCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned kpiCategoriess.
+    """
+    orderBy: KpiCategoryOrder
+
+    
+    #Filtering options for the returned kpiCategoriess.
+    
+    filterBy: [KpiCategoryFilterInput!]
+  ): KpiCategoryConnection!
+
+
+
 
   """
   A list of thresholds.
@@ -21140,6 +21376,7 @@ type Query {
     
     filterBy: [ResourceRelationshipMultiplicityFilterInput!]
   ): ResourceRelationshipMultiplicityConnection!
+
   """
   A list of resourceRelationships.
   """
@@ -21422,6 +21659,9 @@ type Mutation {
   addKpi(input: AddKpiInput!):Kpi!
   editKpi(input: EditKpiInput!): Kpi!
   removeKpi(id: ID!): ID!
+  addKpiCategory(input: AddKpiCategoryInput!):KpiCategory!
+  editKpiCategory(input: EditKpiCategoryInput!): KpiCategory!
+  removeKpiCategory(id: ID!): ID!
   addDomain(input: AddDomainInput!):Domain!
   editDomain(input: EditDomainInput!): Domain!
   removeDomain(id: ID!): ID!
@@ -21666,6 +21906,32 @@ input DomainFilterInput {
   maxDepth: Int = 5
   stringSet: [String!]
 }
+type KpiCategory implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddKpiCategoryInput {
+  name: String!
+}
+
+input EditKpiCategoryInput {
+  id: ID!
+  name: String!
+}
+
+enum KpiCategoryFilterType{
+  NAME
+}
+
+input KpiCategoryFilterInput {
+  filterType: KpiCategoryFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
 
 type Kpi implements Node {
   id: ID!
@@ -21675,12 +21941,14 @@ type Kpi implements Node {
   status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
+  kpiCategoryFK: KpiCategory!
 }
 
 input AddKpiInput {
   name: String!
   description: String!
   domainFk: ID!
+  kpiCategoryFK: ID!
   status: Boolean!
 }
 
@@ -21689,6 +21957,7 @@ input EditKpiInput {
   name: String!
   description: String!
   domainFk: ID!
+  kpiCategoryFK: ID!
   status: Boolean!
 }
 
@@ -22296,7 +22565,7 @@ input EditKqiComparatorInput {
   comparatorType: String!
 }
 
-##################### RECOMMENDATIONS #######################
+
 
 type Recommendations implements Node {
   id: ID!
@@ -22356,7 +22625,7 @@ input EditRecommendationsInput {
   userApprobed: ID
   vendor: ID!
 }
-######################## filter ###################
+
 enum RecommendationsFilterType {
   EXTERNALID
   RESOURCE
@@ -23503,6 +23772,21 @@ func (ec *executionContext) field_Mutation_addImage_args(ctx context.Context, ra
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddImageInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddImageInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addKpiCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddKpiCategoryInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddKpiCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKpiCategoryInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -24726,6 +25010,21 @@ func (ec *executionContext) field_Mutation_editFormula_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_editKpiCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.EditKpiCategoryInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEditKpiCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditKpiCategoryInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_editKpi_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -25690,6 +25989,21 @@ func (ec *executionContext) field_Mutation_removeEventSeverity_args(ctx context.
 }
 
 func (ec *executionContext) field_Mutation_removeFormula_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeKpiCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -28351,6 +28665,104 @@ func (ec *executionContext) field_Query_formulas_args(ctx context.Context, rawAr
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
 		arg5, err = ec.unmarshalOFormulaFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFormulaFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_kpiCategories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, graphql.ErrorOnPath(ctx, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp))
+		}
+	}
+	args["last"] = arg3
+	var arg4 *ent.KpiCategoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOKpiCategoryOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 []*models.KpiCategoryFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg5, err = ec.unmarshalOKpiCategoryFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -45724,6 +46136,283 @@ func (ec *executionContext) _Kpi_formulaFk(ctx context.Context, field graphql.Co
 	return ec.marshalOFormula2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFormula(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Kpi_kpiCategoryFK(ctx context.Context, field graphql.CollectedField, obj *ent.Kpi) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Kpi",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Kpi().KpiCategoryFk(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.KpiCategory)
+	fc.Result = res
+	return ec.marshalNKpiCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategory_name(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategoryConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategoryConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategoryConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategoryConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.KpiCategoryEdge)
+	fc.Result = res
+	return ec.marshalNKpiCategoryEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategoryConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategoryConnection",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategoryEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategoryEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.KpiCategory)
+	fc.Result = res
+	return ec.marshalOKpiCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KpiCategoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.KpiCategoryEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KpiCategoryEdge",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _KpiConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.KpiConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -55386,6 +56075,132 @@ func (ec *executionContext) _Mutation_removeKpi(ctx context.Context, field graph
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addKpiCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addKpiCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddKpiCategory(rctx, args["input"].(models.AddKpiCategoryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.KpiCategory)
+	fc.Result = res
+	return ec.marshalNKpiCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_editKpiCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_editKpiCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditKpiCategory(rctx, args["input"].(models.EditKpiCategoryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.KpiCategory)
+	fc.Result = res
+	return ec.marshalNKpiCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeKpiCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeKpiCategory_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveKpiCategory(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_addDomain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -64168,6 +64983,48 @@ func (ec *executionContext) _Query_kpis(ctx context.Context, field graphql.Colle
 	res := resTmp.(*ent.KpiConnection)
 	fc.Result = res
 	return ec.marshalNKpiConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_kpiCategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_kpiCategories_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().KpiCategories(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.KpiCategoryOrder), args["filterBy"].([]*models.KpiCategoryFilterInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.KpiCategoryConnection)
+	fc.Result = res
+	return ec.marshalNKpiCategoryConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_thresholds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -82976,6 +83833,26 @@ func (ec *executionContext) unmarshalInputAddImageInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddKpiCategoryInput(ctx context.Context, obj interface{}) (models.AddKpiCategoryInput, error) {
+	var it models.AddKpiCategoryInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddKpiInput(ctx context.Context, obj interface{}) (models.AddKpiInput, error) {
 	var it models.AddKpiInput
 	var asMap = obj.(map[string]interface{})
@@ -83003,6 +83880,14 @@ func (ec *executionContext) unmarshalInputAddKpiInput(ctx context.Context, obj i
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("domainFk"))
 			it.DomainFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kpiCategoryFK":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpiCategoryFK"))
+			it.KpiCategoryFk, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -87004,6 +87889,34 @@ func (ec *executionContext) unmarshalInputEditFormulaInput(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEditKpiCategoryInput(ctx context.Context, obj interface{}) (models.EditKpiCategoryInput, error) {
+	var it models.EditKpiCategoryInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditKpiInput(ctx context.Context, obj interface{}) (models.EditKpiInput, error) {
 	var it models.EditKpiInput
 	var asMap = obj.(map[string]interface{})
@@ -87039,6 +87952,14 @@ func (ec *executionContext) unmarshalInputEditKpiInput(ctx context.Context, obj 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("domainFk"))
 			it.DomainFk, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kpiCategoryFK":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kpiCategoryFK"))
+			it.KpiCategoryFk, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -90103,6 +91024,98 @@ func (ec *executionContext) unmarshalInputInventoryPolicyInput(ctx context.Conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceType"))
 			it.ServiceType, err = ec.unmarshalOBasicCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicCUDInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKpiCategoryFilterInput(ctx context.Context, obj interface{}) (models.KpiCategoryFilterInput, error) {
+	var it models.KpiCategoryFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "filterType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterType"))
+			it.FilterType, err = ec.unmarshalNKpiCategoryFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("operator"))
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringValue":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringValue"))
+			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idSet"))
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("maxDepth"))
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringSet"))
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKpiCategoryOrder(ctx context.Context, obj interface{}) (ent.KpiCategoryOrder, error) {
+	var it ent.KpiCategoryOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			it.Field, err = ec.unmarshalOKpiCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -95636,6 +96649,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Domain(ctx, sel, obj)
+	case *ent.KpiCategory:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._KpiCategory(ctx, sel, obj)
 	case *ent.Kpi:
 		if obj == nil {
 			return graphql.Null
@@ -100537,6 +101555,118 @@ func (ec *executionContext) _Kpi(ctx context.Context, sel ast.SelectionSet, obj 
 				res = ec._Kpi_formulaFk(ctx, field, obj)
 				return res
 			})
+		case "kpiCategoryFK":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Kpi_kpiCategoryFK(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var kpiCategoryImplementors = []string{"KpiCategory", "Node"}
+
+func (ec *executionContext) _KpiCategory(ctx context.Context, sel ast.SelectionSet, obj *ent.KpiCategory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kpiCategoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KpiCategory")
+		case "id":
+			out.Values[i] = ec._KpiCategory_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._KpiCategory_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var kpiCategoryConnectionImplementors = []string{"KpiCategoryConnection"}
+
+func (ec *executionContext) _KpiCategoryConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.KpiCategoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kpiCategoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KpiCategoryConnection")
+		case "totalCount":
+			out.Values[i] = ec._KpiCategoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._KpiCategoryConnection_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._KpiCategoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var kpiCategoryEdgeImplementors = []string{"KpiCategoryEdge"}
+
+func (ec *executionContext) _KpiCategoryEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.KpiCategoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kpiCategoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KpiCategoryEdge")
+		case "node":
+			out.Values[i] = ec._KpiCategoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._KpiCategoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -102863,6 +103993,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addKpiCategory":
+			out.Values[i] = ec._Mutation_addKpiCategory(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "editKpiCategory":
+			out.Values[i] = ec._Mutation_editKpiCategory(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeKpiCategory":
+			out.Values[i] = ec._Mutation_removeKpiCategory(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addDomain":
 			out.Values[i] = ec._Mutation_addDomain(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -104850,6 +105995,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_kpis(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "kpiCategories":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_kpiCategories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -110552,6 +111711,11 @@ func (ec *executionContext) unmarshalNAddImageInput2ᚖgithubᚗcomᚋfacebookin
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddKpiCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKpiCategoryInput(ctx context.Context, v interface{}) (models.AddKpiCategoryInput, error) {
+	res, err := ec.unmarshalInputAddKpiCategoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddKpiInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddKpiInput(ctx context.Context, v interface{}) (models.AddKpiInput, error) {
 	res, err := ec.unmarshalInputAddKpiInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -112295,6 +113459,11 @@ func (ec *executionContext) unmarshalNEditEventSeverityInput2githubᚗcomᚋface
 
 func (ec *executionContext) unmarshalNEditFormulaInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditFormulaInput(ctx context.Context, v interface{}) (models.EditFormulaInput, error) {
 	res, err := ec.unmarshalInputEditFormulaInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNEditKpiCategoryInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEditKpiCategoryInput(ctx context.Context, v interface{}) (models.EditKpiCategoryInput, error) {
+	res, err := ec.unmarshalInputEditKpiCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -114103,6 +115272,96 @@ func (ec *executionContext) marshalNKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsy
 		return graphql.Null
 	}
 	return ec._Kpi(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNKpiCategory2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx context.Context, sel ast.SelectionSet, v ent.KpiCategory) graphql.Marshaler {
+	return ec._KpiCategory(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNKpiCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx context.Context, sel ast.SelectionSet, v *ent.KpiCategory) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._KpiCategory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNKpiCategoryConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryConnection(ctx context.Context, sel ast.SelectionSet, v ent.KpiCategoryConnection) graphql.Marshaler {
+	return ec._KpiCategoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNKpiCategoryConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryConnection(ctx context.Context, sel ast.SelectionSet, v *ent.KpiCategoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._KpiCategoryConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNKpiCategoryEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.KpiCategoryEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNKpiCategoryEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNKpiCategoryEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryEdge(ctx context.Context, sel ast.SelectionSet, v *ent.KpiCategoryEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._KpiCategoryEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNKpiCategoryFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterInput(ctx context.Context, v interface{}) (*models.KpiCategoryFilterInput, error) {
+	res, err := ec.unmarshalInputKpiCategoryFilterInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNKpiCategoryFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterType(ctx context.Context, v interface{}) (models.KpiCategoryFilterType, error) {
+	var res models.KpiCategoryFilterType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNKpiCategoryFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterType(ctx context.Context, sel ast.SelectionSet, v models.KpiCategoryFilterType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNKpiConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiConnection(ctx context.Context, sel ast.SelectionSet, v ent.KpiConnection) graphql.Marshaler {
@@ -121534,6 +122793,61 @@ func (ec *executionContext) marshalOKpi2ᚖgithubᚗcomᚋfacebookincubatorᚋsy
 		return graphql.Null
 	}
 	return ec._Kpi(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOKpiCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategory(ctx context.Context, sel ast.SelectionSet, v *ent.KpiCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._KpiCategory(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOKpiCategoryFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.KpiCategoryFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.KpiCategoryFilterInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNKpiCategoryFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiCategoryFilterInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOKpiCategoryOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryOrder(ctx context.Context, v interface{}) (*ent.KpiCategoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputKpiCategoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOKpiCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryOrderField(ctx context.Context, v interface{}) (*ent.KpiCategoryOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(ent.KpiCategoryOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOKpiCategoryOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐKpiCategoryOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.KpiCategoryOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOKpiFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐKpiFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.KpiFilterInput, error) {
