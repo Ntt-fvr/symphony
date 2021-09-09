@@ -7117,10 +7117,10 @@ type Query {
     filterBy: [TechFilterInput!]
   ): TechConnection!
   """
-  A list of resourceTypeClasss.
+  A list of resourceTypeClasses.
   """
   
-  resourceTypeClasss(
+  resourceTypeClasses(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7258,9 +7258,9 @@ type Query {
     filterBy: [ResourceRelationshipTypeFilterInput!]
   ): ResourceRelationshipTypeConnection!
   """
-  A list of resourceRelationshipMultiplicitys.
+  A list of resourceRelationshipMultiplicities.
   """
-  resourceRelationshipMultiplicitys(
+  resourceRelationshipMultiplicities(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7282,12 +7282,12 @@ type Query {
     last: Int @numberValue(min: 0)
 
     """
-    Ordering options for the returned resourceRelationshipMultiplicitys.
+    Ordering options for the returned resourceRelationshipMultiplicities.
     """
     orderBy: ResourceRelationshipMultiplicityOrder
 
     
-    #Filtering options for the returned resourceRelationshipMultiplicitys.
+    #Filtering options for the returned resourceRelationshipMultiplicities.
     
     filterBy: [ResourceRelationshipMultiplicityFilterInput!]
   ): ResourceRelationshipMultiplicityConnection!
@@ -8380,7 +8380,7 @@ type KqiTarget implements Node {
   name: String! 
   impact: String!
   period: Float!
-  alowedValidation: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -8392,7 +8392,7 @@ input AddKqiTargetInput {
   name: String! 
   impact: String!
   period: Float!
-  alowedValidation: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -8404,7 +8404,7 @@ input EditKqiTargetInput {
   name: String! 
   impact: String!
   period: Float!
-  alowedValidation: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -8723,9 +8723,9 @@ type ResourceRelationship implements Node {
   name: String!
   resourceRelationshipMultiplicityFk: ResourceRelationshipMultiplicity!
   resourceRelationshipTypeFk: ResourceRelationshipType!
-  locationTypeFk: LocationType!
+  locationTypeFk: LocationType
   resourceTypeFkA: ResourceType!
-  resourceTypeFkB: ResourceType!
+  resourceTypeFkB: ResourceType
 }
 input AddResourceRelationshipInput {
   name: String!  

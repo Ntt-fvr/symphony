@@ -1411,7 +1411,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "period", Type: field.TypeFloat64},
-		{Name: "alowed_validation", Type: field.TypeFloat64},
+		{Name: "allowed_variation", Type: field.TypeFloat64},
 		{Name: "init_time", Type: field.TypeTime},
 		{Name: "end_time", Type: field.TypeTime},
 		{Name: "impact", Type: field.TypeString},

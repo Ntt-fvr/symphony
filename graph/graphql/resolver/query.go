@@ -541,7 +541,7 @@ func (r queryResolver) Techs(
 		)
 }
 
-func (r queryResolver) ResourceTypeClasss(
+func (r queryResolver) ResourceTypeClasses(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
@@ -617,7 +617,7 @@ func (r queryResolver) ResourceRelationshipTypes(
 			),
 		)
 }
-func (r queryResolver) ResourceRelationshipMultiplicitys(
+func (r queryResolver) ResourceRelationshipMultiplicities(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,

@@ -125,10 +125,10 @@ func Period(v float64) predicate.KqiTarget {
 	})
 }
 
-// AlowedValidation applies equality check predicate on the "alowedValidation" field. It's identical to AlowedValidationEQ.
-func AlowedValidation(v float64) predicate.KqiTarget {
+// AllowedVariation applies equality check predicate on the "allowedVariation" field. It's identical to AllowedVariationEQ.
+func AllowedVariation(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlowedValidation), v))
+		s.Where(sql.EQ(s.C(FieldAllowedVariation), v))
 	})
 }
 
@@ -499,22 +499,22 @@ func PeriodLTE(v float64) predicate.KqiTarget {
 	})
 }
 
-// AlowedValidationEQ applies the EQ predicate on the "alowedValidation" field.
-func AlowedValidationEQ(v float64) predicate.KqiTarget {
+// AllowedVariationEQ applies the EQ predicate on the "allowedVariation" field.
+func AllowedVariationEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlowedValidation), v))
+		s.Where(sql.EQ(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationNEQ applies the NEQ predicate on the "alowedValidation" field.
-func AlowedValidationNEQ(v float64) predicate.KqiTarget {
+// AllowedVariationNEQ applies the NEQ predicate on the "allowedVariation" field.
+func AllowedVariationNEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlowedValidation), v))
+		s.Where(sql.NEQ(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationIn applies the In predicate on the "alowedValidation" field.
-func AlowedValidationIn(vs ...float64) predicate.KqiTarget {
+// AllowedVariationIn applies the In predicate on the "allowedVariation" field.
+func AllowedVariationIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -526,12 +526,12 @@ func AlowedValidationIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldAlowedValidation), v...))
+		s.Where(sql.In(s.C(FieldAllowedVariation), v...))
 	})
 }
 
-// AlowedValidationNotIn applies the NotIn predicate on the "alowedValidation" field.
-func AlowedValidationNotIn(vs ...float64) predicate.KqiTarget {
+// AllowedVariationNotIn applies the NotIn predicate on the "allowedVariation" field.
+func AllowedVariationNotIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -543,35 +543,35 @@ func AlowedValidationNotIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldAlowedValidation), v...))
+		s.Where(sql.NotIn(s.C(FieldAllowedVariation), v...))
 	})
 }
 
-// AlowedValidationGT applies the GT predicate on the "alowedValidation" field.
-func AlowedValidationGT(v float64) predicate.KqiTarget {
+// AllowedVariationGT applies the GT predicate on the "allowedVariation" field.
+func AllowedVariationGT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAlowedValidation), v))
+		s.Where(sql.GT(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationGTE applies the GTE predicate on the "alowedValidation" field.
-func AlowedValidationGTE(v float64) predicate.KqiTarget {
+// AllowedVariationGTE applies the GTE predicate on the "allowedVariation" field.
+func AllowedVariationGTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAlowedValidation), v))
+		s.Where(sql.GTE(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationLT applies the LT predicate on the "alowedValidation" field.
-func AlowedValidationLT(v float64) predicate.KqiTarget {
+// AllowedVariationLT applies the LT predicate on the "allowedVariation" field.
+func AllowedVariationLT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAlowedValidation), v))
+		s.Where(sql.LT(s.C(FieldAllowedVariation), v))
 	})
 }
 
-// AlowedValidationLTE applies the LTE predicate on the "alowedValidation" field.
-func AlowedValidationLTE(v float64) predicate.KqiTarget {
+// AllowedVariationLTE applies the LTE predicate on the "allowedVariation" field.
+func AllowedVariationLTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAlowedValidation), v))
+		s.Where(sql.LTE(s.C(FieldAllowedVariation), v))
 	})
 }
 

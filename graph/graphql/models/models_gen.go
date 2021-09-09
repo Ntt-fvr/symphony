@@ -251,7 +251,7 @@ type AddKqiTargetInput struct {
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Period           float64   `json:"period"`
-	AlowedValidation float64   `json:"alowedValidation"`
+	AllowedVariation float64   `json:"allowedVariation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
 	Status           bool      `json:"status"`
@@ -821,7 +821,7 @@ type EditKqiTargetInput struct {
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Period           float64   `json:"period"`
-	AlowedValidation float64   `json:"alowedValidation"`
+	AllowedVariation float64   `json:"allowedVariation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
 	Status           bool      `json:"status"`

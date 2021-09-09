@@ -42,7 +42,7 @@ func (r mutationResolver) AddKqiTarget(ctx context.Context, input models.AddKqiT
 		KqiTarget.Create().
 		SetName(input.Name).
 		SetPeriod(input.Period).
-		SetAlowedValidation(input.AlowedValidation).
+		SetAllowedVariation(input.AllowedVariation).
 		SetInitTime(input.InitTime).
 		SetEndTime(input.EndTime).
 		SetImpact(input.Impact).
@@ -86,7 +86,7 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var kqiID int
-	var init, end, period, allowed, status, impact, name = et.InitTime, et.EndTime, et.Period, et.AlowedValidation, et.Status, et.Impact, et.Name
+	var init, end, period, allowed, status, impact, name = et.InitTime, et.EndTime, et.Period, et.AllowedVariation, et.Status, et.Impact, et.Name
 	var kqi, err1 = et.KqiTargetFk(ctx)
 	if err1 != nil {
 		return nil, errors.Wrap(err1, "has occurred error on process: %w")
@@ -108,8 +108,8 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		change = true
 	}
 
-	if allowed != input.AlowedValidation {
-		allowed = input.AlowedValidation
+	if allowed != input.AllowedVariation {
+		allowed = input.AllowedVariation
 		change = true
 	}
 
@@ -137,7 +137,7 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 			SetInitTime(init).
 			SetEndTime(end).
 			SetPeriod(period).
-			SetAlowedValidation(allowed).
+			SetAllowedVariation(allowed).
 			SetStatus(status).
 			SetImpact(impact).
 			SetKqiTargetFkID(kqiID).

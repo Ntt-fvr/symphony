@@ -35729,8 +35729,8 @@ type KqiTargetMutation struct {
 	name                         *string
 	period                       *float64
 	addperiod                    *float64
-	alowedValidation             *float64
-	addalowedValidation          *float64
+	allowedVariation             *float64
+	addallowedVariation          *float64
 	initTime                     *time.Time
 	endTime                      *time.Time
 	impact                       *string
@@ -35993,61 +35993,61 @@ func (m *KqiTargetMutation) ResetPeriod() {
 	m.addperiod = nil
 }
 
-// SetAlowedValidation sets the alowedValidation field.
-func (m *KqiTargetMutation) SetAlowedValidation(f float64) {
-	m.alowedValidation = &f
-	m.addalowedValidation = nil
+// SetAllowedVariation sets the allowedVariation field.
+func (m *KqiTargetMutation) SetAllowedVariation(f float64) {
+	m.allowedVariation = &f
+	m.addallowedVariation = nil
 }
 
-// AlowedValidation returns the alowedValidation value in the mutation.
-func (m *KqiTargetMutation) AlowedValidation() (r float64, exists bool) {
-	v := m.alowedValidation
+// AllowedVariation returns the allowedVariation value in the mutation.
+func (m *KqiTargetMutation) AllowedVariation() (r float64, exists bool) {
+	v := m.allowedVariation
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAlowedValidation returns the old alowedValidation value of the KqiTarget.
+// OldAllowedVariation returns the old allowedVariation value of the KqiTarget.
 // If the KqiTarget object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *KqiTargetMutation) OldAlowedValidation(ctx context.Context) (v float64, err error) {
+func (m *KqiTargetMutation) OldAllowedVariation(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldAlowedValidation is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldAllowedVariation is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldAlowedValidation requires an ID field in the mutation")
+		return v, fmt.Errorf("OldAllowedVariation requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlowedValidation: %w", err)
+		return v, fmt.Errorf("querying old value for OldAllowedVariation: %w", err)
 	}
-	return oldValue.AlowedValidation, nil
+	return oldValue.AllowedVariation, nil
 }
 
-// AddAlowedValidation adds f to alowedValidation.
-func (m *KqiTargetMutation) AddAlowedValidation(f float64) {
-	if m.addalowedValidation != nil {
-		*m.addalowedValidation += f
+// AddAllowedVariation adds f to allowedVariation.
+func (m *KqiTargetMutation) AddAllowedVariation(f float64) {
+	if m.addallowedVariation != nil {
+		*m.addallowedVariation += f
 	} else {
-		m.addalowedValidation = &f
+		m.addallowedVariation = &f
 	}
 }
 
-// AddedAlowedValidation returns the value that was added to the alowedValidation field in this mutation.
-func (m *KqiTargetMutation) AddedAlowedValidation() (r float64, exists bool) {
-	v := m.addalowedValidation
+// AddedAllowedVariation returns the value that was added to the allowedVariation field in this mutation.
+func (m *KqiTargetMutation) AddedAllowedVariation() (r float64, exists bool) {
+	v := m.addallowedVariation
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetAlowedValidation reset all changes of the "alowedValidation" field.
-func (m *KqiTargetMutation) ResetAlowedValidation() {
-	m.alowedValidation = nil
-	m.addalowedValidation = nil
+// ResetAllowedVariation reset all changes of the "allowedVariation" field.
+func (m *KqiTargetMutation) ResetAllowedVariation() {
+	m.allowedVariation = nil
+	m.addallowedVariation = nil
 }
 
 // SetInitTime sets the initTime field.
@@ -36317,8 +36317,8 @@ func (m *KqiTargetMutation) Fields() []string {
 	if m.period != nil {
 		fields = append(fields, kqitarget.FieldPeriod)
 	}
-	if m.alowedValidation != nil {
-		fields = append(fields, kqitarget.FieldAlowedValidation)
+	if m.allowedVariation != nil {
+		fields = append(fields, kqitarget.FieldAllowedVariation)
 	}
 	if m.initTime != nil {
 		fields = append(fields, kqitarget.FieldInitTime)
@@ -36348,8 +36348,8 @@ func (m *KqiTargetMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case kqitarget.FieldPeriod:
 		return m.Period()
-	case kqitarget.FieldAlowedValidation:
-		return m.AlowedValidation()
+	case kqitarget.FieldAllowedVariation:
+		return m.AllowedVariation()
 	case kqitarget.FieldInitTime:
 		return m.InitTime()
 	case kqitarget.FieldEndTime:
@@ -36375,8 +36375,8 @@ func (m *KqiTargetMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldName(ctx)
 	case kqitarget.FieldPeriod:
 		return m.OldPeriod(ctx)
-	case kqitarget.FieldAlowedValidation:
-		return m.OldAlowedValidation(ctx)
+	case kqitarget.FieldAllowedVariation:
+		return m.OldAllowedVariation(ctx)
 	case kqitarget.FieldInitTime:
 		return m.OldInitTime(ctx)
 	case kqitarget.FieldEndTime:
@@ -36422,12 +36422,12 @@ func (m *KqiTargetMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPeriod(v)
 		return nil
-	case kqitarget.FieldAlowedValidation:
+	case kqitarget.FieldAllowedVariation:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlowedValidation(v)
+		m.SetAllowedVariation(v)
 		return nil
 	case kqitarget.FieldInitTime:
 		v, ok := value.(time.Time)
@@ -36468,8 +36468,8 @@ func (m *KqiTargetMutation) AddedFields() []string {
 	if m.addperiod != nil {
 		fields = append(fields, kqitarget.FieldPeriod)
 	}
-	if m.addalowedValidation != nil {
-		fields = append(fields, kqitarget.FieldAlowedValidation)
+	if m.addallowedVariation != nil {
+		fields = append(fields, kqitarget.FieldAllowedVariation)
 	}
 	return fields
 }
@@ -36481,8 +36481,8 @@ func (m *KqiTargetMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case kqitarget.FieldPeriod:
 		return m.AddedPeriod()
-	case kqitarget.FieldAlowedValidation:
-		return m.AddedAlowedValidation()
+	case kqitarget.FieldAllowedVariation:
+		return m.AddedAllowedVariation()
 	}
 	return nil, false
 }
@@ -36499,12 +36499,12 @@ func (m *KqiTargetMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddPeriod(v)
 		return nil
-	case kqitarget.FieldAlowedValidation:
+	case kqitarget.FieldAllowedVariation:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddAlowedValidation(v)
+		m.AddAllowedVariation(v)
 		return nil
 	}
 	return fmt.Errorf("unknown KqiTarget numeric field %s", name)
@@ -36546,8 +36546,8 @@ func (m *KqiTargetMutation) ResetField(name string) error {
 	case kqitarget.FieldPeriod:
 		m.ResetPeriod()
 		return nil
-	case kqitarget.FieldAlowedValidation:
-		m.ResetAlowedValidation()
+	case kqitarget.FieldAllowedVariation:
+		m.ResetAllowedVariation()
 		return nil
 	case kqitarget.FieldInitTime:
 		m.ResetInitTime()

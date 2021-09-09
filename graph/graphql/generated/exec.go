@@ -935,7 +935,7 @@ type ComplexityRoot struct {
 	}
 
 	KqiTarget struct {
-		AlowedValidation func(childComplexity int) int
+		AllowedVariation func(childComplexity int) int
 		EndTime          func(childComplexity int) int
 		ID               func(childComplexity int) int
 		Impact           func(childComplexity int) int
@@ -1458,73 +1458,73 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		ActionType                        func(childComplexity int, id flowschema.ActionTypeID) int
-		AlarmFilters                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
-		AlarmStatus                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmStatusOrder, filterBy []*models.AlarmStatusFilterInput) int
-		Appointments                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) int
-		Comparators                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) int
-		CounterFamilies                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) int
-		Counters                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
-		Customers                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Domains                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) int
-		EndToEndPath                      func(childComplexity int, linkID *int, portID *int) int
-		EquipmentPortDefinitions          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		EquipmentPortTypes                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		EquipmentPorts                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
-		EquipmentTypes                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Equipments                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
-		EventSeverities                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) int
-		FlowDrafts                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
-		FlowInstances                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
-		Flows                             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
-		Formulas                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) int
-		Kpis                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
-		KqiCategories                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiCategoryOrder, filterBy []*models.KqiCategoryFilterInput) int
-		KqiPerspectives                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiPerspectiveOrder, filterBy []*models.KqiPerspectiveFilterInput) int
-		KqiSources                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiSourceOrder, filterBy []*models.KqiSourceFilterInput) int
-		KqiTargets                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiTargetOrder, filterBy []*models.KqiTargetFilterInput) int
-		KqiTemporalFrequencies            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiTemporalFrequencyOrder, filterBy []*models.KqiTemporalFrequencyFilterInput) int
-		Kqis                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiOrder, filterBy []*models.KqiFilterInput) int
-		LatestPythonPackage               func(childComplexity int) int
-		Links                             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
-		LocationTypes                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Locations                         func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) int
-		Me                                func(childComplexity int) int
-		NearestSites                      func(childComplexity int, latitude float64, longitude float64, first int) int
-		Node                              func(childComplexity int, id int) int
-		Organizations                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.OrganizationOrder, filterBy []*models.OrganizationFilterInput) int
-		PermissionsPolicies               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
-		PossibleProperties                func(childComplexity int, entityType enum.PropertyEntity) int
-		ProjectTypes                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Projects                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
-		PythonPackages                    func(childComplexity int) int
-		Recommendations                   func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) int
-		RecommendationsCategories         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) int
-		RecommendationsSources            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) int
-		ReportFilters                     func(childComplexity int, entity models.FilterEntity) int
-		ResourceRelationshipMultiplicitys func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipMultiplicityOrder, filterBy []*models.ResourceRelationshipMultiplicityFilterInput) int
-		ResourceRelationshipTypes         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipTypeOrder, filterBy []*models.ResourceRelationshipTypeFilterInput) int
-		ResourceRelationships             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipOrder, filterBy []*models.ResourceRelationshipFilterInput) int
-		ResourceTypeBaseTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeBaseTypeOrder, filterBy []*models.ResourceTypeBaseTypeFilterInput) int
-		ResourceTypeClasss                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeClassOrder, filterBy []*models.ResourceTypeClassFilterInput) int
-		ResourceTypes                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) int
-		RuleTypes                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) int
-		SearchForNode                     func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		ServiceTypes                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Services                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
-		Surveys                           func(childComplexity int) int
-		Techs                             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) int
-		Thresholds                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ThresholdOrder, filterBy []*models.ThresholdFilterInput) int
-		TriggerType                       func(childComplexity int, id flowschema.TriggerTypeID) int
-		User                              func(childComplexity int, authID string) int
-		Users                             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
-		UsersAvailability                 func(childComplexity int, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput, duration float64, regularHours models.RegularHoursInput) int
-		UsersGroups                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
-		Vendors                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) int
-		Vertex                            func(childComplexity int, id int) int
-		WorkOrderTypes                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		WorkOrders                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
-		WorkerTypes                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		ActionType                         func(childComplexity int, id flowschema.ActionTypeID) int
+		AlarmFilters                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmFilterOrder, filterBy []*models.AlarmFilterFilterInput) int
+		AlarmStatus                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.AlarmStatusOrder, filterBy []*models.AlarmStatusFilterInput) int
+		Appointments                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) int
+		Comparators                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ComparatorOrder, filterBy []*models.ComparatorFilterInput) int
+		CounterFamilies                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterFamilyOrder, filterBy []*models.CounterFamilyFilterInput) int
+		Counters                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.CounterOrder, filterBy []*models.CounterFilterInput) int
+		Customers                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Domains                            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.DomainOrder, filterBy []*models.DomainFilterInput) int
+		EndToEndPath                       func(childComplexity int, linkID *int, portID *int) int
+		EquipmentPortDefinitions           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		EquipmentPortTypes                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		EquipmentPorts                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
+		EquipmentTypes                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Equipments                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
+		EventSeverities                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EventSeverityOrder, filterBy []*models.EventSeverityFilterInput) int
+		FlowDrafts                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		FlowInstances                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FlowInstanceOrder, filterBy []*models.FlowInstanceFilterInput) int
+		Flows                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, name *string) int
+		Formulas                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) int
+		Kpis                               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KpiOrder, filterBy []*models.KpiFilterInput) int
+		KqiCategories                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiCategoryOrder, filterBy []*models.KqiCategoryFilterInput) int
+		KqiPerspectives                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiPerspectiveOrder, filterBy []*models.KqiPerspectiveFilterInput) int
+		KqiSources                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiSourceOrder, filterBy []*models.KqiSourceFilterInput) int
+		KqiTargets                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiTargetOrder, filterBy []*models.KqiTargetFilterInput) int
+		KqiTemporalFrequencies             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiTemporalFrequencyOrder, filterBy []*models.KqiTemporalFrequencyFilterInput) int
+		Kqis                               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.KqiOrder, filterBy []*models.KqiFilterInput) int
+		LatestPythonPackage                func(childComplexity int) int
+		Links                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
+		LocationTypes                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Locations                          func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) int
+		Me                                 func(childComplexity int) int
+		NearestSites                       func(childComplexity int, latitude float64, longitude float64, first int) int
+		Node                               func(childComplexity int, id int) int
+		Organizations                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.OrganizationOrder, filterBy []*models.OrganizationFilterInput) int
+		PermissionsPolicies                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
+		PossibleProperties                 func(childComplexity int, entityType enum.PropertyEntity) int
+		ProjectTypes                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Projects                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput, propertyValue *string, propertyOrder *string) int
+		PythonPackages                     func(childComplexity int) int
+		Recommendations                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsOrder, filterBy []*models.RecommendationsFilterInput) int
+		RecommendationsCategories          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) int
+		RecommendationsSources             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsSourcesOrder, filterBy []*models.RecommendationsSourcesFilterInput) int
+		ReportFilters                      func(childComplexity int, entity models.FilterEntity) int
+		ResourceRelationshipMultiplicities func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipMultiplicityOrder, filterBy []*models.ResourceRelationshipMultiplicityFilterInput) int
+		ResourceRelationshipTypes          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipTypeOrder, filterBy []*models.ResourceRelationshipTypeFilterInput) int
+		ResourceRelationships              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipOrder, filterBy []*models.ResourceRelationshipFilterInput) int
+		ResourceTypeBaseTypes              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeBaseTypeOrder, filterBy []*models.ResourceTypeBaseTypeFilterInput) int
+		ResourceTypeClasses                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeClassOrder, filterBy []*models.ResourceTypeClassFilterInput) int
+		ResourceTypes                      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) int
+		RuleTypes                          func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RuleTypeOrder, filterBy []*models.RuleTypeFilterInput) int
+		SearchForNode                      func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		ServiceTypes                       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Services                           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
+		Surveys                            func(childComplexity int) int
+		Techs                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) int
+		Thresholds                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ThresholdOrder, filterBy []*models.ThresholdFilterInput) int
+		TriggerType                        func(childComplexity int, id flowschema.TriggerTypeID) int
+		User                               func(childComplexity int, authID string) int
+		Users                              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) int
+		UsersAvailability                  func(childComplexity int, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput, duration float64, regularHours models.RegularHoursInput) int
+		UsersGroups                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
+		Vendors                            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.VendorOrder, filterBy []*models.VendorFilterInput) int
+		Vertex                             func(childComplexity int, id int) int
+		WorkOrderTypes                     func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		WorkOrders                         func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
+		WorkerTypes                        func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 	}
 
 	Recommendations struct {
@@ -2681,11 +2681,11 @@ type QueryResolver interface {
 	RecommendationsCategories(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.RecommendationsCategoryOrder, filterBy []*models.RecommendationsCategoryFilterInput) (*ent.RecommendationsCategoryConnection, error)
 	Formulas(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.FormulaOrder, filterBy []*models.FormulaFilterInput) (*ent.FormulaConnection, error)
 	Techs(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TechOrder, filterBy []*models.TechFilterInput) (*ent.TechConnection, error)
-	ResourceTypeClasss(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeClassOrder, filterBy []*models.ResourceTypeClassFilterInput) (*ent.ResourceTypeClassConnection, error)
+	ResourceTypeClasses(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeClassOrder, filterBy []*models.ResourceTypeClassFilterInput) (*ent.ResourceTypeClassConnection, error)
 	ResourceTypeBaseTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeBaseTypeOrder, filterBy []*models.ResourceTypeBaseTypeFilterInput) (*ent.ResourceTypeBaseTypeConnection, error)
 	ResourceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceTypeOrder, filterBy []*models.ResourceTypeFilterInput) (*ent.ResourceTypeConnection, error)
 	ResourceRelationshipTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipTypeOrder, filterBy []*models.ResourceRelationshipTypeFilterInput) (*ent.ResourceRelationshipTypeConnection, error)
-	ResourceRelationshipMultiplicitys(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipMultiplicityOrder, filterBy []*models.ResourceRelationshipMultiplicityFilterInput) (*ent.ResourceRelationshipMultiplicityConnection, error)
+	ResourceRelationshipMultiplicities(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipMultiplicityOrder, filterBy []*models.ResourceRelationshipMultiplicityFilterInput) (*ent.ResourceRelationshipMultiplicityConnection, error)
 	ResourceRelationships(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ResourceRelationshipOrder, filterBy []*models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipConnection, error)
 	Appointments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, slotFilterBy *models.SlotFilterInput) (*ent.AppointmentConnection, error)
 	UsersAvailability(ctx context.Context, filterBy []*models.UserFilterInput, slotFilterBy models.SlotFilterInput, duration float64, regularHours models.RegularHoursInput) ([]*models.UserAvailability, error)
@@ -6036,12 +6036,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.KqiSourceEdge.Node(childComplexity), true
 
-	case "KqiTarget.alowedValidation":
-		if e.complexity.KqiTarget.AlowedValidation == nil {
+	case "KqiTarget.allowedVariation":
+		if e.complexity.KqiTarget.AllowedVariation == nil {
 			break
 		}
 
-		return e.complexity.KqiTarget.AlowedValidation(childComplexity), true
+		return e.complexity.KqiTarget.AllowedVariation(childComplexity), true
 
 	case "KqiTarget.endTime":
 		if e.complexity.KqiTarget.EndTime == nil {
@@ -10363,17 +10363,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ReportFilters(childComplexity, args["entity"].(models.FilterEntity)), true
 
-	case "Query.resourceRelationshipMultiplicitys":
-		if e.complexity.Query.ResourceRelationshipMultiplicitys == nil {
+	case "Query.resourceRelationshipMultiplicities":
+		if e.complexity.Query.ResourceRelationshipMultiplicities == nil {
 			break
 		}
 
-		args, err := ec.field_Query_resourceRelationshipMultiplicitys_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_resourceRelationshipMultiplicities_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.ResourceRelationshipMultiplicitys(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceRelationshipMultiplicityOrder), args["filterBy"].([]*models.ResourceRelationshipMultiplicityFilterInput)), true
+		return e.complexity.Query.ResourceRelationshipMultiplicities(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceRelationshipMultiplicityOrder), args["filterBy"].([]*models.ResourceRelationshipMultiplicityFilterInput)), true
 
 	case "Query.resourceRelationshipTypes":
 		if e.complexity.Query.ResourceRelationshipTypes == nil {
@@ -10411,17 +10411,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ResourceTypeBaseTypes(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeBaseTypeOrder), args["filterBy"].([]*models.ResourceTypeBaseTypeFilterInput)), true
 
-	case "Query.resourceTypeClasss":
-		if e.complexity.Query.ResourceTypeClasss == nil {
+	case "Query.resourceTypeClasses":
+		if e.complexity.Query.ResourceTypeClasses == nil {
 			break
 		}
 
-		args, err := ec.field_Query_resourceTypeClasss_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_resourceTypeClasses_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.ResourceTypeClasss(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeClassOrder), args["filterBy"].([]*models.ResourceTypeClassFilterInput)), true
+		return e.complexity.Query.ResourceTypeClasses(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeClassOrder), args["filterBy"].([]*models.ResourceTypeClassFilterInput)), true
 
 	case "Query.resourceTypes":
 		if e.complexity.Query.ResourceTypes == nil {
@@ -20966,10 +20966,10 @@ type Query {
     filterBy: [TechFilterInput!]
   ): TechConnection!
   """
-  A list of resourceTypeClasss.
+  A list of resourceTypeClasses.
   """
   
-  resourceTypeClasss(
+  resourceTypeClasses(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -21107,9 +21107,9 @@ type Query {
     filterBy: [ResourceRelationshipTypeFilterInput!]
   ): ResourceRelationshipTypeConnection!
   """
-  A list of resourceRelationshipMultiplicitys.
+  A list of resourceRelationshipMultiplicities.
   """
-  resourceRelationshipMultiplicitys(
+  resourceRelationshipMultiplicities(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -21131,12 +21131,12 @@ type Query {
     last: Int @numberValue(min: 0)
 
     """
-    Ordering options for the returned resourceRelationshipMultiplicitys.
+    Ordering options for the returned resourceRelationshipMultiplicities.
     """
     orderBy: ResourceRelationshipMultiplicityOrder
 
     
-    #Filtering options for the returned resourceRelationshipMultiplicitys.
+    #Filtering options for the returned resourceRelationshipMultiplicities.
     
     filterBy: [ResourceRelationshipMultiplicityFilterInput!]
   ): ResourceRelationshipMultiplicityConnection!
@@ -22229,7 +22229,7 @@ type KqiTarget implements Node {
   name: String! 
   impact: String!
   period: Float!
-  alowedValidation: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -22241,7 +22241,7 @@ input AddKqiTargetInput {
   name: String! 
   impact: String!
   period: Float!
-  alowedValidation: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -22253,7 +22253,7 @@ input EditKqiTargetInput {
   name: String! 
   impact: String!
   period: Float!
-  alowedValidation: Float!
+  allowedVariation: Float!
   initTime: Time!
   endTime: Time!
   status: Boolean!
@@ -22572,9 +22572,9 @@ type ResourceRelationship implements Node {
   name: String!
   resourceRelationshipMultiplicityFk: ResourceRelationshipMultiplicity!
   resourceRelationshipTypeFk: ResourceRelationshipType!
-  locationTypeFk: LocationType!
+  locationTypeFk: LocationType
   resourceTypeFkA: ResourceType!
-  resourceTypeFkB: ResourceType!
+  resourceTypeFkB: ResourceType
 }
 input AddResourceRelationshipInput {
   name: String!  
@@ -29868,7 +29868,7 @@ func (ec *executionContext) field_Query_reportFilters_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_resourceRelationshipMultiplicitys_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_resourceRelationshipMultiplicities_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *ent.Cursor
@@ -30260,7 +30260,7 @@ func (ec *executionContext) field_Query_resourceTypeBaseTypes_args(ctx context.C
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_resourceTypeClasss_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_resourceTypeClasses_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *ent.Cursor
@@ -47587,7 +47587,7 @@ func (ec *executionContext) _KqiTarget_period(ctx context.Context, field graphql
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _KqiTarget_alowedValidation(ctx context.Context, field graphql.CollectedField, obj *ent.KqiTarget) (ret graphql.Marshaler) {
+func (ec *executionContext) _KqiTarget_allowedVariation(ctx context.Context, field graphql.CollectedField, obj *ent.KqiTarget) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -47605,7 +47605,7 @@ func (ec *executionContext) _KqiTarget_alowedValidation(ctx context.Context, fie
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AlowedValidation, nil
+		return obj.AllowedVariation, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -65052,7 +65052,7 @@ func (ec *executionContext) _Query_techs(ctx context.Context, field graphql.Coll
 	return ec.marshalNTechConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐTechConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_resourceTypeClasss(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_resourceTypeClasses(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -65069,7 +65069,7 @@ func (ec *executionContext) _Query_resourceTypeClasss(ctx context.Context, field
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_resourceTypeClasss_args(ctx, rawArgs)
+	args, err := ec.field_Query_resourceTypeClasses_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -65077,7 +65077,7 @@ func (ec *executionContext) _Query_resourceTypeClasss(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ResourceTypeClasss(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeClassOrder), args["filterBy"].([]*models.ResourceTypeClassFilterInput))
+		return ec.resolvers.Query().ResourceTypeClasses(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceTypeClassOrder), args["filterBy"].([]*models.ResourceTypeClassFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -65220,7 +65220,7 @@ func (ec *executionContext) _Query_resourceRelationshipTypes(ctx context.Context
 	return ec.marshalNResourceRelationshipTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceRelationshipTypeConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_resourceRelationshipMultiplicitys(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_resourceRelationshipMultiplicities(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -65237,7 +65237,7 @@ func (ec *executionContext) _Query_resourceRelationshipMultiplicitys(ctx context
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_resourceRelationshipMultiplicitys_args(ctx, rawArgs)
+	args, err := ec.field_Query_resourceRelationshipMultiplicities_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -65245,7 +65245,7 @@ func (ec *executionContext) _Query_resourceRelationshipMultiplicitys(ctx context
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ResourceRelationshipMultiplicitys(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceRelationshipMultiplicityOrder), args["filterBy"].([]*models.ResourceRelationshipMultiplicityFilterInput))
+		return ec.resolvers.Query().ResourceRelationshipMultiplicities(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ResourceRelationshipMultiplicityOrder), args["filterBy"].([]*models.ResourceRelationshipMultiplicityFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -67029,14 +67029,11 @@ func (ec *executionContext) _ResourceRelationship_locationTypeFk(ctx context.Con
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.LocationType)
 	fc.Result = res
-	return ec.marshalNLocationType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationType(ctx, field.Selections, res)
+	return ec.marshalOLocationType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceRelationship_resourceTypeFkA(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceRelationship) (ret graphql.Marshaler) {
@@ -67099,14 +67096,11 @@ func (ec *executionContext) _ResourceRelationship_resourceTypeFkB(ctx context.Co
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.ResourceType)
 	fc.Result = res
-	return ec.marshalNResourceType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceType(ctx, field.Selections, res)
+	return ec.marshalOResourceType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐResourceType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ResourceRelationshipConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ResourceRelationshipConnection) (ret graphql.Marshaler) {
@@ -83244,11 +83238,11 @@ func (ec *executionContext) unmarshalInputAddKqiTargetInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "alowedValidation":
+		case "allowedVariation":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alowedValidation"))
-			it.AlowedValidation, err = ec.unmarshalNFloat2float64(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("allowedVariation"))
+			it.AllowedVariation, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -87328,11 +87322,11 @@ func (ec *executionContext) unmarshalInputEditKqiTargetInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "alowedValidation":
+		case "allowedVariation":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alowedValidation"))
-			it.AlowedValidation, err = ec.unmarshalNFloat2float64(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("allowedVariation"))
+			it.AllowedVariation, err = ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -101228,8 +101222,8 @@ func (ec *executionContext) _KqiTarget(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "alowedValidation":
-			out.Values[i] = ec._KqiTarget_alowedValidation(ctx, field, obj)
+		case "allowedVariation":
+			out.Values[i] = ec._KqiTarget_allowedVariation(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
@@ -105155,7 +105149,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "resourceTypeClasss":
+		case "resourceTypeClasses":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -105163,7 +105157,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_resourceTypeClasss(ctx, field)
+				res = ec._Query_resourceTypeClasses(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -105211,7 +105205,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "resourceRelationshipMultiplicitys":
+		case "resourceRelationshipMultiplicities":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -105219,7 +105213,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_resourceRelationshipMultiplicitys(ctx, field)
+				res = ec._Query_resourceRelationshipMultiplicities(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -105816,9 +105810,6 @@ func (ec *executionContext) _ResourceRelationship(ctx context.Context, sel ast.S
 					}
 				}()
 				res = ec._ResourceRelationship_locationTypeFk(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			})
 		case "resourceTypeFkA":
@@ -105844,9 +105835,6 @@ func (ec *executionContext) _ResourceRelationship(ctx context.Context, sel ast.S
 					}
 				}()
 				res = ec._ResourceRelationship_resourceTypeFkB(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			})
 		default:
