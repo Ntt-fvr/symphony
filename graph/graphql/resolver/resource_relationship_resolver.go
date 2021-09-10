@@ -233,7 +233,7 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 				SetResourceRelationshipMultiplicityFkID(relationmulplicityid).
 				SetResourcerelationshiptypefkID(relationtypeid).
 				SetResourcetypeaID(resourcetypeAid).
-				SetNillableResourcetypebID(nil).
+				ClearResourcetypeb().
 				Save(ctx)
 			if err != nil {
 				if ent.IsConstraintError(err) {
@@ -251,7 +251,7 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 			SetResourceRelationshipMultiplicityFkID(relationmulplicityid).
 			SetResourcerelationshiptypefkID(relationtypeid).
 			SetResourcetypeaID(resourcetypeAid).
-			SetNillableLocationtypefkID(nil).
+			ClearLocationtypefk().
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {

@@ -8888,6 +8888,12 @@ input EditResourceRelationshipInput {
 enum ResourceRelationshipFilterType {
   ID 
   NAME
+  RESOURCE_RELATIONSHIP_MULTIPLICITY
+  RESOURCE_RELATIONSHIP_FILTER
+  RESOURCE_RELATIONSHIP_TYPE
+  RESOURCE_RELATIONSHIP_RESOURCE_A
+  RESOURCE_RELATIONSHIP_RESOURCE_B
+
 }
 input ResourceRelationshipFilterInput {
   filterType: ResourceRelationshipFilterType!

@@ -2964,18 +2964,28 @@ func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 type ResourceRelationshipFilterType string
 
 const (
-	ResourceRelationshipFilterTypeID   ResourceRelationshipFilterType = "ID"
-	ResourceRelationshipFilterTypeName ResourceRelationshipFilterType = "NAME"
+	ResourceRelationshipFilterTypeID                               ResourceRelationshipFilterType = "ID"
+	ResourceRelationshipFilterTypeName                             ResourceRelationshipFilterType = "NAME"
+	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
+	ResourceRelationshipFilterTypeResourceRelationshipFilter       ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_FILTER"
+	ResourceRelationshipFilterTypeResourceRelationshipType         ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
+	ResourceRelationshipFilterTypeResourceRelationshipResourceA    ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE_A"
+	ResourceRelationshipFilterTypeResourceRelationshipResourceB    ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE_B"
 )
 
 var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
 	ResourceRelationshipFilterTypeID,
 	ResourceRelationshipFilterTypeName,
+	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity,
+	ResourceRelationshipFilterTypeResourceRelationshipFilter,
+	ResourceRelationshipFilterTypeResourceRelationshipType,
+	ResourceRelationshipFilterTypeResourceRelationshipResourceA,
+	ResourceRelationshipFilterTypeResourceRelationshipResourceB,
 }
 
 func (e ResourceRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName:
+	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResourceA, ResourceRelationshipFilterTypeResourceRelationshipResourceB:
 		return true
 	}
 	return false
