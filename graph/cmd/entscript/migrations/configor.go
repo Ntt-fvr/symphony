@@ -11,21 +11,21 @@ import (
 )
 
 var Config = struct {
-	Teches []struct {
+	Techs []struct {
 		Name   string
 		Domain string
 	}
 	Domains                   []string
 	Ruletypes                 []string
 	Comparators               []string
-	Eventseverity             []string
-	Counterfamily             []string
+	Eventseverities           []string
+	Counterfamilies           []string
 	Vendors                   []string
 	Alarmstatus               []string
-	Kqicategory               []string
-	Kqiperspective            []string
-	Kqitemporalfrecuency      []string
-	Kqisource                 []string
+	Kqicategories             []string
+	Kqiperspectives           []string
+	Kqitemporalfrecuencies    []string
+	Kqisources                []string
 	Recommendationscategories []string
 	Recommendationssources    []string
 }{}

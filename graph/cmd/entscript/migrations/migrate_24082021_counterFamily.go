@@ -15,7 +15,7 @@ import (
 func MigrateCounterFamily(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, CounterFamily := range Config.Counterfamily {
+	for _, CounterFamily := range Config.Counterfamilies {
 		CounterFamilyDB, err := client.CounterFamily.
 			Create().
 			SetName(CounterFamily).
