@@ -335,7 +335,7 @@ func (r mutationResolver) createOrUpdateCheckListCategory(
 	mutation := cl.UpdateOneID(clc.ID)
 	addedCLIds, deletedCLIds, err := r.createOrUpdateCheckListItems(ctx, clc, clInput.CheckList)
 	if err != nil {
-		return nil, errors.Wrap(err, " items")
+		return nil, errors.Wrap(err, "updating check list category items")
 	}
 	return mutation.
 		RemoveCheckListItemIDs(deletedCLIds...).

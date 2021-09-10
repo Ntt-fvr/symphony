@@ -18192,7 +18192,7 @@ type ResourceTypeClassEdge {
   """
   cursor: Cursor!
 }
-################################ conection ResourceTypeBaseType ###############################################
+
 """
 Properties by which ResourceTypeBaseType connections can be ordered.
 """
@@ -18259,7 +18259,7 @@ type ResourceTypeBaseTypeEdge {
   """
   cursor: Cursor!
 }
-################################ conection ResourceType ###############################################
+
 """
 Properties by which ResourceType connections can be ordered.
 """
@@ -18326,7 +18326,7 @@ type ResourceTypeEdge {
   """
   cursor: Cursor!
 }
-################################ conection ResourceRelationshipType ###############################################
+
 """
 Properties by which ResourceRelationshipType connections can be ordered.
 """
