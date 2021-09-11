@@ -2760,6 +2760,38 @@ func (c *DocumentCategoryClient) QueryLocationType(dc *DocumentCategory) *Locati
 	return query
 }
 
+// QueryFiles queries the files edge of a DocumentCategory.
+func (c *DocumentCategoryClient) QueryFiles(dc *DocumentCategory) *FileQuery {
+	query := &FileQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := dc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentcategory.Table, documentcategory.FieldID, id),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, documentcategory.FilesTable, documentcategory.FilesColumn),
+		)
+		fromV = sqlgraph.Neighbors(dc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryHyperlinks queries the hyperlinks edge of a DocumentCategory.
+func (c *DocumentCategoryClient) QueryHyperlinks(dc *DocumentCategory) *HyperlinkQuery {
+	query := &HyperlinkQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := dc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentcategory.Table, documentcategory.FieldID, id),
+			sqlgraph.To(hyperlink.Table, hyperlink.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, documentcategory.HyperlinksTable, documentcategory.HyperlinksColumn),
+		)
+		fromV = sqlgraph.Neighbors(dc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DocumentCategoryClient) Hooks() []Hook {
 	hooks := c.hooks.DocumentCategory
@@ -4943,6 +4975,22 @@ func (c *FileClient) QuerySurveyQuestion(f *File) *SurveyQuestionQuery {
 	return query
 }
 
+// QueryDocumentCategory queries the document_category edge of a File.
+func (c *FileClient) QueryDocumentCategory(f *File) *DocumentCategoryQuery {
+	query := &DocumentCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, id),
+			sqlgraph.To(documentcategory.Table, documentcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, file.DocumentCategoryTable, file.DocumentCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FileClient) Hooks() []Hook {
 	hooks := c.hooks.File
@@ -6146,6 +6194,22 @@ func (c *HyperlinkClient) QueryWorkOrder(h *Hyperlink) *WorkOrderQuery {
 			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, id),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.WorkOrderTable, hyperlink.WorkOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDocumentCategory queries the document_category edge of a Hyperlink.
+func (c *HyperlinkClient) QueryDocumentCategory(h *Hyperlink) *DocumentCategoryQuery {
+	query := &DocumentCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := h.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, id),
+			sqlgraph.To(documentcategory.Table, documentcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.DocumentCategoryTable, hyperlink.DocumentCategoryColumn),
 		)
 		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
 		return fromV, nil

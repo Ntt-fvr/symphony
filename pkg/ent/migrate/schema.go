@@ -881,6 +881,7 @@ var (
 		{Name: "category", Type: field.TypeString, Nullable: true},
 		{Name: "annotation", Type: field.TypeString, Nullable: true},
 		{Name: "check_list_item_files", Type: field.TypeInt, Nullable: true},
+		{Name: "document_category_files", Type: field.TypeInt, Nullable: true},
 		{Name: "equipment_files", Type: field.TypeInt, Nullable: true},
 		{Name: "floor_plan_image", Type: field.TypeInt, Unique: true, Nullable: true},
 		{Name: "location_files", Type: field.TypeInt, Nullable: true},
@@ -904,57 +905,64 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "files_equipment_files",
+				Symbol:  "files_document_categories_files",
 				Columns: []*schema.Column{FilesColumns[13]},
+
+				RefColumns: []*schema.Column{DocumentCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "files_equipment_files",
+				Columns: []*schema.Column{FilesColumns[14]},
 
 				RefColumns: []*schema.Column{EquipmentColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_floor_plans_image",
-				Columns: []*schema.Column{FilesColumns[14]},
+				Columns: []*schema.Column{FilesColumns[15]},
 
 				RefColumns: []*schema.Column{FloorPlansColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_locations_files",
-				Columns: []*schema.Column{FilesColumns[15]},
+				Columns: []*schema.Column{FilesColumns[16]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_surveys_source_file",
-				Columns: []*schema.Column{FilesColumns[16]},
+				Columns: []*schema.Column{FilesColumns[17]},
 
 				RefColumns: []*schema.Column{SurveysColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_survey_questions_photo_data",
-				Columns: []*schema.Column{FilesColumns[17]},
-
-				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:  "files_survey_questions_images",
 				Columns: []*schema.Column{FilesColumns[18]},
 
 				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "files_users_profile_photo",
+				Symbol:  "files_survey_questions_images",
 				Columns: []*schema.Column{FilesColumns[19]},
+
+				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "files_users_profile_photo",
+				Columns: []*schema.Column{FilesColumns[20]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "files_work_orders_files",
-				Columns: []*schema.Column{FilesColumns[20]},
+				Columns: []*schema.Column{FilesColumns[21]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1217,6 +1225,7 @@ var (
 		{Name: "url", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "category", Type: field.TypeString, Nullable: true},
+		{Name: "document_category_hyperlinks", Type: field.TypeInt, Nullable: true},
 		{Name: "equipment_hyperlinks", Type: field.TypeInt, Nullable: true},
 		{Name: "location_hyperlinks", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_hyperlinks", Type: field.TypeInt, Nullable: true},
@@ -1228,22 +1237,29 @@ var (
 		PrimaryKey: []*schema.Column{HyperlinksColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "hyperlinks_equipment_hyperlinks",
+				Symbol:  "hyperlinks_document_categories_hyperlinks",
 				Columns: []*schema.Column{HyperlinksColumns[6]},
+
+				RefColumns: []*schema.Column{DocumentCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "hyperlinks_equipment_hyperlinks",
+				Columns: []*schema.Column{HyperlinksColumns[7]},
 
 				RefColumns: []*schema.Column{EquipmentColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "hyperlinks_locations_hyperlinks",
-				Columns: []*schema.Column{HyperlinksColumns[7]},
+				Columns: []*schema.Column{HyperlinksColumns[8]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "hyperlinks_work_orders_hyperlinks",
-				Columns: []*schema.Column{HyperlinksColumns[8]},
+				Columns: []*schema.Column{HyperlinksColumns[9]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -3312,14 +3328,15 @@ func init() {
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
 	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
-	FilesTable.ForeignKeys[1].RefTable = EquipmentTable
-	FilesTable.ForeignKeys[2].RefTable = FloorPlansTable
-	FilesTable.ForeignKeys[3].RefTable = LocationsTable
-	FilesTable.ForeignKeys[4].RefTable = SurveysTable
-	FilesTable.ForeignKeys[5].RefTable = SurveyQuestionsTable
+	FilesTable.ForeignKeys[1].RefTable = DocumentCategoriesTable
+	FilesTable.ForeignKeys[2].RefTable = EquipmentTable
+	FilesTable.ForeignKeys[3].RefTable = FloorPlansTable
+	FilesTable.ForeignKeys[4].RefTable = LocationsTable
+	FilesTable.ForeignKeys[5].RefTable = SurveysTable
 	FilesTable.ForeignKeys[6].RefTable = SurveyQuestionsTable
-	FilesTable.ForeignKeys[7].RefTable = UsersTable
-	FilesTable.ForeignKeys[8].RefTable = WorkOrdersTable
+	FilesTable.ForeignKeys[7].RefTable = SurveyQuestionsTable
+	FilesTable.ForeignKeys[8].RefTable = UsersTable
+	FilesTable.ForeignKeys[9].RefTable = WorkOrdersTable
 	FileCategoryTypesTable.ForeignKeys[0].RefTable = LocationTypesTable
 	FloorPlansTable.ForeignKeys[0].RefTable = LocationsTable
 	FloorPlansTable.ForeignKeys[1].RefTable = FloorPlanReferencePointsTable
@@ -3330,9 +3347,10 @@ func init() {
 	FlowInstancesTable.ForeignKeys[2].RefTable = FlowExecutionTemplatesTable
 	FormulasTable.ForeignKeys[0].RefTable = KpisTable
 	FormulasTable.ForeignKeys[1].RefTable = TechesTable
-	HyperlinksTable.ForeignKeys[0].RefTable = EquipmentTable
-	HyperlinksTable.ForeignKeys[1].RefTable = LocationsTable
-	HyperlinksTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	HyperlinksTable.ForeignKeys[0].RefTable = DocumentCategoriesTable
+	HyperlinksTable.ForeignKeys[1].RefTable = EquipmentTable
+	HyperlinksTable.ForeignKeys[2].RefTable = LocationsTable
+	HyperlinksTable.ForeignKeys[3].RefTable = WorkOrdersTable
 	KpisTable.ForeignKeys[0].RefTable = DomainsTable
 	KqisTable.ForeignKeys[0].RefTable = KqiCategoriesTable
 	KqisTable.ForeignKeys[1].RefTable = KqiPerspectivesTable

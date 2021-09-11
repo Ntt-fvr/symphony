@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebook/ent/schema/index"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 )
 
@@ -32,6 +33,10 @@ func (DocumentCategory) Edges() []ent.Edge {
 		edge.From("location_type", LocationType.Type).
 			Ref("document_category").
 			Unique(),
+		edge.To("files", File.Type).
+			Annotations(entgql.Bind()),
+		edge.To("hyperlinks", Hyperlink.Type).
+			Annotations(entgql.Bind()),
 	}
 }
 

@@ -1380,7 +1380,7 @@ func (dc *DocumentCategory) Node(ctx context.Context) (node *Node, err error) {
 		ID:     dc.ID,
 		Type:   "DocumentCategory",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 1),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(dc.CreateTime); err != nil {
@@ -1421,6 +1421,26 @@ func (dc *DocumentCategory) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[0].IDs, err = dc.QueryLocationType().
 		Select(locationtype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		Type: "File",
+		Name: "files",
+	}
+	node.Edges[1].IDs, err = dc.QueryFiles().
+		Select(file.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		Type: "Hyperlink",
+		Name: "hyperlinks",
+	}
+	node.Edges[2].IDs, err = dc.QueryHyperlinks().
+		Select(hyperlink.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -2483,7 +2503,7 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 		ID:     f.ID,
 		Type:   "File",
 		Fields: make([]*Field, 11),
-		Edges:  make([]*Edge, 9),
+		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -2660,6 +2680,16 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[8].IDs, err = f.QuerySurveyQuestion().
 		Select(surveyquestion.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[9] = &Edge{
+		Type: "DocumentCategory",
+		Name: "document_category",
+	}
+	node.Edges[9].IDs, err = f.QueryDocumentCategory().
+		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -3341,7 +3371,7 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 		ID:     h.ID,
 		Type:   "Hyperlink",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(h.CreateTime); err != nil {
@@ -3410,6 +3440,16 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[2].IDs, err = h.QueryWorkOrder().
 		Select(workorder.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		Type: "DocumentCategory",
+		Name: "document_category",
+	}
+	node.Edges[3].IDs, err = h.QueryDocumentCategory().
+		Select(documentcategory.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err

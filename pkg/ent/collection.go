@@ -237,6 +237,18 @@ func (dc *DocumentCategoryQuery) CollectFields(ctx context.Context, satisfies ..
 }
 
 func (dc *DocumentCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *DocumentCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "files":
+			dc = dc.WithFiles(func(query *FileQuery) {
+				query.collectField(ctx, field)
+			})
+		case "hyperlinks":
+			dc = dc.WithHyperlinks(func(query *HyperlinkQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
 	return dc
 }
 

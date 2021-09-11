@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
@@ -341,6 +342,25 @@ func (fu *FileUpdate) SetSurveyQuestion(s *SurveyQuestion) *FileUpdate {
 	return fu.SetSurveyQuestionID(s.ID)
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (fu *FileUpdate) SetDocumentCategoryID(id int) *FileUpdate {
+	fu.mutation.SetDocumentCategoryID(id)
+	return fu
+}
+
+// SetNillableDocumentCategoryID sets the document_category edge to DocumentCategory by id if the given value is not nil.
+func (fu *FileUpdate) SetNillableDocumentCategoryID(id *int) *FileUpdate {
+	if id != nil {
+		fu = fu.SetDocumentCategoryID(*id)
+	}
+	return fu
+}
+
+// SetDocumentCategory sets the document_category edge to DocumentCategory.
+func (fu *FileUpdate) SetDocumentCategory(d *DocumentCategory) *FileUpdate {
+	return fu.SetDocumentCategoryID(d.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (fu *FileUpdate) Mutation() *FileMutation {
 	return fu.mutation
@@ -397,6 +417,12 @@ func (fu *FileUpdate) ClearPhotoSurveyQuestion() *FileUpdate {
 // ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (fu *FileUpdate) ClearSurveyQuestion() *FileUpdate {
 	fu.mutation.ClearSurveyQuestion()
+	return fu
+}
+
+// ClearDocumentCategory clears the "document_category" edge to type DocumentCategory.
+func (fu *FileUpdate) ClearDocumentCategory() *FileUpdate {
+	fu.mutation.ClearDocumentCategory()
 	return fu
 }
 
@@ -921,6 +947,41 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if fu.mutation.DocumentCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.DocumentCategoryTable,
+			Columns: []string{file.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.DocumentCategoryTable,
+			Columns: []string{file.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{file.Label}
@@ -1241,6 +1302,25 @@ func (fuo *FileUpdateOne) SetSurveyQuestion(s *SurveyQuestion) *FileUpdateOne {
 	return fuo.SetSurveyQuestionID(s.ID)
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (fuo *FileUpdateOne) SetDocumentCategoryID(id int) *FileUpdateOne {
+	fuo.mutation.SetDocumentCategoryID(id)
+	return fuo
+}
+
+// SetNillableDocumentCategoryID sets the document_category edge to DocumentCategory by id if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableDocumentCategoryID(id *int) *FileUpdateOne {
+	if id != nil {
+		fuo = fuo.SetDocumentCategoryID(*id)
+	}
+	return fuo
+}
+
+// SetDocumentCategory sets the document_category edge to DocumentCategory.
+func (fuo *FileUpdateOne) SetDocumentCategory(d *DocumentCategory) *FileUpdateOne {
+	return fuo.SetDocumentCategoryID(d.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (fuo *FileUpdateOne) Mutation() *FileMutation {
 	return fuo.mutation
@@ -1297,6 +1377,12 @@ func (fuo *FileUpdateOne) ClearPhotoSurveyQuestion() *FileUpdateOne {
 // ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (fuo *FileUpdateOne) ClearSurveyQuestion() *FileUpdateOne {
 	fuo.mutation.ClearSurveyQuestion()
+	return fuo
+}
+
+// ClearDocumentCategory clears the "document_category" edge to type DocumentCategory.
+func (fuo *FileUpdateOne) ClearDocumentCategory() *FileUpdateOne {
+	fuo.mutation.ClearDocumentCategory()
 	return fuo
 }
 
@@ -1811,6 +1897,41 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: surveyquestion.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fuo.mutation.DocumentCategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.DocumentCategoryTable,
+			Columns: []string{file.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.DocumentCategoryTable,
+			Columns: []string{file.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
 				},
 			},
 		}

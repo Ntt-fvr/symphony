@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -16,6 +17,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
@@ -30,6 +33,8 @@ type DocumentCategoryQuery struct {
 	predicates []predicate.DocumentCategory
 	// eager-loading edges.
 	withLocationType *LocationTypeQuery
+	withFiles        *FileQuery
+	withHyperlinks   *HyperlinkQuery
 	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -75,6 +80,50 @@ func (dcq *DocumentCategoryQuery) QueryLocationType() *LocationTypeQuery {
 			sqlgraph.From(documentcategory.Table, documentcategory.FieldID, selector),
 			sqlgraph.To(locationtype.Table, locationtype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, documentcategory.LocationTypeTable, documentcategory.LocationTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dcq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFiles chains the current query on the files edge.
+func (dcq *DocumentCategoryQuery) QueryFiles() *FileQuery {
+	query := &FileQuery{config: dcq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dcq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentcategory.Table, documentcategory.FieldID, selector),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, documentcategory.FilesTable, documentcategory.FilesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dcq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryHyperlinks chains the current query on the hyperlinks edge.
+func (dcq *DocumentCategoryQuery) QueryHyperlinks() *HyperlinkQuery {
+	query := &HyperlinkQuery{config: dcq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dcq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentcategory.Table, documentcategory.FieldID, selector),
+			sqlgraph.To(hyperlink.Table, hyperlink.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, documentcategory.HyperlinksTable, documentcategory.HyperlinksColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(dcq.driver.Dialect(), step)
 		return fromU, nil
@@ -259,6 +308,8 @@ func (dcq *DocumentCategoryQuery) Clone() *DocumentCategoryQuery {
 		unique:           append([]string{}, dcq.unique...),
 		predicates:       append([]predicate.DocumentCategory{}, dcq.predicates...),
 		withLocationType: dcq.withLocationType.Clone(),
+		withFiles:        dcq.withFiles.Clone(),
+		withHyperlinks:   dcq.withHyperlinks.Clone(),
 		// clone intermediate query.
 		sql:  dcq.sql.Clone(),
 		path: dcq.path,
@@ -273,6 +324,28 @@ func (dcq *DocumentCategoryQuery) WithLocationType(opts ...func(*LocationTypeQue
 		opt(query)
 	}
 	dcq.withLocationType = query
+	return dcq
+}
+
+//  WithFiles tells the query-builder to eager-loads the nodes that are connected to
+// the "files" edge. The optional arguments used to configure the query builder of the edge.
+func (dcq *DocumentCategoryQuery) WithFiles(opts ...func(*FileQuery)) *DocumentCategoryQuery {
+	query := &FileQuery{config: dcq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	dcq.withFiles = query
+	return dcq
+}
+
+//  WithHyperlinks tells the query-builder to eager-loads the nodes that are connected to
+// the "hyperlinks" edge. The optional arguments used to configure the query builder of the edge.
+func (dcq *DocumentCategoryQuery) WithHyperlinks(opts ...func(*HyperlinkQuery)) *DocumentCategoryQuery {
+	query := &HyperlinkQuery{config: dcq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	dcq.withHyperlinks = query
 	return dcq
 }
 
@@ -346,8 +419,10 @@ func (dcq *DocumentCategoryQuery) sqlAll(ctx context.Context) ([]*DocumentCatego
 		nodes       = []*DocumentCategory{}
 		withFKs     = dcq.withFKs
 		_spec       = dcq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [3]bool{
 			dcq.withLocationType != nil,
+			dcq.withFiles != nil,
+			dcq.withHyperlinks != nil,
 		}
 	)
 	if dcq.withLocationType != nil {
@@ -402,6 +477,64 @@ func (dcq *DocumentCategoryQuery) sqlAll(ctx context.Context) ([]*DocumentCatego
 			for i := range nodes {
 				nodes[i].Edges.LocationType = n
 			}
+		}
+	}
+
+	if query := dcq.withFiles; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*DocumentCategory)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Files = []*File{}
+		}
+		query.withFKs = true
+		query.Where(predicate.File(func(s *sql.Selector) {
+			s.Where(sql.InValues(documentcategory.FilesColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.document_category_files
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "document_category_files" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "document_category_files" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Files = append(node.Edges.Files, n)
+		}
+	}
+
+	if query := dcq.withHyperlinks; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*DocumentCategory)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Hyperlinks = []*Hyperlink{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Hyperlink(func(s *sql.Selector) {
+			s.Where(sql.InValues(documentcategory.HyperlinksColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.document_category_hyperlinks
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "document_category_hyperlinks" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "document_category_hyperlinks" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Hyperlinks = append(node.Edges.Hyperlinks, n)
 		}
 	}
 

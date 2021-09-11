@@ -320,6 +320,22 @@ func (dc *DocumentCategory) LocationType(ctx context.Context) (*LocationType, er
 	return result, MaskNotFound(err)
 }
 
+func (dc *DocumentCategory) Files(ctx context.Context) ([]*File, error) {
+	result, err := dc.Edges.FilesOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryFiles().All(ctx)
+	}
+	return result, err
+}
+
+func (dc *DocumentCategory) Hyperlinks(ctx context.Context) ([]*Hyperlink, error) {
+	result, err := dc.Edges.HyperlinksOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryHyperlinks().All(ctx)
+	}
+	return result, err
+}
+
 func (d *Domain) Techdomain(ctx context.Context) ([]*Tech, error) {
 	result, err := d.Edges.TechdomainOrErr()
 	if IsNotLoaded(err) {
@@ -744,6 +760,14 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	return result, MaskNotFound(err)
 }
 
+func (f *File) DocumentCategory(ctx context.Context) (*DocumentCategory, error) {
+	result, err := f.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryDocumentCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
 	result, err := fct.Edges.LocationTypeOrErr()
 	if IsNotLoaded(err) {
@@ -900,6 +924,14 @@ func (h *Hyperlink) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 	result, err := h.Edges.WorkOrderOrErr()
 	if IsNotLoaded(err) {
 		result, err = h.QueryWorkOrder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (h *Hyperlink) DocumentCategory(ctx context.Context) (*DocumentCategory, error) {
+	result, err := h.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = h.QueryDocumentCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

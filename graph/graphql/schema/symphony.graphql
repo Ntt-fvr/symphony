@@ -1315,6 +1315,17 @@ type LocationTypeEdge {
   cursor: Cursor!
 }
 
+type DocumentCategoryConnection {
+  totalCount: Int!
+  edges: [DocumentCategoryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type DocumentCategoryEdge {
+  node: DocumentCategory
+  cursor: Cursor!
+}
+
 """
 A connection to a list of locations.
 """
@@ -1575,6 +1586,10 @@ type DocumentCategory implements Node {
   id: ID!
   name: String
   index: Int
+  files: [File]!
+  hyperlinks: [Hyperlink]!
+  filesByLocation(locationID: ID!): [File]!
+  hyperlinksByLocation(locationID: ID!): [Hyperlink]!
 }
 
 input PropertyTypeInput
@@ -5575,7 +5590,16 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
-
+  documentCategories(
+    """
+    Filter by location type ID
+    """
+    locationTypeID: ID
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): DocumentCategoryConnection
   """
   Fetches end to end path of links
   """

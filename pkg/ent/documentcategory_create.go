@@ -15,6 +15,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 )
 
@@ -82,6 +84,36 @@ func (dcc *DocumentCategoryCreate) SetNillableLocationTypeID(id *int) *DocumentC
 // SetLocationType sets the location_type edge to LocationType.
 func (dcc *DocumentCategoryCreate) SetLocationType(l *LocationType) *DocumentCategoryCreate {
 	return dcc.SetLocationTypeID(l.ID)
+}
+
+// AddFileIDs adds the files edge to File by ids.
+func (dcc *DocumentCategoryCreate) AddFileIDs(ids ...int) *DocumentCategoryCreate {
+	dcc.mutation.AddFileIDs(ids...)
+	return dcc
+}
+
+// AddFiles adds the files edges to File.
+func (dcc *DocumentCategoryCreate) AddFiles(f ...*File) *DocumentCategoryCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return dcc.AddFileIDs(ids...)
+}
+
+// AddHyperlinkIDs adds the hyperlinks edge to Hyperlink by ids.
+func (dcc *DocumentCategoryCreate) AddHyperlinkIDs(ids ...int) *DocumentCategoryCreate {
+	dcc.mutation.AddHyperlinkIDs(ids...)
+	return dcc
+}
+
+// AddHyperlinks adds the hyperlinks edges to Hyperlink.
+func (dcc *DocumentCategoryCreate) AddHyperlinks(h ...*Hyperlink) *DocumentCategoryCreate {
+	ids := make([]int, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return dcc.AddHyperlinkIDs(ids...)
 }
 
 // Mutation returns the DocumentCategoryMutation object of the builder.
@@ -235,6 +267,44 @@ func (dcc *DocumentCategoryCreate) createSpec() (*DocumentCategory, *sqlgraph.Cr
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: locationtype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dcc.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dcc.mutation.HyperlinksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
 				},
 			},
 		}

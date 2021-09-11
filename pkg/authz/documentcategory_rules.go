@@ -6,15 +6,20 @@ package authz
 
 import (
 	"context"
+	"github.com/facebookincubator/symphony/pkg/authz/models"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
+func DocumentCategoryCudBasedRule(ctx context.Context, cud *models.DocumentCategoryCud, m *ent.DocumentCategoryMutation) error {
+	return privacy.Allow
+
+}
 // DocumentCategoryWritePolicyRule grants write permission to Category Document based on policy.
 func DocumentCategoryWritePolicyRule() privacy.MutationRule {
 	return privacy.DocumentCategoryMutationRuleFunc(func(ctx context.Context, m *ent.DocumentCategoryMutation) error {
-		return privacy.Allow
+		return DocumentCategoryCudBasedRule(ctx, FromContext(ctx).InventoryPolicy.DocumentCategory, m)
 	})
 }
 

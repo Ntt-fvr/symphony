@@ -12007,6 +12007,12 @@ type DocumentCategoryMutation struct {
 	clearedFields        map[string]struct{}
 	location_type        *int
 	clearedlocation_type bool
+	files                map[int]struct{}
+	removedfiles         map[int]struct{}
+	clearedfiles         bool
+	hyperlinks           map[int]struct{}
+	removedhyperlinks    map[int]struct{}
+	clearedhyperlinks    bool
 	done                 bool
 	oldValue             func(context.Context) (*DocumentCategory, error)
 	predicates           []predicate.DocumentCategory
@@ -12298,6 +12304,112 @@ func (m *DocumentCategoryMutation) ResetLocationType() {
 	m.clearedlocation_type = false
 }
 
+// AddFileIDs adds the files edge to File by ids.
+func (m *DocumentCategoryMutation) AddFileIDs(ids ...int) {
+	if m.files == nil {
+		m.files = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.files[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFiles clears the files edge to File.
+func (m *DocumentCategoryMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared returns if the edge files was cleared.
+func (m *DocumentCategoryMutation) FilesCleared() bool {
+	return m.clearedfiles
+}
+
+// RemoveFileIDs removes the files edge to File by ids.
+func (m *DocumentCategoryMutation) RemoveFileIDs(ids ...int) {
+	if m.removedfiles == nil {
+		m.removedfiles = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedfiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFiles returns the removed ids of files.
+func (m *DocumentCategoryMutation) RemovedFilesIDs() (ids []int) {
+	for id := range m.removedfiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FilesIDs returns the files ids in the mutation.
+func (m *DocumentCategoryMutation) FilesIDs() (ids []int) {
+	for id := range m.files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFiles reset all changes of the "files" edge.
+func (m *DocumentCategoryMutation) ResetFiles() {
+	m.files = nil
+	m.clearedfiles = false
+	m.removedfiles = nil
+}
+
+// AddHyperlinkIDs adds the hyperlinks edge to Hyperlink by ids.
+func (m *DocumentCategoryMutation) AddHyperlinkIDs(ids ...int) {
+	if m.hyperlinks == nil {
+		m.hyperlinks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.hyperlinks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearHyperlinks clears the hyperlinks edge to Hyperlink.
+func (m *DocumentCategoryMutation) ClearHyperlinks() {
+	m.clearedhyperlinks = true
+}
+
+// HyperlinksCleared returns if the edge hyperlinks was cleared.
+func (m *DocumentCategoryMutation) HyperlinksCleared() bool {
+	return m.clearedhyperlinks
+}
+
+// RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
+func (m *DocumentCategoryMutation) RemoveHyperlinkIDs(ids ...int) {
+	if m.removedhyperlinks == nil {
+		m.removedhyperlinks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedhyperlinks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedHyperlinks returns the removed ids of hyperlinks.
+func (m *DocumentCategoryMutation) RemovedHyperlinksIDs() (ids []int) {
+	for id := range m.removedhyperlinks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// HyperlinksIDs returns the hyperlinks ids in the mutation.
+func (m *DocumentCategoryMutation) HyperlinksIDs() (ids []int) {
+	for id := range m.hyperlinks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetHyperlinks reset all changes of the "hyperlinks" edge.
+func (m *DocumentCategoryMutation) ResetHyperlinks() {
+	m.hyperlinks = nil
+	m.clearedhyperlinks = false
+	m.removedhyperlinks = nil
+}
+
 // Op returns the operation name.
 func (m *DocumentCategoryMutation) Op() Op {
 	return m.op
@@ -12479,9 +12591,15 @@ func (m *DocumentCategoryMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *DocumentCategoryMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.location_type != nil {
 		edges = append(edges, documentcategory.EdgeLocationType)
+	}
+	if m.files != nil {
+		edges = append(edges, documentcategory.EdgeFiles)
+	}
+	if m.hyperlinks != nil {
+		edges = append(edges, documentcategory.EdgeHyperlinks)
 	}
 	return edges
 }
@@ -12494,6 +12612,18 @@ func (m *DocumentCategoryMutation) AddedIDs(name string) []ent.Value {
 		if id := m.location_type; id != nil {
 			return []ent.Value{*id}
 		}
+	case documentcategory.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.files))
+		for id := range m.files {
+			ids = append(ids, id)
+		}
+		return ids
+	case documentcategory.EdgeHyperlinks:
+		ids := make([]ent.Value, 0, len(m.hyperlinks))
+		for id := range m.hyperlinks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -12501,7 +12631,13 @@ func (m *DocumentCategoryMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *DocumentCategoryMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
+	if m.removedfiles != nil {
+		edges = append(edges, documentcategory.EdgeFiles)
+	}
+	if m.removedhyperlinks != nil {
+		edges = append(edges, documentcategory.EdgeHyperlinks)
+	}
 	return edges
 }
 
@@ -12509,6 +12645,18 @@ func (m *DocumentCategoryMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *DocumentCategoryMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case documentcategory.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.removedfiles))
+		for id := range m.removedfiles {
+			ids = append(ids, id)
+		}
+		return ids
+	case documentcategory.EdgeHyperlinks:
+		ids := make([]ent.Value, 0, len(m.removedhyperlinks))
+		for id := range m.removedhyperlinks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -12516,9 +12664,15 @@ func (m *DocumentCategoryMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *DocumentCategoryMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.clearedlocation_type {
 		edges = append(edges, documentcategory.EdgeLocationType)
+	}
+	if m.clearedfiles {
+		edges = append(edges, documentcategory.EdgeFiles)
+	}
+	if m.clearedhyperlinks {
+		edges = append(edges, documentcategory.EdgeHyperlinks)
 	}
 	return edges
 }
@@ -12529,6 +12683,10 @@ func (m *DocumentCategoryMutation) EdgeCleared(name string) bool {
 	switch name {
 	case documentcategory.EdgeLocationType:
 		return m.clearedlocation_type
+	case documentcategory.EdgeFiles:
+		return m.clearedfiles
+	case documentcategory.EdgeHyperlinks:
+		return m.clearedhyperlinks
 	}
 	return false
 }
@@ -12551,6 +12709,12 @@ func (m *DocumentCategoryMutation) ResetEdge(name string) error {
 	switch name {
 	case documentcategory.EdgeLocationType:
 		m.ResetLocationType()
+		return nil
+	case documentcategory.EdgeFiles:
+		m.ResetFiles()
+		return nil
+	case documentcategory.EdgeHyperlinks:
+		m.ResetHyperlinks()
 		return nil
 	}
 	return fmt.Errorf("unknown DocumentCategory edge %s", name)
@@ -22876,6 +23040,8 @@ type FileMutation struct {
 	clearedphoto_survey_question bool
 	survey_question              *int
 	clearedsurvey_question       bool
+	document_category            *int
+	cleareddocument_category     bool
 	done                         bool
 	oldValue                     func(context.Context) (*File, error)
 	predicates                   []predicate.File
@@ -23804,6 +23970,45 @@ func (m *FileMutation) ResetSurveyQuestion() {
 	m.clearedsurvey_question = false
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (m *FileMutation) SetDocumentCategoryID(id int) {
+	m.document_category = &id
+}
+
+// ClearDocumentCategory clears the document_category edge to DocumentCategory.
+func (m *FileMutation) ClearDocumentCategory() {
+	m.cleareddocument_category = true
+}
+
+// DocumentCategoryCleared returns if the edge document_category was cleared.
+func (m *FileMutation) DocumentCategoryCleared() bool {
+	return m.cleareddocument_category
+}
+
+// DocumentCategoryID returns the document_category id in the mutation.
+func (m *FileMutation) DocumentCategoryID() (id int, exists bool) {
+	if m.document_category != nil {
+		return *m.document_category, true
+	}
+	return
+}
+
+// DocumentCategoryIDs returns the document_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DocumentCategoryID instead. It exists only for internal usage by the builders.
+func (m *FileMutation) DocumentCategoryIDs() (ids []int) {
+	if id := m.document_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDocumentCategory reset all changes of the "document_category" edge.
+func (m *FileMutation) ResetDocumentCategory() {
+	m.document_category = nil
+	m.cleareddocument_category = false
+}
+
 // Op returns the operation name.
 func (m *FileMutation) Op() Op {
 	return m.op
@@ -24137,7 +24342,7 @@ func (m *FileMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.location != nil {
 		edges = append(edges, file.EdgeLocation)
 	}
@@ -24164,6 +24369,9 @@ func (m *FileMutation) AddedEdges() []string {
 	}
 	if m.survey_question != nil {
 		edges = append(edges, file.EdgeSurveyQuestion)
+	}
+	if m.document_category != nil {
+		edges = append(edges, file.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -24208,6 +24416,10 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 		if id := m.survey_question; id != nil {
 			return []ent.Value{*id}
 		}
+	case file.EdgeDocumentCategory:
+		if id := m.document_category; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -24215,7 +24427,7 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	return edges
 }
 
@@ -24230,7 +24442,7 @@ func (m *FileMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedlocation {
 		edges = append(edges, file.EdgeLocation)
 	}
@@ -24258,6 +24470,9 @@ func (m *FileMutation) ClearedEdges() []string {
 	if m.clearedsurvey_question {
 		edges = append(edges, file.EdgeSurveyQuestion)
 	}
+	if m.cleareddocument_category {
+		edges = append(edges, file.EdgeDocumentCategory)
+	}
 	return edges
 }
 
@@ -24283,6 +24498,8 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 		return m.clearedphoto_survey_question
 	case file.EdgeSurveyQuestion:
 		return m.clearedsurvey_question
+	case file.EdgeDocumentCategory:
+		return m.cleareddocument_category
 	}
 	return false
 }
@@ -24317,6 +24534,9 @@ func (m *FileMutation) ClearEdge(name string) error {
 		return nil
 	case file.EdgeSurveyQuestion:
 		m.ClearSurveyQuestion()
+		return nil
+	case file.EdgeDocumentCategory:
+		m.ClearDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown File unique edge %s", name)
@@ -24353,6 +24573,9 @@ func (m *FileMutation) ResetEdge(name string) error {
 		return nil
 	case file.EdgeSurveyQuestion:
 		m.ResetSurveyQuestion()
+		return nil
+	case file.EdgeDocumentCategory:
+		m.ResetDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown File edge %s", name)
@@ -30956,24 +31179,26 @@ func (m *FormulaMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type HyperlinkMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	create_time       *time.Time
-	update_time       *time.Time
-	url               *string
-	name              *string
-	category          *string
-	clearedFields     map[string]struct{}
-	equipment         *int
-	clearedequipment  bool
-	location          *int
-	clearedlocation   bool
-	work_order        *int
-	clearedwork_order bool
-	done              bool
-	oldValue          func(context.Context) (*Hyperlink, error)
-	predicates        []predicate.Hyperlink
+	op                       Op
+	typ                      string
+	id                       *int
+	create_time              *time.Time
+	update_time              *time.Time
+	url                      *string
+	name                     *string
+	category                 *string
+	clearedFields            map[string]struct{}
+	equipment                *int
+	clearedequipment         bool
+	location                 *int
+	clearedlocation          bool
+	work_order               *int
+	clearedwork_order        bool
+	document_category        *int
+	cleareddocument_category bool
+	done                     bool
+	oldValue                 func(context.Context) (*Hyperlink, error)
+	predicates               []predicate.Hyperlink
 }
 
 var _ ent.Mutation = (*HyperlinkMutation)(nil)
@@ -31383,6 +31608,45 @@ func (m *HyperlinkMutation) ResetWorkOrder() {
 	m.clearedwork_order = false
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (m *HyperlinkMutation) SetDocumentCategoryID(id int) {
+	m.document_category = &id
+}
+
+// ClearDocumentCategory clears the document_category edge to DocumentCategory.
+func (m *HyperlinkMutation) ClearDocumentCategory() {
+	m.cleareddocument_category = true
+}
+
+// DocumentCategoryCleared returns if the edge document_category was cleared.
+func (m *HyperlinkMutation) DocumentCategoryCleared() bool {
+	return m.cleareddocument_category
+}
+
+// DocumentCategoryID returns the document_category id in the mutation.
+func (m *HyperlinkMutation) DocumentCategoryID() (id int, exists bool) {
+	if m.document_category != nil {
+		return *m.document_category, true
+	}
+	return
+}
+
+// DocumentCategoryIDs returns the document_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DocumentCategoryID instead. It exists only for internal usage by the builders.
+func (m *HyperlinkMutation) DocumentCategoryIDs() (ids []int) {
+	if id := m.document_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDocumentCategory reset all changes of the "document_category" edge.
+func (m *HyperlinkMutation) ResetDocumentCategory() {
+	m.document_category = nil
+	m.cleareddocument_category = false
+}
+
 // Op returns the operation name.
 func (m *HyperlinkMutation) Op() Op {
 	return m.op
@@ -31581,7 +31845,7 @@ func (m *HyperlinkMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *HyperlinkMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.equipment != nil {
 		edges = append(edges, hyperlink.EdgeEquipment)
 	}
@@ -31590,6 +31854,9 @@ func (m *HyperlinkMutation) AddedEdges() []string {
 	}
 	if m.work_order != nil {
 		edges = append(edges, hyperlink.EdgeWorkOrder)
+	}
+	if m.document_category != nil {
+		edges = append(edges, hyperlink.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -31610,6 +31877,10 @@ func (m *HyperlinkMutation) AddedIDs(name string) []ent.Value {
 		if id := m.work_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case hyperlink.EdgeDocumentCategory:
+		if id := m.document_category; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -31617,7 +31888,7 @@ func (m *HyperlinkMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *HyperlinkMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -31632,7 +31903,7 @@ func (m *HyperlinkMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *HyperlinkMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedequipment {
 		edges = append(edges, hyperlink.EdgeEquipment)
 	}
@@ -31641,6 +31912,9 @@ func (m *HyperlinkMutation) ClearedEdges() []string {
 	}
 	if m.clearedwork_order {
 		edges = append(edges, hyperlink.EdgeWorkOrder)
+	}
+	if m.cleareddocument_category {
+		edges = append(edges, hyperlink.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -31655,6 +31929,8 @@ func (m *HyperlinkMutation) EdgeCleared(name string) bool {
 		return m.clearedlocation
 	case hyperlink.EdgeWorkOrder:
 		return m.clearedwork_order
+	case hyperlink.EdgeDocumentCategory:
+		return m.cleareddocument_category
 	}
 	return false
 }
@@ -31671,6 +31947,9 @@ func (m *HyperlinkMutation) ClearEdge(name string) error {
 		return nil
 	case hyperlink.EdgeWorkOrder:
 		m.ClearWorkOrder()
+		return nil
+	case hyperlink.EdgeDocumentCategory:
+		m.ClearDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown Hyperlink unique edge %s", name)
@@ -31689,6 +31968,9 @@ func (m *HyperlinkMutation) ResetEdge(name string) error {
 		return nil
 	case hyperlink.EdgeWorkOrder:
 		m.ResetWorkOrder()
+		return nil
+	case hyperlink.EdgeDocumentCategory:
+		m.ResetDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown Hyperlink edge %s", name)

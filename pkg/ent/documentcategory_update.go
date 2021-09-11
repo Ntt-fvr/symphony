@@ -14,6 +14,8 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
@@ -69,6 +71,36 @@ func (dcu *DocumentCategoryUpdate) SetLocationType(l *LocationType) *DocumentCat
 	return dcu.SetLocationTypeID(l.ID)
 }
 
+// AddFileIDs adds the files edge to File by ids.
+func (dcu *DocumentCategoryUpdate) AddFileIDs(ids ...int) *DocumentCategoryUpdate {
+	dcu.mutation.AddFileIDs(ids...)
+	return dcu
+}
+
+// AddFiles adds the files edges to File.
+func (dcu *DocumentCategoryUpdate) AddFiles(f ...*File) *DocumentCategoryUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return dcu.AddFileIDs(ids...)
+}
+
+// AddHyperlinkIDs adds the hyperlinks edge to Hyperlink by ids.
+func (dcu *DocumentCategoryUpdate) AddHyperlinkIDs(ids ...int) *DocumentCategoryUpdate {
+	dcu.mutation.AddHyperlinkIDs(ids...)
+	return dcu
+}
+
+// AddHyperlinks adds the hyperlinks edges to Hyperlink.
+func (dcu *DocumentCategoryUpdate) AddHyperlinks(h ...*Hyperlink) *DocumentCategoryUpdate {
+	ids := make([]int, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return dcu.AddHyperlinkIDs(ids...)
+}
+
 // Mutation returns the DocumentCategoryMutation object of the builder.
 func (dcu *DocumentCategoryUpdate) Mutation() *DocumentCategoryMutation {
 	return dcu.mutation
@@ -78,6 +110,48 @@ func (dcu *DocumentCategoryUpdate) Mutation() *DocumentCategoryMutation {
 func (dcu *DocumentCategoryUpdate) ClearLocationType() *DocumentCategoryUpdate {
 	dcu.mutation.ClearLocationType()
 	return dcu
+}
+
+// ClearFiles clears all "files" edges to type File.
+func (dcu *DocumentCategoryUpdate) ClearFiles() *DocumentCategoryUpdate {
+	dcu.mutation.ClearFiles()
+	return dcu
+}
+
+// RemoveFileIDs removes the files edge to File by ids.
+func (dcu *DocumentCategoryUpdate) RemoveFileIDs(ids ...int) *DocumentCategoryUpdate {
+	dcu.mutation.RemoveFileIDs(ids...)
+	return dcu
+}
+
+// RemoveFiles removes files edges to File.
+func (dcu *DocumentCategoryUpdate) RemoveFiles(f ...*File) *DocumentCategoryUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return dcu.RemoveFileIDs(ids...)
+}
+
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (dcu *DocumentCategoryUpdate) ClearHyperlinks() *DocumentCategoryUpdate {
+	dcu.mutation.ClearHyperlinks()
+	return dcu
+}
+
+// RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
+func (dcu *DocumentCategoryUpdate) RemoveHyperlinkIDs(ids ...int) *DocumentCategoryUpdate {
+	dcu.mutation.RemoveHyperlinkIDs(ids...)
+	return dcu
+}
+
+// RemoveHyperlinks removes hyperlinks edges to Hyperlink.
+func (dcu *DocumentCategoryUpdate) RemoveHyperlinks(h ...*Hyperlink) *DocumentCategoryUpdate {
+	ids := make([]int, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return dcu.RemoveHyperlinkIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -237,6 +311,114 @@ func (dcu *DocumentCategoryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if dcu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !dcu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcu.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if dcu.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcu.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !dcu.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcu.mutation.HyperlinksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, dcu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{documentcategory.Label}
@@ -293,6 +475,36 @@ func (dcuo *DocumentCategoryUpdateOne) SetLocationType(l *LocationType) *Documen
 	return dcuo.SetLocationTypeID(l.ID)
 }
 
+// AddFileIDs adds the files edge to File by ids.
+func (dcuo *DocumentCategoryUpdateOne) AddFileIDs(ids ...int) *DocumentCategoryUpdateOne {
+	dcuo.mutation.AddFileIDs(ids...)
+	return dcuo
+}
+
+// AddFiles adds the files edges to File.
+func (dcuo *DocumentCategoryUpdateOne) AddFiles(f ...*File) *DocumentCategoryUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return dcuo.AddFileIDs(ids...)
+}
+
+// AddHyperlinkIDs adds the hyperlinks edge to Hyperlink by ids.
+func (dcuo *DocumentCategoryUpdateOne) AddHyperlinkIDs(ids ...int) *DocumentCategoryUpdateOne {
+	dcuo.mutation.AddHyperlinkIDs(ids...)
+	return dcuo
+}
+
+// AddHyperlinks adds the hyperlinks edges to Hyperlink.
+func (dcuo *DocumentCategoryUpdateOne) AddHyperlinks(h ...*Hyperlink) *DocumentCategoryUpdateOne {
+	ids := make([]int, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return dcuo.AddHyperlinkIDs(ids...)
+}
+
 // Mutation returns the DocumentCategoryMutation object of the builder.
 func (dcuo *DocumentCategoryUpdateOne) Mutation() *DocumentCategoryMutation {
 	return dcuo.mutation
@@ -302,6 +514,48 @@ func (dcuo *DocumentCategoryUpdateOne) Mutation() *DocumentCategoryMutation {
 func (dcuo *DocumentCategoryUpdateOne) ClearLocationType() *DocumentCategoryUpdateOne {
 	dcuo.mutation.ClearLocationType()
 	return dcuo
+}
+
+// ClearFiles clears all "files" edges to type File.
+func (dcuo *DocumentCategoryUpdateOne) ClearFiles() *DocumentCategoryUpdateOne {
+	dcuo.mutation.ClearFiles()
+	return dcuo
+}
+
+// RemoveFileIDs removes the files edge to File by ids.
+func (dcuo *DocumentCategoryUpdateOne) RemoveFileIDs(ids ...int) *DocumentCategoryUpdateOne {
+	dcuo.mutation.RemoveFileIDs(ids...)
+	return dcuo
+}
+
+// RemoveFiles removes files edges to File.
+func (dcuo *DocumentCategoryUpdateOne) RemoveFiles(f ...*File) *DocumentCategoryUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return dcuo.RemoveFileIDs(ids...)
+}
+
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (dcuo *DocumentCategoryUpdateOne) ClearHyperlinks() *DocumentCategoryUpdateOne {
+	dcuo.mutation.ClearHyperlinks()
+	return dcuo
+}
+
+// RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
+func (dcuo *DocumentCategoryUpdateOne) RemoveHyperlinkIDs(ids ...int) *DocumentCategoryUpdateOne {
+	dcuo.mutation.RemoveHyperlinkIDs(ids...)
+	return dcuo
+}
+
+// RemoveHyperlinks removes hyperlinks edges to Hyperlink.
+func (dcuo *DocumentCategoryUpdateOne) RemoveHyperlinks(h ...*Hyperlink) *DocumentCategoryUpdateOne {
+	ids := make([]int, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return dcuo.RemoveHyperlinkIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -451,6 +705,114 @@ func (dcuo *DocumentCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Docu
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: locationtype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if dcuo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcuo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !dcuo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcuo.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.FilesTable,
+			Columns: []string{documentcategory.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if dcuo.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcuo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !dcuo.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dcuo.mutation.HyperlinksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   documentcategory.HyperlinksTable,
+			Columns: []string{documentcategory.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
 				},
 			},
 		}

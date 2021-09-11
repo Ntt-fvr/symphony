@@ -28,6 +28,10 @@ const (
 
 	// EdgeLocationType holds the string denoting the location_type edge name in mutations.
 	EdgeLocationType = "location_type"
+	// EdgeFiles holds the string denoting the files edge name in mutations.
+	EdgeFiles = "files"
+	// EdgeHyperlinks holds the string denoting the hyperlinks edge name in mutations.
+	EdgeHyperlinks = "hyperlinks"
 
 	// Table holds the table name of the documentcategory in the database.
 	Table = "document_categories"
@@ -38,6 +42,20 @@ const (
 	LocationTypeInverseTable = "location_types"
 	// LocationTypeColumn is the table column denoting the location_type relation/edge.
 	LocationTypeColumn = "location_type_document_category"
+	// FilesTable is the table the holds the files relation/edge.
+	FilesTable = "files"
+	// FilesInverseTable is the table name for the File entity.
+	// It exists in this package in order to avoid circular dependency with the "file" package.
+	FilesInverseTable = "files"
+	// FilesColumn is the table column denoting the files relation/edge.
+	FilesColumn = "document_category_files"
+	// HyperlinksTable is the table the holds the hyperlinks relation/edge.
+	HyperlinksTable = "hyperlinks"
+	// HyperlinksInverseTable is the table name for the Hyperlink entity.
+	// It exists in this package in order to avoid circular dependency with the "hyperlink" package.
+	HyperlinksInverseTable = "hyperlinks"
+	// HyperlinksColumn is the table column denoting the hyperlinks relation/edge.
+	HyperlinksColumn = "document_category_hyperlinks"
 )
 
 // Columns holds all SQL columns for documentcategory fields.

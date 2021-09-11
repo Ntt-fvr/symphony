@@ -39,9 +39,13 @@ type DocumentCategory struct {
 type DocumentCategoryEdges struct {
 	// LocationType holds the value of the location_type edge.
 	LocationType *LocationType
+	// Files holds the value of the files edge.
+	Files []*File
+	// Hyperlinks holds the value of the hyperlinks edge.
+	Hyperlinks []*Hyperlink
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [3]bool
 }
 
 // LocationTypeOrErr returns the LocationType value or an error if the edge
@@ -56,6 +60,24 @@ func (e DocumentCategoryEdges) LocationTypeOrErr() (*LocationType, error) {
 		return e.LocationType, nil
 	}
 	return nil, &NotLoadedError{edge: "location_type"}
+}
+
+// FilesOrErr returns the Files value or an error if the edge
+// was not loaded in eager-loading.
+func (e DocumentCategoryEdges) FilesOrErr() ([]*File, error) {
+	if e.loadedTypes[1] {
+		return e.Files, nil
+	}
+	return nil, &NotLoadedError{edge: "files"}
+}
+
+// HyperlinksOrErr returns the Hyperlinks value or an error if the edge
+// was not loaded in eager-loading.
+func (e DocumentCategoryEdges) HyperlinksOrErr() ([]*Hyperlink, error) {
+	if e.loadedTypes[2] {
+		return e.Hyperlinks, nil
+	}
+	return nil, &NotLoadedError{edge: "hyperlinks"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -123,6 +145,16 @@ func (dc *DocumentCategory) assignValues(values ...interface{}) error {
 // QueryLocationType queries the location_type edge of the DocumentCategory.
 func (dc *DocumentCategory) QueryLocationType() *LocationTypeQuery {
 	return (&DocumentCategoryClient{config: dc.config}).QueryLocationType(dc)
+}
+
+// QueryFiles queries the files edge of the DocumentCategory.
+func (dc *DocumentCategory) QueryFiles() *FileQuery {
+	return (&DocumentCategoryClient{config: dc.config}).QueryFiles(dc)
+}
+
+// QueryHyperlinks queries the hyperlinks edge of the DocumentCategory.
+func (dc *DocumentCategory) QueryHyperlinks() *HyperlinkQuery {
+	return (&DocumentCategoryClient{config: dc.config}).QueryHyperlinks(dc)
 }
 
 // Update returns a builder for updating this DocumentCategory.
