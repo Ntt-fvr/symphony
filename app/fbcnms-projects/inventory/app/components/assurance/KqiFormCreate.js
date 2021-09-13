@@ -8,26 +8,21 @@
  * @format
  */
 
+import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
 import React, {useState} from 'react';
 import fbt from 'fbt';
-
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
-
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import {MenuItem, Select} from '@material-ui/core';
-
 import Text from '@symphony/design-system/components/Text';
-
 import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 import moment from 'moment';
-import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
 import AddKqiMutation from '../../mutations/AddKqiMutation';
-import DateTimeFormat from '../../common/DateTimeFormat.js';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -107,48 +102,26 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
-const data = {
-  counters: {
-    edges: [
-      {
-        node: {
-          id: '244813135872',
-          name: 'contador_family_7',
-          networkManagerSystem: 'hola bebe',
-          externalID: '123456789',
-        },
-      },
-      {
-        node: {
-          id: '244813135873',
-          name: 'contador_family_8',
-          networkManagerSystem: 'hola sergio',
-          externalID: '987654321',
-        },
-      },
-    ],
-  },
-};
 
 type KqiPerspectives = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiSources = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiCategories = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiTemporalFrequency = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type Kqis = {
   data: {
@@ -205,11 +178,10 @@ const KqiFormCreate = (props: Props) => {
         kqiPerspective: Kqis.data.kqiPerspective,
         kqiSource: Kqis.data.kqiSource,
         kqiTemporalFrequency: Kqis.data.kqiTemporalFrequency,
-
       },
     };
     AddKqiMutation(variables);
-    returnTableKqi()
+    returnTableKqi();
   }
 
   return (
@@ -251,12 +223,21 @@ const KqiFormCreate = (props: Props) => {
             <Grid container spacing={1} className={classes.insideContainer}>
               <Grid item xs={6}>
                 <FormField label="Name" className={classes.formField}>
-                  <TextInput name="name" className={classes.textInput} onChange={handleChange}/>
+                  <TextInput
+                    name="name"
+                    className={classes.textInput}
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="ID">
-                  <TextInput disabled name="id" className={classes.textInput} onChange={handleChange}/>
+                  <TextInput
+                    disabled
+                    name="id"
+                    className={classes.textInput}
+                    onChange={handleChange}
+                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
@@ -266,8 +247,7 @@ const KqiFormCreate = (props: Props) => {
                       className={classes.select}
                       disableUnderline
                       name="kqiCategory"
-                      onChange={handleChange}
-                    >
+                      onChange={handleChange}>
                       {dataCategories?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {item.name}
@@ -282,8 +262,7 @@ const KqiFormCreate = (props: Props) => {
                       className={classes.select}
                       disableUnderline
                       name="kqiPerspective"
-                      onChange={handleChange}
-                    >
+                      onChange={handleChange}>
                       {dataPerspectives?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {item.name}
@@ -340,8 +319,7 @@ const KqiFormCreate = (props: Props) => {
                       className={classes.select}
                       disableUnderline
                       name="kqiSource"
-                      onChange={handleChange}
-                    >
+                      onChange={handleChange}>
                       {dataSources?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {item.name}
@@ -363,8 +341,7 @@ const KqiFormCreate = (props: Props) => {
                         )}
                         disableUnderline
                         name="kqiTemporalFrequency"
-                        onChange={handleChange}
-                      >
+                        onChange={handleChange}>
                         {dataTemporalFrequencies.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}

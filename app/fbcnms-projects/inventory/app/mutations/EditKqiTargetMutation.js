@@ -9,10 +9,10 @@
  */
 
 import type {
-  AddKqiMutation,
-  AddKqiMutationResponse,
-  AddKqiMutationVariables,
-} from './__generated__/AddKqiMutation.graphql';
+  EditKqiTargetMutation,
+  EditKqiTargetMutationResponse,
+  EditKqiTargetMutationVariables,
+} from './__generated__/EditKqiTargetMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
@@ -20,41 +20,27 @@ import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation AddKqiMutation($input: AddKqiInput!) {
-    addKqi(input: $input) {
+  mutation EditKqiTargetMutation($input: EditKqiTargetInput!) {
+    editKqiTarget(input: $input) {
       id
       name
-      description
-      formula
-      startDateTime
-      endDateTime
-      kqiCategory {
-        id
-        name
-      }
-      kqiPerspective {
-        id
-        name
-      }
-      kqiSource {
-        id
-        name
-      }
-      kqiTemporalFrequency {
-        id
-        name
-      }
+      impact
+      frame
+      alowedValidation
+      initTime
+      endTime
+      status
     }
   }
 `;
 
 export default (
-  variables: AddKqiMutationVariables,
-  callbacks?: MutationCallbacks<AddKqiMutationResponse>,
+  variables: EditKqiTargetMutationVariables,
+  callbacks?: MutationCallbacks<EditKqiTargetMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<AddKqiMutation>(RelayEnvironment, {
+  commitMutation<EditKqiTargetMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

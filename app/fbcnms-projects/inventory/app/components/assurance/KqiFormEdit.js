@@ -8,7 +8,10 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery, graphql} from 'relay-runtime';
+
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -28,20 +31,22 @@ import KqiFormEditTarget from './KqiFormEditTarget';
 import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import IconButton from '@material-ui/core/IconButton';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import IconButton from '@material-ui/core/IconButton'
 
-import {makeStyles} from '@material-ui/styles';
 import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
 
-import EditKqiMutation from '../../mutations/EditKqiMutation';
+import {makeStyles} from '@material-ui/styles';
+
 import type {RemoveKqiMutationVariables} from '../../mutations/__generated__/RemoveKqiMutation.graphql';
 
+import EditKqiMutation from '../../mutations/EditKqiMutation';
+
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
-import {graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
 import moment from 'moment';
+// import {graphql} from 'relay-runtime';
 import {useFormInput} from './common/useFormInput';
+// import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -129,23 +134,35 @@ const useStyles = makeStyles(() => ({
 
 type KqiPerspectives = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiSources = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiCategories = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiTemporalFrequency = {
   id: string,
-  name: string
-}
+  name: string,
+};
+
+type KqiTarget = {
+  id: string,
+  name: string,
+  impact: string,
+  frame: number,
+  alowedValidation: number,
+  initTime: string,
+  endTime: string,
+  status: boolean,
+  kqi: string,
+};
 
 type Props = $ReadOnly<{|
   formValues: {
@@ -174,8 +191,7 @@ type Props = $ReadOnly<{|
       },
     },
   },
-  
-  dataKqiTargets: any,
+
   dataPerspectives: Array<KqiPerspectives>,
   dataSources: Array<KqiSources>,
   dataCategories: Array<KqiCategories>,
@@ -184,33 +200,89 @@ type Props = $ReadOnly<{|
 |}>;
 
 
+const TargetQuery = graphql`
+  query KqiFormEditQuery {
+    kqiTargets {
+      edges {
+        node {
+          id
+          name
+          impact
+          frame
+          alowedValidation
+          initTime
+          endTime
+          status
+          kqi {
+            id
+            name
+          }
+          kqiComparator {
+            kqiTargetFk {
+              id
+              name
+            }
+            comparatorFk {
+              id
+              name
+            }
+            number
+            comparatorType
+          }
+        }
+      }
+    }
+    comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    
+
+  }
+`;
+
 const KqiFormEdit = (props: Props) => {
   const {
     formValues,
-    dataKqiTargets,
     dataPerspectives,
     dataSources,
     dataCategories,
     dataTemporalFrequencies,
-    returnTableKqi
+    returnTableKqi,
   } = props;
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
   const [showEditTarget, setShowEditTarget] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
+  const [dataTarget, setDataTarget] = useState({});
+
+  useEffect(() => {
+    fetchQuery(RelayEnvironment, TargetQuery, {}).then(data => {
+      setDataTarget(data);
+    });
+  }, [dataTarget]);
+  
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
-  const startDateTime = useFormInput(
-    moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
-  );
-  const endDateTime = useFormInput(
-    moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
-  );
+  const startDateTime = useFormInput(moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'));
+  const endDateTime = useFormInput(moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'));
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
   const kqiPerspective = useFormInput(formValues.item.kqiPerspective.id);
   const kqiSource = useFormInput(formValues.item.kqiSource.id);
-  const kqiTemporalFrequency = useFormInput(
-    formValues.item.kqiTemporalFrequency.id,
+  const kqiTemporalFrequency = useFormInput(formValues.item.kqiTemporalFrequency.id,);
+  
+  
+  const filterKqiTargetsById = dataTarget?.kqiTargets?.edges?.filter(
+    kqi => kqi.node.kqi.id === formValues.item.id,
+  );
+
+  const dataResponseComparators = dataTarget.comparators?.edges.map(
+    item => item.node,
   );
   
   const handleRemove = id => {
@@ -236,6 +308,7 @@ const KqiFormEdit = (props: Props) => {
       },
     };
     EditKqiMutation(variables);
+    returnTableKqi();
   };
 
   const showFormCreateTarget = () => {
@@ -244,16 +317,25 @@ const KqiFormEdit = (props: Props) => {
 
   if (showCreateTarget) {
     return (
-      <KqiFormCreateTarget returnFormEdit={() => setShowCreateTarget(false)} />
+      <KqiFormCreateTarget
+        idKqi={formValues.item.id}
+        dataComparator={dataResponseComparators}
+        returnFormEdit={() => setShowCreateTarget(false)}
+      />
     );
   }
-  const showFormEditTarget = () => {
+  const showFormEditTarget = (kqiTarget: KqiTarget) => {
     setShowEditTarget(true);
+    setDataEdit(kqiTarget);
   };
 
   if (showEditTarget) {
     return (
-      <KqiFormEditTarget returnFormEdit={() => setShowEditTarget(false)} />
+      <KqiFormEditTarget
+        formValues={dataEdit}
+        dataComparator={dataResponseComparators}
+        returnFormEdit={() => setShowEditTarget(false)}
+      />
     );
   }
 
@@ -271,8 +353,8 @@ const KqiFormEdit = (props: Props) => {
           <IconButton>
             <DeleteOutlinedIcon
               onClick={() => {
-                handleRemove(formValues.item.id)
-                returnTableKqi()
+                handleRemove(formValues.item.id);
+                returnTableKqi();
               }}
               style={{color: DARK.D300}}
             />
@@ -304,7 +386,6 @@ const KqiFormEdit = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-
         <Grid item xs={12}>
           <Card>
             <Grid container spacing={1} className={classes.insideContainer}>
@@ -422,7 +503,6 @@ const KqiFormEdit = (props: Props) => {
                     className={classes.formField}>
                     <div className={classes.formFieldTf}>
                       <Text variant={'caption'}>Repeat every</Text>
-
                       <Select
                         {...kqiTemporalFrequency}
                         className={classNames(
@@ -458,9 +538,9 @@ const KqiFormEdit = (props: Props) => {
       </Grid>
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
-          dataTableTargets={dataKqiTargets}
+          tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}
-          edit={() => showFormEditTarget()}
+          edit={showFormEditTarget}
         />
       </Grid>
     </div>

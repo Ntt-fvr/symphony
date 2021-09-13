@@ -10,27 +10,19 @@
 
 import React, {useState} from 'react';
 import fbt from 'fbt';
-
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
-
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import {MenuItem, Select} from '@material-ui/core';
-
 import Switch from '@symphony/design-system/components/switch/Switch';
-
-import Text from '@symphony/design-system/components/Text';
-import {makeStyles} from '@material-ui/styles';
 import type {AddKqiTargetMutationVariables} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
+import Text from '@symphony/design-system/components/Text';
 import moment from 'moment';
-import DateTimeFormat from '../../common/DateTimeFormat.js';
-import {useFormInput} from './common/useFormInput';
-import {graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -122,30 +114,25 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type Comparator = {
+  id: string,
+  name: string,
+}
 type Props = $ReadOnly<{|
-  returnFormEdit: () => void
+  idKqi: string,
+  returnFormEdit: () => void,
+  dataComparator: Array<Comparator>,
 |}>;
 
 
-type KqiTarget = {
-  id: string,
-  name: string,
-  impact: string,
-  frame: number,
-  alowedValidation: number,
-  initTime: string,
-  endTime: string,
-  status: boolean,
-  kqi: string
-};
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit} = props;
+  const {returnFormEdit, idKqi, dataComparator} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
 
-    function handleChange({target}) {
+  function handleChange({target}) {
     setKqiTarget({
       data: {
         ...KqiTarget.data,
@@ -160,16 +147,38 @@ const KqiFormCreateTarget = (props: Props) => {
         name: KqiTarget.data.name,
         impact: KqiTarget.data.impact,
         status: checked,
-        initTime: moment(KqiTarget.data.initTime).format(),
-        endTime: moment(KqiTarget.data.endTime).format(),
+        initTime: moment(KqiTarget.data.initTime, "HH"),
+        endTime: moment(KqiTarget.data.endTime, "HH"),
         frame: KqiTarget.data.frame,
-        alowedValidation:KqiTarget.data.alowedValidation,
-        kqi: KqiTarget.data.kqi
+        alowedValidation: KqiTarget.data.alowedValidation,
+        kqi: idKqi,
       },
     };
+    // const response: MutationCallbacks<AddRuleMutationResponse> = {
+    //   onCompleted: response => {
+    //     const variablesUpper: AddRuleLimitMutationVariables = {
+    //       input: {
+    //         number: Number(rule.data.upperLimit),
+    //         limitType: 'UPPER',
+    //         comparator: rule.data.upperTarget,
+    //         rule: response.addRule.id,
+    //       },
+    //     };
+    //     const variablesLower: AddRuleLimitMutationVariables = {
+    //       input: {
+    //         number: Number(rule.data.lowerLimit),
+    //         limitType: 'LOWER',
+    //         comparator: rule.data.lowerTarget,
+    //         rule: response.addRule.id,
+    //       },
+    //     };
+    //     AddRuleLimitMutation(variablesUpper);
+    //     AddRuleLimitMutation(variablesLower);
+    //   },
+    // };
     AddKqiTargetMutation(variables);
-    console.log("Hola soy data AddKqiTarget", variables);
-    // setTimeout(() => returnTableAlarm(), 1000)
+    console.log(variables);
+    
   }
 
   return (
@@ -196,7 +205,10 @@ const KqiFormCreateTarget = (props: Props) => {
             <Grid xs={6}>
               <FormField>
                 <Button
-                  onClick={handleClick}
+                  onClick={() => {
+                    handleClick();
+                    returnFormEdit();
+                  }}
                   className={classes.option}
                   variant="contained"
                   color="primary">
@@ -225,7 +237,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                {/* <Grid item xs={6}>
+                <Grid item xs={6}>
                   <FormField label="Comparator" className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
@@ -235,9 +247,9 @@ const KqiFormCreateTarget = (props: Props) => {
                         )}
                         disableUnderline
                         name="family">
-                        {data.counters.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
+                        {dataComparator.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {item.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -247,8 +259,8 @@ const KqiFormCreateTarget = (props: Props) => {
                       />
                     </div>
                   </FormField>
-                </Grid>  */}
-                {/* <Grid item xs={6}>
+                </Grid> 
+                <Grid item xs={6}>
                   <FormField
                     label="Warning comparator"
                     className={classes.formField}>
@@ -260,9 +272,9 @@ const KqiFormCreateTarget = (props: Props) => {
                         )}
                         disableUnderline
                         name="family">
-                        {data.counters.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
+                        {dataComparator.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {item.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -272,7 +284,7 @@ const KqiFormCreateTarget = (props: Props) => {
                       />
                     </div>
                   </FormField>
-                </Grid> */}
+                </Grid>
               </Grid>
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Impact">
@@ -299,12 +311,12 @@ const KqiFormCreateTarget = (props: Props) => {
 
                 <FormField
                   className={classes.formField}
-                  label="Allowed Varation">
+                  label="Allowed Variation">
                   <div className={classes.contPeriods}>
                     <TextInput
                       name="alowedValidation"
                       className={classes.periods}
-                      type="number"
+                      type="text"
                       onChange={handleChange}
                     />
                   </div>
