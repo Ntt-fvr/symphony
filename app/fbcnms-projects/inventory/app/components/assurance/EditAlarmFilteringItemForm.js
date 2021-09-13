@@ -59,16 +59,36 @@ const useStyles = makeStyles(() => ({
     alignSelf: 'flex-end',
   },
   delete: {
-    alignSelf: 'flex-end',
+    // alignSelf: 'flex-end',
+    // border: '1px solid blue',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  gridcancel: {
+    // border: '1px solid black',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  save: {
+    // border: '1px solid black',
   },
   title: {
     marginLeft: '10px',
   },
   textTitle: {
     paddingLeft: '2rem',
+    // border: '1px solid blue',
   },
   titleButtons: {
     marginBottom: '1rem',
+    // border: '1px solid green',
+  },
+  titleEdit: {
+    // border: '1px solid red',
+    display: 'flex',
+    alignItems: 'center',
   },
   reason: {
     minHeight: '100px',
@@ -171,13 +191,19 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons} alignItems="center">
-          <Grid xs={7} sm={9} lg={9} xl={10}>
+        <Grid container className={classes.titleButtons}>
+          <Grid
+            className={classes.titleEdit}
+            xs={5}
+            sm={5}
+            md={7}
+            lg={9}
+            xl={9}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid className={classes.delete} xs={1} sm={1} lg={1} xl={1}>
+          <Grid className={classes.delete} xs={1} sm={1} md={1} lg={1} xl={1}>
             <DeleteOutlinedIcon
               icon={DeleteOutlinedIcon}
               onClick={() => {
@@ -186,34 +212,37 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               }}
             />
           </Grid>
-          <Grid xs={3} sm={2} lg={2} xl={1}>
-            <Grid container>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    className={classes.cancel}
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => closeEditForm()}>
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    onClick={() => {
-                      handleClickEdit();
-                      closeEditForm();
-                    }}
-                    className={classes.option}
-                    variant="contained"
-                    color="primary">
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-            </Grid>
+
+          <Grid
+            className={classes.gridcancel}
+            xs={3}
+            sm={3}
+            md={2}
+            lg={1}
+            xl={1}>
+            <FormField>
+              <Button
+                className={classes.cancel}
+                variant="outlined"
+                color="primary"
+                onClick={() => closeEditForm()}>
+                Cancel
+              </Button>
+            </FormField>
+          </Grid>
+          <Grid className={classes.save} xs={3} sm={3} md={2} lg={1} xl={1}>
+            <FormField>
+              <Button
+                onClick={() => {
+                  handleClickEdit();
+                  closeEditForm();
+                }}
+                className={classes.option}
+                variant="contained"
+                color="primary">
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
         <Grid xs={12}>
