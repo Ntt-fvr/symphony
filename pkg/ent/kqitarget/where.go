@@ -118,10 +118,10 @@ func Name(v string) predicate.KqiTarget {
 	})
 }
 
-// Frame applies equality check predicate on the "frame" field. It's identical to FrameEQ.
-func Frame(v float64) predicate.KqiTarget {
+// Period applies equality check predicate on the "period" field. It's identical to PeriodEQ.
+func Period(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFrame), v))
+		s.Where(sql.EQ(s.C(FieldPeriod), v))
 	})
 }
 
@@ -423,22 +423,22 @@ func NameContainsFold(v string) predicate.KqiTarget {
 	})
 }
 
-// FrameEQ applies the EQ predicate on the "frame" field.
-func FrameEQ(v float64) predicate.KqiTarget {
+// PeriodEQ applies the EQ predicate on the "period" field.
+func PeriodEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFrame), v))
+		s.Where(sql.EQ(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameNEQ applies the NEQ predicate on the "frame" field.
-func FrameNEQ(v float64) predicate.KqiTarget {
+// PeriodNEQ applies the NEQ predicate on the "period" field.
+func PeriodNEQ(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFrame), v))
+		s.Where(sql.NEQ(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameIn applies the In predicate on the "frame" field.
-func FrameIn(vs ...float64) predicate.KqiTarget {
+// PeriodIn applies the In predicate on the "period" field.
+func PeriodIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -450,12 +450,12 @@ func FrameIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldFrame), v...))
+		s.Where(sql.In(s.C(FieldPeriod), v...))
 	})
 }
 
-// FrameNotIn applies the NotIn predicate on the "frame" field.
-func FrameNotIn(vs ...float64) predicate.KqiTarget {
+// PeriodNotIn applies the NotIn predicate on the "period" field.
+func PeriodNotIn(vs ...float64) predicate.KqiTarget {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -467,35 +467,35 @@ func FrameNotIn(vs ...float64) predicate.KqiTarget {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldFrame), v...))
+		s.Where(sql.NotIn(s.C(FieldPeriod), v...))
 	})
 }
 
-// FrameGT applies the GT predicate on the "frame" field.
-func FrameGT(v float64) predicate.KqiTarget {
+// PeriodGT applies the GT predicate on the "period" field.
+func PeriodGT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFrame), v))
+		s.Where(sql.GT(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameGTE applies the GTE predicate on the "frame" field.
-func FrameGTE(v float64) predicate.KqiTarget {
+// PeriodGTE applies the GTE predicate on the "period" field.
+func PeriodGTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFrame), v))
+		s.Where(sql.GTE(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameLT applies the LT predicate on the "frame" field.
-func FrameLT(v float64) predicate.KqiTarget {
+// PeriodLT applies the LT predicate on the "period" field.
+func PeriodLT(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFrame), v))
+		s.Where(sql.LT(s.C(FieldPeriod), v))
 	})
 }
 
-// FrameLTE applies the LTE predicate on the "frame" field.
-func FrameLTE(v float64) predicate.KqiTarget {
+// PeriodLTE applies the LTE predicate on the "period" field.
+func PeriodLTE(v float64) predicate.KqiTarget {
 	return predicate.KqiTarget(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFrame), v))
+		s.Where(sql.LTE(s.C(FieldPeriod), v))
 	})
 }
 

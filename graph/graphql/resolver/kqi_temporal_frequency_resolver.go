@@ -20,10 +20,9 @@ type kqiTemporalFrequencyResolver struct{}
 func (kqiTemporalFrequencyResolver) Kqi(ctx context.Context, kqiTemporalFrequency *ent.KqiTemporalFrequency) ([]*ent.Kqi, error) {
 	variable, err := kqiTemporalFrequency.KqiTemporalFrequencyFk(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 func (r mutationResolver) AddKqiTemporalFrequency(ctx context.Context, input models.AddKqiTemporalFrequencyInput) (*ent.KqiTemporalFrequency, error) {
 	client := r.ClientFrom(ctx)
@@ -32,9 +31,9 @@ func (r mutationResolver) AddKqiTemporalFrequency(ctx context.Context, input mod
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -47,12 +46,12 @@ func (r mutationResolver) RemoveKqiTemporalFrequency(ctx context.Context, id int
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	//TODO: borrar o editar los edges relacionados
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.KqiTemporalFrequency.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -62,20 +61,19 @@ func (r mutationResolver) EditKqiTemporalFrequency(ctx context.Context, input mo
 	et, err := client.KqiTemporalFrequency.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name {
-
 		if et, err = client.KqiTemporalFrequency.
 			UpdateOne(et).
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

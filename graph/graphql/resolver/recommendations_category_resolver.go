@@ -15,18 +15,6 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-type recommendationsCategoryResolver struct{}
-
-func (recommendationsCategoryResolver) Recommendations(ctx context.Context, recommendationsCategory *ent.RecommendationsCategory) ([]*ent.Recommendations, error) {
-	variable, err := recommendationsCategory.Recommendations(ctx)
-
-	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
-	}
-}
-
 func (r mutationResolver) AddRecommendationsCategory(ctx context.Context, input models.AddRecommendationsCategoryInput) (*ent.RecommendationsCategory, error) {
 	client := r.ClientFrom(ctx)
 	typ, err := client.
@@ -35,9 +23,9 @@ func (r mutationResolver) AddRecommendationsCategory(ctx context.Context, input 
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -50,12 +38,12 @@ func (r mutationResolver) RemoveRecommendationsCategory(ctx context.Context, id 
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	//TODO: borrar o editar los edges relacionados
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.RecommendationsCategory.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -65,20 +53,19 @@ func (r mutationResolver) EditRecommendationsCategory(ctx context.Context, input
 	et, err := client.RecommendationsCategory.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name {
-
 		if et, err = client.RecommendationsCategory.
 			UpdateOne(et).
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

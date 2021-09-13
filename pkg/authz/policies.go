@@ -172,7 +172,11 @@ func appendWorkforcePermissionRule(rule *models.WorkforcePermissionRule, addRule
 	case models.PermissionValueYes:
 		rule.WorkOrderTypeIds = nil
 		rule.ProjectTypeIds = nil
-		rule.OrganizationIds = nil
+		if addRule.OrganizationIds != nil {
+			rule.OrganizationIds = append(rule.OrganizationIds, addRule.OrganizationIds...)
+		} else {
+			rule.OrganizationIds = nil
+		}
 	case models.PermissionValueNo:
 		rule.WorkOrderTypeIds = nil
 		rule.ProjectTypeIds = nil
