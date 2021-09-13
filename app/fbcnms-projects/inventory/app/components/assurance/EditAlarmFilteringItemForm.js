@@ -47,9 +47,6 @@ const useStyles = makeStyles(() => ({
   id: {
     margin: '50px 43px 22px 0',
   },
-  formFieldStatus: {
-    marginTop: '1rem',
-  },
   textInput: {
     minHeight: '36px',
   },
@@ -57,41 +54,22 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
+    marginLeft: '1rem',
   },
   delete: {
-    // alignSelf: 'flex-end',
-    // border: '1px solid blue',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-  },
-  gridcancel: {
-    // border: '1px solid black',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  save: {
-    // border: '1px solid black',
-  },
-  title: {
-    marginLeft: '10px',
   },
   textTitle: {
     paddingLeft: '2rem',
-    // border: '1px solid blue',
   },
   titleButtons: {
     marginBottom: '1rem',
-    // border: '1px solid green',
   },
   titleEdit: {
-    // border: '1px solid red',
     display: 'flex',
     alignItems: 'center',
-  },
-  reason: {
-    minHeight: '100px',
   },
   status: {
     marginTop: '74px',
@@ -103,29 +81,7 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'center',
-  },
-  button: {
-    width: '111px',
-    height: '36px',
-  },
-  buttonActive: {
-    border: '1px solid #00AF5B',
-    color: '#00AF5B',
-    fontSize: '14px',
-  },
-  buttonPending: {
-    border: '1px solid #FFB63E',
-    color: '#FFB63E',
-    fontSize: '14px',
-  },
-  buttonClosed: {
-    border: '1px solid #8895AD',
-    color: '#8895AD',
-    fontSize: '14px',
-  },
-  textFieldDate: {
-    height: '12px',
-    border: '1px solid #D2DAE7',
+    marginLeft: '1rem',
   },
 }));
 
@@ -203,7 +159,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid className={classes.delete} xs={1} sm={1} md={1} lg={1} xl={1}>
+          <Grid className={classes.delete} xs={7} sm={7} md={5} lg={3} xl={3}>
             <DeleteOutlinedIcon
               icon={DeleteOutlinedIcon}
               onClick={() => {
@@ -211,15 +167,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 closeEditForm();
               }}
             />
-          </Grid>
-
-          <Grid
-            className={classes.gridcancel}
-            xs={3}
-            sm={3}
-            md={2}
-            lg={1}
-            xl={1}>
             <FormField>
               <Button
                 className={classes.cancel}
@@ -229,8 +176,6 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 Cancel
               </Button>
             </FormField>
-          </Grid>
-          <Grid className={classes.save} xs={3} sm={3} md={2} lg={1} xl={1}>
             <FormField>
               <Button
                 onClick={() => {
