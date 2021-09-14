@@ -44,9 +44,9 @@ import EditKqiMutation from '../../mutations/EditKqiMutation';
 
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
-// import {graphql} from 'relay-runtime';
+
 import {useFormInput} from './common/useFormInput';
-// import {useLazyLoadQuery} from 'react-relay/hooks';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -226,6 +226,7 @@ const TargetQuery = graphql`
               id
               name
             }
+            id
             number
             comparatorType
           }
@@ -284,7 +285,7 @@ const KqiFormEdit = (props: Props) => {
   const dataResponseComparators = dataTarget.comparators?.edges.map(
     item => item.node,
   );
-  
+
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
       id: id,

@@ -37,6 +37,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
 import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
+import moment from 'moment';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -82,7 +83,7 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   create: () => void,
   edit: () => void,
-  tableTargets: any
+  tableTargets: any,
 |}>;
 
 
@@ -157,9 +158,9 @@ const KqiTableAssociatedTarget = (props: Props) => {
                     </Text>
                   </Button>
                 </TableCell>
-                <TableCell>{item.comparator}</TableCell>
+                <TableCell>{item.node.kqiComparator[0].comparatorFk.name} - {item.node.kqiComparator[0].number}</TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.warningComparator}
+                  {item.node.kqiComparator[1].number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   {item.node.frame}
@@ -168,7 +169,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   {item.node.alowedValidation}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.activeHours}
+                  {moment(item.node.initTime).format("HH")} - {moment(item.node.endTime).format("HH")}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>

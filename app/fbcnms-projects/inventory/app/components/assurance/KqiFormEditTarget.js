@@ -32,9 +32,14 @@ import {makeStyles} from '@material-ui/styles';
 import moment from 'moment';
 import {useFormInput} from './common/useFormInput';
 import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
+import type {EditKqiTargetMutationResponse} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
 import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
+import EditKqiComparatorMutation from '../../mutations/EditKqiComparatorMutation';
+import type {EditKqiComparatorMutationVariables} from '../../mutations/__generated__/EditKqiComparatorMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
 import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -149,6 +154,19 @@ type Props = $ReadOnly<{|
         kqi: {
           id: string,
         },
+        kqiComparator:{
+          id: string,
+          number: Number,
+          comparatorType: string,
+          kqiTargetFk:{
+            name: string,
+            id: string,
+          },
+          comparatorFk:{
+            id: string,
+            name: string,
+          }
+        }
       }
     }
   }
@@ -166,7 +184,12 @@ const KqiFormEditTarget = (props: Props) => {
   const initTime = useFormInput(moment(formValues.item.node.initTime).format("HH"));
   const endTime = useFormInput(moment(formValues.item.node.endTime).format("HH"));
 
-
+  const comparatorSelect = useFormInput(formValues.item.node.kqiComparator[0].comparatorFk.id);
+  const comparatorNumber = useFormInput(formValues.item.node.kqiComparator[0].number);
+  
+  const warningComparatorSelect = useFormInput(formValues.item.node.kqiComparator[1].comparatorFk.id);
+  const warningComparatorNumber = useFormInput(formValues.item.node.kqiComparator[1].number);
+  
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
       id: id,
@@ -188,7 +211,31 @@ const KqiFormEditTarget = (props: Props) => {
         kqi: formValues.item.node.kqi.id,
       },
     };
-    EditKqiTargetMutation(variables);
+    const response: MutationCallbacks<EditKqiTargetMutationResponse> = {
+      onCompleted: response => {
+        const variablesUpper: EditKqiComparatorMutationVariables = {
+          input: {
+            id: formValues.item.node.kqiComparator[0].id,
+            number: Number(comparatorNumber.value),
+            comparatorType: "COMPARATOR",
+            kqiTargetFk: formValues.item.node.kqiComparator[0].kqiTargetFk.id,
+            comparatorFk: comparatorSelect.value,
+          },
+        };
+        const variablesLower: EditKqiComparatorMutationVariables = {
+          input: {
+            id: formValues.item.node.kqiComparator[1].id,
+            number: Number(warningComparatorNumber.value),
+            comparatorType: 'WARNING_COMPARATOR',
+            kqiTargetFk: formValues.item.node.kqiComparator[1].kqiTargetFk.id,
+            comparatorFk: warningComparatorSelect.value
+          },
+        };
+        EditKqiComparatorMutation(variablesUpper);
+        EditKqiComparatorMutation(variablesLower);
+      },
+    };
+    EditKqiTargetMutation(variables, response);
     returnFormEdit()
   };
 
@@ -261,12 +308,13 @@ const KqiFormEditTarget = (props: Props) => {
                   <FormField label="Comparator" className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
+                        {...comparatorSelect}
                         className={classNames(
                           classes.select,
                           classes.selectWarningComparator,
                         )}
                         disableUnderline
-                        name="family">
+                        name="comparatorSelect">
                         {dataComparator?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
@@ -274,6 +322,8 @@ const KqiFormEditTarget = (props: Props) => {
                         ))}
                       </Select>
                       <TextInput
+                        {...comparatorNumber}
+                        name="comparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
                       />
@@ -286,12 +336,13 @@ const KqiFormEditTarget = (props: Props) => {
                     className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
+                        {...warningComparatorSelect}
                         className={classNames(
                           classes.select,
                           classes.selectWarningComparator,
                         )}
                         disableUnderline
-                        name="family">
+                        name="warningComparatorSelect">
                         {dataComparator?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
@@ -299,6 +350,8 @@ const KqiFormEditTarget = (props: Props) => {
                         ))}
                       </Select>
                       <TextInput
+                        {...warningComparatorNumber}
+                        name="warningComparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
                       />
