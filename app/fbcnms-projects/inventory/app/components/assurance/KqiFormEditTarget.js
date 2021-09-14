@@ -211,31 +211,28 @@ const KqiFormEditTarget = (props: Props) => {
         kqi: formValues.item.node.kqi.id,
       },
     };
-    const response: MutationCallbacks<EditKqiTargetMutationResponse> = {
-      onCompleted: response => {
-        const variablesUpper: EditKqiComparatorMutationVariables = {
-          input: {
-            id: formValues.item.node.kqiComparator[0].id,
-            number: Number(comparatorNumber.value),
-            comparatorType: "COMPARATOR",
-            kqiTargetFk: formValues.item.node.kqiComparator[0].kqiTargetFk.id,
-            comparatorFk: comparatorSelect.value,
-          },
-        };
-        const variablesLower: EditKqiComparatorMutationVariables = {
-          input: {
-            id: formValues.item.node.kqiComparator[1].id,
-            number: Number(warningComparatorNumber.value),
-            comparatorType: 'WARNING_COMPARATOR',
-            kqiTargetFk: formValues.item.node.kqiComparator[1].kqiTargetFk.id,
-            comparatorFk: warningComparatorSelect.value
-          },
-        };
-        EditKqiComparatorMutation(variablesUpper);
-        EditKqiComparatorMutation(variablesLower);
+    
+    const variablesUpper: EditKqiComparatorMutationVariables = {
+      input: {
+        id: formValues.item.node.kqiComparator[0].id,
+        number: Number(comparatorNumber.value),
+        comparatorType: "COMPARATOR",
+        kqiTargetFk: formValues.item.node.kqiComparator[0].kqiTargetFk.id,
+        comparatorFk: comparatorSelect.value,
       },
     };
-    EditKqiTargetMutation(variables, response);
+    const variablesLower: EditKqiComparatorMutationVariables = {
+      input: {
+        id: formValues.item.node.kqiComparator[1].id,
+        number: Number(warningComparatorNumber.value),
+        comparatorType: 'WARNING_COMPARATOR',
+        kqiTargetFk: formValues.item.node.kqiComparator[1].kqiTargetFk.id,
+        comparatorFk: warningComparatorSelect.value
+      },
+    };
+    EditKqiComparatorMutation(variablesUpper);
+    EditKqiComparatorMutation(variablesLower);  
+    EditKqiTargetMutation(variables);
     returnFormEdit()
   };
 
