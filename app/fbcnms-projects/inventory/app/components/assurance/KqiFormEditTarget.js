@@ -207,7 +207,7 @@ const KqiFormEditTarget = (props: Props) => {
         alowedValidation: Number(alowedValidation.value),
         initTime: moment(initTime.value, "HH"),
         endTime: moment(endTime.value, "HH"),
-        status: true,
+        status: checked,
         kqi: formValues.item.node.kqi.id,
       },
     };

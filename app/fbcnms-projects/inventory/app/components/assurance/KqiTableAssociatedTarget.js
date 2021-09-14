@@ -146,7 +146,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
             {tableTargets?.map((item, index) => (
               <StyledTableRow key={index}>
                 <TableCell>
-                  <Switch checked={checked} title={''} onChange={setChecked} />
+                  <Switch checked={item.node.status} title={''} onChange={setChecked} />
                 </TableCell>
                 <TableCell>
                   <Button onClick={() => edit({item})} variant="text">
@@ -158,7 +158,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                     </Text>
                   </Button>
                 </TableCell>
-                <TableCell>{item.node.kqiComparator[0].comparatorFk.name} - {item.node.kqiComparator[0].number}</TableCell>
+                <TableCell>{item.node.kqiComparator[0]?.comparatorFk?.name} - {item.node.kqiComparator[0].number}</TableCell>
                 <TableCell className={classes.insideCenter}>
                   {item.node.kqiComparator[1].number}
                 </TableCell>
