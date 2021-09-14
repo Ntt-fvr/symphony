@@ -47,9 +47,6 @@ const useStyles = makeStyles(() => ({
   id: {
     margin: '50px 43px 22px 0',
   },
-  formFieldStatus: {
-    marginTop: '1rem',
-  },
   textInput: {
     minHeight: '36px',
   },
@@ -57,12 +54,12 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
+    marginLeft: '1rem',
   },
   delete: {
-    alignSelf: 'flex-end',
-  },
-  title: {
-    marginLeft: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   textTitle: {
     paddingLeft: '2rem',
@@ -70,8 +67,9 @@ const useStyles = makeStyles(() => ({
   titleButtons: {
     marginBottom: '1rem',
   },
-  reason: {
-    minHeight: '100px',
+  titleEdit: {
+    display: 'flex',
+    alignItems: 'center',
   },
   status: {
     marginTop: '74px',
@@ -83,29 +81,7 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'center',
-  },
-  button: {
-    width: '111px',
-    height: '36px',
-  },
-  buttonActive: {
-    border: '1px solid #00AF5B',
-    color: '#00AF5B',
-    fontSize: '14px',
-  },
-  buttonPending: {
-    border: '1px solid #FFB63E',
-    color: '#FFB63E',
-    fontSize: '14px',
-  },
-  buttonClosed: {
-    border: '1px solid #8895AD',
-    color: '#8895AD',
-    fontSize: '14px',
-  },
-  textFieldDate: {
-    height: '12px',
-    border: '1px solid #D2DAE7',
+    marginLeft: '1rem',
   },
 }));
 
@@ -171,13 +147,19 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons} alignItems="center">
-          <Grid xs={7} sm={9} lg={9} xl={10}>
+        <Grid container className={classes.titleButtons}>
+          <Grid
+            className={classes.titleEdit}
+            xs={5}
+            sm={5}
+            md={7}
+            lg={9}
+            xl={9}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid className={classes.delete} xs={1} sm={1} lg={1} xl={1}>
+          <Grid className={classes.delete} xs={7} sm={7} md={5} lg={3} xl={3}>
             <DeleteOutlinedIcon
               icon={DeleteOutlinedIcon}
               onClick={() => {
@@ -185,35 +167,27 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 closeEditForm();
               }}
             />
-          </Grid>
-          <Grid xs={3} sm={2} lg={2} xl={1}>
-            <Grid container>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    className={classes.cancel}
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => closeEditForm()}>
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    onClick={() => {
-                      handleClickEdit();
-                      closeEditForm();
-                    }}
-                    className={classes.option}
-                    variant="contained"
-                    color="primary">
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-            </Grid>
+            <FormField>
+              <Button
+                className={classes.cancel}
+                variant="outlined"
+                color="primary"
+                onClick={() => closeEditForm()}>
+                Cancel
+              </Button>
+            </FormField>
+            <FormField>
+              <Button
+                onClick={() => {
+                  handleClickEdit();
+                  closeEditForm();
+                }}
+                className={classes.option}
+                variant="contained"
+                color="primary">
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
         <Grid xs={12}>
