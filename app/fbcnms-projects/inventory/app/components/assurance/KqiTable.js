@@ -101,7 +101,7 @@ const KqiTable = (props: Props) => {
                 </TableCell>
                 <TableCell>{item.kqiCategory.name}</TableCell>
                 <TableCell>
-                  <Indicator>1</Indicator>
+                  <Indicator>{item.kqiTarget.length}</Indicator>
                 </TableCell>
                 <TableCell>{item.kqiPerspective.name}</TableCell>
                 <TableCell>{item.kqiSource.id}</TableCell>

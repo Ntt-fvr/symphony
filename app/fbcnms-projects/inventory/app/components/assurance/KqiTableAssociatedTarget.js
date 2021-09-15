@@ -35,6 +35,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
+import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
 import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
 import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 import moment from 'moment';
@@ -146,7 +148,27 @@ const KqiTableAssociatedTarget = (props: Props) => {
             {tableTargets?.map((item, index) => (
               <StyledTableRow key={index}>
                 <TableCell>
-                  <Switch checked={item.node.status} title={''} onChange={setChecked} />
+                  <Switch 
+                    title={''} 
+                    checked={item.node.status} 
+                    onChange={setChecked} 
+                    onClick={() => {
+                    const variables: EditKqiTargetMutationVariables = {
+                      input: {
+                        id: item.node.id,
+                        name: item.node.name,
+                        impact: item.node.impact,
+                        frame: item.node.frame,
+                        alowedValidation: item.node.alowedValidation,
+                        initTime: moment(item.node.initTime, "HH"),
+                        endTime: moment(item.node.endTime, "HH"),
+                        status: !checked,
+                        kqi: item.node.kqi.id,
+                      },
+                    };
+                      EditKqiTargetMutation(variables);
+                    }} 
+                  />
                 </TableCell>
                 <TableCell>
                   <Button onClick={() => edit({item})} variant="text">
