@@ -20,6 +20,10 @@ import {MenuItem, Select} from '@material-ui/core';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import type {AddKqiTargetMutationVariables} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
 import AddKqiTargetMutation from '../../mutations/AddKqiTargetMutation';
+import type {AddKqiTargetMutationResponse} from '../../mutations/__generated__/AddKqiTargetMutation.graphql';
+import AddKqiComparatorMutation from '../../mutations/AddKqiComparatorMutation';
+import type {AddKqiComparatorMutationVariables} from '../../mutations/__generated__/AddKqiComparatorMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
 import Text from '@symphony/design-system/components/Text';
 import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
@@ -118,13 +122,13 @@ type Comparator = {
   id: string,
   name: string,
 }
+
+
 type Props = $ReadOnly<{|
   idKqi: string,
   returnFormEdit: () => void,
   dataComparator: Array<Comparator>,
 |}>;
-
-
 
 const KqiFormCreateTarget = (props: Props) => {
   const {returnFormEdit, idKqi, dataComparator} = props;
@@ -140,7 +144,7 @@ const KqiFormCreateTarget = (props: Props) => {
       },
     });
   }
-
+  
   function handleClick() {
     const variables: AddKqiTargetMutationVariables = {
       input: {
@@ -154,31 +158,29 @@ const KqiFormCreateTarget = (props: Props) => {
         kqi: idKqi,
       },
     };
-    // const response: MutationCallbacks<AddRuleMutationResponse> = {
-    //   onCompleted: response => {
-    //     const variablesUpper: AddRuleLimitMutationVariables = {
-    //       input: {
-    //         number: Number(rule.data.upperLimit),
-    //         limitType: 'UPPER',
-    //         comparator: rule.data.upperTarget,
-    //         rule: response.addRule.id,
-    //       },
-    //     };
-    //     const variablesLower: AddRuleLimitMutationVariables = {
-    //       input: {
-    //         number: Number(rule.data.lowerLimit),
-    //         limitType: 'LOWER',
-    //         comparator: rule.data.lowerTarget,
-    //         rule: response.addRule.id,
-    //       },
-    //     };
-    //     AddRuleLimitMutation(variablesUpper);
-    //     AddRuleLimitMutation(variablesLower);
-    //   },
-    // };
-    AddKqiTargetMutation(variables);
-    console.log(variables);
-    
+    const response: MutationCallbacks<AddKqiTargetMutationResponse> = {
+      onCompleted: response => {
+        const variablesUpper: AddKqiComparatorMutationVariables = {
+          input: {
+            number: Number(KqiTarget.data.comparatorNumber),
+            comparatorType: "COMPARATOR",
+            kqiTargetFk: response.addKqiTarget.id,
+            comparatorFk: KqiTarget.data.comparatorSelect,
+          },
+        };
+        const variablesLower: AddKqiComparatorMutationVariables = {
+          input: {
+            number: Number(KqiTarget.data.warningComparatorNumber),
+            comparatorType: 'WARNING_COMPARATOR',
+            kqiTargetFk: response.addKqiTarget.id,
+            comparatorFk: KqiTarget.data.warningComparatorSelect
+          },
+        };
+        AddKqiComparatorMutation(variablesUpper);
+        AddKqiComparatorMutation(variablesLower);
+      },
+    };
+    AddKqiTargetMutation(variables, response);
   }
 
   return (
@@ -246,7 +248,9 @@ const KqiFormCreateTarget = (props: Props) => {
                           classes.selectWarningComparator,
                         )}
                         disableUnderline
-                        name="family">
+                        name="comparatorSelect"
+                        onChange={handleChange}
+                      >
                         {dataComparator.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
@@ -254,8 +258,10 @@ const KqiFormCreateTarget = (props: Props) => {
                         ))}
                       </Select>
                       <TextInput
+                        name="comparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
+                        onChange={handleChange}
                       />
                     </div>
                   </FormField>
@@ -271,7 +277,9 @@ const KqiFormCreateTarget = (props: Props) => {
                           classes.selectWarningComparator,
                         )}
                         disableUnderline
-                        name="family">
+                        name="warningComparatorSelect"
+                        onChange={handleChange}
+                        >
                         {dataComparator.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
@@ -279,6 +287,8 @@ const KqiFormCreateTarget = (props: Props) => {
                         ))}
                       </Select>
                       <TextInput
+                        onChange={handleChange}
+                        name="warningComparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
                       />

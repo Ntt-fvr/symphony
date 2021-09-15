@@ -40,6 +40,7 @@ export type KqiFormEditQueryResponse = {|
             +id: string,
             +name: string,
           |},
+          +id: string,
           +number: number,
           +comparatorType: string,
         |}>,
@@ -88,9 +89,9 @@ query KqiFormEditQuery {
             id
             name
           }
+          id
           number
           comparatorType
-          id
         }
       }
     }
@@ -121,181 +122,130 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "impact",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "frame",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "alowedValidation",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "initTime",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "endTime",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v8 = [
+v2 = [
   (v0/*: any*/),
   (v1/*: any*/)
 ],
-v9 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Kqi",
-  "kind": "LinkedField",
-  "name": "kqi",
-  "plural": false,
-  "selections": (v8/*: any*/),
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "KqiTarget",
-  "kind": "LinkedField",
-  "name": "kqiTargetFk",
-  "plural": false,
-  "selections": (v8/*: any*/),
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Comparator",
-  "kind": "LinkedField",
-  "name": "comparatorFk",
-  "plural": false,
-  "selections": (v8/*: any*/),
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "number",
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "comparatorType",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "ComparatorConnection",
-  "kind": "LinkedField",
-  "name": "comparators",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ComparatorEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "Comparator",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": (v8/*: any*/),
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "KqiFormEditQuery",
+v3 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KqiTargetConnection",
+    "kind": "LinkedField",
+    "name": "kqiTargets",
+    "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "KqiTargetConnection",
+        "concreteType": "KqiTargetEdge",
         "kind": "LinkedField",
-        "name": "kqiTargets",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "KqiTargetEdge",
+            "concreteType": "KqiTarget",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "KqiTarget",
+                "kind": "ScalarField",
+                "name": "impact",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "frame",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "alowedValidation",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "initTime",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "endTime",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "status",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Kqi",
                 "kind": "LinkedField",
-                "name": "node",
+                "name": "kqi",
                 "plural": false,
+                "selections": (v2/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "KqiComparator",
+                "kind": "LinkedField",
+                "name": "kqiComparator",
+                "plural": true,
                 "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "KqiComparator",
+                    "concreteType": "KqiTarget",
                     "kind": "LinkedField",
-                    "name": "kqiComparator",
-                    "plural": true,
-                    "selections": [
-                      (v10/*: any*/),
-                      (v11/*: any*/),
-                      (v12/*: any*/),
-                      (v13/*: any*/)
-                    ],
+                    "name": "kqiTargetFk",
+                    "plural": false,
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Comparator",
+                    "kind": "LinkedField",
+                    "name": "comparatorFk",
+                    "plural": false,
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
+                  },
+                  (v0/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "number",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "comparatorType",
                     "storageKey": null
                   }
                 ],
@@ -306,9 +256,50 @@ return {
           }
         ],
         "storageKey": null
-      },
-      (v14/*: any*/)
+      }
     ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ComparatorConnection",
+    "kind": "LinkedField",
+    "name": "comparators",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ComparatorEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Comparator",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "KqiFormEditQuery",
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -317,79 +308,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "KqiFormEditQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "KqiTargetConnection",
-        "kind": "LinkedField",
-        "name": "kqiTargets",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KqiTargetEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "KqiTarget",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/),
-                  (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v9/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "KqiComparator",
-                    "kind": "LinkedField",
-                    "name": "kqiComparator",
-                    "plural": true,
-                    "selections": [
-                      (v10/*: any*/),
-                      (v11/*: any*/),
-                      (v12/*: any*/),
-                      (v13/*: any*/),
-                      (v0/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      (v14/*: any*/)
-    ]
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "88098b1702ca9512e55c95ff89046173",
+    "cacheID": "1ad1445f24126cc88a189ca80911053c",
     "id": null,
     "metadata": {},
     "name": "KqiFormEditQuery",
     "operationKind": "query",
-    "text": "query KqiFormEditQuery {\n  kqiTargets {\n    edges {\n      node {\n        id\n        name\n        impact\n        frame\n        alowedValidation\n        initTime\n        endTime\n        status\n        kqi {\n          id\n          name\n        }\n        kqiComparator {\n          kqiTargetFk {\n            id\n            name\n          }\n          comparatorFk {\n            id\n            name\n          }\n          number\n          comparatorType\n          id\n        }\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query KqiFormEditQuery {\n  kqiTargets {\n    edges {\n      node {\n        id\n        name\n        impact\n        frame\n        alowedValidation\n        initTime\n        endTime\n        status\n        kqi {\n          id\n          name\n        }\n        kqiComparator {\n          kqiTargetFk {\n            id\n            name\n          }\n          comparatorFk {\n            id\n            name\n          }\n          id\n          number\n          comparatorType\n        }\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd1031518bf62a35c0e06ccae92a479d8';
+(node/*: any*/).hash = 'd9bbee7679daaca91ba0e01adb2d67df';
 
 module.exports = node;
