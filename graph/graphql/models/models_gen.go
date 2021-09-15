@@ -2969,8 +2969,7 @@ const (
 	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
 	ResourceRelationshipFilterTypeResourceRelationshipFilter       ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_FILTER"
 	ResourceRelationshipFilterTypeResourceRelationshipType         ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
-	ResourceRelationshipFilterTypeResourceRelationshipResourceA    ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE_A"
-	ResourceRelationshipFilterTypeResourceRelationshipResourceB    ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE_B"
+	ResourceRelationshipFilterTypeResourceRelationshipResource     ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE"
 )
 
 var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
@@ -2979,13 +2978,12 @@ var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
 	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity,
 	ResourceRelationshipFilterTypeResourceRelationshipFilter,
 	ResourceRelationshipFilterTypeResourceRelationshipType,
-	ResourceRelationshipFilterTypeResourceRelationshipResourceA,
-	ResourceRelationshipFilterTypeResourceRelationshipResourceB,
+	ResourceRelationshipFilterTypeResourceRelationshipResource,
 }
 
 func (e ResourceRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResourceA, ResourceRelationshipFilterTypeResourceRelationshipResourceB:
+	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResource:
 		return true
 	}
 	return false
