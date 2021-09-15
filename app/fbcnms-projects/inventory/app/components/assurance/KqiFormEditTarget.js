@@ -296,6 +296,7 @@ const KqiFormEditTarget = (props: Props) => {
                 <FormField className={classes.formField} label="Target name">
                   <TextInput 
                     {...name}
+                    autoComplete="off"
                     name="name"
                     className={classes.textInput} />
                 </FormField>
@@ -320,6 +321,7 @@ const KqiFormEditTarget = (props: Props) => {
                       </Select>
                       <TextInput
                         {...comparatorNumber}
+                        autoComplete="off"
                         name="comparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
@@ -348,6 +350,7 @@ const KqiFormEditTarget = (props: Props) => {
                       </Select>
                       <TextInput
                         {...warningComparatorNumber}
+                        autoComplete="off"
                         name="warningComparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
@@ -360,6 +363,7 @@ const KqiFormEditTarget = (props: Props) => {
                 <FormField className={classes.formField} label="Impact">
                   <TextInput
                     {...impact}
+                    autoComplete="off"
                     name="Impact"
                     className={classes.textInput}
                     type="multiline"
@@ -372,6 +376,7 @@ const KqiFormEditTarget = (props: Props) => {
                   <div className={classes.contPeriods}>
                     <TextInput
                       {...frame} 
+                      autoComplete="off"
                       name="frame"
                       className={classes.periods} type="number" />
                   </div>
@@ -383,6 +388,7 @@ const KqiFormEditTarget = (props: Props) => {
                   <div className={classes.contPeriods}>
                     <TextInput 
                       {...alowedValidation}
+                      autoComplete="off"
                       name="allowedVariation"
                       className={classes.periods} type="number" />
                   </div>
@@ -398,6 +404,7 @@ const KqiFormEditTarget = (props: Props) => {
                     <div className={classes.contHours}>
                       <TextInput
                         {...initTime}
+                        autoComplete="off"
                         name="initTime"
                         suffix={'hrs'}
                         className={classes.activeHours}
@@ -409,6 +416,7 @@ const KqiFormEditTarget = (props: Props) => {
                     <div className={classes.contHours}>
                       <TextInput
                         {...endTime}
+                        autoComplete="off"
                         name="endTime"
                         suffix={'hrs'}
                         className={classes.activeHours}

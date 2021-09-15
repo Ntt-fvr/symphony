@@ -224,6 +224,7 @@ const KqiFormCreate = (props: Props) => {
               <Grid item xs={6}>
                 <FormField label="Name" className={classes.formField}>
                   <TextInput
+                    autoComplete="off"
                     name="name"
                     className={classes.textInput}
                     onChange={handleChange}
@@ -233,6 +234,7 @@ const KqiFormCreate = (props: Props) => {
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="ID">
                   <TextInput
+                    autoComplete="off"
                     disabled
                     name="id"
                     className={classes.textInput}
@@ -280,6 +282,7 @@ const KqiFormCreate = (props: Props) => {
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Description">
                   <TextInput
+                    autoComplete="off"
                     name="description"
                     className={classes.textInput}
                     type="multiline"
@@ -355,6 +358,7 @@ const KqiFormCreate = (props: Props) => {
               <Grid item xs={6}>
                 <FormField label="Formula" className={classes.formField}>
                   <TextInput
+                    autoComplete="off"
                     name="formula"
                     type="multiline"
                     rows={10}

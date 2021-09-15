@@ -232,6 +232,7 @@ const KqiFormCreateTarget = (props: Props) => {
               <Grid item xs={11}>
                 <FormField className={classes.formField} label="Target name">
                   <TextInput
+                    autoComplete="off"
                     name="name"
                     className={classes.textInput}
                     onChange={handleChange}
@@ -258,6 +259,7 @@ const KqiFormCreateTarget = (props: Props) => {
                         ))}
                       </Select>
                       <TextInput
+                        autoComplete="off"
                         name="comparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
@@ -287,6 +289,7 @@ const KqiFormCreateTarget = (props: Props) => {
                         ))}
                       </Select>
                       <TextInput
+                        autoComplete="off"
                         onChange={handleChange}
                         name="warningComparatorNumber"
                         placeholder="Number"
@@ -299,6 +302,7 @@ const KqiFormCreateTarget = (props: Props) => {
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Impact">
                   <TextInput
+                    autoComplete="off"
                     name="impact"
                     className={classes.textInput}
                     type="multiline"
@@ -311,6 +315,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 <FormField className={classes.formField} label="Periods">
                   <div className={classes.contPeriods}>
                     <TextInput
+                      autoComplete="off"
                       name="frame"
                       className={classes.periods}
                       type="number"
@@ -324,6 +329,7 @@ const KqiFormCreateTarget = (props: Props) => {
                   label="Allowed Variation">
                   <div className={classes.contPeriods}>
                     <TextInput
+                      autoComplete="off"
                       name="alowedValidation"
                       className={classes.periods}
                       type="text"
@@ -341,6 +347,7 @@ const KqiFormCreateTarget = (props: Props) => {
                     </Text>
                     <div className={classes.contHours}>
                       <TextInput
+                        autoComplete="off"
                         name="initTime"
                         suffix={'hrs'}
                         className={classes.activeHours}
@@ -352,6 +359,7 @@ const KqiFormCreateTarget = (props: Props) => {
                     </Text>
                     <div className={classes.contHours}>
                       <TextInput
+                        autoComplete="off"
                         name="endTime"
                         suffix={'hrs'}
                         className={classes.activeHours}

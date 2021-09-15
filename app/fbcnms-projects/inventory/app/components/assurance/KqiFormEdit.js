@@ -394,6 +394,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField label="Name" className={classes.formField}>
                   <TextInput
                     {...name}
+                    autoComplete="off"
                     name="name"
                     className={classes.textInput}
                   />
@@ -403,6 +404,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField className={classes.formField} label="ID">
                   <TextInput
                     value={formValues.item.id}
+                    autoComplete="off"
                     name="id"
                     disabled
                     className={classes.textInput}
@@ -450,6 +452,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField className={classes.formField} label="Description">
                   <TextInput
                     {...description}
+                    autoComplete="off"
                     name="description"
                     className={classes.textInput}
                     type="multiline"
@@ -526,6 +529,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField label="Formula" className={classes.formField}>
                   <TextInput
                     {...formula}
+                    autoComplete="off"
                     name="formula"
                     type="multiline"
                     rows={10}

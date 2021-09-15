@@ -12,7 +12,7 @@ import {BLUE} from '@symphony/design-system/theme/symphony';
 
 import Text from '@symphony/design-system/components/Text';
 
-import React from 'react';
+import React, {useState} from 'react';
 
 import Indicator from './KqiIndicator';
 import {withStyles} from '@material-ui/core/styles';
@@ -26,8 +26,10 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+
 const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'white',
@@ -64,6 +66,17 @@ type Props = $ReadOnly<{|
 const KqiTable = (props: Props) => {
   const {dataValues, viewFormEdit} = props;
   const classes = useStyles();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(Number(event.target.value));
+    setPage(0);
+  };
 
   return (
     <Paper className={classes.root}>
@@ -87,7 +100,7 @@ const KqiTable = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataValues?.map((item, index) => (
+            {dataValues?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <StyledTableRow key={index}>
                 <TableCell>
                   <Button onClick={() => viewFormEdit({item})} variant="text">
@@ -118,6 +131,15 @@ const KqiTable = (props: Props) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 15]}
+        component="div"
+        count={dataValues?.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </Paper>
   );
 };
