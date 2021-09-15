@@ -40,6 +40,8 @@ const (
 	EdgeFileCategoryType = "file_category_type"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
+	// EdgeResourceRelationshipFk holds the string denoting the resource_relationship_fk edge name in mutations.
+	EdgeResourceRelationshipFk = "resource_relationship_fk"
 
 	// Table holds the table name of the locationtype in the database.
 	Table = "location_types"
@@ -71,6 +73,13 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
+	// ResourceRelationshipFkTable is the table the holds the resource_relationship_fk relation/edge.
+	ResourceRelationshipFkTable = "resource_relationships"
+	// ResourceRelationshipFkInverseTable is the table name for the ResourceRelationship entity.
+	// It exists in this package in order to avoid circular dependency with the "resourcerelationship" package.
+	ResourceRelationshipFkInverseTable = "resource_relationships"
+	// ResourceRelationshipFkColumn is the table column denoting the resource_relationship_fk relation/edge.
+	ResourceRelationshipFkColumn = "location_type_resource_relationship_fk"
 )
 
 // Columns holds all SQL columns for locationtype fields.

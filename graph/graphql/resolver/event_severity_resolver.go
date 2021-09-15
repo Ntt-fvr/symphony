@@ -21,10 +21,9 @@ func (eventSeverityResolver) Rule(ctx context.Context, eventSeverity *ent.EventS
 	variable, err := eventSeverity.Eventseverityrule(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) AddEventSeverity(ctx context.Context, input models.AddEventSeverityInput) (*ent.EventSeverity, error) {
@@ -35,9 +34,9 @@ func (r mutationResolver) AddEventSeverity(ctx context.Context, input models.Add
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -50,12 +49,12 @@ func (r mutationResolver) RemoveEventSeverity(ctx context.Context, id int) (int,
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	//TODO: borrar o editar los edges relacionados
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.EventSeverity.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -65,20 +64,19 @@ func (r mutationResolver) EditEventSeverity(ctx context.Context, input models.Ed
 	et, err := client.EventSeverity.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name {
-
 		if et, err = client.EventSeverity.
 			UpdateOne(et).
 			SetName(input.Name).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

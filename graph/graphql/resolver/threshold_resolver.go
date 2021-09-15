@@ -22,9 +22,8 @@ func (thresholdResolver) Rule(ctx context.Context, threshold *ent.Threshold) ([]
 
 	if err != nil {
 		return nil, fmt.Errorf("no return a rule valid to id, %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
 }
 
 func (thresholdResolver) Kpi(ctx context.Context, threshold *ent.Threshold) (*ent.Kpi, error) {
@@ -32,9 +31,8 @@ func (thresholdResolver) Kpi(ctx context.Context, threshold *ent.Threshold) (*en
 
 	if err != nil {
 		return nil, fmt.Errorf("no return a kpi valid to id, %w", err)
-	} else {
-		return variable, nil
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) AddThreshold(ctx context.Context, input models.AddThresholdInput) (*ent.Threshold, error) {
@@ -49,9 +47,9 @@ func (r mutationResolver) AddThreshold(ctx context.Context, input models.AddThre
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -64,12 +62,12 @@ func (r mutationResolver) RemoveThreshold(ctx context.Context, id int) (int, err
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	//TODO: borrar o editar los edges relacionados
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.Threshold.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -79,12 +77,11 @@ func (r mutationResolver) EditThreshold(ctx context.Context, input models.EditTh
 	et, err := client.Threshold.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	if input.Name != et.Name || input.Description != et.Description || input.Status != et.Status {
-
 		if et, err = client.Threshold.
 			UpdateOne(et).
 			SetName(input.Name).
@@ -92,9 +89,9 @@ func (r mutationResolver) EditThreshold(ctx context.Context, input models.EditTh
 			SetStatus(input.Status).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

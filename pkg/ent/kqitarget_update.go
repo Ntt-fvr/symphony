@@ -39,29 +39,29 @@ func (ktu *KqiTargetUpdate) SetName(s string) *KqiTargetUpdate {
 	return ktu
 }
 
-// SetFrame sets the frame field.
-func (ktu *KqiTargetUpdate) SetFrame(f float64) *KqiTargetUpdate {
-	ktu.mutation.ResetFrame()
-	ktu.mutation.SetFrame(f)
+// SetPeriod sets the period field.
+func (ktu *KqiTargetUpdate) SetPeriod(f float64) *KqiTargetUpdate {
+	ktu.mutation.ResetPeriod()
+	ktu.mutation.SetPeriod(f)
 	return ktu
 }
 
-// AddFrame adds f to frame.
-func (ktu *KqiTargetUpdate) AddFrame(f float64) *KqiTargetUpdate {
-	ktu.mutation.AddFrame(f)
+// AddPeriod adds f to period.
+func (ktu *KqiTargetUpdate) AddPeriod(f float64) *KqiTargetUpdate {
+	ktu.mutation.AddPeriod(f)
 	return ktu
 }
 
-// SetAlowedValidation sets the alowedValidation field.
-func (ktu *KqiTargetUpdate) SetAlowedValidation(f float64) *KqiTargetUpdate {
-	ktu.mutation.ResetAlowedValidation()
-	ktu.mutation.SetAlowedValidation(f)
+// SetAllowedVariation sets the allowedVariation field.
+func (ktu *KqiTargetUpdate) SetAllowedVariation(f float64) *KqiTargetUpdate {
+	ktu.mutation.ResetAllowedVariation()
+	ktu.mutation.SetAllowedVariation(f)
 	return ktu
 }
 
-// AddAlowedValidation adds f to alowedValidation.
-func (ktu *KqiTargetUpdate) AddAlowedValidation(f float64) *KqiTargetUpdate {
-	ktu.mutation.AddAlowedValidation(f)
+// AddAllowedVariation adds f to allowedVariation.
+func (ktu *KqiTargetUpdate) AddAllowedVariation(f float64) *KqiTargetUpdate {
+	ktu.mutation.AddAllowedVariation(f)
 	return ktu
 }
 
@@ -263,32 +263,32 @@ func (ktu *KqiTargetUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: kqitarget.FieldName,
 		})
 	}
-	if value, ok := ktu.mutation.Frame(); ok {
+	if value, ok := ktu.mutation.Period(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldFrame,
+			Column: kqitarget.FieldPeriod,
 		})
 	}
-	if value, ok := ktu.mutation.AddedFrame(); ok {
+	if value, ok := ktu.mutation.AddedPeriod(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldFrame,
+			Column: kqitarget.FieldPeriod,
 		})
 	}
-	if value, ok := ktu.mutation.AlowedValidation(); ok {
+	if value, ok := ktu.mutation.AllowedVariation(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldAlowedValidation,
+			Column: kqitarget.FieldAllowedVariation,
 		})
 	}
-	if value, ok := ktu.mutation.AddedAlowedValidation(); ok {
+	if value, ok := ktu.mutation.AddedAllowedVariation(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldAlowedValidation,
+			Column: kqitarget.FieldAllowedVariation,
 		})
 	}
 	if value, ok := ktu.mutation.InitTime(); ok {
@@ -432,29 +432,29 @@ func (ktuo *KqiTargetUpdateOne) SetName(s string) *KqiTargetUpdateOne {
 	return ktuo
 }
 
-// SetFrame sets the frame field.
-func (ktuo *KqiTargetUpdateOne) SetFrame(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.ResetFrame()
-	ktuo.mutation.SetFrame(f)
+// SetPeriod sets the period field.
+func (ktuo *KqiTargetUpdateOne) SetPeriod(f float64) *KqiTargetUpdateOne {
+	ktuo.mutation.ResetPeriod()
+	ktuo.mutation.SetPeriod(f)
 	return ktuo
 }
 
-// AddFrame adds f to frame.
-func (ktuo *KqiTargetUpdateOne) AddFrame(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.AddFrame(f)
+// AddPeriod adds f to period.
+func (ktuo *KqiTargetUpdateOne) AddPeriod(f float64) *KqiTargetUpdateOne {
+	ktuo.mutation.AddPeriod(f)
 	return ktuo
 }
 
-// SetAlowedValidation sets the alowedValidation field.
-func (ktuo *KqiTargetUpdateOne) SetAlowedValidation(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.ResetAlowedValidation()
-	ktuo.mutation.SetAlowedValidation(f)
+// SetAllowedVariation sets the allowedVariation field.
+func (ktuo *KqiTargetUpdateOne) SetAllowedVariation(f float64) *KqiTargetUpdateOne {
+	ktuo.mutation.ResetAllowedVariation()
+	ktuo.mutation.SetAllowedVariation(f)
 	return ktuo
 }
 
-// AddAlowedValidation adds f to alowedValidation.
-func (ktuo *KqiTargetUpdateOne) AddAlowedValidation(f float64) *KqiTargetUpdateOne {
-	ktuo.mutation.AddAlowedValidation(f)
+// AddAllowedVariation adds f to allowedVariation.
+func (ktuo *KqiTargetUpdateOne) AddAllowedVariation(f float64) *KqiTargetUpdateOne {
+	ktuo.mutation.AddAllowedVariation(f)
 	return ktuo
 }
 
@@ -654,32 +654,32 @@ func (ktuo *KqiTargetUpdateOne) sqlSave(ctx context.Context) (_node *KqiTarget, 
 			Column: kqitarget.FieldName,
 		})
 	}
-	if value, ok := ktuo.mutation.Frame(); ok {
+	if value, ok := ktuo.mutation.Period(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldFrame,
+			Column: kqitarget.FieldPeriod,
 		})
 	}
-	if value, ok := ktuo.mutation.AddedFrame(); ok {
+	if value, ok := ktuo.mutation.AddedPeriod(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldFrame,
+			Column: kqitarget.FieldPeriod,
 		})
 	}
-	if value, ok := ktuo.mutation.AlowedValidation(); ok {
+	if value, ok := ktuo.mutation.AllowedVariation(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldAlowedValidation,
+			Column: kqitarget.FieldAllowedVariation,
 		})
 	}
-	if value, ok := ktuo.mutation.AddedAlowedValidation(); ok {
+	if value, ok := ktuo.mutation.AddedAllowedVariation(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldAlowedValidation,
+			Column: kqitarget.FieldAllowedVariation,
 		})
 	}
 	if value, ok := ktuo.mutation.InitTime(); ok {

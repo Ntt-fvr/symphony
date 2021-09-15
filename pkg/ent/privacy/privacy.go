@@ -240,6 +240,30 @@ func (f AlarmStatusMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AlarmStatusMutation", m)
 }
 
+// The AppointmentQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppointmentQueryRuleFunc func(context.Context, *ent.AppointmentQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppointmentQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppointmentQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppointmentQuery", q)
+}
+
+// The AppointmentMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppointmentMutationRuleFunc func(context.Context, *ent.AppointmentMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppointmentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppointmentMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppointmentMutation", m)
+}
+
 // The BlockQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type BlockQueryRuleFunc func(context.Context, *ent.BlockQuery) error
@@ -1152,6 +1176,30 @@ func (f KpiMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) e
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KpiMutation", m)
 }
 
+// The KpiCategoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type KpiCategoryQueryRuleFunc func(context.Context, *ent.KpiCategoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f KpiCategoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.KpiCategoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.KpiCategoryQuery", q)
+}
+
+// The KpiCategoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type KpiCategoryMutationRuleFunc func(context.Context, *ent.KpiCategoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f KpiCategoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.KpiCategoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.KpiCategoryMutation", m)
+}
+
 // The KqiQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type KqiQueryRuleFunc func(context.Context, *ent.KqiQuery) error
@@ -1654,6 +1702,150 @@ func (f ReportFilterMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ReportFilterMutation", m)
+}
+
+// The ResourceRelationshipQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ResourceRelationshipQueryRuleFunc func(context.Context, *ent.ResourceRelationshipQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ResourceRelationshipQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ResourceRelationshipQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceRelationshipQuery", q)
+}
+
+// The ResourceRelationshipMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ResourceRelationshipMutationRuleFunc func(context.Context, *ent.ResourceRelationshipMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ResourceRelationshipMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ResourceRelationshipMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceRelationshipMutation", m)
+}
+
+// The ResourceRelationshipMultiplicityQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ResourceRelationshipMultiplicityQueryRuleFunc func(context.Context, *ent.ResourceRelationshipMultiplicityQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ResourceRelationshipMultiplicityQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ResourceRelationshipMultiplicityQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceRelationshipMultiplicityQuery", q)
+}
+
+// The ResourceRelationshipMultiplicityMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ResourceRelationshipMultiplicityMutationRuleFunc func(context.Context, *ent.ResourceRelationshipMultiplicityMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ResourceRelationshipMultiplicityMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ResourceRelationshipMultiplicityMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceRelationshipMultiplicityMutation", m)
+}
+
+// The ResourceRelationshipTypeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ResourceRelationshipTypeQueryRuleFunc func(context.Context, *ent.ResourceRelationshipTypeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ResourceRelationshipTypeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ResourceRelationshipTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceRelationshipTypeQuery", q)
+}
+
+// The ResourceRelationshipTypeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ResourceRelationshipTypeMutationRuleFunc func(context.Context, *ent.ResourceRelationshipTypeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ResourceRelationshipTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ResourceRelationshipTypeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceRelationshipTypeMutation", m)
+}
+
+// The ResourceTypeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ResourceTypeQueryRuleFunc func(context.Context, *ent.ResourceTypeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ResourceTypeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ResourceTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceTypeQuery", q)
+}
+
+// The ResourceTypeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ResourceTypeMutationRuleFunc func(context.Context, *ent.ResourceTypeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ResourceTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ResourceTypeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceTypeMutation", m)
+}
+
+// The ResourceTypeBaseTypeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ResourceTypeBaseTypeQueryRuleFunc func(context.Context, *ent.ResourceTypeBaseTypeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ResourceTypeBaseTypeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ResourceTypeBaseTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceTypeBaseTypeQuery", q)
+}
+
+// The ResourceTypeBaseTypeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ResourceTypeBaseTypeMutationRuleFunc func(context.Context, *ent.ResourceTypeBaseTypeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ResourceTypeBaseTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ResourceTypeBaseTypeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceTypeBaseTypeMutation", m)
+}
+
+// The ResourceTypeClassQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ResourceTypeClassQueryRuleFunc func(context.Context, *ent.ResourceTypeClassQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ResourceTypeClassQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ResourceTypeClassQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ResourceTypeClassQuery", q)
+}
+
+// The ResourceTypeClassMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ResourceTypeClassMutationRuleFunc func(context.Context, *ent.ResourceTypeClassMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ResourceTypeClassMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ResourceTypeClassMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ResourceTypeClassMutation", m)
 }
 
 // The RuleQueryRuleFunc type is an adapter to allow the use of ordinary

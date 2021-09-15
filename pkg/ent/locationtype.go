@@ -49,9 +49,11 @@ type LocationTypeEdges struct {
 	FileCategoryType []*FileCategoryType
 	// SurveyTemplateCategories holds the value of the survey_template_categories edge.
 	SurveyTemplateCategories []*SurveyTemplateCategory
+	// ResourceRelationshipFk holds the value of the resource_relationship_fk edge.
+	ResourceRelationshipFk []*ResourceRelationship
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // LocationsOrErr returns the Locations value or an error if the edge
@@ -88,6 +90,15 @@ func (e LocationTypeEdges) SurveyTemplateCategoriesOrErr() ([]*SurveyTemplateCat
 		return e.SurveyTemplateCategories, nil
 	}
 	return nil, &NotLoadedError{edge: "survey_template_categories"}
+}
+
+// ResourceRelationshipFkOrErr returns the ResourceRelationshipFk value or an error if the edge
+// was not loaded in eager-loading.
+func (e LocationTypeEdges) ResourceRelationshipFkOrErr() ([]*ResourceRelationship, error) {
+	if e.loadedTypes[4] {
+		return e.ResourceRelationshipFk, nil
+	}
+	return nil, &NotLoadedError{edge: "resource_relationship_fk"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -172,6 +183,11 @@ func (lt *LocationType) QueryFileCategoryType() *FileCategoryTypeQuery {
 // QuerySurveyTemplateCategories queries the survey_template_categories edge of the LocationType.
 func (lt *LocationType) QuerySurveyTemplateCategories() *SurveyTemplateCategoryQuery {
 	return (&LocationTypeClient{config: lt.config}).QuerySurveyTemplateCategories(lt)
+}
+
+// QueryResourceRelationshipFk queries the resource_relationship_fk edge of the LocationType.
+func (lt *LocationType) QueryResourceRelationshipFk() *ResourceRelationshipQuery {
+	return (&LocationTypeClient{config: lt.config}).QueryResourceRelationshipFk(lt)
 }
 
 // Update returns a builder for updating this LocationType.

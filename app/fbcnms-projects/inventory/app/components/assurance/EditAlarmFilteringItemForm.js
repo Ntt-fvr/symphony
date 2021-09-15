@@ -56,7 +56,7 @@ const useStyles = makeStyles(() => ({
     alignSelf: 'flex-end',
     marginLeft: '1rem',
   },
-  delete: {
+  header: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -159,7 +159,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid className={classes.delete} xs={7} sm={7} md={5} lg={3} xl={3}>
+          <Grid className={classes.header} xs={7} sm={7} md={5} lg={3} xl={3}>
             <DeleteOutlinedIcon
               icon={DeleteOutlinedIcon}
               onClick={() => {

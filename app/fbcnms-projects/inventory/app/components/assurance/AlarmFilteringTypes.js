@@ -22,6 +22,8 @@ import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
+import {useLazyLoadQuery} from "react-relay/hooks";
+import type {AlarmFilteringTypesQuery} from "./__generated__/AlarmFilteringTypesQuery.graphql";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -79,16 +81,22 @@ type Alarms = {
 
 const AlarmFilteringTypes = () => {
   const classes = useStyles();
-  const [DataAlarms, setDataAlarms] = useState({});
+  //const [DataAlarms, setDataAlarms] = useState({});
   const [showEditForm, setShowEditForm] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
+  const DataAlarms = useLazyLoadQuery<AlarmFilteringTypesQuery>(
+    AlarmFilteringQuery,
+    {},
+  );
+
+  /*useEffect(() => {
     fetchQuery(RelayEnvironment, AlarmFilteringQuery, {}).then(data => {
       setDataAlarms(data);
     });
   }, [DataAlarms]);
+   */
 
   const handleClickEdit = (alarm: Alarms) => {
     setShowEditForm(true);

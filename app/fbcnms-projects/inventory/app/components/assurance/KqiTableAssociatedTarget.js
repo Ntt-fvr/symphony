@@ -28,17 +28,18 @@ import {makeStyles} from '@material-ui/styles';
 
 import Grid from '@material-ui/core/Grid';
 
+import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
+import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
+
+import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
 import Paper from '@material-ui/core/Paper';
+import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
-import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
-import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
-import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 import moment from 'moment';
 
 const StyledTableCell = withStyles(() => ({
@@ -84,17 +85,15 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   create: () => void,
-  edit: () => void,
+  edit: ({}) => void,
   tableTargets: any,
 |}>;
 
-
 const KqiTableAssociatedTarget = (props: Props) => {
   const {create, edit, tableTargets} = props;
-  const [items, setItems] = useState({});
 
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);  
+  const [checked, setChecked] = useState(true);
 
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
@@ -102,7 +101,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
     };
     RemoveKqiTargetMutation(variables);
   };
-  
+
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -148,26 +147,26 @@ const KqiTableAssociatedTarget = (props: Props) => {
             {tableTargets?.map((item, index) => (
               <StyledTableRow key={index}>
                 <TableCell>
-                  <Switch 
-                    title={''} 
-                    checked={item.node.status} 
-                    onChange={setChecked} 
+                  <Switch
+                    title={''}
+                    checked={item.node.status}
+                    onChange={setChecked}
                     onClick={() => {
-                    const variables: EditKqiTargetMutationVariables = {
-                      input: {
-                        id: item.node.id,
-                        name: item.node.name,
-                        impact: item.node.impact,
-                        frame: item.node.frame,
-                        alowedValidation: item.node.alowedValidation,
-                        initTime: moment(item.node.initTime, "HH"),
-                        endTime: moment(item.node.endTime, "HH"),
-                        status: !checked,
-                        kqi: item.node.kqi.id,
-                      },
-                    };
+                      const variables: EditKqiTargetMutationVariables = {
+                        input: {
+                          id: item.node.id,
+                          name: item.node.name,
+                          impact: item.node.impact,
+                          period: item.node.period,
+                          allowedVariation: item.node.allowedVariation,
+                          initTime: moment(item.node.initTime, 'HH'),
+                          endTime: moment(item.node.endTime, 'HH'),
+                          status: !checked,
+                          kqi: item.node.kqi.id,
+                        },
+                      };
                       EditKqiTargetMutation(variables);
-                    }} 
+                    }}
                   />
                 </TableCell>
                 <TableCell>
@@ -180,23 +179,27 @@ const KqiTableAssociatedTarget = (props: Props) => {
                     </Text>
                   </Button>
                 </TableCell>
-                <TableCell>{item.node.kqiComparator[0]?.comparatorFk?.name} - {item.node.kqiComparator[0].number}</TableCell>
-                <TableCell className={classes.insideCenter}>
-                  {item.node.kqiComparator[1].number}
+                <TableCell>
+                  {item?.node.kqiComparator[0]?.comparatorFk?.name} -{' '}
+                  {item?.node.kqiComparator[0].number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.frame}
+                  {item?.node.kqiComparator[1].number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.alowedValidation}
+                  {item?.node.frame}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {moment(item.node.initTime).format("HH")} - {moment(item.node.endTime).format("HH")}
+                  {item?.node.alowedValidation}
+                </TableCell>
+                <TableCell className={classes.insideCenter}>
+                  {moment(item?.node.initTime).format('HH')} -{' '}
+                  {moment(item?.node.endTime).format('HH')}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>
                     <DeleteOutlinedIcon
-                      onClick={() => handleRemove(item.node.id)}
+                      onClick={() => handleRemove(item?.node.id)}
                       style={{color: DARK.D300}}
                     />
                   </IconButton>
@@ -210,4 +213,3 @@ const KqiTableAssociatedTarget = (props: Props) => {
   );
 };
 export default KqiTableAssociatedTarget;
-

@@ -125,7 +125,8 @@ func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
 	rule := FromContext(ctx).WorkforcePolicy.Read
 	switch rule.IsAllowed {
 	case models.PermissionValueYes:
-		return nil
+		predicatesReturns = append(predicatesReturns, workorder.HasOrganizationWith(organization.IDIn(rule.OrganizationIds...)))
+		//return nil
 	case models.PermissionValueByCondition:
 		predicatesWo = append(predicatesWo, workorder.HasTypeWith(workordertype.IDIn(rule.WorkOrderTypeIds...)))
 		if rule.OrganizationIds != nil {

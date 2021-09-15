@@ -206,14 +206,6 @@ func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
 
-/*func (r resolver) Domain() generated.DomainResolver {
-	return domainResolver{}
-}
-
-func (r resolver) CounterFamily() generated.CounterFamilyResolver {
-	return counterFamilyResolver{}
-}*/
-
 func (r resolver) Vendor() generated.VendorResolver {
 	return vendorResolver{}
 }
@@ -261,11 +253,6 @@ func (r resolver) Rule() generated.RuleResolver {
 func (r resolver) RuleType() generated.RuleTypeResolver {
 	return ruleTypeResolver{}
 }
-
-/*
-func (r resolver) RuleLimit() generated.RuleLimitResolver {
-	return ruleLimitResolver{}
-}*/
 func (r resolver) EventSeverity() generated.EventSeverityResolver {
 	return eventSeverityResolver{}
 }
@@ -297,17 +284,13 @@ func (r resolver) KqiComparator() generated.KqiComparatorResolver {
 	return kqiComparatorResolver{}
 }
 
-/**************************************************************************************************/
-/************************* RECOMMENDATIONS ********************************************************/
-/*func (r resolver) RecommendationsCategory() generated.RecommendationsCategoryResolver {
-	return recommendationsCategoryResolver{}
-}
-
-func (r resolver) RecommendationsSources() generated.RecommendationsSourcesResolver {
-	return recommendationsSourcesResolver{}
-}*/
 func (r resolver) Recommendations() generated.RecommendationsResolver {
 	return recommendationsResolver{}
 }
+func (r resolver) ResourceRelationship() generated.ResourceRelationshipResolver {
+	return resourceRelationshipResolver{}
+}
 
-/**************************************************************************************************/
+func (r resolver) ResourceType() generated.ResourceTypeResolver {
+	return resourceTypeResolver{}
+}

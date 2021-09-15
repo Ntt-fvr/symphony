@@ -1,0 +1,46 @@
+techs:
+  - name: tech_1
+    domain: Domain_3
+  - name: tech_2
+    domain: Domain_2
+  - name: tech_3
+    domain: Domain_1
+domains:
+  - Domain_1
+  - Domain_2
+ruletypes:
+  - ruletype_1
+  - ruletype_2
+comparators:
+  - comparators_1
+  - comparators_2
+eventseverities:
+  - eventSeverity_1
+  - eventSeverity_2
+counterfamilies:
+  - counterFamily_1
+  - counterFamily_2
+vendors:
+  - vendors_1
+  - vendors_2
+alarmstatus:
+  - alarmStatus_1
+  - alarmStatus_2
+kqicategories:
+  - kqiCategory_1
+  - kqiCategory_2
+kqiperspectives:
+  - kqiPerspective_1
+  - kqiPerspective_2
+kqitemporalfrecuencies:
+  - kqiTemporalFrecuency_1
+  - kqiTemporalFrecuency_2
+kqisources:
+  - kqiSource_1
+  - kqiSource_2
+recommendationscategories:
+  - recommendationsCategories_1
+  - recommendationsCategories_2
+recommendationssources:
+  - recommendationsSources_1
+  - recommendationsSources_2

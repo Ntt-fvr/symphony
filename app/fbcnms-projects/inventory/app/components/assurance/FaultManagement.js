@@ -97,7 +97,9 @@ export default function Catalog() {
               path={relativeUrl('/alarm_admission')}
               component={AlarmFilteringTypes}
             />
-            <Redirect to={relativeUrl('/alarm_admission')} />
+            <Redirect
+              from={relativeUrl('/assurance/fault_management/')}
+              to={relativeUrl('/alarm_admission')} />
           </Switch>
         </InventorySuspense>
       </InventoryErrorBoundary>

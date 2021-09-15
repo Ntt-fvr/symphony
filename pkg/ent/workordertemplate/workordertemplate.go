@@ -27,6 +27,8 @@ const (
 	FieldDescription = "description"
 	// FieldAssigneeCanCompleteWorkOrder holds the string denoting the assignee_can_complete_work_order field in the database.
 	FieldAssigneeCanCompleteWorkOrder = "assignee_can_complete_work_order"
+	// FieldDuration holds the string denoting the duration field in the database.
+	FieldDuration = "duration"
 
 	// EdgePropertyTypes holds the string denoting the property_types edge name in mutations.
 	EdgePropertyTypes = "property_types"
@@ -68,6 +70,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldAssigneeCanCompleteWorkOrder,
+	FieldDuration,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrderTemplate type.

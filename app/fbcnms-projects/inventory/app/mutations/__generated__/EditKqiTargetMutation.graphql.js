@@ -18,8 +18,8 @@ export type EditKqiTargetInput = {|
   id: string,
   name: string,
   impact: string,
-  frame: number,
-  alowedValidation: number,
+  period: number,
+  allowedVariation: number,
   initTime: any,
   endTime: any,
   status: boolean,
@@ -33,8 +33,7 @@ export type EditKqiTargetMutationResponse = {|
     +id: string,
     +name: string,
     +impact: string,
-    +frame: number,
-    +alowedValidation: number,
+    +allowedVariation: number,
     +initTime: any,
     +endTime: any,
     +status: boolean,
@@ -55,8 +54,7 @@ mutation EditKqiTargetMutation(
     id
     name
     impact
-    frame
-    alowedValidation
+    allowedVariation
     initTime
     endTime
     status
@@ -112,14 +110,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "frame",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "alowedValidation",
+        "name": "allowedVariation",
         "storageKey": null
       },
       {
@@ -165,16 +156,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "00f5100e9926d3ed606498d4fc66c172",
+    "cacheID": "a00f018aa4fbe3f985586179e74e87de",
     "id": null,
     "metadata": {},
     "name": "EditKqiTargetMutation",
     "operationKind": "mutation",
-    "text": "mutation EditKqiTargetMutation(\n  $input: EditKqiTargetInput!\n) {\n  editKqiTarget(input: $input) {\n    id\n    name\n    impact\n    frame\n    alowedValidation\n    initTime\n    endTime\n    status\n  }\n}\n"
+    "text": "mutation EditKqiTargetMutation(\n  $input: EditKqiTargetInput!\n) {\n  editKqiTarget(input: $input) {\n    id\n    name\n    impact\n    allowedVariation\n    initTime\n    endTime\n    status\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'bc512a0211e450efba21b3b17fb770ce';
+(node/*: any*/).hash = '0a12f000a570cffe541dc5e7e2a0d1b1';
 
 module.exports = node;
