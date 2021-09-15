@@ -23,6 +23,7 @@ var migrationMap = map[string]func(context.Context, *zap.Logger) error{
 	"counterFamily":             migrations.MigrateCounterFamily,
 	"vendors":                   migrations.MigrateVendors,
 	"alarmStatus":               migrations.MigrateAlarmStatus,
+	"kpiCategory":               migrations.MigrateKpiCategory,
 	"kqiCategory":               migrations.MigrateKqiCategory,
 	"kqiPerspective":            migrations.MigrateKqiPerspective,
 	"kqiTemporalFrecuency":      migrations.MigrateKqiTemporalFrecuency,

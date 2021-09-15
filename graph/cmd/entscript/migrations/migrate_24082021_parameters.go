@@ -19,6 +19,7 @@ func MigrateParameters(ctx context.Context, logger *zap.Logger) error {
 	MigrateCounterFamily(ctx, logger)
 	MigrateVendors(ctx, logger)
 	MigrateAlarmStatus(ctx, logger)
+	MigrateKpiCategory(ctx, logger)
 	MigrateKqiCategory(ctx, logger)
 	MigrateKqiPerspective(ctx, logger)
 	MigrateKqiTemporalFrecuency(ctx, logger)

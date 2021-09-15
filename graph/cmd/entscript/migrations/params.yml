@@ -26,6 +26,9 @@ vendors:
 alarmstatus:
   - alarmStatus_1
   - alarmStatus_2
+kpicategory:
+  - kpiCategory_1
+  - kpiCategory_2 
 kqicategories:
   - kqiCategory_1
   - kqiCategory_2
