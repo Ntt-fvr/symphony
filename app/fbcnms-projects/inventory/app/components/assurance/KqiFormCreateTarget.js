@@ -151,7 +151,7 @@ const KqiFormCreateTarget = (props: Props) => {
         name: KqiTarget.data.name,
         impact: KqiTarget.data.impact,
         period: KqiTarget.data.period,
-        allowedVariation: KqiTarget.data.alowedValidation,
+        allowedVariation: KqiTarget.data.allowedVariation,
         initTime: moment(KqiTarget.data.initTime, 'HH'),
         endTime: moment(KqiTarget.data.endTime, 'HH'),
         status: checked,

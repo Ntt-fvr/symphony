@@ -26,6 +26,7 @@ export type KqiFormEditQueryResponse = {|
         +initTime: any,
         +endTime: any,
         +status: boolean,
+        +period: number,
         +kqi: {|
           +id: string,
           +name: string,
@@ -74,6 +75,7 @@ query KqiFormEditQuery {
         initTime
         endTime
         status
+        period
         kqi {
           id
           name
@@ -184,6 +186,13 @@ v3 = [
                 "args": null,
                 "kind": "ScalarField",
                 "name": "status",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "period",
                 "storageKey": null
               },
               {
@@ -302,16 +311,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "415dc8ea7c6c86fdbc2ab38680739ab9",
+    "cacheID": "4a77828b77c550566c50e28d8b41a6be",
     "id": null,
     "metadata": {},
     "name": "KqiFormEditQuery",
     "operationKind": "query",
-    "text": "query KqiFormEditQuery {\n  kqiTargets {\n    edges {\n      node {\n        id\n        name\n        impact\n        allowedVariation\n        initTime\n        endTime\n        status\n        kqi {\n          id\n          name\n        }\n        kqiComparator {\n          kqiTargetFk {\n            id\n            name\n          }\n          comparatorFk {\n            id\n            name\n          }\n          id\n          number\n          comparatorType\n        }\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query KqiFormEditQuery {\n  kqiTargets {\n    edges {\n      node {\n        id\n        name\n        impact\n        allowedVariation\n        initTime\n        endTime\n        status\n        period\n        kqi {\n          id\n          name\n        }\n        kqiComparator {\n          kqiTargetFk {\n            id\n            name\n          }\n          comparatorFk {\n            id\n            name\n          }\n          id\n          number\n          comparatorType\n        }\n      }\n    }\n  }\n  comparators {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a472f837109421a57a9504de16993a12';
+(node/*: any*/).hash = '86b2ef663668cb9ccc2e70113b379c1a';
 
 module.exports = node;

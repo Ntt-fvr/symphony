@@ -210,6 +210,7 @@ const TargetQuery = graphql`
           initTime
           endTime
           status
+          period
           kqi {
             id
             name
@@ -277,6 +278,10 @@ const KqiFormEdit = (props: Props) => {
   const kqiTemporalFrequency = useFormInput(
     formValues.item.kqiTemporalFrequency.id,
   );
+
+
+  console.log(dataTarget)
+  debugger
 
   const filterKqiTargetsById = dataTarget?.kqiTargets?.edges?.filter(
     kqi => kqi.node.kqi.id === formValues.item.id,
