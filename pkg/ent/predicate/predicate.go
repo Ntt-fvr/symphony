@@ -136,6 +136,9 @@ type Hyperlink func(*sql.Selector)
 // Kpi is the predicate function for kpi builders.
 type Kpi func(*sql.Selector)
 
+// KpiCategory is the predicate function for kpicategory builders.
+type KpiCategory func(*sql.Selector)
+
 // Kqi is the predicate function for kqi builders.
 type Kqi func(*sql.Selector)
 

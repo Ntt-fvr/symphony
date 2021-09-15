@@ -25,8 +25,8 @@ const (
 	FieldName = "name"
 	// FieldPeriod holds the string denoting the period field in the database.
 	FieldPeriod = "period"
-	// FieldAlowedValidation holds the string denoting the alowedvalidation field in the database.
-	FieldAlowedValidation = "alowed_validation"
+	// FieldAllowedVariation holds the string denoting the allowedvariation field in the database.
+	FieldAllowedVariation = "allowed_variation"
 	// FieldInitTime holds the string denoting the inittime field in the database.
 	FieldInitTime = "init_time"
 	// FieldEndTime holds the string denoting the endtime field in the database.
@@ -66,7 +66,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldPeriod,
-	FieldAlowedValidation,
+	FieldAllowedVariation,
 	FieldInitTime,
 	FieldEndTime,
 	FieldImpact,

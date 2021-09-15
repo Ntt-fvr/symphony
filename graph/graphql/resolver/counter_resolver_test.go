@@ -24,38 +24,54 @@ func TestAddRemoveCounter(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddCounterTest(t, ctx, mr)
-	EditCounterTest(t, ctx, mr, id1, id2)
+	id1, id2, vnd := AddCounterTest(t, ctx, mr)
+	EditCounterTest(t, ctx, mr, id1, id2, vnd)
 	RemoveCounterTest(t, ctx, mr, id1, id2)
 
 }
-func AddCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int, int) {
+	vendor1, err := mr.AddVendor(ctx, models.AddVendorInput{
+		Name: "vendor_test_1",
+	})
+	require.NoError(t, err)
+	counterFamily1, err := mr.AddCounterFamily(ctx, models.AddCounterFamilyInput{
+		Name: "counterFamily_test_1",
+	})
+	require.NoError(t, err)
 	counter1, err := mr.AddCounter(ctx, models.AddCounterInput{
-		Name: "counter_test_1",
+		Name:          "counter_test_1",
+		VendorFk:      vendor1.ID,
+		CounterFamily: counterFamily1.ID,
 	})
 	require.NoError(t, err)
 
 	counter2, err := mr.AddCounter(ctx, models.AddCounterInput{
-		Name: "counter_test_2",
+		Name:          "counter_test_2",
+		VendorFk:      vendor1.ID,
+		CounterFamily: counterFamily1.ID,
 	})
 	require.NoError(t, err)
 	id1, id2 := counter1.ID, counter2.ID
 	_, err = mr.AddCounter(ctx, models.AddCounterInput{
-		Name: "counter_test_1",
+		Name:          "counter_test_1",
+		VendorFk:      vendor1.ID,
+		CounterFamily: counterFamily1.ID,
 	})
 	require.Error(t, err)
-	return id1, id2
+	return id1, id2, vendor1.ID
 }
 
-func EditCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditCounterTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int, vnd int) {
 	_, err := mr.EditCounter(ctx, models.EditCounterInput{
-		ID:   id1,
-		Name: "counter_test_1.1",
+		ID:       id1,
+		Name:     "counter_test_1.1",
+		VendorFk: vnd,
 	})
 	require.NoError(t, err)
 	_, err = mr.EditCounter(ctx, models.EditCounterInput{
-		ID:   id2,
-		Name: "counter_test_1.1",
+		ID:       id2,
+		Name:     "counter_test_1.1",
+		VendorFk: vnd,
 	})
 	require.Error(t, err)
 }

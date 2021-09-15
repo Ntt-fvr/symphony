@@ -28,6 +28,8 @@ type ResourceRelationship struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResourceRelationshipQuery when eager-loading is set.
 	Edges                                                       ResourceRelationshipEdges `json:"edges"`
@@ -128,9 +130,10 @@ func (e ResourceRelationshipEdges) ResourceRelationshipMultiplicityFkOrErr() (*R
 // scanValues returns the types for scanning values from sql.Rows.
 func (*ResourceRelationship) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // id
-		&sql.NullTime{},  // create_time
-		&sql.NullTime{},  // update_time
+		&sql.NullInt64{},  // id
+		&sql.NullTime{},   // create_time
+		&sql.NullTime{},   // update_time
+		&sql.NullString{}, // name
 	}
 }
 
@@ -167,7 +170,12 @@ func (rr *ResourceRelationship) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rr.UpdateTime = value.Time
 	}
-	values = values[2:]
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field name", values[2])
+	} else if value.Valid {
+		rr.Name = value.String
+	}
+	values = values[3:]
 	if len(values) == len(resourcerelationship.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field location_type_resource_relationship_fk", value)
@@ -255,6 +263,8 @@ func (rr *ResourceRelationship) String() string {
 	builder.WriteString(rr.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(rr.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", name=")
+	builder.WriteString(rr.Name)
 	builder.WriteByte(')')
 	return builder.String()
 }

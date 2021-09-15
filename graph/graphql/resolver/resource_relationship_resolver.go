@@ -71,6 +71,7 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 	if valor {
 		typ, err := client.
 			ResourceRelationship.Create().
+			SetName(input.Name).
 			SetNillableLocationtypefkID(input.LocationTypeFk).
 			SetResourceRelationshipMultiplicityFkID(input.ResourceRelationshipMultiplicityFk).
 			SetResourcerelationshiptypefkID(input.ResourceRelationshipTypeFk).
@@ -87,6 +88,7 @@ func (r mutationResolver) AddResourceRelationship(ctx context.Context, input mod
 	}
 	typ, err := client.
 		ResourceRelationship.Create().
+		SetName(input.Name).
 		SetResourceRelationshipMultiplicityFkID(input.ResourceRelationshipMultiplicityFk).
 		SetResourcerelationshiptypefkID(input.ResourceRelationshipTypeFk).
 		SetNillableResourcetypebID(input.ResourceTypeFkB).
@@ -226,11 +228,12 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 		if valor {
 			typ, err := client.
 				ResourceRelationship.UpdateOne(et).
+				SetName(input.Name).
 				SetNillableLocationtypefkID(locationtypeid).
 				SetResourceRelationshipMultiplicityFkID(relationmulplicityid).
 				SetResourcerelationshiptypefkID(relationtypeid).
 				SetResourcetypeaID(resourcetypeAid).
-				SetNillableResourcetypebID(nil).
+				ClearResourcetypeb().
 				Save(ctx)
 			if err != nil {
 				if ent.IsConstraintError(err) {
@@ -243,11 +246,12 @@ func (r mutationResolver) EditResourceRelationship(ctx context.Context, input mo
 		}
 		typ, err := client.
 			ResourceRelationship.UpdateOne(et).
+			SetName(input.Name).
 			SetNillableResourcetypebID(resourcetypeBid).
 			SetResourceRelationshipMultiplicityFkID(relationmulplicityid).
 			SetResourcerelationshiptypefkID(relationtypeid).
 			SetResourcetypeaID(resourcetypeAid).
-			SetNillableLocationtypefkID(nil).
+			ClearLocationtypefk().
 			Save(ctx)
 		if err != nil {
 			if ent.IsConstraintError(err) {

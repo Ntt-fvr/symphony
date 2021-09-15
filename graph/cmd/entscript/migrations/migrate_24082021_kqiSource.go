@@ -15,7 +15,7 @@ import (
 func MigrateKqiSource(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, kqiSource := range Config.Kqisource {
+	for _, kqiSource := range Config.Kqisources {
 		kqiSourceDB, err := client.KqiSource.
 			Create().
 			SetName(kqiSource).

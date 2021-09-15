@@ -70,6 +70,7 @@ type hooks struct {
 	Formula                          []ent.Hook
 	Hyperlink                        []ent.Hook
 	Kpi                              []ent.Hook
+	KpiCategory                      []ent.Hook
 	Kqi                              []ent.Hook
 	KqiCategory                      []ent.Hook
 	KqiComparator                    []ent.Hook

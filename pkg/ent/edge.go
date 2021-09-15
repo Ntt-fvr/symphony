@@ -920,6 +920,14 @@ func (k *Kpi) Domain(ctx context.Context) (*Domain, error) {
 	return result, MaskNotFound(err)
 }
 
+func (k *Kpi) KpiCategory(ctx context.Context) (*KpiCategory, error) {
+	result, err := k.Edges.KpiCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKpiCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (k *Kpi) Formulakpi(ctx context.Context) ([]*Formula, error) {
 	result, err := k.Edges.FormulakpiOrErr()
 	if IsNotLoaded(err) {
@@ -934,6 +942,14 @@ func (k *Kpi) Thresholdkpi(ctx context.Context) (*Threshold, error) {
 		result, err = k.QueryThresholdkpi().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (kc *KpiCategory) Kpicategory(ctx context.Context) ([]*Kpi, error) {
+	result, err := kc.Edges.KpicategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = kc.QueryKpicategory().All(ctx)
+	}
+	return result, err
 }
 
 func (k *Kqi) KqiCategoryFk(ctx context.Context) (*KqiCategory, error) {

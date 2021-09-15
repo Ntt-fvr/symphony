@@ -100,6 +100,8 @@ type Tx struct {
 	Hyperlink *HyperlinkClient
 	// Kpi is the client for interacting with the Kpi builders.
 	Kpi *KpiClient
+	// KpiCategory is the client for interacting with the KpiCategory builders.
+	KpiCategory *KpiCategoryClient
 	// Kqi is the client for interacting with the Kqi builders.
 	Kqi *KqiClient
 	// KqiCategory is the client for interacting with the KqiCategory builders.
@@ -377,6 +379,7 @@ func (tx *Tx) init() {
 	tx.Formula = NewFormulaClient(tx.config)
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
 	tx.Kpi = NewKpiClient(tx.config)
+	tx.KpiCategory = NewKpiCategoryClient(tx.config)
 	tx.Kqi = NewKqiClient(tx.config)
 	tx.KqiCategory = NewKqiCategoryClient(tx.config)
 	tx.KqiComparator = NewKqiComparatorClient(tx.config)

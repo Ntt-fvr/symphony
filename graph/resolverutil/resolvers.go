@@ -181,6 +181,15 @@ func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQ
 	return query, nil
 }
 
+func KpiCategoryFilter(query *ent.KpiCategoryQuery, filters []*models.KpiCategoryFilterInput) (*ent.KpiCategoryQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKpiCategoryFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
 func ThresholdFilter(query *ent.ThresholdQuery, filters []*models.ThresholdFilterInput) (*ent.ThresholdQuery, error) {
 	var err error
 	for _, f := range filters {

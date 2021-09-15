@@ -15,7 +15,7 @@ import (
 func MigrateKqiTemporalFrecuency(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, kqiTemporalFrecuency := range Config.Kqitemporalfrecuency {
+	for _, kqiTemporalFrecuency := range Config.Kqitemporalfrecuencies {
 		kqiTemporalFrecuencyDB, err := client.KqiTemporalFrequency.
 			Create().
 			SetName(kqiTemporalFrecuency).

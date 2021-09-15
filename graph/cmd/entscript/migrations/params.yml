@@ -1,4 +1,4 @@
-teches:
+techs:
   - name: tech_1
     domain: Domain_3
   - name: tech_2
@@ -14,10 +14,10 @@ ruletypes:
 comparators:
   - comparators_1
   - comparators_2
-eventseverity:
+eventseverities:
   - eventSeverity_1
   - eventSeverity_2
-counterfamily:
+counterfamilies:
   - counterFamily_1
   - counterFamily_2
 vendors:
@@ -26,16 +26,16 @@ vendors:
 alarmstatus:
   - alarmStatus_1
   - alarmStatus_2
-kqicategory:
+kqicategories:
   - kqiCategory_1
   - kqiCategory_2
-kqiperspective:
+kqiperspectives:
   - kqiPerspective_1
   - kqiPerspective_2
-kqitemporalfrecuency:
+kqitemporalfrecuencies:
   - kqiTemporalFrecuency_1
   - kqiTemporalFrecuency_2
-kqisource:
+kqisources:
   - kqiSource_1
   - kqiSource_2
 recommendationscategories:

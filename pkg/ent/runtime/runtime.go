@@ -52,6 +52,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
@@ -1206,6 +1207,33 @@ func init() {
 	kpiDescDescription := kpiFields[1].Descriptor()
 	// kpi.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	kpi.DescriptionValidator = kpiDescDescription.Validators[0].(func(string) error)
+	kpicategoryMixin := schema.KpiCategory{}.Mixin()
+	kpicategory.Policy = privacy.NewPolicies(schema.KpiCategory{})
+	kpicategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := kpicategory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	kpicategoryMixinFields0 := kpicategoryMixin[0].Fields()
+	kpicategoryFields := schema.KpiCategory{}.Fields()
+	_ = kpicategoryFields
+	// kpicategoryDescCreateTime is the schema descriptor for create_time field.
+	kpicategoryDescCreateTime := kpicategoryMixinFields0[0].Descriptor()
+	// kpicategory.DefaultCreateTime holds the default value on creation for the create_time field.
+	kpicategory.DefaultCreateTime = kpicategoryDescCreateTime.Default.(func() time.Time)
+	// kpicategoryDescUpdateTime is the schema descriptor for update_time field.
+	kpicategoryDescUpdateTime := kpicategoryMixinFields0[1].Descriptor()
+	// kpicategory.DefaultUpdateTime holds the default value on creation for the update_time field.
+	kpicategory.DefaultUpdateTime = kpicategoryDescUpdateTime.Default.(func() time.Time)
+	// kpicategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	kpicategory.UpdateDefaultUpdateTime = kpicategoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// kpicategoryDescName is the schema descriptor for name field.
+	kpicategoryDescName := kpicategoryFields[0].Descriptor()
+	// kpicategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	kpicategory.NameValidator = kpicategoryDescName.Validators[0].(func(string) error)
 	kqiMixin := schema.Kqi{}.Mixin()
 	kqi.Policy = privacy.NewPolicies(schema.Kqi{})
 	kqi.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1834,6 +1862,10 @@ func init() {
 	resourcerelationship.DefaultUpdateTime = resourcerelationshipDescUpdateTime.Default.(func() time.Time)
 	// resourcerelationship.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	resourcerelationship.UpdateDefaultUpdateTime = resourcerelationshipDescUpdateTime.UpdateDefault.(func() time.Time)
+	// resourcerelationshipDescName is the schema descriptor for name field.
+	resourcerelationshipDescName := resourcerelationshipFields[0].Descriptor()
+	// resourcerelationship.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	resourcerelationship.NameValidator = resourcerelationshipDescName.Validators[0].(func(string) error)
 	resourcerelationshipmultiplicityMixin := schema.ResourceRelationshipMultiplicity{}.Mixin()
 	resourcerelationshipmultiplicity.Policy = privacy.NewPolicies(schema.ResourceRelationshipMultiplicity{})
 	resourcerelationshipmultiplicity.Hooks[0] = func(next ent.Mutator) ent.Mutator {

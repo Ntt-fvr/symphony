@@ -60,6 +60,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
@@ -10196,6 +10197,268 @@ var DefaultKpiOrder = &KpiOrder{
 	},
 }
 
+// KpiCategoryEdge is the edge representation of KpiCategory.
+type KpiCategoryEdge struct {
+	Node   *KpiCategory `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// KpiCategoryConnection is the connection containing edges to KpiCategory.
+type KpiCategoryConnection struct {
+	Edges      []*KpiCategoryEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+// KpiCategoryPaginateOption enables pagination customization.
+type KpiCategoryPaginateOption func(*kpiCategoryPager) error
+
+// WithKpiCategoryOrder configures pagination ordering.
+func WithKpiCategoryOrder(order *KpiCategoryOrder) KpiCategoryPaginateOption {
+	if order == nil {
+		order = DefaultKpiCategoryOrder
+	}
+	o := *order
+	return func(pager *kpiCategoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultKpiCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithKpiCategoryFilter configures pagination filter.
+func WithKpiCategoryFilter(filter func(*KpiCategoryQuery) (*KpiCategoryQuery, error)) KpiCategoryPaginateOption {
+	return func(pager *kpiCategoryPager) error {
+		if filter == nil {
+			return errors.New("KpiCategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type kpiCategoryPager struct {
+	order  *KpiCategoryOrder
+	filter func(*KpiCategoryQuery) (*KpiCategoryQuery, error)
+}
+
+func newKpiCategoryPager(opts []KpiCategoryPaginateOption) (*kpiCategoryPager, error) {
+	pager := &kpiCategoryPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultKpiCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *kpiCategoryPager) applyFilter(query *KpiCategoryQuery) (*KpiCategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *kpiCategoryPager) toCursor(kc *KpiCategory) Cursor {
+	return p.order.Field.toCursor(kc)
+}
+
+func (p *kpiCategoryPager) applyCursors(query *KpiCategoryQuery, after, before *Cursor) *KpiCategoryQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultKpiCategoryOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *kpiCategoryPager) applyOrder(query *KpiCategoryQuery, reverse bool) *KpiCategoryQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultKpiCategoryOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultKpiCategoryOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to KpiCategory.
+func (kc *KpiCategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...KpiCategoryPaginateOption,
+) (*KpiCategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newKpiCategoryPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if kc, err = pager.applyFilter(kc); err != nil {
+		return nil, err
+	}
+
+	conn := &KpiCategoryConnection{Edges: []*KpiCategoryEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := kc.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := kc.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	kc = pager.applyCursors(kc, after, before)
+	kc = pager.applyOrder(kc, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		kc = kc.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		kc = kc.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := kc.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *KpiCategory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *KpiCategory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *KpiCategory {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*KpiCategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &KpiCategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// KpiCategoryOrderFieldName orders KpiCategory by name.
+	KpiCategoryOrderFieldName = &KpiCategoryOrderField{
+		field: kpicategory.FieldName,
+		toCursor: func(kc *KpiCategory) Cursor {
+			return Cursor{
+				ID:    kc.ID,
+				Value: kc.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f KpiCategoryOrderField) String() string {
+	var str string
+	switch f.field {
+	case kpicategory.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f KpiCategoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *KpiCategoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("KpiCategoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *KpiCategoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid KpiCategoryOrderField", str)
+	}
+	return nil
+}
+
+// KpiCategoryOrderField defines the ordering field of KpiCategory.
+type KpiCategoryOrderField struct {
+	field    string
+	toCursor func(*KpiCategory) Cursor
+}
+
+// KpiCategoryOrder defines the ordering of KpiCategory.
+type KpiCategoryOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *KpiCategoryOrderField `json:"field"`
+}
+
+// DefaultKpiCategoryOrder is the default ordering of KpiCategory.
+var DefaultKpiCategoryOrder = &KpiCategoryOrder{
+	Direction: OrderDirectionAsc,
+	Field: &KpiCategoryOrderField{
+		field: kpicategory.FieldID,
+		toCursor: func(kc *KpiCategory) Cursor {
+			return Cursor{ID: kc.ID}
+		},
+	},
+}
+
 // KqiEdge is the edge representation of Kqi.
 type KqiEdge struct {
 	Node   *Kqi   `json:"node"`
@@ -15673,6 +15936,49 @@ func (rr *ResourceRelationshipQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// ResourceRelationshipOrderFieldName orders ResourceRelationship by name.
+	ResourceRelationshipOrderFieldName = &ResourceRelationshipOrderField{
+		field: resourcerelationship.FieldName,
+		toCursor: func(rr *ResourceRelationship) Cursor {
+			return Cursor{
+				ID:    rr.ID,
+				Value: rr.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ResourceRelationshipOrderField) String() string {
+	var str string
+	switch f.field {
+	case resourcerelationship.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ResourceRelationshipOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ResourceRelationshipOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ResourceRelationshipOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *ResourceRelationshipOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid ResourceRelationshipOrderField", str)
+	}
+	return nil
 }
 
 // ResourceRelationshipOrderField defines the ordering field of ResourceRelationship.

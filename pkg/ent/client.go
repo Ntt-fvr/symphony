@@ -55,6 +55,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqi"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/kqicomparator"
@@ -200,6 +201,8 @@ type Client struct {
 	Hyperlink *HyperlinkClient
 	// Kpi is the client for interacting with the Kpi builders.
 	Kpi *KpiClient
+	// KpiCategory is the client for interacting with the KpiCategory builders.
+	KpiCategory *KpiCategoryClient
 	// Kqi is the client for interacting with the Kqi builders.
 	Kqi *KqiClient
 	// KqiCategory is the client for interacting with the KqiCategory builders.
@@ -357,6 +360,7 @@ func (c *Client) init() {
 	c.Formula = NewFormulaClient(c.config)
 	c.Hyperlink = NewHyperlinkClient(c.config)
 	c.Kpi = NewKpiClient(c.config)
+	c.KpiCategory = NewKpiCategoryClient(c.config)
 	c.Kqi = NewKqiClient(c.config)
 	c.KqiCategory = NewKqiCategoryClient(c.config)
 	c.KqiComparator = NewKqiComparatorClient(c.config)
@@ -481,6 +485,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Formula:                          NewFormulaClient(cfg),
 		Hyperlink:                        NewHyperlinkClient(cfg),
 		Kpi:                              NewKpiClient(cfg),
+		KpiCategory:                      NewKpiCategoryClient(cfg),
 		Kqi:                              NewKqiClient(cfg),
 		KqiCategory:                      NewKqiCategoryClient(cfg),
 		KqiComparator:                    NewKqiComparatorClient(cfg),
@@ -588,6 +593,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Formula:                          NewFormulaClient(cfg),
 		Hyperlink:                        NewHyperlinkClient(cfg),
 		Kpi:                              NewKpiClient(cfg),
+		KpiCategory:                      NewKpiCategoryClient(cfg),
 		Kqi:                              NewKqiClient(cfg),
 		KqiCategory:                      NewKqiCategoryClient(cfg),
 		KqiComparator:                    NewKqiComparatorClient(cfg),
@@ -708,6 +714,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Formula.Use(hooks...)
 	c.Hyperlink.Use(hooks...)
 	c.Kpi.Use(hooks...)
+	c.KpiCategory.Use(hooks...)
 	c.Kqi.Use(hooks...)
 	c.KqiCategory.Use(hooks...)
 	c.KqiComparator.Use(hooks...)
@@ -6316,6 +6323,22 @@ func (c *KpiClient) QueryDomain(k *Kpi) *DomainQuery {
 	return query
 }
 
+// QueryKpiCategory queries the KpiCategory edge of a Kpi.
+func (c *KpiClient) QueryKpiCategory(k *Kpi) *KpiCategoryQuery {
+	query := &KpiCategoryQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := k.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpi.Table, kpi.FieldID, id),
+			sqlgraph.To(kpicategory.Table, kpicategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, kpi.KpiCategoryTable, kpi.KpiCategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(k.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryFormulakpi queries the formulakpi edge of a Kpi.
 func (c *KpiClient) QueryFormulakpi(k *Kpi) *FormulaQuery {
 	query := &FormulaQuery{config: c.config}
@@ -6352,6 +6375,111 @@ func (c *KpiClient) QueryThresholdkpi(k *Kpi) *ThresholdQuery {
 func (c *KpiClient) Hooks() []Hook {
 	hooks := c.hooks.Kpi
 	return append(hooks[:len(hooks):len(hooks)], kpi.Hooks[:]...)
+}
+
+// KpiCategoryClient is a client for the KpiCategory schema.
+type KpiCategoryClient struct {
+	config
+}
+
+// NewKpiCategoryClient returns a client for the KpiCategory from the given config.
+func NewKpiCategoryClient(c config) *KpiCategoryClient {
+	return &KpiCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `kpicategory.Hooks(f(g(h())))`.
+func (c *KpiCategoryClient) Use(hooks ...Hook) {
+	c.hooks.KpiCategory = append(c.hooks.KpiCategory, hooks...)
+}
+
+// Create returns a create builder for KpiCategory.
+func (c *KpiCategoryClient) Create() *KpiCategoryCreate {
+	mutation := newKpiCategoryMutation(c.config, OpCreate)
+	return &KpiCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of KpiCategory entities.
+func (c *KpiCategoryClient) CreateBulk(builders ...*KpiCategoryCreate) *KpiCategoryCreateBulk {
+	return &KpiCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for KpiCategory.
+func (c *KpiCategoryClient) Update() *KpiCategoryUpdate {
+	mutation := newKpiCategoryMutation(c.config, OpUpdate)
+	return &KpiCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KpiCategoryClient) UpdateOne(kc *KpiCategory) *KpiCategoryUpdateOne {
+	mutation := newKpiCategoryMutation(c.config, OpUpdateOne, withKpiCategory(kc))
+	return &KpiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KpiCategoryClient) UpdateOneID(id int) *KpiCategoryUpdateOne {
+	mutation := newKpiCategoryMutation(c.config, OpUpdateOne, withKpiCategoryID(id))
+	return &KpiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for KpiCategory.
+func (c *KpiCategoryClient) Delete() *KpiCategoryDelete {
+	mutation := newKpiCategoryMutation(c.config, OpDelete)
+	return &KpiCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *KpiCategoryClient) DeleteOne(kc *KpiCategory) *KpiCategoryDeleteOne {
+	return c.DeleteOneID(kc.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *KpiCategoryClient) DeleteOneID(id int) *KpiCategoryDeleteOne {
+	builder := c.Delete().Where(kpicategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KpiCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for KpiCategory.
+func (c *KpiCategoryClient) Query() *KpiCategoryQuery {
+	return &KpiCategoryQuery{config: c.config}
+}
+
+// Get returns a KpiCategory entity by its id.
+func (c *KpiCategoryClient) Get(ctx context.Context, id int) (*KpiCategory, error) {
+	return c.Query().Where(kpicategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KpiCategoryClient) GetX(ctx context.Context, id int) *KpiCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryKpicategory queries the kpicategory edge of a KpiCategory.
+func (c *KpiCategoryClient) QueryKpicategory(kc *KpiCategory) *KpiQuery {
+	query := &KpiQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := kc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(kpicategory.Table, kpicategory.FieldID, id),
+			sqlgraph.To(kpi.Table, kpi.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, kpicategory.KpicategoryTable, kpicategory.KpicategoryColumn),
+		)
+		fromV = sqlgraph.Neighbors(kc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *KpiCategoryClient) Hooks() []Hook {
+	hooks := c.hooks.KpiCategory
+	return append(hooks[:len(hooks):len(hooks)], kpicategory.Hooks[:]...)
 }
 
 // KqiClient is a client for the Kqi schema.

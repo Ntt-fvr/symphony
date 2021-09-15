@@ -56,6 +56,12 @@ func (rrc *ResourceRelationshipCreate) SetNillableUpdateTime(t *time.Time) *Reso
 	return rrc
 }
 
+// SetName sets the name field.
+func (rrc *ResourceRelationshipCreate) SetName(s string) *ResourceRelationshipCreate {
+	rrc.mutation.SetName(s)
+	return rrc
+}
+
 // SetResourcetypeaID sets the resourcetypea edge to ResourceType by id.
 func (rrc *ResourceRelationshipCreate) SetResourcetypeaID(id int) *ResourceRelationshipCreate {
 	rrc.mutation.SetResourcetypeaID(id)
@@ -221,6 +227,14 @@ func (rrc *ResourceRelationshipCreate) check() error {
 	if _, ok := rrc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
+	if _, ok := rrc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := rrc.mutation.Name(); ok {
+		if err := resourcerelationship.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -263,6 +277,14 @@ func (rrc *ResourceRelationshipCreate) createSpec() (*ResourceRelationship, *sql
 			Column: resourcerelationship.FieldUpdateTime,
 		})
 		_node.UpdateTime = value
+	}
+	if value, ok := rrc.mutation.Name(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: resourcerelationship.FieldName,
+		})
+		_node.Name = value
 	}
 	if nodes := rrc.mutation.ResourcetypeaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

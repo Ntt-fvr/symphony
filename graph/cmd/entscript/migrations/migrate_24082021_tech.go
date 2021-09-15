@@ -15,7 +15,7 @@ import (
 func MigrateTechs(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, tech := range Config.Teches {
+	for _, tech := range Config.Techs {
 
 		domain, errDomain := client.Domain.Query().Where(domain.NameEQ(tech.Domain)).FirstID(ctx)
 		if errDomain != nil {

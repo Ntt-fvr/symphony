@@ -209,11 +209,16 @@ type AddImageInput struct {
 	Annotation  *string     `json:"annotation"`
 }
 
+type AddKpiCategoryInput struct {
+	Name string `json:"name"`
+}
+
 type AddKpiInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DomainFk    int    `json:"domainFk"`
-	Status      bool   `json:"status"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	DomainFk      int    `json:"domainFk"`
+	KpiCategoryFk int    `json:"kpiCategoryFK"`
+	Status        bool   `json:"status"`
 }
 
 type AddKqiCategoryInput struct {
@@ -251,7 +256,7 @@ type AddKqiTargetInput struct {
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Period           float64   `json:"period"`
-	AlowedValidation float64   `json:"alowedValidation"`
+	AllowedVariation float64   `json:"allowedVariation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
 	Status           bool      `json:"status"`
@@ -353,11 +358,12 @@ type AddRecommendationsSourcesInput struct {
 }
 
 type AddResourceRelationshipInput struct {
-	ResourceRelationshipTypeFk         int  `json:"resourceRelationshipTypeFk"`
-	ResourceRelationshipMultiplicityFk int  `json:"resourceRelationshipMultiplicityFk"`
-	LocationTypeFk                     *int `json:"locationTypeFk"`
-	ResourceTypeFkA                    int  `json:"resourceTypeFkA"`
-	ResourceTypeFkB                    *int `json:"resourceTypeFkB"`
+	Name                               string `json:"name"`
+	ResourceRelationshipTypeFk         int    `json:"resourceRelationshipTypeFk"`
+	ResourceRelationshipMultiplicityFk int    `json:"resourceRelationshipMultiplicityFk"`
+	LocationTypeFk                     *int   `json:"locationTypeFk"`
+	ResourceTypeFkA                    int    `json:"resourceTypeFkA"`
+	ResourceTypeFkB                    *int   `json:"resourceTypeFkB"`
 }
 
 type AddResourceRelationshipMultiplicityInput struct {
@@ -771,12 +777,18 @@ type EditFormulaInput struct {
 	KpiFk       int    `json:"kpiFk"`
 }
 
+type EditKpiCategoryInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type EditKpiInput struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DomainFk    int    `json:"domainFk"`
-	Status      bool   `json:"status"`
+	ID            int    `json:"id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	DomainFk      int    `json:"domainFk"`
+	KpiCategoryFk int    `json:"kpiCategoryFK"`
+	Status        bool   `json:"status"`
 }
 
 type EditKqiCategoryInput struct {
@@ -820,7 +832,7 @@ type EditKqiTargetInput struct {
 	Name             string    `json:"name"`
 	Impact           string    `json:"impact"`
 	Period           float64   `json:"period"`
-	AlowedValidation float64   `json:"alowedValidation"`
+	AllowedVariation float64   `json:"allowedVariation"`
 	InitTime         time.Time `json:"initTime"`
 	EndTime          time.Time `json:"endTime"`
 	Status           bool      `json:"status"`
@@ -928,12 +940,13 @@ type EditReportFilterInput struct {
 }
 
 type EditResourceRelationshipInput struct {
-	ID                                 int  `json:"id"`
-	ResourceRelationshipMultiplicityFk int  `json:"resourceRelationshipMultiplicityFk"`
-	ResourceRelationshipTypeFk         int  `json:"resourceRelationshipTypeFk"`
-	LocationTypeFk                     *int `json:"locationTypeFk"`
-	ResourceTypeFkA                    int  `json:"resourceTypeFkA"`
-	ResourceTypeFkB                    *int `json:"resourceTypeFkB"`
+	ID                                 int    `json:"id"`
+	Name                               string `json:"name"`
+	ResourceRelationshipMultiplicityFk int    `json:"resourceRelationshipMultiplicityFk"`
+	ResourceRelationshipTypeFk         int    `json:"resourceRelationshipTypeFk"`
+	LocationTypeFk                     *int   `json:"locationTypeFk"`
+	ResourceTypeFkA                    int    `json:"resourceTypeFkA"`
+	ResourceTypeFkB                    *int   `json:"resourceTypeFkB"`
 }
 
 type EditResourceRelationshipMultiplicityInput struct {
@@ -1209,6 +1222,15 @@ type ImportFlowDraftInput struct {
 	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
 	TrueFalseBlocks     []*TrueFalseBlockInput           `json:"trueFalseBlocks"`
 	Connectors          []*ConnectorInput                `json:"connectors"`
+}
+
+type KpiCategoryFilterInput struct {
+	FilterType  KpiCategoryFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
 }
 
 type KpiFilterInput struct {
@@ -2350,6 +2372,45 @@ func (e ImageEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type KpiCategoryFilterType string
+
+const (
+	KpiCategoryFilterTypeName KpiCategoryFilterType = "NAME"
+)
+
+var AllKpiCategoryFilterType = []KpiCategoryFilterType{
+	KpiCategoryFilterTypeName,
+}
+
+func (e KpiCategoryFilterType) IsValid() bool {
+	switch e {
+	case KpiCategoryFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e KpiCategoryFilterType) String() string {
+	return string(e)
+}
+
+func (e *KpiCategoryFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = KpiCategoryFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid KpiCategoryFilterType", str)
+	}
+	return nil
+}
+
+func (e KpiCategoryFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type KpiFilterType string
 
 const (
@@ -2903,18 +2964,28 @@ func (e RecommendationsSourcesFilterType) MarshalGQL(w io.Writer) {
 type ResourceRelationshipFilterType string
 
 const (
-	ResourceRelationshipFilterTypeID            ResourceRelationshipFilterType = "ID"
-	ResourceRelationshipFilterTypeResourcetypea ResourceRelationshipFilterType = "RESOURCETYPEA"
+	ResourceRelationshipFilterTypeID                               ResourceRelationshipFilterType = "ID"
+	ResourceRelationshipFilterTypeName                             ResourceRelationshipFilterType = "NAME"
+	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_MULTIPLICITY"
+	ResourceRelationshipFilterTypeResourceRelationshipFilter       ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_FILTER"
+	ResourceRelationshipFilterTypeResourceRelationshipType         ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_TYPE"
+	ResourceRelationshipFilterTypeResourceRelationshipResourceA    ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE_A"
+	ResourceRelationshipFilterTypeResourceRelationshipResourceB    ResourceRelationshipFilterType = "RESOURCE_RELATIONSHIP_RESOURCE_B"
 )
 
 var AllResourceRelationshipFilterType = []ResourceRelationshipFilterType{
 	ResourceRelationshipFilterTypeID,
-	ResourceRelationshipFilterTypeResourcetypea,
+	ResourceRelationshipFilterTypeName,
+	ResourceRelationshipFilterTypeResourceRelationshipMultiplicity,
+	ResourceRelationshipFilterTypeResourceRelationshipFilter,
+	ResourceRelationshipFilterTypeResourceRelationshipType,
+	ResourceRelationshipFilterTypeResourceRelationshipResourceA,
+	ResourceRelationshipFilterTypeResourceRelationshipResourceB,
 }
 
 func (e ResourceRelationshipFilterType) IsValid() bool {
 	switch e {
-	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeResourcetypea:
+	case ResourceRelationshipFilterTypeID, ResourceRelationshipFilterTypeName, ResourceRelationshipFilterTypeResourceRelationshipMultiplicity, ResourceRelationshipFilterTypeResourceRelationshipFilter, ResourceRelationshipFilterTypeResourceRelationshipType, ResourceRelationshipFilterTypeResourceRelationshipResourceA, ResourceRelationshipFilterTypeResourceRelationshipResourceB:
 		return true
 	}
 	return false

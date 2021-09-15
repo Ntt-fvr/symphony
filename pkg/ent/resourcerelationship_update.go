@@ -34,6 +34,12 @@ func (rru *ResourceRelationshipUpdate) Where(ps ...predicate.ResourceRelationshi
 	return rru
 }
 
+// SetName sets the name field.
+func (rru *ResourceRelationshipUpdate) SetName(s string) *ResourceRelationshipUpdate {
+	rru.mutation.SetName(s)
+	return rru
+}
+
 // SetResourcetypeaID sets the resourcetypea edge to ResourceType by id.
 func (rru *ResourceRelationshipUpdate) SetResourcetypeaID(id int) *ResourceRelationshipUpdate {
 	rru.mutation.SetResourcetypeaID(id)
@@ -172,12 +178,18 @@ func (rru *ResourceRelationshipUpdate) Save(ctx context.Context) (int, error) {
 	)
 	rru.defaults()
 	if len(rru.hooks) == 0 {
+		if err = rru.check(); err != nil {
+			return 0, err
+		}
 		affected, err = rru.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ResourceRelationshipMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = rru.check(); err != nil {
+				return 0, err
 			}
 			rru.mutation = mutation
 			affected, err = rru.sqlSave(ctx)
@@ -224,6 +236,16 @@ func (rru *ResourceRelationshipUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (rru *ResourceRelationshipUpdate) check() error {
+	if v, ok := rru.mutation.Name(); ok {
+		if err := resourcerelationship.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (rru *ResourceRelationshipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -247,6 +269,13 @@ func (rru *ResourceRelationshipUpdate) sqlSave(ctx context.Context) (n int, err 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: resourcerelationship.FieldUpdateTime,
+		})
+	}
+	if value, ok := rru.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: resourcerelationship.FieldName,
 		})
 	}
 	if rru.mutation.ResourcetypeaCleared() {
@@ -442,6 +471,12 @@ type ResourceRelationshipUpdateOne struct {
 	mutation *ResourceRelationshipMutation
 }
 
+// SetName sets the name field.
+func (rruo *ResourceRelationshipUpdateOne) SetName(s string) *ResourceRelationshipUpdateOne {
+	rruo.mutation.SetName(s)
+	return rruo
+}
+
 // SetResourcetypeaID sets the resourcetypea edge to ResourceType by id.
 func (rruo *ResourceRelationshipUpdateOne) SetResourcetypeaID(id int) *ResourceRelationshipUpdateOne {
 	rruo.mutation.SetResourcetypeaID(id)
@@ -580,12 +615,18 @@ func (rruo *ResourceRelationshipUpdateOne) Save(ctx context.Context) (*ResourceR
 	)
 	rruo.defaults()
 	if len(rruo.hooks) == 0 {
+		if err = rruo.check(); err != nil {
+			return nil, err
+		}
 		node, err = rruo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ResourceRelationshipMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = rruo.check(); err != nil {
+				return nil, err
 			}
 			rruo.mutation = mutation
 			node, err = rruo.sqlSave(ctx)
@@ -632,6 +673,16 @@ func (rruo *ResourceRelationshipUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (rruo *ResourceRelationshipUpdateOne) check() error {
+	if v, ok := rruo.mutation.Name(); ok {
+		if err := resourcerelationship.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (rruo *ResourceRelationshipUpdateOne) sqlSave(ctx context.Context) (_node *ResourceRelationship, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -653,6 +704,13 @@ func (rruo *ResourceRelationshipUpdateOne) sqlSave(ctx context.Context) (_node *
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: resourcerelationship.FieldUpdateTime,
+		})
+	}
+	if value, ok := rruo.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: resourcerelationship.FieldName,
 		})
 	}
 	if rruo.mutation.ResourcetypeaCleared() {
