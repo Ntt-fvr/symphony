@@ -38,6 +38,8 @@ export type EditWorkOrderInput = {|
   checkList?: ?$ReadOnlyArray<CheckListItemInput>,
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryInput>,
   locationId?: ?string,
+  duration?: ?number,
+  dueDate?: ?any,
 |};
 export type PropertyInput = {|
   id?: ?string,

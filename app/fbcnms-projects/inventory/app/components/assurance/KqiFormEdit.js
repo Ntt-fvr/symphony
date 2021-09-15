@@ -47,7 +47,6 @@ import moment from 'moment';
 
 import {useFormInput} from './common/useFormInput';
 
-
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
@@ -199,7 +198,6 @@ type Props = $ReadOnly<{|
   returnTableKqi: () => void,
 |}>;
 
-
 const TargetQuery = graphql`
   query KqiFormEditQuery {
     kqiTargets {
@@ -208,8 +206,7 @@ const TargetQuery = graphql`
           id
           name
           impact
-          frame
-          alowedValidation
+          allowedVariation
           initTime
           endTime
           status
@@ -241,8 +238,6 @@ const TargetQuery = graphql`
         }
       }
     }
-    
-
   }
 `;
 
@@ -266,18 +261,23 @@ const KqiFormEdit = (props: Props) => {
       setDataTarget(data);
     });
   }, [dataTarget]);
-  
+
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
-  const startDateTime = useFormInput(moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'));
-  const endDateTime = useFormInput(moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'));
+  const startDateTime = useFormInput(
+    moment(formValues.item.startDateTime).format('YYYY-MM-DDThh:mm'),
+  );
+  const endDateTime = useFormInput(
+    moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
+  );
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
   const kqiPerspective = useFormInput(formValues.item.kqiPerspective.id);
   const kqiSource = useFormInput(formValues.item.kqiSource.id);
-  const kqiTemporalFrequency = useFormInput(formValues.item.kqiTemporalFrequency.id,);
-  
-  
+  const kqiTemporalFrequency = useFormInput(
+    formValues.item.kqiTemporalFrequency.id,
+  );
+
   const filterKqiTargetsById = dataTarget?.kqiTargets?.edges?.filter(
     kqi => kqi.node.kqi.id === formValues.item.id,
   );
