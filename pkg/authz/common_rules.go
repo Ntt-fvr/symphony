@@ -50,20 +50,6 @@ func allowOrSkipLocations(r *models.LocationPermissionRule, locationTypeID int) 
 	return privacy.Skip
 }
 
-func allowOrSkipDocumentCategories(r *models.DocumentCategoryPermissionRule, documentCategoryID string) error {
-	switch r.IsAllowed {
-	case models.PermissionValueYes:
-		return privacy.Allow
-	case models.PermissionValueByCondition:
-		for _, name := range r.DocumentCategoyNames {
-			if name == documentCategoryID {
-				return privacy.Allow
-			}
-		}
-	}
-	return privacy.Skip
-}
-
 func privacyDecision(allowed bool) error {
 	if allowed {
 		return privacy.Allow

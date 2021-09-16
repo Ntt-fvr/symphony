@@ -128,7 +128,7 @@ const LocationTypes = () => {
     editingLocationType,
     setEditingLocationType,
   ] = useState<?ResponseLocationType>(null);
-  const [showAddEditCard, setShowAddEditCard] = useState(true);
+  const [showAddEditCard, setShowAddEditCard] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const enqueueSnackbar = useEnqueueSnackbar();
 

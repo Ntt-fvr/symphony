@@ -95,17 +95,6 @@ export default function PermissionsPolicyRulesPane(props: Props) {
               />
             ),
           },
-          {
-            tab: {
-              label: `${fbt('Documents', '')}`,
-            },
-            view: (
-              <PermissionsPolicyInventoryDocumentRulesTab
-                policy={policy.inventoryRules}
-                onChange={callOnInventoryChange}
-              />
-            ),
-          },
         ];
       case POLICY_TYPES.WorkforcePolicy.key:
         return [

@@ -94,14 +94,14 @@ func newWorkforceCUD(allowed bool) *models.WorkforceCud {
 // NewInventoryPolicy builds an inventory policy based on general restriction on read,write
 func NewInventoryPolicy(writeAllowed bool) *models.InventoryPolicy {
 	return &models.InventoryPolicy{
-		Read:          		newBasicPermissionRule(true),
-		Location:      		newLocationCUD(writeAllowed),
-		DocumentCategory: 	newDocumentCategoryCUD(writeAllowed),
-		Equipment:     		newCUD(writeAllowed),
-		EquipmentType: 		newCUD(writeAllowed),
-		LocationType:  		newCUD(writeAllowed),
-		PortType:      		newCUD(writeAllowed),
-		ServiceType:   		newCUD(writeAllowed),
+		Read:             newBasicPermissionRule(true),
+		Location:         newLocationCUD(writeAllowed),
+		DocumentCategory: newDocumentCategoryCUD(writeAllowed),
+		Equipment:        newCUD(writeAllowed),
+		EquipmentType:    newCUD(writeAllowed),
+		LocationType:     newCUD(writeAllowed),
+		PortType:         newCUD(writeAllowed),
+		ServiceType:      newCUD(writeAllowed),
 	}
 }
 
@@ -149,14 +149,6 @@ func appendTopLevelLocationPermissionRuleInput(
 	rule *models.LocationPermissionRuleInput, bottomRule *models.BasicPermissionRuleInput) *models.LocationPermissionRuleInput {
 	if bottomRule == nil || bottomRule.IsAllowed == models.PermissionValueNo {
 		return &models.LocationPermissionRuleInput{IsAllowed: models.PermissionValueNo}
-	}
-	return rule
-}
-
-func appendTopLevelDocCategoryPermissionRuleInput(
-	rule *models.DocumentCategoryPermissionRuleInput, bottomRule *models.DocumentCategoryPermissionRuleInput) *models.DocumentCategoryPermissionRuleInput {
-	if bottomRule == nil || bottomRule.IsAllowed == models.PermissionValueNo {
-		return &models.DocumentCategoryPermissionRuleInput{IsAllowed: models.PermissionValueNo}
 	}
 	return rule
 }
@@ -255,7 +247,7 @@ func appendDocCategoryCUD(cud *models.DocumentCategoryCud, addCUD *models.Docume
 	if addCUD == nil {
 		return cud
 	}
-	cud.Read   = appendDocCategoryPermissionRule(cud.Read, addCUD.Read)
+	cud.Read = appendDocCategoryPermissionRule(cud.Read, addCUD.Read)
 	cud.Create = appendDocCategoryPermissionRule(cud.Create, addCUD.Create)
 	cud.Update = appendDocCategoryPermissionRule(cud.Update, addCUD.Update)
 	cud.Delete = appendDocCategoryPermissionRule(cud.Delete, addCUD.Delete)
@@ -331,7 +323,6 @@ func AppendAssurancePolicies(policy *models.AssurancePolicy, inputs ...*models.A
 }
 
 func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.InventoryPolicy, *models.WorkforcePolicy, *models.AutomationPolicy, *models.AssurancePolicy, error) {
-
 	client := ent.FromContext(ctx)
 	userID := v.User().ID
 	inventoryPolicy := NewInventoryPolicy(false)

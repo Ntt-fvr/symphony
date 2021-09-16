@@ -33,9 +33,9 @@ type LocationCUDInput struct {
 }
 
 type DocumentCategoryPermissionRuleInput struct {
-	IsAllowed       		PermissionValue 	`json:"isAllowed"`
-	DocumentCategoyIds 		[]int          		`json:"documentCategoyIds"`
-	DocumentCategoyNames 	[]string           	`json:"documentCategoyNames"`
+	IsAllowed            PermissionValue `json:"isAllowed"`
+	DocumentCategoyIds   []int           `json:"documentCategoyIds"`
+	DocumentCategoyNames []string        `json:"documentCategoyNames"`
 }
 
 type WorkforceCUDInput struct {
@@ -47,21 +47,21 @@ type WorkforceCUDInput struct {
 }
 
 type DocumentCategoryCUDInput struct {
-	Read	*DocumentCategoryPermissionRuleInput `json:"read"`
-	Create 	*DocumentCategoryPermissionRuleInput `json:"create"`
-	Update 	*DocumentCategoryPermissionRuleInput `json:"update"`
-	Delete 	*DocumentCategoryPermissionRuleInput `json:"delete"`
+	Read   *DocumentCategoryPermissionRuleInput `json:"read"`
+	Create *DocumentCategoryPermissionRuleInput `json:"create"`
+	Update *DocumentCategoryPermissionRuleInput `json:"update"`
+	Delete *DocumentCategoryPermissionRuleInput `json:"delete"`
 }
 
 type InventoryPolicyInput struct {
-	Read          		*BasicPermissionRuleInput 	`json:"read"`
-	Location      		*LocationCUDInput         	`json:"location"`
-	DocumentCategory	*DocumentCategoryCUDInput 	`json:"documentCategory"`
-	Equipment     		*BasicCUDInput           	`json:"equipment"`
-	EquipmentType 		*BasicCUDInput           	`json:"equipmentType"`
-	LocationType  		*BasicCUDInput            	`json:"locationType"`
-	PortType      		*BasicCUDInput            	`json:"portType"`
-	ServiceType   		*BasicCUDInput             	`json:"serviceType"`
+	Read             *BasicPermissionRuleInput `json:"read"`
+	Location         *LocationCUDInput         `json:"location"`
+	DocumentCategory *DocumentCategoryCUDInput `json:"documentCategory"`
+	Equipment        *BasicCUDInput            `json:"equipment"`
+	EquipmentType    *BasicCUDInput            `json:"equipmentType"`
+	LocationType     *BasicCUDInput            `json:"locationType"`
+	PortType         *BasicCUDInput            `json:"portType"`
+	ServiceType      *BasicCUDInput            `json:"serviceType"`
 }
 
 type WorkforcePolicyInput struct {

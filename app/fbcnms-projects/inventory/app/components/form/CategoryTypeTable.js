@@ -11,6 +11,7 @@
 import type {AppContextType} from '@fbcnms/ui/context/AppContext';
 import type {DocumentCategoryType} from '../../common/DocumentCategoryType';
 import type {WithStyles} from '@material-ui/core';
+import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
@@ -21,6 +22,8 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@symphony/design-system/components/IconButton';
 
+import RemoveDocumentCategoryTypeMutation from '../../mutations/RemoveDocumentCategoryTypeMutation';
+
 import PropertyValueInput from './PropertyValueInput';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -28,9 +31,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
+import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {removeItem, setItem, updateItem} from '@fbcnms/util/arrays';
 import {reorder} from '../draggable/DraggableUtils';
+import {ConnectionHandler} from 'relay-runtime';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = () => ({
@@ -70,7 +75,8 @@ type Props = {|
   propertyTypes: Array<DocumentCategoryType>,
   onPropertiesChanged: (newProperties: Array<DocumentCategoryType>) => void,
   supportDelete?: boolean,
-|} & WithStyles<typeof styles>;
+|} & WithAlert &
+  WithStyles<typeof styles>;
 
 class CategoryTypeTable extends React.Component<Props> {
   static contextType = AppContext;
@@ -118,10 +124,11 @@ class CategoryTypeTable extends React.Component<Props> {
                     <FormAction>
                       <IconButton
                         skin="primary"
-                        onClick={this._onRemovePropertyClicked(i, property)}
-                        disabled={
+                        onClick={
                           !this.props.supportDelete &&
                           !property.id.includes('@tmp')
+                            ? this._onRemoveCategoryClicked(i, property)
+                            : this._onRemovePropertyClicked(i, property)
                         }
                         icon={DeleteIcon}
                       />
@@ -185,6 +192,41 @@ class CategoryTypeTable extends React.Component<Props> {
     newArray.splice(index, 1);
     return newArray;
   }
+  _onRemoveCategoryClicked = (
+    index,
+    property: DocumentCategoryType,
+  ) => _event => {
+    this.props
+      .confirm(`Are you sure you want to delete "${property.name}"?`)
+      .then(confirm => {
+        if (!confirm) {
+          return;
+        }
+        RemoveDocumentCategoryTypeMutation(
+          {id: property.id},
+          {
+            onError: (error: any) => {
+              this.props.alert('Error: ' + error.source?.errors[0]?.message);
+            },
+          },
+          store => {
+            const rootQuery = store.getRoot();
+            const locationTypes = ConnectionHandler.getConnection(
+              rootQuery,
+              'Catalog_locationTypes',
+            );
+            console.log(locationTypes);
+            if (locationTypes != null) {
+              ConnectionHandler.deleteNode(locationTypes, property.id);
+            }
+            store.delete(property.id);
+          },
+        );
+        this.props.onPropertiesChanged(
+          removeItem(this.props.propertyTypes, index),
+        );
+      });
+  };
 
   _onRemovePropertyClicked = (
     index,
@@ -247,4 +289,4 @@ class CategoryTypeTable extends React.Component<Props> {
   }
 }
 
-export default withStyles(styles)(CategoryTypeTable);
+export default withStyles(styles)(withAlert(CategoryTypeTable));

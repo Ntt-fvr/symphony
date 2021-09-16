@@ -175,7 +175,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
               <Grid item xs={12} xl={7}>
                 <CardSection
                   className={classes.section}
-                  title="Category Documents">
+                  title="Documents Category">
                   <CategoryTypeTable
                     propertyTypes={categoryTypes}
                     onPropertiesChanged={this._documentCategoryChangedHandler}

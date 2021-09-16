@@ -5,7 +5,7 @@
 package models
 
 type DocumentCategoryInput struct {
-	ID                 *int              `json:"id"`
-	Name         		string           `json:"name"`
-	Index               int              `json:"index"`
+	ID    *int   `json:"id"`
+	Name  string `json:"name"`
+	Index int    `json:"index"`
 }
