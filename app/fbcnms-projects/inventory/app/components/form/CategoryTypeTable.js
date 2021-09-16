@@ -265,18 +265,6 @@ class CategoryTypeTable extends React.Component<Props> {
       id: `CategoryType@tmp-${this.props.propertyTypes.length}-${Date.now()}`,
       name: '',
       index: this.props.propertyTypes.length,
-      // type: 'string',
-      // nodeType: null,
-      // booleanValue: false,
-      // stringValue: null,
-      // intValue: null,
-      // floatValue: null,
-      // latitudeValue: null,
-      // longitudeValue: null,
-      // rangeFromValue: null,
-      // rangeToValue: null,
-      // isEditable: true,
-      // isInstanceProperty: true,
     };
   }
 }
