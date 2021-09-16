@@ -9,22 +9,21 @@
  */
 
 import type {AppContextType} from '@fbcnms/ui/context/AppContext';
-import type {FeatureID} from '@fbcnms/types/features';
-import type {Property} from '../../common/Property';
-import type {PropertyKind} from '../../mutations/__generated__/AddEquipmentPortTypeMutation.graphql';
-import type {PropertyType} from '../../common/PropertyType';
+import type {DocumentCategoryType} from '../../common/DocumentCategoryType';
 import type {WithStyles} from '@material-ui/core';
+import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
-import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import IconButton from '@symphony/design-system/components/IconButton';
-import PropertyTypeSelect from './PropertyTypeSelect';
+
+import RemoveDocumentCategoryTypeMutation from '../../mutations/RemoveDocumentCategoryTypeMutation';
+
 import PropertyValueInput from './PropertyValueInput';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -32,9 +31,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
+import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {removeItem, setItem, updateItem} from '@fbcnms/util/arrays';
 import {reorder} from '../draggable/DraggableUtils';
+import {ConnectionHandler} from 'relay-runtime';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = () => ({
@@ -52,6 +53,11 @@ const styles = () => ({
     marginBottom: '0px',
     width: '100%',
   },
+  nameInput: {
+    display: 'inline-flex',
+    marginBottom: '16px',
+    width: '305px',
+  },
   cell: {
     ...inventoryTheme.textField,
     paddingLeft: '0px',
@@ -65,20 +71,14 @@ const styles = () => ({
   },
 });
 
-export type PropertyTypeInfo = $ReadOnly<{|
-  kind: PropertyKind,
-  label: string,
-  featureFlag?: FeatureID,
-|}>;
-
 type Props = {|
-  propertyTypes: Array<PropertyType>,
-  onPropertiesChanged: (newProperties: Array<PropertyType>) => void,
-  supportMandatory?: boolean,
+  propertyTypes: Array<DocumentCategoryType>,
+  onPropertiesChanged: (newProperties: Array<DocumentCategoryType>) => void,
   supportDelete?: boolean,
-|} & WithStyles<typeof styles>;
+|} & WithAlert &
+  WithStyles<typeof styles>;
 
-class PropertyTypeTable extends React.Component<Props> {
+class CategoryTypeTable extends React.Component<Props> {
   static contextType = AppContext;
   context: AppContextType;
   render() {
@@ -94,26 +94,6 @@ class PropertyTypeTable extends React.Component<Props> {
               <TableCell component="div" className={classes.cell}>
                 Name
               </TableCell>
-              <TableCell component="div" className={classes.cell}>
-                Property Type
-              </TableCell>
-              <TableCell component="div" className={classes.cell}>
-                Default Value
-              </TableCell>
-              <TableCell
-                padding="checkbox"
-                component="div"
-                className={classes.cell}>
-                Fixed Value
-              </TableCell>
-              {supportMandatory && (
-                <TableCell
-                  padding="checkbox"
-                  component="div"
-                  className={classes.cell}>
-                  Mandatory
-                </TableCell>
-              )}
               <TableCell component="div" />
             </TableRow>
           </TableHead>
@@ -129,56 +109,14 @@ class PropertyTypeTable extends React.Component<Props> {
                       <TextInput
                         autoFocus={true}
                         placeholder="Name"
-                        className={classes.input}
+                        className={classes.nameInput}
                         value={property.name}
                         onChange={this._handleNameChange(i)}
                         onBlur={() => this._handleNameBlur(i)}
                       />
                     </FormField>
                   </TableCell>
-                  <TableCell
-                    className={classes.cell}
-                    component="div"
-                    scope="row">
-                    <FormField>
-                      <PropertyTypeSelect
-                        propertyType={property}
-                        onPropertyTypeChange={this._handleTypeChange(i)}
-                      />
-                    </FormField>
-                  </TableCell>
-                  <TableCell
-                    className={classes.cell}
-                    component="div"
-                    scope="row">
-                    <PropertyValueInput
-                      label={null}
-                      className={classes.input}
-                      inputType="PropertyType"
-                      property={property}
-                      onChange={this._handlePropertyTypeChange(i)}
-                    />
-                  </TableCell>
-                  <TableCell padding="checkbox" component="div">
-                    <FormField>
-                      <Checkbox
-                        checked={!property.isInstanceProperty}
-                        title={null}
-                        onChange={this._handleChecked(i)}
-                      />
-                    </FormField>
-                  </TableCell>
-                  {supportMandatory && (
-                    <TableCell padding="checkbox" component="div">
-                      <FormField>
-                        <Checkbox
-                          checked={!!property.isMandatory}
-                          title={null}
-                          onChange={this._handleIsMandatoryChecked(i)}
-                        />
-                      </FormField>
-                    </TableCell>
-                  )}
+
                   <TableCell
                     className={classes.actionsBar}
                     align="right"
@@ -186,10 +124,11 @@ class PropertyTypeTable extends React.Component<Props> {
                     <FormAction>
                       <IconButton
                         skin="primary"
-                        onClick={this._onRemovePropertyClicked(i, property)}
-                        disabled={
+                        onClick={
                           !this.props.supportDelete &&
                           !property.id.includes('@tmp')
+                            ? this._onRemoveCategoryClicked(i, property)
+                            : this._onRemovePropertyClicked(i, property)
                         }
                         icon={DeleteIcon}
                       />
@@ -205,43 +144,23 @@ class PropertyTypeTable extends React.Component<Props> {
             variant="text"
             onClick={this._onAddProperty}
             leftIcon={PlusIcon}>
-            Add Property
+            Add Category
           </Button>
         </FormAction>
       </div>
     );
   }
 
-  _handlePropertyTypeChange = (index: number) => (
-    property: PropertyType | Property,
-  ) => {
-    if (property.propertyType) {
-      // Filter out properties, we are just dealing with propertyTypes
-      return;
-    }
-    this.props.onPropertiesChanged(
-      setItem(this.props.propertyTypes, index, property),
-    );
-  };
-
   _handleNameChange = index => event => {
     this.props.onPropertiesChanged(
-      updateItem<PropertyType, 'name'>(
+      updateItem<DocumentCategoryType, 'name'>(
         this.props.propertyTypes,
         index,
         'name',
-        // $FlowFixMe: need to figure out how to cast string to PropertyKind
+
         event.target.value,
       ),
     );
-  };
-
-  _handleTypeChange = (index: number) => (value: PropertyType) => {
-    this.props.onPropertiesChanged([
-      ...this.props.propertyTypes.slice(0, index),
-      value,
-      ...this.props.propertyTypes.slice(index + 1),
-    ]);
   };
 
   _handleNameBlur = index => {
@@ -252,33 +171,11 @@ class PropertyTypeTable extends React.Component<Props> {
     }
 
     this.props.onPropertiesChanged(
-      updateItem<PropertyType, 'name'>(
+      updateItem<DocumentCategoryType, 'name'>(
         this.props.propertyTypes,
         index,
         'name',
         trimmedName,
-      ),
-    );
-  };
-
-  _handleChecked = index => checkedNewValue => {
-    this.props.onPropertiesChanged(
-      updateItem<PropertyType, 'isInstanceProperty'>(
-        this.props.propertyTypes,
-        index,
-        'isInstanceProperty',
-        checkedNewValue !== 'checked',
-      ),
-    );
-  };
-
-  _handleIsMandatoryChecked = index => checkedNewValue => {
-    this.props.onPropertiesChanged(
-      updateItem<PropertyType, 'isMandatory'>(
-        this.props.propertyTypes,
-        index,
-        'isMandatory',
-        checkedNewValue === 'checked',
       ),
     );
   };
@@ -290,16 +187,63 @@ class PropertyTypeTable extends React.Component<Props> {
     ]);
   };
 
-  _onRemovePropertyClicked = (index, property: PropertyType) => _event => {
+  _removeItem<T>(input: $ReadOnlyArray<T>, index: number): Array<T> {
+    const newArray = [...input];
+    newArray.splice(index, 1);
+    return newArray;
+  }
+  _onRemoveCategoryClicked = (
+    index,
+    property: DocumentCategoryType,
+  ) => _event => {
+    this.props
+      .confirm(`Are you sure you want to delete "${property.name}"?`)
+      .then(confirm => {
+        if (!confirm) {
+          return;
+        }
+        RemoveDocumentCategoryTypeMutation(
+          {id: property.id},
+          {
+            onError: (error: any) => {
+              this.props.alert('Error: ' + error.source?.errors[0]?.message);
+            },
+          },
+          store => {
+            const rootQuery = store.getRoot();
+            const locationTypes = ConnectionHandler.getConnection(
+              rootQuery,
+              'Catalog_locationTypes',
+            );
+            console.log(locationTypes);
+            if (locationTypes != null) {
+              ConnectionHandler.deleteNode(locationTypes, property.id);
+            }
+            store.delete(property.id);
+          },
+        );
+        this.props.onPropertiesChanged(
+          removeItem(this.props.propertyTypes, index),
+        );
+      });
+  };
+
+  _onRemovePropertyClicked = (
+    index,
+    property: DocumentCategoryType,
+  ) => _event => {
     console.log(this.props.propertyTypes);
-    console.log('borrando prop', removeItem(this.props.propertyTypes, index));
+    console.log(
+      'borrando cat',
+      this._removeItem(this.props.propertyTypes, index),
+    );
     if (property.id?.includes('@tmp')) {
       this.props.onPropertiesChanged(
         removeItem(this.props.propertyTypes, index),
       );
     } else {
       this.props.onPropertiesChanged(
-        updateItem<PropertyType, 'isDeleted'>(
+        updateItem<DocumentCategoryType, 'isDeleted'>(
           this.props.propertyTypes,
           index,
           'isDeleted',
@@ -324,25 +268,25 @@ class PropertyTypeTable extends React.Component<Props> {
     this.props.onPropertiesChanged(newItems);
   };
 
-  getInitialProperty(): PropertyType {
+  getInitialProperty(): DocumentCategoryType {
     return {
-      id: `PropertyType@tmp-${this.props.propertyTypes.length}-${Date.now()}`,
+      id: `CategoryType@tmp-${this.props.propertyTypes.length}-${Date.now()}`,
       name: '',
       index: this.props.propertyTypes.length,
-      type: 'string',
-      nodeType: null,
-      booleanValue: false,
-      stringValue: null,
-      intValue: null,
-      floatValue: null,
-      latitudeValue: null,
-      longitudeValue: null,
-      rangeFromValue: null,
-      rangeToValue: null,
-      isEditable: true,
-      isInstanceProperty: true,
+      // type: 'string',
+      // nodeType: null,
+      // booleanValue: false,
+      // stringValue: null,
+      // intValue: null,
+      // floatValue: null,
+      // latitudeValue: null,
+      // longitudeValue: null,
+      // rangeFromValue: null,
+      // rangeToValue: null,
+      // isEditable: true,
+      // isInstanceProperty: true,
     };
   }
 }
 
-export default withStyles(styles)(PropertyTypeTable);
+export default withStyles(styles)(withAlert(CategoryTypeTable));

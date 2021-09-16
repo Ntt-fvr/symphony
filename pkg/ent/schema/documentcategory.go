@@ -25,6 +25,7 @@ func (DocumentCategory) Fields() []ent.Field {
 		field.Int("index"),
 	}
 }
+
 // Edges returns property type edges.
 func (DocumentCategory) Edges() []ent.Edge {
 	return []ent.Edge{
@@ -48,7 +49,7 @@ func (DocumentCategory) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithQueryRules(
 			authz.DocumentCategoryReadPolicyRule(),
-			),
+		),
 		authz.WithMutationRules(
 			authz.DocumentCategoryWritePolicyRule(),
 		),

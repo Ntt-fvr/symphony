@@ -112,6 +112,15 @@ type LocationPermissionRule
   locationTypeIds: [ID!]
 }
 
+type DocumentCategoryPermissionRule
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRule"
+) {
+  isAllowed: PermissionValue!
+  DocumentCategoyIds: [ID!]
+  DocumentCategoyNames: [String!]
+}
+
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -163,6 +172,16 @@ type LocationCUD
   create: LocationPermissionRule!
   update: LocationPermissionRule!
   delete: LocationPermissionRule!
+}
+
+type DocumentCategoryCUD
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
+) {
+  Read  : DocumentCategoryPermissionRule
+  Create: DocumentCategoryPermissionRule
+  Update: DocumentCategoryPermissionRule
+  Delete: DocumentCategoryPermissionRule
 }
 
 input BasicCUDInput
@@ -228,6 +247,7 @@ type InventoryPolicy
   ) {
   read: BasicPermissionRule!
   location: LocationCUD!
+  DocumentCategory: DocumentCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
