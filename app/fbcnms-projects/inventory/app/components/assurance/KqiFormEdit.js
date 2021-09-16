@@ -155,8 +155,8 @@ type KqiTarget = {
   id: string,
   name: string,
   impact: string,
-  frame: number,
-  alowedValidation: number,
+  period: number,
+  allowedVariation: number,
   initTime: string,
   endTime: string,
   status: boolean,
@@ -278,10 +278,6 @@ const KqiFormEdit = (props: Props) => {
   const kqiTemporalFrequency = useFormInput(
     formValues.item.kqiTemporalFrequency.id,
   );
-
-
-  console.log(dataTarget)
-  debugger
 
   const filterKqiTargetsById = dataTarget?.kqiTargets?.edges?.filter(
     kqi => kqi.node.kqi.id === formValues.item.id,

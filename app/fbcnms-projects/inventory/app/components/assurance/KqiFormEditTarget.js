@@ -146,8 +146,8 @@ type Props = $ReadOnly<{|
         id: string,
         name: string,
         impact: string,
-        frame: string,
-        alowedValidation: string,
+        period: string,
+        allowedVariation: string,
         initTime: string,
         endTime: string,
         status: boolean,
@@ -179,8 +179,8 @@ const KqiFormEditTarget = (props: Props) => {
   
   const name = useFormInput(formValues.item.node.name);
   const impact = useFormInput(formValues.item.node.impact);
-  const frame = useFormInput(formValues.item.node.frame);
-  const alowedValidation = useFormInput(formValues.item.node.alowedValidation);
+  const period = useFormInput(formValues.item.node.period);
+  const allowedVariation = useFormInput(formValues.item.node.allowedVariation);
   const initTime = useFormInput(moment(formValues.item.node.initTime).format("HH"));
   const endTime = useFormInput(moment(formValues.item.node.endTime).format("HH"));
 
@@ -203,8 +203,8 @@ const KqiFormEditTarget = (props: Props) => {
         id: formValues.item.node.id,
         name: name.value,
         impact: impact.value,
-        frame: Number(frame.value),
-        alowedValidation: Number(alowedValidation.value),
+        period: Number(period.value),
+        allowedVariation: Number(allowedVariation.value),
         initTime: moment(initTime.value, "HH"),
         endTime: moment(endTime.value, "HH"),
         status: checked,
@@ -375,9 +375,9 @@ const KqiFormEditTarget = (props: Props) => {
                 <FormField className={classes.formField} label="Periods">
                   <div className={classes.contPeriods}>
                     <TextInput
-                      {...frame} 
+                      {...period} 
                       autoComplete="off"
-                      name="frame"
+                      name="period"
                       className={classes.periods} type="number" />
                   </div>
                 </FormField>
@@ -387,7 +387,7 @@ const KqiFormEditTarget = (props: Props) => {
                   label="Allowed Variation">
                   <div className={classes.contPeriods}>
                     <TextInput 
-                      {...alowedValidation}
+                      {...allowedVariation}
                       autoComplete="off"
                       name="allowedVariation"
                       className={classes.periods} type="number" />

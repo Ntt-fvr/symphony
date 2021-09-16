@@ -161,7 +161,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
                           allowedVariation: item.node.allowedVariation,
                           initTime: moment(item.node.initTime, 'HH'),
                           endTime: moment(item.node.endTime, 'HH'),
-                          status: !checked,
+                          status: checked,
                           kqi: item.node.kqi.id,
                         },
                       };
@@ -180,26 +180,26 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  {item?.node.kqiComparator[0]?.comparatorFk?.name} -{' '}
-                  {item?.node.kqiComparator[0].number}
+                  {item.node.kqiComparator[0]?.comparatorFk?.name} -{' '}
+                  {item.node.kqiComparator[0]?.number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item?.node.kqiComparator[1].number}
+                  {item.node.kqiComparator[1]?.number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item?.node.frame}
+                  {item.node.period}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item?.node.alowedValidation}
+                  {item.node.allowedVariation}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {moment(item?.node.initTime).format('HH')} -{' '}
-                  {moment(item?.node.endTime).format('HH')}
+                  {moment(item.node.initTime).format('HH')} -{' '}
+                  {moment(item.node.endTime).format('HH')}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>
                     <DeleteOutlinedIcon
-                      onClick={() => handleRemove(item?.node.id)}
+                      onClick={() => handleRemove(item.node.id)}
                       style={{color: DARK.D300}}
                     />
                   </IconButton>
