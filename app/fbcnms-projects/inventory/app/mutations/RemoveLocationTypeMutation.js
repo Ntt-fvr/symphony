@@ -10,28 +10,28 @@
 
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
-  RemoveDocumentCategoryTypeMutation,
-  RemoveDocumentCategoryTypeMutationVariables,
-  RemoveDocumentCategoryTypeMutationResponse,
-} from './__generated__/RemoveDocumentCategoryTypeMutation.graphql';
+  RemoveLocationTypeMutation,
+  RemoveLocationTypeMutationResponse,
+  RemoveLocationTypeMutationVariables,
+} from './__generated__/RemoveLocationTypeMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
 import RelayEnvironment from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation RemoveDocumentCategoryTypeMutation($id: ID!) {
+  mutation RemoveLocationTypeMutation($id: ID!) {
     removeLocationType(id: $id)
   }
 `;
 
 export default (
-  variables: RemoveDocumentCategoryTypeMutationVariables,
-  callbacks?: MutationCallbacks<RemoveDocumentCategoryTypeMutationResponse>,
+  variables: RemoveLocationTypeMutationVariables,
+  callbacks?: MutationCallbacks<RemoveLocationTypeMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<RemoveDocumentCategoryTypeMutation>(RelayEnvironment, {
+  commitMutation<RemoveLocationTypeMutation>(RelayEnvironment, {
     mutation,
     variables,
     updater,

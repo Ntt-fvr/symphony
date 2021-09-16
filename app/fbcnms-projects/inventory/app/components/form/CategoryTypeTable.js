@@ -215,7 +215,6 @@ class CategoryTypeTable extends React.Component<Props> {
               rootQuery,
               'Catalog_locationTypes',
             );
-            console.log(locationTypes);
             if (locationTypes != null) {
               ConnectionHandler.deleteNode(locationTypes, property.id);
             }
@@ -232,11 +231,6 @@ class CategoryTypeTable extends React.Component<Props> {
     index,
     property: DocumentCategoryType,
   ) => _event => {
-    console.log(this.props.propertyTypes);
-    console.log(
-      'borrando cat',
-      this._removeItem(this.props.propertyTypes, index),
-    );
     if (property.id?.includes('@tmp')) {
       this.props.onPropertiesChanged(
         removeItem(this.props.propertyTypes, index),
@@ -257,13 +251,11 @@ class CategoryTypeTable extends React.Component<Props> {
     if (!result.destination) {
       return;
     }
-
     const items = reorder(
       this.props.propertyTypes,
       result.source.index,
       result.destination.index,
     );
-
     const newItems = items.map((property, i) => ({...property, index: i}));
     this.props.onPropertiesChanged(newItems);
   };
@@ -273,18 +265,6 @@ class CategoryTypeTable extends React.Component<Props> {
       id: `CategoryType@tmp-${this.props.propertyTypes.length}-${Date.now()}`,
       name: '',
       index: this.props.propertyTypes.length,
-      // type: 'string',
-      // nodeType: null,
-      // booleanValue: false,
-      // stringValue: null,
-      // intValue: null,
-      // floatValue: null,
-      // latitudeValue: null,
-      // longitudeValue: null,
-      // rangeFromValue: null,
-      // rangeToValue: null,
-      // isEditable: true,
-      // isInstanceProperty: true,
     };
   }
 }

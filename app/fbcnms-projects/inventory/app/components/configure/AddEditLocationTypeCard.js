@@ -423,8 +423,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   nameChanged = this.fieldChangedHandler('name');
 
   _propertyChangedHandler = properties => {
-    // console.log(properties);
-    // console.log(this.props);
     this.setState(prevState => {
       return {
         error: '',
@@ -436,8 +434,6 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   };
 
   _documentCategoryChangedHandler = categories => {
-    // console.log(categories);
-    // console.log(this.props);
     this.setState(prevState => {
       return {
         error: '',
@@ -449,7 +445,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   };
 
   getEditingLocationType(): LocationType {
-    //TODO: revisar type
+    //TODO: check type
     const {editingLocationType} = this.props;
     const propertyTypes = (editingLocationType?.propertyTypes ?? [])
       .filter(Boolean)
