@@ -291,8 +291,6 @@ class PropertyTypeTable extends React.Component<Props> {
   };
 
   _onRemovePropertyClicked = (index, property: PropertyType) => _event => {
-    console.log(this.props.propertyTypes);
-    console.log('borrando prop', removeItem(this.props.propertyTypes, index));
     if (property.id?.includes('@tmp')) {
       this.props.onPropertiesChanged(
         removeItem(this.props.propertyTypes, index),
