@@ -14,6 +14,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
@@ -34,21 +35,24 @@ type Kpi struct {
 	Status bool `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the KpiQuery when eager-loading is set.
-	Edges            KpiEdges `json:"edges"`
-	domain_kpidomain *int
+	Edges                    KpiEdges `json:"edges"`
+	domain_kpidomain         *int
+	kpi_category_kpicategory *int
 }
 
 // KpiEdges holds the relations/edges for other nodes in the graph.
 type KpiEdges struct {
 	// Domain holds the value of the domain edge.
 	Domain *Domain
+	// KpiCategory holds the value of the KpiCategory edge.
+	KpiCategory *KpiCategory
 	// Formulakpi holds the value of the formulakpi edge.
 	Formulakpi []*Formula
 	// Thresholdkpi holds the value of the thresholdkpi edge.
 	Thresholdkpi *Threshold
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // DomainOrErr returns the Domain value or an error if the edge
@@ -65,10 +69,24 @@ func (e KpiEdges) DomainOrErr() (*Domain, error) {
 	return nil, &NotLoadedError{edge: "domain"}
 }
 
+// KpiCategoryOrErr returns the KpiCategory value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e KpiEdges) KpiCategoryOrErr() (*KpiCategory, error) {
+	if e.loadedTypes[1] {
+		if e.KpiCategory == nil {
+			// The edge KpiCategory was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: kpicategory.Label}
+		}
+		return e.KpiCategory, nil
+	}
+	return nil, &NotLoadedError{edge: "KpiCategory"}
+}
+
 // FormulakpiOrErr returns the Formulakpi value or an error if the edge
 // was not loaded in eager-loading.
 func (e KpiEdges) FormulakpiOrErr() ([]*Formula, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.Formulakpi, nil
 	}
 	return nil, &NotLoadedError{edge: "formulakpi"}
@@ -77,7 +95,7 @@ func (e KpiEdges) FormulakpiOrErr() ([]*Formula, error) {
 // ThresholdkpiOrErr returns the Thresholdkpi value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e KpiEdges) ThresholdkpiOrErr() (*Threshold, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		if e.Thresholdkpi == nil {
 			// The edge thresholdkpi was loaded in eager-loading,
 			// but was not found.
@@ -104,6 +122,7 @@ func (*Kpi) scanValues() []interface{} {
 func (*Kpi) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // domain_kpidomain
+		&sql.NullInt64{}, // kpi_category_kpicategory
 	}
 }
 
@@ -152,6 +171,12 @@ func (k *Kpi) assignValues(values ...interface{}) error {
 			k.domain_kpidomain = new(int)
 			*k.domain_kpidomain = int(value.Int64)
 		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field kpi_category_kpicategory", value)
+		} else if value.Valid {
+			k.kpi_category_kpicategory = new(int)
+			*k.kpi_category_kpicategory = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -159,6 +184,11 @@ func (k *Kpi) assignValues(values ...interface{}) error {
 // QueryDomain queries the domain edge of the Kpi.
 func (k *Kpi) QueryDomain() *DomainQuery {
 	return (&KpiClient{config: k.config}).QueryDomain(k)
+}
+
+// QueryKpiCategory queries the KpiCategory edge of the Kpi.
+func (k *Kpi) QueryKpiCategory() *KpiCategoryQuery {
+	return (&KpiClient{config: k.config}).QueryKpiCategory(k)
 }
 
 // QueryFormulakpi queries the formulakpi edge of the Kpi.

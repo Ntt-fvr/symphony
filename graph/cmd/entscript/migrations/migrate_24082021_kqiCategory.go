@@ -15,7 +15,7 @@ import (
 func MigrateKqiCategory(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, kqiCategory := range Config.Kqicategory {
+	for _, kqiCategory := range Config.Kqicategories {
 		kqiCategoryDB, err := client.KqiCategory.
 			Create().
 			SetName(kqiCategory).

@@ -21,20 +21,18 @@ func (kqiTargetResolver) KqiComparator(ctx context.Context, kqiTarget *ent.KqiTa
 	variable, err := kqiTarget.Kqitargetcomparatorfk(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (kqiTargetResolver) Kqi(ctx context.Context, kqiTarget *ent.KqiTarget) (*ent.Kqi, error) {
 	variable, err := kqiTarget.KqiTargetFk(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) AddKqiTarget(ctx context.Context, input models.AddKqiTargetInput) (*ent.KqiTarget, error) {
@@ -44,7 +42,7 @@ func (r mutationResolver) AddKqiTarget(ctx context.Context, input models.AddKqiT
 		KqiTarget.Create().
 		SetName(input.Name).
 		SetPeriod(input.Period).
-		SetAlowedValidation(input.AlowedValidation).
+		SetAllowedVariation(input.AllowedVariation).
 		SetInitTime(input.InitTime).
 		SetEndTime(input.EndTime).
 		SetImpact(input.Impact).
@@ -53,9 +51,9 @@ func (r mutationResolver) AddKqiTarget(ctx context.Context, input models.AddKqiT
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
 	return typ, nil
 }
@@ -68,12 +66,12 @@ func (r mutationResolver) RemoveKqiTarget(ctx context.Context, id int) (int, err
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return id, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	//TODO: borrar o editar los edges relacionados
+	// TODO: borrar o editar los edges relacionados
 
 	if err := client.KqiTarget.DeleteOne(t).Exec(ctx); err != nil {
-		return id, errors.Wrap(err, "has ocurred error on proces: %w")
+		return id, errors.Wrap(err, "has occurred error on process: %v")
 	}
 	return id, nil
 }
@@ -83,17 +81,17 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 	et, err := client.KqiTarget.Get(ctx, input.ID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+			return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 		}
-		return nil, errors.Wrapf(err, "has ocurred error on proces: %w", err)
+		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
-	var kqiId int
-	var init, end, period, allowed, status, impact, name = et.InitTime, et.EndTime, et.Period, et.AlowedValidation, et.Status, et.Impact, et.Name
+	var kqiID int
+	var init, end, period, allowed, status, impact, name = et.InitTime, et.EndTime, et.Period, et.AllowedVariation, et.Status, et.Impact, et.Name
 	var kqi, err1 = et.KqiTargetFk(ctx)
 	if err1 != nil {
-		return nil, errors.Wrap(err1, "has ocurred error on proces: %w")
+		return nil, errors.Wrap(err1, "has occurred error on process: %w")
 	} else if kqi != nil {
-		kqiId = kqi.ID
+		kqiID = kqi.ID
 	}
 
 	var change = false
@@ -110,8 +108,8 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		change = true
 	}
 
-	if allowed != input.AlowedValidation {
-		allowed = input.AlowedValidation
+	if allowed != input.AllowedVariation {
+		allowed = input.AllowedVariation
 		change = true
 	}
 
@@ -128,27 +126,26 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		change = true
 	}
 	if (kqi != nil && kqi.ID != input.Kqi) || kqi == nil {
-		kqiId = input.Kqi
+		kqiID = input.Kqi
 		change = true
 	}
 
 	if change {
-
 		if et, err = client.KqiTarget.
 			UpdateOne(et).
 			SetName(name).
 			SetInitTime(init).
 			SetEndTime(end).
 			SetPeriod(period).
-			SetAlowedValidation(allowed).
+			SetAllowedVariation(allowed).
 			SetStatus(status).
 			SetImpact(impact).
-			SetKqiTargetFkID(kqiId).
+			SetKqiTargetFkID(kqiID).
 			Save(ctx); err != nil {
 			if ent.IsConstraintError(err) {
-				return nil, gqlerror.Errorf("has ocurred error on proces: %w", err)
+				return nil, gqlerror.Errorf("has occurred error on process: %v", err)
 			}
-			return nil, errors.Wrap(err, "has ocurred error on proces: %w")
+			return nil, errors.Wrap(err, "has occurred error on process: %v")
 		}
 	}
 	return et, nil

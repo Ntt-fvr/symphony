@@ -25,6 +25,12 @@ func (c *AlarmStatusClient) Instantiate(as *AlarmStatus) *AlarmStatus {
 }
 
 // Instantiate entity configuration.
+func (c *AppointmentClient) Instantiate(a *Appointment) *Appointment {
+	a.config = c.config
+	return a
+}
+
+// Instantiate entity configuration.
 func (c *BlockClient) Instantiate(b *Block) *Block {
 	b.config = c.config
 	return b
@@ -253,6 +259,12 @@ func (c *KpiClient) Instantiate(k *Kpi) *Kpi {
 }
 
 // Instantiate entity configuration.
+func (c *KpiCategoryClient) Instantiate(kc *KpiCategory) *KpiCategory {
+	kc.config = c.config
+	return kc
+}
+
+// Instantiate entity configuration.
 func (c *KqiClient) Instantiate(k *Kqi) *Kqi {
 	k.config = c.config
 	return k
@@ -376,6 +388,42 @@ func (c *RecommendationsSourcesClient) Instantiate(rs *RecommendationsSources) *
 func (c *ReportFilterClient) Instantiate(rf *ReportFilter) *ReportFilter {
 	rf.config = c.config
 	return rf
+}
+
+// Instantiate entity configuration.
+func (c *ResourceRelationshipClient) Instantiate(rr *ResourceRelationship) *ResourceRelationship {
+	rr.config = c.config
+	return rr
+}
+
+// Instantiate entity configuration.
+func (c *ResourceRelationshipMultiplicityClient) Instantiate(rrm *ResourceRelationshipMultiplicity) *ResourceRelationshipMultiplicity {
+	rrm.config = c.config
+	return rrm
+}
+
+// Instantiate entity configuration.
+func (c *ResourceRelationshipTypeClient) Instantiate(rrt *ResourceRelationshipType) *ResourceRelationshipType {
+	rrt.config = c.config
+	return rrt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeClient) Instantiate(rt *ResourceType) *ResourceType {
+	rt.config = c.config
+	return rt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeBaseTypeClient) Instantiate(rtbt *ResourceTypeBaseType) *ResourceTypeBaseType {
+	rtbt.config = c.config
+	return rtbt
+}
+
+// Instantiate entity configuration.
+func (c *ResourceTypeClassClient) Instantiate(rtc *ResourceTypeClass) *ResourceTypeClass {
+	rtc.config = c.config
+	return rtc
 }
 
 // Instantiate entity configuration.

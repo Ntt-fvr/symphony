@@ -15,7 +15,7 @@ import (
 func MigrateKqiPerspective(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, kqiPerspective := range Config.Kqiperspective {
+	for _, kqiPerspective := range Config.Kqiperspectives {
 		kqiPerspectiveDB, err := client.KqiPerspective.
 			Create().
 			SetName(kqiPerspective).

@@ -21,7 +21,7 @@ func (KqiTarget) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty().Unique().Annotations(entgql.OrderField("NAME")),
 		field.Float("period"),
-		field.Float("alowedValidation"),
+		field.Float("allowedVariation"),
 		field.Time("initTime"),
 		field.Time("endTime"),
 		field.String("impact"),

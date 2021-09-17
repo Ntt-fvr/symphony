@@ -25,6 +25,8 @@ const Automation = React.lazy(() => import('./automation/Automation'));
 const Inventory = React.lazy(() => import('./Inventory'));
 const Settings = React.lazy(() => import('./settings/Settings'));
 const WorkOrdersMain = React.lazy(() => import('./work_orders/WorkOrdersMain'));
+const Assurance = React.lazy(() => import('./assurance/AssuranceMain'));
+const Fulfillment = React.lazy(() => import('./fulfillment/FulfillmentMain'));
 
 export default () => (
   <AppContextProvider>
@@ -49,6 +51,8 @@ export default () => (
                   ) : null}
                   <Route path="/automation" component={Automation} />
                   <Route path="/id" component={IDToolMain} />
+                  <Route path="/assurance" component={Assurance} />
+                  <Route path="/fulfillment" component={Fulfillment} />
                 </Switch>
               </InventorySuspense>
               <SymphonyFilesUploadSnackbar />

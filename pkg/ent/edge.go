@@ -40,6 +40,22 @@ func (as *AlarmStatus) AlarmStatusFk(ctx context.Context) ([]*AlarmFilter, error
 	return result, err
 }
 
+func (a *Appointment) Workorder(ctx context.Context) (*WorkOrder, error) {
+	result, err := a.Edges.WorkorderOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryWorkorder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *Appointment) Assignee(ctx context.Context) (*User, error) {
+	result, err := a.Edges.AssigneeOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryAssignee().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (b *Block) Flow(ctx context.Context) (*Flow, error) {
 	result, err := b.Edges.FlowOrErr()
 	if IsNotLoaded(err) {
@@ -904,6 +920,14 @@ func (k *Kpi) Domain(ctx context.Context) (*Domain, error) {
 	return result, MaskNotFound(err)
 }
 
+func (k *Kpi) KpiCategory(ctx context.Context) (*KpiCategory, error) {
+	result, err := k.Edges.KpiCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = k.QueryKpiCategory().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (k *Kpi) Formulakpi(ctx context.Context) ([]*Formula, error) {
 	result, err := k.Edges.FormulakpiOrErr()
 	if IsNotLoaded(err) {
@@ -918,6 +942,14 @@ func (k *Kpi) Thresholdkpi(ctx context.Context) (*Threshold, error) {
 		result, err = k.QueryThresholdkpi().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (kc *KpiCategory) Kpicategory(ctx context.Context) ([]*Kpi, error) {
+	result, err := kc.Edges.KpicategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = kc.QueryKpicategory().All(ctx)
+	}
+	return result, err
 }
 
 func (k *Kqi) KqiCategoryFk(ctx context.Context) (*KqiCategory, error) {
@@ -1180,6 +1212,14 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
+	}
+	return result, err
+}
+
+func (lt *LocationType) ResourceRelationshipFk(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := lt.Edges.ResourceRelationshipFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryResourceRelationshipFk().All(ctx)
 	}
 	return result, err
 }
@@ -1580,6 +1620,142 @@ func (rs *RecommendationsSources) Recommendations(ctx context.Context) ([]*Recom
 	result, err := rs.Edges.RecommendationsOrErr()
 	if IsNotLoaded(err) {
 		result, err = rs.QueryRecommendations().All(ctx)
+	}
+	return result, err
+}
+
+func (rr *ResourceRelationship) Resourcetypea(ctx context.Context) (*ResourceType, error) {
+	result, err := rr.Edges.ResourcetypeaOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryResourcetypea().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rr *ResourceRelationship) Resourcetypeb(ctx context.Context) (*ResourceType, error) {
+	result, err := rr.Edges.ResourcetypebOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryResourcetypeb().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rr *ResourceRelationship) Resourcerelationshiptypefk(ctx context.Context) (*ResourceRelationshipType, error) {
+	result, err := rr.Edges.ResourcerelationshiptypefkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryResourcerelationshiptypefk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rr *ResourceRelationship) Locationtypefk(ctx context.Context) (*LocationType, error) {
+	result, err := rr.Edges.LocationtypefkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryLocationtypefk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rr *ResourceRelationship) ResourceRelationshipMultiplicityFk(ctx context.Context) (*ResourceRelationshipMultiplicity, error) {
+	result, err := rr.Edges.ResourceRelationshipMultiplicityFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rr.QueryResourceRelationshipMultiplicityFk().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rrm *ResourceRelationshipMultiplicity) ResourceRelationshipFk(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := rrm.Edges.ResourceRelationshipFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rrm.QueryResourceRelationshipFk().All(ctx)
+	}
+	return result, err
+}
+
+func (rrm *ResourceRelationshipMultiplicity) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
+	result, err := rrm.Edges.PoliciesOrErr()
+	if IsNotLoaded(err) {
+		result, err = rrm.QueryPolicies().All(ctx)
+	}
+	return result, err
+}
+
+func (rrt *ResourceRelationshipType) ResourceRelationshipFk(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := rrt.Edges.ResourceRelationshipFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rrt.QueryResourceRelationshipFk().All(ctx)
+	}
+	return result, err
+}
+
+func (rrt *ResourceRelationshipType) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
+	result, err := rrt.Edges.PoliciesOrErr()
+	if IsNotLoaded(err) {
+		result, err = rrt.QueryPolicies().All(ctx)
+	}
+	return result, err
+}
+
+func (rt *ResourceType) Resourcetypeclass(ctx context.Context) (*ResourceTypeClass, error) {
+	result, err := rt.Edges.ResourcetypeclassOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourcetypeclass().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rt *ResourceType) Resourcetypebasetype(ctx context.Context) (*ResourceTypeBaseType, error) {
+	result, err := rt.Edges.ResourcetypebasetypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourcetypebasetype().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (rt *ResourceType) ResourceRelationshipFkA(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := rt.Edges.ResourceRelationshipFkAOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourceRelationshipFkA().All(ctx)
+	}
+	return result, err
+}
+
+func (rt *ResourceType) ResourceRelationshipFkB(ctx context.Context) ([]*ResourceRelationship, error) {
+	result, err := rt.Edges.ResourceRelationshipFkBOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryResourceRelationshipFkB().All(ctx)
+	}
+	return result, err
+}
+
+func (rtbt *ResourceTypeBaseType) ResourceTypeFk(ctx context.Context) ([]*ResourceType, error) {
+	result, err := rtbt.Edges.ResourceTypeFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtbt.QueryResourceTypeFk().All(ctx)
+	}
+	return result, err
+}
+
+func (rtbt *ResourceTypeBaseType) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
+	result, err := rtbt.Edges.PoliciesOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtbt.QueryPolicies().All(ctx)
+	}
+	return result, err
+}
+
+func (rtc *ResourceTypeClass) ResourceTypeFk(ctx context.Context) ([]*ResourceType, error) {
+	result, err := rtc.Edges.ResourceTypeFkOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtc.QueryResourceTypeFk().All(ctx)
+	}
+	return result, err
+}
+
+func (rtc *ResourceTypeClass) Policies(ctx context.Context) ([]*PermissionsPolicy, error) {
+	result, err := rtc.Edges.PoliciesOrErr()
+	if IsNotLoaded(err) {
+		result, err = rtc.QueryPolicies().All(ctx)
 	}
 	return result, err
 }
@@ -2024,6 +2200,14 @@ func (u *User) Features(ctx context.Context) ([]*Feature, error) {
 	return result, err
 }
 
+func (u *User) Appointment(ctx context.Context) ([]*Appointment, error) {
+	result, err := u.Edges.AppointmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QueryAppointment().All(ctx)
+	}
+	return result, err
+}
+
 func (ug *UsersGroup) Members(ctx context.Context) ([]*User, error) {
 	result, err := ug.Edges.MembersOrErr()
 	if IsNotLoaded(err) {
@@ -2182,6 +2366,14 @@ func (wo *WorkOrder) Assignee(ctx context.Context) (*User, error) {
 		result, err = wo.QueryAssignee().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (wo *WorkOrder) Appointment(ctx context.Context) ([]*Appointment, error) {
+	result, err := wo.Edges.AppointmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = wo.QueryAppointment().All(ctx)
+	}
+	return result, err
 }
 
 func (wod *WorkOrderDefinition) Type(ctx context.Context) (*WorkOrderType, error) {

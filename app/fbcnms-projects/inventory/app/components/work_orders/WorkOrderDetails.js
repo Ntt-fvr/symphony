@@ -176,23 +176,37 @@ const WorkOrderDetails = ({
   const {enqueueSnackbar} = useSnackbar();
 
   const linkFiles = () => {
-    countDispatch({type: 'apply', value: '', file: null});
-    enqueueSnackbar('Linking files');
-    state.files.map(item => {
-      linkFileToLocation(
-        propsWorkOrder.location?.id,
-        item.file,
-        item.file.storeKey,
-        item.category,
-      );
-    });
-    state.links.map(item => {
-      addNewHyperlinkToLocation(
-        propsWorkOrder.location?.id,
-        item.link,
-        item.category,
-      );
-    });
+    countDispatch({type: 'apply', value: '', file: null, link: null});
+    if (state.files.length) {
+      enqueueSnackbar('Linking files');
+      onGroupDuplicates(state?.files).map(item => {
+        linkFileToLocation(
+          propsWorkOrder.location?.id,
+          item,
+          item.storeKey,
+          item.category,
+        );
+      });
+    }
+    if (state.links.length) {
+      enqueueSnackbar('Linking hyperlinks');
+      onGroupDuplicates(state?.links).map(item => {
+        addNewHyperlinkToLocation(
+          propsWorkOrder.location?.id,
+          item,
+          item.category,
+        );
+      });
+    }
+  };
+
+  const onGroupDuplicates = attach => {
+    const result = attach.reduce((acc, item) => {
+      acc[item.id] = [...(acc[item.id] ?? []), item];
+      return acc;
+    }, []);
+
+    return Object.values(result).map((item: Object) => item[item.length - 1]);
   };
 
   function reducerCounter(
@@ -228,7 +242,7 @@ const WorkOrderDetails = ({
         }
       case 'valueIncrement':
         const newFile = action.file
-          ? {file: action.file, category: action.value}
+          ? {id: action.file.id, ...action.file, category: action.value}
           : false;
         const newFiles = newFile
           ? state.files.concat(newFile)
@@ -236,7 +250,7 @@ const WorkOrderDetails = ({
           ? state.files
           : [];
         const newLink = action.link
-          ? {link: action.link, category: action.value}
+          ? {id: action.link.id, ...action.link, category: action.value}
           : false;
         const newLinks = newLink
           ? state.links.concat(newLink)
@@ -255,12 +269,8 @@ const WorkOrderDetails = ({
           return {
             valueCount: state.valueCount - 1,
             checkCount: state.checkCount,
-            files: state.files?.filter(
-              item => item.file?.id !== action.file?.id,
-            ),
-            links: state.links?.filter(
-              item => item.link?.id !== action.link?.id,
-            ),
+            files: state.files?.filter(item => item?.id !== action.file?.id),
+            links: state.links?.filter(item => item?.id !== action.link?.id),
             isApplyButtonEnabled: true,
           };
         } else {
@@ -284,7 +294,6 @@ const WorkOrderDetails = ({
         throw new Error();
     }
   }
-
   const [state, countDispatch] = useReducer(reducerCounter, {
     checkCount: 0,
     valueCount: 0,
@@ -446,7 +455,7 @@ const WorkOrderDetails = ({
       },
       onError: () => {
         enqueueSnackbar(
-          `There was an error linking ${file.fileName} to location with category ${category}`,
+          `There was an error linking ${link?.displayName} to location with category ${category}`,
         );
       },
     };
@@ -780,8 +789,7 @@ const WorkOrderDetails = ({
                             disabled={
                               state.isApplyButtonEnabled === false
                                 ? true
-                                : state.checkCount === 0 ||
-                                  state.valueCount !== state.checkCount
+                                : state.checkCount === 0
                                 ? true
                                 : false
                             }

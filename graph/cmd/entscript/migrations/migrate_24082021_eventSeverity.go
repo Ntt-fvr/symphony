@@ -15,7 +15,7 @@ import (
 func MigrateEvenSeverity(ctx context.Context, logger *zap.Logger) error {
 	getConfig()
 	client := ent.FromContext(ctx)
-	for _, evenSeverity := range Config.Eventseverity {
+	for _, evenSeverity := range Config.Eventseverities {
 		evenSeverityDB, err := client.EventSeverity.
 			Create().
 			SetName(evenSeverity).

@@ -66,9 +66,9 @@ func (ktc *KqiTargetCreate) SetPeriod(f float64) *KqiTargetCreate {
 	return ktc
 }
 
-// SetAlowedValidation sets the alowedValidation field.
-func (ktc *KqiTargetCreate) SetAlowedValidation(f float64) *KqiTargetCreate {
-	ktc.mutation.SetAlowedValidation(f)
+// SetAllowedVariation sets the allowedVariation field.
+func (ktc *KqiTargetCreate) SetAllowedVariation(f float64) *KqiTargetCreate {
+	ktc.mutation.SetAllowedVariation(f)
 	return ktc
 }
 
@@ -211,8 +211,8 @@ func (ktc *KqiTargetCreate) check() error {
 	if _, ok := ktc.mutation.Period(); !ok {
 		return &ValidationError{Name: "period", err: errors.New("ent: missing required field \"period\"")}
 	}
-	if _, ok := ktc.mutation.AlowedValidation(); !ok {
-		return &ValidationError{Name: "alowedValidation", err: errors.New("ent: missing required field \"alowedValidation\"")}
+	if _, ok := ktc.mutation.AllowedVariation(); !ok {
+		return &ValidationError{Name: "allowedVariation", err: errors.New("ent: missing required field \"allowedVariation\"")}
 	}
 	if _, ok := ktc.mutation.InitTime(); !ok {
 		return &ValidationError{Name: "initTime", err: errors.New("ent: missing required field \"initTime\"")}
@@ -285,13 +285,13 @@ func (ktc *KqiTargetCreate) createSpec() (*KqiTarget, *sqlgraph.CreateSpec) {
 		})
 		_node.Period = value
 	}
-	if value, ok := ktc.mutation.AlowedValidation(); ok {
+	if value, ok := ktc.mutation.AllowedVariation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Value:  value,
-			Column: kqitarget.FieldAlowedValidation,
+			Column: kqitarget.FieldAllowedVariation,
 		})
-		_node.AlowedValidation = value
+		_node.AllowedVariation = value
 	}
 	if value, ok := ktc.mutation.InitTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

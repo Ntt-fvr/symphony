@@ -7,10 +7,13 @@ package resolverutil
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/appointment"
 	"github.com/pkg/errors"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func UserFilter(query *ent.UserQuery, filters []*models.UserFilterInput) (*ent.UserQuery, error) {
@@ -178,6 +181,15 @@ func KpiFilter(query *ent.KpiQuery, filters []*models.KpiFilterInput) (*ent.KpiQ
 	return query, nil
 }
 
+func KpiCategoryFilter(query *ent.KpiCategoryQuery, filters []*models.KpiCategoryFilterInput) (*ent.KpiCategoryQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleKpiCategoryFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
 func ThresholdFilter(query *ent.ThresholdQuery, filters []*models.ThresholdFilterInput) (*ent.ThresholdQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -286,6 +298,7 @@ func KqiFilter(query *ent.KqiQuery, filters []*models.KqiFilterInput) (*ent.KqiQ
 	}
 	return query, nil
 }
+
 func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.OrganizationFilterInput) (*ent.OrganizationQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -295,6 +308,7 @@ func OrganizationFilter(query *ent.OrganizationQuery, filters []*models.Organiza
 	}
 	return query, nil
 }
+
 func RecommendationsSourcesFilter(query *ent.RecommendationsSourcesQuery, filters []*models.RecommendationsSourcesFilterInput) (*ent.RecommendationsSourcesQuery, error) {
 	var err error
 	for _, f := range filters {
@@ -391,4 +405,86 @@ func TechFilter(query *ent.TechQuery, filters []*models.TechFilterInput) (*ent.T
 		}
 	}
 	return query, nil
+}
+func ResourceTypeClassFilter(query *ent.ResourceTypeClassQuery, filters []*models.ResourceTypeClassFilterInput) (*ent.ResourceTypeClassQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceTypeClassFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ResourceTypeBaseTypeFilter(query *ent.ResourceTypeBaseTypeQuery, filters []*models.ResourceTypeBaseTypeFilterInput) (*ent.ResourceTypeBaseTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceTypeBaseTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ResourceTypeFilter(query *ent.ResourceTypeQuery, filters []*models.ResourceTypeFilterInput) (*ent.ResourceTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ResourceRelationshipTypeFilter(query *ent.ResourceRelationshipTypeQuery, filters []*models.ResourceRelationshipTypeFilterInput) (*ent.ResourceRelationshipTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceRelationshipTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ResourceRelationshipMultiplicityFilter(query *ent.ResourceRelationshipMultiplicityQuery, filters []*models.ResourceRelationshipMultiplicityFilterInput) (*ent.ResourceRelationshipMultiplicityQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceRelationshipMultiplicityFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func ResourceRelationshipFilter(query *ent.ResourceRelationshipQuery, filters []*models.ResourceRelationshipFilterInput) (*ent.ResourceRelationshipQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleResourceRelationshipFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
+func validateSlot(startDate time.Time, endDate time.Time) (err error) {
+	/*switch {
+	case startDate == nil || endDate == nil:
+		err = &gqlerror.Error{
+			Message: "Passing both `first` and `last` to paginate a connection is not supported.",
+		}
+	case startDate.After(endDate):*/
+	if startDate.After(endDate) {
+		err = &gqlerror.Error{
+			Message: "Slot `endDate` must be after `startDate`",
+		}
+	}
+	return err
+}
+
+func SlotFilter(query *ent.AppointmentQuery, filter *models.SlotFilterInput) (*ent.AppointmentQuery, error) {
+	if err := validateSlot(filter.SlotStartDate, filter.SlotEndDate); err != nil {
+		return nil, err
+	}
+
+	return query.Where(appointment.Or(
+		appointment.And(
+			appointment.StartLTE(filter.SlotStartDate),
+			appointment.EndGT(filter.SlotStartDate)),
+		appointment.And(
+			appointment.StartGTE(filter.SlotStartDate),
+			appointment.StartLTE(filter.SlotEndDate)))).Order(ent.Asc(appointment.FieldStart)), nil
 }
