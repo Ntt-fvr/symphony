@@ -8,6 +8,7 @@ import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/index"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
@@ -48,10 +49,28 @@ func (Appointment) Edges() []ent.Edge {
 	}
 }
 
+func (Appointment) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("start"),
+		index.Fields("end"),
+		index.Edges("workorder"),
+	}
+}
+
 func (Appointment) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithMutationRules(
 			privacy.AlwaysAllowRule(),
 		),
 	)
+	/*return authz.NewPolicy(
+		authz.WithQueryRules(
+			authz.WorkOrderReadPolicyRule(),
+		),
+		authz.WithMutationRules(
+			authz.WorkOrderWritePolicyRule(),
+			authz.AllowWorkOrderOwnerWrite(),
+			authz.AllowWorkOrderAssigneeWrite(),
+		),
+	)*/
 }

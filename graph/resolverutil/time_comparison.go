@@ -17,7 +17,14 @@ func LE(date1 time.Time, date2 time.Time) bool {
 }
 
 func IsWorkday(date time.Time) bool {
-	return true
+	switch date.Weekday() {
+	case time.Saturday:
+		return false
+	case time.Sunday:
+		return false
+	default:
+		return true
+	}
 }
 
 func IsWorkTime(date time.Time, startHour int, startMinute int, endHour int, endMinute int) bool {

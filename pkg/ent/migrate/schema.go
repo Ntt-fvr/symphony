@@ -125,6 +125,23 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appointment_start",
+				Unique:  false,
+				Columns: []*schema.Column{AppointmentsColumns[3]},
+			},
+			{
+				Name:    "appointment_end",
+				Unique:  false,
+				Columns: []*schema.Column{AppointmentsColumns[4]},
+			},
+			{
+				Name:    "appointment_work_order_appointment",
+				Unique:  false,
+				Columns: []*schema.Column{AppointmentsColumns[9]},
+			},
+		},
 	}
 	// BlocksColumns holds the columns for the "blocks" table.
 	BlocksColumns = []*schema.Column{
