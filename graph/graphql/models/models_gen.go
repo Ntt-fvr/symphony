@@ -183,10 +183,11 @@ type AddFlowDraftInput struct {
 }
 
 type AddFormulaInput struct {
-	TextFormula string `json:"textFormula"`
-	Status      bool   `json:"status"`
-	TechFk      int    `json:"techFk"`
-	KpiFk       int    `json:"kpiFk"`
+	TextFormula   string `json:"textFormula"`
+	Status        bool   `json:"status"`
+	TechFk        int    `json:"techFk"`
+	NetworkTypeFk int    `json:"networkTypeFk"`
+	KpiFk         int    `json:"kpiFk"`
 }
 
 type AddHyperlinkInput struct {
@@ -292,6 +293,10 @@ type AddLocationTypeInput struct {
 	FileCategoriesType       []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
 	Properties               []*models.PropertyTypeInput     `json:"properties"`
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
+}
+
+type AddNetworkTypeInput struct {
+	Name string `json:"name"`
 }
 
 type AddOrganizationInput struct {
@@ -770,11 +775,12 @@ type EditFlowInstanceInput struct {
 }
 
 type EditFormulaInput struct {
-	ID          int    `json:"id"`
-	TextFormula string `json:"textFormula"`
-	Status      bool   `json:"status"`
-	TechFk      int    `json:"techFk"`
-	KpiFk       int    `json:"kpiFk"`
+	ID            int    `json:"id"`
+	TextFormula   string `json:"textFormula"`
+	Status        bool   `json:"status"`
+	TechFk        int    `json:"techFk"`
+	NetworkTypeFk int    `json:"networkTypeFk"`
+	KpiFk         int    `json:"kpiFk"`
 }
 
 type EditKpiCategoryInput struct {
@@ -867,6 +873,11 @@ type EditLocationTypeInput struct {
 	IsSite             *bool                           `json:"isSite"`
 	FileCategoriesType []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
 	Properties         []*models.PropertyTypeInput     `json:"properties"`
+}
+
+type EditNetworkTypeInput struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type EditOrganizationInput struct {
@@ -1314,6 +1325,15 @@ type LocationTypeIndex struct {
 type NetworkTopology struct {
 	Nodes []ent.Noder     `json:"nodes"`
 	Links []*TopologyLink `json:"links"`
+}
+
+type NetworkTypeFilterInput struct {
+	FilterType  NetworkTypeFilterType `json:"filterType"`
+	Operator    enum.FilterOperator   `json:"operator"`
+	StringValue *string               `json:"stringValue"`
+	IDSet       []int                 `json:"idSet"`
+	MaxDepth    *int                  `json:"maxDepth"`
+	StringSet   []string              `json:"stringSet"`
 }
 
 type OrganizationFilterInput struct {
@@ -2681,6 +2701,45 @@ func (e *KqiTemporalFrequencyFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e KqiTemporalFrequencyFilterType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type NetworkTypeFilterType string
+
+const (
+	NetworkTypeFilterTypeName NetworkTypeFilterType = "NAME"
+)
+
+var AllNetworkTypeFilterType = []NetworkTypeFilterType{
+	NetworkTypeFilterTypeName,
+}
+
+func (e NetworkTypeFilterType) IsValid() bool {
+	switch e {
+	case NetworkTypeFilterTypeName:
+		return true
+	}
+	return false
+}
+
+func (e NetworkTypeFilterType) String() string {
+	return string(e)
+}
+
+func (e *NetworkTypeFilterType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = NetworkTypeFilterType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid NetworkTypeFilterType", str)
+	}
+	return nil
+}
+
+func (e NetworkTypeFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

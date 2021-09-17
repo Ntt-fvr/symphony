@@ -47,3 +47,7 @@ recommendationscategories:
 recommendationssources:
   - recommendationsSources_1
   - recommendationsSources_2
+networktype:
+  - BACKBONE
+  - L2AGG
+  - GPON

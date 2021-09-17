@@ -1033,6 +1033,26 @@ func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (nt *NetworkTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *NetworkTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		nt = nt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return nt
+}
+
+func (nt *NetworkTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *NetworkTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "formula":
+			nt = nt.WithFormulaNetworkTypeFK(func(query *FormulaQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return nt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...string) *OrganizationQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		o = o.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

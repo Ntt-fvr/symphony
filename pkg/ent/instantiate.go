@@ -325,6 +325,12 @@ func (c *LocationTypeClient) Instantiate(lt *LocationType) *LocationType {
 }
 
 // Instantiate entity configuration.
+func (c *NetworkTypeClient) Instantiate(nt *NetworkType) *NetworkType {
+	nt.config = c.config
+	return nt
+}
+
+// Instantiate entity configuration.
 func (c *OrganizationClient) Instantiate(o *Organization) *Organization {
 	o.config = c.config
 	return o

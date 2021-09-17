@@ -29,6 +29,7 @@ var Config = struct {
 	Kqisources                []string
 	Recommendationscategories []string
 	Recommendationssources    []string
+	NetworkType               []string
 }{}
 
 func getConfig() {

@@ -17,6 +17,7 @@ var migrationMap = map[string]func(context.Context, *zap.Logger) error{
 	"migrate_workorder_status":  migrations.MigrateWorkOrderStatus,
 	"techs":                     migrations.MigrateTechs,
 	"domains":                   migrations.MigrateDomains,
+	"networktype":               migrations.MigrateNetworkType,
 	"ruleTypes":                 migrations.MigrateRuleType,
 	"comparators":               migrations.MigrateComparators,
 	"eventSeverity":             migrations.MigrateEvenSeverity,

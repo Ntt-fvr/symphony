@@ -26,5 +26,6 @@ func MigrateParameters(ctx context.Context, logger *zap.Logger) error {
 	MigrateKqiSource(ctx, logger)
 	MigrateRecommendationsCategories(ctx, logger)
 	MigrateRecommendationssources(ctx, logger)
+	MigrateNetworkType(ctx, logger)
 	return nil
 }

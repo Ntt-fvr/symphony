@@ -406,6 +406,15 @@ func TechFilter(query *ent.TechQuery, filters []*models.TechFilterInput) (*ent.T
 	}
 	return query, nil
 }
+func NetworkTypeFilter(query *ent.NetworkTypeQuery, filters []*models.NetworkTypeFilterInput) (*ent.NetworkTypeQuery, error) {
+	var err error
+	for _, f := range filters {
+		if query, err = handleNetworkTypeFilter(query, f); err != nil {
+			return nil, err
+		}
+	}
+	return query, nil
+}
 func ResourceTypeClassFilter(query *ent.ResourceTypeClassQuery, filters []*models.ResourceTypeClassFilterInput) (*ent.ResourceTypeClassQuery, error) {
 	var err error
 	for _, f := range filters {
