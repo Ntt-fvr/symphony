@@ -72,7 +72,7 @@ const AlarmFilteringTable = (props: Props) => {
   };
 
   const handleChangeRowsPerPage = event => {
-    setRowsPerPage(event.target.value);
+    setRowsPerPage(Number(event.target.value));
     setPage(0);
   };
 

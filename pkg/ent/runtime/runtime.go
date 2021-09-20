@@ -63,6 +63,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -1524,6 +1525,33 @@ func init() {
 	locationtypeDescIndex := locationtypeFields[4].Descriptor()
 	// locationtype.DefaultIndex holds the default value on creation for the index field.
 	locationtype.DefaultIndex = locationtypeDescIndex.Default.(int)
+	networktypeMixin := schema.NetworkType{}.Mixin()
+	networktype.Policy = privacy.NewPolicies(schema.NetworkType{})
+	networktype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := networktype.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	networktypeMixinFields0 := networktypeMixin[0].Fields()
+	networktypeFields := schema.NetworkType{}.Fields()
+	_ = networktypeFields
+	// networktypeDescCreateTime is the schema descriptor for create_time field.
+	networktypeDescCreateTime := networktypeMixinFields0[0].Descriptor()
+	// networktype.DefaultCreateTime holds the default value on creation for the create_time field.
+	networktype.DefaultCreateTime = networktypeDescCreateTime.Default.(func() time.Time)
+	// networktypeDescUpdateTime is the schema descriptor for update_time field.
+	networktypeDescUpdateTime := networktypeMixinFields0[1].Descriptor()
+	// networktype.DefaultUpdateTime holds the default value on creation for the update_time field.
+	networktype.DefaultUpdateTime = networktypeDescUpdateTime.Default.(func() time.Time)
+	// networktype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	networktype.UpdateDefaultUpdateTime = networktypeDescUpdateTime.UpdateDefault.(func() time.Time)
+	// networktypeDescName is the schema descriptor for name field.
+	networktypeDescName := networktypeFields[0].Descriptor()
+	// networktype.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	networktype.NameValidator = networktypeDescName.Validators[0].(func(string) error)
 	organizationMixin := schema.Organization{}.Mixin()
 	organization.Policy = privacy.NewPolicies(schema.Organization{})
 	organization.Hooks[0] = func(next ent.Mutator) ent.Mutator {

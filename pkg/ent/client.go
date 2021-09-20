@@ -66,6 +66,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -223,6 +224,8 @@ type Client struct {
 	Location *LocationClient
 	// LocationType is the client for interacting with the LocationType builders.
 	LocationType *LocationTypeClient
+	// NetworkType is the client for interacting with the NetworkType builders.
+	NetworkType *NetworkTypeClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// PermissionsPolicy is the client for interacting with the PermissionsPolicy builders.
@@ -371,6 +374,7 @@ func (c *Client) init() {
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.LocationType = NewLocationTypeClient(c.config)
+	c.NetworkType = NewNetworkTypeClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.PermissionsPolicy = NewPermissionsPolicyClient(c.config)
 	c.Project = NewProjectClient(c.config)
@@ -496,6 +500,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Link:                             NewLinkClient(cfg),
 		Location:                         NewLocationClient(cfg),
 		LocationType:                     NewLocationTypeClient(cfg),
+		NetworkType:                      NewNetworkTypeClient(cfg),
 		Organization:                     NewOrganizationClient(cfg),
 		PermissionsPolicy:                NewPermissionsPolicyClient(cfg),
 		Project:                          NewProjectClient(cfg),
@@ -604,6 +609,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Link:                             NewLinkClient(cfg),
 		Location:                         NewLocationClient(cfg),
 		LocationType:                     NewLocationTypeClient(cfg),
+		NetworkType:                      NewNetworkTypeClient(cfg),
 		Organization:                     NewOrganizationClient(cfg),
 		PermissionsPolicy:                NewPermissionsPolicyClient(cfg),
 		Project:                          NewProjectClient(cfg),
@@ -725,6 +731,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
 	c.LocationType.Use(hooks...)
+	c.NetworkType.Use(hooks...)
 	c.Organization.Use(hooks...)
 	c.PermissionsPolicy.Use(hooks...)
 	c.Project.Use(hooks...)
@@ -6033,6 +6040,22 @@ func (c *FormulaClient) GetX(ctx context.Context, id int) *Formula {
 	return obj
 }
 
+// QueryNetworkType queries the networkType edge of a Formula.
+func (c *FormulaClient) QueryNetworkType(f *Formula) *NetworkTypeQuery {
+	query := &NetworkTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(formula.Table, formula.FieldID, id),
+			sqlgraph.To(networktype.Table, networktype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, formula.NetworkTypeTable, formula.NetworkTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryTech queries the tech edge of a Formula.
 func (c *FormulaClient) QueryTech(f *Formula) *TechQuery {
 	query := &TechQuery{config: c.config}
@@ -7914,6 +7937,111 @@ func (c *LocationTypeClient) QueryResourceRelationshipFk(lt *LocationType) *Reso
 func (c *LocationTypeClient) Hooks() []Hook {
 	hooks := c.hooks.LocationType
 	return append(hooks[:len(hooks):len(hooks)], locationtype.Hooks[:]...)
+}
+
+// NetworkTypeClient is a client for the NetworkType schema.
+type NetworkTypeClient struct {
+	config
+}
+
+// NewNetworkTypeClient returns a client for the NetworkType from the given config.
+func NewNetworkTypeClient(c config) *NetworkTypeClient {
+	return &NetworkTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `networktype.Hooks(f(g(h())))`.
+func (c *NetworkTypeClient) Use(hooks ...Hook) {
+	c.hooks.NetworkType = append(c.hooks.NetworkType, hooks...)
+}
+
+// Create returns a create builder for NetworkType.
+func (c *NetworkTypeClient) Create() *NetworkTypeCreate {
+	mutation := newNetworkTypeMutation(c.config, OpCreate)
+	return &NetworkTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NetworkType entities.
+func (c *NetworkTypeClient) CreateBulk(builders ...*NetworkTypeCreate) *NetworkTypeCreateBulk {
+	return &NetworkTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NetworkType.
+func (c *NetworkTypeClient) Update() *NetworkTypeUpdate {
+	mutation := newNetworkTypeMutation(c.config, OpUpdate)
+	return &NetworkTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NetworkTypeClient) UpdateOne(nt *NetworkType) *NetworkTypeUpdateOne {
+	mutation := newNetworkTypeMutation(c.config, OpUpdateOne, withNetworkType(nt))
+	return &NetworkTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NetworkTypeClient) UpdateOneID(id int) *NetworkTypeUpdateOne {
+	mutation := newNetworkTypeMutation(c.config, OpUpdateOne, withNetworkTypeID(id))
+	return &NetworkTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NetworkType.
+func (c *NetworkTypeClient) Delete() *NetworkTypeDelete {
+	mutation := newNetworkTypeMutation(c.config, OpDelete)
+	return &NetworkTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *NetworkTypeClient) DeleteOne(nt *NetworkType) *NetworkTypeDeleteOne {
+	return c.DeleteOneID(nt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *NetworkTypeClient) DeleteOneID(id int) *NetworkTypeDeleteOne {
+	builder := c.Delete().Where(networktype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NetworkTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for NetworkType.
+func (c *NetworkTypeClient) Query() *NetworkTypeQuery {
+	return &NetworkTypeQuery{config: c.config}
+}
+
+// Get returns a NetworkType entity by its id.
+func (c *NetworkTypeClient) Get(ctx context.Context, id int) (*NetworkType, error) {
+	return c.Query().Where(networktype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NetworkTypeClient) GetX(ctx context.Context, id int) *NetworkType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFormulaNetworkTypeFK queries the formulaNetworkType_FK edge of a NetworkType.
+func (c *NetworkTypeClient) QueryFormulaNetworkTypeFK(nt *NetworkType) *FormulaQuery {
+	query := &FormulaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := nt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(networktype.Table, networktype.FieldID, id),
+			sqlgraph.To(formula.Table, formula.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, networktype.FormulaNetworkTypeFKTable, networktype.FormulaNetworkTypeFKColumn),
+		)
+		fromV = sqlgraph.Neighbors(nt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NetworkTypeClient) Hooks() []Hook {
+	hooks := c.hooks.NetworkType
+	return append(hooks[:len(hooks):len(hooks)], networktype.Hooks[:]...)
 }
 
 // OrganizationClient is a client for the Organization schema.

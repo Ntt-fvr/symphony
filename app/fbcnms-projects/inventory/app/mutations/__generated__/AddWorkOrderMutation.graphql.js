@@ -36,6 +36,8 @@ export type AddWorkOrderInput = {|
   organizationFk?: ?string,
   status?: ?WorkOrderStatus,
   priority?: ?WorkOrderPriority,
+  duration?: ?number,
+  dueDate?: ?any,
 |};
 export type PropertyInput = {|
   id?: ?string,

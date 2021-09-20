@@ -10,7 +10,7 @@ COPY fbcnms-projects/inventory /app/fbcnms-projects/inventory
 
 # Build static files
 WORKDIR /app/fbcnms-projects/inventory
-RUN yarn install --frozen-lockfile --network-timeout 600000 && yarn cache clean
+RUN yarn install --network-timeout 600000 && yarn cache clean
 RUN yarn build
 
 FROM nginx:alpine

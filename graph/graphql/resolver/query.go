@@ -558,6 +558,25 @@ func (r queryResolver) Techs(
 			),
 		)
 }
+func (r queryResolver) NetworkTypes(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+	orderBy *ent.NetworkTypeOrder,
+	filterBy []*models.NetworkTypeFilterInput,
+) (*ent.NetworkTypeConnection, error) {
+	return r.ClientFrom(ctx).
+		NetworkType.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithNetworkTypeOrder(orderBy),
+			ent.WithNetworkTypeFilter(
+				func(query *ent.NetworkTypeQuery) (*ent.NetworkTypeQuery, error) {
+					return resolverutil.NetworkTypeFilter(query, filterBy)
+				},
+			),
+		)
+}
 
 func (r queryResolver) ResourceTypeClasses(
 	ctx context.Context,

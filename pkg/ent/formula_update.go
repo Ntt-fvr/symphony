@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/tech"
 )
@@ -43,6 +44,25 @@ func (fu *FormulaUpdate) SetTextFormula(s string) *FormulaUpdate {
 func (fu *FormulaUpdate) SetStatus(b bool) *FormulaUpdate {
 	fu.mutation.SetStatus(b)
 	return fu
+}
+
+// SetNetworkTypeID sets the networkType edge to NetworkType by id.
+func (fu *FormulaUpdate) SetNetworkTypeID(id int) *FormulaUpdate {
+	fu.mutation.SetNetworkTypeID(id)
+	return fu
+}
+
+// SetNillableNetworkTypeID sets the networkType edge to NetworkType by id if the given value is not nil.
+func (fu *FormulaUpdate) SetNillableNetworkTypeID(id *int) *FormulaUpdate {
+	if id != nil {
+		fu = fu.SetNetworkTypeID(*id)
+	}
+	return fu
+}
+
+// SetNetworkType sets the networkType edge to NetworkType.
+func (fu *FormulaUpdate) SetNetworkType(n *NetworkType) *FormulaUpdate {
+	return fu.SetNetworkTypeID(n.ID)
 }
 
 // SetTechID sets the tech edge to Tech by id.
@@ -101,6 +121,12 @@ func (fu *FormulaUpdate) AddCounterformula(c ...*CounterFormula) *FormulaUpdate 
 // Mutation returns the FormulaMutation object of the builder.
 func (fu *FormulaUpdate) Mutation() *FormulaMutation {
 	return fu.mutation
+}
+
+// ClearNetworkType clears the "networkType" edge to type NetworkType.
+func (fu *FormulaUpdate) ClearNetworkType() *FormulaUpdate {
+	fu.mutation.ClearNetworkType()
+	return fu
 }
 
 // ClearTech clears the "tech" edge to type Tech.
@@ -250,6 +276,41 @@ func (fu *FormulaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Value:  value,
 			Column: formula.FieldStatus,
 		})
+	}
+	if fu.mutation.NetworkTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   formula.NetworkTypeTable,
+			Columns: []string{formula.NetworkTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networktype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.NetworkTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   formula.NetworkTypeTable,
+			Columns: []string{formula.NetworkTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networktype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if fu.mutation.TechCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -405,6 +466,25 @@ func (fuo *FormulaUpdateOne) SetStatus(b bool) *FormulaUpdateOne {
 	return fuo
 }
 
+// SetNetworkTypeID sets the networkType edge to NetworkType by id.
+func (fuo *FormulaUpdateOne) SetNetworkTypeID(id int) *FormulaUpdateOne {
+	fuo.mutation.SetNetworkTypeID(id)
+	return fuo
+}
+
+// SetNillableNetworkTypeID sets the networkType edge to NetworkType by id if the given value is not nil.
+func (fuo *FormulaUpdateOne) SetNillableNetworkTypeID(id *int) *FormulaUpdateOne {
+	if id != nil {
+		fuo = fuo.SetNetworkTypeID(*id)
+	}
+	return fuo
+}
+
+// SetNetworkType sets the networkType edge to NetworkType.
+func (fuo *FormulaUpdateOne) SetNetworkType(n *NetworkType) *FormulaUpdateOne {
+	return fuo.SetNetworkTypeID(n.ID)
+}
+
 // SetTechID sets the tech edge to Tech by id.
 func (fuo *FormulaUpdateOne) SetTechID(id int) *FormulaUpdateOne {
 	fuo.mutation.SetTechID(id)
@@ -461,6 +541,12 @@ func (fuo *FormulaUpdateOne) AddCounterformula(c ...*CounterFormula) *FormulaUpd
 // Mutation returns the FormulaMutation object of the builder.
 func (fuo *FormulaUpdateOne) Mutation() *FormulaMutation {
 	return fuo.mutation
+}
+
+// ClearNetworkType clears the "networkType" edge to type NetworkType.
+func (fuo *FormulaUpdateOne) ClearNetworkType() *FormulaUpdateOne {
+	fuo.mutation.ClearNetworkType()
+	return fuo
 }
 
 // ClearTech clears the "tech" edge to type Tech.
@@ -608,6 +694,41 @@ func (fuo *FormulaUpdateOne) sqlSave(ctx context.Context) (_node *Formula, err e
 			Value:  value,
 			Column: formula.FieldStatus,
 		})
+	}
+	if fuo.mutation.NetworkTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   formula.NetworkTypeTable,
+			Columns: []string{formula.NetworkTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networktype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.NetworkTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   formula.NetworkTypeTable,
+			Columns: []string{formula.NetworkTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networktype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if fuo.mutation.TechCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -9,7 +9,8 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -19,7 +20,6 @@ import KqiFormEdit from './KqiFormEdit';
 import Button from '@symphony/design-system/components/Button';
 import KqiTable from './KqiTable';
 import fbt from 'fbt';
-import RelayEnvironment from '../../common/RelayEnvironment';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
@@ -101,39 +101,8 @@ const KqiQuery = graphql`
         }
       }
     }
-    kqiTargets {
-      edges {
-        node {
-          id
-          name
-          impact
-          frame
-          alowedValidation
-          initTime
-          endTime
-          status
-          kqi {
-            id
-            name
-          }
-          kqiComparator {
-            kqiTargetFk {
-              id
-              name
-            }
-            comparatorFk {
-              id
-              name
-            }
-            number
-            comparatorType
-          }
-        }
-      }
-    }
   }
 `;
-
 
 type Kqis = {
   item: {
@@ -159,10 +128,10 @@ type Kqis = {
       kqiTemporalFrequency: {
         id: string,
         name: string,
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 
 const KqiTypes = () => {
   const classes = useStyles();
@@ -171,25 +140,34 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
-  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node)
-  const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node)
-  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node)
-  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node)
-  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(item => item.node)
+  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(
+    item => item.node,
+  );
+  const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node);
+  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(
+    item => item.node,
+  );
+  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(
+    item => item.node,
+  );
+  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(
+    item => item.node,
+  );
+
 
   useEffect(() => {
-      fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
-        setDataKqi(data);
-      });
-    }, []);
+    fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
+      setDataKqi(data);
+    });
+  }, [dataKqi]);
   
   const handleClick = () => {
     setShowFormCreate(true);
-  }
+  };
   const formEdit = (kqi: Kqis) => {
     setShowFormEdit(true);
     setDataEdit(kqi);
-  }
+  };
   if (showFormCreate) {
     return (
       <KqiFormCreate
@@ -205,13 +183,12 @@ const KqiTypes = () => {
   if (showFormEdit) {
     return (
       <KqiFormEdit
-        dataKqiTargets={dataResponseKqiTargets}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
         dataTemporalFrequencies={dataResponseTemporalFrequencies}
-        returnTableKqi={() => setShowFormEdit(false)}
         formValues={dataEdit}
+        returnTableKqi={() => setShowFormEdit(false)}
       />
     );
   }
@@ -229,14 +206,15 @@ const KqiTypes = () => {
           />
         </Grid>
         <Grid className={classes.addKpi} item xs={1}>
-          <Button onClick={handleClick}>
-            Add KQI
-          </Button>
+          <Button onClick={handleClick}>Add KQI</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
         <Grid className={classes.paper} item xs={12}>
-          <KqiTable dataValues={dataKqi.kqis?.edges.map(item => item.node)} viewFormEdit={formEdit} />
+          <KqiTable
+            dataValues={dataKqi.kqis?.edges.map(item => item.node)}
+            viewFormEdit={formEdit}
+          />
         </Grid>
       </Grid>
     </div>

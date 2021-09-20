@@ -169,6 +169,9 @@ type Location func(*sql.Selector)
 // LocationType is the predicate function for locationtype builders.
 type LocationType func(*sql.Selector)
 
+// NetworkType is the predicate function for networktype builders.
+type NetworkType func(*sql.Selector)
+
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
 

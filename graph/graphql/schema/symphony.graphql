@@ -4147,6 +4147,73 @@ type TechEdge {
 
 
 """
+Properties by which network types connections can be ordered.
+"""
+enum NetworkTypeOrderField {
+  """
+  Order network types by name.
+  """
+  NAME
+
+  """
+  Order network types by creation time.
+  """
+  CREATED_AT
+
+  """
+  Order network types by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for network types connections.
+"""
+input NetworkTypeOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order network types by.
+  """
+  field: NetworkTypeOrderField
+}
+
+"""
+A connection to a list of network types.
+"""
+type NetworkTypeConnection {
+  """
+  Total network types of projects in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of network types edges.
+  """
+  edges: [NetworkTypeEdge!]!
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+A network types edge in a connection.
+"""
+type NetworkTypeEdge {
+  """
+  The network types at the end of the edge.
+  """
+  node: NetworkType
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
 Properties by which ResourceTypeClass connections can be ordered.
 """
 enum ResourceTypeClassOrderField {
@@ -7187,7 +7254,7 @@ type Query {
     filterBy: [FormulaFilterInput!]
   ): FormulaConnection!
 
-    """
+  """
   A list of techs.
   """
   techs(
@@ -7221,6 +7288,43 @@ type Query {
     
     filterBy: [TechFilterInput!]
   ): TechConnection!
+
+  """
+  A list of networkTypes.
+  """
+  networkTypes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned networkTypes.
+    """
+    orderBy: NetworkTypeOrder
+
+    
+    #Filtering options for the returned networkTypes.
+    
+    filterBy: [NetworkTypeFilterInput!]
+  ): NetworkTypeConnection!
+
+  
   """
   A list of resourceTypeClasses.
   """
@@ -7688,6 +7792,9 @@ type Mutation {
   addTech(input: AddTechInput!):Tech!
   editTech(input: EditTechInput!): Tech!
   removeTech(id: ID!): ID!
+  addNetworkType(input: AddNetworkTypeInput!):NetworkType!
+  editNetworkType(input: EditNetworkTypeInput!): NetworkType!
+  removeNetworkType(id: ID!): ID!
   addCounterFormula(input: AddCounterFormulaInput!):CounterFormula!
   editCounterFormula(input: EditCounterFormulaInput!):CounterFormula!
   removeCounterFormula(id: ID!): ID!
@@ -7998,11 +8105,39 @@ input EditTechInput {
   domainFk: ID!
 }
 
+type NetworkType implements Node {
+  id: ID!
+  name: String!
+}
+
+input AddNetworkTypeInput {
+  name: String!
+}
+
+input EditNetworkTypeInput {
+  id: ID!
+  name: String!
+}
+
+enum NetworkTypeFilterType {
+  NAME
+}
+
+input NetworkTypeFilterInput {
+  filterType: NetworkTypeFilterType!
+  operator: FilterOperator!
+  stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
+  stringSet: [String!]
+}
+
 type Formula implements Node {
   id: ID!
   textFormula: String!
   status: Boolean!
   techFk: Tech!
+  networkTypeFk: NetworkType!
   kpiFk: Kpi!
   counterformulaFk: [CounterFormula]
 }
@@ -8011,6 +8146,7 @@ input AddFormulaInput {
   textFormula: String!
   status: Boolean!
   techFk: ID!
+  networkTypeFk: ID!
   kpiFk: ID!
 }
 
@@ -8019,8 +8155,10 @@ input EditFormulaInput {
   textFormula: String!
   status: Boolean!
   techFk: ID!
+  networkTypeFk: ID!
   kpiFk: ID!
 }
+
 
 type CounterFormula implements Node {
   id: ID!

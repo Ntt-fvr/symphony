@@ -121,6 +121,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Techs = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.TechOrder, _ []*models.TechFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.NetworkTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.NetworkTypeOrder, _ []*models.NetworkTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.RecommendationsSources = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RecommendationsSourcesOrder, _ []*models.RecommendationsSourcesFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
