@@ -125,6 +125,23 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appointment_start",
+				Unique:  false,
+				Columns: []*schema.Column{AppointmentsColumns[3]},
+			},
+			{
+				Name:    "appointment_end",
+				Unique:  false,
+				Columns: []*schema.Column{AppointmentsColumns[4]},
+			},
+			{
+				Name:    "appointment_work_order_appointment",
+				Unique:  false,
+				Columns: []*schema.Column{AppointmentsColumns[9]},
+			},
+		},
 	}
 	// BlocksColumns holds the columns for the "blocks" table.
 	BlocksColumns = []*schema.Column{
@@ -1189,6 +1206,7 @@ var (
 		{Name: "text_formula", Type: field.TypeString, Unique: true},
 		{Name: "status", Type: field.TypeBool},
 		{Name: "kpi_formulakpi", Type: field.TypeInt, Nullable: true},
+		{Name: "network_type_formula_network_type_fk", Type: field.TypeInt, Nullable: true},
 		{Name: "tech_formulatech", Type: field.TypeInt, Nullable: true},
 	}
 	// FormulasTable holds the schema information for the "formulas" table.
@@ -1205,8 +1223,15 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "formulas_teches_formulatech",
+				Symbol:  "formulas_network_types_formulaNetworkType_FK",
 				Columns: []*schema.Column{FormulasColumns[6]},
+
+				RefColumns: []*schema.Column{NetworkTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "formulas_teches_formulatech",
+				Columns: []*schema.Column{FormulasColumns[7]},
 
 				RefColumns: []*schema.Column{TechesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1550,6 +1575,20 @@ var (
 		Name:        "location_types",
 		Columns:     LocationTypesColumns,
 		PrimaryKey:  []*schema.Column{LocationTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// NetworkTypesColumns holds the columns for the "network_types" table.
+	NetworkTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+	}
+	// NetworkTypesTable holds the schema information for the "network_types" table.
+	NetworkTypesTable = &schema.Table{
+		Name:        "network_types",
+		Columns:     NetworkTypesColumns,
+		PrimaryKey:  []*schema.Column{NetworkTypesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
@@ -3431,6 +3470,7 @@ var (
 		LinksTable,
 		LocationsTable,
 		LocationTypesTable,
+		NetworkTypesTable,
 		OrganizationsTable,
 		PermissionsPoliciesTable,
 		ProjectsTable,
@@ -3543,7 +3583,8 @@ func init() {
 	FlowInstancesTable.ForeignKeys[1].RefTable = FlowsTable
 	FlowInstancesTable.ForeignKeys[2].RefTable = FlowExecutionTemplatesTable
 	FormulasTable.ForeignKeys[0].RefTable = KpisTable
-	FormulasTable.ForeignKeys[1].RefTable = TechesTable
+	FormulasTable.ForeignKeys[1].RefTable = NetworkTypesTable
+	FormulasTable.ForeignKeys[2].RefTable = TechesTable
 	HyperlinksTable.ForeignKeys[0].RefTable = EquipmentTable
 	HyperlinksTable.ForeignKeys[1].RefTable = LocationsTable
 	HyperlinksTable.ForeignKeys[2].RefTable = WorkOrdersTable

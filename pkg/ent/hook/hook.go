@@ -702,6 +702,19 @@ func (f LocationTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The NetworkTypeFunc type is an adapter to allow the use of ordinary
+// function as NetworkType mutator.
+type NetworkTypeFunc func(context.Context, *ent.NetworkTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NetworkTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.NetworkTypeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NetworkTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OrganizationFunc type is an adapter to allow the use of ordinary
 // function as Organization mutator.
 type OrganizationFunc func(context.Context, *ent.OrganizationMutation) (ent.Value, error)

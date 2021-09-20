@@ -1440,6 +1440,30 @@ func (f LocationTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.LocationTypeMutation", m)
 }
 
+// The NetworkTypeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NetworkTypeQueryRuleFunc func(context.Context, *ent.NetworkTypeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NetworkTypeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NetworkTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NetworkTypeQuery", q)
+}
+
+// The NetworkTypeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NetworkTypeMutationRuleFunc func(context.Context, *ent.NetworkTypeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NetworkTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NetworkTypeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NetworkTypeMutation", m)
+}
+
 // The OrganizationQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrganizationQueryRuleFunc func(context.Context, *ent.OrganizationQuery) error

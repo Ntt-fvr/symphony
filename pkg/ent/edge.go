@@ -864,6 +864,14 @@ func (fi *FlowInstance) ParentSubflowBlock(ctx context.Context) (*BlockInstance,
 	return result, MaskNotFound(err)
 }
 
+func (f *Formula) NetworkType(ctx context.Context) (*NetworkType, error) {
+	result, err := f.Edges.NetworkTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = f.QueryNetworkType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (f *Formula) Tech(ctx context.Context) (*Tech, error) {
 	result, err := f.Edges.TechOrErr()
 	if IsNotLoaded(err) {
@@ -1220,6 +1228,14 @@ func (lt *LocationType) ResourceRelationshipFk(ctx context.Context) ([]*Resource
 	result, err := lt.Edges.ResourceRelationshipFkOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QueryResourceRelationshipFk().All(ctx)
+	}
+	return result, err
+}
+
+func (nt *NetworkType) FormulaNetworkTypeFK(ctx context.Context) ([]*Formula, error) {
+	result, err := nt.Edges.FormulaNetworkTypeFKOrErr()
+	if IsNotLoaded(err) {
+		result, err = nt.QueryFormulaNetworkTypeFK().All(ctx)
 	}
 	return result, err
 }

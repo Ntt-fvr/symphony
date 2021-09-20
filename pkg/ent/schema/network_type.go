@@ -14,39 +14,28 @@ import (
 )
 
 // Counter defines the property type schema.
-type Formula struct {
+type NetworkType struct {
 	schema
 }
 
-// Counter returns formula.
-func (Formula) Fields() []ent.Field {
+// Counter returns property type counter.
+func (NetworkType) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("textFormula").NotEmpty().Unique().
-			Annotations(entgql.OrderField("TEXTFORMULA")),
-		field.Bool("status").
-			Annotations(entgql.OrderField("STATUS")),
+		field.String("name").NotEmpty().Unique().
+			Annotations(entgql.OrderField("NAME")),
 	}
 }
 
-// Edges returns formula type edges.
-func (Formula) Edges() []ent.Edge {
+// Edges returns location type edges.
+func (NetworkType) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("networkType", NetworkType.Type).
-			Ref("formulaNetworkType_FK").
-			Unique(),
-		edge.From("tech", Tech.Type).
-			Ref("formulatech").
-			Unique(),
-		edge.From("kpi", Kpi.Type).
-			Ref("formulakpi").
-			Unique(),
-		edge.To("counterformula", CounterFormula.Type).
-			Annotations(entgql.MapsTo("counter_formula")),
+		edge.To("formulaNetworkType_FK", Formula.Type).
+			Annotations(entgql.MapsTo("formula")),
 	}
 }
 
 // Policy returns entity policy.
-func (Formula) Policy() ent.Policy {
+func (NetworkType) Policy() ent.Policy {
 	/*return authz.NewPolicy(
 		authz.WithMutationRules(
 			authz.AssuranceTemplatesWritePolicyRule(),

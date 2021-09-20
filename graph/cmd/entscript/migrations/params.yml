@@ -26,6 +26,9 @@ vendors:
 alarmstatus:
   - alarmStatus_1
   - alarmStatus_2
+kpicategory:
+  - kpiCategory_1
+  - kpiCategory_2 
 kqicategories:
   - kqiCategory_1
   - kqiCategory_2
@@ -44,3 +47,7 @@ recommendationscategories:
 recommendationssources:
   - recommendationsSources_1
   - recommendationsSources_2
+networktype:
+  - BACKBONE
+  - L2AGG
+  - GPON

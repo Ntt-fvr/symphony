@@ -70,6 +70,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -3309,7 +3310,7 @@ func (f *Formula) Node(ctx context.Context) (node *Node, err error) {
 		ID:     f.ID,
 		Type:   "Formula",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(f.CreateTime); err != nil {
@@ -3345,30 +3346,40 @@ func (f *Formula) Node(ctx context.Context) (node *Node, err error) {
 		Value: string(buf),
 	}
 	node.Edges[0] = &Edge{
-		Type: "Tech",
-		Name: "tech",
+		Type: "NetworkType",
+		Name: "networkType",
 	}
-	node.Edges[0].IDs, err = f.QueryTech().
-		Select(tech.FieldID).
+	node.Edges[0].IDs, err = f.QueryNetworkType().
+		Select(networktype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[1] = &Edge{
-		Type: "Kpi",
-		Name: "kpi",
+		Type: "Tech",
+		Name: "tech",
 	}
-	node.Edges[1].IDs, err = f.QueryKpi().
-		Select(kpi.FieldID).
+	node.Edges[1].IDs, err = f.QueryTech().
+		Select(tech.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
+		Type: "Kpi",
+		Name: "kpi",
+	}
+	node.Edges[2].IDs, err = f.QueryKpi().
+		Select(kpi.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
 		Type: "CounterFormula",
 		Name: "counterformula",
 	}
-	node.Edges[2].IDs, err = f.QueryCounterformula().
+	node.Edges[3].IDs, err = f.QueryCounterformula().
 		Select(counterformula.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -4429,6 +4440,51 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	node.Edges[4].IDs, err = lt.QueryResourceRelationshipFk().
 		Select(resourcerelationship.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (nt *NetworkType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     nt.ID,
+		Type:   "NetworkType",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(nt.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(nt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(nt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	node.Edges[0] = &Edge{
+		Type: "Formula",
+		Name: "formulaNetworkType_FK",
+	}
+	node.Edges[0].IDs, err = nt.QueryFormulaNetworkTypeFK().
+		Select(formula.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
@@ -9081,6 +9137,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.LocationType.Query().
 			Where(locationtype.ID(id)).
 			CollectFields(ctx, "LocationType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case networktype.Table:
+		n, err := c.NetworkType.Query().
+			Where(networktype.ID(id)).
+			CollectFields(ctx, "NetworkType").
 			Only(ctx)
 		if err != nil {
 			return nil, err

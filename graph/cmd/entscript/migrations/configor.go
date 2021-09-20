@@ -22,12 +22,14 @@ var Config = struct {
 	Counterfamilies           []string
 	Vendors                   []string
 	Alarmstatus               []string
+	Kpicategory               []string
 	Kqicategories             []string
 	Kqiperspectives           []string
 	Kqitemporalfrecuencies    []string
 	Kqisources                []string
 	Recommendationscategories []string
 	Recommendationssources    []string
+	NetworkType               []string
 }{}
 
 func getConfig() {

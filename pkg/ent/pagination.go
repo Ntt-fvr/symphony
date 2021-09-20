@@ -71,6 +71,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/networktype"
 	"github.com/facebookincubator/symphony/pkg/ent/organization"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -12946,6 +12947,268 @@ var DefaultLocationTypeOrder = &LocationTypeOrder{
 		field: locationtype.FieldID,
 		toCursor: func(lt *LocationType) Cursor {
 			return Cursor{ID: lt.ID}
+		},
+	},
+}
+
+// NetworkTypeEdge is the edge representation of NetworkType.
+type NetworkTypeEdge struct {
+	Node   *NetworkType `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// NetworkTypeConnection is the connection containing edges to NetworkType.
+type NetworkTypeConnection struct {
+	Edges      []*NetworkTypeEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+// NetworkTypePaginateOption enables pagination customization.
+type NetworkTypePaginateOption func(*networkTypePager) error
+
+// WithNetworkTypeOrder configures pagination ordering.
+func WithNetworkTypeOrder(order *NetworkTypeOrder) NetworkTypePaginateOption {
+	if order == nil {
+		order = DefaultNetworkTypeOrder
+	}
+	o := *order
+	return func(pager *networkTypePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultNetworkTypeOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithNetworkTypeFilter configures pagination filter.
+func WithNetworkTypeFilter(filter func(*NetworkTypeQuery) (*NetworkTypeQuery, error)) NetworkTypePaginateOption {
+	return func(pager *networkTypePager) error {
+		if filter == nil {
+			return errors.New("NetworkTypeQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type networkTypePager struct {
+	order  *NetworkTypeOrder
+	filter func(*NetworkTypeQuery) (*NetworkTypeQuery, error)
+}
+
+func newNetworkTypePager(opts []NetworkTypePaginateOption) (*networkTypePager, error) {
+	pager := &networkTypePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultNetworkTypeOrder
+	}
+	return pager, nil
+}
+
+func (p *networkTypePager) applyFilter(query *NetworkTypeQuery) (*NetworkTypeQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *networkTypePager) toCursor(nt *NetworkType) Cursor {
+	return p.order.Field.toCursor(nt)
+}
+
+func (p *networkTypePager) applyCursors(query *NetworkTypeQuery, after, before *Cursor) *NetworkTypeQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultNetworkTypeOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *networkTypePager) applyOrder(query *NetworkTypeQuery, reverse bool) *NetworkTypeQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultNetworkTypeOrder.Field {
+		query = query.Order(direction.orderFunc(DefaultNetworkTypeOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to NetworkType.
+func (nt *NetworkTypeQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...NetworkTypePaginateOption,
+) (*NetworkTypeConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newNetworkTypePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if nt, err = pager.applyFilter(nt); err != nil {
+		return nil, err
+	}
+
+	conn := &NetworkTypeConnection{Edges: []*NetworkTypeEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := nt.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := nt.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	nt = pager.applyCursors(nt, after, before)
+	nt = pager.applyOrder(nt, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		nt = nt.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		nt = nt.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := nt.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *NetworkType
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *NetworkType {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *NetworkType {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*NetworkTypeEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &NetworkTypeEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+var (
+	// NetworkTypeOrderFieldName orders NetworkType by name.
+	NetworkTypeOrderFieldName = &NetworkTypeOrderField{
+		field: networktype.FieldName,
+		toCursor: func(nt *NetworkType) Cursor {
+			return Cursor{
+				ID:    nt.ID,
+				Value: nt.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f NetworkTypeOrderField) String() string {
+	var str string
+	switch f.field {
+	case networktype.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f NetworkTypeOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *NetworkTypeOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("NetworkTypeOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *NetworkTypeOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid NetworkTypeOrderField", str)
+	}
+	return nil
+}
+
+// NetworkTypeOrderField defines the ordering field of NetworkType.
+type NetworkTypeOrderField struct {
+	field    string
+	toCursor func(*NetworkType) Cursor
+}
+
+// NetworkTypeOrder defines the ordering of NetworkType.
+type NetworkTypeOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *NetworkTypeOrderField `json:"field"`
+}
+
+// DefaultNetworkTypeOrder is the default ordering of NetworkType.
+var DefaultNetworkTypeOrder = &NetworkTypeOrder{
+	Direction: OrderDirectionAsc,
+	Field: &NetworkTypeOrderField{
+		field: networktype.FieldID,
+		toCursor: func(nt *NetworkType) Cursor {
+			return Cursor{ID: nt.ID}
 		},
 	},
 }
