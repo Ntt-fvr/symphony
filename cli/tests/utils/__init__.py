@@ -20,11 +20,13 @@ TENANT = "fb-test"
 
 def wait_for_platform() -> None:
     if TEST_MODE == TestMode.REMOTE:
+        time.sleep(60)
         return
     platform_server_health_check = PLATFORM_SERVER_HEALTH_CHECK_URL
     if TEST_MODE == TestMode.LOCAL:
         platform_server_health_check = "https://fb-test.localtest.me/healthz"
 
+    time.sleep(60)
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         try:
