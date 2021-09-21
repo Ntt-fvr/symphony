@@ -26,6 +26,7 @@ def wait_for_platform() -> None:
     if TEST_MODE == TestMode.LOCAL:
         platform_server_health_check = "https://fb-test.localtest.me/healthz"
 
+    time.sleep(60)
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         try:
