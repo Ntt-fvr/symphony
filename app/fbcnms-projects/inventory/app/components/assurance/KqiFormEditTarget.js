@@ -138,7 +138,7 @@ type Comparator = {
 }
 
 type Props = $ReadOnly<{|
-  dataComparator: Array<Comparator>,
+  dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
   formValues: {
     item: {
@@ -167,13 +167,13 @@ type Props = $ReadOnly<{|
             name: string,
           }
         }
-      
-    }
+      }
+    
   }
 |}>;
 
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit, formValues, dataComparator} = props;
+  const {returnFormEdit, formValues, dataComparatorSelect} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   
@@ -184,11 +184,11 @@ const KqiFormEditTarget = (props: Props) => {
   const initTime = useFormInput(moment(formValues.item.initTime).format("HH"));
   const endTime = useFormInput(moment(formValues.item.endTime).format("HH"));
 
-  const comparatorSelect = useFormInput(formValues.item.kqiComparator[0]?.comparatorFk.id);
-  const comparatorNumber = useFormInput(formValues.item.kqiComparator[0]?.number);
+  const comparatorSelect = useFormInput(formValues.item.kqiComparator[0].comparatorFk.id);
+  const comparatorNumber = useFormInput(formValues.item.kqiComparator[0].number);
   
-  const warningComparatorSelect = useFormInput(formValues.item.kqiComparator[1]?.comparatorFk.id);
-  const warningComparatorNumber = useFormInput(formValues.item.kqiComparator[1]?.number);
+  const warningComparatorSelect = useFormInput(formValues.item.kqiComparator[1].comparatorFk.id);
+  const warningComparatorNumber = useFormInput(formValues.item.kqiComparator[1].number);
   
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
@@ -313,7 +313,7 @@ const KqiFormEditTarget = (props: Props) => {
                         )}
                         disableUnderline
                         name="comparatorSelect">
-                        {dataComparator?.map((item, index) => (
+                        {dataComparatorSelect?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
                           </MenuItem>
@@ -342,7 +342,7 @@ const KqiFormEditTarget = (props: Props) => {
                         )}
                         disableUnderline
                         name="warningComparatorSelect">
-                        {dataComparator?.map((item, index) => (
+                        {dataComparatorSelect?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
                           </MenuItem>

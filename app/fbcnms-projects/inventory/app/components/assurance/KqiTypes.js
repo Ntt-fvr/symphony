@@ -125,6 +125,45 @@ const KqiQuery = graphql`
         }
       }
     }
+    kqiTargets {
+      edges {
+        node {
+          id
+          name
+          impact
+          allowedVariation
+          initTime
+          endTime
+          status
+          period
+          kqi {
+            id
+            name
+          }
+          kqiComparator {
+            kqiTargetFk {
+              id
+              name
+            }
+            comparatorFk {
+              id
+              name
+            }
+            id
+            number
+            comparatorType
+          }
+        }
+      }
+    }
+    comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -164,21 +203,13 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
-  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(
-    item => item.node,
-  );
+  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node);
   const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node);
-  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(
-    item => item.node,
-  );
-  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(
-    item => item.node,
-  );
-  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(
-    item => item.node,
-  );
-
-
+  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node);
+  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node);
+  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(item => item.node);
+  const dataResponseComparators = dataKqi.comparators?.edges.map(item => item.node,);
+  
   useEffect(() => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
@@ -192,6 +223,7 @@ const KqiTypes = () => {
     setShowFormEdit(true);
     setDataEdit(kqi);
   };
+
   if (showFormCreate) {
     return (
       <KqiFormCreate
@@ -207,11 +239,13 @@ const KqiTypes = () => {
   if (showFormEdit) {
     return (
       <KqiFormEdit
+        formValues={dataEdit}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
         dataTemporalFrequencies={dataResponseTemporalFrequencies}
-        formValues={dataEdit}
+        dataValues={dataResponseKqiTargets}
+        dataComparator={dataResponseComparators}
         returnTableKqi={() => setShowFormEdit(false)}
       />
     );
