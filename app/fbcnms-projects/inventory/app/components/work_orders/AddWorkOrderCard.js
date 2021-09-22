@@ -25,6 +25,8 @@ import type {WorkOrder} from '../../common/WorkOrder';
 import AddWorkOrderMutation from '../../mutations/AddWorkOrderMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
+import Button from '@symphony/design-system/components/Button';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
@@ -86,8 +88,19 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   input: {
-    width: '250px',
-    paddingBottom: '24px',
+    paddingBottom: '15px',
+  },
+  inputFilter: {
+    paddingBottom: '22px',
+  },
+  filterButton: {
+    width: '87px',
+    alignSelf: 'flex-end',
+    marginTop: '30px',
+  },
+  calendarButton: {
+    width: '132px',
+    alignSelf: 'flex-end',
   },
   gridInput: {
     display: 'inline-flex',
@@ -324,7 +337,6 @@ const AddWorkOrderCard = (props: Props) => {
   };
 
   const _propertyChangedHandler = index => property =>
-    // eslint-disable-next-line no-warning-comments
     // $FlowFixMe - known techdebt with Property/PropertyType flow definitions
     setWorkOrder(prevWorkOrder => {
       if (!prevWorkOrder) {
@@ -334,7 +346,6 @@ const AddWorkOrderCard = (props: Props) => {
         ...prevWorkOrder,
         properties: [
           ...prevWorkOrder.properties.slice(0, index),
-          // eslint-disable-next-line no-warning-comments
           // $FlowFixMe - known techdebt with Property/PropertyType flow definitions
           property,
           ...prevWorkOrder.properties.slice(index + 1),
@@ -507,13 +518,58 @@ const AddWorkOrderCard = (props: Props) => {
                 </ChecklistCategoriesMutateDispatchContext.Provider>
               </Grid>
               <Grid item xs={4} sm={4} lg={4} xl={4}>
-                <ExpandingPanel title="Team">
+                <ExpandingPanel title="Select availabilty assignee">
+                  <Button
+                    variant="text"
+                    leftIcon={CalendarTodayIcon}
+                    className={classes.calendarButton}>
+                    View Calendar
+                  </Button>
+                  <FormField label="Time slot start">
+                    <TextField
+                      disabled
+                      variant="outlined"
+                      margin="dense"
+                      className={classes.inputFilter}
+                    />
+                  </FormField>
+                  <FormField label="Time slot end">
+                    <TextField
+                      disabled
+                      variant="outlined"
+                      margin="dense"
+                      className={classes.inputFilter}
+                    />
+                  </FormField>
+                  <FormField label="Duration">
+                    <Select
+                      options={[
+                        {key: '0 hr', label: '0 hr', value: '0'},
+                        {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
+                        {key: '1 hr', label: '1 hr', value: '1'},
+                        {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
+                        {key: '2 hr', label: '2 hr', value: '2'},
+                        {key: '2.5 hr', label: '2.5 hr', value: '2.5'},
+                      ]}
+                      selectedValue={workOrder.status}
+                      className={classes.inputFilter}
+                      onChange={value => {}}
+                    />
+                  </FormField>
+                  <Button className={classes.filterButton}>Filter</Button>
                   <FormField className={classes.input} label="Organization">
                     <OrganizationTypeahead
                       onOrganizationSelected={organization =>
                         _setWorkOrderDetail('organizationFk', organization)
                       }
                       margin="dense"
+                    />
+                  </FormField>
+                  <FormField className={classes.input} label="Owner">
+                    <Select
+                      options={statusValues}
+                      selectedValue={workOrder.status}
+                      onChange={value => {}}
                     />
                   </FormField>
                   <FormField className={classes.input} label="Assignee">
