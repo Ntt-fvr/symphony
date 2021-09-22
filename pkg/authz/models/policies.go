@@ -22,9 +22,8 @@ type LocationPermissionRule struct {
 }
 
 type DocumentCategoryPermissionRule struct {
-	IsAllowed            PermissionValue `json:"isAllowed"`
-	DocumentCategoyIds   []int           `json:"documentCategoyIds"`
-	DocumentCategoyNames []string        `json:"documentCategoyNames"`
+	IsAllowed           PermissionValue `json:"isAllowed"`
+	DocumentCategoryIds []int           `json:"documentCategoryIds"`
 }
 
 type Cud struct {

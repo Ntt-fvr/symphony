@@ -32,6 +32,7 @@ export type EditPermissionsPolicyInput = {|
 export type InventoryPolicyInput = {|
   read?: ?BasicPermissionRuleInput,
   location?: ?LocationCUDInput,
+  documentCategory?: ?DocumentCategoryCUDInput,
   equipment?: ?BasicCUDInput,
   equipmentType?: ?BasicCUDInput,
   locationType?: ?BasicCUDInput,
@@ -49,6 +50,16 @@ export type LocationCUDInput = {|
 export type LocationPermissionRuleInput = {|
   isAllowed: PermissionValue,
   locationTypeIds?: ?$ReadOnlyArray<string>,
+|};
+export type DocumentCategoryCUDInput = {|
+  read?: ?DocumentCategoryPermissionRuleInput,
+  create?: ?DocumentCategoryPermissionRuleInput,
+  update?: ?DocumentCategoryPermissionRuleInput,
+  delete?: ?DocumentCategoryPermissionRuleInput,
+|};
+export type DocumentCategoryPermissionRuleInput = {|
+  isAllowed: PermissionValue,
+  documentCategoryIds?: ?$ReadOnlyArray<string>,
 |};
 export type BasicCUDInput = {|
   create?: ?BasicPermissionRuleInput,

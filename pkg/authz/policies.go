@@ -180,11 +180,11 @@ func appendDocCategoryPermissionRule(rule *models.DocumentCategoryPermissionRule
 	}
 	switch rule.IsAllowed {
 	case models.PermissionValueYes:
-		rule.DocumentCategoyIds = nil
+		rule.DocumentCategoryIds = nil
 	case models.PermissionValueNo:
-		rule.DocumentCategoyIds = nil
+		rule.DocumentCategoryIds = nil
 	case models.PermissionValueByCondition:
-		rule.DocumentCategoyIds = append(rule.DocumentCategoyIds, addRule.DocumentCategoyIds...)
+		rule.DocumentCategoryIds = append(rule.DocumentCategoryIds, addRule.DocumentCategoryIds...)
 	}
 	return rule
 }

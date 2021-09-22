@@ -117,8 +117,7 @@ type DocumentCategoryPermissionRule
   model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRule"
 ) {
   isAllowed: PermissionValue!
-  DocumentCategoyIds: [ID!]
-  DocumentCategoyNames: [String!]
+  documentCategoryIds: [ID!]
 }
 
 type WorkforcePermissionRule
@@ -144,6 +143,14 @@ input LocationPermissionRuleInput
   ) {
   isAllowed: PermissionValue!
   locationTypeIds: [ID!]
+}
+
+input DocumentCategoryPermissionRuleInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRuleInput"
+) {
+  isAllowed: PermissionValue!
+  documentCategoryIds: [ID!]
 }
 
 input WorkforcePermissionRuleInput
@@ -178,10 +185,10 @@ type DocumentCategoryCUD
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
 ) {
-  Read  : DocumentCategoryPermissionRule
-  Create: DocumentCategoryPermissionRule
-  Update: DocumentCategoryPermissionRule
-  Delete: DocumentCategoryPermissionRule
+  read  : DocumentCategoryPermissionRule
+  create: DocumentCategoryPermissionRule
+  update: DocumentCategoryPermissionRule
+  delete: DocumentCategoryPermissionRule
 }
 
 input BasicCUDInput
@@ -200,6 +207,16 @@ input LocationCUDInput
   create: BasicPermissionRuleInput
   update: LocationPermissionRuleInput
   delete: BasicPermissionRuleInput
+}
+
+input DocumentCategoryCUDInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCUDInput"
+) {
+  read  : DocumentCategoryPermissionRuleInput
+  create: DocumentCategoryPermissionRuleInput
+  update: DocumentCategoryPermissionRuleInput
+  delete: DocumentCategoryPermissionRuleInput
 }
 
 type AdministrativePolicy
@@ -247,7 +264,7 @@ type InventoryPolicy
   ) {
   read: BasicPermissionRule!
   location: LocationCUD!
-  DocumentCategory: DocumentCategoryCUD!
+  documentCategory: DocumentCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -261,6 +278,7 @@ input InventoryPolicyInput
   ) {
   read: BasicPermissionRuleInput
   location: LocationCUDInput
+  documentCategory: DocumentCategoryCUDInput
   equipment: BasicCUDInput
   equipmentType: BasicCUDInput
   locationType: BasicCUDInput
