@@ -323,7 +323,7 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
                 ? null
                 : enableOrganization
                 ? policy.read.organizationIds
-                : [me.user.organizationFk.id],
+                : me.user.organizationFk === null ? [] : [me.user.organizationFk.id],
           },
         }}
         onChange={callOnChange.bind(this)}
