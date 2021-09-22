@@ -65,6 +65,30 @@ const KqiQuery = graphql`
           }
           kqiTarget {
             id
+            name
+            impact
+            allowedVariation
+            initTime
+            endTime
+            status
+            period
+            kqi {
+              id
+              name
+            }
+            kqiComparator {
+              kqiTargetFk {
+                id
+                name
+              }
+              comparatorFk {
+                id
+                name
+              }
+              id
+              number
+              comparatorType
+            }
           }
         }
       }

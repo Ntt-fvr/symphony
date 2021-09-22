@@ -188,6 +188,9 @@ type Props = $ReadOnly<{|
         id: string,
         name: string,
       },
+      kqiTarget: {
+        id: string,
+      }
     },
   },
 
@@ -544,7 +547,7 @@ const KqiFormEdit = (props: Props) => {
       </Grid>
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
-          tableTargets={filterKqiTargetsById}
+          tableTargets={formValues.item.kqiTarget}
           create={() => showFormCreateTarget()}
           edit={showFormEditTarget}
         />
