@@ -198,12 +198,12 @@ services:
   minio:
     image: minio/minio
     environment:
-      MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
-      MINIO_SECRET_KEY: /wJalrXUtnFEMIK7MDENG/bPxRfiCYEXAMPLEKEY
+      MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
+      MINIO_ROOT_PASSWORD: /wJalrXUtnFEMIK7MDENG/bPxRfiCYEXAMPLEKEY
     networks:
       - private
     entrypoint: sh
-    command: -c 'mkdir -p /data/store.blobs && /usr/bin/minio server /data'
+    command: -c 'mkdir -p /data/store.blobs && minio server /data'
     restart: on-failure
 
   jaeger:
