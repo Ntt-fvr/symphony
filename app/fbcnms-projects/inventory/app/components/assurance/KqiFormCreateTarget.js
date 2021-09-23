@@ -127,15 +127,15 @@ type Comparator = {
 type Props = $ReadOnly<{|
   idKqi: string,
   returnFormEdit: () => void,
-  dataComparator: Array<Comparator>,
+  dataComparatorSelect: Array<Comparator>,
 |}>;
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit, idKqi, dataComparator} = props;
+  const {returnFormEdit, idKqi, dataComparatorSelect} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
-
+  
   function handleChange({target}) {
     setKqiTarget({
       data: {
@@ -251,7 +251,7 @@ const KqiFormCreateTarget = (props: Props) => {
                         disableUnderline
                         name="comparatorSelect"
                         onChange={handleChange}>
-                        {dataComparator.map((item, index) => (
+                        {dataComparatorSelect?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
                           </MenuItem>
@@ -280,7 +280,7 @@ const KqiFormCreateTarget = (props: Props) => {
                         disableUnderline
                         name="warningComparatorSelect"
                         onChange={handleChange}>
-                        {dataComparator.map((item, index) => (
+                        {dataComparatorSelect?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
                           </MenuItem>
