@@ -229,10 +229,15 @@ const KqiFormEdit = (props: Props) => {
   const endDateTime = useFormInput(
     moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
   );
+  
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
   const kqiPerspective = useFormInput(formValues.item.kqiPerspective.id);
   const kqiSource = useFormInput(formValues.item.kqiSource.id);
   const kqiTemporalFrequency = useFormInput(formValues.item.kqiTemporalFrequency.id,);
+
+  const filterKqiTargetsById = dataValues?.filter(
+    kqiData => kqiData.kqi?.id === formValues.item.id,
+  );
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -491,7 +496,7 @@ const KqiFormEdit = (props: Props) => {
       </Grid>
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
-          tableTargets={formValues.item.kqiTarget}
+          tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}
           edit={showFormEditTarget}
         />

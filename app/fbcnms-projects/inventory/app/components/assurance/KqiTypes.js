@@ -203,19 +203,20 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
+  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node)
   const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node);
   const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node);
   const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node);
   const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node);
   const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(item => item.node);
   const dataResponseComparators = dataKqi.comparators?.edges.map(item => item.node,);
-  
+
   useEffect(() => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
   }, [dataKqi]);
-  
+
   const handleClick = () => {
     setShowFormCreate(true);
   };

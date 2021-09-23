@@ -175,7 +175,7 @@ type Props = $ReadOnly<{|
 const KqiFormEditTarget = (props: Props) => {
   const {returnFormEdit, formValues, dataComparatorSelect} = props;
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(formValues.item.status);
   
   const name = useFormInput(formValues.item.name);
   const impact = useFormInput(formValues.item.impact);
