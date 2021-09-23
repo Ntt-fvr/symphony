@@ -19,8 +19,9 @@ TENANT = "fb-test"
 
 
 def wait_for_platform() -> None:
+    print(f"TEST_MODE {TEST_MODE}")
     if TEST_MODE == TestMode.REMOTE:
-        time.sleep(120)
+        time.sleep(240)
         return
     platform_server_health_check = PLATFORM_SERVER_HEALTH_CHECK_URL
     if TEST_MODE == TestMode.LOCAL:
