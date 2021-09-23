@@ -25,15 +25,9 @@ import {graphql} from 'react-relay';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: '1',
-    margin: '40px',
+    padding: '40px',
   },
-  paper: {
-    padding: theme.spacing(2),
-  },
-  addKpi: {
-    display: 'flex',
-  },
+  
 }));
 
 const KqiQuery = graphql`
@@ -253,9 +247,9 @@ const KqiTypes = () => {
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={11}>
+    <Grid className={classes.root}>
+      <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+        <Grid xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
             subtitle={fbt(
@@ -264,19 +258,17 @@ const KqiTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.addKpi} item xs={1}>
+        <Grid>
           <Button onClick={handleClick}>Add KQI</Button>
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid className={classes.paper} item xs={12}>
+        <Grid item fullWidth>
           <KqiTable
             dataValues={dataKqi.kqis?.edges.map(item => item.node)}
             viewFormEdit={formEdit}
           />
         </Grid>
-      </Grid>
-    </div>
+    </Grid>
   );
 };
 export default KqiTypes;

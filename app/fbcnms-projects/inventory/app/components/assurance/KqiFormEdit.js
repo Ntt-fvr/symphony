@@ -236,7 +236,7 @@ const KqiFormEdit = (props: Props) => {
   const kqiTemporalFrequency = useFormInput(formValues.item.kqiTemporalFrequency.id,);
 
   const filterKqiTargetsById = dataValues?.filter(
-    kqiData => kqiData.kqi?.id === formValues.item.id,
+    kqiData => kqiData?.kqi?.id === formValues.item.id,
   );
 
   const handleRemove = id => {
