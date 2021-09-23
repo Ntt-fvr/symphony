@@ -208,6 +208,19 @@ func (f CustomerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The DocumentCategoryFunc type is an adapter to allow the use of ordinary
+// function as DocumentCategory mutator.
+type DocumentCategoryFunc func(context.Context, *ent.DocumentCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DocumentCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.DocumentCategoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DocumentCategoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The DomainFunc type is an adapter to allow the use of ordinary
 // function as Domain mutator.
 type DomainFunc func(context.Context, *ent.DomainMutation) (ent.Value, error)

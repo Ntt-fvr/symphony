@@ -312,6 +312,14 @@ func (c *Customer) Services(ctx context.Context) ([]*Service, error) {
 	return result, err
 }
 
+func (dc *DocumentCategory) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := dc.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryLocationType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (d *Domain) Techdomain(ctx context.Context) ([]*Tech, error) {
 	result, err := d.Edges.TechdomainOrErr()
 	if IsNotLoaded(err) {
@@ -1180,6 +1188,14 @@ func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*Survey
 	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
+	}
+	return result, err
+}
+
+func (lt *LocationType) DocumentCategory(ctx context.Context) ([]*DocumentCategory, error) {
+	result, err := lt.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryDocumentCategory().All(ctx)
 	}
 	return result, err
 }

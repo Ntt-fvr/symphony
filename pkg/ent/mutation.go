@@ -28,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -129,6 +130,7 @@ const (
 	TypeCounterFamily               = "CounterFamily"
 	TypeCounterFormula              = "CounterFormula"
 	TypeCustomer                    = "Customer"
+	TypeDocumentCategory            = "DocumentCategory"
 	TypeDomain                      = "Domain"
 	TypeEntryPoint                  = "EntryPoint"
 	TypeEquipment                   = "Equipment"
@@ -11988,6 +11990,570 @@ func (m *CustomerMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Customer edge %s", name)
+}
+
+// DocumentCategoryMutation represents an operation that mutate the DocumentCategories
+// nodes in the graph.
+type DocumentCategoryMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	name                 *string
+	index                *int
+	addindex             *int
+	clearedFields        map[string]struct{}
+	location_type        *int
+	clearedlocation_type bool
+	done                 bool
+	oldValue             func(context.Context) (*DocumentCategory, error)
+	predicates           []predicate.DocumentCategory
+}
+
+var _ ent.Mutation = (*DocumentCategoryMutation)(nil)
+
+// documentcategoryOption allows to manage the mutation configuration using functional options.
+type documentcategoryOption func(*DocumentCategoryMutation)
+
+// newDocumentCategoryMutation creates new mutation for DocumentCategory.
+func newDocumentCategoryMutation(c config, op Op, opts ...documentcategoryOption) *DocumentCategoryMutation {
+	m := &DocumentCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDocumentCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDocumentCategoryID sets the id field of the mutation.
+func withDocumentCategoryID(id int) documentcategoryOption {
+	return func(m *DocumentCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DocumentCategory
+		)
+		m.oldValue = func(ctx context.Context) (*DocumentCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DocumentCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDocumentCategory sets the old DocumentCategory of the mutation.
+func withDocumentCategory(node *DocumentCategory) documentcategoryOption {
+	return func(m *DocumentCategoryMutation) {
+		m.oldValue = func(context.Context) (*DocumentCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DocumentCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DocumentCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *DocumentCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *DocumentCategoryMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *DocumentCategoryMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *DocumentCategoryMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *DocumentCategoryMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *DocumentCategoryMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *DocumentCategoryMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *DocumentCategoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *DocumentCategoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *DocumentCategoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIndex sets the index field.
+func (m *DocumentCategoryMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *DocumentCategoryMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *DocumentCategoryMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *DocumentCategoryMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *DocumentCategoryMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// SetLocationTypeID sets the location_type edge to LocationType by id.
+func (m *DocumentCategoryMutation) SetLocationTypeID(id int) {
+	m.location_type = &id
+}
+
+// ClearLocationType clears the location_type edge to LocationType.
+func (m *DocumentCategoryMutation) ClearLocationType() {
+	m.clearedlocation_type = true
+}
+
+// LocationTypeCleared returns if the edge location_type was cleared.
+func (m *DocumentCategoryMutation) LocationTypeCleared() bool {
+	return m.clearedlocation_type
+}
+
+// LocationTypeID returns the location_type id in the mutation.
+func (m *DocumentCategoryMutation) LocationTypeID() (id int, exists bool) {
+	if m.location_type != nil {
+		return *m.location_type, true
+	}
+	return
+}
+
+// LocationTypeIDs returns the location_type ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// LocationTypeID instead. It exists only for internal usage by the builders.
+func (m *DocumentCategoryMutation) LocationTypeIDs() (ids []int) {
+	if id := m.location_type; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLocationType reset all changes of the "location_type" edge.
+func (m *DocumentCategoryMutation) ResetLocationType() {
+	m.location_type = nil
+	m.clearedlocation_type = false
+}
+
+// Op returns the operation name.
+func (m *DocumentCategoryMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (DocumentCategory).
+func (m *DocumentCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *DocumentCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, documentcategory.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, documentcategory.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, documentcategory.FieldName)
+	}
+	if m.index != nil {
+		fields = append(fields, documentcategory.FieldIndex)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *DocumentCategoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		return m.CreateTime()
+	case documentcategory.FieldUpdateTime:
+		return m.UpdateTime()
+	case documentcategory.FieldName:
+		return m.Name()
+	case documentcategory.FieldIndex:
+		return m.Index()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *DocumentCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case documentcategory.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case documentcategory.FieldName:
+		return m.OldName(ctx)
+	case documentcategory.FieldIndex:
+		return m.OldIndex(ctx)
+	}
+	return nil, fmt.Errorf("unknown DocumentCategory field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *DocumentCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case documentcategory.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case documentcategory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case documentcategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *DocumentCategoryMutation) AddedFields() []string {
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, documentcategory.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *DocumentCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case documentcategory.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *DocumentCategoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case documentcategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *DocumentCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *DocumentCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DocumentCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown DocumentCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *DocumentCategoryMutation) ResetField(name string) error {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case documentcategory.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case documentcategory.FieldName:
+		m.ResetName()
+		return nil
+	case documentcategory.FieldIndex:
+		m.ResetIndex()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *DocumentCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.location_type != nil {
+		edges = append(edges, documentcategory.EdgeLocationType)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *DocumentCategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		if id := m.location_type; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *DocumentCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *DocumentCategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *DocumentCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedlocation_type {
+		edges = append(edges, documentcategory.EdgeLocationType)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *DocumentCategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		return m.clearedlocation_type
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *DocumentCategoryMutation) ClearEdge(name string) error {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		m.ClearLocationType()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *DocumentCategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		m.ResetLocationType()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory edge %s", name)
 }
 
 // DomainMutation represents an operation that mutate the Domains
@@ -38817,6 +39383,9 @@ type LocationTypeMutation struct {
 	survey_template_categories        map[int]struct{}
 	removedsurvey_template_categories map[int]struct{}
 	clearedsurvey_template_categories bool
+	document_category                 map[int]struct{}
+	removeddocument_category          map[int]struct{}
+	cleareddocument_category          bool
 	done                              bool
 	oldValue                          func(context.Context) (*LocationType, error)
 	predicates                        []predicate.LocationType
@@ -39439,6 +40008,59 @@ func (m *LocationTypeMutation) ResetSurveyTemplateCategories() {
 	m.removedsurvey_template_categories = nil
 }
 
+// AddDocumentCategoryIDs adds the document_category edge to DocumentCategory by ids.
+func (m *LocationTypeMutation) AddDocumentCategoryIDs(ids ...int) {
+	if m.document_category == nil {
+		m.document_category = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.document_category[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDocumentCategory clears the document_category edge to DocumentCategory.
+func (m *LocationTypeMutation) ClearDocumentCategory() {
+	m.cleareddocument_category = true
+}
+
+// DocumentCategoryCleared returns if the edge document_category was cleared.
+func (m *LocationTypeMutation) DocumentCategoryCleared() bool {
+	return m.cleareddocument_category
+}
+
+// RemoveDocumentCategoryIDs removes the document_category edge to DocumentCategory by ids.
+func (m *LocationTypeMutation) RemoveDocumentCategoryIDs(ids ...int) {
+	if m.removeddocument_category == nil {
+		m.removeddocument_category = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removeddocument_category[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDocumentCategory returns the removed ids of document_category.
+func (m *LocationTypeMutation) RemovedDocumentCategoryIDs() (ids []int) {
+	for id := range m.removeddocument_category {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DocumentCategoryIDs returns the document_category ids in the mutation.
+func (m *LocationTypeMutation) DocumentCategoryIDs() (ids []int) {
+	for id := range m.document_category {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDocumentCategory reset all changes of the "document_category" edge.
+func (m *LocationTypeMutation) ResetDocumentCategory() {
+	m.document_category = nil
+	m.cleareddocument_category = false
+	m.removeddocument_category = nil
+}
+
 // Op returns the operation name.
 func (m *LocationTypeMutation) Op() Op {
 	return m.op
@@ -39698,7 +40320,7 @@ func (m *LocationTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *LocationTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.locations != nil {
 		edges = append(edges, locationtype.EdgeLocations)
 	}
@@ -39710,6 +40332,9 @@ func (m *LocationTypeMutation) AddedEdges() []string {
 	}
 	if m.survey_template_categories != nil {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
+	if m.document_category != nil {
+		edges = append(edges, locationtype.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -39742,6 +40367,12 @@ func (m *LocationTypeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case locationtype.EdgeDocumentCategory:
+		ids := make([]ent.Value, 0, len(m.document_category))
+		for id := range m.document_category {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -39749,7 +40380,7 @@ func (m *LocationTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *LocationTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedlocations != nil {
 		edges = append(edges, locationtype.EdgeLocations)
 	}
@@ -39761,6 +40392,9 @@ func (m *LocationTypeMutation) RemovedEdges() []string {
 	}
 	if m.removedsurvey_template_categories != nil {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
+	if m.removeddocument_category != nil {
+		edges = append(edges, locationtype.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -39793,6 +40427,12 @@ func (m *LocationTypeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case locationtype.EdgeDocumentCategory:
+		ids := make([]ent.Value, 0, len(m.removeddocument_category))
+		for id := range m.removeddocument_category {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -39800,7 +40440,7 @@ func (m *LocationTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *LocationTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedlocations {
 		edges = append(edges, locationtype.EdgeLocations)
 	}
@@ -39812,6 +40452,9 @@ func (m *LocationTypeMutation) ClearedEdges() []string {
 	}
 	if m.clearedsurvey_template_categories {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
+	if m.cleareddocument_category {
+		edges = append(edges, locationtype.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -39828,6 +40471,8 @@ func (m *LocationTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedfile_category_type
 	case locationtype.EdgeSurveyTemplateCategories:
 		return m.clearedsurvey_template_categories
+	case locationtype.EdgeDocumentCategory:
+		return m.cleareddocument_category
 	}
 	return false
 }
@@ -39856,6 +40501,9 @@ func (m *LocationTypeMutation) ResetEdge(name string) error {
 		return nil
 	case locationtype.EdgeSurveyTemplateCategories:
 		m.ResetSurveyTemplateCategories()
+		return nil
+	case locationtype.EdgeDocumentCategory:
+		m.ResetDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown LocationType edge %s", name)

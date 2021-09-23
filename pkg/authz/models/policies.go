@@ -21,11 +21,10 @@ type LocationPermissionRule struct {
 	LocationTypeIds []int           `json:"locationTypeIds"`
 }
 
-type WorkforcePermissionRule struct {
-	IsAllowed        PermissionValue `json:"isAllowed"`
-	ProjectTypeIds   []int           `json:"projectTypeIds"`
-	WorkOrderTypeIds []int           `json:"workOrderTypeIds"`
-	OrganizationIds  []int           `json:"organizationIds"`
+type DocumentCategoryPermissionRule struct {
+	IsAllowed            PermissionValue `json:"isAllowed"`
+	DocumentCategoyIds   []int           `json:"documentCategoyIds"`
+	DocumentCategoyNames []string        `json:"documentCategoyNames"`
 }
 
 type Cud struct {
@@ -38,6 +37,20 @@ type LocationCud struct {
 	Create *LocationPermissionRule `json:"create"`
 	Update *LocationPermissionRule `json:"update"`
 	Delete *LocationPermissionRule `json:"delete"`
+}
+
+type DocumentCategoryCud struct {
+	Read   *DocumentCategoryPermissionRule `json:"read"`
+	Create *DocumentCategoryPermissionRule `json:"create"`
+	Update *DocumentCategoryPermissionRule `json:"update"`
+	Delete *DocumentCategoryPermissionRule `json:"delete"`
+}
+
+type WorkforcePermissionRule struct {
+	IsAllowed        PermissionValue `json:"isAllowed"`
+	ProjectTypeIds   []int           `json:"projectTypeIds"`
+	WorkOrderTypeIds []int           `json:"workOrderTypeIds"`
+	OrganizationIds  []int           `json:"organizationIds"`
 }
 
 type WorkforceCud struct {
@@ -53,13 +66,14 @@ type AdministrativePolicy struct {
 }
 
 type InventoryPolicy struct {
-	Read          *BasicPermissionRule `json:"read"`
-	Location      *LocationCud         `json:"location"`
-	Equipment     *Cud                 `json:"equipment"`
-	EquipmentType *Cud                 `json:"equipmentType"`
-	LocationType  *Cud                 `json:"locationType"`
-	PortType      *Cud                 `json:"portType"`
-	ServiceType   *Cud                 `json:"serviceType"`
+	Read             *BasicPermissionRule `json:"read"`
+	Location         *LocationCud         `json:"location"`
+	DocumentCategory *DocumentCategoryCud `json:"documentCategory"`
+	Equipment        *Cud                 `json:"equipment"`
+	EquipmentType    *Cud                 `json:"equipmentType"`
+	LocationType     *Cud                 `json:"locationType"`
+	PortType         *Cud                 `json:"portType"`
+	ServiceType      *Cud                 `json:"serviceType"`
 }
 
 type WorkforcePolicy struct {

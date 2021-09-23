@@ -28,6 +28,7 @@ import Grid from '@material-ui/core/Grid';
 import LocationMapViewProperties from '../location/LocationMapViewProperties';
 import PageFooter from '@fbcnms/ui/components/PageFooter';
 import PropertyTypeTable from '../form/PropertyTypeTable';
+import CategoryTypeTable from '../form/CategoryTypeTable';
 import React from 'react';
 import SectionedCard from '@fbcnms/ui/components/SectionedCard';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
@@ -107,7 +108,11 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   render() {
     const {classes, onClose} = this.props;
     const {editingLocationType} = this.state;
+
     const propertyTypes = editingLocationType.propertyTypes
+      .slice()
+      .sort(sortByIndex);
+    const categoryTypes = editingLocationType.documentCategories
       .slice()
       .sort(sortByIndex);
     const error = this.state.error ? (
@@ -151,6 +156,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
               />
             </div>
           </SectionedCard>
+
           <SectionedCard>
             <Grid container direction="column" spacing={3}>
               <Grid item xs={12} xl={7}>
@@ -158,6 +164,21 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
                   <PropertyTypeTable
                     propertyTypes={propertyTypes}
                     onPropertiesChanged={this._propertyChangedHandler}
+                  />
+                </CardSection>
+              </Grid>
+            </Grid>
+          </SectionedCard>
+
+          <SectionedCard>
+            <Grid container direction="column" spacing={3}>
+              <Grid item xs={12} xl={7}>
+                <CardSection
+                  className={classes.section}
+                  title="Documents Category">
+                  <CategoryTypeTable
+                    propertyTypes={categoryTypes}
+                    onPropertiesChanged={this._documentCategoryChangedHandler}
                   />
                 </CardSection>
               </Grid>
@@ -204,6 +225,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       mapZoomLevel,
       propertyTypes,
       surveyTemplateCategories,
+      documentCategories,
     } = this.state.editingLocationType;
 
     return {
@@ -222,6 +244,9 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
               category.surveyTemplateQuestions || []
             ).map(this.deleteTempId),
           })),
+        documentCategories: documentCategories
+          .filter(propType => !!propType.name)
+          .map(this.deleteTempId),
       },
     };
   };
@@ -233,6 +258,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       mapType,
       mapZoomLevel,
       propertyTypes,
+      documentCategories,
     } = this.state.editingLocationType;
 
     return {
@@ -242,6 +268,9 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         mapType,
         mapZoomLevel: parseInt(mapZoomLevel, 10),
         properties: propertyTypes
+          .filter(propType => !!propType.name)
+          .map(this.deleteTempId),
+        documentCategories: documentCategories
           .filter(propType => !!propType.name)
           .map(this.deleteTempId),
       },
@@ -404,7 +433,19 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
     });
   };
 
+  _documentCategoryChangedHandler = categories => {
+    this.setState(prevState => {
+      return {
+        error: '',
+        editingLocationType: update(prevState.editingLocationType, {
+          documentCategories: {$set: categories},
+        }),
+      };
+    });
+  };
+
   getEditingLocationType(): LocationType {
+    //TODO: check type
     const {editingLocationType} = this.props;
     const propertyTypes = (editingLocationType?.propertyTypes ?? [])
       .filter(Boolean)
@@ -443,7 +484,13 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
             index: q.index,
           })),
       }));
-
+    const documentCategories = (editingLocationType?.documentCategories || [])
+      .filter(Boolean)
+      .map(d => ({
+        id: d.id,
+        name: d.name,
+        index: d.index,
+      }));
     return {
       id: editingLocationType?.id ?? 'LocationType@tmp0',
       name: editingLocationType?.name ?? '',
@@ -451,6 +498,16 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       mapType: editingLocationType?.mapType ?? 'map',
       mapZoomLevel: String(editingLocationType?.mapZoomLevel ?? 8),
       numberOfLocations: editingLocationType?.numberOfLocations ?? 0,
+      documentCategories:
+        documentCategories.length > 0
+          ? documentCategories
+          : [
+              {
+                id: 'DocumentCategories@tmp',
+                name: '',
+                index: editingLocationType?.documentCategories?.length ?? 0,
+              },
+            ],
       propertyTypes:
         propertyTypes.length > 0
           ? propertyTypes
@@ -515,6 +572,11 @@ export default withStyles(styles)(
               isEditable
               isMandatory
               isInstanceProperty
+            }
+            documentCategories {
+              id
+              name
+              index
             }
             surveyTemplateCategories {
               id

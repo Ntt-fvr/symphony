@@ -48,6 +48,8 @@ func (LocationType) Edges() []ent.Edge {
 			Annotations(entgql.MapsTo("fileCategoryType")),
 		edge.To("survey_template_categories", SurveyTemplateCategory.Type).
 			Annotations(entgql.MapsTo("surveyTemplateCategories")),
+		edge.To("document_category", DocumentCategory.Type).
+			Annotations(entgql.MapsTo("documentCategories")),
 	}
 }
 
