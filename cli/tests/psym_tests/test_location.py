@@ -183,7 +183,7 @@ class TestLocation(BaseTest):
         self.assertTrue("Address" in properties)
         self.assertEquals("test address", properties["Address"].stringValue)
 
-    @unittest.expectedFailure
+    @unittest.skip("fixme to support location file category")
     def test_location_add_file(self) -> None:
         temp_file_path = os.path.join(self.tmpdir, ".".join(["temp_file", "txt"]))
         with open(temp_file_path, "wb") as tmp_file:
@@ -201,7 +201,7 @@ class TestLocation(BaseTest):
         for doc in docs:
             delete_document(self.client, doc)
 
-    @unittest.expectedFailure
+    @unittest.skip("fixme to support location file category")
     def test_location_add_file_with_category(self) -> None:
         temp_file_path = os.path.join(self.tmpdir, ".".join(["temp_file", "txt"]))
         with open(temp_file_path, "wb") as tmp_file:
@@ -218,7 +218,7 @@ class TestLocation(BaseTest):
             self.assertEqual(doc.category, "test_category")
             delete_document(self.client, doc)
 
-    @unittest.expectedFailure
+    @unittest.skip("fixme to support location file category")
     def test_location_upload_folder(self) -> None:
         fetch_location = get_location(
             client=self.client, location_hirerchy=[("City", "Lima1")]
@@ -265,7 +265,7 @@ class TestLocation(BaseTest):
         fetch_locations_arr = {location.id for location in fetch_locations}
         self.assertEqual(created_locations_arr, fetch_locations_arr)
 
-    @unittest.expectedFailure
+    @unittest.skip("fixme to support location file category")
     def test_delete_location_documents(self) -> None:
         with tempfile.NamedTemporaryFile() as fp:
             fp.write(b"DATA")
