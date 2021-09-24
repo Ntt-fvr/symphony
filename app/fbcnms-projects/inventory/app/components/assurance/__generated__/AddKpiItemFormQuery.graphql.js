@@ -23,7 +23,15 @@ export type AddKpiItemFormQueryResponse = {|
         +name: string,
       |}
     |}>
-  |}
+  |},
+  +kpiCategories: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type AddKpiItemFormQuery = {|
   variables: AddKpiItemFormQueryVariables,
@@ -42,11 +50,35 @@ query AddKpiItemFormQuery {
       }
     }
   }
+  kpiCategories {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
 }
 */
 
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "id",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": null,
@@ -70,22 +102,39 @@ var v0 = [
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              }
-            ],
+            "selections": (v0/*: any*/),
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "KpiCategoryConnection",
+    "kind": "LinkedField",
+    "name": "kpiCategories",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "KpiCategoryEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "KpiCategory",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v0/*: any*/),
             "storageKey": null
           }
         ],
@@ -101,7 +150,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AddKpiItemFormQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -110,19 +159,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AddKpiItemFormQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "39e770425e0e83e8333ce7984bdef95a",
+    "cacheID": "d4ba49dcb54af221bbc02e7eedf3446a",
     "id": null,
     "metadata": {},
     "name": "AddKpiItemFormQuery",
     "operationKind": "query",
-    "text": "query AddKpiItemFormQuery {\n  domains {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddKpiItemFormQuery {\n  domains {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  kpiCategories {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '5c8d3156a8da047f0da177b4c77580ea';
+(node/*: any*/).hash = 'd2a79148942321c79becab0350370027';
 
 module.exports = node;

@@ -30,19 +30,6 @@ import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
-const AddDomainsKpiQuery = graphql`
-  query AddKpiItemFormQuery {
-    domains {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
@@ -94,8 +81,30 @@ type Kpis = {
     status: boolean,
     domain: string,
     description: string,
+    category: string,
   },
 };
+
+const AddDomainsKpiQuery = graphql`
+  query AddKpiItemFormQuery {
+    domains {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    kpiCategories {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 
 export default function AddKpiItemForm(props: Props) {
   const {kpiNames} = props;
@@ -123,6 +132,7 @@ export default function AddKpiItemForm(props: Props) {
         status: kpis.data.status,
         domainFk: kpis.data.domain,
         description: kpis.data.description,
+        kpiCategoryFK: kpis.data.category,
       },
     };
     setShowChecking(true);
@@ -185,6 +195,19 @@ export default function AddKpiItemForm(props: Props) {
           ))}
         </Select>
       </FormField>
+      <FormField label="Category" className={classes.formField}>
+        <Select
+          className={classes.select}
+          disableUnderline
+          name="category"
+          onChange={handleChange}>
+          {data.kpiCategories.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormField>
       <FormField className={classes.formField} label="Description" required>
         <TextInput
           autoComplete="off"
@@ -201,7 +224,7 @@ export default function AddKpiItemForm(props: Props) {
           onClick={handleClick}
           disabled={
             !(
-              Object.values(kpis.data).length === 4 &&
+              Object.values(kpis.data).length === 5 &&
               !Object.values(kpis.data).some(item => item === '') &&
               !names?.some(item => item === kpis.data.name)
             )
