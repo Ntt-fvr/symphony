@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: '40px',
   },
+  header: {
+    marginBottom: "1rem"
+  }
   
 }));
 
@@ -209,7 +212,7 @@ const KqiTypes = () => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
-  }, [dataKqi]);
+  }, []);
 
   const handleClick = () => {
     setShowFormCreate(true);
@@ -248,7 +251,7 @@ const KqiTypes = () => {
 
   return (
     <Grid className={classes.root}>
-      <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+      <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
         <Grid xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
