@@ -6,25 +6,39 @@ package authz
 
 import (
 	"context"
-	"github.com/facebookincubator/symphony/pkg/authz/models"
-
+	"encoding/json"
+	"fmt"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
-func DocumentCategoryCudBasedRule(ctx context.Context, cud *models.DocumentCategoryCud, m *ent.DocumentCategoryMutation) error {
-	return privacy.Allow
-
-}
 // DocumentCategoryWritePolicyRule grants write permission to Category Document based on policy.
 func DocumentCategoryWritePolicyRule() privacy.MutationRule {
 	return privacy.DocumentCategoryMutationRuleFunc(func(ctx context.Context, m *ent.DocumentCategoryMutation) error {
-		return DocumentCategoryCudBasedRule(ctx, FromContext(ctx).InventoryPolicy.DocumentCategory, m)
+		return privacy.Allow
 	})
 }
 
 func DocumentCategoryReadPolicyRule() privacy.QueryRule {
 	return privacy.DocumentCategoryQueryRuleFunc(func(ctx context.Context, q *ent.DocumentCategoryQuery) error {
-		return privacy.Allow
+		dcPredicate := DocumentCategoryReadRule(ctx)
+		if dcPredicate != nil {
+			q.Where(dcPredicate)
+		}
+		return privacy.Skip
 	})
+}
+
+func DocumentCategoryReadRule(ctx context.Context) predicate.DocumentCategory {
+	fmt.Println("===========DocumentCategoryReadPolicyRule:============= ")
+	var predicatesDc []predicate.DocumentCategory
+
+	rule := FromContext(ctx).InventoryPolicy.DocumentCategory.Read
+	documentCategory, _ := json.Marshal(rule)
+	fmt.Println("LEN==",len(rule.DocumentCategoryIds),"-----data==",rule.DocumentCategoryIds,"--------", string(documentCategory))
+
+	predicatesDc = append(predicatesDc, documentcategory.IDIn(rule.DocumentCategoryIds...))
+	return documentcategory.Or(predicatesDc...)
 }
