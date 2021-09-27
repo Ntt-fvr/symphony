@@ -63,6 +63,7 @@ type Formula = {
   data: {
     kpi: string,
     technology: string,
+    networkTypes: string,
   },
 };
 
@@ -91,6 +92,7 @@ const AddFormulaDialog = (props: Props) => {
         status: true,
         techFk: dataFormula.data.technology,
         kpiFk: dataFormula.data.kpi,
+        networkTypeFk: dataFormula.data.networkTypes,
       },
     };
     AddFormulaMutation(variables);

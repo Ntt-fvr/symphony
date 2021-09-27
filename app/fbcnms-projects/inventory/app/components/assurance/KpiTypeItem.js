@@ -97,6 +97,10 @@ type Formula = {
     id: string,
     name: string,
   },
+  networkTypeFk: {
+    id: string,
+    name: string,
+  },
 };
 
 type Props = $ReadOnly<{|
@@ -154,7 +158,6 @@ const KpiTypeItem = (props: Props) => {
         domainFk: domainFk.id,
         status: !checked,
         description: description,
-        kpiCategoryFK: kpiCategoryFK.id,
       },
     };
     EditKpiMutation(variables);

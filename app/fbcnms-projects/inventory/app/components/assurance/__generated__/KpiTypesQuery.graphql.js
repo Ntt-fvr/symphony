@@ -39,6 +39,10 @@ export type KpiTypesQueryResponse = {|
             +id: string,
             +name: string,
           |},
+          +networkTypeFk: {|
+            +id: string,
+            +name: string,
+          |},
         |}>,
         +kpiCategoryFK: {|
           +id: string,
@@ -54,6 +58,14 @@ export type KpiTypesQueryResponse = {|
         +kpi: ?{|
           +name: string
         |},
+      |}
+    |}>
+  |},
+  +networkTypes: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
       |}
     |}>
   |},
@@ -90,6 +102,10 @@ query KpiTypesQuery {
             id
             name
           }
+          networkTypeFk {
+            id
+            name
+          }
         }
         kpiCategoryFK {
           id
@@ -107,6 +123,14 @@ query KpiTypesQuery {
           id
         }
         id
+      }
+    }
+  }
+  networkTypes {
+    edges {
+      node {
+        id
+        name
       }
     }
   }
@@ -219,6 +243,16 @@ v4 = {
                   "plural": false,
                   "selections": (v3/*: any*/),
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "NetworkType",
+                  "kind": "LinkedField",
+                  "name": "networkTypeFk",
+                  "plural": false,
+                  "selections": (v3/*: any*/),
+                  "storageKey": null
                 }
               ],
               "storageKey": null
@@ -234,6 +268,38 @@ v4 = {
               "storageKey": null
             }
           ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "NetworkTypeConnection",
+  "kind": "LinkedField",
+  "name": "networkTypes",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "NetworkTypeEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "NetworkType",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": (v3/*: any*/),
           "storageKey": null
         }
       ],
@@ -295,7 +361,8 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v5/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -354,20 +421,21 @@ return {
           }
         ],
         "storageKey": null
-      }
+      },
+      (v5/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "63a814c03b46fb63c4f439570453d76a",
+    "cacheID": "a8d0bab775505baf722dd02d722e6fd8",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n          networkTypeFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '93eaba8e9b7296903b9691dad7a31252';
+(node/*: any*/).hash = '6a66a7ed913e48607b4b4fc9990a0fdb';
 
 module.exports = node;
