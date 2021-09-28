@@ -212,7 +212,7 @@ const KqiFormEdit = (props: Props) => {
 
   const validationName = () => {
     if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Counter name existing'};
+      return {hasError: true, errorText: 'Kqi name existing'};
     }
   };
 
