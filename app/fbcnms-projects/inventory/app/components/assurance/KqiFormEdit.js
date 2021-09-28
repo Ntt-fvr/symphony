@@ -57,6 +57,7 @@ const useStyles = makeStyles(() => ({
   select: {
     '& .MuiSelect-select': {
       padding: '9px 0 0 10px',
+      width: '100%'
     },
     border: '1px solid #D2DAE7',
     height: '36px',
@@ -66,10 +67,6 @@ const useStyles = makeStyles(() => ({
     minHeight: '36px',
     borderRadius: '4px',
     fontSize: '14px',
-  },
-  selectRepeatEvery: {
-    width: '75%',
-    marginLeft: '1rem',
   },
   option: {
     width: '111px',
@@ -273,7 +270,7 @@ const KqiFormEdit = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container>
+      <Grid container className={classes.header}>
         <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
           <Grid xs>
             <ConfigureTitleSubItem
@@ -386,7 +383,7 @@ const KqiFormEdit = (props: Props) => {
                     autoComplete="off"
                     name="description"
                     type="multiline"
-                    rows={3}
+                    rows={4}
                   />
                 </FormField>
               </Grid>
@@ -431,29 +428,32 @@ const KqiFormEdit = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid container item xs={6}>
-                  <Grid item xs={3}>
-                    <Text variant={'caption'}>Repeat every</Text>
+                <Grid item xs={6}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Temporal frequency</Text>
+                  </Grid>
+                  <Grid container alignItems="center">
+                    <Grid item xs={5} lg={3}>
+                      <Text variant={'caption'}>Repeat every</Text>
+                    </Grid>
+                    <Grid item xs>
+                      <FormField>
+                        <Select
+                          {...kqiTemporalFrequency}
+                          className={classes.select}
+                          disableUnderline
+                          name="kqiTemporalFrequency">
+                          {dataTemporalFrequencies.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid container item xs>
-                  <FormField label="Temporal frequency">
-                    <Select
-                      {...kqiTemporalFrequency}
-                      className={classNames(
-                        classes.select,
-                        classes.selectRepeatEvery,
-                      )}
-                      disableUnderline
-                      name="kqiTemporalFrequency">
-                      {dataTemporalFrequencies?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormField>
-                </Grid>
+                
               </Grid>
               <Grid item xs={6}>
                 <FormField label="Formula">

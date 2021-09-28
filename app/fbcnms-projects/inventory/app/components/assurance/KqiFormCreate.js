@@ -44,10 +44,6 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
-  selectRepeatEvery: {
-    width: '75%',
-    marginLeft: '1rem',
-  },
   option: {
     width: '111px',
     height: '36px',
@@ -164,8 +160,8 @@ const KqiFormCreate = (props: Props) => {
     <div className={classes.root}>
       <Grid container>
         <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
-          <Grid >
-            <Text  variant="h6" weight={'bold'}>
+          <Grid>
+            <Text variant="h6" weight={'bold'}>
               {fbt('Create KQI', ' ')}
             </Text>
           </Grid>
@@ -181,7 +177,7 @@ const KqiFormCreate = (props: Props) => {
               </Button>
             </FormField>
           </Grid>
-          <Grid >
+          <Grid>
             <FormField>
               <Button
                 onClick={handleClick}
@@ -307,28 +303,30 @@ const KqiFormCreate = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid container item xs={6}>
-                  <Grid item xs={3}>
-                    <Text variant={'caption'}>Repeat every</Text>
+                <Grid item xs={6}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Temporal frequency</Text>
                   </Grid>
-                </Grid>
-                <Grid container item xs>
-                  <FormField label="Temporal frequency">
-                    <Select
-                      className={classNames(
-                        classes.select,
-                        classes.selectRepeatEvery,
-                      )}
-                      disableUnderline
-                      name="kqiTemporalFrequency"
-                      onChange={handleChange}>
-                      {dataTemporalFrequencies.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormField>
+                  <Grid container alignItems="center">
+                    <Grid item xs={5} lg={3}>
+                      <Text variant={'caption'}>Repeat every</Text>
+                    </Grid>
+                    <Grid item xs>
+                      <FormField>
+                        <Select
+                          className={classes.select}
+                          disableUnderline
+                          name="kqiTemporalFrequency"
+                          onChange={handleChange}>
+                          {dataTemporalFrequencies.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
