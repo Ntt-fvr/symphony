@@ -51,7 +51,7 @@ const useStyles = makeStyles(() => ({
   },
   calendar: {
     '& .MuiOutlinedInput-input': {
-      height: '17px',
+      height: '12px',
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
