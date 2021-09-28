@@ -103,6 +103,7 @@ export default function PermissionsPolicyRulesPane(props: Props) {
             view: (
               <PermissionsPolicyWorkforceDataRulesTab
                 policy={policy.workforceRules}
+                groups={policy.groups}
                 onChange={callOnWorkforceChange}
               />
             ),
