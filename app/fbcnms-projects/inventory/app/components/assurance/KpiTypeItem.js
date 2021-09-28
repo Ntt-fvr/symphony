@@ -108,7 +108,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   kpiCategoryFK: {
-    id: number,
+    id: string,
     name: string,
   },
   formulaFk: Array<Formula>,
@@ -192,7 +192,7 @@ const KpiTypeItem = (props: Props) => {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{domainFk.name}</Text>
+              <Text className={classes.typeRed}>{domainFk?.name}</Text>
             </Button>
           </Grid>
 
@@ -202,7 +202,7 @@ const KpiTypeItem = (props: Props) => {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpiCategoryFK.name}</Text>
+              <Text className={classes.typeRed}>{kpiCategoryFK?.name}</Text>
             </Button>
           </Grid>
 
