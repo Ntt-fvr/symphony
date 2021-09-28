@@ -167,6 +167,7 @@ const KpiTypeItem = (props: Props) => {
     parentCallback({
       kpi: id,
       technology: formulaFk[0]?.techFk?.id,
+      networkTypes: formulaFk[0]?.networkTypeFk?.id,
     });
   }
 

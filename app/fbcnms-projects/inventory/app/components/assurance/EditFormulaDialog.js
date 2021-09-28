@@ -60,14 +60,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-/*type Formula = {
-  data: {
-    kpi: string,
-    vendors: string,
-    technology: string,
-  },
-};
- */
+// type Formula = {
+//   data: {
+//     kpi: string,
+//     vendors: string,
+//     technology: string,
+//     networkTypes: string,
+//   },
+// };
 
 type Props = $ReadOnly<{|
   open: boolean,
@@ -88,8 +88,10 @@ const EditFormulaDialog = (props: Props) => {
         status: true,
         techFk: dataFormula.data.tech,
         kpiFk: dataFormula.data.kpiId,
+        networkTypeFk: dataFormula.data,
       },
     };
+    console.log(variables);
     EditFormulaMutation(variables);
   }
 

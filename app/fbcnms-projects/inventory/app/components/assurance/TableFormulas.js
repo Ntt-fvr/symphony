@@ -142,6 +142,7 @@ const DenseTable = (props: Props) => {
                         tech: row.techFk?.id,
                         kpiId: row.kpiFk?.id,
                         kpiFk: row.kpiFk?.name,
+                        networkTypes: row?.networkTypeFk?.id,
                       });
                       handleEditFormulaClick();
                     }}
