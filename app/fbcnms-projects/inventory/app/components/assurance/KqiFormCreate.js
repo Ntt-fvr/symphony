@@ -9,7 +9,7 @@
  */
 
 import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import fbt from 'fbt';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
@@ -89,6 +89,7 @@ type KqiTemporalFrequency = {
 };
 
 type Kqis = {
+  name: string,
   data: {
     id: string,
     name: string,
@@ -109,6 +110,7 @@ type Props = $ReadOnly<{|
   dataSources: Array<KqiSources>,
   dataCategories: Array<KqiCategories>,
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
+  dataKqi: Array<Kqis>
 |}>;
 
 const KqiFormCreate = (props: Props) => {
@@ -118,6 +120,7 @@ const KqiFormCreate = (props: Props) => {
     dataSources,
     dataCategories,
     dataTemporalFrequencies,
+    dataKqi
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
@@ -148,6 +151,14 @@ const KqiFormCreate = (props: Props) => {
     AddKqiMutation(variables);
     returnTableKqi();
   }
+
+  const dataNameKqi = dataKqi.map(item => item.name)
+
+  const validationName = () => {
+    if (dataNameKqi?.some(item => item === Kqis.data.name)) {
+      return {hasError: true, errorText: 'Kqi name existing'};
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -186,7 +197,11 @@ const KqiFormCreate = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name">
+                <FormField 
+                  label="Name"
+                  required
+                  {...validationName()}
+                >
                   <TextInput
                     autoComplete="off"
                     name="name"
@@ -296,7 +311,6 @@ const KqiFormCreate = (props: Props) => {
                   <Grid item xs={3}>
                     <Text variant={'caption'}>Repeat every</Text>
                   </Grid>
-                  
                 </Grid>
                 <Grid container item xs>
                   <FormField label="Temporal frequency">
