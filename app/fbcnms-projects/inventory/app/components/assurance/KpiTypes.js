@@ -119,7 +119,7 @@ type Formula = {
 type FormulaForm = {
   data: {
     kpi: string,
-    // vendors: string,
+    vendors: string,
     technology: string,
     networkTypes: string,
   },
@@ -151,8 +151,7 @@ const KpiTypes = () => {
   const [formulaForm, setFormulaForm] = useState<FormulaForm>({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [formulaEditForm, setFormulaEditForm] = useState<any>({});
-  console.log('TYPES');
-  console.log(formulaEditForm);
+
   useEffect(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
       setDataKpis(data);

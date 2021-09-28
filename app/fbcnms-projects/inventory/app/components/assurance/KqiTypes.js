@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: '40px',
   },
+  header: {
+    marginBottom: "1rem"
+  }
   
 }));
 
@@ -209,7 +212,7 @@ const KqiTypes = () => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
-  }, [dataKqi]);
+  }, []);
 
   const handleClick = () => {
     setShowFormCreate(true);
@@ -222,6 +225,7 @@ const KqiTypes = () => {
   if (showFormCreate) {
     return (
       <KqiFormCreate
+        dataKqi={dataResponseKqi}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
@@ -235,6 +239,7 @@ const KqiTypes = () => {
     return (
       <KqiFormEdit
         formValues={dataEdit}
+        dataKqi={dataResponseKqi}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
@@ -248,7 +253,7 @@ const KqiTypes = () => {
 
   return (
     <Grid className={classes.root}>
-      <Grid container direction="row" justifyContent="flex-end" alignItems="center">
+      <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
         <Grid xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
@@ -264,7 +269,7 @@ const KqiTypes = () => {
       </Grid>
         <Grid item fullWidth>
           <KqiTable
-            dataValues={dataKqi.kqis?.edges.map(item => item.node)}
+            dataValues={dataResponseKqi}
             viewFormEdit={formEdit}
           />
         </Grid>

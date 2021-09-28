@@ -112,7 +112,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   kpiCategoryFK: {
-    id: number,
+    id: string,
     name: string,
   },
   formulaFk: Array<Formula>,
@@ -149,7 +149,6 @@ const KpiTypeItem = (props: Props) => {
   const [checked, setChecked] = useState(status);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
-
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
       input: {
@@ -158,6 +157,7 @@ const KpiTypeItem = (props: Props) => {
         domainFk: domainFk.id,
         status: !checked,
         description: description,
+        kpiCategoryFK: kpiCategoryFK.id,
       },
     };
     EditKpiMutation(variables);
@@ -196,7 +196,7 @@ const KpiTypeItem = (props: Props) => {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{domainFk.name}</Text>
+              <Text className={classes.typeRed}>{domainFk?.name}</Text>
             </Button>
           </Grid>
 
@@ -206,7 +206,7 @@ const KpiTypeItem = (props: Props) => {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpiCategoryFK.name}</Text>
+              <Text className={classes.typeRed}>{kpiCategoryFK?.name}</Text>
             </Button>
           </Grid>
 

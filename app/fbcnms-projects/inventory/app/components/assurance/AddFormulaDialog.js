@@ -78,6 +78,7 @@ const AddFormulaDialog = (props: Props) => {
   const {onClose, dataFormula} = props;
   const classes = useStyles();
   const [textFormula, setTextFormula] = useState<any>({});
+  // debugger;
 
   function handleChange({target}) {
     setTextFormula({
@@ -93,7 +94,7 @@ const AddFormulaDialog = (props: Props) => {
         status: true,
         techFk: dataFormula.data.technology,
         kpiFk: dataFormula.data.kpi,
-        networkTypeFk: dataFormula.data.network,
+        networkTypeFk: dataFormula.data.networkTypes,
       },
     };
     AddFormulaMutation(variables);

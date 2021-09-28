@@ -167,11 +167,11 @@ export default function AddFormulaItemForm(props: Props) {
           ))}
         </Select>
       </FormField>
-      <FormField className={classes.formField} label="Network" required>
+      <FormField className={classes.formField} label="Network Type" required>
         <Select
           className={classes.select}
           disableUnderline
-          name="network"
+          name="networkTypes"
           type="reset"
           onChange={handleChange}>
           {data.networkTypes?.edges.map((item, index) => (

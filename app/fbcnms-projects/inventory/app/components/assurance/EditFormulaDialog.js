@@ -88,10 +88,9 @@ const EditFormulaDialog = (props: Props) => {
         status: true,
         techFk: dataFormula.data.tech,
         kpiFk: dataFormula.data.kpiId,
-        networkTypeFk: dataFormula.data,
+        networkTypeFk: dataFormula.data.networkTypes,
       },
     };
-    console.log(variables);
     EditFormulaMutation(variables);
   }
 

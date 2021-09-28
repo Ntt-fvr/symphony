@@ -112,7 +112,7 @@ export default function AddKpiItemForm(props: Props) {
 
   const [kpis, setKpis] = useState<Kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-  const names = kpiNames?.map(item => item.node.name);
+  const names = kpiNames?.map(item => item?.node.name);
 
   const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
 
@@ -188,7 +188,7 @@ export default function AddKpiItemForm(props: Props) {
           disableUnderline
           name="domain"
           onChange={handleChange}>
-          {data.domains.edges.map((item, index) => (
+          {data?.domains.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
@@ -201,7 +201,7 @@ export default function AddKpiItemForm(props: Props) {
           disableUnderline
           name="category"
           onChange={handleChange}>
-          {data.kpiCategories.edges.map((item, index) => (
+          {data?.kpiCategories.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
