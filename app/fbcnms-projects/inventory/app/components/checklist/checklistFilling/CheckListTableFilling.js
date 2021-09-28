@@ -49,14 +49,8 @@ const useStyles = makeStyles(() => ({
     width: '24px',
     fill: symphony.palette.D300,
   },
-  true: {
+  doneIcon: {
     fill: symphony.palette.G600,
-  },
-  false: {
-    fill: symphony.palette.R600,
-  },
-  mandatory: {
-    color: symphony.palette.R600,
   },
 }));
 
@@ -86,14 +80,9 @@ const CheckListTableFilling = ({items}: Props) => {
               return (
                 <div className={classes.titleContainer}>
                   <Icon
-                    className={classNames(
-                      classes.icon,
-                      classes[
-                        row.item.isMandatory
-                          ? isChecklistItemDone(row.item).toString()
-                          : 'true'
-                      ],
-                    )}
+                    className={classNames(classes.icon, {
+                      [classes.doneIcon]: isChecklistItemDone(row.item),
+                    })}
                   />
                   <Text
                     weight="medium"
@@ -103,17 +92,6 @@ const CheckListTableFilling = ({items}: Props) => {
                       row.item.title
                     ) : (
                       <fbt desc="">Item</fbt>
-                    )}
-                    {row.item && !!row.item.isMandatory && (
-                      <span
-                        className={classNames(
-                          !isChecklistItemDone(row.item)
-                            ? classes.mandatory
-                            : '',
-                        )}>
-                        {' '}
-                        *{' '}
-                      </span>
                     )}
                   </Text>
                 </div>

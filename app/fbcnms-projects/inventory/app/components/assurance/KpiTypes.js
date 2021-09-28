@@ -72,6 +72,10 @@ const KpiQuery = graphql`
               name
             }
           }
+          kpiCategoryFK {
+            id
+            name
+          }
         }
       }
     }

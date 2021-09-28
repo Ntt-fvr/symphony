@@ -18,7 +18,6 @@ func handleOrganizationFilter(q *ent.OrganizationQuery, filter *models.Organizat
 		return organizationNameFilter(q, filter)
 	case models.OrganizationFilterTypeDescription:
 		return organizationDescriptionFilter(q, filter)
-
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }

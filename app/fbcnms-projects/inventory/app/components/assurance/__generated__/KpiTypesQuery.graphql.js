@@ -40,6 +40,10 @@ export type KpiTypesQueryResponse = {|
             +name: string,
           |},
         |}>,
+        +kpiCategoryFK: {|
+          +id: string,
+          +name: string,
+        |},
       |}
     |}>
   |},
@@ -86,6 +90,10 @@ query KpiTypesQuery {
             id
             name
           }
+        }
+        kpiCategoryFK {
+          id
+          name
         }
       }
     }
@@ -214,6 +222,16 @@ v4 = {
                 }
               ],
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "KpiCategory",
+              "kind": "LinkedField",
+              "name": "kpiCategoryFK",
+              "plural": false,
+              "selections": (v3/*: any*/),
+              "storageKey": null
             }
           ],
           "storageKey": null
@@ -340,16 +358,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "552384b1ec34d70e37c8928b666a6b56",
+    "cacheID": "63a814c03b46fb63c4f439570453d76a",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '79ff9a3173b3be46ce0416a4df08dd48';
+(node/*: any*/).hash = '93eaba8e9b7296903b9691dad7a31252';
 
 module.exports = node;

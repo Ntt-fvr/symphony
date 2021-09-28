@@ -46,7 +46,7 @@ function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={3}>
+      <Grid xs={2}>
         <Text className={classes.title} variant="subtitle2">
           Status
         </Text>
@@ -54,14 +54,20 @@ function TitleTextCardsKpi() {
           Kpi name
         </Text>
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={3}>
         <Text
           className={classNames(classes.title, classes.network)}
           variant="subtitle2">
           Domain
         </Text>
       </Grid>
-      <Grid xs={3} />
+      <Grid xs={5}>
+        <Text
+          className={classNames(classes.title, classes.network)}
+          variant="subtitle2">
+          Category
+        </Text>
+      </Grid>
       <Grid xs={1}>
         <Text
           className={classNames(

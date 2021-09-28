@@ -104,6 +104,7 @@ export type UserManagementUtils_policies = {|
       +isAllowed: PermissionValue,
       +projectTypeIds: ?$ReadOnlyArray<string>,
       +workOrderTypeIds: ?$ReadOnlyArray<string>,
+      +organizationIds: ?$ReadOnlyArray<string>,
     |},
     +templates: {|
       +create: {|
@@ -151,6 +152,11 @@ export type UserManagementUtils_policies = {|
       +email: string,
       +status: UserStatus,
       +role: UserRole,
+      +organizationFk: ?{|
+        +id: string,
+        +name: string,
+        +description: string,
+      |},
     |}>,
     +policies: $ReadOnlyArray<{|
       +id: string,
@@ -235,6 +241,7 @@ export type UserManagementUtils_policies = {|
           +isAllowed: PermissionValue,
           +projectTypeIds: ?$ReadOnlyArray<string>,
           +workOrderTypeIds: ?$ReadOnlyArray<string>,
+          +organizationIds: ?$ReadOnlyArray<string>,
         |},
         +templates: {|
           +create: {|
@@ -510,6 +517,13 @@ v7 = {
               "kind": "ScalarField",
               "name": "workOrderTypeIds",
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "organizationIds",
+              "storageKey": null
             }
           ],
           "storageKey": null
@@ -665,6 +679,20 @@ return {
               "args": null,
               "kind": "ScalarField",
               "name": "role",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "Organization",
+              "kind": "LinkedField",
+              "name": "organizationFk",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                (v1/*: any*/),
+                (v2/*: any*/)
+              ],
               "storageKey": null
             }
           ],

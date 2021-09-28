@@ -57,6 +57,18 @@ func (as *AlarmStatusQuery) collectField(ctx *graphql.OperationContext, field gr
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (a *AppointmentQuery) CollectFields(ctx context.Context, satisfies ...string) *AppointmentQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		a = a.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return a
+}
+
+func (a *AppointmentQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *AppointmentQuery {
+	return a
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		b = b.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -761,6 +773,26 @@ func (k *KpiQuery) collectField(ctx *graphql.OperationContext, field graphql.Col
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (kc *KpiCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *KpiCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		kc = kc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return kc
+}
+
+func (kc *KpiCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *KpiCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "kpi":
+			kc = kc.WithKpicategory(func(query *KpiQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return kc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (k *KqiQuery) CollectFields(ctx context.Context, satisfies ...string) *KqiQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		k = k.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1001,6 +1033,26 @@ func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field g
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (nt *NetworkTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *NetworkTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		nt = nt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return nt
+}
+
+func (nt *NetworkTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *NetworkTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "formula":
+			nt = nt.WithFormulaNetworkTypeFK(func(query *FormulaQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return nt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...string) *OrganizationQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		o = o.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1238,6 +1290,106 @@ func (rf *ReportFilterQuery) CollectFields(ctx context.Context, satisfies ...str
 
 func (rf *ReportFilterQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ReportFilterQuery {
 	return rf
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rr *ResourceRelationshipQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceRelationshipQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rr = rr.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rr
+}
+
+func (rr *ResourceRelationshipQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceRelationshipQuery {
+	return rr
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rrm *ResourceRelationshipMultiplicityQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceRelationshipMultiplicityQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rrm = rrm.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rrm
+}
+
+func (rrm *ResourceRelationshipMultiplicityQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceRelationshipMultiplicityQuery {
+	return rrm
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rrt *ResourceRelationshipTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceRelationshipTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rrt = rrt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rrt
+}
+
+func (rrt *ResourceRelationshipTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceRelationshipTypeQuery {
+	return rrt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rt *ResourceTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rt = rt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rt
+}
+
+func (rt *ResourceTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "resourcerelationshipa":
+			rt = rt.WithResourceRelationshipFkA(func(query *ResourceRelationshipQuery) {
+				query.collectField(ctx, field)
+			})
+		case "resourcerelationshipb":
+			rt = rt.WithResourceRelationshipFkB(func(query *ResourceRelationshipQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rtbt *ResourceTypeBaseTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceTypeBaseTypeQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rtbt = rtbt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rtbt
+}
+
+func (rtbt *ResourceTypeBaseTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceTypeBaseTypeQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "resourcetype":
+			rtbt = rtbt.WithResourceTypeFk(func(query *ResourceTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rtbt
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rtc *ResourceTypeClassQuery) CollectFields(ctx context.Context, satisfies ...string) *ResourceTypeClassQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		rtc = rtc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return rtc
+}
+
+func (rtc *ResourceTypeClassQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ResourceTypeClassQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "resourcetype":
+			rtc = rtc.WithResourceTypeFk(func(query *ResourceTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return rtc
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

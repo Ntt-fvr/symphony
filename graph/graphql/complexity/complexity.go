@@ -73,6 +73,85 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.FlowInstances = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.FlowInstanceOrder, _ []*models.FlowInstanceFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.AlarmFilters = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.AlarmFilterOrder, _ []*models.AlarmFilterFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.AlarmStatus = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.AlarmStatusOrder, _ []*models.AlarmStatusFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Comparators = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ComparatorOrder, _ []*models.ComparatorFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.CounterFamilies = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterFamilyOrder, _ []*models.CounterFamilyFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Counters = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.CounterOrder, _ []*models.CounterFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Kpis = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiOrder, _ []*models.KpiFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.KpiCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiCategoryOrder, _ []*models.KpiCategoryFilterInput) int {
+        	return PaginationComplexity(childComplexity, after, first, before, last)
+    	}
+	complexity.Query.Thresholds = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ThresholdOrder, _ []*models.ThresholdFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Domains = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.DomainOrder, _ []*models.DomainFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Vendors = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.VendorOrder, _ []*models.VendorFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.RuleTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RuleTypeOrder, _ []*models.RuleTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.EventSeverities = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.EventSeverityOrder, _ []*models.EventSeverityFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Comparators = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ComparatorOrder, _ []*models.ComparatorFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Organizations = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.OrganizationOrder, _ []*models.OrganizationFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Formulas = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.FormulaOrder, _ []*models.FormulaFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Techs = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.TechOrder, _ []*models.TechFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.NetworkTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.NetworkTypeOrder, _ []*models.NetworkTypeFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.RecommendationsSources = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RecommendationsSourcesOrder, _ []*models.RecommendationsSourcesFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.RecommendationsCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RecommendationsCategoryOrder, _ []*models.RecommendationsCategoryFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Recommendations = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RecommendationsOrder, _ []*models.RecommendationsFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.Kqis = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiOrder, _ []*models.KqiFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.KqiCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiCategoryOrder, _ []*models.KqiCategoryFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.KqiPerspectives = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiPerspectiveOrder, _ []*models.KqiPerspectiveFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.KqiTemporalFrequencies = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiTemporalFrequencyOrder, _ []*models.KqiTemporalFrequencyFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.KqiSources = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiSourceOrder, _ []*models.KqiSourceFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.KqiTargets = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiTargetOrder, _ []*models.KqiTargetFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {
 		var limit *int
 		if filter != nil {

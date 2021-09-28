@@ -12,16 +12,16 @@ import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
-import IconButton from '@material-ui/core/IconButton'
+import IconButton from '@material-ui/core/IconButton';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
-import {DARK} from '@symphony/design-system/theme/symphony';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {MenuItem, Select} from '@material-ui/core';
 
 import classNames from 'classnames';
@@ -29,6 +29,17 @@ import classNames from 'classnames';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
+import moment from 'moment';
+import {useFormInput} from './common/useFormInput';
+import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
+import type {EditKqiTargetMutationResponse} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
+import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
+import EditKqiComparatorMutation from '../../mutations/EditKqiComparatorMutation';
+import type {EditKqiComparatorMutationVariables} from '../../mutations/__generated__/EditKqiComparatorMutation.graphql';
+import type {MutationCallbacks} from '../../mutations/MutationCallbacks';
+import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
+import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -121,45 +132,109 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type Comparator = {
+  id: string,
+  name: string,
+}
+
 type Props = $ReadOnly<{|
+  dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
   formValues: {
     item: {
-      id: string,
-      name: string,
+      
+        id: string,
+        name: string,
+        impact: string,
+        period: string,
+        allowedVariation: string,
+        initTime: string,
+        endTime: string,
+        status: boolean,
+        kqi: {
+          id: string,
+        },
+        kqiComparator:{
+          id: string,
+          number: Number,
+          comparatorType: string,
+          kqiTargetFk:{
+            name: string,
+            id: string,
+          },
+          comparatorFk:{
+            id: string,
+            name: string,
+          }
+        }
+      }
     
-    },
-  },
+  }
 |}>;
-const handleRemove = () => {
-  console.log('remove');
-};
-const data = {
-  counters: {
-    edges: [
-      {
-        node: {
-          id: '244813135872',
-          name: 'contador_family_7',
-          networkManagerSystem: 'hola bebe',
-          externalID: '123456789',
-        },
-      },
-      {
-        node: {
-          id: '244813135873',
-          name: 'contador_family_8',
-          networkManagerSystem: 'hola sergio',
-          externalID: '987654321',
-        },
-      },
-    ],
-  },
-};
+
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit} = props;
+  const {returnFormEdit, formValues, dataComparatorSelect} = props;
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(formValues.item.status);
+  
+  const name = useFormInput(formValues.item.name);
+  const impact = useFormInput(formValues.item.impact);
+  const period = useFormInput(formValues.item.period);
+  const allowedVariation = useFormInput(formValues.item.allowedVariation);
+  const initTime = useFormInput(moment(formValues.item.initTime).format("HH"));
+  const endTime = useFormInput(moment(formValues.item.endTime).format("HH"));
+
+  const comparatorSelect = useFormInput(formValues.item.kqiComparator[0].comparatorFk.id);
+  const comparatorNumber = useFormInput(formValues.item.kqiComparator[0].number);
+  
+  const warningComparatorSelect = useFormInput(formValues.item.kqiComparator[1].comparatorFk.id);
+  const warningComparatorNumber = useFormInput(formValues.item.kqiComparator[1].number);
+  
+  const handleRemove = id => {
+    const variables: RemoveKqiTargetMutationVariables = {
+      id: id,
+    };
+    RemoveKqiTargetMutation(variables);
+  };
+  
+  const handleClick = () => {
+    const variables: EditKqiTargetMutationVariables = {
+      input: {
+        id: formValues.item.id,
+        name: name.value,
+        impact: impact.value,
+        period: Number(period.value),
+        allowedVariation: Number(allowedVariation.value),
+        initTime: moment(initTime.value, "HH"),
+        endTime: moment(endTime.value, "HH"),
+        status: checked,
+        kqi: formValues.item.kqi.id,
+      },
+    };
+    
+    const variablesUpper: EditKqiComparatorMutationVariables = {
+      input: {
+        id: formValues.item.kqiComparator[0].id,
+        number: Number(comparatorNumber.value),
+        comparatorType: "COMPARATOR",
+        kqiTargetFk: formValues.item.kqiComparator[0].kqiTargetFk.id,
+        comparatorFk: comparatorSelect.value,
+      },
+    };
+    const variablesLower: EditKqiComparatorMutationVariables = {
+      input: {
+        id: formValues.item.kqiComparator[1].id,
+        number: Number(warningComparatorNumber.value),
+        comparatorType: 'WARNING_COMPARATOR',
+        kqiTargetFk: formValues.item.kqiComparator[1].kqiTargetFk.id,
+        comparatorFk: warningComparatorSelect.value
+      },
+    };
+    EditKqiComparatorMutation(variablesUpper);
+    EditKqiComparatorMutation(variablesLower);  
+    EditKqiTargetMutation(variables);
+    returnFormEdit()
+  };
 
   return (
     <div className={classes.root}>
@@ -174,7 +249,10 @@ const KqiFormEditTarget = (props: Props) => {
         <Grid className={classes.delete} item xs={1}>
           <IconButton>
             <DeleteOutlinedIcon
-              onClick={handleRemove}
+              onClick={() => {
+                handleRemove(formValues.item.id);
+                returnFormEdit()
+              }}
               style={{color: DARK.D300}}
             />
           </IconButton>
@@ -195,7 +273,7 @@ const KqiFormEditTarget = (props: Props) => {
             <Grid xs={6}>
               <FormField>
                 <Button
-                  onClick={props.returnFormEdit}
+                  onClick={handleClick}
                   className={classes.option}
                   variant="contained"
                   color="primary">
@@ -216,7 +294,11 @@ const KqiFormEditTarget = (props: Props) => {
               </Grid>
               <Grid item xs={11}>
                 <FormField className={classes.formField} label="Target name">
-                  <TextInput className={classes.textInput} />
+                  <TextInput 
+                    {...name}
+                    autoComplete="off"
+                    name="name"
+                    className={classes.textInput} />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
@@ -224,19 +306,23 @@ const KqiFormEditTarget = (props: Props) => {
                   <FormField label="Comparator" className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
+                        {...comparatorSelect}
                         className={classNames(
                           classes.select,
                           classes.selectWarningComparator,
                         )}
                         disableUnderline
-                        name="family">
-                        {data.counters.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
+                        name="comparatorSelect">
+                        {dataComparatorSelect?.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {item.name}
                           </MenuItem>
                         ))}
                       </Select>
                       <TextInput
+                        {...comparatorNumber}
+                        autoComplete="off"
+                        name="comparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
                       />
@@ -249,19 +335,23 @@ const KqiFormEditTarget = (props: Props) => {
                     className={classes.formField}>
                     <div className={classes.warningComparator}>
                       <Select
+                        {...warningComparatorSelect}
                         className={classNames(
                           classes.select,
                           classes.selectWarningComparator,
                         )}
                         disableUnderline
-                        name="family">
-                        {data.counters.edges.map((item, index) => (
-                          <MenuItem key={index} value={item.node?.id}>
-                            {item.node?.name}
+                        name="warningComparatorSelect">
+                        {dataComparatorSelect?.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {item.name}
                           </MenuItem>
                         ))}
                       </Select>
                       <TextInput
+                        {...warningComparatorNumber}
+                        autoComplete="off"
+                        name="warningComparatorNumber"
                         placeholder="Number"
                         className={classes.textIndicator}
                       />
@@ -272,6 +362,9 @@ const KqiFormEditTarget = (props: Props) => {
               <Grid item xs={6}>
                 <FormField className={classes.formField} label="Impact">
                   <TextInput
+                    {...impact}
+                    autoComplete="off"
+                    name="Impact"
                     className={classes.textInput}
                     type="multiline"
                     rows={3}
@@ -281,15 +374,23 @@ const KqiFormEditTarget = (props: Props) => {
               <Grid className={classes.sectionSelects} container item xs={6}>
                 <FormField className={classes.formField} label="Periods">
                   <div className={classes.contPeriods}>
-                    <TextInput className={classes.periods} type="number" />
+                    <TextInput
+                      {...period} 
+                      autoComplete="off"
+                      name="period"
+                      className={classes.periods} type="number" />
                   </div>
                 </FormField>
 
                 <FormField
                   className={classes.formField}
-                  label="Allowed Varation">
+                  label="Allowed Variation">
                   <div className={classes.contPeriods}>
-                    <TextInput className={classes.periods} type="number" />
+                    <TextInput 
+                      {...allowedVariation}
+                      autoComplete="off"
+                      name="allowedVariation"
+                      className={classes.periods} type="number" />
                   </div>
                 </FormField>
 
@@ -302,6 +403,9 @@ const KqiFormEditTarget = (props: Props) => {
                     </Text>
                     <div className={classes.contHours}>
                       <TextInput
+                        {...initTime}
+                        autoComplete="off"
+                        name="initTime"
                         suffix={'hrs'}
                         className={classes.activeHours}
                       />
@@ -311,6 +415,9 @@ const KqiFormEditTarget = (props: Props) => {
                     </Text>
                     <div className={classes.contHours}>
                       <TextInput
+                        {...endTime}
+                        autoComplete="off"
+                        name="endTime"
                         suffix={'hrs'}
                         className={classes.activeHours}
                       />

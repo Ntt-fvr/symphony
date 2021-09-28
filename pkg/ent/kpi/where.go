@@ -548,6 +548,34 @@ func HasDomainWith(preds ...predicate.Domain) predicate.Kpi {
 	})
 }
 
+// HasKpiCategory applies the HasEdge predicate on the "KpiCategory" edge.
+func HasKpiCategory() predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(KpiCategoryTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, KpiCategoryTable, KpiCategoryColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasKpiCategoryWith applies the HasEdge predicate on the "KpiCategory" edge with a given conditions (other predicates).
+func HasKpiCategoryWith(preds ...predicate.KpiCategory) predicate.Kpi {
+	return predicate.Kpi(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(KpiCategoryInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, KpiCategoryTable, KpiCategoryColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFormulakpi applies the HasEdge predicate on the "formulakpi" edge.
 func HasFormulakpi() predicate.Kpi {
 	return predicate.Kpi(func(s *sql.Selector) {

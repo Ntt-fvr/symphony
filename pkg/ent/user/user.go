@@ -57,6 +57,8 @@ const (
 	EdgeCreatedProjects = "created_projects"
 	// EdgeFeatures holds the string denoting the features edge name in mutations.
 	EdgeFeatures = "features"
+	// EdgeAppointment holds the string denoting the appointment edge name in mutations.
+	EdgeAppointment = "appointment"
 
 	// Table holds the table name of the user in the database.
 	Table = "users"
@@ -119,6 +121,13 @@ const (
 	// FeaturesInverseTable is the table name for the Feature entity.
 	// It exists in this package in order to avoid circular dependency with the "feature" package.
 	FeaturesInverseTable = "features"
+	// AppointmentTable is the table the holds the appointment relation/edge.
+	AppointmentTable = "appointments"
+	// AppointmentInverseTable is the table name for the Appointment entity.
+	// It exists in this package in order to avoid circular dependency with the "appointment" package.
+	AppointmentInverseTable = "appointments"
+	// AppointmentColumn is the table column denoting the appointment relation/edge.
+	AppointmentColumn = "user_appointment"
 )
 
 // Columns holds all SQL columns for user fields.

@@ -33,7 +33,8 @@ RUN apk add --no-cache musl curl
 
 # Copy artifacts from builder
 COPY --from=builder /build/* /bin/
-
+COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /
+ENV ZONEINFO=/zoneinfo.zip
 # Set exposed port and entrypoint
 EXPOSE 80
 ENTRYPOINT ["/bin/graph"]

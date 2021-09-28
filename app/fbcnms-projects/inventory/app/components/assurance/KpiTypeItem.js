@@ -107,7 +107,12 @@ type Props = $ReadOnly<{|
     id: string,
     name: string,
   },
+  kpiCategoryFK: {
+    id: string,
+    name: string,
+  },
   formulaFk: Array<Formula>,
+
   description: string,
   threshold: Array<KpiThreshold>,
   edit: void,
@@ -118,12 +123,13 @@ type Props = $ReadOnly<{|
   parentEditCallback: any,
 |}>;
 
-export default function KpiTypeItem(props: Props) {
+const KpiTypeItem = (props: Props) => {
   const {
     id,
     name,
     status,
     domainFk,
+    kpiCategoryFK,
     description,
     formulaFk,
     threshold,
@@ -148,6 +154,7 @@ export default function KpiTypeItem(props: Props) {
         domainFk: domainFk.id,
         status: !checked,
         description: description,
+        kpiCategoryFK: kpiCategoryFK.id,
       },
     };
     EditKpiMutation(variables);
@@ -167,7 +174,7 @@ export default function KpiTypeItem(props: Props) {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={3} container alignItems="center">
+          <Grid xs={2} container alignItems="center">
             <FormField label="">
               <Switch
                 title={''}
@@ -185,11 +192,21 @@ export default function KpiTypeItem(props: Props) {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{domainFk.name}</Text>
+              <Text className={classes.typeRed}>{domainFk?.name}</Text>
             </Button>
           </Grid>
 
-          <Grid xs={5} container justify="center" alignItems="center">
+          <Grid
+            xs={3}
+            container
+            alignItems="center"
+            justifyContent="flex-start">
+            <Button variant="text">
+              <Text className={classes.typeRed}>{kpiCategoryFK?.name}</Text>
+            </Button>
+          </Grid>
+
+          <Grid xs={3} container justify="center" alignItems="center">
             <AddButton
               disabled={false}
               textButton={'Add formula'}
@@ -249,4 +266,5 @@ export default function KpiTypeItem(props: Props) {
       </Accordion>
     </div>
   );
-}
+};
+export default KpiTypeItem;

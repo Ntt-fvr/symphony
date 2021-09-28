@@ -60,6 +60,7 @@ fragment FileAttachment_file on File {
   fileType
   storeKey
   category
+  annotation
   ...ImageDialog_img
 }
 
@@ -173,6 +174,13 @@ return {
             "kind": "ScalarField",
             "name": "category",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "annotation",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -180,12 +188,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3bb49fa9d63950bae9399f577f400729",
+    "cacheID": "f17b43755d5e1dbd7de29a2a7559c388",
     "id": null,
     "metadata": {},
     "name": "AddImageMutation",
     "operationKind": "mutation",
-    "text": "mutation AddImageMutation(\n  $input: AddImageInput!\n) {\n  addImage(input: $input) {\n    ...FileAttachment_file\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
+    "text": "mutation AddImageMutation(\n  $input: AddImageInput!\n) {\n  addImage(input: $input) {\n    ...FileAttachment_file\n    id\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  annotation\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
   }
 };
 })();

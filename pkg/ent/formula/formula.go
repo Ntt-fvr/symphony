@@ -26,6 +26,8 @@ const (
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 
+	// EdgeNetworkType holds the string denoting the networktype edge name in mutations.
+	EdgeNetworkType = "networkType"
 	// EdgeTech holds the string denoting the tech edge name in mutations.
 	EdgeTech = "tech"
 	// EdgeKpi holds the string denoting the kpi edge name in mutations.
@@ -35,6 +37,13 @@ const (
 
 	// Table holds the table name of the formula in the database.
 	Table = "formulas"
+	// NetworkTypeTable is the table the holds the networkType relation/edge.
+	NetworkTypeTable = "formulas"
+	// NetworkTypeInverseTable is the table name for the NetworkType entity.
+	// It exists in this package in order to avoid circular dependency with the "networktype" package.
+	NetworkTypeInverseTable = "network_types"
+	// NetworkTypeColumn is the table column denoting the networkType relation/edge.
+	NetworkTypeColumn = "network_type_formula_network_type_fk"
 	// TechTable is the table the holds the tech relation/edge.
 	TechTable = "formulas"
 	// TechInverseTable is the table name for the Tech entity.
@@ -70,6 +79,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the Formula type.
 var ForeignKeys = []string{
 	"kpi_formulakpi",
+	"network_type_formula_network_type_fk",
 	"tech_formulatech",
 }
 

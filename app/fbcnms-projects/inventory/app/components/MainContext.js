@@ -69,6 +69,11 @@ const meQuery = graphql`
         email
         firstName
         lastName
+        organizationFk {
+          id
+          name
+          description
+        }
       }
       permissions {
         adminPolicy {
@@ -155,6 +160,7 @@ const meQuery = graphql`
             isAllowed
             projectTypeIds
             workOrderTypeIds
+            organizationIds
           }
           templates {
             create {

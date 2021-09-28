@@ -26,10 +26,18 @@ func TestSurveyCellScanWritePolicyRule(t *testing.T) {
 		SetName("WorkOrderType").
 		SaveX(ctx)
 
+	organization := c.Organization.Create().
+		SetCreateTime(time.Now()).
+		SetDescription("Organization").
+		SetName("Organization").
+		SetUpdateTime(time.Now()).
+		SaveX(ctx)
+
 	workOrder := c.WorkOrder.Create().
 		SetName("WorkOrder").
 		SetTypeID(workOrderType.ID).
 		SetCreationDate(time.Now()).
+		SetOrganizationID(organization.ID).
 		SetOwner(u).
 		SaveX(ctx)
 
@@ -74,6 +82,7 @@ func TestSurveyCellScanWritePolicyRule(t *testing.T) {
 		appendPermissions: func(p *models.PermissionSettings) {
 			p.WorkforcePolicy.Data.Update.IsAllowed = models.PermissionValueByCondition
 			p.WorkforcePolicy.Data.Update.WorkOrderTypeIds = []int{workOrderType.ID}
+			p.WorkforcePolicy.Data.Update.OrganizationIds = []int{organization.ID}
 		},
 		create: createSurveyCellScan,
 		update: updateSurveyCellScan,

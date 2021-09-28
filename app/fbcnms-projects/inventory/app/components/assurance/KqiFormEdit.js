@@ -8,7 +8,10 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
+import {fetchQuery, graphql} from 'relay-runtime';
+
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -28,19 +31,20 @@ import KqiFormEditTarget from './KqiFormEditTarget';
 import KqiTableAssociatedTarget from './KqiTableAssociatedTarget';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import IconButton from '@material-ui/core/IconButton';
 import {DARK} from '@symphony/design-system/theme/symphony';
-import IconButton from '@material-ui/core/IconButton'
 
-import {makeStyles} from '@material-ui/styles';
 import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
 
-import EditKqiMutation from '../../mutations/EditKqiMutation';
+import {makeStyles} from '@material-ui/styles';
+
 import type {RemoveKqiMutationVariables} from '../../mutations/__generated__/RemoveKqiMutation.graphql';
 
+import EditKqiMutation from '../../mutations/EditKqiMutation';
+
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
-import {graphql} from 'relay-runtime';
-import {useLazyLoadQuery} from 'react-relay/hooks';
 import moment from 'moment';
+
 import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
@@ -129,23 +133,35 @@ const useStyles = makeStyles(() => ({
 
 type KqiPerspectives = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiSources = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiCategories = {
   id: string,
-  name: string
-}
+  name: string,
+};
 
 type KqiTemporalFrequency = {
   id: string,
-  name: string
-}
+  name: string,
+};
+
+type KqiTarget = {
+  id: string,
+  name: string,
+  impact: string,
+  period: number,
+  allowedVariation: number,
+  initTime: string,
+  endTime: string,
+  status: boolean,
+  kqi: string,
+};
 
 type Props = $ReadOnly<{|
   formValues: {
@@ -172,31 +188,38 @@ type Props = $ReadOnly<{|
         id: string,
         name: string,
       },
+      kqiTarget: {
+        id: string,
+      }
     },
   },
-  
-  dataKqiTargets: any,
+
   dataPerspectives: Array<KqiPerspectives>,
   dataSources: Array<KqiSources>,
   dataCategories: Array<KqiCategories>,
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
   returnTableKqi: () => void,
+  dataValues: any,
+  dataComparator: any,
 |}>;
-
 
 const KqiFormEdit = (props: Props) => {
   const {
+    dataValues,
     formValues,
-    dataKqiTargets,
+    dataComparator,
     dataPerspectives,
     dataSources,
     dataCategories,
     dataTemporalFrequencies,
-    returnTableKqi
+    returnTableKqi,
   } = props;
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
   const [showEditTarget, setShowEditTarget] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
+
+
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
   const formula = useFormInput(formValues.item.formula);
@@ -206,13 +229,16 @@ const KqiFormEdit = (props: Props) => {
   const endDateTime = useFormInput(
     moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
   );
+  
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
   const kqiPerspective = useFormInput(formValues.item.kqiPerspective.id);
   const kqiSource = useFormInput(formValues.item.kqiSource.id);
-  const kqiTemporalFrequency = useFormInput(
-    formValues.item.kqiTemporalFrequency.id,
+  const kqiTemporalFrequency = useFormInput(formValues.item.kqiTemporalFrequency.id,);
+
+  const filterKqiTargetsById = dataValues?.filter(
+    kqiData => kqiData?.kqi?.id === formValues.item.id,
   );
-  
+
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
       id: id,
@@ -236,6 +262,7 @@ const KqiFormEdit = (props: Props) => {
       },
     };
     EditKqiMutation(variables);
+    returnTableKqi();
   };
 
   const showFormCreateTarget = () => {
@@ -244,16 +271,25 @@ const KqiFormEdit = (props: Props) => {
 
   if (showCreateTarget) {
     return (
-      <KqiFormCreateTarget returnFormEdit={() => setShowCreateTarget(false)} />
+      <KqiFormCreateTarget
+        idKqi={formValues.item.id}
+        dataComparatorSelect={dataComparator}
+        returnFormEdit={() => setShowCreateTarget(false)}
+      />
     );
   }
-  const showFormEditTarget = () => {
+  const showFormEditTarget = (kqiTarget: KqiTarget) => {
     setShowEditTarget(true);
+    setDataEdit(kqiTarget);
   };
 
   if (showEditTarget) {
     return (
-      <KqiFormEditTarget returnFormEdit={() => setShowEditTarget(false)} />
+      <KqiFormEditTarget
+        formValues={dataEdit}
+        dataComparatorSelect={dataComparator}
+        returnFormEdit={() => setShowEditTarget(false)}
+      />
     );
   }
 
@@ -271,8 +307,8 @@ const KqiFormEdit = (props: Props) => {
           <IconButton>
             <DeleteOutlinedIcon
               onClick={() => {
-                handleRemove(formValues.item.id)
-                returnTableKqi()
+                handleRemove(formValues.item.id);
+                returnTableKqi();
               }}
               style={{color: DARK.D300}}
             />
@@ -304,7 +340,6 @@ const KqiFormEdit = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-
         <Grid item xs={12}>
           <Card>
             <Grid container spacing={1} className={classes.insideContainer}>
@@ -312,6 +347,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField label="Name" className={classes.formField}>
                   <TextInput
                     {...name}
+                    autoComplete="off"
                     name="name"
                     className={classes.textInput}
                   />
@@ -321,6 +357,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField className={classes.formField} label="ID">
                   <TextInput
                     value={formValues.item.id}
+                    autoComplete="off"
                     name="id"
                     disabled
                     className={classes.textInput}
@@ -368,6 +405,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField className={classes.formField} label="Description">
                   <TextInput
                     {...description}
+                    autoComplete="off"
                     name="description"
                     className={classes.textInput}
                     type="multiline"
@@ -422,7 +460,6 @@ const KqiFormEdit = (props: Props) => {
                     className={classes.formField}>
                     <div className={classes.formFieldTf}>
                       <Text variant={'caption'}>Repeat every</Text>
-
                       <Select
                         {...kqiTemporalFrequency}
                         className={classNames(
@@ -445,6 +482,7 @@ const KqiFormEdit = (props: Props) => {
                 <FormField label="Formula" className={classes.formField}>
                   <TextInput
                     {...formula}
+                    autoComplete="off"
                     name="formula"
                     type="multiline"
                     rows={10}
@@ -458,9 +496,9 @@ const KqiFormEdit = (props: Props) => {
       </Grid>
       <Grid className={classes.target} item xs={12}>
         <KqiTableAssociatedTarget
-          dataTableTargets={dataKqiTargets}
+          tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}
-          edit={() => showFormEditTarget()}
+          edit={showFormEditTarget}
         />
       </Grid>
     </div>

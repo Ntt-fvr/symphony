@@ -9,7 +9,8 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import RelayEnvironment from '../../common/RelayEnvironment';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
@@ -19,21 +20,17 @@ import KqiFormEdit from './KqiFormEdit';
 import Button from '@symphony/design-system/components/Button';
 import KqiTable from './KqiTable';
 import fbt from 'fbt';
-import RelayEnvironment from '../../common/RelayEnvironment';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: '1',
-    margin: '40px',
+    padding: '40px',
   },
-  paper: {
-    padding: theme.spacing(2),
-  },
-  addKpi: {
-    display: 'flex',
-  },
+  header: {
+    marginBottom: "1rem"
+  }
+  
 }));
 
 const KqiQuery = graphql`
@@ -65,6 +62,30 @@ const KqiQuery = graphql`
           }
           kqiTarget {
             id
+            name
+            impact
+            allowedVariation
+            initTime
+            endTime
+            status
+            period
+            kqi {
+              id
+              name
+            }
+            kqiComparator {
+              kqiTargetFk {
+                id
+                name
+              }
+              comparatorFk {
+                id
+                name
+              }
+              id
+              number
+              comparatorType
+            }
           }
         }
       }
@@ -107,11 +128,11 @@ const KqiQuery = graphql`
           id
           name
           impact
-          frame
-          alowedValidation
+          allowedVariation
           initTime
           endTime
           status
+          period
           kqi {
             id
             name
@@ -125,15 +146,23 @@ const KqiQuery = graphql`
               id
               name
             }
+            id
             number
             comparatorType
           }
         }
       }
     }
+    comparators {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
-
 
 type Kqis = {
   item: {
@@ -159,10 +188,10 @@ type Kqis = {
       kqiTemporalFrequency: {
         id: string,
         name: string,
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 
 const KqiTypes = () => {
   const classes = useStyles();
@@ -171,25 +200,28 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
-  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node)
-  const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node)
-  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node)
-  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node)
-  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(item => item.node)
+  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node)
+  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node);
+  const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node);
+  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node);
+  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node);
+  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(item => item.node);
+  const dataResponseComparators = dataKqi.comparators?.edges.map(item => item.node,);
 
   useEffect(() => {
-      fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
-        setDataKqi(data);
-      });
-    }, []);
-  
+    fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
+      setDataKqi(data);
+    });
+  }, []);
+
   const handleClick = () => {
     setShowFormCreate(true);
-  }
+  };
   const formEdit = (kqi: Kqis) => {
     setShowFormEdit(true);
     setDataEdit(kqi);
-  }
+  };
+
   if (showFormCreate) {
     return (
       <KqiFormCreate
@@ -205,21 +237,22 @@ const KqiTypes = () => {
   if (showFormEdit) {
     return (
       <KqiFormEdit
-        dataKqiTargets={dataResponseKqiTargets}
+        formValues={dataEdit}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
         dataTemporalFrequencies={dataResponseTemporalFrequencies}
+        dataValues={dataResponseKqiTargets}
+        dataComparator={dataResponseComparators}
         returnTableKqi={() => setShowFormEdit(false)}
-        formValues={dataEdit}
       />
     );
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={11}>
+    <Grid className={classes.root}>
+      <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
+        <Grid xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
             subtitle={fbt(
@@ -228,18 +261,17 @@ const KqiTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.addKpi} item xs={1}>
-          <Button onClick={handleClick}>
-            Add KQI
-          </Button>
+        <Grid>
+          <Button onClick={handleClick}>Add KQI</Button>
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid className={classes.paper} item xs={12}>
-          <KqiTable dataValues={dataKqi.kqis?.edges.map(item => item.node)} viewFormEdit={formEdit} />
+        <Grid item fullWidth>
+          <KqiTable
+            dataValues={dataKqi.kqis?.edges.map(item => item.node)}
+            viewFormEdit={formEdit}
+          />
         </Grid>
-      </Grid>
-    </div>
+    </Grid>
   );
 };
 export default KqiTypes;

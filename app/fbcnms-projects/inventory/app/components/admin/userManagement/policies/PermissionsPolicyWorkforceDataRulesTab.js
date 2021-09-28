@@ -22,6 +22,7 @@ import PermissionsPolicyRulesSection, {
   DataRuleTitle,
 } from './PermissionsPolicyRulesSection';
 import PermissionsPolicyWorkforceDataRulesSpecification from './PermissionsPolicyWorkforceDataRulesSpecification';
+import PermissionsPolicyWorkforceOrganizationSpecification from './PermissionsPolicyWorkforceOrganizationSpecification';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
@@ -34,6 +35,7 @@ import {
 import {debounce} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useEffect, useState} from 'react';
+import {useMainContext} from '../../../MainContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -227,6 +229,21 @@ type Props = $ReadOnly<{|
 export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
   const {policy, onChange, className} = props;
   const classes = useStyles();
+  const [enableOrganization, setEnableOrganization] = useState(false);
+  const {me} = useMainContext();
+
+  useEffect(() => {
+    if (policy?.read.organizationIds && readAllowed) {
+      setEnableOrganization(true);
+    }
+  }, [policy]);
+
+  if (policy == null) {
+    return null;
+  }
+
+  const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
+  const isDisabled = onChange == null;
 
   const callOnChange = useCallback(
     (updatedPolicy: WorkforcePolicy) => {
@@ -237,13 +254,9 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
     },
     [onChange],
   );
-
-  if (policy == null) {
-    return null;
-  }
-
-  const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
-  const isDisabled = onChange == null;
+  const handleOnOrganizationSwitchChange = useCallback(() => {
+    setEnableOrganization(!enableOrganization);
+  }, [enableOrganization, setEnableOrganization, onChange]);
 
   return (
     <div className={classNames(classes.root, className)}>
@@ -281,12 +294,39 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
       <WorkforceDataRulesSection
         disabled={isDisabled || !readAllowed}
         rule={policy.data}
+        View
         onChange={data =>
           callOnChange({
             ...policy,
             data,
           })
         }
+      />
+
+      <Switch
+        className={classNames(classes.readRule, classes.rule)}
+        title={fbt('View work orders form multiple organizations', '')}
+        checked={enableOrganization}
+        disabled={isDisabled || !readAllowed}
+        onChange={handleOnOrganizationSwitchChange}
+      />
+
+      <PermissionsPolicyWorkforceOrganizationSpecification
+        disabled={!enableOrganization}
+        userOrganization={me.user.organizationFk}
+        policy={{
+          ...policy,
+          read: {
+            ...policy.read,
+            organizationIds:
+              isDisabled || !readAllowed
+                ? null
+                : enableOrganization
+                ? policy.read.organizationIds
+                : [me.user.organizationFk.id],
+          },
+        }}
+        onChange={callOnChange.bind(this)}
       />
     </div>
   );

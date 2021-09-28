@@ -40,10 +40,9 @@ func (userResolver) Name(_ context.Context, user *ent.User) (string, error) {
 func (userResolver) OrganizationFk(ctx context.Context, user *ent.User) (*ent.Organization, error) {
 	variable, err := user.Organization(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("has ocurred error on proces: %w", err)
-	} else {
-		return variable, nil
+		return nil, fmt.Errorf("has occurred error on process: %w", err)
 	}
+	return variable, nil
 }
 
 func (r mutationResolver) EditUser(ctx context.Context, input models.EditUserInput) (*ent.User, error) {

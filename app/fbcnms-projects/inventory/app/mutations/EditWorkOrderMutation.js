@@ -25,6 +25,11 @@ const mutation = graphql`
       id
       name
       description
+      organizationFk {
+        id
+        name
+        description
+      }
       owner {
         id
         email
