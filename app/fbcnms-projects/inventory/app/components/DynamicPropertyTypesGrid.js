@@ -25,7 +25,6 @@ const useStyles = makeStyles(_theme => ({
     minWidth: '50%',
     paddingRight: '16px',
     marginBottom: '12px',
-    border: '1px solid red',
   },
 }));
 

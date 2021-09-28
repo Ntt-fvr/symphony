@@ -8,42 +8,41 @@
  * @format
  */
 
- import type {
-    AddKpiMutation,
-    AddKpiMutationResponse,
-    AddKpiMutationVariables,
-  } from './__generated__/AddKpiMutation.graphql';
-  import type {MutationCallbacks} from './MutationCallbacks.js';
-  import type {SelectorStoreUpdater} from 'relay-runtime';
-  
-  import RelayEnvironment from '../common/RelayEnvironment.js';
-  import {commitMutation, graphql} from 'react-relay';
-  
-  const mutation = graphql`
-    mutation AddKpiMutation($input: AddKpiInput!) {
-        addKpi(input: $input) {
-            id
-            name
-            domainFk {
-                id
-                name
-            }
-        }
-    }
-    `;
+import type {
+  AddKpiMutation,
+  AddKpiMutationResponse,
+  AddKpiMutationVariables,
+} from './__generated__/AddKpiMutation.graphql';
+import type {MutationCallbacks} from './MutationCallbacks.js';
+import type {SelectorStoreUpdater} from 'relay-runtime';
 
-  export default (
-    variables: AddKpiMutationVariables,
-    callbacks?: MutationCallbacks<AddKpiMutationResponse>,
-    updater?: SelectorStoreUpdater,
-  ) => {
-    const {onCompleted, onError} = callbacks ? callbacks : {};
-    commitMutation<AddKpiMutation>(RelayEnvironment, {
-      mutation,
-      variables,
-      updater,
-      onCompleted,
-      onError,
-    });
-  };
-  
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
+
+const mutation = graphql`
+  mutation AddKpiMutation($input: AddKpiInput!) {
+    addKpi(input: $input) {
+      id
+      name
+      domainFk {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export default (
+  variables: AddKpiMutationVariables,
+  callbacks?: MutationCallbacks<AddKpiMutationResponse>,
+  updater?: SelectorStoreUpdater,
+) => {
+  const {onCompleted, onError} = callbacks ? callbacks : {};
+  commitMutation<AddKpiMutation>(RelayEnvironment, {
+    mutation,
+    variables,
+    updater,
+    onCompleted,
+    onError,
+  });
+};

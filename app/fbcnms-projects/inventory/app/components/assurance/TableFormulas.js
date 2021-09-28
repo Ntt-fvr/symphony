@@ -63,6 +63,11 @@ type Formula = {
   textFormula: string,
   status: true,
   techFk: {
+    id: string,
+    name: string,
+  },
+  kpiFk: {
+    id: string,
     name: string,
   },
 };
@@ -133,9 +138,9 @@ export default function DenseTable(props: Props) {
                       handleEditCallback({
                         formula: row?.id,
                         textFormula: row?.textFormula,
-                        tech: row.techFk?.id,
-                        kpiId: row.kpiFk?.id,
-                        kpiFk: row.kpiFk?.name,
+                        tech: row?.techFk?.id,
+                        kpiId: row?.kpiFk?.id,
+                        kpiFk: row?.kpiFk?.name,
                       });
                       handleEditFormulaClick();
                     }}

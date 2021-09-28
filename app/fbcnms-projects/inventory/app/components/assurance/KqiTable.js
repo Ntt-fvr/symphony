@@ -26,8 +26,8 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 const StyledTableCell = withStyles(() => ({
@@ -100,34 +100,36 @@ const KqiTable = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataValues?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
-              <StyledTableRow key={index}>
-                <TableCell>
-                  <Button onClick={() => viewFormEdit({item})} variant="text">
-                    <Text
-                      variant={'subtitle1'}
-                      weight={'medium'}
-                      color={'primary'}>
-                      {item.name}
-                    </Text>
-                  </Button>
-                </TableCell>
-                <TableCell>{item.kqiCategory.name}</TableCell>
-                <TableCell>
-                  <Indicator>{item.kqiTarget.length}</Indicator>
-                </TableCell>
-                <TableCell>{item.kqiPerspective.name}</TableCell>
-                <TableCell>{item.kqiSource.id}</TableCell>
-                <TableCell>
-                  {DateTimeFormat.dateOnly(item.startDateTime)}
-                </TableCell>
-                <TableCell>
-                  {DateTimeFormat.dateOnly(item.endDateTime)}
-                </TableCell>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{item.icon}</TableCell>
-              </StyledTableRow>
-            ))}
+            {dataValues
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((item, index) => (
+                <StyledTableRow key={index}>
+                  <TableCell>
+                    <Button onClick={() => viewFormEdit({item})} variant="text">
+                      <Text
+                        variant={'subtitle1'}
+                        weight={'medium'}
+                        color={'primary'}>
+                        {item.name}
+                      </Text>
+                    </Button>
+                  </TableCell>
+                  <TableCell>{item.kqiCategory.name}</TableCell>
+                  <TableCell>
+                    <Indicator>{item.kqiTarget.length}</Indicator>
+                  </TableCell>
+                  <TableCell>{item.kqiPerspective.name}</TableCell>
+                  <TableCell>{item.kqiSource.id}</TableCell>
+                  <TableCell>
+                    {DateTimeFormat.dateOnly(item.startDateTime)}
+                  </TableCell>
+                  <TableCell>
+                    {DateTimeFormat.dateOnly(item.endDateTime)}
+                  </TableCell>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.icon}</TableCell>
+                </StyledTableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

@@ -138,11 +138,11 @@ type Comparator = {
 }
 
 type Props = $ReadOnly<{|
-  dataComparator: Array<Comparator>,
+  dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
   formValues: {
     item: {
-      node:{
+      
         id: string,
         name: string,
         impact: string,
@@ -168,27 +168,27 @@ type Props = $ReadOnly<{|
           }
         }
       }
-    }
+    
   }
 |}>;
 
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit, formValues, dataComparator} = props;
+  const {returnFormEdit, formValues, dataComparatorSelect} = props;
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(formValues.item.status);
   
-  const name = useFormInput(formValues.item.node.name);
-  const impact = useFormInput(formValues.item.node.impact);
-  const period = useFormInput(formValues.item.node.period);
-  const allowedVariation = useFormInput(formValues.item.node.allowedVariation);
-  const initTime = useFormInput(moment(formValues.item.node.initTime).format("HH"));
-  const endTime = useFormInput(moment(formValues.item.node.endTime).format("HH"));
+  const name = useFormInput(formValues.item.name);
+  const impact = useFormInput(formValues.item.impact);
+  const period = useFormInput(formValues.item.period);
+  const allowedVariation = useFormInput(formValues.item.allowedVariation);
+  const initTime = useFormInput(moment(formValues.item.initTime).format("HH"));
+  const endTime = useFormInput(moment(formValues.item.endTime).format("HH"));
 
-  const comparatorSelect = useFormInput(formValues.item.node.kqiComparator[0].comparatorFk.id);
-  const comparatorNumber = useFormInput(formValues.item.node.kqiComparator[0].number);
+  const comparatorSelect = useFormInput(formValues.item.kqiComparator[0].comparatorFk.id);
+  const comparatorNumber = useFormInput(formValues.item.kqiComparator[0].number);
   
-  const warningComparatorSelect = useFormInput(formValues.item.node.kqiComparator[1].comparatorFk.id);
-  const warningComparatorNumber = useFormInput(formValues.item.node.kqiComparator[1].number);
+  const warningComparatorSelect = useFormInput(formValues.item.kqiComparator[1].comparatorFk.id);
+  const warningComparatorNumber = useFormInput(formValues.item.kqiComparator[1].number);
   
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
@@ -200,7 +200,7 @@ const KqiFormEditTarget = (props: Props) => {
   const handleClick = () => {
     const variables: EditKqiTargetMutationVariables = {
       input: {
-        id: formValues.item.node.id,
+        id: formValues.item.id,
         name: name.value,
         impact: impact.value,
         period: Number(period.value),
@@ -208,25 +208,25 @@ const KqiFormEditTarget = (props: Props) => {
         initTime: moment(initTime.value, "HH"),
         endTime: moment(endTime.value, "HH"),
         status: checked,
-        kqi: formValues.item.node.kqi.id,
+        kqi: formValues.item.kqi.id,
       },
     };
     
     const variablesUpper: EditKqiComparatorMutationVariables = {
       input: {
-        id: formValues.item.node.kqiComparator[0].id,
+        id: formValues.item.kqiComparator[0].id,
         number: Number(comparatorNumber.value),
         comparatorType: "COMPARATOR",
-        kqiTargetFk: formValues.item.node.kqiComparator[0].kqiTargetFk.id,
+        kqiTargetFk: formValues.item.kqiComparator[0].kqiTargetFk.id,
         comparatorFk: comparatorSelect.value,
       },
     };
     const variablesLower: EditKqiComparatorMutationVariables = {
       input: {
-        id: formValues.item.node.kqiComparator[1].id,
+        id: formValues.item.kqiComparator[1].id,
         number: Number(warningComparatorNumber.value),
         comparatorType: 'WARNING_COMPARATOR',
-        kqiTargetFk: formValues.item.node.kqiComparator[1].kqiTargetFk.id,
+        kqiTargetFk: formValues.item.kqiComparator[1].kqiTargetFk.id,
         comparatorFk: warningComparatorSelect.value
       },
     };
@@ -250,7 +250,7 @@ const KqiFormEditTarget = (props: Props) => {
           <IconButton>
             <DeleteOutlinedIcon
               onClick={() => {
-                handleRemove(formValues.item.node.id);
+                handleRemove(formValues.item.id);
                 returnFormEdit()
               }}
               style={{color: DARK.D300}}
@@ -313,7 +313,7 @@ const KqiFormEditTarget = (props: Props) => {
                         )}
                         disableUnderline
                         name="comparatorSelect">
-                        {dataComparator?.map((item, index) => (
+                        {dataComparatorSelect?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
                           </MenuItem>
@@ -342,7 +342,7 @@ const KqiFormEditTarget = (props: Props) => {
                         )}
                         disableUnderline
                         name="warningComparatorSelect">
-                        {dataComparator?.map((item, index) => (
+                        {dataComparatorSelect?.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
                             {item.name}
                           </MenuItem>
