@@ -39,7 +39,6 @@ export const AssuranceNavListItems = () => {
           LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED,
         );
       }}
-      hidden
     />,
   ];
 };
