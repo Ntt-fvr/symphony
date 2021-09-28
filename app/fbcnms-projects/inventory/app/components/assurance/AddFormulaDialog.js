@@ -78,7 +78,6 @@ const AddFormulaDialog = (props: Props) => {
   const {onClose, dataFormula} = props;
   const classes = useStyles();
   const [textFormula, setTextFormula] = useState<any>({});
-  // debugger;
 
   function handleChange({target}) {
     setTextFormula({
