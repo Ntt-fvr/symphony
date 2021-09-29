@@ -9,7 +9,7 @@
  */
 
 import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import fbt from 'fbt';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
@@ -44,10 +44,6 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
-  selectRepeatEvery: {
-    width: '75%',
-    marginLeft: '1rem',
-  },
   option: {
     width: '111px',
     height: '36px',
@@ -55,7 +51,7 @@ const useStyles = makeStyles(() => ({
   },
   calendar: {
     '& .MuiOutlinedInput-input': {
-      height: '17px',
+      height: '12px',
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
@@ -89,6 +85,7 @@ type KqiTemporalFrequency = {
 };
 
 type Kqis = {
+  name: string,
   data: {
     id: string,
     name: string,
@@ -109,6 +106,7 @@ type Props = $ReadOnly<{|
   dataSources: Array<KqiSources>,
   dataCategories: Array<KqiCategories>,
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
+  dataKqi: Array<Kqis>
 |}>;
 
 const KqiFormCreate = (props: Props) => {
@@ -118,6 +116,7 @@ const KqiFormCreate = (props: Props) => {
     dataSources,
     dataCategories,
     dataTemporalFrequencies,
+    dataKqi
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
@@ -149,12 +148,20 @@ const KqiFormCreate = (props: Props) => {
     returnTableKqi();
   }
 
+  const dataNameKqi = dataKqi.map(item => item.name)
+
+  const validationName = () => {
+    if (dataNameKqi?.some(item => item === Kqis.data.name)) {
+      return {hasError: true, errorText: 'Kqi name existing'};
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Grid container>
         <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
-          <Grid >
-            <Text  variant="h6" weight={'bold'}>
+          <Grid>
+            <Text variant="h6" weight={'bold'}>
               {fbt('Create KQI', ' ')}
             </Text>
           </Grid>
@@ -170,7 +177,7 @@ const KqiFormCreate = (props: Props) => {
               </Button>
             </FormField>
           </Grid>
-          <Grid >
+          <Grid>
             <FormField>
               <Button
                 onClick={handleClick}
@@ -186,7 +193,11 @@ const KqiFormCreate = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name">
+                <FormField 
+                  label="Name"
+                  required
+                  {...validationName()}
+                >
                   <TextInput
                     autoComplete="off"
                     name="name"
@@ -292,29 +303,30 @@ const KqiFormCreate = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid container item xs={6}>
-                  <Grid item xs={3}>
-                    <Text variant={'caption'}>Repeat every</Text>
+                <Grid item xs={6}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Temporal frequency</Text>
                   </Grid>
-                  
-                </Grid>
-                <Grid container item xs>
-                  <FormField label="Temporal frequency">
-                    <Select
-                      className={classNames(
-                        classes.select,
-                        classes.selectRepeatEvery,
-                      )}
-                      disableUnderline
-                      name="kqiTemporalFrequency"
-                      onChange={handleChange}>
-                      {dataTemporalFrequencies.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormField>
+                  <Grid container alignItems="center">
+                    <Grid item xs={5} lg={3}>
+                      <Text variant={'caption'}>Repeat every</Text>
+                    </Grid>
+                    <Grid item xs>
+                      <FormField>
+                        <Select
+                          className={classes.select}
+                          disableUnderline
+                          name="kqiTemporalFrequency"
+                          onChange={handleChange}>
+                          {dataTemporalFrequencies.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={6}>

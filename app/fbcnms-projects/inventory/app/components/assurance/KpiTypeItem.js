@@ -97,6 +97,10 @@ type Formula = {
     id: string,
     name: string,
   },
+  networkTypeFk: {
+    id: string,
+    name: string,
+  },
 };
 
 type Props = $ReadOnly<{|
@@ -145,7 +149,6 @@ const KpiTypeItem = (props: Props) => {
   const [checked, setChecked] = useState(status);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
-
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
       input: {
@@ -164,6 +167,7 @@ const KpiTypeItem = (props: Props) => {
     parentCallback({
       kpi: id,
       technology: formulaFk[0]?.techFk?.id,
+      networkTypes: formulaFk[0]?.networkTypeFk?.id,
     });
   }
 

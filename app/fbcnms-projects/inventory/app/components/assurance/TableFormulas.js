@@ -70,6 +70,10 @@ type Formula = {
     id: string,
     name: string,
   },
+  networkTypeFk: {
+    id: string,
+    name: string,
+  },
 };
 
 type Props = $ReadOnly<{|
@@ -78,7 +82,7 @@ type Props = $ReadOnly<{|
   handleEditFormulaClick: any,
 |}>;
 
-export default function DenseTable(props: Props) {
+const DenseTable = (props: Props) => {
   const {formulas, handleEditFormulaClick, parentEditCallback} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
@@ -103,6 +107,7 @@ export default function DenseTable(props: Props) {
               <StyledTableCell>Enable</StyledTableCell>
               <StyledTableCell>Id</StyledTableCell>
               <StyledTableCell>Technology</StyledTableCell>
+              <StyledTableCell>Network</StyledTableCell>
               <StyledTableCell>Delete</StyledTableCell>
               <StyledTableCell>Edit</StyledTableCell>
             </TableRow>
@@ -121,6 +126,7 @@ export default function DenseTable(props: Props) {
                   {row?.id}
                 </TableCell>
                 <TableCell>{row?.techFk?.name}</TableCell>
+                <TableCell>{row?.networkTypeFk?.name}</TableCell>
                 <TableCell>
                   <Button>
                     <DeleteOutlinedIcon
@@ -141,6 +147,7 @@ export default function DenseTable(props: Props) {
                         tech: row?.techFk?.id,
                         kpiId: row?.kpiFk?.id,
                         kpiFk: row?.kpiFk?.name,
+                        networkTypes: row?.networkTypeFk?.id,
                       });
                       handleEditFormulaClick();
                     }}
@@ -153,4 +160,5 @@ export default function DenseTable(props: Props) {
       </TableContainer>
     </Paper>
   );
-}
+};
+export default DenseTable;

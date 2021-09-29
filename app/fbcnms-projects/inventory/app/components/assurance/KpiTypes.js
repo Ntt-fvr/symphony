@@ -71,6 +71,10 @@ const KpiQuery = graphql`
               id
               name
             }
+            networkTypeFk {
+              id
+              name
+            }
           }
           kpiCategoryFK {
             id
@@ -89,6 +93,14 @@ const KpiQuery = graphql`
         }
       }
     }
+    networkTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -99,6 +111,9 @@ type Formula = {
   techFk: {
     name: string,
   },
+  networkTypeFk: {
+    name: string,
+  },
 };
 
 type FormulaForm = {
@@ -106,6 +121,7 @@ type FormulaForm = {
     kpi: string,
     vendors: string,
     technology: string,
+    networkTypes: string,
   },
 };
 

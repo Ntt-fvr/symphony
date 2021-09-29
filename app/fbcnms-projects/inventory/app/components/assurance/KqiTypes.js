@@ -225,6 +225,7 @@ const KqiTypes = () => {
   if (showFormCreate) {
     return (
       <KqiFormCreate
+        dataKqi={dataResponseKqi}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
@@ -238,6 +239,7 @@ const KqiTypes = () => {
     return (
       <KqiFormEdit
         formValues={dataEdit}
+        dataKqi={dataResponseKqi}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
@@ -267,7 +269,7 @@ const KqiTypes = () => {
       </Grid>
         <Grid item fullWidth>
           <KqiTable
-            dataValues={dataKqi.kqis?.edges.map(item => item.node)}
+            dataValues={dataResponseKqi}
             viewFormEdit={formEdit}
           />
         </Grid>

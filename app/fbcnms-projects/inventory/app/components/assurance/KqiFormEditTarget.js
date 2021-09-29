@@ -138,6 +138,7 @@ type Comparator = {
 }
 
 type Props = $ReadOnly<{|
+  nameKqi: any,
   dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
   formValues: {
@@ -173,7 +174,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit, formValues, dataComparatorSelect} = props;
+  const {returnFormEdit, formValues, dataComparatorSelect, nameKqi} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(formValues.item.status);
   
@@ -241,8 +242,8 @@ const KqiFormEditTarget = (props: Props) => {
       <Grid container spacing={1}>
         <Grid item xs={9}>
           <ConfigureTitleSubItem
-            title={fbt('KQI Catalog / TINE Retainability /', '')}
-            tag={''}
+            title={fbt('KQI Catalog/', '') + ` ${nameKqi}/`}
+            tag={` ${formValues.item.name}`}
             className={classes.textTitle}
           />
         </Grid>
