@@ -86,6 +86,7 @@ func (r mutationResolver) EditKqiTarget(ctx context.Context, input models.EditKq
 		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 	var kqiID int
+
 	var init, end, period, allowed, status, impact, name = et.InitTime, et.EndTime, et.Period, et.AllowedVariation, et.Status, et.Impact, et.Name
 	var kqi, err1 = et.KqiTargetFk(ctx)
 	if err1 != nil {
