@@ -453,7 +453,6 @@ const KqiFormEdit = (props: Props) => {
                     </Grid>
                   </Grid>
                 </Grid>
-                
               </Grid>
               <Grid item xs={6}>
                 <FormField label="Formula">
@@ -470,7 +469,7 @@ const KqiFormEdit = (props: Props) => {
           </Card>
         </Grid>
       </Grid>
-      <Grid className={classes.target} item xs={12}>
+      <Grid item xs={12}>
         <KqiTableAssociatedTarget
           tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}

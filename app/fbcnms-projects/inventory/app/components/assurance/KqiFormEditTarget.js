@@ -43,12 +43,15 @@ import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '40px',
+    padding: '40px',
+  },
+  header: {
+    marginBottom: '1rem'
   },
   select: {
     '& .MuiSelect-select': {
-      padding: '0 0 0 9px',
+      padding: '9px 0 0 10px',
+      width: '100%'
     },
     border: '1px solid #D2DAE7',
     height: '36px',
@@ -59,76 +62,10 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
-  selectWarningComparator: {
-    width: '25%',
-    margin: '0 2rem 0 0',
-  },
-  formField: {
-    width: 'auto',
-    margin: '0 1rem 1rem 1rem',
-  },
-  formFieldHours: {
-    margin: '0 1rem 1rem 10rem',
-  },
-  warningComparator: {
-    width: 'auto',
-    height: 'auto',
-    display: 'flex',
-    margin: '0 1rem 1rem 0',
-  },
-  contPeriods: {
-    width: '97px',
-  },
-  periods: {
-    width: '100%',
-    '& .clickable': {
-      width: '25px',
-    },
-  },
-  contHours: {
-    width: '60px',
-  },
-  hours: {
-    display: 'flex',
-    alignItems: 'center',
-    margin: '0 1rem 1rem 0',
-  },
-  activeHours: {
-    width: '100%',
-    '& .clickable': {
-      width: '25px',
-    },
-    '& .inputContainer': {
-      padding: '0px 7px',
-    },
-  },
-  from: {
-    margin: '0 0.5rem 0 0',
-  },
-  to: {
-    margin: '0 0.5rem 0 0.5rem',
-  },
-  textInput: {
-    minHeight: '36px',
-  },
-  textIndicator: {
-    width: '25%',
-  },
-  option: {
+option: {
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
-  },
-  delete: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  textTitle: {
-    paddingLeft: '3rem',
-  },
-  sectionSelects: {
-    display: 'flex',
   },
 }));
 
@@ -239,192 +176,204 @@ const KqiFormEditTarget = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid item xs={9}>
-          <ConfigureTitleSubItem
-            title={fbt('KQI Catalog/', '') + ` ${nameKqi}/`}
-            tag={` ${formValues.item.name}`}
-            className={classes.textTitle}
-          />
-        </Grid>
-        <Grid className={classes.delete} item xs={1}>
-          <IconButton>
-            <DeleteOutlinedIcon
-              onClick={() => {
-                handleRemove(formValues.item.id);
-                returnFormEdit()
-              }}
-              style={{color: DARK.D300}}
+      <Grid container>
+        <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
+          <Grid xs>
+            <ConfigureTitleSubItem
+              title={fbt('KQI Catalog/', '') + ` ${nameKqi}/`}
+              tag={` ${formValues.item.name}`}
             />
-          </IconButton>
-        </Grid>
-        <Grid item xs={2}>
-          <Grid container>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  className={classes.option}
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => returnFormEdit()}>
-                  Cancel
-                </Button>
-              </FormField>
-            </Grid>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  onClick={handleClick}
-                  className={classes.option}
-                  variant="contained"
-                  color="primary">
-                  Save
-                </Button>
-              </FormField>
-            </Grid>
+          </Grid>
+          <Grid style={{marginRight: '1rem'}}>
+            <IconButton>
+              <DeleteOutlinedIcon
+                onClick={() => {
+                  handleRemove(formValues.item.id);
+                  returnFormEdit()
+                }}
+                style={{color: DARK.D300}}
+              />
+            </IconButton>
+          </Grid>          
+          <Grid style={{marginRight: '1rem'}}>
+            <FormField>
+              <Button
+                className={classes.option}
+                variant="outlined"
+                color="primary"
+                onClick={() => returnFormEdit()}>
+                Cancel
+              </Button>
+            </FormField>
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                onClick={handleClick}
+                className={classes.option}
+                variant="contained"
+                color="primary">
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid xs>
           <Card>
-            <Grid container spacing={1}>
+            <Grid container spacing={3}>
               <Grid item xs={1}>
-                <FormField className={classes.formField} label="Enabled">
+                <FormField  label="Enabled">
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField className={classes.formField} label="Target name">
-                  <TextInput 
+                <FormField  label="Target name">
+                  <TextInput
                     {...name}
                     autoComplete="off"
                     name="name"
-                    className={classes.textInput} />
-                </FormField>
-              </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={6}>
-                  <FormField label="Comparator" className={classes.formField}>
-                    <div className={classes.warningComparator}>
-                      <Select
-                        {...comparatorSelect}
-                        className={classNames(
-                          classes.select,
-                          classes.selectWarningComparator,
-                        )}
-                        disableUnderline
-                        name="comparatorSelect">
-                        {dataComparatorSelect?.map((item, index) => (
-                          <MenuItem key={index} value={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      <TextInput
-                        {...comparatorNumber}
-                        autoComplete="off"
-                        name="comparatorNumber"
-                        placeholder="Number"
-                        className={classes.textIndicator}
-                      />
-                    </div>
-                  </FormField>
-                </Grid>
-                <Grid item xs={6}>
-                  <FormField
-                    label="Warning comparator"
-                    className={classes.formField}>
-                    <div className={classes.warningComparator}>
-                      <Select
-                        {...warningComparatorSelect}
-                        className={classNames(
-                          classes.select,
-                          classes.selectWarningComparator,
-                        )}
-                        disableUnderline
-                        name="warningComparatorSelect">
-                        {dataComparatorSelect?.map((item, index) => (
-                          <MenuItem key={index} value={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      <TextInput
-                        {...warningComparatorNumber}
-                        autoComplete="off"
-                        name="warningComparatorNumber"
-                        placeholder="Number"
-                        className={classes.textIndicator}
-                      />
-                    </div>
-                  </FormField>
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <FormField className={classes.formField} label="Impact">
-                  <TextInput
-                    {...impact}
-                    autoComplete="off"
-                    name="Impact"
-                    className={classes.textInput}
-                    type="multiline"
-                    rows={3}
                   />
                 </FormField>
               </Grid>
-              <Grid className={classes.sectionSelects} container item xs={6}>
-                <FormField className={classes.formField} label="Periods">
-                  <div className={classes.contPeriods}>
-                    <TextInput
-                      {...period} 
-                      autoComplete="off"
-                      name="period"
-                      className={classes.periods} type="number" />
-                  </div>
+              <Grid container item xs={7}>
+                <Grid item xs={6}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Comparator</Text>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <FormField>
+                        <Select
+                          {...comparatorSelect}
+                          className={classes.select}
+                          disableUnderline
+                          name="comparatorSelect"
+                          >
+                          {dataComparatorSelect?.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <FormField>
+                        <TextInput
+                          {...comparatorNumber}
+                          autoComplete="off"
+                          name="comparatorNumber"
+                          placeholder="Number"
+                        />
+                      </FormField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Warning comparator</Text>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <FormField>
+                        <Select
+                          {...warningComparatorSelect}
+                          className={classes.select}
+                          disableUnderline
+                          name="warningComparatorSelect"
+                          >
+                          {dataComparatorSelect?.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <FormField>
+                        <TextInput
+                          {...warningComparatorNumber}
+                          autoComplete="off"
+                          name="warningComparatorNumber"
+                          placeholder="Number"
+                        />
+                      </FormField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={5}>
+                <FormField  label="Impact">
+                  <TextInput
+                    {...impact}
+                    autoComplete="off"
+                    name="impact"
+                    type="multiline"
+                    rows={4}
+                  />
                 </FormField>
-
-                <FormField
-                  className={classes.formField}
-                  label="Allowed Variation">
-                  <div className={classes.contPeriods}>
-                    <TextInput 
-                      {...allowedVariation}
-                      autoComplete="off"
-                      name="allowedVariation"
-                      className={classes.periods} type="number" />
-                  </div>
-                </FormField>
-
-                <FormField
-                  className={classes.formFieldHours}
-                  label="Active Hours">
-                  <div className={classes.hours}>
-                    <Text variant="caption" className={classes.from}>
-                      From
-                    </Text>
-                    <div className={classes.contHours}>
-                      <TextInput
-                        {...initTime}
-                        autoComplete="off"
-                        name="initTime"
-                        suffix={'hrs'}
-                        className={classes.activeHours}
-                      />
-                    </div>
-                    <Text variant="caption" className={classes.to}>
-                      to
-                    </Text>
-                    <div className={classes.contHours}>
-                      <TextInput
-                        {...endTime}
-                        autoComplete="off"
-                        name="endTime"
-                        suffix={'hrs'}
-                        className={classes.activeHours}
-                      />
-                    </div>
-                  </div>
-                </FormField>
+              </Grid>
+              <Grid container item xs={7}>
+                <Grid container item xs={6}>
+                  <Grid item xs={6}>
+                    <FormField  label="Periods">
+                        <TextInput
+                          {...period}
+                          autoComplete="off"
+                          name="period"
+                          type="number"
+                        />
+                    </FormField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormField label="Allowed Variation">
+                        <TextInput
+                          {...allowedVariation}
+                          autoComplete="off"
+                          name="allowedVariation"
+                          type="text"
+                        />
+                    </FormField>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Active Hours</Text>
+                  </Grid>
+                  <Grid container>
+                    <Grid container item xs={6} alignItems="center">  
+                      <Grid item xs={2}>
+                        <Text variant="caption">From</Text>
+                      </Grid>
+                      <Grid item xs={10}>
+                        <FormField >
+                          <TextInput
+                            {...initTime}
+                            autoComplete="off"
+                            name="initTime"
+                            suffix={'hrs'}
+                          />
+                        </FormField>
+                      </Grid>
+                    </Grid>
+                    <Grid container item xs={6} alignItems="center">  
+                      <Grid item xs={2}>
+                        <Text variant="caption">to</Text>
+                      </Grid>
+                      <Grid item xs={10}>
+                        <FormField >
+                          <TextInput
+                            {...endTime}
+                            autoComplete="off"
+                            name="endTime"
+                            suffix={'hrs'}
+                          />
+                        </FormField>
+                      </Grid>
+                    </Grid>
+                  </Grid> 
+                </Grid>
               </Grid>
             </Grid>
           </Card>

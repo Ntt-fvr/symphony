@@ -58,28 +58,12 @@ const StyledTableRow = withStyles(() => ({
 }))(TableRow);
 
 const useStyles = makeStyles(() => ({
-  root: {
-    width: '100%',
-  },
-  container: {
-    maxHeight: '100%',
-  },
-  id: {},
-  head: {},
-  containerTitle: {
-    height: '64px',
-    padding: '0',
-    margin: '0',
-    borderBottom: '2px solid #F5F7FC',
+  head: {
+    padding: "24px",
+    borderBottom: '2px solid #F5F7FC'
   },
   insideCenter: {
     textAlign: 'center',
-  },
-  title: {
-    marginLeft: '2rem',
-  },
-  plusButton: {
-    marginLeft: '5rem',
   },
 }));
 
@@ -102,24 +86,23 @@ const KqiTableAssociatedTarget = (props: Props) => {
   };
 
   return (
-    <Paper className={classes.root}>
-      <TableContainer className={classes.container}>
-        <Grid container alignItems="center" className={classes.containerTitle}>
-          <Grid xs={10}>
-            <Text className={classes.title} variant="h6" weight="bold">
+    <Paper>
+      <TableContainer>
+        <Grid container alignItems="center" className={classes.head}>
+          <Grid xs>
+            <Text variant="h6" weight="bold">
               Associated targets
             </Text>
           </Grid>
-          <Grid xs={2}>
+          <Grid>
             <AddButton
               onClick={create}
-              className={classes.plusButton}
               textButton={'Add targert'}
               disabled={false}
             />
           </Grid>
         </Grid>
-        <Table className={classes.head} stickyHeader aria-label="sticky table">
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               <StyledTableCell>Enable</StyledTableCell>
