@@ -277,7 +277,6 @@ type AddLocationTypeInput struct {
 	MapZoomLevel             *int                            `json:"mapZoomLevel"`
 	IsSite                   *bool                           `json:"isSite"`
 	FileCategoriesType       []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
-	DocumentCategories       []*models.DocumentCategoryInput `json:"documentCategories"`
 	Properties               []*models.PropertyTypeInput     `json:"properties"`
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
 }
@@ -806,7 +805,6 @@ type EditLocationTypeInput struct {
 	MapZoomLevel       *int                            `json:"mapZoomLevel"`
 	IsSite             *bool                           `json:"isSite"`
 	FileCategoriesType []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
-	DocumentCategories []*models.DocumentCategoryInput `json:"documentCategories"`
 	Properties         []*models.PropertyTypeInput     `json:"properties"`
 }
 

@@ -23,10 +23,6 @@ import (
 
 type locationTypeResolver struct{}
 
-func (r locationTypeResolver) DocumentCategories(ctx context.Context, obj *ent.LocationType) ([]*ent.DocumentCategory, error) {
-	return obj.QueryDocumentCategory().All(ctx)
-}
-
 func (locationTypeResolver) NumberOfLocations(ctx context.Context, obj *ent.LocationType) (int, error) {
 	return obj.QueryLocations().Count(ctx)
 }

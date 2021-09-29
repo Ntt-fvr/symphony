@@ -49,11 +49,9 @@ type LocationTypeEdges struct {
 	FileCategoryType []*FileCategoryType
 	// SurveyTemplateCategories holds the value of the survey_template_categories edge.
 	SurveyTemplateCategories []*SurveyTemplateCategory
-	// DocumentCategory holds the value of the document_category edge.
-	DocumentCategory []*DocumentCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 }
 
 // LocationsOrErr returns the Locations value or an error if the edge
@@ -90,15 +88,6 @@ func (e LocationTypeEdges) SurveyTemplateCategoriesOrErr() ([]*SurveyTemplateCat
 		return e.SurveyTemplateCategories, nil
 	}
 	return nil, &NotLoadedError{edge: "survey_template_categories"}
-}
-
-// DocumentCategoryOrErr returns the DocumentCategory value or an error if the edge
-// was not loaded in eager-loading.
-func (e LocationTypeEdges) DocumentCategoryOrErr() ([]*DocumentCategory, error) {
-	if e.loadedTypes[4] {
-		return e.DocumentCategory, nil
-	}
-	return nil, &NotLoadedError{edge: "document_category"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -183,11 +172,6 @@ func (lt *LocationType) QueryFileCategoryType() *FileCategoryTypeQuery {
 // QuerySurveyTemplateCategories queries the survey_template_categories edge of the LocationType.
 func (lt *LocationType) QuerySurveyTemplateCategories() *SurveyTemplateCategoryQuery {
 	return (&LocationTypeClient{config: lt.config}).QuerySurveyTemplateCategories(lt)
-}
-
-// QueryDocumentCategory queries the document_category edge of the LocationType.
-func (lt *LocationType) QueryDocumentCategory() *DocumentCategoryQuery {
-	return (&LocationTypeClient{config: lt.config}).QueryDocumentCategory(lt)
 }
 
 // Update returns a builder for updating this LocationType.

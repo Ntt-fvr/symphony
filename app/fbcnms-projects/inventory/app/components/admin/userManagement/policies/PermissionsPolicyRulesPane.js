@@ -15,8 +15,6 @@ import * as React from 'react';
 import Card from '@symphony/design-system/components/Card/Card';
 import PermissionsPolicyInventoryCatalogRulesTab from './PermissionsPolicyInventoryCatalogRulesTab';
 import PermissionsPolicyInventoryDataRulesTab from './PermissionsPolicyInventoryDataRulesTab';
-import PermissionsPolicyInventoryDocumentRulesTab from './PermissionsPolicyInventoryDocumentRulesTab';
-
 import PermissionsPolicyWorkforceDataRulesTab from './PermissionsPolicyWorkforceDataRulesTab';
 import PermissionsPolicyWorkforceTemplatesRulesTab from './PermissionsPolicyWorkforceTemplatesRulesTab';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
