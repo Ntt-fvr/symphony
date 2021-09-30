@@ -40,8 +40,6 @@ const (
 	EdgeFileCategoryType = "file_category_type"
 	// EdgeSurveyTemplateCategories holds the string denoting the survey_template_categories edge name in mutations.
 	EdgeSurveyTemplateCategories = "survey_template_categories"
-	// EdgeDocumentCategory holds the string denoting the document_category edge name in mutations.
-	EdgeDocumentCategory = "document_category"
 
 	// Table holds the table name of the locationtype in the database.
 	Table = "location_types"
@@ -73,13 +71,6 @@ const (
 	SurveyTemplateCategoriesInverseTable = "survey_template_categories"
 	// SurveyTemplateCategoriesColumn is the table column denoting the survey_template_categories relation/edge.
 	SurveyTemplateCategoriesColumn = "location_type_survey_template_categories"
-	// DocumentCategoryTable is the table the holds the document_category relation/edge.
-	DocumentCategoryTable = "document_categories"
-	// DocumentCategoryInverseTable is the table name for the DocumentCategory entity.
-	// It exists in this package in order to avoid circular dependency with the "documentcategory" package.
-	DocumentCategoryInverseTable = "document_categories"
-	// DocumentCategoryColumn is the table column denoting the document_category relation/edge.
-	DocumentCategoryColumn = "location_type_document_category"
 )
 
 // Columns holds all SQL columns for locationtype fields.

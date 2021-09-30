@@ -112,15 +112,6 @@ type LocationPermissionRule
   locationTypeIds: [ID!]
 }
 
-type DocumentCategoryPermissionRule
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRule"
-) {
-  isAllowed: PermissionValue!
-  DocumentCategoyIds: [ID!]
-  DocumentCategoyNames: [String!]
-}
-
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -172,16 +163,6 @@ type LocationCUD
   create: LocationPermissionRule!
   update: LocationPermissionRule!
   delete: LocationPermissionRule!
-}
-
-type DocumentCategoryCUD
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
-) {
-  Read  : DocumentCategoryPermissionRule
-  Create: DocumentCategoryPermissionRule
-  Update: DocumentCategoryPermissionRule
-  Delete: DocumentCategoryPermissionRule
 }
 
 input BasicCUDInput
@@ -247,7 +228,6 @@ type InventoryPolicy
   ) {
   read: BasicPermissionRule!
   location: LocationCUD!
-  DocumentCategory: DocumentCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -490,7 +470,6 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
-  documentCategories: [DocumentCategory]!
   fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
@@ -504,7 +483,6 @@ input AddLocationTypeInput {
   mapZoomLevel: Int
   isSite: Boolean
   fileCategoriesType: [FileCategoryTypeInput!]
-  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
@@ -517,18 +495,8 @@ input EditLocationTypeInput {
   mapZoomLevel: Int
   isSite: Boolean
   fileCategoriesType: [FileCategoryTypeInput!]
-  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
-}
-
-input DocumentCategoryInput
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/exporter/models.DocumentCategoryInput"
-) {
-  id: ID
-  name: String!
-  index: Int!
 }
 
 type NetworkTopology {
@@ -1569,12 +1537,6 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
-}
-
-type DocumentCategory implements Node {
-  id: ID!
-  name: String
-  index: Int
 }
 
 input PropertyTypeInput
@@ -6716,7 +6678,6 @@ type Mutation {
   addLocationType(input: AddLocationTypeInput!): LocationType!
   editLocationType(input: EditLocationTypeInput!): LocationType!
   removeLocationType(id: ID!): ID!
-  removeDocumentCategory(id: ID!): ID!
   addEquipment(input: AddEquipmentInput!): Equipment!
   editEquipment(input: EditEquipmentInput!): Equipment!
   removeEquipment(id: ID!, workOrderId: ID): ID!

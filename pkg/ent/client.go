@@ -28,7 +28,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
-	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -140,8 +139,6 @@ type Client struct {
 	CounterFormula *CounterFormulaClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
-	// DocumentCategory is the client for interacting with the DocumentCategory builders.
-	DocumentCategory *DocumentCategoryClient
 	// Domain is the client for interacting with the Domain builders.
 	Domain *DomainClient
 	// EntryPoint is the client for interacting with the EntryPoint builders.
@@ -312,7 +309,6 @@ func (c *Client) init() {
 	c.CounterFamily = NewCounterFamilyClient(c.config)
 	c.CounterFormula = NewCounterFormulaClient(c.config)
 	c.Customer = NewCustomerClient(c.config)
-	c.DocumentCategory = NewDocumentCategoryClient(c.config)
 	c.Domain = NewDomainClient(c.config)
 	c.EntryPoint = NewEntryPointClient(c.config)
 	c.Equipment = NewEquipmentClient(c.config)
@@ -430,7 +426,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CounterFamily:               NewCounterFamilyClient(cfg),
 		CounterFormula:              NewCounterFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
-		DocumentCategory:            NewDocumentCategoryClient(cfg),
 		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
 		Equipment:                   NewEquipmentClient(cfg),
@@ -531,7 +526,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CounterFamily:               NewCounterFamilyClient(cfg),
 		CounterFormula:              NewCounterFormulaClient(cfg),
 		Customer:                    NewCustomerClient(cfg),
-		DocumentCategory:            NewDocumentCategoryClient(cfg),
 		Domain:                      NewDomainClient(cfg),
 		EntryPoint:                  NewEntryPointClient(cfg),
 		Equipment:                   NewEquipmentClient(cfg),
@@ -645,7 +639,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CounterFamily.Use(hooks...)
 	c.CounterFormula.Use(hooks...)
 	c.Customer.Use(hooks...)
-	c.DocumentCategory.Use(hooks...)
 	c.Domain.Use(hooks...)
 	c.EntryPoint.Use(hooks...)
 	c.Equipment.Use(hooks...)
@@ -2659,111 +2652,6 @@ func (c *CustomerClient) QueryServices(cu *Customer) *ServiceQuery {
 func (c *CustomerClient) Hooks() []Hook {
 	hooks := c.hooks.Customer
 	return append(hooks[:len(hooks):len(hooks)], customer.Hooks[:]...)
-}
-
-// DocumentCategoryClient is a client for the DocumentCategory schema.
-type DocumentCategoryClient struct {
-	config
-}
-
-// NewDocumentCategoryClient returns a client for the DocumentCategory from the given config.
-func NewDocumentCategoryClient(c config) *DocumentCategoryClient {
-	return &DocumentCategoryClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `documentcategory.Hooks(f(g(h())))`.
-func (c *DocumentCategoryClient) Use(hooks ...Hook) {
-	c.hooks.DocumentCategory = append(c.hooks.DocumentCategory, hooks...)
-}
-
-// Create returns a create builder for DocumentCategory.
-func (c *DocumentCategoryClient) Create() *DocumentCategoryCreate {
-	mutation := newDocumentCategoryMutation(c.config, OpCreate)
-	return &DocumentCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of DocumentCategory entities.
-func (c *DocumentCategoryClient) CreateBulk(builders ...*DocumentCategoryCreate) *DocumentCategoryCreateBulk {
-	return &DocumentCategoryCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for DocumentCategory.
-func (c *DocumentCategoryClient) Update() *DocumentCategoryUpdate {
-	mutation := newDocumentCategoryMutation(c.config, OpUpdate)
-	return &DocumentCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *DocumentCategoryClient) UpdateOne(dc *DocumentCategory) *DocumentCategoryUpdateOne {
-	mutation := newDocumentCategoryMutation(c.config, OpUpdateOne, withDocumentCategory(dc))
-	return &DocumentCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *DocumentCategoryClient) UpdateOneID(id int) *DocumentCategoryUpdateOne {
-	mutation := newDocumentCategoryMutation(c.config, OpUpdateOne, withDocumentCategoryID(id))
-	return &DocumentCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for DocumentCategory.
-func (c *DocumentCategoryClient) Delete() *DocumentCategoryDelete {
-	mutation := newDocumentCategoryMutation(c.config, OpDelete)
-	return &DocumentCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *DocumentCategoryClient) DeleteOne(dc *DocumentCategory) *DocumentCategoryDeleteOne {
-	return c.DeleteOneID(dc.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *DocumentCategoryClient) DeleteOneID(id int) *DocumentCategoryDeleteOne {
-	builder := c.Delete().Where(documentcategory.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &DocumentCategoryDeleteOne{builder}
-}
-
-// Query returns a query builder for DocumentCategory.
-func (c *DocumentCategoryClient) Query() *DocumentCategoryQuery {
-	return &DocumentCategoryQuery{config: c.config}
-}
-
-// Get returns a DocumentCategory entity by its id.
-func (c *DocumentCategoryClient) Get(ctx context.Context, id int) (*DocumentCategory, error) {
-	return c.Query().Where(documentcategory.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *DocumentCategoryClient) GetX(ctx context.Context, id int) *DocumentCategory {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryLocationType queries the location_type edge of a DocumentCategory.
-func (c *DocumentCategoryClient) QueryLocationType(dc *DocumentCategory) *LocationTypeQuery {
-	query := &LocationTypeQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := dc.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(documentcategory.Table, documentcategory.FieldID, id),
-			sqlgraph.To(locationtype.Table, locationtype.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, documentcategory.LocationTypeTable, documentcategory.LocationTypeColumn),
-		)
-		fromV = sqlgraph.Neighbors(dc.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *DocumentCategoryClient) Hooks() []Hook {
-	hooks := c.hooks.DocumentCategory
-	return append(hooks[:len(hooks):len(hooks)], documentcategory.Hooks[:]...)
 }
 
 // DomainClient is a client for the Domain schema.
@@ -7701,22 +7589,6 @@ func (c *LocationTypeClient) QuerySurveyTemplateCategories(lt *LocationType) *Su
 			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.SurveyTemplateCategoriesTable, locationtype.SurveyTemplateCategoriesColumn),
-		)
-		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryDocumentCategory queries the document_category edge of a LocationType.
-func (c *LocationTypeClient) QueryDocumentCategory(lt *LocationType) *DocumentCategoryQuery {
-	query := &DocumentCategoryQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := lt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, id),
-			sqlgraph.To(documentcategory.Table, documentcategory.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.DocumentCategoryTable, locationtype.DocumentCategoryColumn),
 		)
 		fromV = sqlgraph.Neighbors(lt.driver.Dialect(), step)
 		return fromV, nil

@@ -97,12 +97,6 @@ func (c *CustomerClient) Instantiate(cu *Customer) *Customer {
 }
 
 // Instantiate entity configuration.
-func (c *DocumentCategoryClient) Instantiate(dc *DocumentCategory) *DocumentCategory {
-	dc.config = c.config
-	return dc
-}
-
-// Instantiate entity configuration.
 func (c *DomainClient) Instantiate(d *Domain) *Domain {
 	d.config = c.config
 	return d

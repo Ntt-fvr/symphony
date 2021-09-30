@@ -43,11 +43,6 @@ export type AddEditLocationTypeCard_editingLocationType = {|
     +isMandatory: ?boolean,
     +isInstanceProperty: ?boolean,
   |}>,
-  +documentCategories: $ReadOnlyArray<?{|
-    +id: string,
-    +name: ?string,
-    +index: ?number,
-  |}>,
   +surveyTemplateCategories: ?$ReadOnlyArray<?{|
     +id: string,
     +categoryTitle: string,
@@ -230,20 +225,6 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "DocumentCategory",
-      "kind": "LinkedField",
-      "name": "documentCategories",
-      "plural": true,
-      "selections": [
-        (v0/*: any*/),
-        (v1/*: any*/),
-        (v2/*: any*/)
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
       "concreteType": "SurveyTemplateCategory",
       "kind": "LinkedField",
       "name": "surveyTemplateCategories",
@@ -307,6 +288,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '02060638e4e527bc43bc263273f4d89e';
+(node/*: any*/).hash = '6e27020b543c9913fe242a536fcf285c';
 
 module.exports = node;
