@@ -66,10 +66,11 @@ type Props = $ReadOnly<{|
   idKqi: string,
   returnFormEdit: () => void,
   dataComparatorSelect: Array<Comparator>,
+  dataTarget: any,
 |}>;
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit, idKqi, dataComparatorSelect} = props;
+  const {returnFormEdit, idKqi, dataComparatorSelect, dataTarget} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
@@ -121,6 +122,15 @@ const KqiFormCreateTarget = (props: Props) => {
     AddKqiTargetMutation(variables, response);
   }
 
+  const dataNameTarget = dataTarget?.map(item => item?.name)
+    console.log("hola soy filter dataNameTarget", dataNameTarget)
+  
+  const validationName = () => {
+    if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
+      return {hasError: true, errorText: 'Kqi name existing'};
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Grid container>
@@ -165,11 +175,14 @@ const KqiFormCreateTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField  label="Target name">
+                <FormField  
+                  {...validationName()}
+                  required
+                  label="Target name"
+                >
                   <TextInput
                     autoComplete="off"
                     name="name"
-                    
                     onChange={handleChange}
                   />
                 </FormField>

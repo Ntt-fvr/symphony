@@ -75,17 +75,16 @@ type Comparator = {
 }
 
 type Props = $ReadOnly<{|
-  nameKqi: any,
+  nameKqi: string,
   dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
   formValues: {
     item: {
-      
         id: string,
         name: string,
         impact: string,
-        period: string,
-        allowedVariation: string,
+        period: number,
+        allowedVariation: number,
         initTime: string,
         endTime: string,
         status: boolean,

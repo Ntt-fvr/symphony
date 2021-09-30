@@ -46,6 +46,7 @@ import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
 
 import {useFormInput} from './common/useFormInput';
+import type {Kqis} from "./KqiTypes";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -109,16 +110,38 @@ type KqiTemporalFrequency = {
 };
 
 type KqiTarget = {
+  item: {
+    id: string,
+    name: string,
+    impact: string,
+    period: number,
+    allowedVariation: number,
+    initTime: string,
+    endTime: string,
+    status: boolean,
+    kqi: {
+      id: string,
+    },
+    kqiComparator: {
+      id: string,
+      number: Number,
+      comparatorType: string,
+      kqiTargetFk: {
+        name: string,
+        id: string,
+      },
+      comparatorFk: {
+        id: string,
+        name: string,
+      },
+    },
+  },
+};
+
+type Comparator = {
   id: string,
   name: string,
-  impact: string,
-  period: number,
-  allowedVariation: number,
-  initTime: string,
-  endTime: string,
-  status: boolean,
-  kqi: string,
-};
+}
 
 type Props = $ReadOnly<{|
   formValues: {
@@ -145,9 +168,6 @@ type Props = $ReadOnly<{|
         id: string,
         name: string,
       },
-      kqiTarget: {
-        id: string,
-      }
     },
   },
 
@@ -156,15 +176,15 @@ type Props = $ReadOnly<{|
   dataCategories: Array<KqiCategories>,
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
   returnTableKqi: () => void,
-  dataValues: any,
-  dataComparator: any,
-  dataKqi: any
+  dataKqiTarget: Array<KqiTarget>,
+  dataComparator: Array<Comparator>,
+  dataKqi: Array<Kqis>
 |}>;
 
 const KqiFormEdit = (props: Props) => {
   const {
     dataKqi,
-    dataValues,
+    dataKqiTarget,
     formValues,
     dataComparator,
     dataPerspectives,
@@ -176,7 +196,7 @@ const KqiFormEdit = (props: Props) => {
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
   const [showEditTarget, setShowEditTarget] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
+  const [dataEdit, setDataEdit] = useState<KqiTarget>({});
 
 
   const name = useFormInput(formValues.item.name);
@@ -194,7 +214,7 @@ const KqiFormEdit = (props: Props) => {
   const kqiSource = useFormInput(formValues.item.kqiSource.id);
   const kqiTemporalFrequency = useFormInput(formValues.item.kqiTemporalFrequency.id,);
 
-  const filterKqiTargetsById = dataValues?.filter(
+  const filterKqiTargetsById = dataKqiTarget?.filter(
     kqiData => kqiData?.kqi?.id === formValues.item.id,
   );
   const dataNameKqi = dataKqi.map(item => item.name)
@@ -246,6 +266,7 @@ const KqiFormEdit = (props: Props) => {
   if (showCreateTarget) {
     return (
       <KqiFormCreateTarget
+        dataTarget={dataKqiTarget}
         idKqi={formValues.item.id}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowCreateTarget(false)}
