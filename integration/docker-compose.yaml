@@ -24,7 +24,7 @@ services:
     depends_on:
       - mysql
     healthcheck:
-      test: 'curl -If -H "Host: fb-test.localhost" localhost/healthz'
+      test: "curl -If -H \"Host: fb-test.localhost\" localhost/healthz"
       interval: "10s"
       timeout: "3s"
     restart: on-failure
