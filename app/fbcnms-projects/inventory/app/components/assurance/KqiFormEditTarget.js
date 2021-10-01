@@ -75,6 +75,7 @@ type Comparator = {
 }
 
 type Props = $ReadOnly<{|
+  dataTarget: any,
   nameKqi: string,
   dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
@@ -110,7 +111,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const KqiFormEditTarget = (props: Props) => {
-  const {returnFormEdit, formValues, dataComparatorSelect, nameKqi} = props;
+  const {returnFormEdit, formValues, dataComparatorSelect, nameKqi, dataTarget} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(formValues.item.status);
   
@@ -173,6 +174,22 @@ const KqiFormEditTarget = (props: Props) => {
     returnFormEdit()
   };
 
+  const dataNameKqi = dataTarget.map(item => item.name)
+  
+  const inputFilter = () => {
+      return (
+        dataNameKqi?.filter(
+          item => item === name.value && item !== formValues.item.name,
+        ) || []
+      );
+    };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kqi Target name existing'};
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Grid container>
@@ -226,7 +243,9 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField  label="Target name">
+                <FormField  
+                  {...validationName()}
+                  label="Target name">
                   <TextInput
                     {...name}
                     autoComplete="off"

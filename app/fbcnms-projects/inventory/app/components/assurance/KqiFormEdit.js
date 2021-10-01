@@ -282,6 +282,7 @@ const KqiFormEdit = (props: Props) => {
     return (
       <KqiFormEditTarget
         formValues={dataEdit}
+        dataTarget={dataKqiTarget}
         nameKqi={formValues.item.name}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowEditTarget(false)}

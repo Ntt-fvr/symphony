@@ -127,7 +127,7 @@ const KqiFormCreateTarget = (props: Props) => {
   
   const validationName = () => {
     if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
-      return {hasError: true, errorText: 'Kqi name existing'};
+      return {hasError: true, errorText: 'Kqi Target name existing'};
     }
   };
 
