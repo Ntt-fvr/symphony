@@ -600,6 +600,7 @@ input AddHyperlinkInput {
   url: String!
   displayName: String
   category: String
+  documentCategoryId: ID
 }
 
 input AddImageInput {
@@ -612,6 +613,7 @@ input AddImageInput {
   contentType: String!
   category: String
   annotation: String
+  documentCategoryId: ID
 }
 
 type Comment implements Node {

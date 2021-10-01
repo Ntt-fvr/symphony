@@ -1251,6 +1251,7 @@ func (r mutationResolver) createImage(ctx context.Context, input *models.AddImag
 		}()).
 		SetContentType(input.ContentType).
 		SetNillableCategory(input.Category).
+		SetNillableDocumentCategoryID(input.DocumentCategoryID).
 		SetNillableAnnotation(input.Annotation)
 	if err := entSetter(query); err != nil {
 		return nil, err
@@ -1290,7 +1291,8 @@ func (r mutationResolver) AddHyperlink(ctx context.Context, input models.AddHype
 		Create().
 		SetURL(input.URL).
 		SetNillableName(input.DisplayName).
-		SetNillableCategory(input.Category)
+		SetNillableCategory(input.Category).
+		SetNillableDocumentCategoryID(input.DocumentCategoryID)
 	switch input.EntityType {
 	case models.ImageEntityLocation:
 		query = query.SetLocationID(input.EntityID)
