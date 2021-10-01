@@ -62,6 +62,12 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
+  gridStyleLeft: {
+    paddingRight: '0.5rem'
+  },
+  gridStyleRight: {
+    paddingLeft: '0.5rem'
+  },
 option: {
     width: '111px',
     height: '36px',
@@ -254,12 +260,12 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={7}>
-                <Grid item xs={6}>
+                <Grid item xs={6} style={{paddingRight: '1.3rem'}}>
                   <Grid style={{marginBottom: "6px"}}>
                     <Text style={{fontSize: "14px"}}>Comparator</Text>
                   </Grid>
                   <Grid container>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} className={classes.gridStyleLeft}>
                       <FormField>
                         <Select
                           {...comparatorSelect}
@@ -275,7 +281,7 @@ const KqiFormEditTarget = (props: Props) => {
                         </Select>
                       </FormField>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} className={classes.gridStyleRight}>
                       <FormField>
                         <TextInput
                           {...comparatorNumber}
@@ -287,12 +293,12 @@ const KqiFormEditTarget = (props: Props) => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
                   <Grid style={{marginBottom: "6px"}}>
                     <Text style={{fontSize: "14px"}}>Warning comparator</Text>
                   </Grid>
                   <Grid container>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} className={classes.gridStyleLeft}>
                       <FormField>
                         <Select
                           {...warningComparatorSelect}
@@ -308,7 +314,7 @@ const KqiFormEditTarget = (props: Props) => {
                         </Select>
                       </FormField>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} className={classes.gridStyleRight}>
                       <FormField>
                         <TextInput
                           {...warningComparatorNumber}
@@ -333,8 +339,8 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={7}>
-                <Grid container item xs={6}>
-                  <Grid item xs={6}>
+                <Grid container item xs={6} style={{paddingRight: '1.3rem'}}>
+                  <Grid item xs={6} className={classes.gridStyleLeft}>
                     <FormField  label="Periods">
                         <TextInput
                           {...period}
@@ -344,7 +350,7 @@ const KqiFormEditTarget = (props: Props) => {
                         />
                     </FormField>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={6} className={classes.gridStyleRight}>
                     <FormField label="Allowed Variation">
                         <TextInput
                           {...allowedVariation}
@@ -355,12 +361,12 @@ const KqiFormEditTarget = (props: Props) => {
                     </FormField>
                   </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
                   <Grid style={{marginBottom: "6px"}}>
                     <Text style={{fontSize: "14px"}}>Active Hours</Text>
                   </Grid>
                   <Grid container>
-                    <Grid container item xs={6} alignItems="center">  
+                    <Grid container item xs={6} alignItems="center" className={classes.gridStyleLeft}>  
                       <Grid item xs={2}>
                         <Text variant="caption">From</Text>
                       </Grid>
@@ -370,22 +376,22 @@ const KqiFormEditTarget = (props: Props) => {
                             {...initTime}
                             autoComplete="off"
                             name="initTime"
-                            suffix={'hrs'}
+                            suffix='hrs'
                           />
                         </FormField>
                       </Grid>
                     </Grid>
-                    <Grid container item xs={6} alignItems="center">  
-                      <Grid item xs={2}>
+                    <Grid container item xs={6} alignItems="center" className={classes.gridStyleRight}>  
+                      <Grid item xs={1}>
                         <Text variant="caption">to</Text>
                       </Grid>
-                      <Grid item xs={10}>
+                      <Grid item xs={11}>
                         <FormField >
                           <TextInput
                             {...endTime}
                             autoComplete="off"
                             name="endTime"
-                            suffix={'hrs'}
+                            suffix='hrs'
                           />
                         </FormField>
                       </Grid>
