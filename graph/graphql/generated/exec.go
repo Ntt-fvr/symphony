@@ -429,6 +429,7 @@ type ComplexityRoot struct {
 		ID                   func(childComplexity int) int
 		Index                func(childComplexity int) int
 		Name                 func(childComplexity int) int
+		NumberOfDocuments    func(childComplexity int) int
 	}
 
 	DocumentCategoryCud struct {
@@ -2182,6 +2183,7 @@ type CounterFormulaResolver interface {
 	FormulaFk(ctx context.Context, obj *ent.CounterFormula) (*ent.Formula, error)
 }
 type DocumentCategoryResolver interface {
+	NumberOfDocuments(ctx context.Context, obj *ent.DocumentCategory) (int, error)
 	FilesByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.File, error)
 	HyperlinksByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.Hyperlink, error)
 }
@@ -3865,6 +3867,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DocumentCategory.Name(childComplexity), true
+
+	case "DocumentCategory.numberOfDocuments":
+		if e.complexity.DocumentCategory.NumberOfDocuments == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategory.NumberOfDocuments(childComplexity), true
 
 	case "DocumentCategoryCUD.create":
 		if e.complexity.DocumentCategoryCud.Create == nil {
@@ -14683,6 +14692,7 @@ type DocumentCategory implements Node {
   index: Int
   files: [File]!
   hyperlinks: [Hyperlink]!
+  numberOfDocuments: Int!
   filesByLocation(locationID: ID!): [File]!
   hyperlinksByLocation(locationID: ID!): [Hyperlink]!
 }
@@ -34919,6 +34929,41 @@ func (ec *executionContext) _DocumentCategory_hyperlinks(ctx context.Context, fi
 	res := resTmp.([]*ent.Hyperlink)
 	fc.Result = res
 	return ec.marshalNHyperlink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐHyperlink(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategory_numberOfDocuments(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.DocumentCategory().NumberOfDocuments(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _DocumentCategory_filesByLocation(ctx context.Context, field graphql.CollectedField, obj *ent.DocumentCategory) (ret graphql.Marshaler) {
@@ -91431,6 +91476,20 @@ func (ec *executionContext) _DocumentCategory(ctx context.Context, sel ast.Selec
 					}
 				}()
 				res = ec._DocumentCategory_hyperlinks(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "numberOfDocuments":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._DocumentCategory_numberOfDocuments(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

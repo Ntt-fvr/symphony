@@ -577,6 +577,7 @@ export default withStyles(styles)(
               id
               name
               index
+              numberOfDocuments
             }
             surveyTemplateCategories {
               id

@@ -15,6 +15,18 @@ import (
 
 type documentCategoryResolver struct{}
 
+func (d documentCategoryResolver) NumberOfDocuments(ctx context.Context, obj *ent.DocumentCategory) (int, error) {
+	filesCount, err := obj.QueryFiles().Count(ctx)
+	if err != nil {
+		return -1, err
+	}
+	hyperlinksCount, err := obj.QueryHyperlinks().Count(ctx)
+	if err != nil {
+		return -1, err
+	}
+	return filesCount + hyperlinksCount, nil
+}
+
 func (d documentCategoryResolver) FilesByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.File, error) {
 	return obj.QueryFiles().Where(file.HasLocationWith(location.ID(locationID))).All(ctx)
 }
@@ -22,6 +34,5 @@ func (d documentCategoryResolver) FilesByLocation(ctx context.Context, obj *ent.
 func (d documentCategoryResolver) HyperlinksByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.Hyperlink, error) {
 	return obj.QueryHyperlinks().Where(hyperlink.HasLocationWith(location.ID(locationID))).All(ctx)
 }
-
 
 

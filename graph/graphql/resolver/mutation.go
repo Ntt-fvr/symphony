@@ -657,7 +657,9 @@ func (r mutationResolver) AddLocationType(
 	}, input.Properties...); err != nil {
 		return nil, err
 	}
-	if err := r.AddDocumentCategories(ctx, typ.ID, input.DocumentCategories...); err != nil {
+	if err := r.AddDocumentCategories(ctx, func(ptc *ent.DocumentCategoryCreate) {
+		ptc.SetLocationTypeID(typ.ID)
+	}, input.DocumentCategories...); err != nil {
 		return nil, err
 	}
 	if _, err := r.AddSurveyTemplateCategories(ctx, typ.ID, input.SurveyTemplateCategories...); err != nil {
@@ -667,7 +669,7 @@ func (r mutationResolver) AddLocationType(
 }
 
 func (r mutationResolver) AddDocumentCategories(
-	ctx context.Context, locationTypeID int, inputs ...*pkgmodels.DocumentCategoryInput,
+	ctx context.Context, parentSetter func(ptc *ent.DocumentCategoryCreate), inputs ...*pkgmodels.DocumentCategoryInput,
 ) error {
 	var (
 		client   = r.ClientFrom(ctx).DocumentCategory
@@ -676,8 +678,8 @@ func (r mutationResolver) AddDocumentCategories(
 	for i, input := range inputs {
 		builders[i] = client.Create().
 			SetName(input.Name).
-			SetIndex(input.Index).
-			SetLocationTypeID(locationTypeID)
+			SetIndex(input.Index)
+		parentSetter(builders[i])
 	}
 	if _, err := client.CreateBulk(builders...).Save(ctx); err != nil {
 		r.logger.For(ctx).
@@ -2592,7 +2594,16 @@ func (r mutationResolver) EditLocationType(
 	}
 
 	for _, input := range input.DocumentCategories {
-		if err := r.updateDocumentCategory(ctx, typ.ID, input); err != nil {
+		if input.ID == nil {
+			if err := r.AddDocumentCategories(ctx, func(ptc *ent.DocumentCategoryCreate) {
+				ptc.SetLocationType(typ)
+			}, input); err != nil {
+				if ent.IsConstraintError(err) {
+					return nil, gqlerror.Errorf("There's already a saved document category with that name. Please choose a different name.")
+				}
+				return nil, errors.Wrap(err, "creating Category Document: "+input.Name)
+			}
+		} else if err := r.updateDocumentCategory(ctx, input); err != nil {
 			return nil, err
 		}
 	}
@@ -3031,16 +3042,8 @@ func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.P
 	return nil
 }
 
-func (r mutationResolver) updateDocumentCategory(ctx context.Context, locationTypeID int, input *pkgmodels.DocumentCategoryInput) error {
-	if input.ID == nil {
-		dci := []*pkgmodels.DocumentCategoryInput{input}
-		if err := r.AddDocumentCategories(ctx, locationTypeID, dci...); err != nil {
-			if ent.IsConstraintError(err) {
-				return gqlerror.Errorf("There's already a saved document category with that name. Please choose a different name.")
-			}
-			return errors.Wrap(err, "creating Category Document: "+input.Name)
-		}
-	} else if err := r.ClientFrom(ctx).DocumentCategory.
+func (r mutationResolver) updateDocumentCategory(ctx context.Context, input *pkgmodels.DocumentCategoryInput) error {
+	if err := r.ClientFrom(ctx).DocumentCategory.
 		UpdateOneID(*input.ID).
 		SetName(input.Name).
 		SetIndex(input.Index).

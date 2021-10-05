@@ -182,6 +182,29 @@ func TestAddLocationTypeWithSurveyTemplate(t *testing.T) {
 	require.Equal(t, questions[0].QuestionDescription, question.QuestionDescription)
 }
 
+func TestAddLocationTypeWithDocCategory(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	dc1 := pkgmodels.DocumentCategoryInput{
+		Name:  "dc_name_1",
+		Index: 0,
+	}
+	dc2 := pkgmodels.DocumentCategoryInput{
+		Name:  "dc_name_2",
+		Index: 1,
+	}
+
+	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
+		Name:             	"example_type_a",
+		DocumentCategories: []*pkgmodels.DocumentCategoryInput{&dc1, &dc2},
+	})
+	require.NoError(t, err)
+	require.Equal(t, locType.Name, "example_type_a")
+}
+
 func TestAddLocationTypesSameName(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()

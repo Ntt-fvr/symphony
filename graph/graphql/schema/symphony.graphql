@@ -1608,6 +1608,7 @@ type DocumentCategory implements Node {
   index: Int
   files: [File]!
   hyperlinks: [Hyperlink]!
+  numberOfDocuments: Int!
   filesByLocation(locationID: ID!): [File]!
   hyperlinksByLocation(locationID: ID!): [Hyperlink]!
 }
