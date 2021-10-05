@@ -152,7 +152,6 @@ const KpiTypes = () => {
   const [formulaForm, setFormulaForm] = useState<FormulaForm>({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [formulaEditForm, setFormulaEditForm] = useState<any>({});
-  // const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {

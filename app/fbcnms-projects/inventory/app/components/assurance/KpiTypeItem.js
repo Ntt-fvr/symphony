@@ -274,6 +274,7 @@ const KpiTypeItem = (props: Props) => {
       </Accordion>
       {dialogOpen && (
         <DialogConfirmDelete
+          name={'kpi'}
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
           deleteItem={deleteItem}

@@ -20,6 +20,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+type Props = $ReadOnly<{|
+  name: string,
+|}>;
+
 export const Warning = () => {
   const classes = useStyles();
   return (
@@ -32,39 +36,39 @@ export const Warning = () => {
   );
 };
 
-export const WarningKpi = () => {
+export const Warnings = (props: Props) => {
   const classes = useStyles();
+  const {name} = props;
+
   return (
-    <Alert className={classes.root} variant="outlined" severity="warning">
-      <Typography>Warning</Typography>
-      <Typography>
-        You are deleting a KPI with Formulas attached. Are you sure you want to
-        proceed?
-      </Typography>
-    </Alert>
-  );
-};
-export const WarningThreshold = () => {
-  const classes = useStyles();
-  return (
-    <Alert className={classes.root} variant="outlined" severity="warning">
-      <Typography>Warning</Typography>
-      <Typography>
-        You are deleting a Threshold with Rules attached. Are you sure you want
-        to proceed?
-      </Typography>
-    </Alert>
-  );
-};
-export const WarningKqi = () => {
-  const classes = useStyles();
-  return (
-    <Alert className={classes.root} variant="outlined" severity="warning">
-      <Typography>Warning</Typography>
-      <Typography>
-        You are deleting a KQI with Targets attached. Are you sure you want to
-        proceed?
-      </Typography>
-    </Alert>
+    <>
+      {name.toLocaleUpperCase() === 'KPI' && (
+        <Alert className={classes.root} variant="outlined" severity="warning">
+          <Typography>Warning</Typography>
+          <Typography>
+            You are deleting a {name.toLocaleUpperCase()} with Formulas
+            attached. Are you sure you want to proceed?
+          </Typography>
+        </Alert>
+      )}
+      {name.toLocaleUpperCase() === 'THRESHOLD' && (
+        <Alert className={classes.root} variant="outlined" severity="warning">
+          <Typography>Warning</Typography>
+          <Typography>
+            You are deleting a {name.toLocaleUpperCase()} with Rules attached.
+            Are you sure you want to proceed?
+          </Typography>
+        </Alert>
+      )}
+      {name.toLocaleUpperCase() === 'KQI' && (
+        <Alert className={classes.root} variant="outlined" severity="warning">
+          <Typography>Warning</Typography>
+          <Typography>
+            You are deleting a {name.toLocaleUpperCase()} with Targets attached.
+            Are you sure you want to proceed?
+          </Typography>
+        </Alert>
+      )}
+    </>
   );
 };

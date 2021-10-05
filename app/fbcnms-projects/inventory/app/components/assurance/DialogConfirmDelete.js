@@ -15,7 +15,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
-import {WarningKpi} from './common/Warnings';
+import {Warnings} from './common/Warnings';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -53,12 +53,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
+  name: string,
   open?: boolean,
   onClose?: () => void,
 |}>;
 
 const DialogConfirmDelete = (props: Props) => {
-  const {onClose, deleteItem} = props;
+  const {onClose, deleteItem, name} = props;
 
   const classes = useStyles();
   return (
@@ -74,7 +75,7 @@ const DialogConfirmDelete = (props: Props) => {
         </Button>
       </DialogActions>
       <DialogTitle className={classes.dialogTitle}>
-        <WarningKpi />
+        <Warnings name={name} />
       </DialogTitle>
       <DialogActions className={classes.dialogActions}>
         <Button

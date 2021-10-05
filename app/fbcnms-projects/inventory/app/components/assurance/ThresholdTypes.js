@@ -224,7 +224,7 @@ const ThresholdTypes = () => {
               {dataThreshold.thresholds?.edges.map((item, index) => (
                 <ThresholdTypeItem
                   key={index}
-                  handleRemove={() => handleRemove(item.node?.id)}
+                  deleteItem={() => handleRemove(item.node?.id)}
                   edit={() => showEditThresholdItemForm({item})}
                   addRule={() => showAddRuleItemForm({item})}
                   editRule={() => showEditRuleItemForm({item})}
