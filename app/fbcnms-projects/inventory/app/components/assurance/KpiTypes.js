@@ -17,6 +17,7 @@ import {graphql} from 'react-relay';
 // COMPONENTS //
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+// import DialogConfirmDelete from './DialogConfirmDelete';
 import KpiTypeItem from './KpiTypeItem';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';
@@ -151,6 +152,7 @@ const KpiTypes = () => {
   const [formulaForm, setFormulaForm] = useState<FormulaForm>({});
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [formulaEditForm, setFormulaEditForm] = useState<any>({});
+  // const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
@@ -220,7 +222,7 @@ const KpiTypes = () => {
               <KpiTypeItem
                 key={index}
                 threshold={dataKpis.thresholds?.edges}
-                onChange={() => handleRemove(item.node.id)}
+                deleteItem={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
                 handleFormulaClick={handleFormulaClick}
                 parentCallback={handleCallback}

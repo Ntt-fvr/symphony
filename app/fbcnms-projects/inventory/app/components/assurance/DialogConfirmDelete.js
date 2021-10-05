@@ -11,15 +11,11 @@
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Grid from '@material-ui/core/Grid';
 import React from 'react';
-import Text from '@symphony/design-system/components/Text';
 
 import CloseIcon from '@material-ui/icons/Close';
-import DateTimeFormat from '../../common/DateTimeFormat.js';
-import {Warning} from './common/Warnings';
+import {WarningKpi} from './common/Warnings';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -57,18 +53,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  open: boolean,
-  onClose: () => void,
-  onAlarmSelected: () => void,
-  onAlarmSelectedData: {
-    name: string,
-    beginTime: string,
-    endTime: string,
-  },
+  open?: boolean,
+  onClose?: () => void,
 |}>;
 
-const AlarmFilteringAddDialog = (props: Props) => {
-  const {onClose, onAlarmSelected, onAlarmSelectedData} = props;
+const DialogConfirmDelete = (props: Props) => {
+  const {onClose, deleteItem} = props;
+
   const classes = useStyles();
   return (
     <Dialog
@@ -83,53 +74,29 @@ const AlarmFilteringAddDialog = (props: Props) => {
         </Button>
       </DialogActions>
       <DialogTitle className={classes.dialogTitle}>
-        <Warning />
+        <WarningKpi />
       </DialogTitle>
-      <DialogContent className={classes.dialogContent}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Text weight="bold">
-              An alarm filter will be applied on the resource...
-            </Text>
-          </Grid>
-          <Grid item xs={12}>
-            <Text> {onAlarmSelectedData.name} </Text>
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} className={classes.time}>
-          <Grid item xs={12}>
-            <Text>During the period:</Text>
-          </Grid>
-          <Grid item xs={6}>
-            <Text weight="bold">
-              Start: {DateTimeFormat.dateTime(onAlarmSelectedData.beginTime)}
-            </Text>
-          </Grid>
-          <Grid item xs={6}>
-            <Text weight="bold">
-              End: {DateTimeFormat.dateTime(onAlarmSelectedData.endTime)}{' '}
-            </Text>
-          </Grid>
-        </Grid>
-      </DialogContent>
       <DialogActions className={classes.dialogActions}>
         <Button
           className={classes.option}
           variant="outlined"
           color="primary"
           onClick={onClose}>
-          Edit
+          Cancel
         </Button>
         <Button
-          onClick={() => onAlarmSelected()}
+          onClick={() => {
+            onClose();
+            deleteItem();
+          }}
           className={classes.option}
           variant="contained"
           color="primary">
-          Save
+          Delete
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AlarmFilteringAddDialog;
+export default DialogConfirmDelete;
