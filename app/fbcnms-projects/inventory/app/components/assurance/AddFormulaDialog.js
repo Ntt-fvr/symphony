@@ -229,12 +229,7 @@ const AddFormulaDialog = (props: Props) => {
           <Grid item xs={7}>
             <Editor
               resolver={{
-                // Card,
-                Button,
                 Text,
-                // Container,
-                // CardTop,
-                // CardBottom,
               }}>
               <Frame>
                 <Element
@@ -242,20 +237,9 @@ const AddFormulaDialog = (props: Props) => {
                   padding={5}
                   background="#eeeeee"
                   data-cy="root-container">
-                  {/* <Card data-cy="frame-card" /> */}
-                  <Button text="Click me" size="small" data-cy="frame-button" />
-                  <Text fontSize={20} text="Hi world!" data-cy="frame-text" />
-                  <Element
-                    canvas
-                    padding={6}
-                    background="#999999"
-                    data-cy="frame-container">
-                    <Text
-                      size="small"
-                      text="It's me again!"
-                      data-cy="frame-text"
-                    />
-                  </Element>
+                  <Text variant="body2" weight="regular">
+                    ()
+                  </Text>
                 </Element>
               </Frame>
             </Editor>

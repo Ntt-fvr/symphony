@@ -187,7 +187,13 @@ export default function AddFormulaItemForm(props: Props) {
           onClick={() => {
             handleCallback();
             handleClick();
-          }}>
+          }}
+          disabled={
+            !(
+              Object.values(formula).length === 4 &&
+              !Object.values(formula).some(item => item === '')
+            )
+          }>
           Build formula
         </Button>
       </FormField>
