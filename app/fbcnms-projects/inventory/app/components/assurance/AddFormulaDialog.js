@@ -22,9 +22,20 @@ import type {AddFormulaMutationVariables} from '../../mutations/__generated__/Ad
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {makeStyles} from '@material-ui/styles';
+import Switch from '@symphony/design-system/components/switch/Switch';
 
+import Chip from '@material-ui/core/Chip';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import SearchIcon from '@material-ui/icons/Search';
+import Table from '@material-ui/core/Table';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+import symphony from '@symphony/design-system/theme/symphony';
+import {Editor, Element, Frame} from '@craftjs/core';
+import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
@@ -33,11 +44,10 @@ const useStyles = makeStyles(() => ({
     fontsize: '10px',
   },
   dialogTitle: {
-    padding: '24px',
-    paddingBottom: '16px',
+    padding: '0 24px',
   },
   dialogContent: {
-    padding: '2rem',
+    // padding: '2rem',
     height: '250px',
   },
   dialogActions: {
@@ -56,6 +66,35 @@ const useStyles = makeStyles(() => ({
   option: {
     width: '150px',
     height: '40px',
+  },
+  th: {
+    border: 'none',
+    'padding-left': 0,
+    lineHeight: 'normal',
+  },
+  thfirst: {
+    width: '20%',
+    border: 'none',
+    lineHeight: 'normal',
+    'padding-left': 0,
+  },
+  textField: {
+    width: '70%',
+    '& .MuiOutlinedInput-root': {
+      color: symphony.palette.D300,
+      height: '26px',
+      '& .Mui-focused.MuiOutlinedInput-notchedOutline': {
+        border: '2px solid black',
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderRadius: '4px',
+        borderWidth: '2px',
+        borderColor: symphony.palette.D300,
+      },
+      '& .MuiOutlinedInput-notchedOutline:hover': {
+        borderColor: symphony.palette.D100,
+      },
+    },
   },
 }));
 
@@ -112,19 +151,115 @@ const AddFormulaDialog = (props: Props) => {
         </Button>
       </DialogActions>
       <DialogTitle className={classes.dialogTitle}>
-        <Text variant="h4">Build Formula</Text>
+        <Grid container spacing={2}>
+          <Grid item xs={5}>
+            <Text variant="h6">Build Formula</Text>
+          </Grid>
+          <Grid item xs={7}>
+            <TextField
+              placeholder="Add counter"
+              color="primary"
+              type="search"
+              className={classes.textField}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
       </DialogTitle>
       <DialogContent className={classes.dialogContent}>
         <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <Text weight="bold">Technology: </Text>
-            <Text>{dataFormula.data.technology}</Text>
-            <br />
-            <Text weight="bold">KPI: </Text>
-            <Text>{dataFormula.data.kpi}</Text>
+          <Grid item xs={5}>
+            <Text variant="body2" weight="regular">
+              Press the counter to add it to the expression. You can use your
+              keyboard or the buttons on the screen to add math symbols and
+              numbers.
+            </Text>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell className={classes.thfirst}>
+                    <Text variant="subtitle4" color="lightBlue">
+                      Mandatory counter
+                    </Text>
+                  </TableCell>
+                  <TableCell className={classes.th}>
+                    <Text variant="subtitle4" color="lightBlue">
+                      Name counter
+                    </Text>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+            </Table>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Switch
+                  className={classes.readRule}
+                  checked={true}
+                  disabled={false}
+                />
+                <Switch
+                  className={classes.readRule}
+                  checked={false}
+                  disabled={false}
+                />
+              </Grid>
+              <Grid item xs={10}>
+                <Chip
+                  key={1}
+                  label={'pmRrcConnEstabSucc'}
+                  className={classes.chip}
+                  color="primary"
+                />
+                <Chip
+                  key={2}
+                  label={'pmErabRelAbnormalMmeActQci1'}
+                  className={classes.chip}
+                  color="secondary"
+                />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={9}>
-            <FormField label="Formula">
+          <Grid item xs={7}>
+            <Editor
+              resolver={{
+                // Card,
+                Button,
+                Text,
+                // Container,
+                // CardTop,
+                // CardBottom,
+              }}>
+              <Frame>
+                <Element
+                  canvas
+                  padding={5}
+                  background="#eeeeee"
+                  data-cy="root-container">
+                  {/* <Card data-cy="frame-card" /> */}
+                  <Button text="Click me" size="small" data-cy="frame-button" />
+                  <Text fontSize={20} text="Hi world!" data-cy="frame-text" />
+                  <Element
+                    canvas
+                    padding={6}
+                    background="#999999"
+                    data-cy="frame-container">
+                    <Text
+                      size="small"
+                      text="It's me again!"
+                      data-cy="frame-text"
+                    />
+                  </Element>
+                </Element>
+              </Frame>
+            </Editor>
+            <FormField>
               <TextInput
                 autoComplete="off"
                 name="formula"
