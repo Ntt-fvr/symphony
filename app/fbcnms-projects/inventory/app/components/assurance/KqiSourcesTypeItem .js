@@ -100,10 +100,12 @@ const KqiSourcesTypeItem = (props: Props) => {
           <Grid
             xs={1}
             className={classNames(classes.inside, classes.contIconDelete)}>
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={handleRemove}
-            />
+            <Button variant="text">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={handleRemove}
+              />
+            </Button>
           </Grid>
           <Grid
             xs={1}
