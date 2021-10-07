@@ -25,6 +25,8 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
+import classNames from 'classnames';
+
 const useStyles = makeStyles(theme => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
@@ -44,6 +46,7 @@ const useStyles = makeStyles(theme => ({
   },
   bold: {
     fontWeight: 'bold',
+    paddingLeft: '1rem',
   },
   details: {
     marginLeft: '-16px',
@@ -55,14 +58,12 @@ const useStyles = makeStyles(theme => ({
   blue: {
     color: '#3984FF',
     fontWeight: 'bold',
+    paddingLeft: '0.5rem',
   },
-  editIcon: {
+  action: {
     flexGrow: '1',
-    margin: '10px',
   },
   deleteIcon: {
-    flexGrow: '1',
-    margin: '10px',
     color: DARK.D300,
   },
   button: {
@@ -105,25 +106,29 @@ export default function CounterTypeItem(props: Props) {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={4} container justify="flex-start" alignItems="center">
+          <Grid xs={3} container justify="flex-start" alignItems="center">
             <Text className={classes.bold}>{name}</Text>
           </Grid>
 
-          <Grid xs={2} container alignItems="center">
+          <Grid xs={4} container alignItems="center">
             <Text className={classes.blue}>{networkManagerSystem}</Text>
           </Grid>
 
-          <Grid xs={5} container justify="center" alignItems="center">
+          <Grid xs={3} container justify="flex-start" alignItems="center">
             <Text className={classes.bold}>{vendorFk.name}</Text>
           </Grid>
 
-          <Grid xs={1} container justify="flex-end" alignItems="center">
+          <Grid
+            xs={2}
+            container
+            justifyContent="space-evenly"
+            alignItems="center">
             <DeleteOutlinedIcon
-              className={classes.deleteIcon}
+              className={classNames(classes.action, classes.deleteIcon)}
               onClick={handleRemove}
             />
             <IconButton
-              className={classes.editIcon}
+              className={classes.action}
               icon={EditIcon}
               onClick={edit}
             />

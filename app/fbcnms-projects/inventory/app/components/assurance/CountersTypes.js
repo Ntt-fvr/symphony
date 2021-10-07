@@ -32,9 +32,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: '1',
     margin: '40px',
   },
-  paper: {
-    padding: theme.spacing(2),
-  },
+
   listCarCounter: {
     listStyle: 'none',
   },
@@ -130,7 +128,7 @@ const CountersTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12}>
           <ConfigureTitle
             title={fbt('Counters Catalog', 'Counters Title')}
             subtitle={fbt(
@@ -139,7 +137,7 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} lg={9}>
+        <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
           <TitleTextCardsCounter />
           <List disablePadding>
             {items.counters?.edges.map(item => (
@@ -152,7 +150,7 @@ const CountersTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+        <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
           <AddCounterItemForm counterNames={items.counters?.edges} />
         </Grid>
       </Grid>

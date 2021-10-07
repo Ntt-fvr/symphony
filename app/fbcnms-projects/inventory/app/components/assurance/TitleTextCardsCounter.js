@@ -15,7 +15,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 9px 16px',
+    padding: '0  3rem 1rem 0.5rem',
   },
   title: {
     color: '#3984FF',
@@ -24,17 +24,12 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'center',
   },
-  network: {
-    paddingRight: '4rem',
+  titleGeneral: {
+    justifyContent: 'flex-start',
+    paddingLeft: '1rem',
   },
-  vendor: {
-    paddingRight: '3rem',
-  },
-  delete: {
-    justifyContent: 'flex-end',
-  },
-  edit: {
-    paddingLeft: '25px',
+  accion: {
+    justifyContent: 'center',
   },
 }));
 
@@ -43,7 +38,13 @@ function TitleTextCardsCounter() {
   return (
     <Grid container className={classes.root}>
       <Grid xs={3}>
-        <Text className={classes.title} variant="subtitle2">
+        <Text
+          className={classNames(
+            classes.title,
+            classes.globalCenter,
+            classes.titleGeneral,
+          )}
+          variant="subtitle2">
           Counter name
         </Text>
       </Grid>
@@ -52,7 +53,7 @@ function TitleTextCardsCounter() {
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.network,
+            classes.titleGeneral,
           )}
           variant="subtitle2">
           Network Manager System
@@ -63,7 +64,7 @@ function TitleTextCardsCounter() {
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.vendor,
+            classes.titleGeneral,
           )}
           variant="subtitle2">
           Vendor name
@@ -74,7 +75,7 @@ function TitleTextCardsCounter() {
           className={classNames(
             classes.title,
             classes.globalCenter,
-            classes.delete,
+            classes.accion,
           )}
           variant="subtitle2">
           Delete
@@ -82,7 +83,11 @@ function TitleTextCardsCounter() {
       </Grid>
       <Grid xs={1}>
         <Text
-          className={classNames(classes.title, classes.edit)}
+          className={classNames(
+            classes.title,
+            classes.globalCenter,
+            classes.accion,
+          )}
           variant="subtitle2">
           Edit
         </Text>

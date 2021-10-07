@@ -23,8 +23,6 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '400px',
-    height: '611px',
     padding: theme.spacing(0),
   },
   header: {
