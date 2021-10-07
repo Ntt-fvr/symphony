@@ -22,6 +22,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import DialogConfirmDelete from './DialogConfirmDelete';
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
@@ -153,11 +154,12 @@ export default function ThresholdTypeItem(props: Props) {
     addRule,
     editRule,
     rule,
-    handleRemove,
+    deleteItem,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleClick = () => {
     const variables: EditThresholdMutationVariables = {
@@ -215,7 +217,7 @@ export default function ThresholdTypeItem(props: Props) {
           <Grid xs={1} container justify="flex-end" alignItems="center">
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
-              onClick={handleRemove}
+              onClick={() => setDialogOpen(true)}
             />
             <IconButton
               className={classes.editIcon}
@@ -248,6 +250,14 @@ export default function ThresholdTypeItem(props: Props) {
           </Grid>
         </AccordionDetails>
       </Accordion>
+      {dialogOpen && (
+        <DialogConfirmDelete
+          name={'threshold'}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          deleteItem={deleteItem}
+        />
+      )}
     </div>
   );
 }

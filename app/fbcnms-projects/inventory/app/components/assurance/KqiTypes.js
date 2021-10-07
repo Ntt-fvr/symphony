@@ -164,39 +164,37 @@ const KqiQuery = graphql`
   }
 `;
 
-type Kqis = {
+export type Kqis = {
   item: {
-    node: {
+    id: string,
+    name: string,
+    description: string,
+    formula: string,
+    startDateTime: string,
+    endDateTime: string,
+    kqiCategory: {
       id: string,
       name: string,
-      description: string,
-      formula: string,
-      startDateTime: string,
-      endDateTime: string,
-      kqiCategory: {
-        id: string,
-        name: string,
-      },
-      kqiPerspective: {
-        id: string,
-        name: string,
-      },
-      kqiSource: {
-        id: string,
-        name: string,
-      },
-      kqiTemporalFrequency: {
-        id: string,
-        name: string,
-      },
     },
-  },
+    kqiPerspective: {
+      id: string,
+      name: string,
+    },
+    kqiSource: {
+      id: string,
+      name: string,
+    },
+    kqiTemporalFrequency: {
+      id: string,
+      name: string,
+    },
+  }
 };
 
 const KqiTypes = () => {
   const classes = useStyles();
   const [dataKqi, setDataKqi] = useState({});
-  const [dataEdit, setDataEdit] = useState({});
+  const [dataEdit, setDataEdit] = useState<Kqis>({});
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
@@ -212,11 +210,12 @@ const KqiTypes = () => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
-  }, []);
+  }, [dataKqi]);
 
   const handleClick = () => {
     setShowFormCreate(true);
   };
+  
   const formEdit = (kqi: Kqis) => {
     setShowFormEdit(true);
     setDataEdit(kqi);
@@ -244,7 +243,7 @@ const KqiTypes = () => {
         dataSources={dataResponseSources}
         dataCategories={dataResponseCategories}
         dataTemporalFrequencies={dataResponseTemporalFrequencies}
-        dataValues={dataResponseKqiTargets}
+        dataKqiTarget={dataResponseKqiTargets}
         dataComparator={dataResponseComparators}
         returnTableKqi={() => setShowFormEdit(false)}
       />

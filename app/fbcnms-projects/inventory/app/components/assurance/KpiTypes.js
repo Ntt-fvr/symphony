@@ -17,6 +17,7 @@ import {graphql} from 'react-relay';
 // COMPONENTS //
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+// import DialogConfirmDelete from './DialogConfirmDelete';
 import KpiTypeItem from './KpiTypeItem';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';
@@ -71,6 +72,10 @@ const KpiQuery = graphql`
               id
               name
             }
+            networkTypeFk {
+              id
+              name
+            }
           }
           kpiCategoryFK {
             id
@@ -89,6 +94,14 @@ const KpiQuery = graphql`
         }
       }
     }
+    networkTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -99,6 +112,9 @@ type Formula = {
   techFk: {
     name: string,
   },
+  networkTypeFk: {
+    name: string,
+  },
 };
 
 type FormulaForm = {
@@ -106,6 +122,7 @@ type FormulaForm = {
     kpi: string,
     vendors: string,
     technology: string,
+    networkTypes: string,
   },
 };
 
@@ -204,7 +221,7 @@ const KpiTypes = () => {
               <KpiTypeItem
                 key={index}
                 threshold={dataKpis.thresholds?.edges}
-                onChange={() => handleRemove(item.node.id)}
+                deleteItem={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
                 handleFormulaClick={handleFormulaClick}
                 parentCallback={handleCallback}

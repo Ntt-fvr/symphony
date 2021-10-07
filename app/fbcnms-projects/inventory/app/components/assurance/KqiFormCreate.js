@@ -42,7 +42,13 @@ const useStyles = makeStyles(() => ({
     boxSizing: 'border-box',
     minHeight: '36px',
     borderRadius: '4px',
-    fontSize: '14px',
+    fontSize: '14px',  
+  },
+  gridStyleLeft: {
+    paddingRight: '0.5rem'
+  },
+  gridStyleRight: {
+    paddingLeft: '0.5rem'
   },
   option: {
     width: '111px',
@@ -216,7 +222,7 @@ const KqiFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid item xs={6}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
                   <FormField label="Category">
                     <Select
                       className={classes.select}
@@ -231,7 +237,7 @@ const KqiFormCreate = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} className={classes.gridStyleRight}>
                   <FormField label="Perspective">
                     <Select
                       className={classes.select}
@@ -263,8 +269,8 @@ const KqiFormCreate = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6} >
-                <Grid item xs={6}>
+              <Grid container item xs={6}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
                   <FormField label="Start">
                     <TextField
                       name="startDateTime"
@@ -276,7 +282,7 @@ const KqiFormCreate = (props: Props) => {
                     />
                   </FormField>
                 </Grid>
-                <Grid item xs={6} >
+                <Grid item xs={6} className={classes.gridStyleRight}>
                   <FormField label="End">
                     <TextField
                       name="endDateTime"
@@ -288,7 +294,7 @@ const KqiFormCreate = (props: Props) => {
                     />
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
                   <FormField label="Source">
                     <Select
                       className={classes.select}
@@ -303,7 +309,7 @@ const KqiFormCreate = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} className={classes.gridStyleRight}>
                   <Grid style={{marginBottom: "6px"}}>
                     <Text style={{fontSize: "14px"}}>Temporal frequency</Text>
                   </Grid>

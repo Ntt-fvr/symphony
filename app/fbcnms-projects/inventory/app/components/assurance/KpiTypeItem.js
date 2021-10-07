@@ -32,6 +32,8 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
+import DialogConfirmDelete from './DialogConfirmDelete';
+
 const useStyles = makeStyles(theme => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
@@ -97,6 +99,10 @@ type Formula = {
     id: string,
     name: string,
   },
+  networkTypeFk: {
+    id: string,
+    name: string,
+  },
 };
 
 type Props = $ReadOnly<{|
@@ -134,7 +140,7 @@ const KpiTypeItem = (props: Props) => {
     formulaFk,
     threshold,
     edit,
-    onChange,
+    deleteItem,
     handleFormulaClick,
     parentCallback,
     handleEditFormulaClick,
@@ -143,6 +149,7 @@ const KpiTypeItem = (props: Props) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(status);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const thresholdFromKpi = threshold.find(({node}) => node.kpi?.name === name);
 
@@ -164,6 +171,7 @@ const KpiTypeItem = (props: Props) => {
     parentCallback({
       kpi: id,
       technology: formulaFk[0]?.techFk?.id,
+      networkTypes: formulaFk[0]?.networkTypeFk?.id,
     });
   }
 
@@ -220,7 +228,7 @@ const KpiTypeItem = (props: Props) => {
           <Grid xs={1} container justify="flex-end" alignItems="center">
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
-              onClick={onChange}
+              onClick={() => setDialogOpen(true)}
             />
             <IconButton
               className={classes.editIcon}
@@ -264,6 +272,14 @@ const KpiTypeItem = (props: Props) => {
           </Grid>
         </AccordionDetails>
       </Accordion>
+      {dialogOpen && (
+        <DialogConfirmDelete
+          name={'kpi'}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          deleteItem={deleteItem}
+        />
+      )}
     </div>
   );
 };

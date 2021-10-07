@@ -31,12 +31,15 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '40px',
+    padding: '40px',
+  },
+  header: {
+    marginBottom: '1rem'
   },
   select: {
     '& .MuiSelect-select': {
-      padding: '0 0 0 9px',
+      padding: '9px 0 0 10px',
+      width: '100%'
     },
     border: '1px solid #D2DAE7',
     height: '36px',
@@ -47,75 +50,16 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
-  selectWarningComparator: {
-    width: '25%',
-    margin: '0 2rem 0 0',
+  gridStyleLeft: {
+    paddingRight: '0.5rem'
   },
-  formField: {
-    margin: '0 1rem 1rem 1rem',
-  },
-  formFieldHours: {
-    margin: '0 1rem 1rem 10rem',
-  },
-  warningComparator: {
-    width: 'auto',
-    height: 'auto',
-    display: 'flex',
-    margin: '0 1rem 1rem 0',
-  },
-  contPeriods: {
-    width: '97px',
-  },
-  periods: {
-    width: '100%',
-    '& .clickable': {
-      width: '25px',
-    },
-  },
-  contHours: {
-    width: '60px',
-  },
-  hours: {
-    display: 'flex',
-    alignItems: 'center',
-    margin: '0 1rem 1rem 0',
-  },
-  activeHours: {
-    width: '100%',
-    '& .clickable': {
-      width: '25px',
-    },
-    '& .inputContainer': {
-      padding: '0px 7px',
-    },
-  },
-  from: {
-    margin: '0 0.5rem 0 0',
-  },
-  to: {
-    margin: '0 0.5rem 0 0.5rem',
-  },
-  textInput: {
-    minHeight: '36px',
-  },
-  textIndicator: {
-    width: '25%',
+  gridStyleRight: {
+    paddingLeft: '0.5rem'
   },
   option: {
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
-    marginRight: '3px',
-  },
-  delete: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  textTitle: {
-    paddingLeft: '3rem',
-  },
-  sectionSelects: {
-    display: 'flex',
   },
 }));
 
@@ -128,10 +72,11 @@ type Props = $ReadOnly<{|
   idKqi: string,
   returnFormEdit: () => void,
   dataComparatorSelect: Array<Comparator>,
+  dataTarget: any,
 |}>;
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit, idKqi, dataComparatorSelect} = props;
+  const {returnFormEdit, idKqi, dataComparatorSelect, dataTarget} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
@@ -183,189 +128,208 @@ const KqiFormCreateTarget = (props: Props) => {
     AddKqiTargetMutation(variables, response);
   }
 
+  const dataNameTarget = dataTarget?.map(item => item?.name)
+    console.log("hola soy filter dataNameTarget", dataNameTarget)
+  
+  const validationName = () => {
+    if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
+      return {hasError: true, errorText: 'Kqi Target name existing'};
+    }
+  };
+
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid item xs={10}>
-          <Text className={classes.textTitle} variant="h6" weight={'bold'}>
-            {fbt('Create target', ' ')}
-          </Text>
-        </Grid>
-        <Grid item xs={2}>
-          <Grid container>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  className={classes.option}
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => returnFormEdit()}>
-                  Cancel
-                </Button>
-              </FormField>
-            </Grid>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  onClick={() => {
-                    handleClick();
-                    returnFormEdit();
-                  }}
-                  className={classes.option}
-                  variant="contained"
-                  color="primary">
-                  Save
-                </Button>
-              </FormField>
-            </Grid>
+      <Grid container>
+        <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
+          <Grid xs>
+            <Text variant="h6" weight={'bold'}>
+              {fbt('Create target', ' ')}
+            </Text>
+          </Grid>          
+          <Grid style={{marginRight: '1rem'}}>
+            <FormField>
+              <Button
+                className={classes.option}
+                variant="outlined"
+                color="primary"
+                onClick={() => returnFormEdit()}>
+                Cancel
+              </Button>
+            </FormField>
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                onClick={() => {
+                  handleClick();
+                  returnFormEdit();
+                }}
+                className={classes.option}
+                variant="contained"
+                color="primary">
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid xs>
           <Card>
-            <Grid container spacing={1}>
+            <Grid container spacing={3}>
               <Grid item xs={1}>
-                <FormField className={classes.formField} label="Enabled">
+                <FormField  label="Enabled">
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField className={classes.formField} label="Target name">
+                <FormField  
+                  {...validationName()}
+                  required
+                  label="Target name"
+                >
                   <TextInput
                     autoComplete="off"
                     name="name"
-                    className={classes.textInput}
                     onChange={handleChange}
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={6}>
-                <Grid item xs={6}>
-                  <FormField label="Comparator" className={classes.formField}>
-                    <div className={classes.warningComparator}>
-                      <Select
-                        className={classNames(
-                          classes.select,
-                          classes.selectWarningComparator,
-                        )}
-                        disableUnderline
-                        name="comparatorSelect"
-                        onChange={handleChange}>
-                        {dataComparatorSelect?.map((item, index) => (
-                          <MenuItem key={index} value={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      <TextInput
-                        autoComplete="off"
-                        name="comparatorNumber"
-                        placeholder="Number"
-                        className={classes.textIndicator}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </FormField>
+              <Grid container item xs={7}>
+                <Grid item xs={6} style={{paddingRight: '1.3rem'}}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Comparator</Text>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={6} className={classes.gridStyleLeft}>
+                      <FormField>
+                        <Select
+                          className={classes.select}
+                          disableUnderline
+                          name="comparatorSelect"
+                          onChange={handleChange}>
+                          {dataComparatorSelect?.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6} className={classes.gridStyleRight}>
+                      <FormField>
+                        <TextInput
+                          autoComplete="off"
+                          name="comparatorNumber"
+                          placeholder="Number"
+                          onChange={handleChange}
+                        />
+                      </FormField>
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid item xs={6}>
-                  <FormField
-                    label="Warning comparator"
-                    className={classes.formField}>
-                    <div className={classes.warningComparator}>
-                      <Select
-                        className={classNames(
-                          classes.select,
-                          classes.selectWarningComparator,
-                        )}
-                        disableUnderline
-                        name="warningComparatorSelect"
-                        onChange={handleChange}>
-                        {dataComparatorSelect?.map((item, index) => (
-                          <MenuItem key={index} value={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      <TextInput
-                        autoComplete="off"
-                        onChange={handleChange}
-                        name="warningComparatorNumber"
-                        placeholder="Number"
-                        className={classes.textIndicator}
-                      />
-                    </div>
-                  </FormField>
+                <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Warning comparator</Text>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={6} className={classes.gridStyleLeft}>
+                      <FormField>
+                        <Select
+                          className={classes.select}
+                          disableUnderline
+                          name="warningComparatorSelect"
+                          onChange={handleChange}>
+                          {dataComparatorSelect?.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                    <Grid item xs={6} className={classes.gridStyleRight}>
+                      <FormField>
+                        <TextInput
+                          autoComplete="off"
+                          name="warningComparatorNumber"
+                          placeholder="Number"
+                          onChange={handleChange}
+                        />
+                      </FormField>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <FormField className={classes.formField} label="Impact">
+              <Grid item xs={5}>
+                <FormField  label="Impact">
                   <TextInput
                     autoComplete="off"
                     name="impact"
-                    className={classes.textInput}
                     type="multiline"
-                    rows={3}
+                    rows={4}
                     onChange={handleChange}
                   />
                 </FormField>
               </Grid>
-              <Grid className={classes.sectionSelects} container item xs={6}>
-                <FormField className={classes.formField} label="Periods">
-                  <div className={classes.contPeriods}>
-                    <TextInput
-                      autoComplete="off"
-                      name="period"
-                      className={classes.periods}
-                      type="number"
-                      onChange={handleChange}
-                    />
-                  </div>
-                </FormField>
-
-                <FormField
-                  className={classes.formField}
-                  label="Allowed Variation">
-                  <div className={classes.contPeriods}>
-                    <TextInput
-                      autoComplete="off"
-                      name="allowedVariation"
-                      className={classes.periods}
-                      type="text"
-                      onChange={handleChange}
-                    />
-                  </div>
-                </FormField>
-
-                <FormField
-                  className={classes.formFieldHours}
-                  label="Active Hours">
-                  <div className={classes.hours}>
-                    <Text variant="caption" className={classes.from}>
-                      From
-                    </Text>
-                    <div className={classes.contHours}>
-                      <TextInput
-                        autoComplete="off"
-                        name="initTime"
-                        suffix={'hrs'}
-                        className={classes.activeHours}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <Text variant="caption" className={classes.to}>
-                      to
-                    </Text>
-                    <div className={classes.contHours}>
-                      <TextInput
-                        autoComplete="off"
-                        name="endTime"
-                        suffix={'hrs'}
-                        className={classes.activeHours}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                </FormField>
+              <Grid container item xs={7}>
+                <Grid container item xs={6} style={{paddingRight: '1.3rem'}}>
+                  <Grid item xs={6} className={classes.gridStyleLeft}>
+                    <FormField  label="Periods">
+                        <TextInput
+                          autoComplete="off"
+                          name="period"
+                          type="number"
+                          onChange={handleChange}
+                        />
+                    </FormField>
+                  </Grid>
+                  <Grid item xs={6} className={classes.gridStyleRight}>
+                    <FormField label="Allowed Variation">
+                        <TextInput
+                          autoComplete="off"
+                          name="allowedVariation"
+                          type="text"
+                          onChange={handleChange}
+                        />
+                    </FormField>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
+                  <Grid style={{marginBottom: "6px"}}>
+                    <Text style={{fontSize: "14px"}}>Active Hours</Text>
+                  </Grid>
+                  <Grid container>
+                    <Grid container item xs={6} alignItems="center" className={classes.gridStyleLeft}>  
+                      <Grid item xs={2}>
+                        <Text variant="caption">From</Text>
+                      </Grid>
+                      <Grid item xs={10}>
+                        <FormField >
+                          <TextInput
+                            autoComplete="off"
+                            name="initTime"
+                            suffix='hrs'
+                            onChange={handleChange}
+                          />
+                        </FormField>
+                      </Grid>
+                    </Grid>
+                    <Grid container item xs={6} alignItems="center" className={classes.gridStyleRight}>  
+                      <Grid item xs={1}>
+                        <Text variant="caption">to</Text>
+                      </Grid>
+                      <Grid item xs={11}>
+                        <FormField >
+                          <TextInput
+                            autoComplete="off"
+                            name="endTime"
+                            suffix='hrs'
+                            onChange={handleChange}
+                          />
+                        </FormField>
+                      </Grid>
+                    </Grid>
+                  </Grid> 
+                </Grid>
               </Grid>
             </Grid>
           </Card>
