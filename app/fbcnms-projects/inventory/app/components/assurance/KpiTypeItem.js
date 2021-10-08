@@ -23,7 +23,6 @@ import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -57,28 +56,28 @@ const useStyles = makeStyles(theme => ({
   },
   nameKpi: {
     fontWeight: 'bold',
-    paddingLeft: '15px',
+    paddingLeft: '0.25rem',
   },
   threshold: {
     color: '#3984FF',
     fontWeight: 'bold',
   },
   typeRed: {
-    marginLeft: '60px',
     color: '#3984FF',
     fontWeight: 'bold',
   },
   editIcon: {
     flexGrow: '1',
-    margin: '10px',
   },
   deleteIcon: {
     flexGrow: '1',
-    margin: '10px',
     color: DARK.D300,
   },
   button: {
     marginLeft: '20%',
+  },
+  switch: {
+    flexWrap: 'nowrap',
   },
 }));
 
@@ -118,7 +117,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   formulaFk: Array<Formula>,
-
+  deleteItem: string,
   description: string,
   threshold: Array<KpiThreshold>,
   edit: void,
@@ -179,23 +178,31 @@ const KpiTypeItem = (props: Props) => {
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
+          container
+          xs={12}
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={2} container alignItems="center">
-            <FormField label="">
-              <Switch
-                title={''}
-                checked={status}
-                onChange={setChecked}
-                onClick={handleClick}
-              />
-            </FormField>
-            <Text className={classes.nameKpi}>{name}</Text>
+          <Grid
+            container
+            alignItems="center"
+            className={classes.switch}
+            xs={2}
+            md={2}>
+            <Switch
+              title={''}
+              checked={status}
+              onChange={setChecked}
+              onClick={handleClick}
+            />
+            <Text useEllipsis={true} className={classes.nameKpi}>
+              {name}
+            </Text>
           </Grid>
 
           <Grid
-            xs={3}
+            xs={2}
+            md={3}
             container
             alignItems="center"
             justifyContent="flex-start">
@@ -206,6 +213,7 @@ const KpiTypeItem = (props: Props) => {
 
           <Grid
             xs={3}
+            md={3}
             container
             alignItems="center"
             justifyContent="flex-start">
@@ -214,7 +222,14 @@ const KpiTypeItem = (props: Props) => {
             </Button>
           </Grid>
 
-          <Grid xs={3} container justify="center" alignItems="center">
+          <Grid
+            xs={3}
+            md={2}
+            lg={2}
+            xl={3}
+            container
+            justify="center"
+            alignItems="center">
             <AddButton
               disabled={false}
               textButton={'Add formula'}
@@ -225,7 +240,14 @@ const KpiTypeItem = (props: Props) => {
             />
           </Grid>
 
-          <Grid xs={1} container justify="flex-end" alignItems="center">
+          <Grid
+            xs={2}
+            md={2}
+            lg={2}
+            xl={1}
+            container
+            justifyContent="space-evenly"
+            alignItems="center">
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
               onClick={() => setDialogOpen(true)}

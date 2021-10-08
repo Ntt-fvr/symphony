@@ -53,6 +53,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
+  deleteItem: string,
   name: string,
   open?: boolean,
   onClose?: () => void,
