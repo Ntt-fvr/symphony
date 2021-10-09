@@ -21,22 +21,18 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 import classNames from 'classnames';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
     marginBottom: '7px',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
   },
   container: {
     align: 'center',
@@ -44,19 +40,19 @@ const useStyles = makeStyles(theme => ({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  bold: {
+  counterVendorName: {
     fontWeight: 'bold',
     paddingLeft: '1rem',
   },
-  details: {
+  familyName: {
     marginLeft: '-16px',
     paddingBottom: '12px',
   },
   detailsRoot: {
     marginLeft: '11px',
   },
-  blue: {
-    color: '#3984FF',
+  networkManagerSystem: {
+    color: BLUE.B600,
     fontWeight: 'bold',
     paddingLeft: '0.5rem',
   },
@@ -65,9 +61,6 @@ const useStyles = makeStyles(theme => ({
   },
   deleteIcon: {
     color: DARK.D300,
-  },
-  button: {
-    marginLeft: '20%',
   },
 }));
 
@@ -107,15 +100,17 @@ export default function CounterTypeItem(props: Props) {
           aria-controls="panel1a-content"
           id="panel1a-header">
           <Grid xs={3} container justify="flex-start" alignItems="center">
-            <Text className={classes.bold}>{name}</Text>
+            <Text className={classes.counterVendorName}>{name}</Text>
           </Grid>
 
           <Grid xs={4} container alignItems="center">
-            <Text className={classes.blue}>{networkManagerSystem}</Text>
+            <Text className={classes.networkManagerSystem}>
+              {networkManagerSystem}
+            </Text>
           </Grid>
 
           <Grid xs={3} container justify="flex-start" alignItems="center">
-            <Text className={classes.bold}>{vendorFk.name}</Text>
+            <Text className={classes.counterVendorName}>{vendorFk.name}</Text>
           </Grid>
 
           <Grid
@@ -141,7 +136,7 @@ export default function CounterTypeItem(props: Props) {
               <strong>Counter ID: </strong>
               {externalID}
             </Grid>
-            <Grid xs={8} className={classes.details}>
+            <Grid xs={8} className={classes.familyName}>
               <strong>Family Name: </strong>
               {counterFamily.name}
             </Grid>

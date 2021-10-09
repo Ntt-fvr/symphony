@@ -19,28 +19,25 @@ import Clickable from '@symphony/design-system/components/Core/Clickable';
 import Grid from '@material-ui/core/Grid';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
+import {GREEN} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(0),
-  },
+const useStyles = makeStyles(() => ({
   header: {
     margin: '20px 0 24px 20px',
   },
   content: {
-    width: 'auto',
-    height: '450px',
+    padding: '2.3rem 0',
   },
   containerIcon: {
     paddingBottom: '2rem',
   },
   icon: {
     fontSize: '60px',
-    color: '#00AF5B',
+    color: GREEN.G600,
   },
   addButton: {
-    paddingTop: '9rem',
+    paddingTop: '8rem',
   },
 }));
 
@@ -99,7 +96,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
     );
   }
   return (
-    <Card className={classes.root}>
+    <Card>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
       <Grid
         container

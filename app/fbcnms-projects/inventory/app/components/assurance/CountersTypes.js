@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: '1',
     margin: '40px',
   },
-
   listCarCounter: {
     listStyle: 'none',
   },

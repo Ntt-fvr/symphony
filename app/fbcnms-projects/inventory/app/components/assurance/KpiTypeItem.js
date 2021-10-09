@@ -27,22 +27,18 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 import DialogConfirmDelete from './DialogConfirmDelete';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
     marginBottom: '7px',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
   },
   container: {
     align: 'center',
@@ -50,20 +46,16 @@ const useStyles = makeStyles(theme => ({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  rootGrid: {
-    flexGrow: '1',
-    alignSelf: 'center',
-  },
   nameKpi: {
     fontWeight: 'bold',
     paddingLeft: '0.25rem',
   },
-  threshold: {
-    color: '#3984FF',
+  thresholdAssociate: {
+    color: BLUE.B600,
     fontWeight: 'bold',
   },
-  typeRed: {
-    color: '#3984FF',
+  domainCategory: {
+    color: BLUE.B600,
     fontWeight: 'bold',
   },
   editIcon: {
@@ -72,9 +64,6 @@ const useStyles = makeStyles(theme => ({
   deleteIcon: {
     flexGrow: '1',
     color: DARK.D300,
-  },
-  button: {
-    marginLeft: '20%',
   },
   switch: {
     flexWrap: 'nowrap',
@@ -207,7 +196,7 @@ const KpiTypeItem = (props: Props) => {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{domainFk?.name}</Text>
+              <Text className={classes.domainCategory}>{domainFk?.name}</Text>
             </Button>
           </Grid>
 
@@ -218,7 +207,9 @@ const KpiTypeItem = (props: Props) => {
             alignItems="center"
             justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpiCategoryFK?.name}</Text>
+              <Text className={classes.domainCategory}>
+                {kpiCategoryFK?.name}
+              </Text>
             </Button>
           </Grid>
 
@@ -267,7 +258,7 @@ const KpiTypeItem = (props: Props) => {
                 <Grid item xs={12}>
                   {`Associated threshold: `}
                   <Button variant="text">
-                    <Text className={classes.threshold}>
+                    <Text className={classes.thresholdAssociate}>
                       {thresholdFromKpi === undefined
                         ? 'none'
                         : thresholdFromKpi.node.name}

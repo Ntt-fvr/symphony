@@ -25,28 +25,20 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import DialogConfirmDelete from './DialogConfirmDelete';
 import EditTresholdMutation from '../../mutations/EditThresholdMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
-import {DARK} from '@symphony/design-system/theme/symphony';
+import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
     marginBottom: '7px',
-  },
-  panel: {
-    cursor: 'default',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
   },
   container: {
     align: 'center',
@@ -54,42 +46,31 @@ const useStyles = makeStyles(theme => ({
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  details: {},
-  rootGrid: {
-    flexGrow: '1',
-    alignSelf: 'center',
+  switchButton: {
+    flexWrap: 'nowrap',
   },
   nameThreshold: {
     fontWeight: 'bold',
-    paddingLeft: '15px',
+    paddingLeft: '0.25rem',
   },
-  thr: {
-    color: '#3984FF',
+  kpiAssociated: {
+    color: BLUE.B600,
     fontWeight: 'bold',
   },
-  typeRed: {
-    color: '#3984FF',
-    fontWeight: 'bold',
-  },
-  editIcon: {
+  editIconButton: {
     flexGrow: '1',
-    margin: '10px',
   },
   deleteIcon: {
     flexGrow: '1',
-    margin: '10px',
     color: DARK.D300,
-  },
-  button: {
-    marginLeft: '20%',
   },
   rulesContained: {
     margin: '10px 0',
   },
-  description: {
+  descriptionKpi: {
     marginBottom: '20px',
   },
-  table: {
+  tableRules: {
     marginBottom: '30px',
   },
 }));
@@ -135,6 +116,7 @@ type Props = $ReadOnly<{|
   kpi: {
     name: string,
   },
+  deleteItem: string,
   edit: void,
   status: boolean,
   addRule: void => void,
@@ -178,49 +160,77 @@ export default function ThresholdTypeItem(props: Props) {
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
-          classes={{
-            root: classes.panel,
-          }}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={3} container alignItems="center">
-            <FormField label="">
-              <Switch
-                title={''}
-                checked={status}
-                onChange={setChecked}
-                onClick={handleClick}
-              />
-            </FormField>
-            <Text className={classes.nameThreshold}>{name}</Text>
+          <Grid
+            className={classes.switchButton}
+            xs={2}
+            md={3}
+            container
+            alignItems="center">
+            <Switch
+              title={''}
+              checked={status}
+              onChange={setChecked}
+              onClick={handleClick}
+            />
+            <Text useEllipsis={true} className={classes.nameThreshold}>
+              {name}
+            </Text>
           </Grid>
 
-          <Grid xs={3} container alignItems="center">
+          <Grid
+            xs={2}
+            md={3}
+            container
+            alignItems="center"
+            justifyContent="flex-start">
             <Button variant="text">
-              <Text>{id}</Text>
+              <Text useEllipsis={true}>{id}</Text>
             </Button>
           </Grid>
 
-          <Grid xs={3} container className={classes.rootGrid}>
+          <Grid
+            xs={3}
+            md={2}
+            container
+            alignItems="center"
+            justifyContent="flex-start">
             <Button variant="text">
-              <Text className={classes.typeRed}>{kpi?.name}</Text>
+              <Text useEllipsis={true} className={classes.kpiAssociated}>
+                {kpi?.name}
+              </Text>
             </Button>
           </Grid>
 
-          <Grid xs={3} container className={classes.rootGrid}>
+          <Grid
+            xs={3}
+            md={2}
+            lg={2}
+            xl={3}
+            container
+            justify="center"
+            alignItems="center">
             <AddButton
               disabled={false}
               textButton={'Add rule'}
               onClick={addRule}
             />
           </Grid>
-          <Grid xs={1} container justify="flex-end" alignItems="center">
+          <Grid
+            xs={2}
+            md={2}
+            lg={2}
+            xl={1}
+            container
+            justifyContent="space-evenly"
+            alignItems="center">
             <DeleteOutlinedIcon
               className={classes.deleteIcon}
               onClick={() => setDialogOpen(true)}
             />
             <IconButton
-              className={classes.editIcon}
+              className={classes.editIconButton}
               icon={EditIcon}
               onClick={edit}
             />
@@ -235,10 +245,10 @@ export default function ThresholdTypeItem(props: Props) {
             xs={12}
             justify="center"
             alignItems="center">
-            <Grid xs={10} className={classes.description}>
+            <Grid xs={10} className={classes.descriptionKpi}>
               Description: {description}
             </Grid>
-            <Grid className={classes.table} xs={10}>
+            <Grid className={classes.tableRules} xs={10}>
               <Text
                 className={classes.rulesContained}
                 weight="bold"
