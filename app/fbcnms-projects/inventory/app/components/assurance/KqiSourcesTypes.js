@@ -22,7 +22,7 @@ import {makeStyles} from '@material-ui/styles';
 
 import {TitleTextCardsKqiSource} from './TitleTextCardsKqiSource';
 
-import {KqiAddItemForm} from './KqiAddItemForm';
+import {KqiSourceAddForm} from './KqiSourceAddForm';
 
 import KqiSourceFormEdit from './KqiSourceFormEdit';
 
@@ -120,7 +120,7 @@ const KqiSourcesTypes = () => {
           </List>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-          <KqiAddItemForm kqiSourcesNames={items.kqiSources?.edges} />
+          <KqiSourceAddForm kqiSourcesNames={items.kqiSources?.edges} />
         </Grid>
       </Grid>
     </div>

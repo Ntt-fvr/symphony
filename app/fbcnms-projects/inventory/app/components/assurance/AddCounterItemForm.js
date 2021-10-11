@@ -11,7 +11,7 @@
 import React, {useMemo, useState} from 'react';
 
 // COMPONENTS //
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddCounterItemFormQuery} from './__generated__/AddCounterItemFormQuery.graphql';

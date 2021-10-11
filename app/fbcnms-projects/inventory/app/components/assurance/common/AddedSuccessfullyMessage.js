@@ -8,10 +8,10 @@
  * @format
  */
 
-import AddButton from './common/AddButton';
-import AddCounterItemForm from './AddCounterItemForm';
-import AddKpiItemForm from './AddKpiItemForm';
-import AddThresholdItemForm from './AddThresholdItemForm';
+import AddButton from './AddButton';
+import AddCounterItemForm from '../AddCounterItemForm';
+import AddKpiItemForm from '../AddKpiItemForm';
+import AddThresholdItemForm from '../AddThresholdItemForm';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
@@ -23,21 +23,21 @@ import {GREEN} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
+  root: {
+    padding: '0px',
+  },
   header: {
     margin: '20px 0 24px 20px',
   },
-  content: {
-    padding: '2.3rem 0',
-  },
   containerIcon: {
-    paddingBottom: '2rem',
+    paddingBottom: '1rem',
   },
   icon: {
     fontSize: '60px',
     color: GREEN.G600,
   },
   addButton: {
-    paddingTop: '8rem',
+    padding: '1rem 0 2rem 0',
   },
 }));
 
@@ -98,12 +98,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
   return (
     <Card>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
-      <Grid
-        container
-        className={classes.content}
-        direction="column"
-        justify="center"
-        alignItems="center">
+      <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>
           <CheckCircleOutlineOutlinedIcon className={classes.icon} />
         </Grid>
