@@ -490,6 +490,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         id: d.id,
         name: d.name,
         index: d.index,
+        numberOfDocuments: d.numberOfDocuments,
       }));
     return {
       id: editingLocationType?.id ?? 'LocationType@tmp0',
@@ -506,6 +507,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
                 id: 'DocumentCategories@tmp',
                 name: '',
                 index: editingLocationType?.documentCategories?.length ?? 0,
+                numberOfDocuments: 0,
               },
             ],
       propertyTypes:

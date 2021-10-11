@@ -123,26 +123,11 @@ const locationsPropertiesCardQuery = graphql`
           name
           mapType
           mapZoomLevel
-          documentCategories{
-          id
-          name
-          index
-          filesByLocation(locationID: $locationId){
+          documentCategories {
             id
-            fileName
-            fileType
-            mimeType
-            sizeInBytes
-            category
+            name
+            index
           }
-          hyperlinksByLocation(locationID: $locationId){
-            id
-            url
-            displayName
-            category
-            createTime
-          }
-        }
           propertyTypes {
             ...PropertyTypeFormField_propertyType
             ...DynamicPropertiesGrid_propertyTypes

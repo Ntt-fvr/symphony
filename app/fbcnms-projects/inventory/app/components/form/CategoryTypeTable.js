@@ -124,6 +124,15 @@ class CategoryTypeTable extends React.Component<Props> {
                     <FormAction>
                       <IconButton
                         skin="primary"
+                        disabled={
+                          !property.numberOfDocuments &&
+                          !property.id.includes('@tmp')
+                        }
+                        tooltip={
+                          !property.numberOfDocuments
+                            ? 'it is already used'
+                            : ''
+                        }
                         onClick={
                           !this.props.supportDelete &&
                           !property.id.includes('@tmp')
@@ -265,6 +274,7 @@ class CategoryTypeTable extends React.Component<Props> {
       id: `CategoryType@tmp-${this.props.propertyTypes.length}-${Date.now()}`,
       name: '',
       index: this.props.propertyTypes.length,
+      numberOfDocuments: 0,
     };
   }
 }

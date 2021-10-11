@@ -13,4 +13,5 @@ export type DocumentCategoryType = {|
   name: string,
   index?: ?number,
   isDeleted?: ?boolean,
+  numberOfDocuments: number,
 |};
