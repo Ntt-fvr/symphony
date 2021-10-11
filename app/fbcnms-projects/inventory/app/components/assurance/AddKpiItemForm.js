@@ -10,7 +10,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
@@ -142,10 +142,10 @@ export default function AddKpiItemForm(props: Props) {
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="kpi"
-        card_header="Add Kpi"
-        title="Kpi"
-        text_button="Add new Kpi"
+        data_entry="KPI"
+        card_header="Add KPI"
+        title="KPI"
+        text_button="Add new KPI"
         names={kpiNames}
       />
     );
