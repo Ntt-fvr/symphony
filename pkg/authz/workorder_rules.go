@@ -103,16 +103,16 @@ func workOrderCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *en
 		if !exists {
 			return false, errors.New("creating work order with no type")
 		}
-		return checkWorkforce(cud.Create, &typeID, nil, nil), nil
+		return checkWorkforce(cud.Create, &typeID, nil, nil, ctx), nil
 	}
 	workOrderTypeID, err := getWorkOrderType(ctx, m)
 	if err != nil {
 		return false, err
 	}
 	if m.Op().Is(ent.OpUpdateOne) {
-		return checkWorkforce(cud.Update, workOrderTypeID, nil, nil), nil
+		return checkWorkforce(cud.Update, workOrderTypeID, nil, nil, ctx), nil
 	}
-	return checkWorkforce(cud.Delete, workOrderTypeID, nil, nil), nil
+	return checkWorkforce(cud.Delete, workOrderTypeID, nil, nil, ctx), nil
 }
 
 func workOrderReadPredicate(ctx context.Context) predicate.WorkOrder {
@@ -332,14 +332,14 @@ func WorkOrderWritePolicyRule() privacy.MutationRule {
 				return privacy.Denyf(err.Error())
 			}
 			if assigneeChanged {
-				allowed = allowed && checkWorkforce(cud.Assign, workOrderTypeID, nil, nil)
+				allowed = allowed && checkWorkforce(cud.Assign, workOrderTypeID, nil, nil, ctx)
 			}
 			ownerChanged, err := isOwnerChanged(ctx, m)
 			if err != nil {
 				return privacy.Denyf(err.Error())
 			}
 			if ownerChanged {
-				allowed = allowed && checkWorkforce(cud.TransferOwnership, workOrderTypeID, nil, nil)
+				allowed = allowed && checkWorkforce(cud.TransferOwnership, workOrderTypeID, nil, nil, ctx)
 			}
 		}
 		if allowed {
