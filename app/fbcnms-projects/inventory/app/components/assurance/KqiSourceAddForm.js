@@ -11,7 +11,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import KqiSourceAddedSuccessfully from './KqiSourceAddedSuccessfully';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddKqiSourceMutationVariables} from '../../mutations/__generated__/AddKqiSourceMutation.graphql';
@@ -62,7 +62,7 @@ type KqiSources = {
   },
 };
 
-export const KqiAddItemForm = (props: Props) => {
+export const KqiSourceAddForm = (props: Props) => {
   const {kqiSourcesNames} = props;
   const classes = useStyles();
   const [kqiSource, setkqiSource] = useState<KqiSources>({data: {}});
@@ -91,7 +91,7 @@ export const KqiAddItemForm = (props: Props) => {
 
   if (showChecking) {
     return (
-      <KqiSourceAddedSuccessfully
+      <AddedSuccessfullyMessage
         data_entry="KQI Source"
         card_header="Add KQI Source"
         title="KQI Source"
