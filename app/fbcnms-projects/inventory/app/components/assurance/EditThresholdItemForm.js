@@ -45,8 +45,11 @@ const useStyles = makeStyles(() => ({
   textInput: {
     minHeight: '36px',
   },
-  addKpi: {
-    margin: '20px',
+  action: {
+    paddingRight: '1.3rem',
+  },
+  addThreshold: {
+    marginRight: '1rem',
     width: '111px',
     alignSelf: 'flex-end',
   },
@@ -189,31 +192,32 @@ export const EditThresholdItemForm = (props: Props) => {
                 </FormField>
               </Grid>
             </Grid>
-            <Grid container justify="flex-end">
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      handleClick();
-                      hideEditThresholdForm();
-                    }}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      hideEditThresholdForm();
-                    }}
-                    skin="brightGray">
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
+            <Grid
+              className={classes.action}
+              item
+              xs={12}
+              container
+              justify="flex-end">
+              <FormField>
+                <Button
+                  className={classes.addThreshold}
+                  onClick={() => {
+                    handleClick();
+                    hideEditThresholdForm();
+                  }}>
+                  Save
+                </Button>
+              </FormField>
+              <FormField>
+                <Button
+                  className={classes.addThreshold}
+                  onClick={() => {
+                    hideEditThresholdForm();
+                  }}
+                  skin="brightGray">
+                  Cancel
+                </Button>
+              </FormField>
             </Grid>
           </Card>
         </Grid>
