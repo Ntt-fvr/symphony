@@ -21,26 +21,21 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '400px',
-    height: '360px',
     padding: theme.spacing(0),
   },
   header: {
     margin: '20px 0 24px 20px',
   },
-  content: {
-    width: 'auto',
-    height: '220px',
-  },
+
   containerIcon: {
-    paddingBottom: '2rem',
+    paddingBottom: '1rem',
   },
   icon: {
     fontSize: '60px',
     color: '#00AF5B',
   },
   addButton: {
-    paddingTop: '2rem',
+    paddingTop: '1rem',
   },
 }));
 
@@ -55,7 +50,7 @@ type Props = $ReadOnly<{|
   text_button: string,
   data_entry: string,
   names?: Array<Node>,
-  kqiSourcesNames: Array<Node>,
+  kqiSourcesNames?: Array<Node>,
 |}>;
 
 const KqiSourceAddedSuccessfully = (props: Props) => {
@@ -86,12 +81,7 @@ const KqiSourceAddedSuccessfully = (props: Props) => {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
-      <Grid
-        container
-        className={classes.content}
-        direction="column"
-        justify="center"
-        alignItems="center">
+      <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>
           <CheckCircleOutlineOutlinedIcon className={classes.icon} />
         </Grid>

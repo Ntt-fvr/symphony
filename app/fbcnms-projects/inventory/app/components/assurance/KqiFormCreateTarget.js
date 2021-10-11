@@ -193,7 +193,7 @@ const KqiFormCreateTarget = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={7}>
+              <Grid container item xs={8} lg={7}>
                 <Grid item xs={6} style={{paddingRight: '1.3rem'}}>
                   <Grid style={{marginBottom: "6px"}}>
                     <Text style={{fontSize: "14px"}}>Comparator</Text>
@@ -259,7 +259,7 @@ const KqiFormCreateTarget = (props: Props) => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={4} lg={5}>
                 <FormField  label="Impact">
                   <TextInput
                     autoComplete="off"
@@ -270,7 +270,7 @@ const KqiFormCreateTarget = (props: Props) => {
                   />
                 </FormField>
               </Grid>
-              <Grid container item xs={7}>
+              <Grid container item xs={8} lg={7}>
                 <Grid container item xs={6} style={{paddingRight: '1.3rem'}}>
                   <Grid item xs={6} className={classes.gridStyleLeft}>
                     <FormField  label="Periods">
@@ -283,7 +283,10 @@ const KqiFormCreateTarget = (props: Props) => {
                     </FormField>
                   </Grid>
                   <Grid item xs={6} className={classes.gridStyleRight}>
-                    <FormField label="Allowed Variation">
+                    <Grid style={{marginBottom: "6px"}}>
+                      <Text style={{fontSize: "14px"}}>Allowed Variation</Text>
+                    </Grid>
+                    <FormField>
                         <TextInput
                           autoComplete="off"
                           name="allowedVariation"
@@ -299,30 +302,28 @@ const KqiFormCreateTarget = (props: Props) => {
                   </Grid>
                   <Grid container>
                     <Grid container item xs={6} alignItems="center" className={classes.gridStyleLeft}>  
-                      <Grid item xs={2}>
+                      <Grid item xs={4} lg={3} xl={2}>
                         <Text variant="caption">From</Text>
                       </Grid>
-                      <Grid item xs={10}>
+                      <Grid item xs={8} lg={9} xl={10}>
                         <FormField >
                           <TextInput
                             autoComplete="off"
                             name="initTime"
-                            suffix='hrs'
                             onChange={handleChange}
                           />
                         </FormField>
                       </Grid>
                     </Grid>
                     <Grid container item xs={6} alignItems="center" className={classes.gridStyleRight}>  
-                      <Grid item xs={1}>
+                      <Grid item xs={2} xl={1}>
                         <Text variant="caption">to</Text>
                       </Grid>
-                      <Grid item xs={11}>
+                      <Grid item xs={10} xl={11}>
                         <FormField >
                           <TextInput
                             autoComplete="off"
                             name="endTime"
-                            suffix='hrs'
                             onChange={handleChange}
                           />
                         </FormField>
