@@ -129,7 +129,6 @@ const KqiFormCreateTarget = (props: Props) => {
   }
 
   const dataNameTarget = dataTarget?.map(item => item?.name)
-    console.log("hola soy filter dataNameTarget", dataNameTarget)
   
   const validationName = () => {
     if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
@@ -166,7 +165,12 @@ const KqiFormCreateTarget = (props: Props) => {
                 }}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={!(
+                  Object.values(KqiTarget.data).length === 10 &&
+                  !Object.values(KqiTarget.data).some(item => item === '') &&
+                  !dataNameTarget?.some(item => item === KqiTarget.data.name)
+                )}>
                 Save
               </Button>
             </FormField>

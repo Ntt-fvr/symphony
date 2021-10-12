@@ -196,6 +196,11 @@ const KqiFormEditTarget = (props: Props) => {
     }
   };
 
+  const dataInputsObject = [
+    name.value, impact.value, period.value, allowedVariation.value, initTime.value, 
+    endTime.value, comparatorNumber.value, warningComparatorNumber.value
+]
+
   return (
     <div className={classes.root}>
       <Grid container>
@@ -234,7 +239,12 @@ const KqiFormEditTarget = (props: Props) => {
                 onClick={handleClick}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={!(
+                  dataInputsObject.length === 8 &&
+                  !dataInputsObject.some(item => item === '') &&
+                  !inputFilter().length > 0
+                )}>
                 Save
               </Button>
             </FormField>
