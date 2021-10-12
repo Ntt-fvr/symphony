@@ -21,11 +21,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
-
-import classNames from 'classnames';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,14 +33,13 @@ const useStyles = makeStyles(() => ({
     marginBottom: '7px',
   },
   container: {
+    '& .MuiAccordionSummary-root': {
+      padding: '5px 15px',
+    },
     align: 'center',
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
-  },
-  counterVendorName: {
-    fontWeight: 'bold',
-    paddingLeft: '1rem',
   },
   familyName: {
     marginLeft: '-16px',
@@ -51,15 +48,8 @@ const useStyles = makeStyles(() => ({
   detailsRoot: {
     marginLeft: '11px',
   },
-  networkManagerSystem: {
-    color: BLUE.B600,
-    fontWeight: 'bold',
-    paddingLeft: '0.5rem',
-  },
-  action: {
-    flexGrow: '1',
-  },
   deleteIcon: {
+    marginRight: '1rem',
     color: DARK.D300,
   },
 }));
@@ -95,38 +85,40 @@ export default function CounterTypeItem(props: Props) {
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
-          container
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={3} container justify="flex-start" alignItems="center">
-            <Text className={classes.counterVendorName}>{name}</Text>
-          </Grid>
+          <Grid container xs={12}>
+            <Grid xs={3} container justify="flex-start" alignItems="center">
+              <Text useEllipsis={true} weight="bold">
+                {name}
+              </Text>
+            </Grid>
 
-          <Grid xs={4} container alignItems="center">
-            <Text className={classes.networkManagerSystem}>
-              {networkManagerSystem}
-            </Text>
-          </Grid>
+            <Grid xs={4} container alignItems="center">
+              <Text useEllipsis={true} color="primary" weight="bold">
+                {networkManagerSystem}
+              </Text>
+            </Grid>
 
-          <Grid xs={3} container justify="flex-start" alignItems="center">
-            <Text className={classes.counterVendorName}>{vendorFk.name}</Text>
-          </Grid>
+            <Grid
+              xs={3}
+              sm={3}
+              container
+              justify="flex-start"
+              alignItems="center">
+              <Text useEllipsis={true} weight="bold">
+                {vendorFk.name}
+              </Text>
+            </Grid>
 
-          <Grid
-            xs={2}
-            container
-            justifyContent="space-evenly"
-            alignItems="center">
-            <DeleteOutlinedIcon
-              className={classNames(classes.action, classes.deleteIcon)}
-              onClick={handleRemove}
-            />
-            <IconButton
-              className={classes.action}
-              icon={EditIcon}
-              onClick={edit}
-            />
+            <Grid xs={2} container justify="flex-end" alignItems="center">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={handleRemove}
+              />
+              <IconButton icon={EditIcon} onClick={edit} />
+            </Grid>
           </Grid>
         </AccordionSummary>
 

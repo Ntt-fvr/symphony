@@ -27,7 +27,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
-import {BLUE, DARK} from '@symphony/design-system/theme/symphony';
+import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
@@ -42,6 +42,9 @@ const useStyles = makeStyles(() => ({
   },
   container: {
     align: 'center',
+    '& .MuiAccordionSummary-root': {
+      padding: '1px 16px',
+    },
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
@@ -50,19 +53,11 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     paddingLeft: '0.25rem',
   },
-  thresholdAssociate: {
-    color: BLUE.B600,
-    fontWeight: 'bold',
-  },
-  domainCategory: {
-    color: BLUE.B600,
-    fontWeight: 'bold',
-  },
   editIcon: {
     flexGrow: '1',
   },
   deleteIcon: {
-    flexGrow: '1',
+    marginRight: '1rem',
     color: DARK.D300,
   },
   switch: {
@@ -172,82 +167,82 @@ const KpiTypeItem = (props: Props) => {
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid
-            container
-            alignItems="center"
-            className={classes.switch}
-            xs={2}
-            md={2}>
-            <Switch
-              title={''}
-              checked={status}
-              onChange={setChecked}
-              onClick={handleClick}
-            />
-            <Text useEllipsis={true} className={classes.nameKpi}>
-              {name}
-            </Text>
-          </Grid>
-
-          <Grid
-            xs={2}
-            md={3}
-            container
-            alignItems="center"
-            justifyContent="flex-start">
-            <Button variant="text">
-              <Text className={classes.domainCategory}>{domainFk?.name}</Text>
-            </Button>
-          </Grid>
-
-          <Grid
-            xs={3}
-            md={3}
-            container
-            alignItems="center"
-            justifyContent="flex-start">
-            <Button variant="text">
-              <Text className={classes.domainCategory}>
-                {kpiCategoryFK?.name}
+          <Grid container xs={12}>
+            <Grid
+              container
+              alignItems="center"
+              className={classes.switch}
+              xs={2}
+              md={2}>
+              <Switch
+                title={''}
+                checked={status}
+                onChange={setChecked}
+                onClick={handleClick}
+              />
+              <Text useEllipsis={true} className={classes.nameKpi}>
+                {name}
               </Text>
-            </Button>
-          </Grid>
+            </Grid>
 
-          <Grid
-            xs={3}
-            md={2}
-            lg={2}
-            xl={3}
-            container
-            justify="center"
-            alignItems="center">
-            <AddButton
-              disabled={false}
-              textButton={'Add formula'}
-              onClick={() => {
-                handleCallback();
-                handleFormulaClick();
-              }}
-            />
-          </Grid>
+            <Grid
+              xs={2}
+              md={3}
+              container
+              alignItems="center"
+              justifyContent="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} color="primary" weight="bold">
+                  {domainFk?.name}
+                </Text>
+              </Button>
+            </Grid>
 
-          <Grid
-            xs={2}
-            md={2}
-            lg={2}
-            xl={1}
-            container
-            justifyContent="space-evenly"
-            alignItems="center">
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={() => setDialogOpen(true)}
-            />
-            <IconButton
-              className={classes.editIcon}
-              icon={EditIcon}
-              onClick={edit}
-            />
+            <Grid
+              xs={3}
+              md={3}
+              container
+              alignItems="center"
+              justifyContent="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} color="primary" weight="bold">
+                  {kpiCategoryFK?.name}
+                </Text>
+              </Button>
+            </Grid>
+
+            <Grid
+              xs={3}
+              md={2}
+              lg={2}
+              xl={3}
+              container
+              justify="center"
+              alignItems="center">
+              <AddButton
+                disabled={false}
+                textButton={'Add formula'}
+                onClick={() => {
+                  handleCallback();
+                  handleFormulaClick();
+                }}
+              />
+            </Grid>
+
+            <Grid
+              xs={2}
+              md={2}
+              lg={2}
+              xl={1}
+              container
+              justify="flex-end"
+              alignItems="center">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={() => setDialogOpen(true)}
+              />
+              <IconButton icon={EditIcon} onClick={edit} />
+            </Grid>
           </Grid>
         </AccordionSummary>
 
@@ -258,7 +253,7 @@ const KpiTypeItem = (props: Props) => {
                 <Grid item xs={12}>
                   {`Associated threshold: `}
                   <Button variant="text">
-                    <Text className={classes.thresholdAssociate}>
+                    <Text color="primary" weight="bold">
                       {thresholdFromKpi === undefined
                         ? 'none'
                         : thresholdFromKpi.node.name}
