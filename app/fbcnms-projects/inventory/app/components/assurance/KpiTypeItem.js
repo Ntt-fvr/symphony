@@ -23,7 +23,6 @@ import Button from '@symphony/design-system/components/Button';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import EditKpiMutation from '../../mutations/EditKpiMutation';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Switch from '@symphony/design-system/components/switch/Switch';
@@ -34,51 +33,35 @@ import {makeStyles} from '@material-ui/styles';
 
 import DialogConfirmDelete from './DialogConfirmDelete';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiExpansionPanelSummary-root:hover': {
       cursor: 'default',
     },
     marginBottom: '7px',
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
   container: {
     align: 'center',
+    '& .MuiAccordionSummary-root': {
+      padding: '1px 16px',
+    },
     '&.MuiPaper-elevation1': {
       boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
     },
   },
-  rootGrid: {
-    flexGrow: '1',
-    alignSelf: 'center',
-  },
   nameKpi: {
     fontWeight: 'bold',
-    paddingLeft: '15px',
-  },
-  threshold: {
-    color: '#3984FF',
-    fontWeight: 'bold',
-  },
-  typeRed: {
-    marginLeft: '60px',
-    color: '#3984FF',
-    fontWeight: 'bold',
+    paddingLeft: '0.25rem',
   },
   editIcon: {
     flexGrow: '1',
-    margin: '10px',
   },
   deleteIcon: {
-    flexGrow: '1',
-    margin: '10px',
+    marginRight: '1rem',
     color: DARK.D300,
   },
-  button: {
-    marginLeft: '20%',
+  switch: {
+    flexWrap: 'nowrap',
   },
 }));
 
@@ -118,7 +101,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   formulaFk: Array<Formula>,
-
+  deleteItem: string,
   description: string,
   threshold: Array<KpiThreshold>,
   edit: void,
@@ -179,62 +162,87 @@ const KpiTypeItem = (props: Props) => {
     <div className={classes.root}>
       <Accordion className={classes.container} expanded={open}>
         <AccordionSummary
+          container
+          xs={12}
           expandIcon={<ExpandMoreIcon onClick={() => setOpen(!open)} />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Grid xs={2} container alignItems="center">
-            <FormField label="">
+          <Grid container xs={12}>
+            <Grid
+              container
+              alignItems="center"
+              className={classes.switch}
+              xs={2}
+              md={2}>
               <Switch
                 title={''}
                 checked={status}
                 onChange={setChecked}
                 onClick={handleClick}
               />
-            </FormField>
-            <Text className={classes.nameKpi}>{name}</Text>
-          </Grid>
+              <Text useEllipsis={true} className={classes.nameKpi}>
+                {name}
+              </Text>
+            </Grid>
 
-          <Grid
-            xs={3}
-            container
-            alignItems="center"
-            justifyContent="flex-start">
-            <Button variant="text">
-              <Text className={classes.typeRed}>{domainFk?.name}</Text>
-            </Button>
-          </Grid>
+            <Grid
+              xs={2}
+              md={3}
+              container
+              alignItems="center"
+              justifyContent="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} color="primary" weight="bold">
+                  {domainFk?.name}
+                </Text>
+              </Button>
+            </Grid>
 
-          <Grid
-            xs={3}
-            container
-            alignItems="center"
-            justifyContent="flex-start">
-            <Button variant="text">
-              <Text className={classes.typeRed}>{kpiCategoryFK?.name}</Text>
-            </Button>
-          </Grid>
+            <Grid
+              xs={3}
+              md={3}
+              container
+              alignItems="center"
+              justifyContent="flex-start">
+              <Button variant="text">
+                <Text useEllipsis={true} color="primary" weight="bold">
+                  {kpiCategoryFK?.name}
+                </Text>
+              </Button>
+            </Grid>
 
-          <Grid xs={3} container justify="center" alignItems="center">
-            <AddButton
-              disabled={false}
-              textButton={'Add formula'}
-              onClick={() => {
-                handleCallback();
-                handleFormulaClick();
-              }}
-            />
-          </Grid>
+            <Grid
+              xs={3}
+              md={2}
+              lg={2}
+              xl={3}
+              container
+              justify="center"
+              alignItems="center">
+              <AddButton
+                disabled={false}
+                textButton={'Add formula'}
+                onClick={() => {
+                  handleCallback();
+                  handleFormulaClick();
+                }}
+              />
+            </Grid>
 
-          <Grid xs={1} container justify="flex-end" alignItems="center">
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={() => setDialogOpen(true)}
-            />
-            <IconButton
-              className={classes.editIcon}
-              icon={EditIcon}
-              onClick={edit}
-            />
+            <Grid
+              xs={2}
+              md={2}
+              lg={2}
+              xl={1}
+              container
+              justify="flex-end"
+              alignItems="center">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={() => setDialogOpen(true)}
+              />
+              <IconButton icon={EditIcon} onClick={edit} />
+            </Grid>
           </Grid>
         </AccordionSummary>
 
@@ -245,7 +253,7 @@ const KpiTypeItem = (props: Props) => {
                 <Grid item xs={12}>
                   {`Associated threshold: `}
                   <Button variant="text">
-                    <Text className={classes.threshold}>
+                    <Text color="primary" weight="bold">
                       {thresholdFromKpi === undefined
                         ? 'none'
                         : thresholdFromKpi.node.name}

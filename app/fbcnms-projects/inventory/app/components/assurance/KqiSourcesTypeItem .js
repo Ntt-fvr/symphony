@@ -19,8 +19,6 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
-import {DARK} from '@symphony/design-system/theme/symphony';
 import {EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
@@ -31,42 +29,13 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     alignItems: 'center',
+    padding: '0px',
   },
   insideContainer: {
-    padding: '9px 15px',
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-
-  editIcon: {
-    margin: '0px',
+    padding: '17px 15px',
   },
   deleteIcon: {
-    margin: '0px',
-    color: DARK.D300,
-  },
-  inside: {
-    margin: '8px 0',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  kqiName: {
-    justifyContent: 'flex-start',
-  },
-  iD: {
-    justifyContent: 'center',
-    paddingRight: '14rem',
-  },
-  contIconDelete: {
-    justifyContent: 'flex-end',
-  },
-  contIconEdit: {
-    paddingLeft: '',
-    justifyContent: 'center',
-  },
-  inter: {
-    border: '1px solid red',
+    marginRight: '1rem',
   },
 }));
 
@@ -84,35 +53,27 @@ const KqiSourcesTypeItem = (props: Props) => {
   return (
     <div className={classes.root}>
       <Card margins={'none'} className={classes.container}>
-        <Grid container className={classes.insideContainer}>
-          <Grid xs={3} className={classNames(classes.inside, classes.kqiName)}>
-            <Button variant="text" className={classes.bold} onClick={edit}>
-              <Text weight={'medium'} color={'primary'}>
+        <Grid container xs={12} className={classes.insideContainer}>
+          <Grid xs={4}>
+            <Button variant="text" onClick={edit}>
+              <Text weight="bold" color="primary">
                 {name}
               </Text>
             </Button>
           </Grid>
-
-          <Grid xs={7} className={classNames(classes.inside, classes.iD)}>
-            <Text className={classes.bold}>{id}</Text>
+          <Grid xs={6}>
+            <Text useEllipsis={true} weight="bold">
+              {id}
+            </Text>
           </Grid>
-
-          <Grid
-            xs={1}
-            className={classNames(classes.inside, classes.contIconDelete)}>
-            <DeleteOutlinedIcon
-              className={classes.deleteIcon}
-              onClick={handleRemove}
-            />
-          </Grid>
-          <Grid
-            xs={1}
-            className={classNames(classes.inside, classes.contIconEdit)}>
-            <IconButton
-              className={classes.editIcon}
-              icon={EditIcon}
-              onClick={edit}
-            />
+          <Grid xs={2} container justify="flex-end" alignItems="center">
+            <Button skin="brightGray" variant="text">
+              <DeleteOutlinedIcon
+                className={classes.deleteIcon}
+                onClick={handleRemove}
+              />
+            </Button>
+            <IconButton icon={EditIcon} onClick={edit} />
           </Grid>
         </Grid>
       </Card>
