@@ -19,6 +19,7 @@ import Clickable from '@symphony/design-system/components/Core/Clickable';
 import Grid from '@material-ui/core/Grid';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
+import {GREEN} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -33,7 +34,7 @@ const useStyles = makeStyles(() => ({
   },
   icon: {
     fontSize: '60px',
-    color: '#00AF5B',
+    color: GREEN.G600,
   },
   addButton: {
     padding: '1rem 0 2rem 0',
@@ -95,7 +96,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
     );
   }
   return (
-    <Card className={classes.root}>
+    <Card>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
       <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>

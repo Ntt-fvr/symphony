@@ -28,18 +28,10 @@ import KqiSourceFormEdit from './KqiSourceFormEdit';
 
 import KqiSourcesTypeItem from './KqiSourcesTypeItem ';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
     margin: '40px',
-  },
-  listCarCounter: {
-    listStyle: 'none',
-  },
-  powerSearchContainer: {
-    margin: '10px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
 }));
 

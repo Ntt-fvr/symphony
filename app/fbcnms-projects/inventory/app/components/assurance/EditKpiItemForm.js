@@ -53,9 +53,12 @@ const useStyles = makeStyles(() => ({
     minHeight: '60px',
   },
   addKpi: {
-    margin: '20px',
+    marginRight: '1rem',
     width: '111px',
     alignSelf: 'flex-end',
+  },
+  action: {
+    paddingRight: '1.3rem',
   },
   title: {
     marginLeft: '10px',
@@ -298,31 +301,32 @@ export const EditKpiItemForm = (props: Props) => {
                 </FormField>
               </Grid>
             </Grid>
-            <Grid container justify="flex-end">
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      handleClick();
-                      hideEditKpiForm();
-                    }}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addKpi}
-                    onClick={() => {
-                      hideEditKpiForm();
-                    }}
-                    skin="brightGray">
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
+            <Grid
+              container
+              className={classes.action}
+              item
+              xs={12}
+              justify="flex-end">
+              <FormField>
+                <Button
+                  className={classes.addKpi}
+                  onClick={() => {
+                    handleClick();
+                    hideEditKpiForm();
+                  }}>
+                  Save
+                </Button>
+              </FormField>
+              <FormField>
+                <Button
+                  className={classes.addKpi}
+                  onClick={() => {
+                    hideEditKpiForm();
+                  }}
+                  skin="brightGray">
+                  Cancel
+                </Button>
+              </FormField>
             </Grid>
           </Card>
         </Grid>
