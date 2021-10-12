@@ -29,9 +29,10 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     alignItems: 'center',
+    padding: '0px',
   },
   insideContainer: {
-    padding: '17px  15px',
+    padding: '17px 15px',
   },
   deleteIcon: {
     marginRight: '1rem',
