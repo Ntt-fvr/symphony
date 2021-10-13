@@ -21,7 +21,10 @@ import type {AddFormulaMutationVariables} from '../../mutations/__generated__/Ad
 
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import FormGroup from '@material-ui/core/FormGroup';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Chip from '@material-ui/core/Chip';
@@ -34,7 +37,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import symphony from '@symphony/design-system/theme/symphony';
-import {Editor, Element, Frame} from '@craftjs/core';
 import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
@@ -77,6 +79,17 @@ const useStyles = makeStyles(() => ({
     border: 'none',
     lineHeight: 'normal',
     'padding-left': 0,
+  },
+  switch: {
+    height: '35px',
+  },
+  textarea: {
+    width: '100%',
+    height: '200px',
+    border: '1px solid #ccc',
+    padding: '5px',
+    resize: 'both',
+    overflow: 'auto',
   },
   textField: {
     width: '70%',
@@ -138,6 +151,30 @@ const AddFormulaDialog = (props: Props) => {
     AddFormulaMutation(variables);
   }
 
+  const items = [
+    {no: 1, text: 'pmRrcConnEstabSucc', checked: false, color: '#B3A4FF'},
+    {
+      no: 2,
+      text: 'pmErabRelAbnormalMmeActQci1',
+      checked: true,
+      color: '#4EDECA',
+    },
+    {
+      no: 3,
+      text: 'EUtranCellFDD.pmRrcConnEstabSucc',
+      checked: false,
+      color: '#93C9FF',
+    },
+    ,
+  ];
+
+  const [checked, setChecked] = useState();
+
+  function onDragStart(e, v) {
+    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.setData('text/plain', v);
+  }
+
   return (
     <Dialog
       maxWidth="lg"
@@ -197,58 +234,41 @@ const AddFormulaDialog = (props: Props) => {
                 </TableRow>
               </TableHead>
             </Table>
-            <Grid container spacing={2}>
-              <Grid item xs={2}>
-                <Switch
-                  className={classes.readRule}
-                  checked={true}
-                  disabled={false}
-                />
-                <Switch
-                  className={classes.readRule}
-                  checked={false}
-                  disabled={false}
-                />
-              </Grid>
-              <Grid item xs={10}>
-                <Chip
-                  key={1}
-                  label={'pmRrcConnEstabSucc'}
-                  className={classes.chip}
-                  color="primary"
-                />
-                <Chip
-                  key={2}
-                  label={'pmErabRelAbnormalMmeActQci1'}
-                  className={classes.chip}
-                  color="secondary"
-                />
-              </Grid>
-            </Grid>
+            {items.map(item => {
+              return (
+                <Grid container spacing={2}>
+                  <Grid item xs={2}>
+                    <Switch
+                      className={classes.switch}
+                      checked={item.checked}
+                      onChange={setChecked}
+                    />
+                  </Grid>
+                  <Grid item xs={9}>
+                    <Chip
+                      color="primary"
+                      key={item.no}
+                      label={item.text}
+                      style={{
+                        backgroundColor: item.color,
+                        color: 'black',
+                        fontWeight: '500',
+                      }}
+                      draggable="true"
+                      onDragStart={e => onDragStart(e, item.text)}
+                    />
+                  </Grid>
+                </Grid>
+              );
+            })}
           </Grid>
           <Grid item xs={7}>
-            <Editor
-              resolver={{
-                Text,
-              }}>
-              <Frame>
-                <Element
-                  canvas
-                  padding={5}
-                  background="#eeeeee"
-                  data-cy="root-container">
-                  <Text variant="body2" weight="regular">
-                    ()
-                  </Text>
-                </Element>
-              </Frame>
-            </Editor>
             <FormField>
               <TextInput
                 autoComplete="off"
                 name="formula"
                 type="multiline"
-                rows={7}
+                rows={11}
                 onChange={handleChange}
               />
             </FormField>
