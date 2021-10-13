@@ -187,12 +187,10 @@ const AddWorkOrderCard = (props: Props) => {
   const classes = useStyles();
   const {statusValues, closedStatus} = useStatusValues();
 
-  const {
-    workOrderType,
-  }: AddWorkOrderCardTypeQueryResponse = useLazyLoadQuery<AddWorkOrderCardTypeQuery>(
-    workOrderTypeQuery,
-    {workOrderTypeId},
-  );
+  const {workOrderType}: AddWorkOrderCardTypeQueryResponse =
+    useLazyLoadQuery<AddWorkOrderCardTypeQuery>(workOrderTypeQuery, {
+      workOrderTypeId,
+    });
 
   const [workOrder, setWorkOrder] = useState<?WorkOrder>(
     workOrderType?.__typename === 'WorkOrderType'
@@ -291,9 +289,8 @@ const AddWorkOrderCard = (props: Props) => {
         status,
         priority,
         properties: toPropertyInput(properties),
-        checkListCategories: convertChecklistCategoriesStateToInput(
-          editingCategories,
-        ),
+        checkListCategories:
+          convertChecklistCategoriesStateToInput(editingCategories),
       },
     };
 
