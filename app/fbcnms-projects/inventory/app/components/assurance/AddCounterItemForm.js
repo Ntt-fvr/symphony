@@ -93,6 +93,7 @@ type Node = {
 };
 
 type Props = $ReadOnly<{|
+  isCompleted: void => void,
   counterNames?: Array<Node>,
 |}>;
 
@@ -107,7 +108,7 @@ type Counters = {
 };
 
 export default function AddCounterItemForm(props: Props) {
-  const {counterNames} = props;
+  const {isCompleted, counterNames} = props;
   const classes = useStyles();
   const [counters, setCounters] = useState<Counters>({data: {}});
   const [showChecking, setShowChecking] = useState();
@@ -150,17 +151,20 @@ export default function AddCounterItemForm(props: Props) {
       },
     };
     setShowChecking(true);
-    AddCounterMutation(variables);
+    AddCounterMutation(variables, {onCompleted: () => isCompleted()});
+  }
+
+  const setReturn = () => {
+    setShowChecking(false);
   }
 
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="counter"
         card_header="Add Counter"
         title="Counter"
         text_button="Add new counter"
-        names={counterNames}
+        setReturn={setReturn}
       />
     );
   }

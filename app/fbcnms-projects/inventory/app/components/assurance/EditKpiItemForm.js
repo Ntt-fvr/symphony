@@ -138,12 +138,13 @@ type Props = $ReadOnly<{|
     formulaFk: Array<Formula>,
   },
   hideEditKpiForm: void => void,
+  isCompleted: void => void,
   kpi: Array<Kpi>,
   threshold: Array<KpiThreshold>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {kpi, formValues, hideEditKpiForm, threshold} = props;
+  const {kpi, formValues, hideEditKpiForm, threshold, isCompleted} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -172,7 +173,12 @@ export const EditKpiItemForm = (props: Props) => {
         kpiCategoryFK: kpiCategoryFK.value,
       },
     };
-    EditKpiMutation(variables);
+    EditKpiMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideEditKpiForm();
+      },
+    });
   };
 
   return (
@@ -305,7 +311,6 @@ export const EditKpiItemForm = (props: Props) => {
                     className={classes.addKpi}
                     onClick={() => {
                       handleClick();
-                      hideEditKpiForm();
                     }}>
                     Save
                   </Button>

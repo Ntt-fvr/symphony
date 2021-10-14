@@ -88,10 +88,18 @@ type Props = $ReadOnly<{|
   thresholdNames: Array<string>,
   hideEditThresholdForm: void => void,
   editRule: void => void,
+  isCompleted: void => void,
 |}>;
 
 export const EditThresholdItemForm = (props: Props) => {
-  const {thresholdNames, formValues, hideEditThresholdForm, editRule} = props;
+  const {
+    thresholdNames,
+    formValues,
+    hideEditThresholdForm,
+    editRule,
+    isCompleted,
+  } = props;
+  console.log('props', props);
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -107,7 +115,12 @@ export const EditThresholdItemForm = (props: Props) => {
         status: checked,
       },
     };
-    EditTresholdMutation(variables);
+    EditTresholdMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideEditThresholdForm();
+      },
+    });
   };
 
   return (

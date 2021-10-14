@@ -90,11 +90,12 @@ type Props = $ReadOnly<{|
     },
   },
   hideEditCounterForm: void => void,
+  isCompleted: void => void,
   counterNames: Array<string>,
 |}>;
 
 const EditCounterItemForm = (props: Props) => {
-  const {formValues, hideEditCounterForm, counterNames} = props;
+  const {formValues, hideEditCounterForm, counterNames, isCompleted} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -132,8 +133,12 @@ const EditCounterItemForm = (props: Props) => {
         vendorFk: vendor.value,
       },
     };
-
-    EditCounterMutation(variables);
+    EditCounterMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideEditCounterForm();
+      },
+    });
   };
 
   return (
@@ -227,7 +232,6 @@ const EditCounterItemForm = (props: Props) => {
                     className={classes.addCounter}
                     onClick={() => {
                       handleClick();
-                      hideEditCounterForm();
                     }}>
                     Save
                   </Button>
