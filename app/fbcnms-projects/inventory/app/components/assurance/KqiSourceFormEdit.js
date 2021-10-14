@@ -40,6 +40,7 @@ const useStyles = makeStyles(() => ({
     minHeight: '36px',
   },
   option: {
+    marginRight: '1rem',
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
@@ -55,7 +56,7 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '2.5rem',
   },
   titleButtons: {
-    padding: '1rem 1rem 0 4rem',
+    padding: '0 2rem 0 4rem',
     alignItems: 'center',
   },
   reason: {
@@ -110,38 +111,32 @@ const KqiSourceFormEdit = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons}>
-          <Grid item xs={10}>
+        <Grid container xs={12} className={classes.titleButtons}>
+          <Grid xs={6}>
             <ConfigureTitle title={fbt('Edit KQI Source', ' ')} subtitle={''} />
           </Grid>
-          <Grid item xs={2}>
-            <Grid container>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    className={classes.option}
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => hideKqiSourceFormEdit()}>
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid xs={6}>
-                <FormField>
-                  <Button
-                    className={classes.option}
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      hideKqiSourceFormEdit();
-                      handleClick();
-                    }}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-            </Grid>
+          <Grid container justify="flex-end" alignItems="center" xs={6}>
+            <FormField>
+              <Button
+                className={classes.option}
+                variant="outlined"
+                color="primary"
+                onClick={() => hideKqiSourceFormEdit()}>
+                Cancel
+              </Button>
+            </FormField>
+            <FormField>
+              <Button
+                className={classes.option}
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  hideKqiSourceFormEdit();
+                  handleClick();
+                }}>
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
         <Grid item xs={12}>

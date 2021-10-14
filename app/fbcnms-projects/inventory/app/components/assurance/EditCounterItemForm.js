@@ -56,8 +56,11 @@ const useStyles = makeStyles(() => ({
   textInput: {
     minHeight: '36px',
   },
+  action: {
+    paddingRight: '1.3rem',
+  },
   addCounter: {
-    margin: '20px',
+    marginRight: '1rem',
     width: '111px',
     alignSelf: 'flex-end',
   },
@@ -220,31 +223,33 @@ const EditCounterItemForm = (props: Props) => {
                 </Select>
               </FormField>
             </Grid>
-            <Grid container justify="flex-end">
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addCounter}
-                    onClick={() => {
-                      handleClick();
-                      hideEditCounterForm();
-                    }}>
-                    Save
-                  </Button>
-                </FormField>
-              </Grid>
-              <Grid item xs={2} sm={2} lg={1} xl={1}>
-                <FormField>
-                  <Button
-                    className={classes.addCounter}
-                    skin="brightGray"
-                    onClick={() => {
-                      hideEditCounterForm();
-                    }}>
-                    Cancel
-                  </Button>
-                </FormField>
-              </Grid>
+            <Grid
+              className={classes.action}
+              item
+              xs={12}
+              container
+              justify="flex-end">
+              <FormField>
+                <Button
+                  className={classes.addCounter}
+                  onClick={() => {
+                    handleClick();
+                    hideEditCounterForm();
+                  }}>
+                  Save
+                </Button>
+              </FormField>
+
+              <FormField>
+                <Button
+                  className={classes.addCounter}
+                  skin="brightGray"
+                  onClick={() => {
+                    hideEditCounterForm();
+                  }}>
+                  Cancel
+                </Button>
+              </FormField>
             </Grid>
           </Card>
         </Grid>

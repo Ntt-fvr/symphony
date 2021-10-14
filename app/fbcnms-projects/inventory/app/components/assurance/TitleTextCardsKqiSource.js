@@ -9,30 +9,18 @@
  */
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
-import {BLUE} from '@symphony/design-system/theme/symphony';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 20px',
+    padding: '0  1rem 0.5rem 1rem',
   },
-  title: {
-    color: BLUE.B600,
+  action: {
+    flexWrap: 'nowrap',
   },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  iD: {
-    paddingRight: '20rem',
-  },
-  edit: {
-    justifyContent: 'flex-end',
-  },
-  delete: {
-    alignItems: 'center',
+  accionDelete: {
+    marginRight: '1rem',
   },
 }));
 
@@ -40,41 +28,30 @@ export const TitleTextCardsKqiSource = () => {
   const classes = useStyles();
   return (
     <Grid container className={classes.root}>
-      <Grid xs={3}>
-        <Text className={classes.title} variant="subtitle2">
+      <Grid xs={4}>
+        <Text color="primary" useEllipsis={true} variant="subtitle2">
           KQI Source Name
         </Text>
       </Grid>
-      <Grid xs={7}>
-        <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.iD,
-          )}
-          variant="subtitle2">
+      <Grid xs={6}>
+        <Text color="primary" variant="subtitle2">
           ID
         </Text>
       </Grid>
-      <Grid xs={1}>
+      <Grid
+        container
+        alignItems="center"
+        justify="flex-end"
+        className={classes.action}
+        xs={2}>
         <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.edit,
-          )}
+          className={classes.accionDelete}
+          useEllipsis={true}
+          color="primary"
           variant="subtitle2">
           Delete
         </Text>
-      </Grid>
-      <Grid xs={1}>
-        <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.delete,
-          )}
-          variant="subtitle2">
+        <Text useEllipsis={true} color="primary" variant="subtitle2">
           Edit
         </Text>
       </Grid>

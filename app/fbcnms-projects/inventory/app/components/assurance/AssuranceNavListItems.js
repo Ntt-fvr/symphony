@@ -32,7 +32,7 @@ export const AssuranceNavListItems = () => {
     <NavListItem
       key={3}
       label="Service Quality"
-      path={relativeUrl('/service_quality/kqi_source')}
+      path={relativeUrl('/service_quality')}
       icon={<AppRegistrationIcon />}
       onClick={() => {
         ServerLogger.info(

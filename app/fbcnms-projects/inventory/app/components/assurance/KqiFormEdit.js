@@ -8,15 +8,12 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
-import RelayEnvironment from '../../common/RelayEnvironment';
-import {fetchQuery, graphql} from 'relay-runtime';
+import React, {useState} from 'react';
 
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import classNames from 'classnames';
 
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
@@ -25,6 +22,8 @@ import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {MenuItem, Select} from '@material-ui/core';
+
+import DialogConfirmDelete from './DialogConfirmDelete';
 
 import KqiFormCreateTarget from './KqiFormCreateTarget';
 import KqiFormEditTarget from './KqiFormEditTarget';
@@ -35,6 +34,7 @@ import IconButton from '@material-ui/core/IconButton';
 import {DARK} from '@symphony/design-system/theme/symphony';
 
 import type {EditKqiMutationVariables} from '../../mutations/__generated__/EditKqiMutation.graphql';
+import type {Kqis} from './KqiTypes';
 
 import {makeStyles} from '@material-ui/styles';
 
@@ -49,12 +49,15 @@ import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '40px',
+    padding: '40px',
+  },
+  header: {
+    marginBottom: '1rem',
   },
   select: {
     '& .MuiSelect-select': {
       padding: '9px 0 0 10px',
+      width: '100%',
     },
     border: '1px solid #D2DAE7',
     height: '36px',
@@ -65,60 +68,20 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
     fontSize: '14px',
   },
-  selectRepeatEvery: {
-    width: '75%',
-    marginLeft: '1rem',
+  gridStyleLeft: {
+    paddingRight: '0.5rem',
   },
-  insideContainer: {
-    paddingTop: '12px',
-  },
-  formField: {
-    margin: '0 1rem 1rem 1rem',
-  },
-  formFieldTf: {
-    width: '24rem',
-    height: 'auto',
-    margin: '0 1rem 1rem 0',
-  },
-  formFieldStatus: {
-    marginTop: '1rem',
-  },
-  textInput: {
-    minHeight: '36px',
+  gridStyleRight: {
+    paddingLeft: '0.5rem',
   },
   option: {
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
-    margin: '0 3px 0 0 ',
-  },
-  delete: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  title: {
-    marginLeft: '10px',
-  },
-  textTitle: {
-    paddingLeft: '3rem',
-  },
-  reason: {
-    minHeight: '100px',
-  },
-  status: {
-    paddingTop: '40px',
-  },
-  time: {},
-  titleTime: {
-    marginLeft: '1rem',
-  },
-  target: {
-    margin: '2rem 2px 3rem 2px',
   },
   calendar: {
     '& .MuiOutlinedInput-input': {
-      height: '17px',
+      height: '12px',
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
@@ -152,15 +115,37 @@ type KqiTemporalFrequency = {
 };
 
 type KqiTarget = {
+  item: {
+    id: string,
+    name: string,
+    impact: string,
+    period: number,
+    allowedVariation: number,
+    initTime: string,
+    endTime: string,
+    status: boolean,
+    kqi: {
+      id: string,
+    },
+    kqiComparator: {
+      id: string,
+      number: Number,
+      comparatorType: string,
+      kqiTargetFk: {
+        name: string,
+        id: string,
+      },
+      comparatorFk: {
+        id: string,
+        name: string,
+      },
+    },
+  },
+};
+
+type Comparator = {
   id: string,
   name: string,
-  impact: string,
-  period: number,
-  allowedVariation: number,
-  initTime: string,
-  endTime: string,
-  status: boolean,
-  kqi: string,
 };
 
 type Props = $ReadOnly<{|
@@ -196,55 +181,17 @@ type Props = $ReadOnly<{|
   dataCategories: Array<KqiCategories>,
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
   returnTableKqi: () => void,
+  dataKqiTarget: Array<KqiTarget>,
+  dataComparator: Array<Comparator>,
+  dataKqi: Array<Kqis>,
 |}>;
-
-const TargetQuery = graphql`
-  query KqiFormEditQuery {
-    kqiTargets {
-      edges {
-        node {
-          id
-          name
-          impact
-          allowedVariation
-          initTime
-          endTime
-          status
-          period
-          kqi {
-            id
-            name
-          }
-          kqiComparator {
-            kqiTargetFk {
-              id
-              name
-            }
-            comparatorFk {
-              id
-              name
-            }
-            id
-            number
-            comparatorType
-          }
-        }
-      }
-    }
-    comparators {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
 
 const KqiFormEdit = (props: Props) => {
   const {
+    dataKqi,
+    dataKqiTarget,
     formValues,
+    dataComparator,
     dataPerspectives,
     dataSources,
     dataCategories,
@@ -254,14 +201,8 @@ const KqiFormEdit = (props: Props) => {
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
   const [showEditTarget, setShowEditTarget] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
-  const [dataTarget, setDataTarget] = useState({});
-
-  useEffect(() => {
-    fetchQuery(RelayEnvironment, TargetQuery, {}).then(data => {
-      setDataTarget(data);
-    });
-  }, [dataTarget]);
+  const [dataEdit, setDataEdit] = useState<KqiTarget>({});
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const name = useFormInput(formValues.item.name);
   const description = useFormInput(formValues.item.description);
@@ -272,6 +213,7 @@ const KqiFormEdit = (props: Props) => {
   const endDateTime = useFormInput(
     moment(formValues.item.endDateTime).format('YYYY-MM-DDThh:mm'),
   );
+
   const kqiCategory = useFormInput(formValues.item.kqiCategory.id);
   const kqiPerspective = useFormInput(formValues.item.kqiPerspective.id);
   const kqiSource = useFormInput(formValues.item.kqiSource.id);
@@ -279,13 +221,30 @@ const KqiFormEdit = (props: Props) => {
     formValues.item.kqiTemporalFrequency.id,
   );
 
-  const filterKqiTargetsById = dataTarget?.kqiTargets?.edges?.filter(
-    kqi => kqi.node.kqi.id === formValues.item.id,
+  const filterKqiTargetsById = dataKqiTarget?.filter(
+    kqiData => kqiData?.kqi?.id === formValues.item.id,
   );
+  const dataNameKqi = dataKqi.map(item => item.name);
 
-  const dataResponseComparators = dataTarget.comparators?.edges.map(
-    item => item.node,
-  );
+  const inputFilter = () => {
+    return (
+      dataNameKqi?.filter(
+        item => item === name.value && item !== formValues.item.name,
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kqi name existing'};
+    }
+  };
+  
+  const dataInputsObject = [
+    name.value, description.value, formula.value, kqiCategory.value, 
+    kqiPerspective.value, startDateTime.value, endDateTime.value, 
+    kqiSource.value, kqiTemporalFrequency.value,
+  ]
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -320,8 +279,9 @@ const KqiFormEdit = (props: Props) => {
   if (showCreateTarget) {
     return (
       <KqiFormCreateTarget
+        dataTarget={dataKqiTarget}
         idKqi={formValues.item.id}
-        dataComparator={dataResponseComparators}
+        dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowCreateTarget(false)}
       />
     );
@@ -335,7 +295,9 @@ const KqiFormEdit = (props: Props) => {
     return (
       <KqiFormEditTarget
         formValues={dataEdit}
-        dataComparator={dataResponseComparators}
+        dataTarget={dataKqiTarget}
+        nameKqi={formValues.item.name}
+        dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowEditTarget(false)}
       />
     );
@@ -343,78 +305,77 @@ const KqiFormEdit = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid item xs={9}>
-          <ConfigureTitleSubItem
-            title={fbt('KQI catalog/', 'nameKqi')}
-            tag={''}
-            className={classes.textTitle}
-          />
-        </Grid>
-        <Grid item xs={1} className={classes.delete}>
-          <IconButton>
-            <DeleteOutlinedIcon
-              onClick={() => {
-                handleRemove(formValues.item.id);
-                returnTableKqi();
-              }}
-              style={{color: DARK.D300}}
+      <Grid container className={classes.header}>
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center">
+          <Grid xs>
+            <ConfigureTitleSubItem
+              title={fbt('KQI catalog/', 'KQI catalog')}
+              tag={` ${formValues.item.name}`}
             />
-          </IconButton>
-        </Grid>
-        <Grid item xs={2}>
-          <Grid container>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  className={classes.option}
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => returnTableKqi()}>
-                  Cancel
-                </Button>
-              </FormField>
-            </Grid>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  onClick={handleClick}
-                  className={classes.option}
-                  variant="contained"
-                  color="primary">
-                  Save
-                </Button>
-              </FormField>
-            </Grid>
+          </Grid>
+          <Grid style={{marginRight: '1rem'}}>
+            <IconButton>
+              <DeleteOutlinedIcon
+                onClick={() => setDialogOpen(true)}
+                style={{color: DARK.D300}}
+              />
+            </IconButton>
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                style={{marginRight: '1rem'}}
+                className={classes.option}
+                variant="outlined"
+                color="primary"
+                onClick={() => returnTableKqi()}>
+                Cancel
+              </Button>
+            </FormField>
+          </Grid>
+          <Grid>
+            <FormField>
+              <Button
+                onClick={handleClick}
+                className={classes.option}
+                variant="contained"
+                color="primary"
+                disabled={!(
+                  dataInputsObject.length === 9 &&
+                  !dataInputsObject.some(item => item === '') &&
+                  !inputFilter().length > 0
+                )}>
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs>
           <Card>
-            <Grid container spacing={1} className={classes.insideContainer}>
+            <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name" className={classes.formField}>
-                  <TextInput
-                    {...name}
-                    autoComplete="off"
-                    name="name"
-                    className={classes.textInput}
-                  />
+                <FormField label="Name" required {...validationName()}>
+                  <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>
               <Grid item xs={6}>
-                <FormField className={classes.formField} label="ID">
+                <FormField label="ID">
                   <TextInput
                     value={formValues.item.id}
                     autoComplete="off"
                     name="id"
                     disabled
-                    className={classes.textInput}
                   />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid item xs={6}>
-                  <FormField label="Category" className={classes.formField}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
+                  <FormField label="Category">
                     <Select
                       {...kqiCategory}
                       className={classes.select}
@@ -428,8 +389,8 @@ const KqiFormEdit = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
-                  <FormField label="Perspective" className={classes.formField}>
+                <Grid item xs={6} className={classes.gridStyleRight}>
+                  <FormField label="Perspective">
                     <Select
                       {...kqiPerspective}
                       className={classes.select}
@@ -443,27 +404,24 @@ const KqiFormEdit = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid className={classes.time} item xs={12}>
-                  <Text className={classes.titleTime} variant="subtitle1">
-                    Activation period
-                  </Text>
+                <Grid item xs={12}>
+                  <Text variant="subtitle1">Activation period</Text>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField className={classes.formField} label="Description">
+                <FormField label="Description">
                   <TextInput
                     {...description}
                     autoComplete="off"
                     name="description"
-                    className={classes.textInput}
                     type="multiline"
-                    rows={3}
+                    rows={4}
                   />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
-                <Grid item xs={6}>
-                  <FormField label="Start" className={classes.formField}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
+                  <FormField label="Start">
                     <TextField
                       {...startDateTime}
                       disabled
@@ -475,8 +433,8 @@ const KqiFormEdit = (props: Props) => {
                     />
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
-                  <FormField label="End" className={classes.formField}>
+                <Grid item xs={6} className={classes.gridStyleRight}>
+                  <FormField label="End">
                     <TextField
                       {...endDateTime}
                       name="endDateTime"
@@ -487,8 +445,8 @@ const KqiFormEdit = (props: Props) => {
                     />
                   </FormField>
                 </Grid>
-                <Grid item xs={6}>
-                  <FormField label="Source" className={classes.formField}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
+                  <FormField label="Source">
                     <Select
                       {...kqiSource}
                       className={classes.select}
@@ -502,39 +460,40 @@ const KqiFormEdit = (props: Props) => {
                     </Select>
                   </FormField>
                 </Grid>
-                <Grid container item xs={6}>
-                  <FormField
-                    label="Temporal frequency"
-                    className={classes.formField}>
-                    <div className={classes.formFieldTf}>
+                <Grid item xs={6} className={classes.gridStyleRight}>
+                  <Grid style={{marginBottom: '6px'}}>
+                    <Text style={{fontSize: '14px'}}>Temporal frequency</Text>
+                  </Grid>
+                  <Grid container alignItems="center">
+                    <Grid item xs={5} lg={3}>
                       <Text variant={'caption'}>Repeat every</Text>
-                      <Select
-                        {...kqiTemporalFrequency}
-                        className={classNames(
-                          classes.select,
-                          classes.selectRepeatEvery,
-                        )}
-                        disableUnderline
-                        name="kqiTemporalFrequency">
-                        {dataTemporalFrequencies?.map((item, index) => (
-                          <MenuItem key={index} value={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </div>
-                  </FormField>
+                    </Grid>
+                    <Grid item xs>
+                      <FormField>
+                        <Select
+                          {...kqiTemporalFrequency}
+                          className={classes.select}
+                          disableUnderline
+                          name="kqiTemporalFrequency">
+                          {dataTemporalFrequencies.map((item, index) => (
+                            <MenuItem key={index} value={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormField>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <FormField label="Formula" className={classes.formField}>
+                <FormField label="Formula">
                   <TextInput
                     {...formula}
                     autoComplete="off"
                     name="formula"
                     type="multiline"
                     rows={10}
-                    className={classes.textInput}
                   />
                 </FormField>
               </Grid>
@@ -542,13 +501,24 @@ const KqiFormEdit = (props: Props) => {
           </Card>
         </Grid>
       </Grid>
-      <Grid className={classes.target} item xs={12}>
+      <Grid item xs={12}>
         <KqiTableAssociatedTarget
           tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}
           edit={showFormEditTarget}
         />
       </Grid>
+      {dialogOpen && (
+        <DialogConfirmDelete
+          name={'kqi'}
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          deleteItem={() => {
+            handleRemove(formValues.item.id);
+            returnTableKqi();
+          }}
+        />
+      )}
     </div>
   );
 };

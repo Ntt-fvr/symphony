@@ -114,6 +114,7 @@ func (r mutationResolver) EditKpi(ctx context.Context, input models.EditKpiInput
 	}
 
 	if input.Name != et.Name || input.DomainFk != domainID || input.Status != et.Status || input.Description != et.Description || input.KpiCategoryFk != kpiCategoryID {
+
 		if et, err = client.Kpi.
 			UpdateOne(et).
 			SetName(input.Name).

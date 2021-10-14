@@ -58,28 +58,12 @@ const StyledTableRow = withStyles(() => ({
 }))(TableRow);
 
 const useStyles = makeStyles(() => ({
-  root: {
-    width: '100%',
-  },
-  container: {
-    maxHeight: '100%',
-  },
-  id: {},
-  head: {},
-  containerTitle: {
-    height: '64px',
-    padding: '0',
-    margin: '0',
-    borderBottom: '2px solid #F5F7FC',
+  head: {
+    padding: "24px",
+    borderBottom: '2px solid #F5F7FC'
   },
   insideCenter: {
     textAlign: 'center',
-  },
-  title: {
-    marginLeft: '2rem',
-  },
-  plusButton: {
-    marginLeft: '5rem',
   },
 }));
 
@@ -91,7 +75,6 @@ type Props = $ReadOnly<{|
 
 const KqiTableAssociatedTarget = (props: Props) => {
   const {create, edit, tableTargets} = props;
-
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
 
@@ -103,24 +86,23 @@ const KqiTableAssociatedTarget = (props: Props) => {
   };
 
   return (
-    <Paper className={classes.root}>
-      <TableContainer className={classes.container}>
-        <Grid container alignItems="center" className={classes.containerTitle}>
-          <Grid xs={10}>
-            <Text className={classes.title} variant="h6" weight="bold">
+    <Paper>
+      <TableContainer>
+        <Grid container alignItems="center" className={classes.head}>
+          <Grid xs>
+            <Text variant="h6" weight="bold">
               Associated targets
             </Text>
           </Grid>
-          <Grid xs={2}>
+          <Grid>
             <AddButton
               onClick={create}
-              className={classes.plusButton}
               textButton={'Add targert'}
               disabled={false}
             />
           </Grid>
         </Grid>
-        <Table className={classes.head} stickyHeader aria-label="sticky table">
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               <StyledTableCell>Enable</StyledTableCell>
@@ -149,20 +131,20 @@ const KqiTableAssociatedTarget = (props: Props) => {
                 <TableCell>
                   <Switch
                     title={''}
-                    checked={item.node.status}
+                    checked={item.status}
                     onChange={setChecked}
                     onClick={() => {
                       const variables: EditKqiTargetMutationVariables = {
                         input: {
-                          id: item.node.id,
-                          name: item.node.name,
-                          impact: item.node.impact,
-                          period: item.node.period,
-                          allowedVariation: item.node.allowedVariation,
-                          initTime: moment(item.node.initTime, 'HH'),
-                          endTime: moment(item.node.endTime, 'HH'),
+                          id: item.id,
+                          name: item.name,
+                          impact: item.impact,
+                          period: item.period,
+                          allowedVariation: item.allowedVariation,
+                          initTime: moment(item.initTime, 'HH'),
+                          endTime: moment(item.endTime, 'HH'),
                           status: checked,
-                          kqi: item.node.kqi.id,
+                          kqi: item.kqi.id,
                         },
                       };
                       EditKqiTargetMutation(variables);
@@ -175,31 +157,29 @@ const KqiTableAssociatedTarget = (props: Props) => {
                       variant={'subtitle1'}
                       weight={'medium'}
                       color={'primary'}>
-                      {item.node.name}
+                      {item.name}
                     </Text>
                   </Button>
                 </TableCell>
                 <TableCell>
-                  {item.node.kqiComparator[0]?.comparatorFk?.name} -{' '}
-                  {item.node.kqiComparator[0]?.number}
+                  {item.kqiComparator[0]?.comparatorFk?.name} - {item.kqiComparator[0]?.number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.kqiComparator[1]?.number}
+                  {item.kqiComparator[1]?.number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.period}
+                  {item.period}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {item.node.allowedVariation}
+                  {item.allowedVariation}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {moment(item.node.initTime).format('HH')} -{' '}
-                  {moment(item.node.endTime).format('HH')}
+                  {moment(item.initTime).format('HH')} - {moment(item.endTime).format('HH')}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>
                     <DeleteOutlinedIcon
-                      onClick={() => handleRemove(item.node.id)}
+                      onClick={() => handleRemove(item.id)}
                       style={{color: DARK.D300}}
                     />
                   </IconButton>

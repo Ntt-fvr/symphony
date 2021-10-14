@@ -9,73 +9,74 @@
  */
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0 9px 16px',
+    flexGrow: '1',
+    padding: '0 3rem 0.5rem 1rem',
   },
-  title: {
-    color: '#3984FF',
+  nameKpi: {
+    paddingLeft: '0.7rem',
   },
-  name: {
-    paddingLeft: '25px',
-    color: '#3984FF',
+  editButton: {
+    paddingLeft: '1rem',
   },
-  globalCenter: {
-    display: 'flex',
-    justifyContent: 'center',
+  status: {
+    flexWrap: 'nowrap',
   },
-  network: {
-    paddingLeft: '51px',
-  },
-  vendor: {
-    paddingRight: '3rem',
-  },
-  delete: {
-    justifyContent: 'flex-end',
-  },
-  edit: {
-    paddingLeft: '24px',
+  actions: {
+    flexWrap: 'nowrap',
   },
 }));
 
 function TitleTextCardsKpi() {
   const classes = useStyles();
   return (
-    <Grid container className={classes.root}>
-      <Grid xs={3}>
-        <Text className={classes.title} variant="subtitle2">
+    <Grid
+      container
+      xs={12}
+      justifyContent="center"
+      alignItems="center"
+      className={classes.root}>
+      <Grid container className={classes.status} xs={2}>
+        <Text useEllipsis={true} color="primary" variant="subtitle2">
           Status
         </Text>
-        <Text className={classes.name} variant="subtitle2">
+        <Text
+          useEllipsis={true}
+          className={classes.nameKpi}
+          color="primary"
+          variant="subtitle2">
           Kpi name
         </Text>
       </Grid>
-      <Grid xs={4}>
-        <Text
-          className={classNames(classes.title, classes.network)}
-          variant="subtitle2">
+      <Grid xs={2} md={3}>
+        <Text useEllipsis={true} color="primary" variant="subtitle2">
           Domain
         </Text>
       </Grid>
-      <Grid xs={3} />
-      <Grid xs={1}>
-        <Text
-          className={classNames(
-            classes.title,
-            classes.globalCenter,
-            classes.delete,
-          )}
-          variant="subtitle2">
-          Delete
+      <Grid xs={6} md={5} xl={6}>
+        <Text useEllipsis={true} color="primary" variant="subtitle2">
+          Category
         </Text>
       </Grid>
-      <Grid xs={1}>
+      <Grid
+        container
+        alignItems="center"
+        justify="flex-end"
+        className={classes.actions}
+        xs={2}
+        md={2}
+        xl={1}>
+        <Text useEllipsis={true} color="primary" variant="subtitle2">
+          Delete
+        </Text>
         <Text
-          className={classNames(classes.title, classes.edit)}
+          useEllipsis={true}
+          color="primary"
+          className={classes.editButton}
           variant="subtitle2">
           Edit
         </Text>

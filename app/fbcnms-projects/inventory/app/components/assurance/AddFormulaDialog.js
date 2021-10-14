@@ -62,7 +62,9 @@ const useStyles = makeStyles(() => ({
 type Formula = {
   data: {
     kpi: string,
+    vendors: string,
     technology: string,
+    network: string,
   },
 };
 
@@ -91,6 +93,7 @@ const AddFormulaDialog = (props: Props) => {
         status: true,
         techFk: dataFormula.data.technology,
         kpiFk: dataFormula.data.kpi,
+        networkTypeFk: dataFormula.data.networkTypes,
       },
     };
     AddFormulaMutation(variables);
