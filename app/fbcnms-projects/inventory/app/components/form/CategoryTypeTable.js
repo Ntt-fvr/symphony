@@ -274,7 +274,6 @@ class CategoryTypeTable extends React.Component<Props> {
       id: `CategoryType@tmp-${this.props.propertyTypes.length}-${Date.now()}`,
       name: '',
       index: this.props.propertyTypes.length,
-      numberOfDocuments: 0,
     };
   }
 }
