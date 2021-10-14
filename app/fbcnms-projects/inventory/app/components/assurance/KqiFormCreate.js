@@ -194,7 +194,12 @@ const KqiFormCreate = (props: Props) => {
                 onClick={handleClick}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={!(
+                  Object.values(Kqis.data).length === 9 &&
+                  !Object.values(Kqis.data).some(item => item === '') &&
+                  !dataNameKqi?.some(item => item === Kqis.data.name)
+                )}>
                 Save
               </Button>
             </FormField>
