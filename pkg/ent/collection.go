@@ -609,18 +609,6 @@ func (f *FileQuery) collectField(ctx *graphql.OperationContext, field graphql.Co
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (fct *FileCategoryTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *FileCategoryTypeQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		fct = fct.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return fct
-}
-
-func (fct *FileCategoryTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FileCategoryTypeQuery {
-	return fct
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (fp *FloorPlanQuery) CollectFields(ctx context.Context, satisfies ...string) *FloorPlanQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		fp = fp.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -1005,10 +993,6 @@ func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field g
 		switch field.Name {
 		case "documentCategories":
 			lt = lt.WithDocumentCategory(func(query *DocumentCategoryQuery) {
-				query.collectField(ctx, field)
-			})
-		case "fileCategoryType":
-			lt = lt.WithFileCategoryType(func(query *FileCategoryTypeQuery) {
 				query.collectField(ctx, field)
 			})
 		case "locations":

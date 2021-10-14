@@ -9,8 +9,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"sort"
+
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"

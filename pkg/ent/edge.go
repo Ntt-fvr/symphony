@@ -768,14 +768,6 @@ func (f *File) DocumentCategory(ctx context.Context) (*DocumentCategory, error) 
 	return result, MaskNotFound(err)
 }
 
-func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
-	result, err := fct.Edges.LocationTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = fct.QueryLocationType().Only(ctx)
-	}
-	return result, MaskNotFound(err)
-}
-
 func (fp *FloorPlan) Location(ctx context.Context) (*Location, error) {
 	result, err := fp.Edges.LocationOrErr()
 	if IsNotLoaded(err) {
@@ -1204,14 +1196,6 @@ func (lt *LocationType) PropertyTypes(ctx context.Context) ([]*PropertyType, err
 	result, err := lt.Edges.PropertyTypesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QueryPropertyTypes().All(ctx)
-	}
-	return result, err
-}
-
-func (lt *LocationType) FileCategoryType(ctx context.Context) ([]*FileCategoryType, error) {
-	result, err := lt.Edges.FileCategoryTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = lt.QueryFileCategoryType().All(ctx)
 	}
 	return result, err
 }

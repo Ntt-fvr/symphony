@@ -969,36 +969,6 @@ var (
 			},
 		},
 	}
-	// FileCategoryTypesColumns holds the columns for the "file_category_types" table.
-	FileCategoryTypesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString},
-		{Name: "location_type_file_category_type", Type: field.TypeInt, Nullable: true},
-	}
-	// FileCategoryTypesTable holds the schema information for the "file_category_types" table.
-	FileCategoryTypesTable = &schema.Table{
-		Name:       "file_category_types",
-		Columns:    FileCategoryTypesColumns,
-		PrimaryKey: []*schema.Column{FileCategoryTypesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:  "file_category_types_location_types_file_category_type",
-				Columns: []*schema.Column{FileCategoryTypesColumns[4]},
-
-				RefColumns: []*schema.Column{LocationTypesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "filecategorytype_name_location_type_file_category_type",
-				Unique:  true,
-				Columns: []*schema.Column{FileCategoryTypesColumns[3], FileCategoryTypesColumns[4]},
-			},
-		},
-	}
 	// FloorPlansColumns holds the columns for the "floor_plans" table.
 	FloorPlansColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -3219,7 +3189,6 @@ var (
 		ExportTasksTable,
 		FeaturesTable,
 		FilesTable,
-		FileCategoryTypesTable,
 		FloorPlansTable,
 		FloorPlanReferencePointsTable,
 		FloorPlanScalesTable,
@@ -3337,7 +3306,6 @@ func init() {
 	FilesTable.ForeignKeys[7].RefTable = SurveyQuestionsTable
 	FilesTable.ForeignKeys[8].RefTable = UsersTable
 	FilesTable.ForeignKeys[9].RefTable = WorkOrdersTable
-	FileCategoryTypesTable.ForeignKeys[0].RefTable = LocationTypesTable
 	FloorPlansTable.ForeignKeys[0].RefTable = LocationsTable
 	FloorPlansTable.ForeignKeys[1].RefTable = FloorPlanReferencePointsTable
 	FloorPlansTable.ForeignKeys[2].RefTable = FloorPlanScalesTable

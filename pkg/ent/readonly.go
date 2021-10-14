@@ -53,7 +53,6 @@ func (c *Client) ReadOnly() *Client {
 		ExportTask:                  NewExportTaskClient(cfg),
 		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
-		FileCategoryType:            NewFileCategoryTypeClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),

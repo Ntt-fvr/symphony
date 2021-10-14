@@ -509,7 +509,6 @@ type LocationType implements Node {
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
   documentCategories: [DocumentCategory]!
-  fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
@@ -521,7 +520,6 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
   documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
@@ -534,7 +532,6 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
   documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
@@ -1563,20 +1560,6 @@ enum PropertyKind
   gps_location
   datetime_local
   node
-}
-
-type FileCategoryType implements Node {
-  id: ID!
-  name: String!
-  rawValue: String
-}
-
-input FileCategoryTypeInput
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
-  ) {
-  id: ID
-  name: String!
 }
 
 type PropertyType implements Node {

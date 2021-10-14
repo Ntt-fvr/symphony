@@ -193,12 +193,6 @@ func (c *FileClient) Instantiate(f *File) *File {
 }
 
 // Instantiate entity configuration.
-func (c *FileCategoryTypeClient) Instantiate(fct *FileCategoryType) *FileCategoryType {
-	fct.config = c.config
-	return fct
-}
-
-// Instantiate entity configuration.
 func (c *FloorPlanClient) Instantiate(fp *FloorPlan) *FloorPlan {
 	fp.config = c.config
 	return fp

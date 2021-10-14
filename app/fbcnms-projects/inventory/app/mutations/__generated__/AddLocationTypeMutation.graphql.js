@@ -23,14 +23,9 @@ export type AddLocationTypeInput = {|
   mapType?: ?string,
   mapZoomLevel?: ?number,
   isSite?: ?boolean,
-  fileCategoriesType?: ?$ReadOnlyArray<FileCategoryTypeInput>,
   documentCategories?: ?$ReadOnlyArray<DocumentCategoryInput>,
   properties?: ?$ReadOnlyArray<PropertyTypeInput>,
   surveyTemplateCategories?: ?$ReadOnlyArray<SurveyTemplateCategoryInput>,
-|};
-export type FileCategoryTypeInput = {|
-  id?: ?string,
-  name: string,
 |};
 export type DocumentCategoryInput = {|
   id?: ?string,
