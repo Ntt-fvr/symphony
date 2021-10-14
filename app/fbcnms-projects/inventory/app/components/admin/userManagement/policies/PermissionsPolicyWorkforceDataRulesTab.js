@@ -225,23 +225,17 @@ type Props = $ReadOnly<{|
   onChange?: WorkforcePolicy => void,
   className?: ?string,
 |}>;
-const defaultMyOrganization = {};
 export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
-  const {policy, groups, onChange, className} = props;
+  const {policy, onChange, className} = props;
   const classes = useStyles();
   const [enableOrganization, setEnableOrganization] = useState(false);
-  const [groupsOrganizations, setGroupsOrganizations] = useState([]);
   const {me} = useMainContext();
 
   useEffect(() => {
-    const orgs = {};
-    groups.forEach((group, i) => {
-      group.members.forEach(member => {
-        orgs[member.organizationFk.id] = member.organizationFk;
-      });
-    });
-    setGroupsOrganizations(Object.values(orgs));
-  }, [groups]);
+    if (policy?.read.organizationIds && readAllowed) {
+      setEnableOrganization(true);
+    }
+  }, [policy]);
 
   if (policy == null) {
     return null;
@@ -319,7 +313,6 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
       <PermissionsPolicyWorkforceOrganizationSpecification
         disabled={!enableOrganization}
         userOrganization={me.user.organizationFk}
-        groupsOrganizations={groupsOrganizations}
         policy={{
           ...policy,
           read: {

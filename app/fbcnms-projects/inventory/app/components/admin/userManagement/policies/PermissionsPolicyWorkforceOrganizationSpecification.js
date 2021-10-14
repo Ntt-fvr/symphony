@@ -16,8 +16,6 @@ import {makeStyles} from '@material-ui/styles';
 
 import type {Organization} from '../data/Organizations';
 
-import {WorkforcePolicy} from '../data/PermissionsPolicies';
-
 import symphony from '@symphony/design-system/theme/symphony';
 import {Checkbox, ListItemText, MenuItem} from '@material-ui/core';
 import {useOrganizations} from '../data/Organizations';
@@ -65,13 +63,12 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   policy: ?WorkforcePolicy,
-  defaultOrganization?: Organization,
   disabled?: ?boolean,
   onChange?: WorkforcePolicy => void,
 |}>;
 
 const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
-  const {disabled, onChange, policy, groupsOrganizations} = props;
+  const {disabled, onChange, policy} = props;
   const organizationOptions = useOrganizations().map((org: Organization) => ({
     value: org.id,
     label: org.name,
@@ -80,11 +77,6 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
 
   const [selectedOrganizations, setSelectedOrganizations] = useState([]);
   const classes = useStyles();
-
-  useEffect(() => {
-    updateReadRuleOrganization(groupsOrganizations.map(org => org.id));
-    setSelectedOrganizations(['MyOrg']);
-  }, [groupsOrganizations]);
 
   useEffect(() => {
     setSelectedOrganizations(policy?.read.organizationIds || []);
@@ -107,19 +99,19 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
   };
 
   const options = useMemo(() => {
-    if (disabled && groupsOrganizations.length > 0) {
+    if (disabled && selectedOrganizations.length === 0) {
       return (
         <Select
           value="MyOrg"
           disabled={true}
           renderValue={() => (
             <div className={classes.chips}>
-              <Chip label="My Organization" className={classes.chip} />
+              <Chip label="User Organization" className={classes.chip} />
             </div>
           )}>
           <MenuItem key="myOrg" value="MyOrg">
             <Checkbox checked={true} />
-            <ListItemText primary="My Organization" />
+            <ListItemText primary="User Organization" />
           </MenuItem>
         </Select>
       );
