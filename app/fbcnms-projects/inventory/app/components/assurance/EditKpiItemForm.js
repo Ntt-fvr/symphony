@@ -53,9 +53,12 @@ const useStyles = makeStyles(() => ({
     minHeight: '60px',
   },
   addKpi: {
-    margin: '20px',
+    marginRight: '1rem',
     width: '111px',
     alignSelf: 'flex-end',
+  },
+  action: {
+    paddingRight: '1.3rem',
   },
   title: {
     marginLeft: '10px',
@@ -151,7 +154,6 @@ export const EditKpiItemForm = (props: Props) => {
   const domainFk = useFormInput(formValues.domainFk.id);
   const description = useFormInput(formValues.description);
   const kpiCategoryFK = useFormInput(formValues.kpiCategoryFK.id);
-  // debugger;
   const [checked, setChecked] = useState(formValues.status);
 
   const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});

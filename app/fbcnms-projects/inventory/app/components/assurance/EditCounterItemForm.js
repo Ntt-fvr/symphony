@@ -56,8 +56,11 @@ const useStyles = makeStyles(() => ({
   textInput: {
     minHeight: '36px',
   },
+  action: {
+    paddingRight: '1.3rem',
+  },
   addCounter: {
-    margin: '20px',
+    marginRight: '1rem',
     width: '111px',
     alignSelf: 'flex-end',
   },

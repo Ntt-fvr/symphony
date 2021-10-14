@@ -22,6 +22,7 @@ import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutline';
+import IconButton from '@material-ui/core/IconButton';
 
 import type {EditAlarmFilterMutationVariables} from '../../mutations/__generated__/EditAlarmFilterMutation.graphql';
 
@@ -35,6 +36,7 @@ import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 
 import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 import {AlarmFilteringStatus} from './AlarmFilteringStatus';
+import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -160,13 +162,16 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             </Text>
           </Grid>
           <Grid className={classes.header} xs={7} sm={7} md={5} lg={3} xl={3}>
-            <DeleteOutlinedIcon
-              icon={DeleteOutlinedIcon}
-              onClick={() => {
-                handleRemove(formValues.item.id);
-                closeEditForm();
-              }}
-            />
+            <IconButton>
+              <DeleteOutlinedIcon
+                style={{color: DARK.D300}}
+                icon={DeleteOutlinedIcon}
+                onClick={() => {
+                  handleRemove(formValues.item.id);
+                  closeEditForm();
+                }}
+              />
+            </IconButton>
             <FormField>
               <Button
                 className={classes.cancel}

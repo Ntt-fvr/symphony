@@ -10,7 +10,7 @@
 
 import React, {useState} from 'react';
 
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 import type {AddTresholdMutationVariables} from '../../mutations/__generated__/AddTresholdMutation.graphql';
 

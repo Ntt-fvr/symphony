@@ -53,9 +53,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
+  deleteItem: () => void,
   name: string,
-  open?: boolean,
-  onClose?: () => void,
+  open: boolean,
+  onClose: () => void,
 |}>;
 
 const DialogConfirmDelete = (props: Props) => {

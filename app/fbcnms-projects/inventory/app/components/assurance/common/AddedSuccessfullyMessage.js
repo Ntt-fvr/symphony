@@ -8,7 +8,7 @@
  * @format
  */
 
-import AddButton from './common/AddButton';
+import AddButton from './AddButton';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
@@ -16,30 +16,25 @@ import Clickable from '@symphony/design-system/components/Core/Clickable';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import {GREEN} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    width: '400px',
-    height: '611px',
-    padding: theme.spacing(0),
+    padding: '0px',
   },
   header: {
     margin: '20px 0 24px 20px',
   },
-  content: {
-    width: 'auto',
-    height: '450px',
-  },
   containerIcon: {
-    paddingBottom: '2rem',
+    paddingBottom: '1rem',
   },
   icon: {
     fontSize: '60px',
-    color: '#00AF5B',
+    color: GREEN.G600,
   },
   addButton: {
-    paddingTop: '9rem',
+    padding: '1rem 0 2rem 0',
   },
 }));
 
@@ -55,14 +50,9 @@ const AddedSuccessfullyMessage = (props: Props) => {
   const classes = useStyles();
 
   return (
-    <Card className={classes.root}>
+    <Card>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
-      <Grid
-        container
-        className={classes.content}
-        direction="column"
-        justify="center"
-        alignItems="center">
+      <Grid container direction="column" justify="center" alignItems="center">
         <Grid className={classes.containerIcon}>
           <CheckCircleOutlineOutlinedIcon className={classes.icon} />
         </Grid>

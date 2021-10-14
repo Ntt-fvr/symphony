@@ -34,13 +34,10 @@ import EditFormulaDialog from './EditFormulaDialog';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
-    margin: '40px',
-  },
-  paper: {
-    padding: theme.spacing(2),
+    margin: '30px',
   },
   listCarKpi: {
     listStyle: 'none',
@@ -210,7 +207,7 @@ const KpiTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12}>
           <ConfigureTitle
             title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
             subtitle={fbt(
@@ -219,7 +216,7 @@ const KpiTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
           <List disablePadding>
             {dataKpis.kpis?.edges.map((item, index) => (
@@ -237,7 +234,7 @@ const KpiTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+        <Grid item xs={12} sm={12} lg={3} xl={3}>
           <AddKpiItemForm
             kpiNames={dataKpis.kpis?.edges}
             isCompleted={isCompleted}

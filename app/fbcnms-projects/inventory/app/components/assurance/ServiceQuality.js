@@ -21,6 +21,7 @@ import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
 import KqiSourcesTypes from './KqiSourcesTypes';
 import KqiTypes from './KqiTypes';
+import {LogEvents, ServerLogger} from "../../common/LoggingUtils";
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -81,10 +82,12 @@ export default function ServiceQuality() {
   );
 
   useEffect(() => {
-    /*ServerLogger.info(LogEvents.KPI_TAB_NAVIGATION_CLICKED, {
-      id: tabBars[activeTabBar].id,
-    });
-     */
+    ServerLogger.info(
+        LogEvents.SERVICE_QUALITY_MONITORING_TAB_NAVIGATION_CLICKED,
+        {
+          id: tabBars[activeTabBar].id,
+        },
+    );
     history.push(`/assurance/service_quality/${tabBars[activeTabBar].path}`);
   }, [activeTabBar, history]);
 

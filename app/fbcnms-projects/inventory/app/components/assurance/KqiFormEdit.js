@@ -239,6 +239,12 @@ const KqiFormEdit = (props: Props) => {
       return {hasError: true, errorText: 'Kqi name existing'};
     }
   };
+  
+  const dataInputsObject = [
+    name.value, description.value, formula.value, kqiCategory.value, 
+    kqiPerspective.value, startDateTime.value, endDateTime.value, 
+    kqiSource.value, kqiTemporalFrequency.value,
+  ]
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -338,7 +344,12 @@ const KqiFormEdit = (props: Props) => {
                 onClick={handleClick}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={!(
+                  dataInputsObject.length === 9 &&
+                  !dataInputsObject.some(item => item === '') &&
+                  !inputFilter().length > 0
+                )}>
                 Save
               </Button>
             </FormField>

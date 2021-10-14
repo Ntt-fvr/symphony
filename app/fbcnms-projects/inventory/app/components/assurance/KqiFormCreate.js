@@ -9,27 +9,27 @@
  */
 
 import type {AddKqiMutationVariables} from '../../mutations/__generated__/AddKqiMutation.graphql';
-import React, {useState, useMemo} from 'react';
-import fbt from 'fbt';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import classNames from 'classnames';
+
+import AddKqiMutation from '../../mutations/AddKqiMutation';
 import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import {MenuItem, Select} from '@material-ui/core';
+import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {makeStyles} from '@material-ui/styles';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+import fbt from 'fbt';
 import moment from 'moment';
-import AddKqiMutation from '../../mutations/AddKqiMutation';
+import {MenuItem, Select} from '@material-ui/core';
+import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
     padding: '40px',
   },
   header: {
-    marginBottom: '1rem'
+    marginBottom: '1rem',
   },
   select: {
     '& .MuiSelect-select': {
@@ -42,13 +42,13 @@ const useStyles = makeStyles(() => ({
     boxSizing: 'border-box',
     minHeight: '36px',
     borderRadius: '4px',
-    fontSize: '14px',  
+    fontSize: '14px',
   },
   gridStyleLeft: {
-    paddingRight: '0.5rem'
+    paddingRight: '0.5rem',
   },
   gridStyleRight: {
-    paddingLeft: '0.5rem'
+    paddingLeft: '0.5rem',
   },
   option: {
     width: '111px',
@@ -102,9 +102,9 @@ type Kqis = {
     kqiCategory: string,
     kqiPerspective: string,
     kqiSource: string,
-    kqiTemporalFrequency: string
-  }
-}
+    kqiTemporalFrequency: string,
+  },
+};
 
 type Props = $ReadOnly<{|
   returnTableKqi: () => void,
@@ -112,7 +112,7 @@ type Props = $ReadOnly<{|
   dataSources: Array<KqiSources>,
   dataCategories: Array<KqiCategories>,
   dataTemporalFrequencies: Array<KqiTemporalFrequency>,
-  dataKqi: Array<Kqis>
+  dataKqi: Array<Kqis>,
 |}>;
 
 const KqiFormCreate = (props: Props) => {
@@ -122,7 +122,7 @@ const KqiFormCreate = (props: Props) => {
     dataSources,
     dataCategories,
     dataTemporalFrequencies,
-    dataKqi
+    dataKqi,
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
@@ -154,7 +154,7 @@ const KqiFormCreate = (props: Props) => {
     returnTableKqi();
   }
 
-  const dataNameKqi = dataKqi.map(item => item.name)
+  const dataNameKqi = dataKqi.map(item => item.name);
 
   const validationName = () => {
     if (dataNameKqi?.some(item => item === Kqis.data.name)) {
@@ -165,7 +165,12 @@ const KqiFormCreate = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center">
           <Grid>
             <Text variant="h6" weight={'bold'}>
               {fbt('Create KQI', ' ')}
@@ -189,7 +194,12 @@ const KqiFormCreate = (props: Props) => {
                 onClick={handleClick}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={!(
+                  Object.values(Kqis.data).length === 9 &&
+                  !Object.values(Kqis.data).some(item => item === '') &&
+                  !dataNameKqi?.some(item => item === Kqis.data.name)
+                )}>
                 Save
               </Button>
             </FormField>
@@ -199,11 +209,7 @@ const KqiFormCreate = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField 
-                  label="Name"
-                  required
-                  {...validationName()}
-                >
+                <FormField label="Name" required {...validationName()}>
                   <TextInput
                     autoComplete="off"
                     name="name"
@@ -253,9 +259,7 @@ const KqiFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
                 <Grid item xs={12}>
-                  <Text variant="subtitle1">
-                    Activation period
-                  </Text>
+                  <Text variant="subtitle1">Activation period</Text>
                 </Grid>
               </Grid>
               <Grid item xs={6}>
@@ -310,8 +314,8 @@ const KqiFormCreate = (props: Props) => {
                   </FormField>
                 </Grid>
                 <Grid item xs={6} className={classes.gridStyleRight}>
-                  <Grid style={{marginBottom: "6px"}}>
-                    <Text style={{fontSize: "14px"}}>Temporal frequency</Text>
+                  <Grid style={{marginBottom: '6px'}}>
+                    <Text style={{fontSize: '14px'}}>Temporal frequency</Text>
                   </Grid>
                   <Grid container alignItems="center">
                     <Grid item xs={5} lg={3}>

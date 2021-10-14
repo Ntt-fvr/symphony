@@ -22,24 +22,16 @@ import {makeStyles} from '@material-ui/styles';
 
 import {TitleTextCardsKqiSource} from './TitleTextCardsKqiSource';
 
-import {KqiAddItemForm} from './KqiAddItemForm';
+import {KqiSourceAddForm} from './KqiSourceAddForm';
 
 import KqiSourceFormEdit from './KqiSourceFormEdit';
 
 import KqiSourcesTypeItem from './KqiSourcesTypeItem ';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
     margin: '40px',
-  },
-  listCarCounter: {
-    listStyle: 'none',
-  },
-  powerSearchContainer: {
-    margin: '10px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
   },
 }));
 
@@ -128,7 +120,7 @@ const KqiSourcesTypes = () => {
           </List>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-          <KqiAddItemForm kqiSourcesNames={items.kqiSources?.edges} />
+          <KqiSourceAddForm kqiSourcesNames={items.kqiSources?.edges} />
         </Grid>
       </Grid>
     </div>
