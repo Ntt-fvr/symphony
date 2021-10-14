@@ -71,6 +71,7 @@ type Node = {
 };
 
 type Props = $ReadOnly<{|
+  isCompleted: void => void,
   kpiNames?: Array<Node>,
 |}>;
 
@@ -107,7 +108,7 @@ const AddDomainsKpiQuery = graphql`
 `;
 
 export default function AddKpiItemForm(props: Props) {
-  const {kpiNames} = props;
+  const {kpiNames, isCompleted} = props;
   const classes = useStyles();
 
   const [kpis, setKpis] = useState<Kpis>({data: {}});
@@ -136,8 +137,12 @@ export default function AddKpiItemForm(props: Props) {
       },
     };
     setShowChecking(true);
-    AddKpiMutation(variables);
+    AddKpiMutation(variables, {onCompleted: () => isCompleted()});
   }
+
+  const setReturn = () => {
+    setShowChecking(false);
+  };
 
   if (showChecking) {
     return (
@@ -147,6 +152,7 @@ export default function AddKpiItemForm(props: Props) {
         title="KPI"
         text_button="Add new KPI"
         names={kpiNames}
+        setReturn={setReturn}
       />
     );
   }

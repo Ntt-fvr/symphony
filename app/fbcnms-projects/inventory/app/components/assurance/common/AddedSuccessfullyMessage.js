@@ -9,15 +9,12 @@
  */
 
 import AddButton from './AddButton';
-import AddCounterItemForm from '../AddCounterItemForm';
-import AddKpiItemForm from '../AddKpiItemForm';
-import AddThresholdItemForm from '../AddThresholdItemForm';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import Clickable from '@symphony/design-system/components/Core/Clickable';
 import Grid from '@material-ui/core/Grid';
-import React, {useState} from 'react';
+import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {GREEN} from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
@@ -41,60 +38,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Node = {
-  node: {
-    name: string,
-  },
-};
-
-type Kpi = {
-  node: {
-    name: string,
-    kpi: {
-      name: string,
-      id: string,
-    },
-  },
-};
-
 type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
-  data_entry: string,
-  names?: Array<Node>,
-  thresholdNames?: Array<Kpi>,
+  setReturn: void => void,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
-  const {
-    card_header,
-    title,
-    text_button,
-    data_entry,
-    names,
-    thresholdNames,
-  } = props;
+  const {card_header, title, text_button, setReturn} = props;
   const classes = useStyles();
-  const [returnForm, setReturnForm] = useState(false);
 
-  function handleClick() {
-    setReturnForm(true);
-  }
-
-  if (returnForm) {
-    return (
-      <>
-        {(data_entry === 'kpi' && <AddKpiItemForm kpiNames={names} />) ||
-          (data_entry === 'threshold' && (
-            <AddThresholdItemForm thresholdNames={thresholdNames} />
-          )) ||
-          (data_entry === 'counter' && (
-            <AddCounterItemForm counterNames={names} />
-          ))}
-      </>
-    );
-  }
   return (
     <Card>
       <CardHeader className={classes.header}>{card_header}</CardHeader>
@@ -109,7 +63,7 @@ const AddedSuccessfullyMessage = (props: Props) => {
           </Grid>
         </Grid>
         <Grid className={classes.addButton}>
-          <Clickable onClick={handleClick}>
+          <Clickable onClick={setReturn}>
             <AddButton textButton={text_button} disabled={false} />
           </Clickable>
         </Grid>
