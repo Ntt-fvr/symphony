@@ -142,10 +142,6 @@ func (r resolver) Property() generated.PropertyResolver {
 	return propertyResolver{}
 }
 
-func (r resolver) FileCategoryType() generated.FileCategoryTypeResolver {
-	return fileCategoryTypeResolver{}
-}
-
 func (resolver) Service() generated.ServiceResolver {
 	return serviceResolver{}
 }

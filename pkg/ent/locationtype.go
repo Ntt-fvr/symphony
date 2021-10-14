@@ -45,15 +45,13 @@ type LocationTypeEdges struct {
 	Locations []*Location
 	// PropertyTypes holds the value of the property_types edge.
 	PropertyTypes []*PropertyType
-	// FileCategoryType holds the value of the file_category_type edge.
-	FileCategoryType []*FileCategoryType
 	// SurveyTemplateCategories holds the value of the survey_template_categories edge.
 	SurveyTemplateCategories []*SurveyTemplateCategory
 	// DocumentCategory holds the value of the document_category edge.
 	DocumentCategory []*DocumentCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 }
 
 // LocationsOrErr returns the Locations value or an error if the edge
@@ -74,19 +72,10 @@ func (e LocationTypeEdges) PropertyTypesOrErr() ([]*PropertyType, error) {
 	return nil, &NotLoadedError{edge: "property_types"}
 }
 
-// FileCategoryTypeOrErr returns the FileCategoryType value or an error if the edge
-// was not loaded in eager-loading.
-func (e LocationTypeEdges) FileCategoryTypeOrErr() ([]*FileCategoryType, error) {
-	if e.loadedTypes[2] {
-		return e.FileCategoryType, nil
-	}
-	return nil, &NotLoadedError{edge: "file_category_type"}
-}
-
 // SurveyTemplateCategoriesOrErr returns the SurveyTemplateCategories value or an error if the edge
 // was not loaded in eager-loading.
 func (e LocationTypeEdges) SurveyTemplateCategoriesOrErr() ([]*SurveyTemplateCategory, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.SurveyTemplateCategories, nil
 	}
 	return nil, &NotLoadedError{edge: "survey_template_categories"}
@@ -95,7 +84,7 @@ func (e LocationTypeEdges) SurveyTemplateCategoriesOrErr() ([]*SurveyTemplateCat
 // DocumentCategoryOrErr returns the DocumentCategory value or an error if the edge
 // was not loaded in eager-loading.
 func (e LocationTypeEdges) DocumentCategoryOrErr() ([]*DocumentCategory, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.DocumentCategory, nil
 	}
 	return nil, &NotLoadedError{edge: "document_category"}
@@ -173,11 +162,6 @@ func (lt *LocationType) QueryLocations() *LocationQuery {
 // QueryPropertyTypes queries the property_types edge of the LocationType.
 func (lt *LocationType) QueryPropertyTypes() *PropertyTypeQuery {
 	return (&LocationTypeClient{config: lt.config}).QueryPropertyTypes(lt)
-}
-
-// QueryFileCategoryType queries the file_category_type edge of the LocationType.
-func (lt *LocationType) QueryFileCategoryType() *FileCategoryTypeQuery {
-	return (&LocationTypeClient{config: lt.config}).QueryFileCategoryType(lt)
 }
 
 // QuerySurveyTemplateCategories queries the survey_template_categories edge of the LocationType.

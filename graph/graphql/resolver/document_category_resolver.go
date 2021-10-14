@@ -34,5 +34,3 @@ func (d documentCategoryResolver) FilesByLocation(ctx context.Context, obj *ent.
 func (d documentCategoryResolver) HyperlinksByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.Hyperlink, error) {
 	return obj.QueryHyperlinks().Where(hyperlink.HasLocationWith(location.ID(locationID))).All(ctx)
 }
-
-

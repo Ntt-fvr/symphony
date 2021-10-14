@@ -198,7 +198,7 @@ func TestAddLocationTypeWithDocCategory(t *testing.T) {
 	}
 
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
-		Name:             	"example_type_a",
+		Name:               "example_type_a",
 		DocumentCategories: []*pkgmodels.DocumentCategoryInput{&dc1, &dc2},
 	})
 	require.NoError(t, err)

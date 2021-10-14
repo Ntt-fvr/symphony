@@ -76,7 +76,6 @@ type ResolverRoot interface {
 	EquipmentType() EquipmentTypeResolver
 	EventSeverity() EventSeverityResolver
 	ExportTask() ExportTaskResolver
-	FileCategoryType() FileCategoryTypeResolver
 	FloorPlan() FloorPlanResolver
 	Flow() FlowResolver
 	FlowDraft() FlowDraftResolver
@@ -683,12 +682,6 @@ type ComplexityRoot struct {
 		WorkOrder   func(childComplexity int) int
 	}
 
-	FileCategoryType struct {
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		RawValue func(childComplexity int) int
-	}
-
 	FloorPlan struct {
 		ID             func(childComplexity int) int
 		Image          func(childComplexity int) int
@@ -1073,7 +1066,6 @@ type ComplexityRoot struct {
 
 	LocationType struct {
 		DocumentCategories       func(childComplexity int) int
-		FileCategoryType         func(childComplexity int) int
 		ID                       func(childComplexity int) int
 		Index                    func(childComplexity int) int
 		Locations                func(childComplexity int, enforceHasLatLong *bool) int
@@ -2212,9 +2204,6 @@ type EventSeverityResolver interface {
 type ExportTaskResolver interface {
 	Filters(ctx context.Context, obj *ent.ExportTask) ([]*models.GeneralFilter, error)
 }
-type FileCategoryTypeResolver interface {
-	RawValue(ctx context.Context, obj *ent.FileCategoryType) (*string, error)
-}
 type FloorPlanResolver interface {
 	LocationID(ctx context.Context, obj *ent.FloorPlan) (int, error)
 }
@@ -2280,7 +2269,6 @@ type LocationResolver interface {
 }
 type LocationTypeResolver interface {
 	DocumentCategories(ctx context.Context, obj *ent.LocationType) ([]*ent.DocumentCategory, error)
-
 	NumberOfLocations(ctx context.Context, obj *ent.LocationType) (int, error)
 	Locations(ctx context.Context, obj *ent.LocationType, enforceHasLatLong *bool) (*ent.LocationConnection, error)
 }
@@ -4881,27 +4869,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.File.WorkOrder(childComplexity), true
 
-	case "FileCategoryType.id":
-		if e.complexity.FileCategoryType.ID == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.ID(childComplexity), true
-
-	case "FileCategoryType.name":
-		if e.complexity.FileCategoryType.Name == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.Name(childComplexity), true
-
-	case "FileCategoryType.rawValue":
-		if e.complexity.FileCategoryType.RawValue == nil {
-			break
-		}
-
-		return e.complexity.FileCategoryType.RawValue(childComplexity), true
-
 	case "FloorPlan.id":
 		if e.complexity.FloorPlan.ID == nil {
 			break
@@ -6479,13 +6446,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.LocationType.DocumentCategories(childComplexity), true
-
-	case "LocationType.fileCategoryType":
-		if e.complexity.LocationType.FileCategoryType == nil {
-			break
-		}
-
-		return e.complexity.LocationType.FileCategoryType(childComplexity), true
 
 	case "LocationType.id":
 		if e.complexity.LocationType.ID == nil {
@@ -13593,7 +13553,6 @@ type LocationType implements Node {
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
   documentCategories: [DocumentCategory]!
-  fileCategoryType: [FileCategoryType]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
@@ -13605,7 +13564,6 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
   documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
@@ -13618,7 +13576,6 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
   documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
@@ -14647,20 +14604,6 @@ enum PropertyKind
   gps_location
   datetime_local
   node
-}
-
-type FileCategoryType implements Node {
-  id: ID!
-  name: String!
-  rawValue: String
-}
-
-input FileCategoryTypeInput
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
-  ) {
-  id: ID
-  name: String!
 }
 
 type PropertyType implements Node {
@@ -39933,108 +39876,6 @@ func (ec *executionContext) _File_workorder(ctx context.Context, field graphql.C
 	return ec.marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FileCategoryType_id(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_name(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _FileCategoryType_rawValue(ctx context.Context, field graphql.CollectedField, obj *ent.FileCategoryType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "FileCategoryType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.FileCategoryType().RawValue(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _FloorPlan_id(ctx context.Context, field graphql.CollectedField, obj *ent.FloorPlan) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -47988,41 +47829,6 @@ func (ec *executionContext) _LocationType_documentCategories(ctx context.Context
 	res := resTmp.([]*ent.DocumentCategory)
 	fc.Result = res
 	return ec.marshalNDocumentCategory2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LocationType_fileCategoryType(ctx context.Context, field graphql.CollectedField, obj *ent.LocationType) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LocationType",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.FileCategoryType(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.FileCategoryType)
-	fc.Result = res
-	return ec.marshalNFileCategoryType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFileCategoryType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _LocationType_numberOfLocations(ctx context.Context, field graphql.CollectedField, obj *ent.LocationType) (ret graphql.Marshaler) {
@@ -78297,14 +78103,6 @@ func (ec *executionContext) unmarshalInputAddLocationTypeInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
-		case "fileCategoriesType":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileCategoriesType"))
-			it.FileCategoriesType, err = ec.unmarshalOFileCategoryTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "documentCategories":
 			var err error
 
@@ -82191,14 +81989,6 @@ func (ec *executionContext) unmarshalInputEditLocationTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-		case "fileCategoriesType":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fileCategoriesType"))
-			it.FileCategoriesType, err = ec.unmarshalOFileCategoryTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "documentCategories":
 			var err error
 
@@ -83900,34 +83690,6 @@ func (ec *executionContext) unmarshalInputExitPointInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
 			it.Cid, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputFileCategoryTypeInput(ctx context.Context, obj interface{}) (models1.FileCategoryTypeInput, error) {
-	var it models1.FileCategoryTypeInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -89225,11 +88987,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._EquipmentPort(ctx, sel, obj)
-	case *ent.FileCategoryType:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._FileCategoryType(ctx, sel, obj)
 	case *ent.PropertyType:
 		if obj == nil {
 			return graphql.Null
@@ -93290,49 +93047,6 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
-var fileCategoryTypeImplementors = []string{"FileCategoryType", "Node"}
-
-func (ec *executionContext) _FileCategoryType(ctx context.Context, sel ast.SelectionSet, obj *ent.FileCategoryType) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, fileCategoryTypeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("FileCategoryType")
-		case "id":
-			out.Values[i] = ec._FileCategoryType_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "name":
-			out.Values[i] = ec._FileCategoryType_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "rawValue":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._FileCategoryType_rawValue(ctx, field, obj)
-				return res
-			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var floorPlanImplementors = []string{"FloorPlan", "Node"}
 
 func (ec *executionContext) _FloorPlan(ctx context.Context, sel ast.SelectionSet, obj *ent.FloorPlan) graphql.Marshaler {
@@ -96011,20 +95725,6 @@ func (ec *executionContext) _LocationType(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._LocationType_documentCategories(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "fileCategoryType":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._LocationType_fileCategoryType(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -106388,48 +106088,6 @@ func (ec *executionContext) marshalNFile2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 	return ec._File(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFileCategoryType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFileCategoryType(ctx context.Context, sel ast.SelectionSet, v []*ent.FileCategoryType) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOFileCategoryType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFileCategoryType(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) unmarshalNFileCategoryTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInput(ctx context.Context, v interface{}) (*models1.FileCategoryTypeInput, error) {
-	res, err := ec.unmarshalInputFileCategoryTypeInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNFileInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFileInput(ctx context.Context, v interface{}) (*models.FileInput, error) {
 	res, err := ec.unmarshalInputFileInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -113339,37 +112997,6 @@ func (ec *executionContext) marshalOFile2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 		return graphql.Null
 	}
 	return ec._File(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOFileCategoryType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFileCategoryType(ctx context.Context, sel ast.SelectionSet, v *ent.FileCategoryType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._FileCategoryType(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOFileCategoryTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInputᚄ(ctx context.Context, v interface{}) ([]*models1.FileCategoryTypeInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models1.FileCategoryTypeInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNFileCategoryTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐFileCategoryTypeInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) unmarshalOFileInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFileInputᚄ(ctx context.Context, v interface{}) ([]*models.FileInput, error) {
