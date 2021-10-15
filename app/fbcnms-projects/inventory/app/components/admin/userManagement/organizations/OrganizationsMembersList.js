@@ -98,7 +98,6 @@ export default function OrganizationsMembersList(props: Props) {
     userSearch.isSearchInProgress,
     userSearch.searchTerm,
   ]);
-  console.log(organization);
   return (
     <OrganizationMembersList
       users={

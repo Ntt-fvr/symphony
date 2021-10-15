@@ -166,7 +166,12 @@ export default function AddCounterItemForm(props: Props) {
       },
     };
     setShowChecking(true);
-    AddCounterMutation(variables, {onCompleted: () => isCompleted()});
+    AddCounterMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setCounters({data: {}});
+      },
+    });
   }
 
   const setReturn = () => {

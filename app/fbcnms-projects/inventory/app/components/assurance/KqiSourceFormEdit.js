@@ -77,9 +77,15 @@ type Props = $ReadOnly<{|
   },
   hideKqiSourceFormEdit: void => void,
   kqiSourcesNames: Array<string>,
+  isCompleted: void => void,
 |}>;
 const KqiSourceFormEdit = (props: Props) => {
-  const {formValues, hideKqiSourceFormEdit, kqiSourcesNames} = props;
+  const {
+    formValues,
+    hideKqiSourceFormEdit,
+    kqiSourcesNames,
+    isCompleted,
+  } = props;
   const classes = useStyles();
 
   const id = useFormInput(formValues.id);
@@ -105,7 +111,12 @@ const KqiSourceFormEdit = (props: Props) => {
       },
     };
 
-    EditKqiSourceMutation(variables);
+    EditKqiSourceMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideKqiSourceFormEdit();
+      },
+    });
   };
 
   return (

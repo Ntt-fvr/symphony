@@ -135,12 +135,17 @@ export default function AddThresholdItemForm(props: Props) {
       },
     };
     setShowChecking(true);
-    AddTresholdMutation(variables, {onCompleted: () => isCompleted()});
+    AddTresholdMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setThresholds({data: {}});
+      },
+    });
   }
 
   const setReturn = () => {
     setShowChecking(false);
-  }
+  };
 
   if (showChecking) {
     return (
