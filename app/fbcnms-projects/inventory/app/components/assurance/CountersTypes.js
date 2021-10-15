@@ -32,6 +32,36 @@ const useStyles = makeStyles(theme => ({
     flexGrow: '1',
     margin: '40px',
   },
+  listContainer: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'auto',
+    maxHeight: 500,
+    '&::-webkit-scrollbar': {
+      width: '8px',
+    },
+
+    /* Estilos barra (thumb) de scroll */
+    '&::-webkit-scrollbar-thumb': {
+      background: '#9DA9BE',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: '#999999',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#313C48',
+      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+    },
+    /* Estilos track de scroll */
+    '&::-webkit-scrollbar-track': {
+      background: '#e5e5e5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
+      background: '#d4d4d4',
+    },
+  },
   listCarCounter: {
     listStyle: 'none',
   },
@@ -131,7 +161,7 @@ const CountersTypes = () => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <ConfigureTitle
             title={fbt('Counters Catalog', 'Counters Title')}
@@ -141,9 +171,9 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsCounter />
-          <List disablePadding>
+          <List disablePadding className={classes.listContainer}>
             {counterTypes.counters?.edges.map(item => (
               <CounterTypeItem
                 key={item.node?.id}
@@ -154,7 +184,7 @@ const CountersTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid item xs={12} sm={12} lg={3} xl={3}>
+        <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
           <AddCounterItemForm
             isCompleted={isCompleted}
             counterNames={counterTypes.counters?.edges}

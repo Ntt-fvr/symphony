@@ -27,6 +27,7 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
+import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
@@ -58,7 +59,27 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   formField: {
-    margin: '0 20px 22px 20px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      // margin: '0 20px 22px 20px',
+      marginBottom: '41px',
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   textInput: {
     minHeight: '36px',
@@ -71,18 +92,11 @@ const useStyles = makeStyles(theme => ({
     width: '111px',
     alignSelf: 'flex-end',
   },
+  input: {
+    width: '100%',
+  },
   select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
+    width: '100%',
   },
 }));
 
@@ -138,6 +152,7 @@ export default function AddCounterItemForm(props: Props) {
         [target.name]: target.value,
       },
     });
+    console.log(counters.data);
   }
 
   function handleClick() {
@@ -172,71 +187,69 @@ export default function AddCounterItemForm(props: Props) {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Counter</CardHeader>
-      <FormField
-        className={classes.formField}
-        label="Counter name"
-        required
-        hasError={handleHasError}
-        errorText={
-          names?.some(item => item === counters.data.name)
-            ? 'Counter name existing'
-            : ''
-        }>
-        <TextInput
-          className={classes.textInput}
+      <form className={classes.formField} autoComplete="off">
+        <TextField
+          required
+          className={classes.input}
+          id="counter-name"
+          label="Counter name"
+          variant="outlined"
           name="name"
-          autoComplete="off"
-          type="string"
           onChange={handleChange}
+          errorText={
+            names?.some(item => item === counters.data.name)
+              ? 'Counter name existing'
+              : ''
+          }
         />
-      </FormField>
-      <FormField className={classes.formField} label="Counter ID" required>
-        <TextInput
-          className={classes.textInput}
+        <TextField
+          required
+          className={classes.input}
+          id="counter-id"
+          label="Counter ID"
+          variant="outlined"
           name="id"
-          autoComplete="off"
-          type="string"
           onChange={handleChange}
         />
-      </FormField>
-      <FormField className={classes.formField} label="Family name" required>
-        <Select
+        <TextField
+          required
+          id="outlined-select-family"
+          select
           className={classes.select}
-          disableUnderline
+          label="Family name"
+          onChange={handleChange}
           name="family"
-          onChange={handleChange}>
+          variant="outlined">
           {data.counterFamilies.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
-      <FormField className={classes.formField} label="Vendor name" required>
-        <Select
+        </TextField>
+        <TextField
+          id="outlined-select-vendor"
+          select
           className={classes.select}
-          disableUnderline
+          label="Vendor name*"
+          onChange={handleChange}
           name="vendor"
-          onChange={handleChange}>
-          {data.vendors.edges.map((item, index) => (
+          variant="outlined">
+          {data.counterFamilies.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
-      <FormField
-        className={classes.formField}
-        label="Network Manager System"
-        required={true}>
-        <TextInput
-          className={classes.textInput}
+        </TextField>
+        <TextField
+          required
+          className={classes.input}
+          id="network-manager-system"
+          label="Network Manager System"
+          variant="outlined"
           name="nms"
-          autoComplete="off"
-          type="string"
           onChange={handleChange}
         />
-      </FormField>
+      </form>
       <FormField>
         <Button
           className={classes.addCounter}
