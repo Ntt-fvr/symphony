@@ -19,7 +19,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -72,10 +72,17 @@ type Props = $ReadOnly<{|
   returnFormEdit: () => void,
   dataComparatorSelect: Array<Comparator>,
   dataTarget: any,
+  isCompleted: void => void,
 |}>;
 
 const KqiFormCreateTarget = (props: Props) => {
-  const {returnFormEdit, idKqi, dataComparatorSelect, dataTarget} = props;
+  const {
+    returnFormEdit,
+    idKqi,
+    dataComparatorSelect,
+    dataTarget,
+    isCompleted,
+  } = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
@@ -120,8 +127,12 @@ const KqiFormCreateTarget = (props: Props) => {
             comparatorFk: KqiTarget.data.warningComparatorSelect,
           },
         };
-        AddKqiComparatorMutation(variablesUpper);
-        AddKqiComparatorMutation(variablesLower);
+        AddKqiComparatorMutation(variablesUpper, {
+          onCompleted: () => isCompleted(),
+        });
+        AddKqiComparatorMutation(variablesLower, {
+          onCompleted: () => isCompleted(),
+        });
       },
     };
     AddKqiTargetMutation(variables, response);
@@ -129,11 +140,21 @@ const KqiFormCreateTarget = (props: Props) => {
 
   const dataNameTarget = dataTarget?.map(item => item?.name);
 
-  const validationName = () => {
+  const handleDisable = useMemo(
+    () =>
+      !(
+        Object.values(KqiTarget.data).length === 10 &&
+        !Object.values(KqiTarget.data).some(item => item === '') &&
+        !dataNameTarget?.some(item => item === KqiTarget.data.name)
+      ),
+    [KqiTarget.data, dataNameTarget],
+  );
+
+  const handleHasError = useMemo(() => {
     if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
       return {hasError: true, errorText: 'Kqi Target name existing'};
     }
-  };
+  }, [dataNameTarget, KqiTarget.data.name]);
 
   return (
     <div className={classes.root}>
@@ -170,13 +191,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={
-                  !(
-                    Object.values(KqiTarget.data).length === 10 &&
-                    !Object.values(KqiTarget.data).some(item => item === '') &&
-                    !dataNameTarget?.some(item => item === KqiTarget.data.name)
-                  )
-                }>
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>
@@ -191,7 +206,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} required label="Target name">
+                <FormField {...handleHasError} required label="Target name">
                   <TextInput
                     autoComplete="off"
                     name="name"
