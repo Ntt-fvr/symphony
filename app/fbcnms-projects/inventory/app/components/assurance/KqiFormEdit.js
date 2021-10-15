@@ -260,7 +260,7 @@ const KqiFormEdit = (props: Props) => {
 
   const handleHasError = useMemo(() => {
     if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi name name existing'};
+      return {hasError: true, errorText: 'Kqi name existing'};
     }
   }, [dataNameKqi]);
 
