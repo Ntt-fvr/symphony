@@ -195,7 +195,7 @@ const KqiFormEditTarget = (props: Props) => {
     returnFormEdit();
   };
 
-  const dataNameKqi = dataTarget.map(item => item.item.name);
+  const dataNameKqi = dataTarget.map(item => item.name);
 
   const inputFilter = () => {
     return (
