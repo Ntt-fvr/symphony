@@ -141,19 +141,19 @@ type Props = $ReadOnly<{|
     formulaFk: Array<Formula>,
   },
   hideEditKpiForm: void => void,
+  isCompleted: void => void,
   kpi: Array<Kpi>,
   threshold: Array<KpiThreshold>,
 |}>;
 
 export const EditKpiItemForm = (props: Props) => {
-  const {kpi, formValues, hideEditKpiForm, threshold} = props;
+  const {kpi, formValues, hideEditKpiForm, threshold, isCompleted} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
   const domainFk = useFormInput(formValues.domainFk.id);
   const description = useFormInput(formValues.description);
   const kpiCategoryFK = useFormInput(formValues.kpiCategoryFK.id);
-  // debugger;
   const [checked, setChecked] = useState(formValues.status);
 
   const data = useLazyLoadQuery<EditKpiItemFormQuery>(EditKpiQuery, {});
@@ -175,7 +175,12 @@ export const EditKpiItemForm = (props: Props) => {
         kpiCategoryFK: kpiCategoryFK.value,
       },
     };
-    EditKpiMutation(variables);
+    EditKpiMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideEditKpiForm();
+      },
+    });
   };
 
   return (
@@ -301,32 +306,30 @@ export const EditKpiItemForm = (props: Props) => {
                 </FormField>
               </Grid>
             </Grid>
-            <Grid
-              container
-              className={classes.action}
-              item
-              xs={12}
-              justify="flex-end">
-              <FormField>
-                <Button
-                  className={classes.addKpi}
-                  onClick={() => {
-                    handleClick();
-                    hideEditKpiForm();
-                  }}>
-                  Save
-                </Button>
-              </FormField>
-              <FormField>
-                <Button
-                  className={classes.addKpi}
-                  onClick={() => {
-                    hideEditKpiForm();
-                  }}
-                  skin="brightGray">
-                  Cancel
-                </Button>
-              </FormField>
+            <Grid container justify="flex-end">
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
+                <FormField>
+                  <Button
+                    className={classes.addKpi}
+                    onClick={() => {
+                      handleClick();
+                    }}>
+                    Save
+                  </Button>
+                </FormField>
+              </Grid>
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
+                <FormField>
+                  <Button
+                    className={classes.addKpi}
+                    onClick={() => {
+                      hideEditKpiForm();
+                    }}
+                    skin="brightGray">
+                    Cancel
+                  </Button>
+                </FormField>
+              </Grid>
             </Grid>
           </Card>
         </Grid>

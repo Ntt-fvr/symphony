@@ -63,15 +63,15 @@ type KqiSources = {
 };
 
 export const KqiSourceAddForm = (props: Props) => {
-  const {kqiSourcesNames} = props;
+  const {kqiSourcesNames, isCompleted} = props;
   const classes = useStyles();
-  const [kqiSource, setkqiSource] = useState<KqiSources>({data: {}});
+  const [kqiSource, setKqiSource] = useState<KqiSources>({data: {}});
   const [showChecking, setShowChecking] = useState();
 
   const names = kqiSourcesNames?.map(item => item.node.name);
 
   function handleChange({target}) {
-    setkqiSource({
+    setKqiSource({
       data: {
         ...kqiSource.data,
         [target.name]: target.value,
@@ -85,18 +85,22 @@ export const KqiSourceAddForm = (props: Props) => {
         name: kqiSource.data.name,
       },
     };
+    setKqiSource({data: {}});
     setShowChecking(true);
-    AddKqiSourceMutation(variables);
+    AddKqiSourceMutation(variables, {onCompleted: () => isCompleted()});
   }
+
+  const setReturn = () => {
+    setShowChecking(false);
+  };
 
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="KQI Source"
         card_header="Add KQI Source"
         title="KQI Source"
         text_button="Add new KQI Source"
-        names={kqiSourcesNames}
+        setReturn={setReturn}
       />
     );
   }
