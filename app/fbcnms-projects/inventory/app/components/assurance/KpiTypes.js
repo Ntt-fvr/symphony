@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
@@ -151,10 +151,14 @@ const KpiTypes = () => {
   const [formulaEditForm, setFormulaEditForm] = useState<any>({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
       setDataKpis(data);
     });
-  }, [dataKpis]);
+  }, [setDataKpis]);
 
   const handleCallback = childData => {
     setFormulaForm({data: childData});
@@ -176,7 +180,7 @@ const KpiTypes = () => {
     const variables: RemoveKpiMutationVariables = {
       id: id,
     };
-    RemoveKpiMutation(variables);
+    RemoveKpiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const showEditKpiItemForm = (kpis: Kpis) => {
@@ -195,6 +199,7 @@ const KpiTypes = () => {
         formValues={dataEdit.item.node}
         threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -229,8 +234,11 @@ const KpiTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-          <AddKpiItemForm kpiNames={dataKpis.kpis?.edges} />
+        <Grid item xs={12} sm={12} lg={3} xl={3}>
+          <AddKpiItemForm
+            kpiNames={dataKpis.kpis?.edges}
+            isCompleted={isCompleted}
+          />
           <AddFormulaItemForm
             parentCallback={handleCallback}
             handleClick={handleFormulaClick}

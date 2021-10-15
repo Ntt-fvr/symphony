@@ -93,11 +93,12 @@ type Props = $ReadOnly<{|
     },
   },
   hideEditCounterForm: void => void,
+  isCompleted: void => void,
   counterNames: Array<string>,
 |}>;
 
 const EditCounterItemForm = (props: Props) => {
-  const {formValues, hideEditCounterForm, counterNames} = props;
+  const {formValues, hideEditCounterForm, counterNames, isCompleted} = props;
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
@@ -135,8 +136,12 @@ const EditCounterItemForm = (props: Props) => {
         vendorFk: vendor.value,
       },
     };
-
-    EditCounterMutation(variables);
+    EditCounterMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        hideEditCounterForm();
+      },
+    });
   };
 
   return (
@@ -223,33 +228,30 @@ const EditCounterItemForm = (props: Props) => {
                 </Select>
               </FormField>
             </Grid>
-            <Grid
-              className={classes.action}
-              item
-              xs={12}
-              container
-              justify="flex-end">
-              <FormField>
-                <Button
-                  className={classes.addCounter}
-                  onClick={() => {
-                    handleClick();
-                    hideEditCounterForm();
-                  }}>
-                  Save
-                </Button>
-              </FormField>
-
-              <FormField>
-                <Button
-                  className={classes.addCounter}
-                  skin="brightGray"
-                  onClick={() => {
-                    hideEditCounterForm();
-                  }}>
-                  Cancel
-                </Button>
-              </FormField>
+            <Grid container justify="flex-end">
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
+                <FormField>
+                  <Button
+                    className={classes.addCounter}
+                    onClick={() => {
+                      handleClick();
+                    }}>
+                    Save
+                  </Button>
+                </FormField>
+              </Grid>
+              <Grid item xs={2} sm={2} lg={1} xl={1}>
+                <FormField>
+                  <Button
+                    className={classes.addCounter}
+                    skin="brightGray"
+                    onClick={() => {
+                      hideEditCounterForm();
+                    }}>
+                    Cancel
+                  </Button>
+                </FormField>
+              </Grid>
             </Grid>
           </Card>
         </Grid>

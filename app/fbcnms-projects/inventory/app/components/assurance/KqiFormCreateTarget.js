@@ -23,7 +23,6 @@ import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
-import classNames from 'classnames';
 import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
@@ -34,12 +33,12 @@ const useStyles = makeStyles(() => ({
     padding: '40px',
   },
   header: {
-    marginBottom: '1rem'
+    marginBottom: '1rem',
   },
   select: {
     '& .MuiSelect-select': {
       padding: '9px 0 0 10px',
-      width: '100%'
+      width: '100%',
     },
     border: '1px solid #D2DAE7',
     height: '36px',
@@ -51,10 +50,10 @@ const useStyles = makeStyles(() => ({
     fontSize: '14px',
   },
   gridStyleLeft: {
-    paddingRight: '0.5rem'
+    paddingRight: '0.5rem',
   },
   gridStyleRight: {
-    paddingLeft: '0.5rem'
+    paddingLeft: '0.5rem',
   },
   option: {
     width: '111px',
@@ -80,7 +79,7 @@ const KqiFormCreateTarget = (props: Props) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
-  
+
   function handleChange({target}) {
     setKqiTarget({
       data: {
@@ -128,9 +127,8 @@ const KqiFormCreateTarget = (props: Props) => {
     AddKqiTargetMutation(variables, response);
   }
 
-  const dataNameTarget = dataTarget?.map(item => item?.name)
-    console.log("hola soy filter dataNameTarget", dataNameTarget)
-  
+  const dataNameTarget = dataTarget?.map(item => item?.name);
+
   const validationName = () => {
     if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
       return {hasError: true, errorText: 'Kqi Target name existing'};
@@ -140,12 +138,17 @@ const KqiFormCreateTarget = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center">
           <Grid xs>
             <Text variant="h6" weight={'bold'}>
               {fbt('Create target', ' ')}
             </Text>
-          </Grid>          
+          </Grid>
           <Grid style={{marginRight: '1rem'}}>
             <FormField>
               <Button
@@ -166,7 +169,14 @@ const KqiFormCreateTarget = (props: Props) => {
                 }}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={
+                  !(
+                    Object.values(KqiTarget.data).length === 10 &&
+                    !Object.values(KqiTarget.data).some(item => item === '') &&
+                    !dataNameTarget?.some(item => item === KqiTarget.data.name)
+                  )
+                }>
                 Save
               </Button>
             </FormField>
@@ -176,16 +186,12 @@ const KqiFormCreateTarget = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={1}>
-                <FormField  label="Enabled">
+                <FormField label="Enabled">
                   <Switch checked={checked} title={''} onChange={setChecked} />
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField  
-                  {...validationName()}
-                  required
-                  label="Target name"
-                >
+                <FormField {...validationName()} required label="Target name">
                   <TextInput
                     autoComplete="off"
                     name="name"
@@ -195,8 +201,8 @@ const KqiFormCreateTarget = (props: Props) => {
               </Grid>
               <Grid container item xs={8} lg={7}>
                 <Grid item xs={6} style={{paddingRight: '1.3rem'}}>
-                  <Grid style={{marginBottom: "6px"}}>
-                    <Text style={{fontSize: "14px"}}>Comparator</Text>
+                  <Grid style={{marginBottom: '6px'}}>
+                    <Text style={{fontSize: '14px'}}>Comparator</Text>
                   </Grid>
                   <Grid container>
                     <Grid item xs={6} className={classes.gridStyleLeft}>
@@ -220,6 +226,7 @@ const KqiFormCreateTarget = (props: Props) => {
                           autoComplete="off"
                           name="comparatorNumber"
                           placeholder="Number"
+                          type="number"
                           onChange={handleChange}
                         />
                       </FormField>
@@ -227,8 +234,8 @@ const KqiFormCreateTarget = (props: Props) => {
                   </Grid>
                 </Grid>
                 <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
-                  <Grid style={{marginBottom: "6px"}}>
-                    <Text style={{fontSize: "14px"}}>Warning comparator</Text>
+                  <Grid style={{marginBottom: '6px'}}>
+                    <Text style={{fontSize: '14px'}}>Warning comparator</Text>
                   </Grid>
                   <Grid container>
                     <Grid item xs={6} className={classes.gridStyleLeft}>
@@ -252,6 +259,7 @@ const KqiFormCreateTarget = (props: Props) => {
                           autoComplete="off"
                           name="warningComparatorNumber"
                           placeholder="Number"
+                          type="number"
                           onChange={handleChange}
                         />
                       </FormField>
@@ -260,7 +268,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 </Grid>
               </Grid>
               <Grid item xs={4} lg={5}>
-                <FormField  label="Impact">
+                <FormField label="Impact">
                   <TextInput
                     autoComplete="off"
                     name="impact"
@@ -273,63 +281,79 @@ const KqiFormCreateTarget = (props: Props) => {
               <Grid container item xs={8} lg={7}>
                 <Grid container item xs={6} style={{paddingRight: '1.3rem'}}>
                   <Grid item xs={6} className={classes.gridStyleLeft}>
-                    <FormField  label="Periods">
-                        <TextInput
-                          autoComplete="off"
-                          name="period"
-                          type="number"
-                          onChange={handleChange}
-                        />
+                    <FormField label="Periods">
+                      <TextInput
+                        autoComplete="off"
+                        name="period"
+                        placeholder="Number"
+                        type="number"
+                        onChange={handleChange}
+                      />
                     </FormField>
                   </Grid>
                   <Grid item xs={6} className={classes.gridStyleRight}>
-                    <Grid style={{marginBottom: "6px"}}>
-                      <Text style={{fontSize: "14px"}}>Allowed Variation</Text>
+                    <Grid style={{marginBottom: '6px'}}>
+                      <Text style={{fontSize: '14px'}}>Allowed Variation</Text>
                     </Grid>
                     <FormField>
-                        <TextInput
-                          autoComplete="off"
-                          name="allowedVariation"
-                          type="text"
-                          onChange={handleChange}
-                        />
+                      <TextInput
+                        autoComplete="off"
+                        name="allowedVariation"
+                        placeholder="Number"
+                        type="number"
+                        onChange={handleChange}
+                      />
                     </FormField>
                   </Grid>
                 </Grid>
                 <Grid item xs={6} style={{paddingLeft: '1.3rem'}}>
-                  <Grid style={{marginBottom: "6px"}}>
-                    <Text style={{fontSize: "14px"}}>Active Hours</Text>
+                  <Grid style={{marginBottom: '6px'}}>
+                    <Text style={{fontSize: '14px'}}>Active Hours</Text>
                   </Grid>
                   <Grid container>
-                    <Grid container item xs={6} alignItems="center" className={classes.gridStyleLeft}>  
+                    <Grid
+                      container
+                      item
+                      xs={6}
+                      alignItems="center"
+                      className={classes.gridStyleLeft}>
                       <Grid item xs={4} lg={3} xl={2}>
                         <Text variant="caption">From</Text>
                       </Grid>
                       <Grid item xs={8} lg={9} xl={10}>
-                        <FormField >
+                        <FormField>
                           <TextInput
                             autoComplete="off"
                             name="initTime"
+                            placeholder="Number"
+                            type="number"
                             onChange={handleChange}
                           />
                         </FormField>
                       </Grid>
                     </Grid>
-                    <Grid container item xs={6} alignItems="center" className={classes.gridStyleRight}>  
+                    <Grid
+                      container
+                      item
+                      xs={6}
+                      alignItems="center"
+                      className={classes.gridStyleRight}>
                       <Grid item xs={2} xl={1}>
                         <Text variant="caption">to</Text>
                       </Grid>
                       <Grid item xs={10} xl={11}>
-                        <FormField >
+                        <FormField>
                           <TextInput
                             autoComplete="off"
                             name="endTime"
+                            placeholder="Number"
+                            type="number"
                             onChange={handleChange}
                           />
                         </FormField>
                       </Grid>
                     </Grid>
-                  </Grid> 
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>

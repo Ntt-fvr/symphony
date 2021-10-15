@@ -12,7 +12,7 @@ import type {RemoveThresholdMutationVariables} from '../../mutations/__generated
 
 import AddThresholdItemForm from './AddThresholdItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import ThresholdProvider from './ThresholdProvider';
 import ThresholdTypeItem from './ThresholdTypeItem';
@@ -123,16 +123,20 @@ const ThresholdTypes = () => {
   const [dataEdit, setDataEdit] = useState({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, ThresholdQuery, {}).then(data => {
       setDataThreshold(data);
     });
-  }, [dataThreshold]);
+  }, [setDataThreshold]);
 
   const handleRemove = id => {
     const variables: RemoveThresholdMutationVariables = {
       id: id,
     };
-    RemoveThresholdMutation(variables);
+    RemoveThresholdMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   // render Add Rule
@@ -199,6 +203,7 @@ const ThresholdTypes = () => {
           editRule={() => {
             showEditRuleItemForm(dataEdit);
           }}
+          isCompleted={isCompleted}
         />
       </ThresholdProvider>
     );
@@ -236,6 +241,7 @@ const ThresholdTypes = () => {
           <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
             <AddThresholdItemForm
               thresholdNames={dataThreshold.thresholds?.edges}
+              isCompleted={isCompleted}
             />
           </Grid>
         </Grid>
