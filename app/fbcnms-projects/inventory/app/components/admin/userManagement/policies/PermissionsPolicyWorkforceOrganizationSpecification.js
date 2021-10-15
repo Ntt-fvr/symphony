@@ -16,11 +16,6 @@ import {makeStyles} from '@material-ui/styles';
 
 import type {Organization} from '../data/Organizations';
 
-import {
-  PERMISSION_RULE_VALUES,
-  WorkforcePolicy,
-} from '../data/PermissionsPolicies';
-
 import symphony from '@symphony/design-system/theme/symphony';
 import {Checkbox, ListItemText, MenuItem} from '@material-ui/core';
 import {useOrganizations} from '../data/Organizations';
@@ -68,7 +63,6 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   policy: ?WorkforcePolicy,
-  defaultOrganization?: Organization,
   disabled?: ?boolean,
   onChange?: WorkforcePolicy => void,
 |}>;
@@ -103,6 +97,60 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
         },
       });
   };
+
+  const options = useMemo(() => {
+    if (disabled && selectedOrganizations.length === 0) {
+      return (
+        <Select
+          value="MyOrg"
+          disabled={true}
+          renderValue={() => (
+            <div className={classes.chips}>
+              <Chip label="User Organization" className={classes.chip} />
+            </div>
+          )}>
+          <MenuItem key="myOrg" value="MyOrg">
+            <Checkbox checked={true} />
+            <ListItemText primary="User Organization" />
+          </MenuItem>
+        </Select>
+      );
+    }
+    return (
+      <Select
+        displayEmpty={true}
+        disabled={disabled}
+        className={classes.orgSelection}
+        multiple
+        value={selectedOrganizations}
+        onChange={handleOnChange}
+        renderValue={selected => (
+          <div className={classes.chips}>
+            {selected.map(value => {
+              const selectedOption = organizationOptions.find(
+                opt => opt.value === value,
+              );
+
+              return (
+                <Chip
+                  key={value}
+                  label={selectedOption?.label}
+                  className={classes.chip}
+                />
+              );
+            })}
+          </div>
+        )}>
+        {organizationOptions.map(opt => (
+          <MenuItem key={opt.value} value={opt.value}>
+            <Checkbox checked={selectedOrganizations.includes(opt.value)} />
+            <ListItemText primary={opt.label} />
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  }, [organizationOptions, disabled, selectedOrganizations]);
+
   return (
     <div className={classes.container}>
       <div className={classes.methodSelectionBox}>
@@ -114,41 +162,7 @@ const PermissionsPolicyWorkforceOrganizationSpecification = (props: Props) => {
           }
         </Text>
         <FormField>
-          <FormControl variant="outlined">
-            <Select
-              displayEmpty={true}
-              disabled={disabled}
-              className={classes.orgSelection}
-              multiple
-              value={selectedOrganizations}
-              onChange={handleOnChange}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => {
-                    const selectedOption = organizationOptions.find(
-                      opt => opt.value === value,
-                    );
-
-                    return (
-                      <Chip
-                        key={value}
-                        label={selectedOption?.label}
-                        className={classes.chip}
-                      />
-                    );
-                  })}
-                </div>
-              )}>
-              {organizationOptions.map(opt => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  <Checkbox
-                    checked={selectedOrganizations.includes(opt.value)}
-                  />
-                  <ListItemText primary={opt.label} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <FormControl variant="outlined">{options}</FormControl>
         </FormField>
       </div>
     </div>

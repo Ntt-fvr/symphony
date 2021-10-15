@@ -137,7 +137,12 @@ export default function AddKpiItemForm(props: Props) {
       },
     };
     setShowChecking(true);
-    AddKpiMutation(variables, {onCompleted: () => isCompleted()});
+    AddKpiMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setKpis({data: {}});
+      },
+    });
   }
 
   const setReturn = () => {

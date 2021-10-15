@@ -11,7 +11,7 @@ import type {DeleteKqiSourceMutationVariables} from '../../mutations/__generated
 
 import DeleteKqiSourceMutation from '../../mutations/DeleteKqiSourceMutation';
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery, graphql} from 'relay-runtime';
@@ -63,16 +63,20 @@ const KqiSourcesTypes = () => {
   const [dataEdit, setDataEdit] = useState<KqiSource>({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, KqiSourceQuery, {}).then(data => {
       setItems(data);
     });
-  }, [items]);
+  }, [setItems]);
 
   const handleRemove = id => {
     const variables: DeleteKqiSourceMutationVariables = {
       id: id,
     };
-    DeleteKqiSourceMutation(variables);
+    DeleteKqiSourceMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const showEditKqiSourceForm = (kqiSources: KqiSource) => {
@@ -91,6 +95,7 @@ const KqiSourcesTypes = () => {
         kqiSourcesNames={kqiSourcesNames}
         formValues={dataEdit.item.node}
         hideKqiSourceFormEdit={hideKqiSourceFormEdit}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -120,7 +125,10 @@ const KqiSourcesTypes = () => {
           </List>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-          <KqiSourceAddForm kqiSourcesNames={items.kqiSources?.edges} />
+          <KqiSourceAddForm
+            kqiSourcesNames={items.kqiSources?.edges}
+            isCompleted={isCompleted}
+          />
         </Grid>
       </Grid>
     </div>
