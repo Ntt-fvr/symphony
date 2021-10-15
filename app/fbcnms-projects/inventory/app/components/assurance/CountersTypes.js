@@ -36,11 +36,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     position: 'relative',
     overflow: 'auto',
-    maxHeight: 500,
+    maxHeight: 510,
     '&::-webkit-scrollbar': {
-      width: '8px',
+      width: '9px',
     },
-
     /* Estilos barra (thumb) de scroll */
     '&::-webkit-scrollbar-thumb': {
       background: '#9DA9BE',
