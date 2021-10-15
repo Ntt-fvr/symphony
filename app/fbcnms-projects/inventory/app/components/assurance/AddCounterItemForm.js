@@ -62,12 +62,17 @@ const useStyles = makeStyles(theme => ({
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#B8C2D3',
     },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
       transform: 'translate(14px, -3px) scale(0.75)',
     },
     '& .MuiFormControl-root': {
-      // margin: '0 20px 22px 20px',
       marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
     },
     '& .MuiOutlinedInput-input': {
       paddingTop: '7px',
