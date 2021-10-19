@@ -29,6 +29,7 @@ def add_file(
     entity_type: str,
     entity_id: str,
     category: Optional[str] = None,
+    document_category_id: Optional[str] = None,
 ) -> None:
     """This function adds file to an entity of a given type.
 
@@ -38,6 +39,8 @@ def add_file(
     :type entity_type: str
     :param category: File category name
     :type category: str, optional
+    :param document_category_id: Document category id
+    :type document_category_id: int, optional
 
     :raises:
         FailedOperationException: on operation failure
@@ -48,12 +51,17 @@ def add_file(
 
     .. code-block:: python
 
+        document_category = PsymClient.get_document_category_by_names(
+            client=client_symp,
+            location_type_name="SITIO",
+            doc_category_name="Correo de notificación"
+        )
         location = client.get_location({("Country", "LS_IND_Prod_Copy")})
         client.add_file(
             local_file_path="./document.pdf",
             entity_type="LOCATION",
             entity_id=location.id,
-            category="category_name",
+            document_category_id=document_category.id
         )
     """
     entity = {
@@ -62,7 +70,9 @@ def add_file(
         "SITE_SURVEY": ImageEntity.SITE_SURVEY,
         "EQUIPMENT": ImageEntity.EQUIPMENT,
     }.get(entity_type, ImageEntity.LOCATION)
-    add_image(client, local_file_path, entity, entity_id, category)
+    add_image(
+        client, local_file_path, entity, entity_id, category, document_category_id
+    )
 
 
 def add_files(
@@ -71,6 +81,7 @@ def add_files(
     entity_type: str,
     entity_id: str,
     category: Optional[str] = None,
+    document_category_id: Optional[int] = None,
 ) -> None:
     """This function adds all files located in folder to an entity of a given type.
 
@@ -80,6 +91,8 @@ def add_files(
     :type entity_type: str
     :param category: File category name
     :type category: str, optional
+    :param document_category_id: Document category id
+    :type document_category_id: int, optional
 
     :raises:
         FailedOperationException: on operation failure
@@ -90,20 +103,28 @@ def add_files(
 
     .. code-block:: python
 
+        document_category = PsymClient.get_document_category_by_names(
+            client=client_symp,
+            location_type_name="SITIO",
+            doc_category_name="Correo de notificación"
+        )
         location = client.get_location({("Country", "LS_IND_Prod_Copy")})
         client.add_files(
             local_directory_path="./documents_folder/",
             entity_type="LOCATION",
             entity_id=location.id,
-            category="category_name",
+            document_category_id=document_category.id
         )
     """
     for file in list_dir(local_directory_path):
-        add_file(client, file, entity_type, entity_id, category)
+        add_file(client, file, entity_type, entity_id, category, document_category_id)
 
 
 def add_location_image(
-    client: SymphonyClient, local_file_path: str, location: Location
+    client: SymphonyClient,
+    local_file_path: str,
+    location: Location,
+    document_category_id: Optional[str] = None,
 ) -> None:
     """This function adds image to existing location.
 
@@ -113,6 +134,8 @@ def add_location_image(
 
         * :meth:`~psym.api.location.get_location`
         * :meth:`~psym.api.location.add_location`
+    :param document_category_id: Document category id
+    :type document_category_id: int, optional
 
     :type location: :class:`~psym.common.data_class.Location`
 
@@ -129,9 +152,16 @@ def add_location_image(
         client.add_location_image(
             local_file_path="./document.pdf",
             location=location,
+            document_category_id=279172874241
         )
     """
-    add_image(client, local_file_path, ImageEntity.LOCATION, location.id)
+    add_image(
+        client,
+        local_file_path,
+        ImageEntity.LOCATION,
+        location.id,
+        documentCategoryId=document_category_id,
+    )
 
 
 def delete_document(client: SymphonyClient, document: Document) -> None:
@@ -160,6 +190,7 @@ def add_image(
     entity_type: ImageEntity,
     entity_id: str,
     category: Optional[str] = None,
+    documentCategoryId: Optional[str] = None,
 ) -> None:
     file_type = filetype.guess(local_file_path)
     file_type = file_type.MIME if file_type is not None else ""
@@ -177,6 +208,7 @@ def add_image(
             modified=datetime.utcnow(),
             contentType=file_type,
             category=category,
+            documentCategoryId=documentCategoryId,
         ),
     )
 

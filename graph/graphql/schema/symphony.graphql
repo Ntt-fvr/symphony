@@ -581,6 +581,7 @@ type File implements Node {
   category: String
   annotation: String
   workorder: WorkOrder
+  documentCategory: DocumentCategory
 }
 
 type Hyperlink implements Node {

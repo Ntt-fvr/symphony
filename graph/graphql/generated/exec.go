@@ -669,17 +669,18 @@ type ComplexityRoot struct {
 	}
 
 	File struct {
-		Annotation  func(childComplexity int) int
-		Category    func(childComplexity int) int
-		ContentType func(childComplexity int) int
-		ID          func(childComplexity int) int
-		ModifiedAt  func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Size        func(childComplexity int) int
-		StoreKey    func(childComplexity int) int
-		Type        func(childComplexity int) int
-		UploadedAt  func(childComplexity int) int
-		WorkOrder   func(childComplexity int) int
+		Annotation       func(childComplexity int) int
+		Category         func(childComplexity int) int
+		ContentType      func(childComplexity int) int
+		DocumentCategory func(childComplexity int) int
+		ID               func(childComplexity int) int
+		ModifiedAt       func(childComplexity int) int
+		Name             func(childComplexity int) int
+		Size             func(childComplexity int) int
+		StoreKey         func(childComplexity int) int
+		Type             func(childComplexity int) int
+		UploadedAt       func(childComplexity int) int
+		WorkOrder        func(childComplexity int) int
 	}
 
 	FloorPlan struct {
@@ -4812,6 +4813,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.File.ContentType(childComplexity), true
+
+	case "File.documentCategory":
+		if e.complexity.File.DocumentCategory == nil {
+			break
+		}
+
+		return e.complexity.File.DocumentCategory(childComplexity), true
 
 	case "File.id":
 		if e.complexity.File.ID == nil {
@@ -13625,6 +13633,7 @@ type File implements Node {
   category: String
   annotation: String
   workorder: WorkOrder
+  documentCategory: DocumentCategory
 }
 
 type Hyperlink implements Node {
@@ -39874,6 +39883,38 @@ func (ec *executionContext) _File_workorder(ctx context.Context, field graphql.C
 	res := resTmp.(*ent.WorkOrder)
 	fc.Result = res
 	return ec.marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _File_documentCategory(ctx context.Context, field graphql.CollectedField, obj *ent.File) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "File",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentCategory(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.DocumentCategory)
+	fc.Result = res
+	return ec.marshalODocumentCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FloorPlan_id(ctx context.Context, field graphql.CollectedField, obj *ent.FloorPlan) (ret graphql.Marshaler) {
@@ -93034,6 +93075,17 @@ func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._File_workorder(ctx, field, obj)
+				return res
+			})
+		case "documentCategory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._File_documentCategory(ctx, field, obj)
 				return res
 			})
 		default:
