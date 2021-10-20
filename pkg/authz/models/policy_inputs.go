@@ -46,6 +46,7 @@ type WorkforceCUDInput struct {
 }
 
 type DocumentCategoryCUDInput struct {
+	LocationTypeID int 					   		`json:"locationTypeID"`
 	Read   *DocumentCategoryPermissionRuleInput `json:"read"`
 	Create *DocumentCategoryPermissionRuleInput `json:"create"`
 	Update *DocumentCategoryPermissionRuleInput `json:"update"`

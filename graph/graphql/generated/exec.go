@@ -432,10 +432,11 @@ type ComplexityRoot struct {
 	}
 
 	DocumentCategoryCud struct {
-		Create func(childComplexity int) int
-		Delete func(childComplexity int) int
-		Read   func(childComplexity int) int
-		Update func(childComplexity int) int
+		Create         func(childComplexity int) int
+		Delete         func(childComplexity int) int
+		LocationTypeID func(childComplexity int) int
+		Read           func(childComplexity int) int
+		Update         func(childComplexity int) int
 	}
 
 	DocumentCategoryConnection struct {
@@ -3877,6 +3878,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DocumentCategoryCud.Delete(childComplexity), true
+
+	case "DocumentCategoryCUD.locationTypeID":
+		if e.complexity.DocumentCategoryCud.LocationTypeID == nil {
+			break
+		}
+
+		return e.complexity.DocumentCategoryCud.LocationTypeID(childComplexity), true
 
 	case "DocumentCategoryCUD.read":
 		if e.complexity.DocumentCategoryCud.Read == nil {
@@ -13237,6 +13245,7 @@ type DocumentCategoryCUD
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
 ) {
+  locationTypeID: Int
   read  : DocumentCategoryPermissionRule
   create: DocumentCategoryPermissionRule
   update: DocumentCategoryPermissionRule
@@ -13265,6 +13274,7 @@ input DocumentCategoryCUDInput
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCUDInput"
 ) {
+  locationTypeID: Int
   read  : DocumentCategoryPermissionRuleInput
   create: DocumentCategoryPermissionRuleInput
   update: DocumentCategoryPermissionRuleInput
@@ -35000,6 +35010,38 @@ func (ec *executionContext) _DocumentCategory_hyperlinksByLocation(ctx context.C
 	res := resTmp.([]*ent.Hyperlink)
 	fc.Result = res
 	return ec.marshalNHyperlink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐHyperlink(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DocumentCategoryCUD_locationTypeID(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryCud) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DocumentCategoryCUD",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LocationTypeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _DocumentCategoryCUD_read(ctx context.Context, field graphql.CollectedField, obj *models2.DocumentCategoryCud) (ret graphql.Marshaler) {
@@ -80516,6 +80558,14 @@ func (ec *executionContext) unmarshalInputDocumentCategoryCUDInput(ctx context.C
 
 	for k, v := range asMap {
 		switch k {
+		case "locationTypeID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locationTypeID"))
+			it.LocationTypeID, err = ec.unmarshalOInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "read":
 			var err error
 
@@ -91343,6 +91393,8 @@ func (ec *executionContext) _DocumentCategoryCUD(ctx context.Context, sel ast.Se
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DocumentCategoryCUD")
+		case "locationTypeID":
+			out.Values[i] = ec._DocumentCategoryCUD_locationTypeID(ctx, field, obj)
 		case "read":
 			out.Values[i] = ec._DocumentCategoryCUD_read(ctx, field, obj)
 		case "create":

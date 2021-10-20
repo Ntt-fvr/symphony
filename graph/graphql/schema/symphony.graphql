@@ -185,6 +185,7 @@ type DocumentCategoryCUD
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
 ) {
+  locationTypeID: Int
   read  : DocumentCategoryPermissionRule
   create: DocumentCategoryPermissionRule
   update: DocumentCategoryPermissionRule
@@ -213,6 +214,7 @@ input DocumentCategoryCUDInput
 @goModel(
   model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCUDInput"
 ) {
+  locationTypeID: Int
   read  : DocumentCategoryPermissionRuleInput
   create: DocumentCategoryPermissionRuleInput
   update: DocumentCategoryPermissionRuleInput

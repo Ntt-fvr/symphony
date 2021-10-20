@@ -247,6 +247,7 @@ func appendDocCategoryCUD(cud *models.DocumentCategoryCud, addCUD *models.Docume
 	if addCUD == nil {
 		return cud
 	}
+	cud.LocationTypeID = addCUD.LocationTypeID
 	cud.Read = appendDocCategoryPermissionRule(cud.Read, addCUD.Read)
 	cud.Create = appendDocCategoryPermissionRule(cud.Create, addCUD.Create)
 	cud.Update = appendDocCategoryPermissionRule(cud.Update, addCUD.Update)

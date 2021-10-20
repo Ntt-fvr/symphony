@@ -53,7 +53,7 @@ def add_file(
 
         document_category = PsymClient.get_document_category_by_names(
             client=client_symp,
-            location_type_name="SITIO",
+            location_type_name="Country",
             doc_category_name="Correo de notificación"
         )
         location = client.get_location({("Country", "LS_IND_Prod_Copy")})
@@ -105,7 +105,7 @@ def add_files(
 
         document_category = PsymClient.get_document_category_by_names(
             client=client_symp,
-            location_type_name="SITIO",
+            location_type_name="Country",
             doc_category_name="Correo de notificación"
         )
         location = client.get_location({("Country", "LS_IND_Prod_Copy")})
@@ -147,12 +147,15 @@ def add_location_image(
     **Example**
 
     .. code-block:: python
-
+        document_category = PsymClient.get_document_category_by_names(
+            location_type_name="Country",
+            doc_category_name="Correo de notificación",
+        )
         location = client.get_location({("Country", "LS_IND_Prod_Copy")})
         client.add_location_image(
             local_file_path="./document.pdf",
             location=location,
-            document_category_id=279172874241
+            document_category_id=document_category.id
         )
     """
     add_image(

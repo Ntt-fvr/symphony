@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"strings"
 	"time"
 
@@ -1269,6 +1270,15 @@ func (r mutationResolver) AddImage(ctx context.Context, input models.AddImageInp
 	return r.createImage(ctx, &input, func(create *ent.FileCreate) error {
 		switch input.EntityType {
 		case models.ImageEntityLocation:
+			if input.DocumentCategoryID != nil {
+				lc, err := r.ClientFrom(ctx).Location.Query().Where(location.ID(input.EntityID)).Only(ctx)
+				if err != nil {
+					return err
+				}
+				if _, err := lc.QueryType().QueryDocumentCategory().Where(documentcategory.ID(*input.DocumentCategoryID)).Only(ctx); err != nil {
+					return fmt.Errorf("document category (%q) not registered in location type. %w", *input.DocumentCategoryID, err)
+				}
+			}
 			create.SetLocationID(input.EntityID)
 		case models.ImageEntitySiteSurvey:
 			create.SetSurveyID(input.EntityID)
