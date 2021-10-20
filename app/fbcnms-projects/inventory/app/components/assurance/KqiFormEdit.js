@@ -229,7 +229,8 @@ const KqiFormEdit = (props: Props) => {
   const inputFilter = () => {
     return (
       dataNameKqi?.filter(
-        item => item === name.value && item !== formValues.item.name,
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
       ) || []
     );
   };
@@ -239,12 +240,18 @@ const KqiFormEdit = (props: Props) => {
       return {hasError: true, errorText: 'Kqi name existing'};
     }
   };
-  
+
   const dataInputsObject = [
-    name.value, description.value, formula.value, kqiCategory.value, 
-    kqiPerspective.value, startDateTime.value, endDateTime.value, 
-    kqiSource.value, kqiTemporalFrequency.value,
-  ]
+    name.value.trim(),
+    description.value,
+    formula.value,
+    kqiCategory.value,
+    kqiPerspective.value,
+    startDateTime.value,
+    endDateTime.value,
+    kqiSource.value,
+    kqiTemporalFrequency.value,
+  ];
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -257,7 +264,7 @@ const KqiFormEdit = (props: Props) => {
     const variables: EditKqiMutationVariables = {
       input: {
         id: formValues.item.id,
-        name: name.value,
+        name: name.value.trim(),
         description: description.value,
         formula: formula.value,
         startDateTime: moment(startDateTime.value).format(),
@@ -296,7 +303,7 @@ const KqiFormEdit = (props: Props) => {
       <KqiFormEditTarget
         formValues={dataEdit}
         dataTarget={dataKqiTarget}
-        nameKqi={formValues.item.name}
+        nameKqi={formValues.item.name.trim()}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowEditTarget(false)}
       />
@@ -345,11 +352,12 @@ const KqiFormEdit = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={!(
-                  dataInputsObject.length === 9 &&
-                  !dataInputsObject.some(item => item === '') &&
-                  !inputFilter().length > 0
-                )}>
+                disabled={
+                  !(
+                    dataInputsObject.length === 9 &&
+                    !dataInputsObject.some(item => item === '')
+                  )
+                }>
                 Save
               </Button>
             </FormField>

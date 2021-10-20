@@ -101,7 +101,7 @@ const EditCounterItemForm = (props: Props) => {
   const {formValues, hideEditCounterForm, counterNames, isCompleted} = props;
   const classes = useStyles();
 
-  const name = useFormInput(formValues.name);
+  const name = useFormInput(formValues.name.trim());
   const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
   const counterID = useFormInput(formValues.externalID);
   const counterFamily = useFormInput(formValues.counterFamily.name);
@@ -112,10 +112,18 @@ const EditCounterItemForm = (props: Props) => {
     {},
   );
 
+  const dataInputsObject = [
+    name.value.trim(),
+    networkManagerSystem.value,
+    counterID.value,
+    counterFamily.value,
+    vendor.value,
+  ];
+
   const inputFilter = () => {
     return (
       counterNames?.filter(
-        item => item === name.value && item !== formValues.name,
+        item => item === name.value.trim() && item !== formValues.name.trim(),
       ) || []
     );
   };
@@ -130,7 +138,7 @@ const EditCounterItemForm = (props: Props) => {
     const variables: EditCounterMutationVariables = {
       input: {
         id: formValues.id,
-        name: name.value,
+        name: name.value.trim(),
         externalID: counterID.value,
         networkManagerSystem: networkManagerSystem.value,
         vendorFk: vendor.value,
@@ -235,7 +243,13 @@ const EditCounterItemForm = (props: Props) => {
                     className={classes.addCounter}
                     onClick={() => {
                       handleClick();
-                    }}>
+                    }}
+                    disabled={
+                      !(
+                        dataInputsObject.length === 5 &&
+                        !dataInputsObject.some(item => item === '')
+                      )
+                    }>
                     Save
                   </Button>
                 </FormField>

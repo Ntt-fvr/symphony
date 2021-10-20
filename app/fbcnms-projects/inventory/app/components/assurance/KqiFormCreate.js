@@ -23,6 +23,7 @@ import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -126,12 +127,11 @@ const KqiFormCreate = (props: Props) => {
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
-
   function handleChange({target}) {
     setKqis({
       data: {
         ...Kqis.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -161,6 +161,7 @@ const KqiFormCreate = (props: Props) => {
       return {hasError: true, errorText: 'Kqi name existing'};
     }
   };
+  const handleDisable = useDisabledButton(Kqis.data, dataNameKqi, 9);
 
   return (
     <div className={classes.root}>
@@ -195,11 +196,7 @@ const KqiFormCreate = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={!(
-                  Object.values(Kqis.data).length === 9 &&
-                  !Object.values(Kqis.data).some(item => item === '') &&
-                  !dataNameKqi?.some(item => item === Kqis.data.name)
-                )}>
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>
