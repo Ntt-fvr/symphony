@@ -117,6 +117,7 @@ type Props = $ReadOnly<{|
   addRule: void => void,
   editRule: void => void,
   handleRemove: void => void,
+  isCompleted: void => void,
   rule: Array<Rule>,
 |}>;
 
@@ -132,6 +133,7 @@ export default function ThresholdTypeItem(props: Props) {
     editRule,
     rule,
     deleteItem,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -251,7 +253,11 @@ export default function ThresholdTypeItem(props: Props) {
                 variant="subtitle1">
                 {'Rules contained'}
               </Text>
-              <TableThreshold rule={rule} editRule={editRule} />
+              <TableThreshold
+                rule={rule}
+                editRule={editRule}
+                isCompleted={isCompleted}
+              />
             </Grid>
           </Grid>
         </AccordionDetails>
