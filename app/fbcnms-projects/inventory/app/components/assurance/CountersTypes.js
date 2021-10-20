@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery, graphql} from 'relay-runtime';
@@ -86,21 +86,25 @@ type Counters = {
 const CountersTypes = () => {
   const classes = useStyles();
 
-  const [items, setItems] = useState({});
+  const [counterTypes, setCounterTypes] = useState({});
   const [showEditCard, setShowEditCard] = useState(false);
   const [dataEdit, setDataEdit] = useState<Counters>({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, CountersQuery, {}).then(data => {
-      setItems(data);
+      setCounterTypes(data);
     });
-  }, [items]);
+  }, [setCounterTypes]);
 
   const handleRemove = id => {
     const variables: RemoveCountersTypesMutationVariables = {
       id: id,
     };
-    RemoveCountersTypesMutation(variables);
+    RemoveCountersTypesMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const showEditCounterItemForm = (counters: Counters) => {
@@ -112,7 +116,7 @@ const CountersTypes = () => {
     setShowEditCard(false);
   };
 
-  const counterNames = items.counters?.edges.map(item => item.node.name);
+  const counterNames = counterTypes.counters?.edges.map(item => item.node.name);
 
   if (showEditCard) {
     return (
@@ -120,6 +124,7 @@ const CountersTypes = () => {
         counterNames={counterNames}
         formValues={dataEdit.item.node}
         hideEditCounterForm={hideEditCounterForm}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -139,7 +144,7 @@ const CountersTypes = () => {
         <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
           <TitleTextCardsCounter />
           <List disablePadding>
-            {items.counters?.edges.map(item => (
+            {counterTypes.counters?.edges.map(item => (
               <CounterTypeItem
                 key={item.node?.id}
                 handleRemove={() => handleRemove(item.node?.id)}
@@ -149,8 +154,11 @@ const CountersTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
-          <AddCounterItemForm counterNames={items.counters?.edges} />
+        <Grid item xs={12} sm={12} lg={3} xl={3}>
+          <AddCounterItemForm
+            isCompleted={isCompleted}
+            counterNames={counterTypes.counters?.edges}
+          />
         </Grid>
       </Grid>
     </div>

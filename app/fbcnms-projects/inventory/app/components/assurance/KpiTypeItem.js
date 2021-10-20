@@ -110,6 +110,7 @@ type Props = $ReadOnly<{|
   parentCallback: any,
   handleEditFormulaClick: void => void,
   parentEditCallback: any,
+  isCompleted: void => void,
 |}>;
 
 const KpiTypeItem = (props: Props) => {
@@ -128,6 +129,7 @@ const KpiTypeItem = (props: Props) => {
     parentCallback,
     handleEditFormulaClick,
     parentEditCallback,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -275,6 +277,7 @@ const KpiTypeItem = (props: Props) => {
                 formulas={formulaFk}
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={parentEditCallback}
+                isCompleted={isCompleted}
               />
             </Grid>
           </Grid>

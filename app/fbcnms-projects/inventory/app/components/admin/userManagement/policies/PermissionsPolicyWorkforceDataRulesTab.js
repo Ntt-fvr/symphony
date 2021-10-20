@@ -225,7 +225,6 @@ type Props = $ReadOnly<{|
   onChange?: WorkforcePolicy => void,
   className?: ?string,
 |}>;
-
 export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
   const {policy, onChange, className} = props;
   const classes = useStyles();
@@ -323,6 +322,8 @@ export default function PermissionsPolicyWorkforceDataRulesTab(props: Props) {
                 ? null
                 : enableOrganization
                 ? policy.read.organizationIds
+                : me.user.organizationFk === null
+                ? []
                 : [me.user.organizationFk.id],
           },
         }}
