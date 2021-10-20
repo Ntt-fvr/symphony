@@ -69,6 +69,14 @@ export type KpiTypesQueryResponse = {|
       |}
     |}>
   |},
+  +counters: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type KpiTypesQuery = {|
   variables: KpiTypesQueryVariables,
@@ -127,6 +135,14 @@ query KpiTypesQuery {
     }
   }
   networkTypes {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+  counters {
     edges {
       node {
         id
@@ -307,6 +323,38 @@ v5 = {
     }
   ],
   "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "CounterConnection",
+  "kind": "LinkedField",
+  "name": "counters",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "CounterEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Counter",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": (v3/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -362,7 +410,8 @@ return {
         ],
         "storageKey": null
       },
-      (v5/*: any*/)
+      (v5/*: any*/),
+      (v6/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -422,20 +471,21 @@ return {
         ],
         "storageKey": null
       },
-      (v5/*: any*/)
+      (v5/*: any*/),
+      (v6/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "a8d0bab775505baf722dd02d722e6fd8",
+    "cacheID": "e328333787c2f96bf6dfbf65a1e8c857",
     "id": null,
     "metadata": {},
     "name": "KpiTypesQuery",
     "operationKind": "query",
-    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n          networkTypeFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query KpiTypesQuery {\n  kpis {\n    edges {\n      node {\n        id\n        name\n        status\n        description\n        domainFk {\n          id\n          name\n        }\n        formulaFk {\n          id\n          textFormula\n          status\n          kpiFk {\n            id\n            name\n          }\n          techFk {\n            id\n            name\n          }\n          networkTypeFk {\n            id\n            name\n          }\n        }\n        kpiCategoryFK {\n          id\n          name\n        }\n      }\n    }\n  }\n  thresholds {\n    edges {\n      node {\n        name\n        kpi {\n          name\n          id\n        }\n        id\n      }\n    }\n  }\n  networkTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  counters {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '6a66a7ed913e48607b4b4fc9990a0fdb';
+(node/*: any*/).hash = '8946e2675590421a04e2d9015bbb8c02';
 
 module.exports = node;

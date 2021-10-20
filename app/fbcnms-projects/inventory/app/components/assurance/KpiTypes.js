@@ -99,6 +99,14 @@ const KpiQuery = graphql`
         }
       }
     }
+    counters{
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -107,9 +115,11 @@ type Formula = {
   textFormula: string,
   status: true,
   techFk: {
+    id: string,
     name: string,
   },
   networkTypeFk: {
+    id: string,
     name: string,
   },
 };
@@ -250,6 +260,7 @@ const KpiTypes = () => {
         <AddFormulaDialog
           open={openDialog}
           dataFormula={formulaForm}
+          dataCounter={dataKpis.counters?.edges.map(item => item.node)}
           onClose={() => {
             setOpenDialog(false);
             isCompleted();

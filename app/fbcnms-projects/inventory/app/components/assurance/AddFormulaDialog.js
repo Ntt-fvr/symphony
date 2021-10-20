@@ -45,51 +45,13 @@ const useStyles = makeStyles(() => ({
   icon: {
     fontsize: '10px',
   },
-  dialogTitle: {
-    padding: '0 24px',
-  },
   dialogContent: {
-    // padding: '2rem',
-    height: '250px',
-  },
-  dialogActions: {
-    padding: '24px',
-    marginBottom: '30px',
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    zIndex: 2,
-  },
-  time: {
-    marginTop: '2rem',
+    overflow: 'hidden',
+    height: '50vh'
   },
   option: {
     width: '150px',
     height: '40px',
-  },
-  th: {
-    border: 'none',
-    'padding-left': 0,
-    lineHeight: 'normal',
-  },
-  thfirst: {
-    width: '20%',
-    border: 'none',
-    lineHeight: 'normal',
-    'padding-left': 0,
-  },
-  switch: {
-    height: '35px',
-  },
-  textarea: {
-    width: '100%',
-    height: '200px',
-    border: '1px solid #ccc',
-    padding: '5px',
-    resize: 'both',
-    overflow: 'auto',
   },
   textField: {
     width: '70%',
@@ -109,6 +71,11 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  styleSearch: {
+    height: 'calc(100% - 100px)',
+    paddingBottom: '1.5rem',
+    overflow: 'auto',
+  },
 }));
 
 type Formula = {
@@ -116,7 +83,7 @@ type Formula = {
     kpi: string,
     vendors: string,
     technology: string,
-    network: string,
+    networkTypes: string,
   },
 };
 
@@ -124,18 +91,34 @@ type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   dataFormula: Formula,
+  dataCounter: any,
 |}>;
 
 const AddFormulaDialog = (props: Props) => {
-  const {onClose, dataFormula} = props;
-  const classes = useStyles();
+  const {onClose, dataFormula, dataCounter} = props;
+  const [checked, setChecked] = useState();
   const [textFormula, setTextFormula] = useState<any>({});
+  const classes = useStyles();
 
   function handleChange({target}) {
     setTextFormula({
       ...textFormula,
       [target.name]: target.value,
     });
+  }
+
+  const searchCountersFiltered = !textFormula.search
+    ? dataCounter
+    : dataCounter?.filter(item =>
+        item.name
+          .toString()
+          .toLowerCase()
+          .includes(textFormula.search.toLocaleLowerCase()),
+      );
+
+  function onDragStart(e, v) {
+    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.setData('text/plain', v);
   }
 
   function handleClick() {
@@ -151,30 +134,6 @@ const AddFormulaDialog = (props: Props) => {
     AddFormulaMutation(variables);
   }
 
-  const items = [
-    {no: 1, text: 'pmRrcConnEstabSucc', checked: false, color: '#B3A4FF'},
-    {
-      no: 2,
-      text: 'pmErabRelAbnormalMmeActQci1',
-      checked: true,
-      color: '#4EDECA',
-    },
-    {
-      no: 3,
-      text: 'EUtranCellFDD.pmRrcConnEstabSucc',
-      checked: false,
-      color: '#93C9FF',
-    },
-    ,
-  ];
-
-  const [checked, setChecked] = useState();
-
-  function onDragStart(e, v) {
-    e.dataTransfer.dropEffect = 'move';
-    e.dataTransfer.setData('text/plain', v);
-  }
-
   return (
     <Dialog
       maxWidth="lg"
@@ -187,8 +146,8 @@ const AddFormulaDialog = (props: Props) => {
           <CloseIcon fontSize="small" color="action" />
         </Button>
       </DialogActions>
-      <DialogTitle className={classes.dialogTitle}>
-        <Grid container spacing={2}>
+      <DialogTitle>
+        <Grid container>
           <Grid item xs={5}>
             <Text variant="h6">Build Formula</Text>
           </Grid>
@@ -196,9 +155,11 @@ const AddFormulaDialog = (props: Props) => {
             <TextField
               placeholder="Add counter"
               color="primary"
-              type="search"
+              type="text"
               className={classes.textField}
               variant="outlined"
+              name="search"
+              onChange={handleChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -212,70 +173,80 @@ const AddFormulaDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent className={classes.dialogContent}>
         <Grid container spacing={2}>
-          <Grid item xs={5}>
+          <Grid
+            item
+            xs={5}
+            style={{height: '50vh'}}>
             <Text variant="body2" weight="regular">
               Press the counter to add it to the expression. You can use your
               keyboard or the buttons on the screen to add math symbols and
               numbers.
             </Text>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.thfirst}>
-                    <Text variant="subtitle4" color="lightBlue">
-                      Mandatory counter
-                    </Text>
-                  </TableCell>
-                  <TableCell className={classes.th}>
-                    <Text variant="subtitle4" color="lightBlue">
-                      Name counter
-                    </Text>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-            </Table>
-            {items.map(item => {
-              return (
-                <Grid container spacing={2}>
-                  <Grid item xs={2}>
-                    <Switch
-                      className={classes.switch}
-                      checked={item.checked}
-                      onChange={setChecked}
-                    />
+            <Grid
+              container
+              direction="row"
+              alignItems="flex-start"
+              style={{margin: '1rem auto'}}>
+              <Grid item xs={2} style={{lineHeight: '0px'}}>
+                <Text variant="caption" color="lightBlue">
+                  Mandatory counter
+                </Text>
+              </Grid>
+              <Grid item xs={3} style={{lineHeight: '0px'}}>
+                <Text variant="caption" color="lightBlue">
+                  Name counter
+                </Text>
+              </Grid>
+            </Grid>
+
+            <Grid className={classes.styleSearch}>
+              {searchCountersFiltered.map((item, index) => {
+                return (
+                  <Grid container spacing={2}>
+                    <Grid item xs={2}>
+                      <Switch
+                        title={''}
+                        checked={item.checked}
+                        onChange={setChecked}
+                      />
+                    </Grid>
+                    <Grid item xs={10}>
+                      <Chip
+                        color="primary"
+                        key={index}
+                        label={item.name}
+                        style={{
+                          backgroundColor: item.color,
+                          color: 'black',
+                          fontWeight: '500',
+                        }}
+                        draggable="true"
+                        onDragStart={e => onDragStart(e, item.name)}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={9}>
-                    <Chip
-                      color="primary"
-                      key={item.no}
-                      label={item.text}
-                      style={{
-                        backgroundColor: item.color,
-                        color: 'black',
-                        fontWeight: '500',
-                      }}
-                      draggable="true"
-                      onDragStart={e => onDragStart(e, item.text)}
-                    />
-                  </Grid>
-                </Grid>
-              );
-            })}
+                );
+              })}
+            </Grid>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={7} style={{padding: '0px'}}>
             <FormField>
               <TextInput
                 autoComplete="off"
                 name="formula"
                 type="multiline"
-                rows={11}
+                style={{
+                  height: '50vh',
+                }}
                 onChange={handleChange}
               />
             </FormField>
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions className={classes.dialogActions}>
+      <DialogActions
+        style={{height: '100px', backgroundColor: 'blue'}}
+        >
         <Button
           className={classes.option}
           variant="outlined"
