@@ -59,8 +59,8 @@ const StyledTableRow = withStyles(() => ({
 
 const useStyles = makeStyles(() => ({
   head: {
-    padding: "24px",
-    borderBottom: '2px solid #F5F7FC'
+    padding: '24px',
+    borderBottom: '2px solid #F5F7FC',
   },
   insideCenter: {
     textAlign: 'center',
@@ -71,10 +71,11 @@ type Props = $ReadOnly<{|
   create: () => void,
   edit: ({}) => void,
   tableTargets: any,
+  isCompleted: void => void,
 |}>;
 
 const KqiTableAssociatedTarget = (props: Props) => {
-  const {create, edit, tableTargets} = props;
+  const {create, edit, tableTargets, isCompleted} = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
 
@@ -82,7 +83,7 @@ const KqiTableAssociatedTarget = (props: Props) => {
     const variables: RemoveKqiTargetMutationVariables = {
       id: id,
     };
-    RemoveKqiTargetMutation(variables);
+    RemoveKqiTargetMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   return (
@@ -147,7 +148,9 @@ const KqiTableAssociatedTarget = (props: Props) => {
                           kqi: item.kqi.id,
                         },
                       };
-                      EditKqiTargetMutation(variables);
+                      EditKqiTargetMutation(variables, {
+                        onCompleted: () => isCompleted(),
+                      });
                     }}
                   />
                 </TableCell>
@@ -162,7 +165,8 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  {item.kqiComparator[0]?.comparatorFk?.name} - {item.kqiComparator[0]?.number}
+                  {item.kqiComparator[0]?.comparatorFk?.name} -{' '}
+                  {item.kqiComparator[0]?.number}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   {item.kqiComparator[1]?.number}
@@ -174,7 +178,8 @@ const KqiTableAssociatedTarget = (props: Props) => {
                   {item.allowedVariation}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
-                  {moment(item.initTime).format('HH')} - {moment(item.endTime).format('HH')}
+                  {moment(item.initTime).format('HH')} -{' '}
+                  {moment(item.endTime).format('HH')}
                 </TableCell>
                 <TableCell className={classes.insideCenter}>
                   <IconButton>

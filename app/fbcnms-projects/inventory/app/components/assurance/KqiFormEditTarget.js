@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -29,7 +29,7 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 import type {EditKqiComparatorMutationVariables} from '../../mutations/__generated__/EditKqiComparatorMutation.graphql';
 import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
 import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
-
+import type {KqiTarget} from './KqiFormEdit';
 import EditKqiComparatorMutation from '../../mutations/EditKqiComparatorMutation';
 import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
 import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
@@ -77,7 +77,8 @@ type Comparator = {
 };
 
 type Props = $ReadOnly<{|
-  dataTarget: any,
+  isCompleted: void => void,
+  dataTarget: Array<KqiTarget>,
   nameKqi: string,
   dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
@@ -118,6 +119,7 @@ const KqiFormEditTarget = (props: Props) => {
     dataComparatorSelect,
     nameKqi,
     dataTarget,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(formValues.item.status);
@@ -147,7 +149,7 @@ const KqiFormEditTarget = (props: Props) => {
     const variables: RemoveKqiTargetMutationVariables = {
       id: id,
     };
-    RemoveKqiTargetMutation(variables);
+    RemoveKqiTargetMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const handleClick = () => {
@@ -183,9 +185,13 @@ const KqiFormEditTarget = (props: Props) => {
         comparatorFk: warningComparatorSelect.value,
       },
     };
-    EditKqiComparatorMutation(variablesUpper);
-    EditKqiComparatorMutation(variablesLower);
-    EditKqiTargetMutation(variables);
+    EditKqiComparatorMutation(variablesUpper, {
+      onCompleted: () => isCompleted(),
+    });
+    EditKqiComparatorMutation(variablesLower, {
+      onCompleted: () => isCompleted(),
+    });
+    EditKqiTargetMutation(variables, {onCompleted: () => isCompleted()});
     returnFormEdit();
   };
 
@@ -199,12 +205,6 @@ const KqiFormEditTarget = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi Target name existing'};
-    }
-  };
-
   const dataInputsObject = [
     name.value,
     impact.value,
@@ -215,6 +215,22 @@ const KqiFormEditTarget = (props: Props) => {
     comparatorNumber.value,
     warningComparatorNumber.value,
   ];
+
+  const handleDisable = useMemo(
+    () =>
+      !(
+        dataInputsObject.length === 8 &&
+        !dataInputsObject.some(item => item === '') &&
+        !inputFilter().length > 0
+      ),
+    [dataInputsObject, dataNameKqi],
+  );
+
+  const handleHasError = useMemo(() => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kqi Target name existing'};
+    }
+  }, [dataNameKqi]);
 
   return (
     <div className={classes.root}>
@@ -260,13 +276,7 @@ const KqiFormEditTarget = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={
-                  !(
-                    dataInputsObject.length === 8 &&
-                    !dataInputsObject.some(item => item === '') &&
-                    !inputFilter().length > 0
-                  )
-                }>
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>
@@ -281,7 +291,7 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Target name">
+                <FormField {...handleHasError} label="Target name">
                   <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>
