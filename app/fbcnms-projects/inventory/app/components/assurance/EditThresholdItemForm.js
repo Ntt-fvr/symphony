@@ -102,7 +102,6 @@ export const EditThresholdItemForm = (props: Props) => {
     editRule,
     isCompleted,
   } = props;
-  console.log('props', props);
   const classes = useStyles();
 
   const name = useFormInput(formValues.name);
