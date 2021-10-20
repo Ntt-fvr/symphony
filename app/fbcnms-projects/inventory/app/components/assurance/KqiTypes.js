@@ -9,7 +9,7 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -28,9 +28,8 @@ const useStyles = makeStyles(theme => ({
     padding: '40px',
   },
   header: {
-    marginBottom: "1rem"
-  }
-  
+    marginBottom: '1rem',
+  },
 }));
 
 const KqiQuery = graphql`
@@ -188,7 +187,7 @@ export type Kqis = {
       id: string,
       name: string,
     },
-  }
+  },
 };
 
 const KqiTypes = () => {
@@ -198,24 +197,38 @@ const KqiTypes = () => {
   const [showFormCreate, setShowFormCreate] = useState(false);
   const [showFormEdit, setShowFormEdit] = useState(false);
 
-  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node)
-  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(item => item.node);
+  const dataResponseKqi = dataKqi.kqis?.edges.map(item => item.node);
+  const dataResponsePerspectives = dataKqi.kqiPerspectives?.edges.map(
+    item => item.node,
+  );
   const dataResponseSources = dataKqi.kqiSources?.edges.map(item => item.node);
-  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(item => item.node);
-  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(item => item.node);
-  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(item => item.node);
-  const dataResponseComparators = dataKqi.comparators?.edges.map(item => item.node,);
+  const dataResponseCategories = dataKqi.kqiCategories?.edges.map(
+    item => item.node,
+  );
+  const dataResponseTemporalFrequencies = dataKqi.kqiTemporalFrequencies?.edges.map(
+    item => item.node,
+  );
+  const dataResponseKqiTargets = dataKqi.kqiTargets?.edges.map(
+    item => item.node,
+  );
+  const dataResponseComparators = dataKqi.comparators?.edges.map(
+    item => item.node,
+  );
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, KqiQuery, {}).then(data => {
       setDataKqi(data);
     });
-  }, [dataKqi]);
+  }, [setDataKqi]);
 
   const handleClick = () => {
     setShowFormCreate(true);
   };
-  
+
   const formEdit = (kqi: Kqis) => {
     setShowFormEdit(true);
     setDataEdit(kqi);
@@ -224,6 +237,7 @@ const KqiTypes = () => {
   if (showFormCreate) {
     return (
       <KqiFormCreate
+        isCompleted={isCompleted}
         dataKqi={dataResponseKqi}
         dataPerspectives={dataResponsePerspectives}
         dataSources={dataResponseSources}
@@ -237,6 +251,7 @@ const KqiTypes = () => {
   if (showFormEdit) {
     return (
       <KqiFormEdit
+        isCompleted={isCompleted}
         formValues={dataEdit}
         dataKqi={dataResponseKqi}
         dataPerspectives={dataResponsePerspectives}
@@ -252,7 +267,12 @@ const KqiTypes = () => {
 
   return (
     <Grid className={classes.root}>
-      <Grid className={classes.header} container direction="row" justifyContent="flex-end" alignItems="center">
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center">
         <Grid xs>
           <ConfigureTitle
             title={fbt('KQI (Key Quality Indicator) ', 'KQI Title')}
@@ -266,12 +286,9 @@ const KqiTypes = () => {
           <Button onClick={handleClick}>Add KQI</Button>
         </Grid>
       </Grid>
-        <Grid item fullWidth>
-          <KqiTable
-            dataValues={dataResponseKqi}
-            viewFormEdit={formEdit}
-          />
-        </Grid>
+      <Grid item fullWidth>
+        <KqiTable dataValues={dataResponseKqi} viewFormEdit={formEdit} />
+      </Grid>
     </Grid>
   );
 };
