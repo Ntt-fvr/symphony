@@ -127,6 +127,14 @@ const locationsPropertiesCardQuery = graphql`
             id
             name
             index
+            filesByEntity(entity: LOCATION, entityID: $locationId){
+              id
+              fileName
+            }
+            hyperlinksByEntity(entity: LOCATION, entityID: $locationId){
+              id
+              displayName
+            }
           }
           propertyTypes {
             ...PropertyTypeFormField_propertyType

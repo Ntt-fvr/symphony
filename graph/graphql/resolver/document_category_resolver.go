@@ -6,8 +6,11 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -27,10 +30,24 @@ func (d documentCategoryResolver) NumberOfDocuments(ctx context.Context, obj *en
 	return filesCount + hyperlinksCount, nil
 }
 
-func (d documentCategoryResolver) FilesByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.File, error) {
-	return obj.QueryFiles().Where(file.HasLocationWith(location.ID(locationID))).All(ctx)
+func (d documentCategoryResolver) FilesByEntity(ctx context.Context, obj *ent.DocumentCategory, entity models.ImageEntity, entityID *int) ([]*ent.File, error) {
+	switch entity {
+	case models.ImageEntityLocation:
+		return obj.QueryFiles().Where(file.HasLocationWith(location.ID(*entityID))).All(ctx)
+	case models.ImageEntityEquipment:
+		return obj.QueryFiles().Where(file.HasEquipmentWith(equipment.ID(*entityID))).All(ctx)
+	default:
+		return nil, fmt.Errorf("not support entity type: %s", entity)
+	}
 }
 
-func (d documentCategoryResolver) HyperlinksByLocation(ctx context.Context, obj *ent.DocumentCategory, locationID int) ([]*ent.Hyperlink, error) {
-	return obj.QueryHyperlinks().Where(hyperlink.HasLocationWith(location.ID(locationID))).All(ctx)
+func (d documentCategoryResolver) HyperlinksByEntity(ctx context.Context, obj *ent.DocumentCategory, entity models.ImageEntity, entityID *int) ([]*ent.Hyperlink, error) {
+	switch entity {
+	case models.ImageEntityLocation:
+		return obj.QueryHyperlinks().Where(hyperlink.HasLocationWith(location.ID(*entityID))).All(ctx)
+	case models.ImageEntityEquipment:
+		return obj.QueryHyperlinks().Where(hyperlink.HasEquipmentWith(equipment.ID(*entityID))).All(ctx)
+	default:
+		return nil, fmt.Errorf("not support entity type: %s", entity)
+	}
 }
