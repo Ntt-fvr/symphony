@@ -93,7 +93,6 @@ const KqiSourceFormEdit = (props: Props) => {
   const name = useFormInput(formValues.name.trim());
 
   const dataInputsObject = [name.value.trim()];
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 1);
 
   const inputFilter = () => {
     return (
@@ -102,11 +101,15 @@ const KqiSourceFormEdit = (props: Props) => {
       ) || []
     );
   };
+
   const validationName = () => {
     if (inputFilter().length > 0) {
       return {hasError: true, errorText: 'Kqi Source name existing'};
     }
   };
+
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 1, inputFilter);
+
   const handleClick = () => {
     const variables: EditKqiSourceMutationVariables = {
       input: {

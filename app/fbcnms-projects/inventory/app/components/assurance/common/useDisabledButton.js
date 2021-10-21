@@ -30,12 +30,14 @@ export const useDisabledButton = (
 export const useDisabledButtonEdit = (
   dataInputsObject: any,
   number: number,
+  inputFilter: any,
 ) => {
   const handleDisable = useMemo(
     () =>
       !(
         dataInputsObject.length === number &&
-        !dataInputsObject.some(item => item === '')
+        !dataInputsObject.some(item => item === '') &&
+        !inputFilter().length > 0
       ),
     [dataInputsObject],
   );

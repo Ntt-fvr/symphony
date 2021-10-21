@@ -144,6 +144,8 @@ const KqiFormEditTarget = (props: Props) => {
     formValues.item.kqiComparator[1].number,
   );
 
+  const dataNameKqi = dataTarget.map(item => item.name);
+
   const dataInputsObject = [
     name.value.trim(),
     impact.value.trim(),
@@ -156,7 +158,27 @@ const KqiFormEditTarget = (props: Props) => {
     comparatorSelect.value,
     warningComparatorSelect.value,
   ];
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 10);
+
+  const inputFilter = () => {
+    return (
+      dataNameKqi?.filter(
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kqi Target name existing'};
+    }
+  };
+
+  const handleDisable = useDisabledButtonEdit(
+    dataInputsObject,
+    10,
+    inputFilter,
+  );
 
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
@@ -202,23 +224,6 @@ const KqiFormEditTarget = (props: Props) => {
     EditKqiComparatorMutation(variablesLower);
     EditKqiTargetMutation(variables);
     returnFormEdit();
-  };
-
-  const dataNameKqi = dataTarget.map(item => item.name);
-
-  const inputFilter = () => {
-    return (
-      dataNameKqi?.filter(
-        item =>
-          item === name.value.trim() && item !== formValues.item.name.trim(),
-      ) || []
-    );
-  };
-
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi Target name existing'};
-    }
   };
 
   return (

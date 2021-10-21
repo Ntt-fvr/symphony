@@ -237,8 +237,6 @@ const KqiFormEdit = (props: Props) => {
     kqiTemporalFrequency.value,
   ];
 
-  const handleDisable = useDisabledButtonEdit(dataInputsObject, 8);
-
   const inputFilter = () => {
     return (
       dataNameKqi?.filter(
@@ -247,6 +245,7 @@ const KqiFormEdit = (props: Props) => {
       ) || []
     );
   };
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 8, inputFilter);
 
   const validationName = () => {
     if (inputFilter().length > 0) {
