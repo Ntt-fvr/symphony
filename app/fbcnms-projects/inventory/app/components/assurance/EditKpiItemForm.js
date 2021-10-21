@@ -33,6 +33,7 @@ import TableFormulas from './TableFormulas';
 import {Grid, MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
@@ -164,6 +165,29 @@ export const EditKpiItemForm = (props: Props) => {
 
   const kpiNames = kpi?.map(item => item.name);
 
+  const dataInputsObject = [
+    name.value.trim(),
+    domainFk.value,
+    description.value.trim(),
+    kpiCategoryFK.value,
+  ];
+
+  const inputFilter = () => {
+    return (
+      kpiNames?.filter(
+        item => item === name.value.trim() && item !== formValues.name.trim(),
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kpi name existing'};
+    }
+  };
+
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 4, inputFilter);
+
   const handleClick = () => {
     const variables: EditKpiMutationVariables = {
       input: {
@@ -207,16 +231,7 @@ export const EditKpiItemForm = (props: Props) => {
                 <FormField
                   className={classes.formField}
                   label="Name"
-                  hasError={kpiNames?.some(
-                    item => item === name.value && item !== formValues.name,
-                  )}
-                  errorText={
-                    kpiNames?.some(
-                      item => item === name.value && item !== formValues.name,
-                    )
-                      ? 'Kpi name existing'
-                      : ''
-                  }
+                  {...validationName()}
                   required>
                   <TextInput
                     {...name}
@@ -313,7 +328,8 @@ export const EditKpiItemForm = (props: Props) => {
                     className={classes.addKpi}
                     onClick={() => {
                       handleClick();
-                    }}>
+                    }}
+                    disabled={handleDisable}>
                     Save
                   </Button>
                 </FormField>

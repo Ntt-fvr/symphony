@@ -42,7 +42,7 @@ type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
-  setReturn: void => void,
+  setReturn: () => void,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
