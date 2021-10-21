@@ -12867,4 +12867,3 @@ func (c *WorkerTypeClient) Hooks() []Hook {
 	hooks := c.hooks.WorkerType
 	return append(hooks[:len(hooks):len(hooks)], workertype.Hooks[:]...)
 }
-

@@ -117,4 +117,3 @@ var (
 	// DefaultIndex holds the default value on creation for the index field.
 	DefaultIndex int
 )
-

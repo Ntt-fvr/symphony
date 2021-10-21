@@ -75151,4 +75151,3 @@ func (m *WorkerTypeMutation) ResetEdge(name string) error {
 	}
 	return fmt.Errorf("unknown WorkerType edge %s", name)
 }
-

@@ -109,5 +109,3 @@ func (InventoryPolicy) IsSystemPolicy()  {}
 func (WorkforcePolicy) IsSystemPolicy()  {}
 func (AutomationPolicy) IsSystemPolicy() {}
 func (AssurancePolicy) IsSystemPolicy()  {}
-
-

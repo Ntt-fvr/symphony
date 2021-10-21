@@ -131,4 +131,3 @@ func (r *readonly) Exec(context.Context, string, interface{}, interface{}) error
 func (r *readonly) Tx(context.Context) (dialect.Tx, error) {
 	return nil, ErrReadOnly
 }
-

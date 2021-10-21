@@ -2303,4 +2303,3 @@ func (wt *WorkerType) PropertyTypes(ctx context.Context) ([]*PropertyType, error
 	}
 	return result, err
 }
-

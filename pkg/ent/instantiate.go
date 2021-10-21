@@ -515,4 +515,3 @@ func (c *WorkerTypeClient) Instantiate(wt *WorkerType) *WorkerType {
 	wt.config = c.config
 	return wt
 }
-

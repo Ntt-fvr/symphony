@@ -857,4 +857,3 @@ func Not(p predicate.LocationType) predicate.LocationType {
 		p(s.Not())
 	})
 }
-

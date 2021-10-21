@@ -20503,4 +20503,3 @@ var DefaultWorkerTypeOrder = &WorkerTypeOrder{
 		},
 	},
 }
-

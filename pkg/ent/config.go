@@ -145,5 +145,3 @@ func Driver(driver dialect.Driver) Option {
 		c.driver = driver
 	}
 }
-
-

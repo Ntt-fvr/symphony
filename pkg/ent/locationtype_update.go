@@ -1261,4 +1261,3 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *Location
 	}
 	return _node, nil
 }
-
