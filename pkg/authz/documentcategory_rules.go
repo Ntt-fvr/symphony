@@ -6,8 +6,6 @@ package authz
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
@@ -18,11 +16,6 @@ import (
 // DocumentCategoryWritePolicyRule grants write permission to Category Document based on policy.
 func DocumentCategoryWritePolicyRule() privacy.MutationRule {
 	return privacy.DocumentCategoryMutationRuleFunc(func(ctx context.Context, m *ent.DocumentCategoryMutation) error {
-		fmt.Println("===========DocumentCategoryWritePolicyRule============= ")
-		id, _ := m.ID()
-		name,_ := m.Name()
-		index,_ := m.Index()
-		println(id, name, index)
 		return privacy.Allow
 	})
 }
@@ -38,11 +31,8 @@ func DocumentCategoryReadPolicyRule() privacy.QueryRule {
 }
 
 func DocumentCategoryReadRule(ctx context.Context) predicate.DocumentCategory {
-	fmt.Println("===========DocumentCategoryReadPolicyRule============= ")
 	var predicatesDc []predicate.DocumentCategory
 	rule := FromContext(ctx).InventoryPolicy.DocumentCategory.Read
-	documentCategory, _ := json.Marshal(rule)
-	fmt.Println("LEN==",len(rule.DocumentCategoryIds),"-----data==",rule.DocumentCategoryIds,"--------", string(documentCategory))
 	switch rule.IsAllowed {
 	case models.PermissionValueYes:
 		return nil
