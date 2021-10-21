@@ -74,3 +74,4 @@ export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return locationTypes;
 }
+

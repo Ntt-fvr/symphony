@@ -144,3 +144,4 @@ func (Location) Policy() ent.Policy {
 		),
 	)
 }
+

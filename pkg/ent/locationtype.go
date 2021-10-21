@@ -223,3 +223,4 @@ func (lt LocationTypes) config(cfg config) {
 		lt[_i].config = cfg
 	}
 }
+

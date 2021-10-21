@@ -8878,3 +8878,4 @@ func (tables) load(ctx context.Context, drv dialect.Driver) ([]string, error) {
 	var tables []string
 	return tables, sql.ScanSlice(rows, &tables)
 }
+

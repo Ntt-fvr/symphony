@@ -1158,3 +1158,4 @@ func (lts *LocationTypeSelect) sqlQuery() sql.Querier {
 	selector.Select(selector.Columns(lts.fields...)...)
 	return selector
 }
+

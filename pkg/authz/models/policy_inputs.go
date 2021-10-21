@@ -80,3 +80,5 @@ type AssurancePolicyInput struct {
 	Read      *BasicPermissionRuleInput `json:"read"`
 	Templates *BasicCUDInput            `json:"templates"`
 }
+
+

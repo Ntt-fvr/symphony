@@ -116628,3 +116628,4 @@ func (ec *executionContext) marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgen�
 }
 
 // endregion ***************************** type.gotpl *****************************
+

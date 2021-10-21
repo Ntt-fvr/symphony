@@ -497,3 +497,4 @@ func (ltcb *LocationTypeCreateBulk) SaveX(ctx context.Context) []*LocationType {
 	}
 	return v
 }
+

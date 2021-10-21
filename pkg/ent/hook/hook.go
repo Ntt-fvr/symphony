@@ -1298,3 +1298,4 @@ func (c Chain) Append(hooks ...ent.Hook) Chain {
 func (c Chain) Extend(chain Chain) Chain {
 	return c.Append(chain.hooks...)
 }
+

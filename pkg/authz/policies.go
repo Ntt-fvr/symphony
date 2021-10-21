@@ -424,3 +424,4 @@ func AdminPermissions() *models.PermissionSettings {
 		AssurancePolicy:  NewAssurancePolicy(false, false),
 	}
 }
+

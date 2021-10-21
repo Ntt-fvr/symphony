@@ -2416,3 +2416,4 @@ func init() {
 const (
 	Version = "(devel)" // Version of ent codegen.
 )
+

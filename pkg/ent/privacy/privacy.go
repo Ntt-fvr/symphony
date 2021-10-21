@@ -2207,3 +2207,4 @@ func (f WorkerTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.WorkerTypeMutation", m)
 }
+
