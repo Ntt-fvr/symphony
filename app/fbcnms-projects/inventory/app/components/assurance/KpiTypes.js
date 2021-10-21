@@ -39,6 +39,36 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     margin: '30px',
   },
+  listContainer: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'auto',
+    paddingLeft: '9px',
+    maxHeight: 510,
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    /* Estilos barra (thumb) de scroll */
+    '&::-webkit-scrollbar-thumb': {
+      background: '#9DA9BE',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: '#999999',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#313C48',
+      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+    },
+    /* Estilos track de scroll */
+    '&::-webkit-scrollbar-track': {
+      background: '#e5e5e5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
+      background: '#d4d4d4',
+    },
+  },
   listCarKpi: {
     listStyle: 'none',
   },
@@ -218,7 +248,7 @@ const KpiTypes = () => {
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
-          <List disablePadding>
+          <List disablePadding className={classes.listContainer}>
             {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
