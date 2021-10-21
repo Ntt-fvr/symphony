@@ -17,6 +17,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import type {AddFormulaItemFormQuery} from './__generated__/AddFormulaItemFormQuery.graphql';
 
+import TextField from '@material-ui/core/TextField';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
@@ -28,10 +29,35 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   header: {
-    margin: '20px 0 24px 20px',
+    margin: '20px 0 24px 0',
   },
   formField: {
-    margin: '0 20px 22px 20px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   textInput: {
     minHeight: '36px',
@@ -41,18 +67,11 @@ const useStyles = makeStyles(theme => ({
     width: '111px',
     alignSelf: 'flex-end',
   },
+  input: {
+    width: '100%',
+  },
   select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
+    width: '100%',
   },
 }));
 
@@ -125,62 +144,68 @@ export default function AddFormulaItemForm(props: Props) {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add formula</CardHeader>
-      <FormField className={classes.formField} label="KPI" required>
-        <Select
+      <form className={classes.formField} autoComplete="off">
+        <TextField
+          required
+          id="outlined-select-kpi"
+          select
           className={classes.select}
-          disableUnderline
+          label="KPI"
+          onChange={handleChange}
           name="kpi"
-          type="reset"
-          onChange={handleChange}>
+          variant="outlined">
           {data.kpis?.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
-      <FormField className={classes.formField} label="Vendors" required>
-        <Select
+        </TextField>
+        <TextField
+          required
+          id="outlined-select-vendors"
+          select
           className={classes.select}
-          disableUnderline
+          label="Vendors"
+          onChange={handleChange}
           name="vendors"
-          type="reset"
-          onChange={handleChange}>
+          variant="outlined">
           {data.vendors?.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
-      <FormField className={classes.formField} label="Technology" required>
-        <Select
+        </TextField>
+        <TextField
+          required
+          id="outlined-select-technology"
+          select
           className={classes.select}
-          disableUnderline
+          label="Technology"
+          onChange={handleChange}
           name="technology"
-          type="reset"
-          onChange={handleChange}>
+          variant="outlined">
           {data.techs?.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
-      <FormField className={classes.formField} label="Network Type" required>
-        <Select
+        </TextField>
+        <TextField
+          required
+          id="outlined-select-vendors"
+          select
           className={classes.select}
-          disableUnderline
+          label="Network Type"
+          onChange={handleChange}
           name="networkTypes"
-          type="reset"
-          onChange={handleChange}>
+          variant="outlined">
           {data.networkTypes?.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
+        </TextField>
+      </form>
       <FormField>
         <Button
           className={classes.addCounter}

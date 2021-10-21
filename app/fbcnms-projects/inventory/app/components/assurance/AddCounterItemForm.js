@@ -28,7 +28,6 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -90,7 +89,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   header: {
-    margin: '20px 0 24px 20px',
+    margin: '20px 0 24px 0',
   },
   addCounter: {
     margin: '20px',
