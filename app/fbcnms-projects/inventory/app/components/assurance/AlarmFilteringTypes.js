@@ -105,10 +105,8 @@ const AlarmFilteringTypes = () => {
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
-        returnTableAlarm={() => {
-          setShowForm(false);
-          isCompleted();
-        }}
+        returnTableAlarm={() => setShowForm(false)}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -116,11 +114,9 @@ const AlarmFilteringTypes = () => {
   if (showEditForm) {
     return (
       <EditAlarmFilteringItemForm
-        closeEditForm={() => {
-          setShowEditForm(false);
-          isCompleted();
-        }}
+        closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
+        isCompleted={isCompleted}
       />
     );
   }

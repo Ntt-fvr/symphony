@@ -151,11 +151,12 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   hideAddRuleForm: void => void,
+  isCompleted: void => void,
 |}>;
 
 const EditRuleItemForm = (props: Props) => {
   const {rule} = useStore();
-  const {hideAddRuleForm} = props;
+  const {hideAddRuleForm, isCompleted} = props;
 
   const [ruleData, setRuleData] = useState({data: {}});
   const [checked, setChecked] = useState(rule.status);
@@ -217,9 +218,9 @@ const EditRuleItemForm = (props: Props) => {
         rule: rule.id,
       },
     };
-    EditRuleMutation(variables);
-    EditRuleLimitMutation(variablesUpper);
-    EditRuleLimitMutation(variablesLower);
+    EditRuleMutation(variables, {onCompleted: () => isCompleted()});
+    EditRuleLimitMutation(variablesUpper, {onCompleted: () => isCompleted()});
+    EditRuleLimitMutation(variablesLower, {onCompleted: () => isCompleted()});
   };
 
   const classes = useStyles();
