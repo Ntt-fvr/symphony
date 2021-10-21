@@ -36,6 +36,7 @@ import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const AddRuleQuery = graphql`
@@ -178,6 +179,7 @@ type Rule = {
 };
 
 const AddRuleItemForm = (props: Props) => {
+  const classes = useStyles();
   const {threshold, hideAddRuleForm} = props;
 
   const [rule, setRule] = useState<Rule>({data: {}});
@@ -186,11 +188,21 @@ const AddRuleItemForm = (props: Props) => {
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
   const ruleTypeId = data.ruleTypes?.edges[0].node?.id;
 
+  const namesRules = threshold?.rule.map(item => item.name);
+
+  const handleDisable = useDisabledButton(rule.data, namesRules, 12);
+
+  const validationName = () => {
+    if (namesRules?.some(item => item === rule.data.name)) {
+      return {hasError: true, errorText: 'Rule name existing'};
+    }
+  };
+
   function handleChange({target}) {
     setRule({
       data: {
         ...rule.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -238,8 +250,6 @@ const AddRuleItemForm = (props: Props) => {
     AddRuleMutation(variables, response);
   }
 
-  const classes = useStyles();
-
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -265,6 +275,7 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
+                  {...validationName()}
                   className={classes.formField}
                   label="Rule Name"
                   required>
@@ -477,7 +488,8 @@ const AddRuleItemForm = (props: Props) => {
                       onClick={() => {
                         handleClick();
                         hideAddRuleForm();
-                      }}>
+                      }}
+                      disabled={handleDisable}>
                       Save
                     </Button>
                   </FormField>

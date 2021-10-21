@@ -23,7 +23,7 @@ import EditRuleMutation from '../../mutations/EditRuleMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
@@ -154,6 +154,7 @@ type Props = $ReadOnly<{|
 |}>;
 
 const EditRuleItemForm = (props: Props) => {
+  const classes = useStyles();
   const {rule} = useStore();
   const {hideAddRuleForm} = props;
 
@@ -173,11 +174,32 @@ const EditRuleItemForm = (props: Props) => {
   const upper = useFormInput(rule.ruleLimit[0]?.number);
   const lower = useFormInput(rule.ruleLimit[1]?.number);
 
+  const dataInputsObject = [
+    nameRule.value.trim(),
+    gracePeriodRule.value,
+    additionalInfoRule.value.trim(),
+    specificProblemRule.value.trim(),
+    eventTypeRule.value,
+    eventSeverityRules.value,
+    comparatorUpper.value,
+    comparatorLower.value,
+    upper.value,
+    lower.value,
+  ];
+  const handleDisable = useMemo(
+    () =>
+      !(
+        dataInputsObject.length === 10 &&
+        !dataInputsObject.some(item => item === '')
+      ),
+    [dataInputsObject],
+  );
+
   function handleChange({target}) {
     setRuleData({
       data: {
         ...ruleData.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -221,8 +243,6 @@ const EditRuleItemForm = (props: Props) => {
     EditRuleLimitMutation(variablesUpper);
     EditRuleLimitMutation(variablesLower);
   };
-
-  const classes = useStyles();
 
   return (
     <div className={classes.root}>
@@ -466,7 +486,8 @@ const EditRuleItemForm = (props: Props) => {
                       onClick={() => {
                         handleClick();
                         hideAddRuleForm();
-                      }}>
+                      }}
+                      disabled={handleDisable}>
                       Save
                     </Button>
                   </FormField>
