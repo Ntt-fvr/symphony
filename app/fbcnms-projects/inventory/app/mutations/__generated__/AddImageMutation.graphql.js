@@ -26,6 +26,7 @@ export type AddImageInput = {|
   contentType: string,
   category?: ?string,
   annotation?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddImageMutationVariables = {|
   input: AddImageInput

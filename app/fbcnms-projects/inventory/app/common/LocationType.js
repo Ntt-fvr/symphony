@@ -11,6 +11,7 @@
 import type {LocationTypeNodesQuery} from './__generated__/LocationTypeNodesQuery.graphql';
 import type {NamedNode} from './EntUtils';
 import type {PropertyType} from './PropertyType';
+import type {DocumentCategoryType} from './DocumentCategoryType';
 import type {SurveyQuestionType} from '../components/configure/__generated__/AddEditLocationTypeCard_editingLocationType.graphql.js';
 
 import {graphql} from 'relay-runtime';
@@ -21,6 +22,7 @@ export type LocationType = {
   mapType: string,
   mapZoomLevel: string,
   propertyTypes: Array<PropertyType>,
+  documentCategories: Array<DocumentCategoryType>,
   numberOfLocations: number,
   surveyTemplateCategories: SurveyTemplateCategory[],
   isSite: boolean,
@@ -72,3 +74,4 @@ export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return locationTypes;
 }
+

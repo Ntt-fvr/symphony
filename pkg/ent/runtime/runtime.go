@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -40,7 +41,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -489,6 +489,33 @@ func init() {
 	customerDescExternalID := customerFields[1].Descriptor()
 	// customer.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
 	customer.ExternalIDValidator = customerDescExternalID.Validators[0].(func(string) error)
+	documentcategoryMixin := schema.DocumentCategory{}.Mixin()
+	documentcategory.Policy = privacy.NewPolicies(schema.DocumentCategory{})
+	documentcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := documentcategory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	documentcategoryMixinFields0 := documentcategoryMixin[0].Fields()
+	documentcategoryFields := schema.DocumentCategory{}.Fields()
+	_ = documentcategoryFields
+	// documentcategoryDescCreateTime is the schema descriptor for create_time field.
+	documentcategoryDescCreateTime := documentcategoryMixinFields0[0].Descriptor()
+	// documentcategory.DefaultCreateTime holds the default value on creation for the create_time field.
+	documentcategory.DefaultCreateTime = documentcategoryDescCreateTime.Default.(func() time.Time)
+	// documentcategoryDescUpdateTime is the schema descriptor for update_time field.
+	documentcategoryDescUpdateTime := documentcategoryMixinFields0[1].Descriptor()
+	// documentcategory.DefaultUpdateTime holds the default value on creation for the update_time field.
+	documentcategory.DefaultUpdateTime = documentcategoryDescUpdateTime.Default.(func() time.Time)
+	// documentcategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	documentcategory.UpdateDefaultUpdateTime = documentcategoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// documentcategoryDescName is the schema descriptor for name field.
+	documentcategoryDescName := documentcategoryFields[0].Descriptor()
+	// documentcategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	documentcategory.NameValidator = documentcategoryDescName.Validators[0].(func(string) error)
 	domainMixin := schema.Domain{}.Mixin()
 	domain.Policy = privacy.NewPolicies(schema.Domain{})
 	domain.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -874,29 +901,6 @@ func init() {
 	fileDescSize := fileFields[2].Descriptor()
 	// file.SizeValidator is a validator for the "size" field. It is called by the builders before save.
 	file.SizeValidator = fileDescSize.Validators[0].(func(int) error)
-	filecategorytypeMixin := schema.FileCategoryType{}.Mixin()
-	filecategorytype.Policy = privacy.NewPolicies(schema.FileCategoryType{})
-	filecategorytype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := filecategorytype.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	filecategorytypeMixinFields0 := filecategorytypeMixin[0].Fields()
-	filecategorytypeFields := schema.FileCategoryType{}.Fields()
-	_ = filecategorytypeFields
-	// filecategorytypeDescCreateTime is the schema descriptor for create_time field.
-	filecategorytypeDescCreateTime := filecategorytypeMixinFields0[0].Descriptor()
-	// filecategorytype.DefaultCreateTime holds the default value on creation for the create_time field.
-	filecategorytype.DefaultCreateTime = filecategorytypeDescCreateTime.Default.(func() time.Time)
-	// filecategorytypeDescUpdateTime is the schema descriptor for update_time field.
-	filecategorytypeDescUpdateTime := filecategorytypeMixinFields0[1].Descriptor()
-	// filecategorytype.DefaultUpdateTime holds the default value on creation for the update_time field.
-	filecategorytype.DefaultUpdateTime = filecategorytypeDescUpdateTime.Default.(func() time.Time)
-	// filecategorytype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	filecategorytype.UpdateDefaultUpdateTime = filecategorytypeDescUpdateTime.UpdateDefault.(func() time.Time)
 	floorplanMixin := schema.FloorPlan{}.Mixin()
 	floorplan.Policy = privacy.NewPolicies(schema.FloorPlan{})
 	floorplan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
