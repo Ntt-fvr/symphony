@@ -78,8 +78,8 @@ func (File) Edges() []ent.Edge {
 			Ref("images").
 			Unique(),
 		edge.From("document_category", DocumentCategory.Type).
-		 	Ref("files").
-		 	Unique(),
+			Ref("files").
+			Unique(),
 	}
 }
 

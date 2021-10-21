@@ -33,8 +33,8 @@ type LocationCUDInput struct {
 }
 
 type DocumentCategoryPermissionRuleInput struct {
-	IsAllowed            	PermissionValue `json:"isAllowed"`
-	DocumentCategoryIds   	[]int           `json:"documentCategoryIds"`
+	IsAllowed           PermissionValue `json:"isAllowed"`
+	DocumentCategoryIds []int           `json:"documentCategoryIds"`
 }
 
 type WorkforceCUDInput struct {
@@ -46,11 +46,11 @@ type WorkforceCUDInput struct {
 }
 
 type DocumentCategoryCUDInput struct {
-	LocationTypeID int 					   		`json:"locationTypeID"`
-	Read   *DocumentCategoryPermissionRuleInput `json:"read"`
-	Create *DocumentCategoryPermissionRuleInput `json:"create"`
-	Update *DocumentCategoryPermissionRuleInput `json:"update"`
-	Delete *DocumentCategoryPermissionRuleInput `json:"delete"`
+	LocationTypeID int                                  `json:"locationTypeID"`
+	Read           *DocumentCategoryPermissionRuleInput `json:"read"`
+	Create         *DocumentCategoryPermissionRuleInput `json:"create"`
+	Update         *DocumentCategoryPermissionRuleInput `json:"update"`
+	Delete         *DocumentCategoryPermissionRuleInput `json:"delete"`
 }
 
 type InventoryPolicyInput struct {

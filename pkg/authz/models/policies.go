@@ -39,11 +39,11 @@ type LocationCud struct {
 }
 
 type DocumentCategoryCud struct {
-	LocationTypeID int 					   `json:"locationTypeID"`
-	Read   *DocumentCategoryPermissionRule `json:"read"`
-	Create *DocumentCategoryPermissionRule `json:"create"`
-	Update *DocumentCategoryPermissionRule `json:"update"`
-	Delete *DocumentCategoryPermissionRule `json:"delete"`
+	LocationTypeID int                             `json:"locationTypeID"`
+	Read           *DocumentCategoryPermissionRule `json:"read"`
+	Create         *DocumentCategoryPermissionRule `json:"create"`
+	Update         *DocumentCategoryPermissionRule `json:"update"`
+	Delete         *DocumentCategoryPermissionRule `json:"delete"`
 }
 
 type WorkforcePermissionRule struct {
