@@ -27,6 +27,7 @@ import type {AddThresholdItemFormQuery} from './__generated__/AddThresholdItemFo
 
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -115,12 +116,19 @@ export default function AddThresholdItemForm(props: Props) {
   const kpiSelect = kpiResponse.filter(
     item => !kpiExisting?.map(kpi => kpi?.name).includes(item?.name),
   );
+  const handleDisable = useDisabledButton(thresholds.data, names, 3);
+
+  const validationName = () => {
+    if (names?.some(item => item === thresholds.data.name)) {
+      return {hasError: true, errorText: 'Treshold name existing'};
+    }
+  };
 
   function handleChange({target}) {
     setThresholds({
       data: {
         ...thresholds.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -164,12 +172,7 @@ export default function AddThresholdItemForm(props: Props) {
       <FormField
         className={classes.formField}
         label="Threshold Name"
-        hasError={names?.some(item => item === thresholds.data.name)}
-        errorText={
-          names?.some(item => item === thresholds.data.name)
-            ? 'Threshold name existing'
-            : ''
-        }
+        {...validationName()}
         required>
         <TextInput
           className={classes.textInput}
@@ -206,13 +209,7 @@ export default function AddThresholdItemForm(props: Props) {
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={
-            !(
-              Object.values(thresholds.data).length === 3 &&
-              !Object.values(thresholds.data).some(item => item === '') &&
-              !names?.some(item => item === thresholds.data.name)
-            )
-          }>
+          disabled={handleDisable}>
           Add Threshold
         </Button>
       </FormField>

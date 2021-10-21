@@ -30,6 +30,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -102,19 +103,35 @@ export const EditThresholdItemForm = (props: Props) => {
     editRule,
     isCompleted,
   } = props;
-  console.log('props', props);
   const classes = useStyles();
-
   const name = useFormInput(formValues.name);
   const description = useFormInput(formValues.description);
   const [checked, setChecked] = useState(formValues.status);
+
+  const dataInputsObject = [name.value.trim(), description.value.trim()];
+
+  const inputFilter = () => {
+    return (
+      thresholdNames?.filter(
+        item => item === name.value.trim() && item !== formValues.name.trim(),
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Threshold name existing'};
+    }
+  };
+
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 2, inputFilter);
 
   const handleClick = () => {
     const variables: EditThresholdMutationVariables = {
       input: {
         id: formValues.id,
-        name: name.value,
-        description: description.value,
+        name: name.value.trim(),
+        description: description.value.trim(),
         status: checked,
       },
     };
@@ -150,16 +167,7 @@ export const EditThresholdItemForm = (props: Props) => {
                 <FormField
                   className={classes.formField}
                   label="Name"
-                  hasError={thresholdNames?.some(
-                    item => item === name.value && item !== formValues.name,
-                  )}
-                  errorText={
-                    thresholdNames?.some(
-                      item => item === name.value && item !== formValues.name,
-                    )
-                      ? 'Threshold name existing'
-                      : ''
-                  }
+                  {...validationName()}
                   required>
                   <TextInput
                     {...name}
@@ -217,7 +225,8 @@ export const EditThresholdItemForm = (props: Props) => {
                   onClick={() => {
                     handleClick();
                     hideEditThresholdForm();
-                  }}>
+                  }}
+                  disabled={handleDisable}>
                   Save
                 </Button>
               </FormField>
