@@ -111,6 +111,15 @@ export default function AddFormulaItemForm(props: Props) {
   const data = useLazyLoadQuery<AddFormulaItemFormQuery>(AddFormulaQuery, {});
   const classes = useStyles();
 
+  const handleDisable = React.useMemo(
+    () =>
+      !(
+        Object.values(formula).length === 4 &&
+        !Object.values(formula).some(item => item === '')
+      ),
+    [formula],
+  );
+
   function handleChange({target}) {
     setFormula({
       ...formula,
@@ -188,12 +197,7 @@ export default function AddFormulaItemForm(props: Props) {
             handleCallback();
             handleClick();
           }}
-          disabled={
-            !(
-              Object.values(formula).length === 4 &&
-              !Object.values(formula).some(item => item === '')
-            )
-          }>
+          disabled={handleDisable}>
           Build formula
         </Button>
       </FormField>

@@ -12,7 +12,7 @@ import {useMemo} from 'react';
 
 export const useDisabledButton = (
   element: any,
-  nombre: any,
+  nombre?: any,
   number: number,
 ) => {
   const handleDisable = useMemo(
