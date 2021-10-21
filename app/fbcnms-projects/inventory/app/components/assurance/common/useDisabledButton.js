@@ -26,3 +26,18 @@ export const useDisabledButton = (
   );
   return handleDisable;
 };
+
+export const useDisabledButtonEdit = (
+  dataInputsObject: any,
+  number: number,
+) => {
+  const handleDisable = useMemo(
+    () =>
+      !(
+        dataInputsObject.length === number &&
+        !dataInputsObject.some(item => item === '')
+      ),
+    [dataInputsObject],
+  );
+  return handleDisable;
+};

@@ -44,7 +44,7 @@ import EditKqiMutation from '../../mutations/EditKqiMutation';
 
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
-
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
@@ -226,6 +226,19 @@ const KqiFormEdit = (props: Props) => {
   );
   const dataNameKqi = dataKqi.map(item => item.name);
 
+  const dataInputsObject = [
+    name.value.trim(),
+    description.value.trim(),
+    formula.value.trim(),
+    kqiCategory.value,
+    kqiPerspective.value,
+    endDateTime.value,
+    kqiSource.value,
+    kqiTemporalFrequency.value,
+  ];
+
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 8);
+
   const inputFilter = () => {
     return (
       dataNameKqi?.filter(
@@ -241,18 +254,6 @@ const KqiFormEdit = (props: Props) => {
     }
   };
 
-  const dataInputsObject = [
-    name.value.trim(),
-    description.value,
-    formula.value,
-    kqiCategory.value,
-    kqiPerspective.value,
-    startDateTime.value,
-    endDateTime.value,
-    kqiSource.value,
-    kqiTemporalFrequency.value,
-  ];
-
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
       id: id,
@@ -265,8 +266,8 @@ const KqiFormEdit = (props: Props) => {
       input: {
         id: formValues.item.id,
         name: name.value.trim(),
-        description: description.value,
-        formula: formula.value,
+        description: description.value.trim(),
+        formula: formula.value.trim(),
         startDateTime: moment(startDateTime.value).format(),
         endDateTime: moment(endDateTime.value).format(),
         kqiCategory: kqiCategory.value,
@@ -352,12 +353,7 @@ const KqiFormEdit = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={
-                  !(
-                    dataInputsObject.length === 9 &&
-                    !dataInputsObject.some(item => item === '')
-                  )
-                }>
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>

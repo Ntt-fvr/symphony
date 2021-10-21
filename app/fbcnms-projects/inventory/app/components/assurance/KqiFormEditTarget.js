@@ -35,6 +35,7 @@ import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
 import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
@@ -123,7 +124,7 @@ const KqiFormEditTarget = (props: Props) => {
   const [checked, setChecked] = useState(formValues.item.status);
 
   const name = useFormInput(formValues.item.name);
-  const impact = useFormInput(formValues.item.impact);
+  const impact = useFormInput(formValues.item.impact.trim());
   const period = useFormInput(formValues.item.period);
   const allowedVariation = useFormInput(formValues.item.allowedVariation);
   const initTime = useFormInput(moment(formValues.item.initTime).format('HH'));
@@ -143,6 +144,20 @@ const KqiFormEditTarget = (props: Props) => {
     formValues.item.kqiComparator[1].number,
   );
 
+  const dataInputsObject = [
+    name.value.trim(),
+    impact.value.trim(),
+    period.value,
+    allowedVariation.value,
+    initTime.value,
+    endTime.value,
+    comparatorNumber.value,
+    warningComparatorNumber.value,
+    comparatorSelect.value,
+    warningComparatorSelect.value,
+  ];
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 10);
+
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
       id: id,
@@ -154,8 +169,8 @@ const KqiFormEditTarget = (props: Props) => {
     const variables: EditKqiTargetMutationVariables = {
       input: {
         id: formValues.item.id,
-        name: name.value,
-        impact: impact.value,
+        name: name.value.trim(),
+        impact: impact.value.trim(),
         period: Number(period.value),
         allowedVariation: Number(allowedVariation.value),
         initTime: moment(initTime.value, 'HH'),
@@ -194,7 +209,8 @@ const KqiFormEditTarget = (props: Props) => {
   const inputFilter = () => {
     return (
       dataNameKqi?.filter(
-        item => item === name.value && item !== formValues.item.name,
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
       ) || []
     );
   };
@@ -204,17 +220,6 @@ const KqiFormEditTarget = (props: Props) => {
       return {hasError: true, errorText: 'Kqi Target name existing'};
     }
   };
-
-  const dataInputsObject = [
-    name.value,
-    impact.value,
-    period.value,
-    allowedVariation.value,
-    initTime.value,
-    endTime.value,
-    comparatorNumber.value,
-    warningComparatorNumber.value,
-  ];
 
   return (
     <div className={classes.root}>
@@ -260,13 +265,7 @@ const KqiFormEditTarget = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={
-                  !(
-                    dataInputsObject.length === 8 &&
-                    !dataInputsObject.some(item => item === '') &&
-                    !inputFilter().length > 0
-                  )
-                }>
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>

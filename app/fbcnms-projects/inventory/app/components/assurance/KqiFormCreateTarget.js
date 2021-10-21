@@ -27,6 +27,7 @@ import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -79,12 +80,15 @@ const KqiFormCreateTarget = (props: Props) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
+  const dataNameTarget = dataTarget?.map(item => item?.name);
+
+  const handleDisable = useDisabledButton(KqiTarget.data, dataNameTarget, 10);
 
   function handleChange({target}) {
     setKqiTarget({
       data: {
         ...KqiTarget.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -127,8 +131,6 @@ const KqiFormCreateTarget = (props: Props) => {
     AddKqiTargetMutation(variables, response);
   }
 
-  const dataNameTarget = dataTarget?.map(item => item?.name);
-
   const validationName = () => {
     if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {
       return {hasError: true, errorText: 'Kqi Target name existing'};
@@ -170,13 +172,7 @@ const KqiFormCreateTarget = (props: Props) => {
                 className={classes.option}
                 variant="contained"
                 color="primary"
-                disabled={
-                  !(
-                    Object.values(KqiTarget.data).length === 10 &&
-                    !Object.values(KqiTarget.data).some(item => item === '') &&
-                    !dataNameTarget?.some(item => item === KqiTarget.data.name)
-                  )
-                }>
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>

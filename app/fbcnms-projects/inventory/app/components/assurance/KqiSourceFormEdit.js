@@ -21,6 +21,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 
 import {makeStyles} from '@material-ui/styles';
@@ -89,12 +90,15 @@ const KqiSourceFormEdit = (props: Props) => {
   const classes = useStyles();
 
   const id = useFormInput(formValues.id);
-  const name = useFormInput(formValues.name);
+  const name = useFormInput(formValues.name.trim());
+
+  const dataInputsObject = [name.value.trim()];
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 1);
 
   const inputFilter = () => {
     return (
       kqiSourcesNames?.filter(
-        item => item === name.value && item !== formValues.name,
+        item => item === name.value.trim() && item !== formValues.name.trim(),
       ) || []
     );
   };
@@ -107,7 +111,7 @@ const KqiSourceFormEdit = (props: Props) => {
     const variables: EditKqiSourceMutationVariables = {
       input: {
         id: formValues.id,
-        name: name.value,
+        name: name.value.trim(),
       },
     };
 
@@ -144,7 +148,8 @@ const KqiSourceFormEdit = (props: Props) => {
                 onClick={() => {
                   hideKqiSourceFormEdit();
                   handleClick();
-                }}>
+                }}
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>
