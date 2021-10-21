@@ -17203,6 +17203,7 @@ enum FilterOperator
     model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
   ) {
   IS
+  IS_NIL
   CONTAINS
   IS_ONE_OF
   IS_NOT_ONE_OF
