@@ -26,6 +26,7 @@ import fbt from 'fbt';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
@@ -133,6 +134,8 @@ const EditCounterItemForm = (props: Props) => {
       return {hasError: true, errorText: 'Counter name existing'};
     }
   };
+
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
 
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
@@ -244,12 +247,7 @@ const EditCounterItemForm = (props: Props) => {
                     onClick={() => {
                       handleClick();
                     }}
-                    disabled={
-                      !(
-                        dataInputsObject.length === 5 &&
-                        !dataInputsObject.some(item => item === '')
-                      )
-                    }>
+                    disabled={handleDisable}>
                     Save
                   </Button>
                 </FormField>
