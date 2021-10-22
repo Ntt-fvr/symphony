@@ -229,6 +229,7 @@ const KpiTypes = () => {
                 parentCallback={handleCallback}
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={handleEditCallback}
+                isCompleted={isCompleted}
                 {...item.node}
               />
             ))}
@@ -249,14 +250,20 @@ const KpiTypes = () => {
         <AddFormulaDialog
           open={openDialog}
           dataFormula={formulaForm}
-          onClose={() => setOpenDialog(false)}
+          onClose={() => {
+            setOpenDialog(false);
+            isCompleted();
+          }}
         />
       )}
       {openEditDialog && (
         <EditFormulaDialog
           open={openEditDialog}
           dataFormula={formulaEditForm}
-          onClose={() => setOpenEditDialog(false)}
+          onClose={() => {
+            setOpenEditDialog(false);
+            isCompleted();
+          }}
         />
       )}
     </div>

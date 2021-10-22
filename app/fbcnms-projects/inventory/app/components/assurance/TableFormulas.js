@@ -83,7 +83,12 @@ type Props = $ReadOnly<{|
 |}>;
 
 const DenseTable = (props: Props) => {
-  const {formulas, handleEditFormulaClick, parentEditCallback} = props;
+  const {
+    formulas,
+    handleEditFormulaClick,
+    parentEditCallback,
+    isCompleted,
+  } = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
 
@@ -91,7 +96,7 @@ const DenseTable = (props: Props) => {
     const variables: RemoveFormulaMutationVariables = {
       id: id,
     };
-    RemoveFormulaMutation(variables);
+    RemoveFormulaMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   function handleEditCallback(editFormula: {}) {

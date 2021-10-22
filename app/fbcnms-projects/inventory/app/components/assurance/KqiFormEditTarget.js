@@ -28,6 +28,7 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 
 import type {EditKqiComparatorMutationVariables} from '../../mutations/__generated__/EditKqiComparatorMutation.graphql';
 import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
+import type {KqiTarget} from './KqiFormEdit';
 import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
 
 import EditKqiComparatorMutation from '../../mutations/EditKqiComparatorMutation';
@@ -78,7 +79,8 @@ type Comparator = {
 };
 
 type Props = $ReadOnly<{|
-  dataTarget: any,
+  isCompleted: void => void,
+  dataTarget: Array<KqiTarget>,
   nameKqi: string,
   dataComparatorSelect: Array<Comparator>,
   returnFormEdit: () => void,
@@ -119,6 +121,7 @@ const KqiFormEditTarget = (props: Props) => {
     dataComparatorSelect,
     nameKqi,
     dataTarget,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [checked, setChecked] = useState(formValues.item.status);
@@ -184,7 +187,7 @@ const KqiFormEditTarget = (props: Props) => {
     const variables: RemoveKqiTargetMutationVariables = {
       id: id,
     };
-    RemoveKqiTargetMutation(variables);
+    RemoveKqiTargetMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const handleClick = () => {
@@ -220,9 +223,13 @@ const KqiFormEditTarget = (props: Props) => {
         comparatorFk: warningComparatorSelect.value,
       },
     };
-    EditKqiComparatorMutation(variablesUpper);
-    EditKqiComparatorMutation(variablesLower);
-    EditKqiTargetMutation(variables);
+    EditKqiComparatorMutation(variablesUpper, {
+      onCompleted: () => isCompleted(),
+    });
+    EditKqiComparatorMutation(variablesLower, {
+      onCompleted: () => isCompleted(),
+    });
+    EditKqiTargetMutation(variables, {onCompleted: () => isCompleted()});
     returnFormEdit();
   };
 

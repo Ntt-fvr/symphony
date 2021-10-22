@@ -15,7 +15,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -108,6 +108,7 @@ type Kqis = {
 };
 
 type Props = $ReadOnly<{|
+  isCompleted: void => void,
   returnTableKqi: () => void,
   dataPerspectives: Array<KqiPerspectives>,
   dataSources: Array<KqiSources>,
@@ -124,6 +125,7 @@ const KqiFormCreate = (props: Props) => {
     dataCategories,
     dataTemporalFrequencies,
     dataKqi,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
@@ -150,18 +152,27 @@ const KqiFormCreate = (props: Props) => {
         kqiTemporalFrequency: Kqis.data.kqiTemporalFrequency,
       },
     };
-    AddKqiMutation(variables);
+    AddKqiMutation(variables, {onCompleted: () => isCompleted()});
     returnTableKqi();
   }
 
   const dataNameKqi = dataKqi.map(item => item.name);
 
-  const validationName = () => {
+  const handleDisable = useMemo(
+    () =>
+      !(
+        Object.values(Kqis.data).length === 9 &&
+        !Object.values(Kqis.data).some(item => item === '') &&
+        !dataNameKqi?.some(item => item === Kqis.data.name)
+      ),
+    [Kqis.data, dataNameKqi],
+  );
+
+  const handleHasError = useMemo(() => {
     if (dataNameKqi?.some(item => item === Kqis.data.name)) {
-      return {hasError: true, errorText: 'Kqi name existing'};
+      return {hasError: true, errorText: 'Kqi Target name existing'};
     }
-  };
-  const handleDisable = useDisabledButton(Kqis.data, dataNameKqi, 9);
+  }, [dataNameKqi, Kqis.data.name]);
 
   return (
     <div className={classes.root}>
@@ -206,7 +217,7 @@ const KqiFormCreate = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name" required {...validationName()}>
+                <FormField label="Name" required {...handleHasError}>
                   <TextInput
                     autoComplete="off"
                     name="name"

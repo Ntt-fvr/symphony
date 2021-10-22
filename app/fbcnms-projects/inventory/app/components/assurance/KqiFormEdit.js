@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import fbt from 'fbt';
 
@@ -114,7 +114,7 @@ type KqiTemporalFrequency = {
   name: string,
 };
 
-type KqiTarget = {
+export type KqiTarget = {
   item: {
     id: string,
     name: string,
@@ -184,6 +184,7 @@ type Props = $ReadOnly<{|
   dataKqiTarget: Array<KqiTarget>,
   dataComparator: Array<Comparator>,
   dataKqi: Array<Kqis>,
+  isCompleted: void => void,
 |}>;
 
 const KqiFormEdit = (props: Props) => {
@@ -197,6 +198,7 @@ const KqiFormEdit = (props: Props) => {
     dataCategories,
     dataTemporalFrequencies,
     returnTableKqi,
+    isCompleted,
   } = props;
   const classes = useStyles();
   const [showCreateTarget, setShowCreateTarget] = useState(false);
@@ -245,19 +247,20 @@ const KqiFormEdit = (props: Props) => {
       ) || []
     );
   };
+
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 8, inputFilter);
 
-  const validationName = () => {
+  const handleHasError = useMemo(() => {
     if (inputFilter().length > 0) {
       return {hasError: true, errorText: 'Kqi name existing'};
     }
-  };
+  }, [dataNameKqi]);
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
       id: id,
     };
-    RemoveKqiMutation(variables);
+    RemoveKqiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const handleClick = () => {
@@ -275,7 +278,7 @@ const KqiFormEdit = (props: Props) => {
         kqiTemporalFrequency: kqiTemporalFrequency.value,
       },
     };
-    EditKqiMutation(variables);
+    EditKqiMutation(variables, {onCompleted: () => isCompleted()});
     returnTableKqi();
   };
 
@@ -286,6 +289,7 @@ const KqiFormEdit = (props: Props) => {
   if (showCreateTarget) {
     return (
       <KqiFormCreateTarget
+        isCompleted={isCompleted}
         dataTarget={dataKqiTarget}
         idKqi={formValues.item.id}
         dataComparatorSelect={dataComparator}
@@ -301,6 +305,7 @@ const KqiFormEdit = (props: Props) => {
   if (showEditTarget) {
     return (
       <KqiFormEditTarget
+        isCompleted={isCompleted}
         formValues={dataEdit}
         dataTarget={dataKqiTarget}
         nameKqi={formValues.item.name.trim()}
@@ -362,7 +367,7 @@ const KqiFormEdit = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name" required {...validationName()}>
+                <FormField label="Name" required {...handleHasError}>
                   <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>
@@ -506,6 +511,7 @@ const KqiFormEdit = (props: Props) => {
       </Grid>
       <Grid item xs={12}>
         <KqiTableAssociatedTarget
+          isCompleted={isCompleted}
           tableTargets={filterKqiTargetsById}
           create={() => showFormCreateTarget()}
           edit={showFormEditTarget}
