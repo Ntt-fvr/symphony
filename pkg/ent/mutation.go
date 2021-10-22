@@ -28,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/counterfamily"
 	"github.com/facebookincubator/symphony/pkg/ent/counterformula"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -43,7 +44,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/filecategorytype"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
@@ -129,6 +129,7 @@ const (
 	TypeCounterFamily               = "CounterFamily"
 	TypeCounterFormula              = "CounterFormula"
 	TypeCustomer                    = "Customer"
+	TypeDocumentCategory            = "DocumentCategory"
 	TypeDomain                      = "Domain"
 	TypeEntryPoint                  = "EntryPoint"
 	TypeEquipment                   = "Equipment"
@@ -144,7 +145,6 @@ const (
 	TypeExportTask                  = "ExportTask"
 	TypeFeature                     = "Feature"
 	TypeFile                        = "File"
-	TypeFileCategoryType            = "FileCategoryType"
 	TypeFloorPlan                   = "FloorPlan"
 	TypeFloorPlanReferencePoint     = "FloorPlanReferencePoint"
 	TypeFloorPlanScale              = "FloorPlanScale"
@@ -11990,6 +11990,734 @@ func (m *CustomerMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Customer edge %s", name)
 }
 
+// DocumentCategoryMutation represents an operation that mutate the DocumentCategories
+// nodes in the graph.
+type DocumentCategoryMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	name                 *string
+	index                *int
+	addindex             *int
+	clearedFields        map[string]struct{}
+	location_type        *int
+	clearedlocation_type bool
+	files                map[int]struct{}
+	removedfiles         map[int]struct{}
+	clearedfiles         bool
+	hyperlinks           map[int]struct{}
+	removedhyperlinks    map[int]struct{}
+	clearedhyperlinks    bool
+	done                 bool
+	oldValue             func(context.Context) (*DocumentCategory, error)
+	predicates           []predicate.DocumentCategory
+}
+
+var _ ent.Mutation = (*DocumentCategoryMutation)(nil)
+
+// documentcategoryOption allows to manage the mutation configuration using functional options.
+type documentcategoryOption func(*DocumentCategoryMutation)
+
+// newDocumentCategoryMutation creates new mutation for DocumentCategory.
+func newDocumentCategoryMutation(c config, op Op, opts ...documentcategoryOption) *DocumentCategoryMutation {
+	m := &DocumentCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDocumentCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDocumentCategoryID sets the id field of the mutation.
+func withDocumentCategoryID(id int) documentcategoryOption {
+	return func(m *DocumentCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DocumentCategory
+		)
+		m.oldValue = func(ctx context.Context) (*DocumentCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DocumentCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDocumentCategory sets the old DocumentCategory of the mutation.
+func withDocumentCategory(node *DocumentCategory) documentcategoryOption {
+	return func(m *DocumentCategoryMutation) {
+		m.oldValue = func(context.Context) (*DocumentCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DocumentCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DocumentCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *DocumentCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *DocumentCategoryMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *DocumentCategoryMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *DocumentCategoryMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *DocumentCategoryMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *DocumentCategoryMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *DocumentCategoryMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *DocumentCategoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *DocumentCategoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *DocumentCategoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIndex sets the index field.
+func (m *DocumentCategoryMutation) SetIndex(i int) {
+	m.index = &i
+	m.addindex = nil
+}
+
+// Index returns the index value in the mutation.
+func (m *DocumentCategoryMutation) Index() (r int, exists bool) {
+	v := m.index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIndex returns the old index value of the DocumentCategory.
+// If the DocumentCategory object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DocumentCategoryMutation) OldIndex(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIndex is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIndex: %w", err)
+	}
+	return oldValue.Index, nil
+}
+
+// AddIndex adds i to index.
+func (m *DocumentCategoryMutation) AddIndex(i int) {
+	if m.addindex != nil {
+		*m.addindex += i
+	} else {
+		m.addindex = &i
+	}
+}
+
+// AddedIndex returns the value that was added to the index field in this mutation.
+func (m *DocumentCategoryMutation) AddedIndex() (r int, exists bool) {
+	v := m.addindex
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIndex reset all changes of the "index" field.
+func (m *DocumentCategoryMutation) ResetIndex() {
+	m.index = nil
+	m.addindex = nil
+}
+
+// SetLocationTypeID sets the location_type edge to LocationType by id.
+func (m *DocumentCategoryMutation) SetLocationTypeID(id int) {
+	m.location_type = &id
+}
+
+// ClearLocationType clears the location_type edge to LocationType.
+func (m *DocumentCategoryMutation) ClearLocationType() {
+	m.clearedlocation_type = true
+}
+
+// LocationTypeCleared returns if the edge location_type was cleared.
+func (m *DocumentCategoryMutation) LocationTypeCleared() bool {
+	return m.clearedlocation_type
+}
+
+// LocationTypeID returns the location_type id in the mutation.
+func (m *DocumentCategoryMutation) LocationTypeID() (id int, exists bool) {
+	if m.location_type != nil {
+		return *m.location_type, true
+	}
+	return
+}
+
+// LocationTypeIDs returns the location_type ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// LocationTypeID instead. It exists only for internal usage by the builders.
+func (m *DocumentCategoryMutation) LocationTypeIDs() (ids []int) {
+	if id := m.location_type; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLocationType reset all changes of the "location_type" edge.
+func (m *DocumentCategoryMutation) ResetLocationType() {
+	m.location_type = nil
+	m.clearedlocation_type = false
+}
+
+// AddFileIDs adds the files edge to File by ids.
+func (m *DocumentCategoryMutation) AddFileIDs(ids ...int) {
+	if m.files == nil {
+		m.files = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.files[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFiles clears the files edge to File.
+func (m *DocumentCategoryMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared returns if the edge files was cleared.
+func (m *DocumentCategoryMutation) FilesCleared() bool {
+	return m.clearedfiles
+}
+
+// RemoveFileIDs removes the files edge to File by ids.
+func (m *DocumentCategoryMutation) RemoveFileIDs(ids ...int) {
+	if m.removedfiles == nil {
+		m.removedfiles = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedfiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFiles returns the removed ids of files.
+func (m *DocumentCategoryMutation) RemovedFilesIDs() (ids []int) {
+	for id := range m.removedfiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FilesIDs returns the files ids in the mutation.
+func (m *DocumentCategoryMutation) FilesIDs() (ids []int) {
+	for id := range m.files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFiles reset all changes of the "files" edge.
+func (m *DocumentCategoryMutation) ResetFiles() {
+	m.files = nil
+	m.clearedfiles = false
+	m.removedfiles = nil
+}
+
+// AddHyperlinkIDs adds the hyperlinks edge to Hyperlink by ids.
+func (m *DocumentCategoryMutation) AddHyperlinkIDs(ids ...int) {
+	if m.hyperlinks == nil {
+		m.hyperlinks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.hyperlinks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearHyperlinks clears the hyperlinks edge to Hyperlink.
+func (m *DocumentCategoryMutation) ClearHyperlinks() {
+	m.clearedhyperlinks = true
+}
+
+// HyperlinksCleared returns if the edge hyperlinks was cleared.
+func (m *DocumentCategoryMutation) HyperlinksCleared() bool {
+	return m.clearedhyperlinks
+}
+
+// RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
+func (m *DocumentCategoryMutation) RemoveHyperlinkIDs(ids ...int) {
+	if m.removedhyperlinks == nil {
+		m.removedhyperlinks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedhyperlinks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedHyperlinks returns the removed ids of hyperlinks.
+func (m *DocumentCategoryMutation) RemovedHyperlinksIDs() (ids []int) {
+	for id := range m.removedhyperlinks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// HyperlinksIDs returns the hyperlinks ids in the mutation.
+func (m *DocumentCategoryMutation) HyperlinksIDs() (ids []int) {
+	for id := range m.hyperlinks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetHyperlinks reset all changes of the "hyperlinks" edge.
+func (m *DocumentCategoryMutation) ResetHyperlinks() {
+	m.hyperlinks = nil
+	m.clearedhyperlinks = false
+	m.removedhyperlinks = nil
+}
+
+// Op returns the operation name.
+func (m *DocumentCategoryMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (DocumentCategory).
+func (m *DocumentCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *DocumentCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, documentcategory.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, documentcategory.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, documentcategory.FieldName)
+	}
+	if m.index != nil {
+		fields = append(fields, documentcategory.FieldIndex)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *DocumentCategoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		return m.CreateTime()
+	case documentcategory.FieldUpdateTime:
+		return m.UpdateTime()
+	case documentcategory.FieldName:
+		return m.Name()
+	case documentcategory.FieldIndex:
+		return m.Index()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *DocumentCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case documentcategory.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case documentcategory.FieldName:
+		return m.OldName(ctx)
+	case documentcategory.FieldIndex:
+		return m.OldIndex(ctx)
+	}
+	return nil, fmt.Errorf("unknown DocumentCategory field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *DocumentCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case documentcategory.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case documentcategory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case documentcategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *DocumentCategoryMutation) AddedFields() []string {
+	var fields []string
+	if m.addindex != nil {
+		fields = append(fields, documentcategory.FieldIndex)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *DocumentCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case documentcategory.FieldIndex:
+		return m.AddedIndex()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *DocumentCategoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case documentcategory.FieldIndex:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIndex(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *DocumentCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *DocumentCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DocumentCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown DocumentCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *DocumentCategoryMutation) ResetField(name string) error {
+	switch name {
+	case documentcategory.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case documentcategory.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case documentcategory.FieldName:
+		m.ResetName()
+		return nil
+	case documentcategory.FieldIndex:
+		m.ResetIndex()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *DocumentCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.location_type != nil {
+		edges = append(edges, documentcategory.EdgeLocationType)
+	}
+	if m.files != nil {
+		edges = append(edges, documentcategory.EdgeFiles)
+	}
+	if m.hyperlinks != nil {
+		edges = append(edges, documentcategory.EdgeHyperlinks)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *DocumentCategoryMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		if id := m.location_type; id != nil {
+			return []ent.Value{*id}
+		}
+	case documentcategory.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.files))
+		for id := range m.files {
+			ids = append(ids, id)
+		}
+		return ids
+	case documentcategory.EdgeHyperlinks:
+		ids := make([]ent.Value, 0, len(m.hyperlinks))
+		for id := range m.hyperlinks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *DocumentCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedfiles != nil {
+		edges = append(edges, documentcategory.EdgeFiles)
+	}
+	if m.removedhyperlinks != nil {
+		edges = append(edges, documentcategory.EdgeHyperlinks)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *DocumentCategoryMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case documentcategory.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.removedfiles))
+		for id := range m.removedfiles {
+			ids = append(ids, id)
+		}
+		return ids
+	case documentcategory.EdgeHyperlinks:
+		ids := make([]ent.Value, 0, len(m.removedhyperlinks))
+		for id := range m.removedhyperlinks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *DocumentCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedlocation_type {
+		edges = append(edges, documentcategory.EdgeLocationType)
+	}
+	if m.clearedfiles {
+		edges = append(edges, documentcategory.EdgeFiles)
+	}
+	if m.clearedhyperlinks {
+		edges = append(edges, documentcategory.EdgeHyperlinks)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *DocumentCategoryMutation) EdgeCleared(name string) bool {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		return m.clearedlocation_type
+	case documentcategory.EdgeFiles:
+		return m.clearedfiles
+	case documentcategory.EdgeHyperlinks:
+		return m.clearedhyperlinks
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *DocumentCategoryMutation) ClearEdge(name string) error {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		m.ClearLocationType()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *DocumentCategoryMutation) ResetEdge(name string) error {
+	switch name {
+	case documentcategory.EdgeLocationType:
+		m.ResetLocationType()
+		return nil
+	case documentcategory.EdgeFiles:
+		m.ResetFiles()
+		return nil
+	case documentcategory.EdgeHyperlinks:
+		m.ResetHyperlinks()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentCategory edge %s", name)
+}
+
 // DomainMutation represents an operation that mutate the Domains
 // nodes in the graph.
 type DomainMutation struct {
@@ -22310,6 +23038,8 @@ type FileMutation struct {
 	clearedphoto_survey_question bool
 	survey_question              *int
 	clearedsurvey_question       bool
+	document_category            *int
+	cleareddocument_category     bool
 	done                         bool
 	oldValue                     func(context.Context) (*File, error)
 	predicates                   []predicate.File
@@ -23238,6 +23968,45 @@ func (m *FileMutation) ResetSurveyQuestion() {
 	m.clearedsurvey_question = false
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (m *FileMutation) SetDocumentCategoryID(id int) {
+	m.document_category = &id
+}
+
+// ClearDocumentCategory clears the document_category edge to DocumentCategory.
+func (m *FileMutation) ClearDocumentCategory() {
+	m.cleareddocument_category = true
+}
+
+// DocumentCategoryCleared returns if the edge document_category was cleared.
+func (m *FileMutation) DocumentCategoryCleared() bool {
+	return m.cleareddocument_category
+}
+
+// DocumentCategoryID returns the document_category id in the mutation.
+func (m *FileMutation) DocumentCategoryID() (id int, exists bool) {
+	if m.document_category != nil {
+		return *m.document_category, true
+	}
+	return
+}
+
+// DocumentCategoryIDs returns the document_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DocumentCategoryID instead. It exists only for internal usage by the builders.
+func (m *FileMutation) DocumentCategoryIDs() (ids []int) {
+	if id := m.document_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDocumentCategory reset all changes of the "document_category" edge.
+func (m *FileMutation) ResetDocumentCategory() {
+	m.document_category = nil
+	m.cleareddocument_category = false
+}
+
 // Op returns the operation name.
 func (m *FileMutation) Op() Op {
 	return m.op
@@ -23571,7 +24340,7 @@ func (m *FileMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.location != nil {
 		edges = append(edges, file.EdgeLocation)
 	}
@@ -23598,6 +24367,9 @@ func (m *FileMutation) AddedEdges() []string {
 	}
 	if m.survey_question != nil {
 		edges = append(edges, file.EdgeSurveyQuestion)
+	}
+	if m.document_category != nil {
+		edges = append(edges, file.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -23642,6 +24414,10 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 		if id := m.survey_question; id != nil {
 			return []ent.Value{*id}
 		}
+	case file.EdgeDocumentCategory:
+		if id := m.document_category; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -23649,7 +24425,7 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	return edges
 }
 
@@ -23664,7 +24440,7 @@ func (m *FileMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedlocation {
 		edges = append(edges, file.EdgeLocation)
 	}
@@ -23692,6 +24468,9 @@ func (m *FileMutation) ClearedEdges() []string {
 	if m.clearedsurvey_question {
 		edges = append(edges, file.EdgeSurveyQuestion)
 	}
+	if m.cleareddocument_category {
+		edges = append(edges, file.EdgeDocumentCategory)
+	}
 	return edges
 }
 
@@ -23717,6 +24496,8 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 		return m.clearedphoto_survey_question
 	case file.EdgeSurveyQuestion:
 		return m.clearedsurvey_question
+	case file.EdgeDocumentCategory:
+		return m.cleareddocument_category
 	}
 	return false
 }
@@ -23751,6 +24532,9 @@ func (m *FileMutation) ClearEdge(name string) error {
 		return nil
 	case file.EdgeSurveyQuestion:
 		m.ClearSurveyQuestion()
+		return nil
+	case file.EdgeDocumentCategory:
+		m.ClearDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown File unique edge %s", name)
@@ -23788,481 +24572,11 @@ func (m *FileMutation) ResetEdge(name string) error {
 	case file.EdgeSurveyQuestion:
 		m.ResetSurveyQuestion()
 		return nil
+	case file.EdgeDocumentCategory:
+		m.ResetDocumentCategory()
+		return nil
 	}
 	return fmt.Errorf("unknown File edge %s", name)
-}
-
-// FileCategoryTypeMutation represents an operation that mutate the FileCategoryTypes
-// nodes in the graph.
-type FileCategoryTypeMutation struct {
-	config
-	op                   Op
-	typ                  string
-	id                   *int
-	create_time          *time.Time
-	update_time          *time.Time
-	name                 *string
-	clearedFields        map[string]struct{}
-	location_type        *int
-	clearedlocation_type bool
-	done                 bool
-	oldValue             func(context.Context) (*FileCategoryType, error)
-	predicates           []predicate.FileCategoryType
-}
-
-var _ ent.Mutation = (*FileCategoryTypeMutation)(nil)
-
-// filecategorytypeOption allows to manage the mutation configuration using functional options.
-type filecategorytypeOption func(*FileCategoryTypeMutation)
-
-// newFileCategoryTypeMutation creates new mutation for FileCategoryType.
-func newFileCategoryTypeMutation(c config, op Op, opts ...filecategorytypeOption) *FileCategoryTypeMutation {
-	m := &FileCategoryTypeMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeFileCategoryType,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withFileCategoryTypeID sets the id field of the mutation.
-func withFileCategoryTypeID(id int) filecategorytypeOption {
-	return func(m *FileCategoryTypeMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *FileCategoryType
-		)
-		m.oldValue = func(ctx context.Context) (*FileCategoryType, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().FileCategoryType.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withFileCategoryType sets the old FileCategoryType of the mutation.
-func withFileCategoryType(node *FileCategoryType) filecategorytypeOption {
-	return func(m *FileCategoryTypeMutation) {
-		m.oldValue = func(context.Context) (*FileCategoryType, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m FileCategoryTypeMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m FileCategoryTypeMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the id value in the mutation. Note that, the id
-// is available only if it was provided to the builder.
-func (m *FileCategoryTypeMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *FileCategoryTypeMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *FileCategoryTypeMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the FileCategoryType.
-// If the FileCategoryType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *FileCategoryTypeMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *FileCategoryTypeMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *FileCategoryTypeMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *FileCategoryTypeMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the FileCategoryType.
-// If the FileCategoryType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *FileCategoryTypeMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *FileCategoryTypeMutation) ResetUpdateTime() {
-	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *FileCategoryTypeMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *FileCategoryTypeMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the FileCategoryType.
-// If the FileCategoryType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *FileCategoryTypeMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *FileCategoryTypeMutation) ResetName() {
-	m.name = nil
-}
-
-// SetLocationTypeID sets the location_type edge to LocationType by id.
-func (m *FileCategoryTypeMutation) SetLocationTypeID(id int) {
-	m.location_type = &id
-}
-
-// ClearLocationType clears the location_type edge to LocationType.
-func (m *FileCategoryTypeMutation) ClearLocationType() {
-	m.clearedlocation_type = true
-}
-
-// LocationTypeCleared returns if the edge location_type was cleared.
-func (m *FileCategoryTypeMutation) LocationTypeCleared() bool {
-	return m.clearedlocation_type
-}
-
-// LocationTypeID returns the location_type id in the mutation.
-func (m *FileCategoryTypeMutation) LocationTypeID() (id int, exists bool) {
-	if m.location_type != nil {
-		return *m.location_type, true
-	}
-	return
-}
-
-// LocationTypeIDs returns the location_type ids in the mutation.
-// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// LocationTypeID instead. It exists only for internal usage by the builders.
-func (m *FileCategoryTypeMutation) LocationTypeIDs() (ids []int) {
-	if id := m.location_type; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetLocationType reset all changes of the "location_type" edge.
-func (m *FileCategoryTypeMutation) ResetLocationType() {
-	m.location_type = nil
-	m.clearedlocation_type = false
-}
-
-// Op returns the operation name.
-func (m *FileCategoryTypeMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (FileCategoryType).
-func (m *FileCategoryTypeMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during
-// this mutation. Note that, in order to get all numeric
-// fields that were in/decremented, call AddedFields().
-func (m *FileCategoryTypeMutation) Fields() []string {
-	fields := make([]string, 0, 3)
-	if m.create_time != nil {
-		fields = append(fields, filecategorytype.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, filecategorytype.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, filecategorytype.FieldName)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name.
-// The second boolean value indicates that this field was
-// not set, or was not define in the schema.
-func (m *FileCategoryTypeMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case filecategorytype.FieldCreateTime:
-		return m.CreateTime()
-	case filecategorytype.FieldUpdateTime:
-		return m.UpdateTime()
-	case filecategorytype.FieldName:
-		return m.Name()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database.
-// An error is returned if the mutation operation is not UpdateOne,
-// or the query to the database was failed.
-func (m *FileCategoryTypeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case filecategorytype.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case filecategorytype.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
-	case filecategorytype.FieldName:
-		return m.OldName(ctx)
-	}
-	return nil, fmt.Errorf("unknown FileCategoryType field %s", name)
-}
-
-// SetField sets the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *FileCategoryTypeMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case filecategorytype.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case filecategorytype.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
-	case filecategorytype.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	}
-	return fmt.Errorf("unknown FileCategoryType field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented
-// or decremented during this mutation.
-func (m *FileCategoryTypeMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was in/decremented
-// from a field with the given name. The second value indicates
-// that this field was not set, or was not define in the schema.
-func (m *FileCategoryTypeMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *FileCategoryTypeMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown FileCategoryType numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared
-// during this mutation.
-func (m *FileCategoryTypeMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicates if this field was
-// cleared in this mutation.
-func (m *FileCategoryTypeMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value for the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *FileCategoryTypeMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown FileCategoryType nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation regarding the
-// given field name. It returns an error if the field is not
-// defined in the schema.
-func (m *FileCategoryTypeMutation) ResetField(name string) error {
-	switch name {
-	case filecategorytype.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case filecategorytype.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
-	case filecategorytype.FieldName:
-		m.ResetName()
-		return nil
-	}
-	return fmt.Errorf("unknown FileCategoryType field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this
-// mutation.
-func (m *FileCategoryTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.location_type != nil {
-		edges = append(edges, filecategorytype.EdgeLocationType)
-	}
-	return edges
-}
-
-// AddedIDs returns all ids (to other nodes) that were added for
-// the given edge name.
-func (m *FileCategoryTypeMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case filecategorytype.EdgeLocationType:
-		if id := m.location_type; id != nil {
-			return []ent.Value{*id}
-		}
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this
-// mutation.
-func (m *FileCategoryTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	return edges
-}
-
-// RemovedIDs returns all ids (to other nodes) that were removed for
-// the given edge name.
-func (m *FileCategoryTypeMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this
-// mutation.
-func (m *FileCategoryTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedlocation_type {
-		edges = append(edges, filecategorytype.EdgeLocationType)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean indicates if this edge was
-// cleared in this mutation.
-func (m *FileCategoryTypeMutation) EdgeCleared(name string) bool {
-	switch name {
-	case filecategorytype.EdgeLocationType:
-		return m.clearedlocation_type
-	}
-	return false
-}
-
-// ClearEdge clears the value for the given name. It returns an
-// error if the edge name is not defined in the schema.
-func (m *FileCategoryTypeMutation) ClearEdge(name string) error {
-	switch name {
-	case filecategorytype.EdgeLocationType:
-		m.ClearLocationType()
-		return nil
-	}
-	return fmt.Errorf("unknown FileCategoryType unique edge %s", name)
-}
-
-// ResetEdge resets all changes in the mutation regarding the
-// given edge name. It returns an error if the edge is not
-// defined in the schema.
-func (m *FileCategoryTypeMutation) ResetEdge(name string) error {
-	switch name {
-	case filecategorytype.EdgeLocationType:
-		m.ResetLocationType()
-		return nil
-	}
-	return fmt.Errorf("unknown FileCategoryType edge %s", name)
 }
 
 // FloorPlanMutation represents an operation that mutate the FloorPlans
@@ -30390,24 +30704,26 @@ func (m *FormulaMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type HyperlinkMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	create_time       *time.Time
-	update_time       *time.Time
-	url               *string
-	name              *string
-	category          *string
-	clearedFields     map[string]struct{}
-	equipment         *int
-	clearedequipment  bool
-	location          *int
-	clearedlocation   bool
-	work_order        *int
-	clearedwork_order bool
-	done              bool
-	oldValue          func(context.Context) (*Hyperlink, error)
-	predicates        []predicate.Hyperlink
+	op                       Op
+	typ                      string
+	id                       *int
+	create_time              *time.Time
+	update_time              *time.Time
+	url                      *string
+	name                     *string
+	category                 *string
+	clearedFields            map[string]struct{}
+	equipment                *int
+	clearedequipment         bool
+	location                 *int
+	clearedlocation          bool
+	work_order               *int
+	clearedwork_order        bool
+	document_category        *int
+	cleareddocument_category bool
+	done                     bool
+	oldValue                 func(context.Context) (*Hyperlink, error)
+	predicates               []predicate.Hyperlink
 }
 
 var _ ent.Mutation = (*HyperlinkMutation)(nil)
@@ -30817,6 +31133,45 @@ func (m *HyperlinkMutation) ResetWorkOrder() {
 	m.clearedwork_order = false
 }
 
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (m *HyperlinkMutation) SetDocumentCategoryID(id int) {
+	m.document_category = &id
+}
+
+// ClearDocumentCategory clears the document_category edge to DocumentCategory.
+func (m *HyperlinkMutation) ClearDocumentCategory() {
+	m.cleareddocument_category = true
+}
+
+// DocumentCategoryCleared returns if the edge document_category was cleared.
+func (m *HyperlinkMutation) DocumentCategoryCleared() bool {
+	return m.cleareddocument_category
+}
+
+// DocumentCategoryID returns the document_category id in the mutation.
+func (m *HyperlinkMutation) DocumentCategoryID() (id int, exists bool) {
+	if m.document_category != nil {
+		return *m.document_category, true
+	}
+	return
+}
+
+// DocumentCategoryIDs returns the document_category ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DocumentCategoryID instead. It exists only for internal usage by the builders.
+func (m *HyperlinkMutation) DocumentCategoryIDs() (ids []int) {
+	if id := m.document_category; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDocumentCategory reset all changes of the "document_category" edge.
+func (m *HyperlinkMutation) ResetDocumentCategory() {
+	m.document_category = nil
+	m.cleareddocument_category = false
+}
+
 // Op returns the operation name.
 func (m *HyperlinkMutation) Op() Op {
 	return m.op
@@ -31015,7 +31370,7 @@ func (m *HyperlinkMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *HyperlinkMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.equipment != nil {
 		edges = append(edges, hyperlink.EdgeEquipment)
 	}
@@ -31024,6 +31379,9 @@ func (m *HyperlinkMutation) AddedEdges() []string {
 	}
 	if m.work_order != nil {
 		edges = append(edges, hyperlink.EdgeWorkOrder)
+	}
+	if m.document_category != nil {
+		edges = append(edges, hyperlink.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -31044,6 +31402,10 @@ func (m *HyperlinkMutation) AddedIDs(name string) []ent.Value {
 		if id := m.work_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case hyperlink.EdgeDocumentCategory:
+		if id := m.document_category; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -31051,7 +31413,7 @@ func (m *HyperlinkMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *HyperlinkMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -31066,7 +31428,7 @@ func (m *HyperlinkMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *HyperlinkMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedequipment {
 		edges = append(edges, hyperlink.EdgeEquipment)
 	}
@@ -31075,6 +31437,9 @@ func (m *HyperlinkMutation) ClearedEdges() []string {
 	}
 	if m.clearedwork_order {
 		edges = append(edges, hyperlink.EdgeWorkOrder)
+	}
+	if m.cleareddocument_category {
+		edges = append(edges, hyperlink.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -31089,6 +31454,8 @@ func (m *HyperlinkMutation) EdgeCleared(name string) bool {
 		return m.clearedlocation
 	case hyperlink.EdgeWorkOrder:
 		return m.clearedwork_order
+	case hyperlink.EdgeDocumentCategory:
+		return m.cleareddocument_category
 	}
 	return false
 }
@@ -31105,6 +31472,9 @@ func (m *HyperlinkMutation) ClearEdge(name string) error {
 		return nil
 	case hyperlink.EdgeWorkOrder:
 		m.ClearWorkOrder()
+		return nil
+	case hyperlink.EdgeDocumentCategory:
+		m.ClearDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown Hyperlink unique edge %s", name)
@@ -31123,6 +31493,9 @@ func (m *HyperlinkMutation) ResetEdge(name string) error {
 		return nil
 	case hyperlink.EdgeWorkOrder:
 		m.ResetWorkOrder()
+		return nil
+	case hyperlink.EdgeDocumentCategory:
+		m.ResetDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown Hyperlink edge %s", name)
@@ -38811,12 +39184,12 @@ type LocationTypeMutation struct {
 	property_types                    map[int]struct{}
 	removedproperty_types             map[int]struct{}
 	clearedproperty_types             bool
-	file_category_type                map[int]struct{}
-	removedfile_category_type         map[int]struct{}
-	clearedfile_category_type         bool
 	survey_template_categories        map[int]struct{}
 	removedsurvey_template_categories map[int]struct{}
 	clearedsurvey_template_categories bool
+	document_category                 map[int]struct{}
+	removeddocument_category          map[int]struct{}
+	cleareddocument_category          bool
 	done                              bool
 	oldValue                          func(context.Context) (*LocationType, error)
 	predicates                        []predicate.LocationType
@@ -39333,59 +39706,6 @@ func (m *LocationTypeMutation) ResetPropertyTypes() {
 	m.removedproperty_types = nil
 }
 
-// AddFileCategoryTypeIDs adds the file_category_type edge to FileCategoryType by ids.
-func (m *LocationTypeMutation) AddFileCategoryTypeIDs(ids ...int) {
-	if m.file_category_type == nil {
-		m.file_category_type = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.file_category_type[ids[i]] = struct{}{}
-	}
-}
-
-// ClearFileCategoryType clears the file_category_type edge to FileCategoryType.
-func (m *LocationTypeMutation) ClearFileCategoryType() {
-	m.clearedfile_category_type = true
-}
-
-// FileCategoryTypeCleared returns if the edge file_category_type was cleared.
-func (m *LocationTypeMutation) FileCategoryTypeCleared() bool {
-	return m.clearedfile_category_type
-}
-
-// RemoveFileCategoryTypeIDs removes the file_category_type edge to FileCategoryType by ids.
-func (m *LocationTypeMutation) RemoveFileCategoryTypeIDs(ids ...int) {
-	if m.removedfile_category_type == nil {
-		m.removedfile_category_type = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedfile_category_type[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedFileCategoryType returns the removed ids of file_category_type.
-func (m *LocationTypeMutation) RemovedFileCategoryTypeIDs() (ids []int) {
-	for id := range m.removedfile_category_type {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// FileCategoryTypeIDs returns the file_category_type ids in the mutation.
-func (m *LocationTypeMutation) FileCategoryTypeIDs() (ids []int) {
-	for id := range m.file_category_type {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetFileCategoryType reset all changes of the "file_category_type" edge.
-func (m *LocationTypeMutation) ResetFileCategoryType() {
-	m.file_category_type = nil
-	m.clearedfile_category_type = false
-	m.removedfile_category_type = nil
-}
-
 // AddSurveyTemplateCategoryIDs adds the survey_template_categories edge to SurveyTemplateCategory by ids.
 func (m *LocationTypeMutation) AddSurveyTemplateCategoryIDs(ids ...int) {
 	if m.survey_template_categories == nil {
@@ -39437,6 +39757,59 @@ func (m *LocationTypeMutation) ResetSurveyTemplateCategories() {
 	m.survey_template_categories = nil
 	m.clearedsurvey_template_categories = false
 	m.removedsurvey_template_categories = nil
+}
+
+// AddDocumentCategoryIDs adds the document_category edge to DocumentCategory by ids.
+func (m *LocationTypeMutation) AddDocumentCategoryIDs(ids ...int) {
+	if m.document_category == nil {
+		m.document_category = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.document_category[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDocumentCategory clears the document_category edge to DocumentCategory.
+func (m *LocationTypeMutation) ClearDocumentCategory() {
+	m.cleareddocument_category = true
+}
+
+// DocumentCategoryCleared returns if the edge document_category was cleared.
+func (m *LocationTypeMutation) DocumentCategoryCleared() bool {
+	return m.cleareddocument_category
+}
+
+// RemoveDocumentCategoryIDs removes the document_category edge to DocumentCategory by ids.
+func (m *LocationTypeMutation) RemoveDocumentCategoryIDs(ids ...int) {
+	if m.removeddocument_category == nil {
+		m.removeddocument_category = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removeddocument_category[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDocumentCategory returns the removed ids of document_category.
+func (m *LocationTypeMutation) RemovedDocumentCategoryIDs() (ids []int) {
+	for id := range m.removeddocument_category {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DocumentCategoryIDs returns the document_category ids in the mutation.
+func (m *LocationTypeMutation) DocumentCategoryIDs() (ids []int) {
+	for id := range m.document_category {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDocumentCategory reset all changes of the "document_category" edge.
+func (m *LocationTypeMutation) ResetDocumentCategory() {
+	m.document_category = nil
+	m.cleareddocument_category = false
+	m.removeddocument_category = nil
 }
 
 // Op returns the operation name.
@@ -39705,11 +40078,11 @@ func (m *LocationTypeMutation) AddedEdges() []string {
 	if m.property_types != nil {
 		edges = append(edges, locationtype.EdgePropertyTypes)
 	}
-	if m.file_category_type != nil {
-		edges = append(edges, locationtype.EdgeFileCategoryType)
-	}
 	if m.survey_template_categories != nil {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
+	if m.document_category != nil {
+		edges = append(edges, locationtype.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -39730,15 +40103,15 @@ func (m *LocationTypeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case locationtype.EdgeFileCategoryType:
-		ids := make([]ent.Value, 0, len(m.file_category_type))
-		for id := range m.file_category_type {
-			ids = append(ids, id)
-		}
-		return ids
 	case locationtype.EdgeSurveyTemplateCategories:
 		ids := make([]ent.Value, 0, len(m.survey_template_categories))
 		for id := range m.survey_template_categories {
+			ids = append(ids, id)
+		}
+		return ids
+	case locationtype.EdgeDocumentCategory:
+		ids := make([]ent.Value, 0, len(m.document_category))
+		for id := range m.document_category {
 			ids = append(ids, id)
 		}
 		return ids
@@ -39756,11 +40129,11 @@ func (m *LocationTypeMutation) RemovedEdges() []string {
 	if m.removedproperty_types != nil {
 		edges = append(edges, locationtype.EdgePropertyTypes)
 	}
-	if m.removedfile_category_type != nil {
-		edges = append(edges, locationtype.EdgeFileCategoryType)
-	}
 	if m.removedsurvey_template_categories != nil {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
+	if m.removeddocument_category != nil {
+		edges = append(edges, locationtype.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -39781,15 +40154,15 @@ func (m *LocationTypeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case locationtype.EdgeFileCategoryType:
-		ids := make([]ent.Value, 0, len(m.removedfile_category_type))
-		for id := range m.removedfile_category_type {
-			ids = append(ids, id)
-		}
-		return ids
 	case locationtype.EdgeSurveyTemplateCategories:
 		ids := make([]ent.Value, 0, len(m.removedsurvey_template_categories))
 		for id := range m.removedsurvey_template_categories {
+			ids = append(ids, id)
+		}
+		return ids
+	case locationtype.EdgeDocumentCategory:
+		ids := make([]ent.Value, 0, len(m.removeddocument_category))
+		for id := range m.removeddocument_category {
 			ids = append(ids, id)
 		}
 		return ids
@@ -39807,11 +40180,11 @@ func (m *LocationTypeMutation) ClearedEdges() []string {
 	if m.clearedproperty_types {
 		edges = append(edges, locationtype.EdgePropertyTypes)
 	}
-	if m.clearedfile_category_type {
-		edges = append(edges, locationtype.EdgeFileCategoryType)
-	}
 	if m.clearedsurvey_template_categories {
 		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
+	if m.cleareddocument_category {
+		edges = append(edges, locationtype.EdgeDocumentCategory)
 	}
 	return edges
 }
@@ -39824,10 +40197,10 @@ func (m *LocationTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedlocations
 	case locationtype.EdgePropertyTypes:
 		return m.clearedproperty_types
-	case locationtype.EdgeFileCategoryType:
-		return m.clearedfile_category_type
 	case locationtype.EdgeSurveyTemplateCategories:
 		return m.clearedsurvey_template_categories
+	case locationtype.EdgeDocumentCategory:
+		return m.cleareddocument_category
 	}
 	return false
 }
@@ -39851,11 +40224,11 @@ func (m *LocationTypeMutation) ResetEdge(name string) error {
 	case locationtype.EdgePropertyTypes:
 		m.ResetPropertyTypes()
 		return nil
-	case locationtype.EdgeFileCategoryType:
-		m.ResetFileCategoryType()
-		return nil
 	case locationtype.EdgeSurveyTemplateCategories:
 		m.ResetSurveyTemplateCategories()
+		return nil
+	case locationtype.EdgeDocumentCategory:
+		m.ResetDocumentCategory()
 		return nil
 	}
 	return fmt.Errorf("unknown LocationType edge %s", name)

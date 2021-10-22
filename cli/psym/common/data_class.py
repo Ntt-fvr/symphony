@@ -25,6 +25,7 @@ from psym.graphql.enum.user_status import UserStatus
 from psym.graphql.enum.flow_instance_status import FlowInstanceStatus
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 from psym.graphql.enum.work_order_status import WorkOrderStatus
+from psym.graphql.fragment import document_category
 from psym.graphql.fragment.equipment_port_definition import (
     EquipmentPortDefinitionFragment,
 )
@@ -118,6 +119,21 @@ TYPE_AND_FIELD_NAME = {
 }
 
 
+class DocumentCategory(NamedTuple):
+    """
+    :param name: Category name
+    :type name: str
+    :param dc_index: Category name index
+    :type dc_index: int, optional
+    :param id: ID
+    :type id: str, optional
+    """
+
+    name: str
+    index: Optional[int] = None
+    id: Optional[str] = None
+
+
 class LocationType(NamedTuple):
     """
     :param name: Name
@@ -137,6 +153,7 @@ class LocationType(NamedTuple):
     name: str
     id: str
     property_types: Sequence[PropertyDefinition]
+    document_categories: Sequence[DocumentCategory]
     map_type: Optional[str]
     map_zoom_level: Optional[int]
     is_site: bool
@@ -419,6 +436,7 @@ class Document(NamedTuple):
     parent_id: str
     parent_entity: ImageEntity
     category: Optional[str]
+    document_category: Optional[DocumentCategory]
 
 
 class User(NamedTuple):

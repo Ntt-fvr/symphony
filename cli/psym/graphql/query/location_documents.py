@@ -22,11 +22,19 @@ query LocationDocumentsQuery($id: ID!) {
         id
         fileName
         category
+        documentCategory {
+          id
+          name
+        }
       }
       images {
         id
         fileName
         category
+        documentCategory {
+          id
+          name
+        }
       }
     }
   }
@@ -43,9 +51,15 @@ class LocationDocumentsQuery:
         class Node(DataClassJsonMixin):
             @dataclass(frozen=True)
             class File(DataClassJsonMixin):
+                @dataclass(frozen=True)
+                class DocumentCategory(DataClassJsonMixin):
+                    id: str
+                    name: Optional[str]
+
                 id: str
                 fileName: str
                 category: Optional[str]
+                documentCategory: Optional[DocumentCategory]
 
             files: List[File]
             images: List[File]

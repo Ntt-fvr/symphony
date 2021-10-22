@@ -112,6 +112,14 @@ type LocationPermissionRule
   locationTypeIds: [ID!]
 }
 
+type DocumentCategoryPermissionRule
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRule"
+) {
+  isAllowed: PermissionValue!
+  documentCategoryIds: [ID!]
+}
+
 type WorkforcePermissionRule
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.WorkforcePermissionRule"
@@ -135,6 +143,14 @@ input LocationPermissionRuleInput
   ) {
   isAllowed: PermissionValue!
   locationTypeIds: [ID!]
+}
+
+input DocumentCategoryPermissionRuleInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryPermissionRuleInput"
+) {
+  isAllowed: PermissionValue!
+  documentCategoryIds: [ID!]
 }
 
 input WorkforcePermissionRuleInput
@@ -165,6 +181,17 @@ type LocationCUD
   delete: LocationPermissionRule!
 }
 
+type DocumentCategoryCUD
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCud"
+) {
+  locationTypeID: Int
+  read  : DocumentCategoryPermissionRule
+  create: DocumentCategoryPermissionRule
+  update: DocumentCategoryPermissionRule
+  delete: DocumentCategoryPermissionRule
+}
+
 input BasicCUDInput
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.BasicCUDInput"
@@ -181,6 +208,17 @@ input LocationCUDInput
   create: BasicPermissionRuleInput
   update: LocationPermissionRuleInput
   delete: BasicPermissionRuleInput
+}
+
+input DocumentCategoryCUDInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/authz/models.DocumentCategoryCUDInput"
+) {
+  locationTypeID: Int
+  read  : DocumentCategoryPermissionRuleInput
+  create: DocumentCategoryPermissionRuleInput
+  update: DocumentCategoryPermissionRuleInput
+  delete: DocumentCategoryPermissionRuleInput
 }
 
 type AdministrativePolicy
@@ -228,6 +266,7 @@ type InventoryPolicy
   ) {
   read: BasicPermissionRule!
   location: LocationCUD!
+  documentCategory: DocumentCategoryCUD!
   equipment: CUD!
   equipmentType: CUD!
   locationType: CUD!
@@ -241,6 +280,7 @@ input InventoryPolicyInput
   ) {
   read: BasicPermissionRuleInput
   location: LocationCUDInput
+  documentCategory: DocumentCategoryCUDInput
   equipment: BasicCUDInput
   equipmentType: BasicCUDInput
   locationType: BasicCUDInput
@@ -470,7 +510,7 @@ type LocationType implements Node {
   index: Int
   mapZoomLevel: Int
   propertyTypes: [PropertyType]!
-  fileCategoryType: [FileCategoryType]!
+  documentCategories: [DocumentCategory]!
   numberOfLocations: Int!
   locations(enforceHasLatLong: Boolean = false): LocationConnection
     @goField(forceResolver: true)
@@ -482,7 +522,7 @@ input AddLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
+  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
   surveyTemplateCategories: [SurveyTemplateCategoryInput!]
@@ -494,9 +534,18 @@ input EditLocationTypeInput {
   mapType: String
   mapZoomLevel: Int
   isSite: Boolean
-  fileCategoriesType: [FileCategoryTypeInput!]
+  documentCategories: [DocumentCategoryInput!]
   properties: [PropertyTypeInput!]
     @uniqueField(typ: "property type", field: "Name")
+}
+
+input DocumentCategoryInput
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.DocumentCategoryInput"
+) {
+  id: ID
+  name: String!
+  index: Int!
 }
 
 type NetworkTopology {
@@ -534,6 +583,7 @@ type File implements Node {
   category: String
   annotation: String
   workorder: WorkOrder
+  documentCategory: DocumentCategory
 }
 
 type Hyperlink implements Node {
@@ -550,6 +600,7 @@ input AddHyperlinkInput {
   url: String!
   displayName: String
   category: String
+  documentCategoryId: ID
 }
 
 input AddImageInput {
@@ -562,6 +613,7 @@ input AddImageInput {
   contentType: String!
   category: String
   annotation: String
+  documentCategoryId: ID
 }
 
 type Comment implements Node {
@@ -1283,6 +1335,17 @@ type LocationTypeEdge {
   cursor: Cursor!
 }
 
+type DocumentCategoryConnection {
+  totalCount: Int!
+  edges: [DocumentCategoryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type DocumentCategoryEdge {
+  node: DocumentCategory
+  cursor: Cursor!
+}
+
 """
 A connection to a list of locations.
 """
@@ -1502,20 +1565,6 @@ enum PropertyKind
   node
 }
 
-type FileCategoryType implements Node {
-  id: ID!
-  name: String!
-  rawValue: String
-}
-
-input FileCategoryTypeInput
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/exporter/models.FileCategoryTypeInput"
-  ) {
-  id: ID
-  name: String!
-}
-
 type PropertyType implements Node {
   id: ID!
   externalId: String
@@ -1537,6 +1586,17 @@ type PropertyType implements Node {
   isInstanceProperty: Boolean
   isMandatory: Boolean
   isDeleted: Boolean
+}
+
+type DocumentCategory implements Node {
+  id: ID!
+  name: String
+  index: Int
+  files: [File]!
+  hyperlinks: [Hyperlink]!
+  numberOfDocuments: Int!
+  filesByLocation(locationID: ID!): [File]!
+  hyperlinksByLocation(locationID: ID!): [Hyperlink]!
 }
 
 input PropertyTypeInput
@@ -5538,7 +5598,16 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
-
+  documentCategories(
+    """
+    Filter by location type ID
+    """
+    locationTypeID: ID
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): DocumentCategoryConnection
   """
   Fetches end to end path of links
   """
@@ -6679,6 +6748,7 @@ type Mutation {
   addLocationType(input: AddLocationTypeInput!): LocationType!
   editLocationType(input: EditLocationTypeInput!): LocationType!
   removeLocationType(id: ID!): ID!
+  removeDocumentCategory(id: ID!): ID!
   addEquipment(input: AddEquipmentInput!): Equipment!
   editEquipment(input: EditEquipmentInput!): Equipment!
   removeEquipment(id: ID!, workOrderId: ID): ID!

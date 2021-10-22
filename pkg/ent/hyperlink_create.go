@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -144,6 +145,25 @@ func (hc *HyperlinkCreate) SetNillableWorkOrderID(id *int) *HyperlinkCreate {
 // SetWorkOrder sets the work_order edge to WorkOrder.
 func (hc *HyperlinkCreate) SetWorkOrder(w *WorkOrder) *HyperlinkCreate {
 	return hc.SetWorkOrderID(w.ID)
+}
+
+// SetDocumentCategoryID sets the document_category edge to DocumentCategory by id.
+func (hc *HyperlinkCreate) SetDocumentCategoryID(id int) *HyperlinkCreate {
+	hc.mutation.SetDocumentCategoryID(id)
+	return hc
+}
+
+// SetNillableDocumentCategoryID sets the document_category edge to DocumentCategory by id if the given value is not nil.
+func (hc *HyperlinkCreate) SetNillableDocumentCategoryID(id *int) *HyperlinkCreate {
+	if id != nil {
+		hc = hc.SetDocumentCategoryID(*id)
+	}
+	return hc
+}
+
+// SetDocumentCategory sets the document_category edge to DocumentCategory.
+func (hc *HyperlinkCreate) SetDocumentCategory(d *DocumentCategory) *HyperlinkCreate {
+	return hc.SetDocumentCategoryID(d.ID)
 }
 
 // Mutation returns the HyperlinkMutation object of the builder.
@@ -335,6 +355,25 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: workorder.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := hc.mutation.DocumentCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   hyperlink.DocumentCategoryTable,
+			Columns: []string{hyperlink.DocumentCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: documentcategory.FieldID,
 				},
 			},
 		}

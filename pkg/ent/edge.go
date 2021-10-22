@@ -312,6 +312,30 @@ func (c *Customer) Services(ctx context.Context) ([]*Service, error) {
 	return result, err
 }
 
+func (dc *DocumentCategory) LocationType(ctx context.Context) (*LocationType, error) {
+	result, err := dc.Edges.LocationTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryLocationType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (dc *DocumentCategory) Files(ctx context.Context) ([]*File, error) {
+	result, err := dc.Edges.FilesOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryFiles().All(ctx)
+	}
+	return result, err
+}
+
+func (dc *DocumentCategory) Hyperlinks(ctx context.Context) ([]*Hyperlink, error) {
+	result, err := dc.Edges.HyperlinksOrErr()
+	if IsNotLoaded(err) {
+		result, err = dc.QueryHyperlinks().All(ctx)
+	}
+	return result, err
+}
+
 func (d *Domain) Techdomain(ctx context.Context) ([]*Tech, error) {
 	result, err := d.Edges.TechdomainOrErr()
 	if IsNotLoaded(err) {
@@ -736,10 +760,10 @@ func (f *File) SurveyQuestion(ctx context.Context) (*SurveyQuestion, error) {
 	return result, MaskNotFound(err)
 }
 
-func (fct *FileCategoryType) LocationType(ctx context.Context) (*LocationType, error) {
-	result, err := fct.Edges.LocationTypeOrErr()
+func (f *File) DocumentCategory(ctx context.Context) (*DocumentCategory, error) {
+	result, err := f.Edges.DocumentCategoryOrErr()
 	if IsNotLoaded(err) {
-		result, err = fct.QueryLocationType().Only(ctx)
+		result, err = f.QueryDocumentCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -892,6 +916,14 @@ func (h *Hyperlink) WorkOrder(ctx context.Context) (*WorkOrder, error) {
 	result, err := h.Edges.WorkOrderOrErr()
 	if IsNotLoaded(err) {
 		result, err = h.QueryWorkOrder().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (h *Hyperlink) DocumentCategory(ctx context.Context) (*DocumentCategory, error) {
+	result, err := h.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = h.QueryDocumentCategory().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -1168,18 +1200,18 @@ func (lt *LocationType) PropertyTypes(ctx context.Context) ([]*PropertyType, err
 	return result, err
 }
 
-func (lt *LocationType) FileCategoryType(ctx context.Context) ([]*FileCategoryType, error) {
-	result, err := lt.Edges.FileCategoryTypeOrErr()
-	if IsNotLoaded(err) {
-		result, err = lt.QueryFileCategoryType().All(ctx)
-	}
-	return result, err
-}
-
 func (lt *LocationType) SurveyTemplateCategories(ctx context.Context) ([]*SurveyTemplateCategory, error) {
 	result, err := lt.Edges.SurveyTemplateCategoriesOrErr()
 	if IsNotLoaded(err) {
 		result, err = lt.QuerySurveyTemplateCategories().All(ctx)
+	}
+	return result, err
+}
+
+func (lt *LocationType) DocumentCategory(ctx context.Context) ([]*DocumentCategory, error) {
+	result, err := lt.Edges.DocumentCategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = lt.QueryDocumentCategory().All(ctx)
 	}
 	return result, err
 }

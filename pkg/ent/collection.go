@@ -229,6 +229,30 @@ func (c *CustomerQuery) collectField(ctx *graphql.OperationContext, field graphq
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (dc *DocumentCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *DocumentCategoryQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		dc = dc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return dc
+}
+
+func (dc *DocumentCategoryQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *DocumentCategoryQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "files":
+			dc = dc.WithFiles(func(query *FileQuery) {
+				query.collectField(ctx, field)
+			})
+		case "hyperlinks":
+			dc = dc.WithHyperlinks(func(query *HyperlinkQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return dc
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (d *DomainQuery) CollectFields(ctx context.Context, satisfies ...string) *DomainQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		d = d.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -582,18 +606,6 @@ func (f *FileQuery) CollectFields(ctx context.Context, satisfies ...string) *Fil
 
 func (f *FileQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FileQuery {
 	return f
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (fct *FileCategoryTypeQuery) CollectFields(ctx context.Context, satisfies ...string) *FileCategoryTypeQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		fct = fct.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return fct
-}
-
-func (fct *FileCategoryTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FileCategoryTypeQuery {
-	return fct
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -979,8 +991,8 @@ func (lt *LocationTypeQuery) CollectFields(ctx context.Context, satisfies ...str
 func (lt *LocationTypeQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *LocationTypeQuery {
 	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 		switch field.Name {
-		case "fileCategoryType":
-			lt = lt.WithFileCategoryType(func(query *FileCategoryTypeQuery) {
+		case "documentCategories":
+			lt = lt.WithDocumentCategory(func(query *DocumentCategoryQuery) {
 				query.collectField(ctx, field)
 			})
 		case "locations":

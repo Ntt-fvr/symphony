@@ -182,23 +182,25 @@ type AddFormulaInput struct {
 }
 
 type AddHyperlinkInput struct {
-	EntityType  ImageEntity `json:"entityType"`
-	EntityID    int         `json:"entityId"`
-	URL         string      `json:"url"`
-	DisplayName *string     `json:"displayName"`
-	Category    *string     `json:"category"`
+	EntityType         ImageEntity `json:"entityType"`
+	EntityID           int         `json:"entityId"`
+	URL                string      `json:"url"`
+	DisplayName        *string     `json:"displayName"`
+	Category           *string     `json:"category"`
+	DocumentCategoryID *int        `json:"documentCategoryId"`
 }
 
 type AddImageInput struct {
-	EntityType  ImageEntity `json:"entityType"`
-	EntityID    int         `json:"entityId"`
-	ImgKey      string      `json:"imgKey"`
-	FileName    string      `json:"fileName"`
-	FileSize    int         `json:"fileSize"`
-	Modified    time.Time   `json:"modified"`
-	ContentType string      `json:"contentType"`
-	Category    *string     `json:"category"`
-	Annotation  *string     `json:"annotation"`
+	EntityType         ImageEntity `json:"entityType"`
+	EntityID           int         `json:"entityId"`
+	ImgKey             string      `json:"imgKey"`
+	FileName           string      `json:"fileName"`
+	FileSize           int         `json:"fileSize"`
+	Modified           time.Time   `json:"modified"`
+	ContentType        string      `json:"contentType"`
+	Category           *string     `json:"category"`
+	Annotation         *string     `json:"annotation"`
+	DocumentCategoryID *int        `json:"documentCategoryId"`
 }
 
 type AddKpiInput struct {
@@ -276,7 +278,7 @@ type AddLocationTypeInput struct {
 	MapType                  *string                         `json:"mapType"`
 	MapZoomLevel             *int                            `json:"mapZoomLevel"`
 	IsSite                   *bool                           `json:"isSite"`
-	FileCategoriesType       []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
+	DocumentCategories       []*models.DocumentCategoryInput `json:"documentCategories"`
 	Properties               []*models.PropertyTypeInput     `json:"properties"`
 	SurveyTemplateCategories []*SurveyTemplateCategoryInput  `json:"surveyTemplateCategories"`
 }
@@ -804,7 +806,7 @@ type EditLocationTypeInput struct {
 	MapType            *string                         `json:"mapType"`
 	MapZoomLevel       *int                            `json:"mapZoomLevel"`
 	IsSite             *bool                           `json:"isSite"`
-	FileCategoriesType []*models.FileCategoryTypeInput `json:"fileCategoriesType"`
+	DocumentCategories []*models.DocumentCategoryInput `json:"documentCategories"`
 	Properties         []*models.PropertyTypeInput     `json:"properties"`
 }
 

@@ -145,6 +145,15 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.KqiTargets = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KqiTargetOrder, _ []*models.KqiTargetFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.DocumentCategories = func(childComplexity int, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.DocumentCategory.FilesByLocation = func(childComplexity int, locationID int) int {
+		return SearchComplexity(childComplexity, nil)
+	}
+	complexity.DocumentCategory.HyperlinksByLocation = func(childComplexity int, locationID int) int {
+		return SearchComplexity(childComplexity, nil)
+	}
 
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {
 		var limit *int

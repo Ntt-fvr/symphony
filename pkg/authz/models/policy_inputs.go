@@ -32,6 +32,11 @@ type LocationCUDInput struct {
 	Delete *BasicPermissionRuleInput    `json:"delete"`
 }
 
+type DocumentCategoryPermissionRuleInput struct {
+	IsAllowed           PermissionValue `json:"isAllowed"`
+	DocumentCategoryIds []int           `json:"documentCategoryIds"`
+}
+
 type WorkforceCUDInput struct {
 	Create            *BasicPermissionRuleInput `json:"create"`
 	Update            *BasicPermissionRuleInput `json:"update"`
@@ -40,14 +45,23 @@ type WorkforceCUDInput struct {
 	TransferOwnership *BasicPermissionRuleInput `json:"transferOwnership"`
 }
 
+type DocumentCategoryCUDInput struct {
+	LocationTypeID int                                  `json:"locationTypeID"`
+	Read           *DocumentCategoryPermissionRuleInput `json:"read"`
+	Create         *DocumentCategoryPermissionRuleInput `json:"create"`
+	Update         *DocumentCategoryPermissionRuleInput `json:"update"`
+	Delete         *DocumentCategoryPermissionRuleInput `json:"delete"`
+}
+
 type InventoryPolicyInput struct {
-	Read          *BasicPermissionRuleInput `json:"read"`
-	Location      *LocationCUDInput         `json:"location"`
-	Equipment     *BasicCUDInput            `json:"equipment"`
-	EquipmentType *BasicCUDInput            `json:"equipmentType"`
-	LocationType  *BasicCUDInput            `json:"locationType"`
-	PortType      *BasicCUDInput            `json:"portType"`
-	ServiceType   *BasicCUDInput            `json:"serviceType"`
+	Read             *BasicPermissionRuleInput `json:"read"`
+	Location         *LocationCUDInput         `json:"location"`
+	DocumentCategory *DocumentCategoryCUDInput `json:"documentCategory"`
+	Equipment        *BasicCUDInput            `json:"equipment"`
+	EquipmentType    *BasicCUDInput            `json:"equipmentType"`
+	LocationType     *BasicCUDInput            `json:"locationType"`
+	PortType         *BasicCUDInput            `json:"portType"`
+	ServiceType      *BasicCUDInput            `json:"serviceType"`
 }
 
 type WorkforcePolicyInput struct {

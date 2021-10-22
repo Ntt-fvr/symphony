@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/facebookincubator/symphony/pkg/ent/documentcategory"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -34,6 +36,23 @@ import (
 )
 
 type queryResolver struct{ resolver }
+
+func (r queryResolver) DocumentCategories(ctx context.Context, locationTypeID *int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.DocumentCategoryConnection, error) {
+	filter := func(query *ent.DocumentCategoryQuery) (*ent.DocumentCategoryQuery, error) {
+		if locationTypeID != nil {
+			query = query.Where(
+				documentcategory.HasLocationTypeWith(locationtype.ID(*locationTypeID)),
+			)
+		}
+		return query, nil
+	}
+	return r.ClientFrom(ctx).
+		DocumentCategory.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithDocumentCategoryFilter(filter),
+		)
+}
 
 func (queryResolver) Me(ctx context.Context) (viewer.Viewer, error) {
 	return viewer.FromContext(ctx), nil

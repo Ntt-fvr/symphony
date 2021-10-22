@@ -77,6 +77,9 @@ func (File) Edges() []ent.Edge {
 		edge.From("survey_question", SurveyQuestion.Type).
 			Ref("images").
 			Unique(),
+		edge.From("document_category", DocumentCategory.Type).
+			Ref("files").
+			Unique(),
 	}
 }
 

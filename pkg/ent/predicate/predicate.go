@@ -55,6 +55,9 @@ type CounterFormula func(*sql.Selector)
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)
 
+// DocumentCategory is the predicate function for documentcategory builders.
+type DocumentCategory func(*sql.Selector)
+
 // Domain is the predicate function for domain builders.
 type Domain func(*sql.Selector)
 
@@ -99,9 +102,6 @@ type Feature func(*sql.Selector)
 
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
-
-// FileCategoryType is the predicate function for filecategorytype builders.
-type FileCategoryType func(*sql.Selector)
 
 // FloorPlan is the predicate function for floorplan builders.
 type FloorPlan func(*sql.Selector)

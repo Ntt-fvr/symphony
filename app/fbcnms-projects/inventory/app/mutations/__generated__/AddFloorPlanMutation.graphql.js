@@ -40,6 +40,7 @@ export type AddImageInput = {|
   contentType: string,
   category?: ?string,
   annotation?: ?string,
+  documentCategoryId?: ?string,
 |};
 export type AddFloorPlanMutationVariables = {|
   input: AddFloorPlanInput
