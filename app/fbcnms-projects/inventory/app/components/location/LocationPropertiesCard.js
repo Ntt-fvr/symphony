@@ -123,19 +123,6 @@ const locationsPropertiesCardQuery = graphql`
           name
           mapType
           mapZoomLevel
-          documentCategories {
-            id
-            name
-            index
-            filesByEntity(entity: LOCATION, entityID: $locationId){
-              id
-              fileName
-            }
-            hyperlinksByEntity(entity: LOCATION, entityID: $locationId){
-              id
-              displayName
-            }
-          }
           propertyTypes {
             ...PropertyTypeFormField_propertyType
             ...DynamicPropertiesGrid_propertyTypes
@@ -207,8 +194,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
       <InventoryQueryRenderer
         query={locationsPropertiesCardQuery}
         variables={{
-          locationId: locationId,
-          locationID: locationId,
+          locationId: locationId
         }}
         render={props => {
           const location = props.location;
