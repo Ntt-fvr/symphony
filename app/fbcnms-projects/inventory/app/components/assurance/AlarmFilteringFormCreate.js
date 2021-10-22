@@ -8,7 +8,9 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
+
+import React, {useMemo, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -26,8 +28,6 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
-
-import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
@@ -122,11 +122,20 @@ const AlarmFilteringFormCreate = (props: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
 
+  const handleDisable = useMemo(
+    () =>
+      !(
+        Object.values(AlarmFilter.data).length === 5 &&
+        !Object.values(AlarmFilter.data).some(item => item === '')
+      ),
+    [AlarmFilter.data],
+  );
+
   function handleChange({target}) {
     setAlarmFilter({
       data: {
         ...AlarmFilter.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -178,7 +187,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 onClick={() => setDialogOpen(true)}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>

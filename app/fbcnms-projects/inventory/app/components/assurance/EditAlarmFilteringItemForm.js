@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -124,12 +124,29 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const creationTime = useFormInput(formValues.item.creationTime);
   const [checked, setChecked] = useState(formValues.item.enable);
 
+  const dataInputsObject = [
+    name.value.trim(),
+    networkResource.value.trim(),
+    reason.value.trim(),
+    beginTime.value,
+    endTime.value,
+  ];
+
   const handleRemove = id => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
     RemoveAlarmFilterMutation(variables);
   };
+
+  const handleDisable = useMemo(
+    () =>
+      !(
+        dataInputsObject.length === 5 &&
+        !dataInputsObject.some(item => item === '')
+      ),
+    [dataInputsObject],
+  );
 
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
@@ -189,7 +206,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 }}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>
