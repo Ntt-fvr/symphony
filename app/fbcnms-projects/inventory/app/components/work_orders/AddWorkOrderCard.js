@@ -34,6 +34,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSaveCancelPanel';
 import Grid from '@material-ui/core/Grid';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
+import MomentUtils from '@date-io/moment';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
 import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
@@ -44,6 +45,7 @@ import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
 import UserTypeahead from '../typeahead/UserTypeahead';
 import nullthrows from '@fbcnms/util/nullthrows';
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {convertChecklistCategoriesStateToInput} from '../checklist/ChecklistUtils';
@@ -186,11 +188,18 @@ const AddWorkOrderCard = (props: Props) => {
   const {workOrderTypeId} = props;
   const classes = useStyles();
   const {statusValues, closedStatus} = useStatusValues();
+  const [selectedDate, handleDateChange] = useState(
+    new Date('2018-01-01T00:00:00.000Z'),
+  );
 
-  const {workOrderType}: AddWorkOrderCardTypeQueryResponse =
-    useLazyLoadQuery<AddWorkOrderCardTypeQuery>(workOrderTypeQuery, {
+  const {
+    workOrderType,
+  }: AddWorkOrderCardTypeQueryResponse = useLazyLoadQuery<AddWorkOrderCardTypeQuery>(
+    workOrderTypeQuery,
+    {
       workOrderTypeId,
-    });
+    },
+  );
 
   const [workOrder, setWorkOrder] = useState<?WorkOrder>(
     workOrderType?.__typename === 'WorkOrderType'
@@ -289,8 +298,9 @@ const AddWorkOrderCard = (props: Props) => {
         status,
         priority,
         properties: toPropertyInput(properties),
-        checkListCategories:
-          convertChecklistCategoriesStateToInput(editingCategories),
+        checkListCategories: convertChecklistCategoriesStateToInput(
+          editingCategories,
+        ),
       },
     };
 
@@ -375,214 +385,220 @@ const AddWorkOrderCard = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <FormContextProvider
-        permissions={{
-          entity: 'workorder',
-          action: 'create',
-          workOrderTypeId: workOrderTypeId,
-        }}>
-        <div className={classes.nameHeader}>
-          <Breadcrumbs
-            className={classes.breadcrumbs}
-            breadcrumbs={[
-              {
-                id: 'workOrders',
-                name: 'WorkOrders',
-                onClick: () => navigateToMainPage(),
-              },
-              {
-                id: `new_workOrder_` + Date.now(),
-                name: 'New WorkOrder',
-              },
-            ]}
-            size="large"
-          />
-          <FormSaveCancelPanel
-            onCancel={navigateToMainPage}
-            onSave={_saveWorkOrder}
-          />
-        </div>
-        <div className={classes.contentRoot}>
-          <div className={classes.cards}>
-            <Grid container spacing={2}>
-              <Grid item xs={8} sm={8} lg={8} xl={8}>
-                <ExpandingPanel title="Details">
-                  <NameDescriptionSection
-                    name={workOrder.name}
-                    description={workOrder.description}
-                    onNameChange={value => _setWorkOrderDetail('name', value)}
-                    onDescriptionChange={value =>
-                      _setWorkOrderDetail('description', value)
-                    }
-                  />
-                  <div className={classes.separator} />
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} lg={4} xl={4}>
-                      <FormField label="Project">
-                        <ProjectTypeahead
-                          className={classes.gridInput}
-                          margin="dense"
-                          onProjectSelection={project =>
-                            _setWorkOrderDetail('project', project)
-                          }
-                        />
-                      </FormField>
-                    </Grid>
-                    {workOrder.workOrderType && (
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <FormContextProvider
+          permissions={{
+            entity: 'workorder',
+            action: 'create',
+            workOrderTypeId: workOrderTypeId,
+          }}>
+          <div className={classes.nameHeader}>
+            <Breadcrumbs
+              className={classes.breadcrumbs}
+              breadcrumbs={[
+                {
+                  id: 'workOrders',
+                  name: 'WorkOrders',
+                  onClick: () => navigateToMainPage(),
+                },
+                {
+                  id: `new_workOrder_` + Date.now(),
+                  name: 'New WorkOrder',
+                },
+              ]}
+              size="large"
+            />
+            <FormSaveCancelPanel
+              onCancel={navigateToMainPage}
+              onSave={_saveWorkOrder}
+            />
+          </div>
+          <div className={classes.contentRoot}>
+            <div className={classes.cards}>
+              <Grid container spacing={2}>
+                <Grid item xs={8} sm={8} lg={8} xl={8}>
+                  <ExpandingPanel title="Details">
+                    <NameDescriptionSection
+                      name={workOrder.name}
+                      description={workOrder.description}
+                      onNameChange={value => _setWorkOrderDetail('name', value)}
+                      onDescriptionChange={value =>
+                        _setWorkOrderDetail('description', value)
+                      }
+                    />
+                    <div className={classes.separator} />
+                    <Grid container spacing={2}>
                       <Grid item xs={12} sm={6} lg={4} xl={4}>
-                        <FormField label="Type">
-                          <TextField
-                            disabled
-                            variant="outlined"
-                            margin="dense"
+                        <FormField label="Project">
+                          <ProjectTypeahead
                             className={classes.gridInput}
-                            value={workOrder.workOrderType.name}
+                            margin="dense"
+                            onProjectSelection={project =>
+                              _setWorkOrderDetail('project', project)
+                            }
                           />
                         </FormField>
                       </Grid>
-                    )}
-                    <Grid item xs={12} sm={6} lg={4} xl={4}>
-                      <FormField label="Priority">
-                        <Select
-                          options={priorityValues}
-                          selectedValue={workOrder.priority}
-                          onChange={value =>
-                            _setWorkOrderDetail('priority', value)
-                          }
-                        />
-                      </FormField>
-                    </Grid>
-                    <Grid item xs={12} sm={6} lg={4} xl={4}>
-                      <FormField label="Status">
-                        <Select
-                          options={statusValues}
-                          selectedValue={workOrder.status}
-                          onChange={value => {
-                            _setWorkOrderDetail('status', value);
-                          }}
-                        />
-                      </FormField>
-                    </Grid>
-                    <Grid item xs={12} sm={6} lg={4} xl={4}>
-                      <FormField label="Location">
-                        <LocationTypeahead
-                          headline={null}
-                          className={classes.gridInput}
-                          margin="dense"
-                          onLocationSelection={location =>
-                            _setWorkOrderDetail(
-                              'locationId',
-                              location?.id ?? null,
-                            )
-                          }
-                        />
-                      </FormField>
-                    </Grid>
-                    {workOrder.properties
-                      .filter(property => !property.propertyType.isDeleted)
-                      .map((property, index) => (
-                        <Grid
-                          key={property.id}
-                          item
-                          xs={12}
-                          sm={6}
-                          lg={4}
-                          xl={4}>
-                          <PropertyValueInput
-                            required={
-                              !!property.propertyType.isMandatory &&
-                              (workOrder.status === closedStatus.value ||
-                                !mandatoryPropertiesOnCloseEnabled)
-                            }
-                            disabled={!property.propertyType.isInstanceProperty}
-                            label={property.propertyType.name}
-                            className={classes.gridInput}
-                            inputType="Property"
-                            property={property}
-                            headlineVariant="form"
-                            fullWidth={true}
-                            onChange={_propertyChangedHandler(index)}
-                          />
+                      {workOrder.workOrderType && (
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Type">
+                            <TextField
+                              disabled
+                              variant="outlined"
+                              margin="dense"
+                              className={classes.gridInput}
+                              value={workOrder.workOrderType.name}
+                            />
+                          </FormField>
                         </Grid>
-                      ))}
-                  </Grid>
-                </ExpandingPanel>
-                <ChecklistCategoriesMutateDispatchContext.Provider
-                  value={dispatch}>
-                  <CheckListCategoryExpandingPanel
-                    categories={editingCategories}
-                  />
-                </ChecklistCategoriesMutateDispatchContext.Provider>
+                      )}
+                      <Grid item xs={12} sm={6} lg={4} xl={4}>
+                        <FormField label="Priority">
+                          <Select
+                            options={priorityValues}
+                            selectedValue={workOrder.priority}
+                            onChange={value =>
+                              _setWorkOrderDetail('priority', value)
+                            }
+                          />
+                        </FormField>
+                      </Grid>
+                      <Grid item xs={12} sm={6} lg={4} xl={4}>
+                        <FormField label="Status">
+                          <Select
+                            options={statusValues}
+                            selectedValue={workOrder.status}
+                            onChange={value => {
+                              _setWorkOrderDetail('status', value);
+                            }}
+                          />
+                        </FormField>
+                      </Grid>
+                      <Grid item xs={12} sm={6} lg={4} xl={4}>
+                        <FormField label="Location">
+                          <LocationTypeahead
+                            headline={null}
+                            className={classes.gridInput}
+                            margin="dense"
+                            onLocationSelection={location =>
+                              _setWorkOrderDetail(
+                                'locationId',
+                                location?.id ?? null,
+                              )
+                            }
+                          />
+                        </FormField>
+                      </Grid>
+                      {workOrder.properties
+                        .filter(property => !property.propertyType.isDeleted)
+                        .map((property, index) => (
+                          <Grid
+                            key={property.id}
+                            item
+                            xs={12}
+                            sm={6}
+                            lg={4}
+                            xl={4}>
+                            <PropertyValueInput
+                              required={
+                                !!property.propertyType.isMandatory &&
+                                (workOrder.status === closedStatus.value ||
+                                  !mandatoryPropertiesOnCloseEnabled)
+                              }
+                              disabled={
+                                !property.propertyType.isInstanceProperty
+                              }
+                              label={property.propertyType.name}
+                              className={classes.gridInput}
+                              inputType="Property"
+                              property={property}
+                              headlineVariant="form"
+                              fullWidth={true}
+                              onChange={_propertyChangedHandler(index)}
+                            />
+                          </Grid>
+                        ))}
+                    </Grid>
+                  </ExpandingPanel>
+                  <ChecklistCategoriesMutateDispatchContext.Provider
+                    value={dispatch}>
+                    <CheckListCategoryExpandingPanel
+                      categories={editingCategories}
+                    />
+                  </ChecklistCategoriesMutateDispatchContext.Provider>
+                </Grid>
+                <Grid item xs={4} sm={4} lg={4} xl={4}>
+                  <ExpandingPanel title="Select availabilty assignee">
+                    <Button
+                      variant="text"
+                      leftIcon={CalendarTodayIcon}
+                      className={classes.calendarButton}>
+                      View Calendar
+                    </Button>
+                    <FormField label="Time slot start">
+                      <DateTimePicker
+                        variant="inline"
+                        inputVariant="outlined"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        className={classes.inputFilter}
+                      />
+                    </FormField>
+                    <FormField label="Time slot end">
+                      <DateTimePicker
+                        variant="inline"
+                        inputVariant="outlined"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        className={classes.inputFilter}
+                      />
+                    </FormField>
+                    <FormField label="Duration">
+                      <Select
+                        options={[
+                          {key: '0 hr', label: '0 hr', value: '0'},
+                          {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
+                          {key: '1 hr', label: '1 hr', value: '1'},
+                          {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
+                          {key: '2 hr', label: '2 hr', value: '2'},
+                          {key: '2.5 hr', label: '2.5 hr', value: '2.5'},
+                        ]}
+                        selectedValue={workOrder.status}
+                        className={classes.inputFilter}
+                        onChange={value => {}}
+                      />
+                    </FormField>
+                    <Button className={classes.filterButton}>Filter</Button>
+                    <FormField className={classes.input} label="Organization">
+                      <OrganizationTypeahead
+                        onOrganizationSelected={organization =>
+                          _setWorkOrderDetail('organizationFk', organization)
+                        }
+                        margin="dense"
+                      />
+                    </FormField>
+                    <FormField className={classes.input} label="Owner">
+                      <Select
+                        options={statusValues}
+                        selectedValue={workOrder.status}
+                        onChange={value => {}}
+                      />
+                    </FormField>
+                    <FormField className={classes.input} label="Assignee">
+                      <UserTypeahead
+                        onUserSelection={user =>
+                          _setWorkOrderDetail('assignedTo', user)
+                        }
+                        margin="dense"
+                      />
+                    </FormField>
+                  </ExpandingPanel>
+                </Grid>
               </Grid>
-              <Grid item xs={4} sm={4} lg={4} xl={4}>
-                <ExpandingPanel title="Select availabilty assignee">
-                  <Button
-                    variant="text"
-                    leftIcon={CalendarTodayIcon}
-                    className={classes.calendarButton}>
-                    View Calendar
-                  </Button>
-                  <FormField label="Time slot start">
-                    <TextField
-                      disabled
-                      variant="outlined"
-                      margin="dense"
-                      className={classes.inputFilter}
-                    />
-                  </FormField>
-                  <FormField label="Time slot end">
-                    <TextField
-                      disabled
-                      variant="outlined"
-                      margin="dense"
-                      className={classes.inputFilter}
-                    />
-                  </FormField>
-                  <FormField label="Duration">
-                    <Select
-                      options={[
-                        {key: '0 hr', label: '0 hr', value: '0'},
-                        {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
-                        {key: '1 hr', label: '1 hr', value: '1'},
-                        {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
-                        {key: '2 hr', label: '2 hr', value: '2'},
-                        {key: '2.5 hr', label: '2.5 hr', value: '2.5'},
-                      ]}
-                      selectedValue={workOrder.status}
-                      className={classes.inputFilter}
-                      onChange={value => {}}
-                    />
-                  </FormField>
-                  <Button className={classes.filterButton}>Filter</Button>
-                  <FormField className={classes.input} label="Organization">
-                    <OrganizationTypeahead
-                      onOrganizationSelected={organization =>
-                        _setWorkOrderDetail('organizationFk', organization)
-                      }
-                      margin="dense"
-                    />
-                  </FormField>
-                  <FormField className={classes.input} label="Owner">
-                    <Select
-                      options={statusValues}
-                      selectedValue={workOrder.status}
-                      onChange={value => {}}
-                    />
-                  </FormField>
-                  <FormField className={classes.input} label="Assignee">
-                    <UserTypeahead
-                      onUserSelection={user =>
-                        _setWorkOrderDetail('assignedTo', user)
-                      }
-                      margin="dense"
-                    />
-                  </FormField>
-                </ExpandingPanel>
-              </Grid>
-            </Grid>
+            </div>
           </div>
-        </div>
-      </FormContextProvider>
+        </FormContextProvider>
+      </MuiPickersUtilsProvider>
     </div>
   );
 };
