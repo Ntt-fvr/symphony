@@ -19,9 +19,7 @@ const onProxyReq = (proxyReq: ClientRequest, req: FBCNMSRequest): void => {
   if (req.user.organization) {
     proxyReq.setHeader('x-auth-organization', req.user.organization);
   }
-  const email = req.user.email || req.user.attributes.email;
-
-  proxyReq.setHeader('x-auth-user-email', email);
+  proxyReq.setHeader('x-auth-user-email', req.user.email);
   proxyReq.setHeader('x-auth-user-role', accessRoleToString(req.user.role));
 
   const accessToken = oidcAccessToken(req);

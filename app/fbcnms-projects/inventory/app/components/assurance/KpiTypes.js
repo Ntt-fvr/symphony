@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
@@ -17,6 +17,7 @@ import {graphql} from 'react-relay';
 // COMPONENTS //
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
+// import DialogConfirmDelete from './DialogConfirmDelete';
 import KpiTypeItem from './KpiTypeItem';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';
@@ -33,13 +34,10 @@ import EditFormulaDialog from './EditFormulaDialog';
 import {Grid, List} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
-    margin: '40px',
-  },
-  paper: {
-    padding: theme.spacing(2),
+    margin: '30px',
   },
   listCarKpi: {
     listStyle: 'none',
@@ -71,6 +69,14 @@ const KpiQuery = graphql`
               id
               name
             }
+            networkTypeFk {
+              id
+              name
+            }
+          }
+          kpiCategoryFK {
+            id
+            name
           }
         }
       }
@@ -85,6 +91,14 @@ const KpiQuery = graphql`
         }
       }
     }
+    networkTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -95,6 +109,9 @@ type Formula = {
   techFk: {
     name: string,
   },
+  networkTypeFk: {
+    name: string,
+  },
 };
 
 type FormulaForm = {
@@ -102,6 +119,7 @@ type FormulaForm = {
     kpi: string,
     vendors: string,
     technology: string,
+    networkTypes: string,
   },
 };
 
@@ -133,10 +151,14 @@ const KpiTypes = () => {
   const [formulaEditForm, setFormulaEditForm] = useState<any>({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, KpiQuery, {}).then(data => {
       setDataKpis(data);
     });
-  }, [dataKpis]);
+  }, [setDataKpis]);
 
   const handleCallback = childData => {
     setFormulaForm({data: childData});
@@ -158,7 +180,7 @@ const KpiTypes = () => {
     const variables: RemoveKpiMutationVariables = {
       id: id,
     };
-    RemoveKpiMutation(variables);
+    RemoveKpiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const showEditKpiItemForm = (kpis: Kpis) => {
@@ -177,6 +199,7 @@ const KpiTypes = () => {
         formValues={dataEdit.item.node}
         threshold={dataKpis.thresholds?.edges}
         hideEditKpiForm={hideEditKpiForm}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -184,7 +207,7 @@ const KpiTypes = () => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12}>
           <ConfigureTitle
             title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
             subtitle={fbt(
@@ -193,26 +216,30 @@ const KpiTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsKpi />
           <List disablePadding>
             {dataKpis.kpis?.edges.map((item, index) => (
               <KpiTypeItem
                 key={index}
                 threshold={dataKpis.thresholds?.edges}
-                onChange={() => handleRemove(item.node.id)}
+                deleteItem={() => handleRemove(item.node.id)}
                 edit={() => showEditKpiItemForm({item})}
                 handleFormulaClick={handleFormulaClick}
                 parentCallback={handleCallback}
                 handleEditFormulaClick={handleEditFormulaClick}
                 parentEditCallback={handleEditCallback}
+                isCompleted={isCompleted}
                 {...item.node}
               />
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-          <AddKpiItemForm kpiNames={dataKpis.kpis?.edges} />
+        <Grid item xs={12} sm={12} lg={3} xl={3}>
+          <AddKpiItemForm
+            kpiNames={dataKpis.kpis?.edges}
+            isCompleted={isCompleted}
+          />
           <AddFormulaItemForm
             parentCallback={handleCallback}
             handleClick={handleFormulaClick}
@@ -223,14 +250,20 @@ const KpiTypes = () => {
         <AddFormulaDialog
           open={openDialog}
           dataFormula={formulaForm}
-          onClose={() => setOpenDialog(false)}
+          onClose={() => {
+            setOpenDialog(false);
+            isCompleted();
+          }}
         />
       )}
       {openEditDialog && (
         <EditFormulaDialog
           open={openEditDialog}
           dataFormula={formulaEditForm}
-          onClose={() => setOpenEditDialog(false)}
+          onClose={() => {
+            setOpenEditDialog(false);
+            isCompleted();
+          }}
         />
       )}
     </div>

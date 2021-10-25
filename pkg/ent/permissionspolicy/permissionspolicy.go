@@ -69,6 +69,14 @@ var Columns = []string{
 	FieldAssurancePolicy,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the PermissionsPolicy type.
+var ForeignKeys = []string{
+	"resource_relationship_multiplicity_policies",
+	"resource_relationship_type_policies",
+	"resource_type_base_type_policies",
+	"resource_type_class_policies",
+}
+
 var (
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
@@ -82,6 +90,11 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

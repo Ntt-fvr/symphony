@@ -56,7 +56,7 @@ export default function DetailsPanelSection(props: Props) {
     className,
     variant = 'normal',
   } = props;
-
+  console.log(actionItems);
   return (
     <div className={classNames(className, classes.root)}>
       <div className={classes.header}>

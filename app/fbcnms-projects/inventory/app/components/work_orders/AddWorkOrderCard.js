@@ -33,6 +33,7 @@ import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSav
 import Grid from '@material-ui/core/Grid';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
+import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useCallback, useContext, useReducer, useState} from 'react';
@@ -262,6 +263,7 @@ const AddWorkOrderCard = (props: Props) => {
       status,
       priority,
       properties,
+      organizationFk,
     } = nullthrows(workOrder);
     const workOrderTypeId = nullthrows(workOrder?.workOrderTypeId);
     const variables: AddWorkOrderMutationVariables = {
@@ -270,6 +272,7 @@ const AddWorkOrderCard = (props: Props) => {
         description,
         locationId,
         workOrderTypeId,
+        organizationFk: organizationFk?.id,
         assigneeId: assignedTo?.id,
         projectId: project?.id,
         status,
@@ -307,6 +310,7 @@ const AddWorkOrderCard = (props: Props) => {
       | 'assignedTo'
       | 'project'
       | 'locationId'
+      | 'organizationFk'
       | 'priority'
       | 'status',
     value,
@@ -504,6 +508,14 @@ const AddWorkOrderCard = (props: Props) => {
               </Grid>
               <Grid item xs={4} sm={4} lg={4} xl={4}>
                 <ExpandingPanel title="Team">
+                  <FormField className={classes.input} label="Organization">
+                    <OrganizationTypeahead
+                      onOrganizationSelected={organization =>
+                        _setWorkOrderDetail('organizationFk', organization)
+                      }
+                      margin="dense"
+                    />
+                  </FormField>
                   <FormField className={classes.input} label="Assignee">
                     <UserTypeahead
                       onUserSelection={user =>

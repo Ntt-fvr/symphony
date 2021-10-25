@@ -10,7 +10,7 @@
 
 import React, {useState} from 'react';
 
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 import type {AddTresholdMutationVariables} from '../../mutations/__generated__/AddTresholdMutation.graphql';
 
@@ -86,6 +86,7 @@ type Node = {
 
 type Props = $ReadOnly<{|
   thresholdNames?: Array<Node>,
+  isCompleted: void => void,
 |}>;
 
 type Thresholds = {
@@ -99,7 +100,7 @@ type Thresholds = {
 };
 
 export default function AddThresholdItemForm(props: Props) {
-  const {thresholdNames} = props;
+  const {thresholdNames, isCompleted} = props;
   const classes = useStyles();
 
   const [thresholds, setThresholds] = useState<Thresholds>({data: {}});
@@ -134,17 +135,25 @@ export default function AddThresholdItemForm(props: Props) {
       },
     };
     setShowChecking(true);
-    AddTresholdMutation(variables);
+    AddTresholdMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setThresholds({data: {}});
+      },
+    });
   }
+
+  const setReturn = () => {
+    setShowChecking(false);
+  };
 
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="threshold"
         card_header="Add Threshold"
         title="Threshold"
         text_button="Add new threshold"
-        thresholdNames={thresholdNames}
+        setReturn={setReturn}
       />
     );
   }

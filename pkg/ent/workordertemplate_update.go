@@ -79,6 +79,33 @@ func (wotu *WorkOrderTemplateUpdate) ClearAssigneeCanCompleteWorkOrder() *WorkOr
 	return wotu
 }
 
+// SetDuration sets the duration field.
+func (wotu *WorkOrderTemplateUpdate) SetDuration(f float64) *WorkOrderTemplateUpdate {
+	wotu.mutation.ResetDuration()
+	wotu.mutation.SetDuration(f)
+	return wotu
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wotu *WorkOrderTemplateUpdate) SetNillableDuration(f *float64) *WorkOrderTemplateUpdate {
+	if f != nil {
+		wotu.SetDuration(*f)
+	}
+	return wotu
+}
+
+// AddDuration adds f to duration.
+func (wotu *WorkOrderTemplateUpdate) AddDuration(f float64) *WorkOrderTemplateUpdate {
+	wotu.mutation.AddDuration(f)
+	return wotu
+}
+
+// ClearDuration clears the value of duration.
+func (wotu *WorkOrderTemplateUpdate) ClearDuration() *WorkOrderTemplateUpdate {
+	wotu.mutation.ClearDuration()
+	return wotu
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wotu *WorkOrderTemplateUpdate) AddPropertyTypeIDs(ids ...int) *WorkOrderTemplateUpdate {
 	wotu.mutation.AddPropertyTypeIDs(ids...)
@@ -299,6 +326,26 @@ func (wotu *WorkOrderTemplateUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
 		})
 	}
+	if value, ok := wotu.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertemplate.FieldDuration,
+		})
+	}
+	if value, ok := wotu.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertemplate.FieldDuration,
+		})
+	}
+	if wotu.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workordertemplate.FieldDuration,
+		})
+	}
 	if wotu.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -503,6 +550,33 @@ func (wotuo *WorkOrderTemplateUpdateOne) SetNillableAssigneeCanCompleteWorkOrder
 // ClearAssigneeCanCompleteWorkOrder clears the value of assignee_can_complete_work_order.
 func (wotuo *WorkOrderTemplateUpdateOne) ClearAssigneeCanCompleteWorkOrder() *WorkOrderTemplateUpdateOne {
 	wotuo.mutation.ClearAssigneeCanCompleteWorkOrder()
+	return wotuo
+}
+
+// SetDuration sets the duration field.
+func (wotuo *WorkOrderTemplateUpdateOne) SetDuration(f float64) *WorkOrderTemplateUpdateOne {
+	wotuo.mutation.ResetDuration()
+	wotuo.mutation.SetDuration(f)
+	return wotuo
+}
+
+// SetNillableDuration sets the duration field if the given value is not nil.
+func (wotuo *WorkOrderTemplateUpdateOne) SetNillableDuration(f *float64) *WorkOrderTemplateUpdateOne {
+	if f != nil {
+		wotuo.SetDuration(*f)
+	}
+	return wotuo
+}
+
+// AddDuration adds f to duration.
+func (wotuo *WorkOrderTemplateUpdateOne) AddDuration(f float64) *WorkOrderTemplateUpdateOne {
+	wotuo.mutation.AddDuration(f)
+	return wotuo
+}
+
+// ClearDuration clears the value of duration.
+func (wotuo *WorkOrderTemplateUpdateOne) ClearDuration() *WorkOrderTemplateUpdateOne {
+	wotuo.mutation.ClearDuration()
 	return wotuo
 }
 
@@ -722,6 +796,26 @@ func (wotuo *WorkOrderTemplateUpdateOne) sqlSave(ctx context.Context) (_node *Wo
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
+		})
+	}
+	if value, ok := wotuo.mutation.Duration(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertemplate.FieldDuration,
+		})
+	}
+	if value, ok := wotuo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: workordertemplate.FieldDuration,
+		})
+	}
+	if wotuo.mutation.DurationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: workordertemplate.FieldDuration,
 		})
 	}
 	if wotuo.mutation.PropertyTypesCleared() {

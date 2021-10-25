@@ -49,19 +49,24 @@ const useStyles = makeStyles(() => ({
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
+    marginLeft: '1rem',
   },
   cancel: {
     width: '111px',
     height: '36px',
-    marginRight: '70px',
     alignSelf: 'flex-end',
   },
-  delete: {
+  header: {
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'flex-end',
   },
   title: {
     marginLeft: '10px',
+  },
+  titleEdit: {
+    display: 'flex',
+    alignItems: 'center',
   },
   textTitle: {
     paddingLeft: '2rem',
@@ -146,35 +151,37 @@ const AlarmFilteringFormCreate = (props: Props) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons} alignItems="center">
-          <Grid xs={7} sm={9} lg={11} xl={11}>
+        <Grid container className={classes.titleButtons}>
+          <Grid
+            className={classes.titleEdit}
+            xs={5}
+            sm={5}
+            md={7}
+            lg={9}
+            xl={9}>
             <Text className={classes.textTitle} variant="h6">
               {fbt('Create Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid xs={5} sm={3} lg={1} xl={1} container>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  className={classes.cancel}
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => returnTableAlarm()}>
-                  Cancel
-                </Button>
-              </FormField>
-            </Grid>
-            <Grid xs={6}>
-              <FormField>
-                <Button
-                  onClick={() => setDialogOpen(true)}
-                  className={classes.option}
-                  variant="contained"
-                  color="primary">
-                  Save
-                </Button>
-              </FormField>
-            </Grid>
+          <Grid className={classes.header} xs={7} sm={7} md={5} lg={3} xl={3}>
+            <FormField>
+              <Button
+                className={classes.cancel}
+                variant="outlined"
+                color="primary"
+                onClick={() => returnTableAlarm()}>
+                Cancel
+              </Button>
+            </FormField>
+            <FormField>
+              <Button
+                onClick={() => setDialogOpen(true)}
+                className={classes.option}
+                variant="contained"
+                color="primary">
+                Save
+              </Button>
+            </FormField>
           </Grid>
         </Grid>
         <Grid xs={12}>

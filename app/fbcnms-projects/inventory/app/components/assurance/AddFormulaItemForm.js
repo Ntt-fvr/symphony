@@ -82,6 +82,14 @@ const AddFormulaQuery = graphql`
         }
       }
     }
+    networkTypes {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
 
@@ -94,6 +102,7 @@ type Formula = {
   kpi: string,
   vendors: string,
   technology: string,
+  networkTypes: string,
 };
 
 export default function AddFormulaItemForm(props: Props) {
@@ -158,6 +167,20 @@ export default function AddFormulaItemForm(props: Props) {
           ))}
         </Select>
       </FormField>
+      <FormField className={classes.formField} label="Network Type" required>
+        <Select
+          className={classes.select}
+          disableUnderline
+          name="networkTypes"
+          type="reset"
+          onChange={handleChange}>
+          {data.networkTypes?.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormField>
       <FormField>
         <Button
           className={classes.addCounter}
@@ -167,7 +190,7 @@ export default function AddFormulaItemForm(props: Props) {
           }}
           disabled={
             !(
-              Object.values(formula).length === 3 &&
+              Object.values(formula).length === 4 &&
               !Object.values(formula).some(item => item === '')
             )
           }>
