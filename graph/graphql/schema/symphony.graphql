@@ -8137,6 +8137,7 @@ type Kpi implements Node {
   status: Boolean!
   domainFk: Domain!
   formulaFk: [Formula]
+  kpiCategoryFK: KpiCategory!
 }
 
 input AddKpiInput {
@@ -8599,21 +8600,6 @@ enum KqiFilterType {
 
 input KqiFilterInput {
   filterType: KqiFilterType!
-  operator: FilterOperator!
-  stringValue: String
-  idSet: [ID!]
-  maxDepth: Int = 5
-  stringSet: [String!]
-}
-
-enum OrganizationFilterType {
-  ID
-  NAME
-  DESCRIPTION
-}
-
-input OrganizationFilterInput {
-  filterType: OrganizationFilterType!
   operator: FilterOperator!
   stringValue: String
   idSet: [ID!]

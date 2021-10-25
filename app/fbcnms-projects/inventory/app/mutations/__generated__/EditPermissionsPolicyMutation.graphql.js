@@ -199,6 +199,7 @@ export type EditPermissionsPolicyMutationResponse = {|
         +isAllowed: PermissionValue,
         +projectTypeIds: ?$ReadOnlyArray<string>,
         +workOrderTypeIds: ?$ReadOnlyArray<string>,
+        +organizationIds: ?$ReadOnlyArray<string>,
       |},
       +templates: {|
         +create: {|
@@ -246,6 +247,11 @@ export type EditPermissionsPolicyMutationResponse = {|
         +email: string,
         +status: UserStatus,
         +role: UserRole,
+        +organizationFk: ?{|
+          +id: string,
+          +name: string,
+          +description: string,
+        |},
       |}>,
       +policies: $ReadOnlyArray<{|
         +id: string,
@@ -349,6 +355,7 @@ export type EditPermissionsPolicyMutationResponse = {|
             +isAllowed: PermissionValue,
             +projectTypeIds: ?$ReadOnlyArray<string>,
             +workOrderTypeIds: ?$ReadOnlyArray<string>,
+            +organizationIds: ?$ReadOnlyArray<string>,
           |},
           +templates: {|
             +create: {|
@@ -501,6 +508,7 @@ mutation EditPermissionsPolicyMutation(
           isAllowed
           projectTypeIds
           workOrderTypeIds
+          organizationIds
         }
         templates {
           create {
@@ -545,6 +553,11 @@ mutation EditPermissionsPolicyMutation(
         email
         status
         role
+        organizationFk {
+          id
+          name
+          description
+        }
       }
       policies {
         id
@@ -649,6 +662,7 @@ mutation EditPermissionsPolicyMutation(
               isAllowed
               projectTypeIds
               workOrderTypeIds
+              organizationIds
             }
             templates {
               create {
@@ -989,6 +1003,13 @@ v9 = {
               "kind": "ScalarField",
               "name": "workOrderTypeIds",
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "organizationIds",
+              "storageKey": null
             }
           ],
           "storageKey": null
@@ -1154,6 +1175,20 @@ v11 = [
                 "kind": "ScalarField",
                 "name": "role",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Organization",
+                "kind": "LinkedField",
+                "name": "organizationFk",
+                "plural": false,
+                "selections": [
+                  (v1/*: any*/),
+                  (v2/*: any*/),
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -1199,12 +1234,12 @@ return {
     "selections": (v11/*: any*/)
   },
   "params": {
-    "cacheID": "6178debbb078ab026b547d6f6982ebd7",
+    "cacheID": "a75984e4aac8d099564db43fd2ad3a9d",
     "id": null,
     "metadata": {},
     "name": "EditPermissionsPolicyMutation",
     "operationKind": "mutation",
-    "text": "mutation EditPermissionsPolicyMutation(\n  $input: EditPermissionsPolicyInput!\n) {\n  editPermissionsPolicy(input: $input) {\n    id\n    name\n    description\n    isGlobal\n    policy {\n      __typename\n      ... on InventoryPolicy {\n        read {\n          isAllowed\n        }\n        documentCategory {\n          locationTypeID\n          read {\n            isAllowed\n            documentCategoryIds\n          }\n          create {\n            isAllowed\n            documentCategoryIds\n          }\n          update {\n            isAllowed\n            documentCategoryIds\n          }\n          delete {\n            isAllowed\n            documentCategoryIds\n          }\n        }\n        location {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n            locationTypeIds\n          }\n          delete {\n            isAllowed\n          }\n        }\n        equipment {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        equipmentType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        locationType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        portType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        serviceType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n      }\n      ... on WorkforcePolicy {\n        read {\n          isAllowed\n          projectTypeIds\n          workOrderTypeIds\n        }\n        templates {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        data {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n          assign {\n            isAllowed\n          }\n          transferOwnership {\n            isAllowed\n          }\n        }\n      }\n    }\n    groups {\n      id\n      name\n      description\n      status\n      members {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n      }\n      policies {\n        id\n        name\n        description\n        isGlobal\n        policy {\n          __typename\n          ... on InventoryPolicy {\n            read {\n              isAllowed\n            }\n            documentCategory {\n              locationTypeID\n              read {\n                isAllowed\n                documentCategoryIds\n              }\n              create {\n                isAllowed\n                documentCategoryIds\n              }\n              update {\n                isAllowed\n                documentCategoryIds\n              }\n              delete {\n                isAllowed\n                documentCategoryIds\n              }\n            }\n            location {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n                locationTypeIds\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipment {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipmentType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            locationType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            portType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            serviceType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n          }\n          ... on WorkforcePolicy {\n            read {\n              isAllowed\n              projectTypeIds\n              workOrderTypeIds\n            }\n            templates {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            data {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n              assign {\n                isAllowed\n              }\n              transferOwnership {\n                isAllowed\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation EditPermissionsPolicyMutation(\n  $input: EditPermissionsPolicyInput!\n) {\n  editPermissionsPolicy(input: $input) {\n    id\n    name\n    description\n    isGlobal\n    policy {\n      __typename\n      ... on InventoryPolicy {\n        read {\n          isAllowed\n        }\n        documentCategory {\n          locationTypeID\n          read {\n            isAllowed\n            documentCategoryIds\n          }\n          create {\n            isAllowed\n            documentCategoryIds\n          }\n          update {\n            isAllowed\n            documentCategoryIds\n          }\n          delete {\n            isAllowed\n            documentCategoryIds\n          }\n        }\n        location {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n            locationTypeIds\n          }\n          delete {\n            isAllowed\n          }\n        }\n        equipment {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        equipmentType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        locationType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        portType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        serviceType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n      }\n      ... on WorkforcePolicy {\n        read {\n          isAllowed\n          projectTypeIds\n          workOrderTypeIds\n          organizationIds\n        }\n        templates {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        data {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n          assign {\n            isAllowed\n          }\n          transferOwnership {\n            isAllowed\n          }\n        }\n      }\n    }\n    groups {\n      id\n      name\n      description\n      status\n      members {\n        id\n        authID\n        firstName\n        lastName\n        email\n        status\n        role\n        organizationFk {\n          id\n          name\n          description\n        }\n      }\n      policies {\n        id\n        name\n        description\n        isGlobal\n        policy {\n          __typename\n          ... on InventoryPolicy {\n            read {\n              isAllowed\n            }\n            documentCategory {\n              locationTypeID\n              read {\n                isAllowed\n                documentCategoryIds\n              }\n              create {\n                isAllowed\n                documentCategoryIds\n              }\n              update {\n                isAllowed\n                documentCategoryIds\n              }\n              delete {\n                isAllowed\n                documentCategoryIds\n              }\n            }\n            location {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n                locationTypeIds\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipment {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            equipmentType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            locationType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            portType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            serviceType {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n          }\n          ... on WorkforcePolicy {\n            read {\n              isAllowed\n              projectTypeIds\n              workOrderTypeIds\n              organizationIds\n            }\n            templates {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n            }\n            data {\n              create {\n                isAllowed\n              }\n              update {\n                isAllowed\n              }\n              delete {\n                isAllowed\n              }\n              assign {\n                isAllowed\n              }\n              transferOwnership {\n                isAllowed\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

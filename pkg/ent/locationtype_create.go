@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/resourcerelationship"
 	"github.com/facebookincubator/symphony/pkg/ent/surveytemplatecategory"
 )
 
@@ -176,6 +177,21 @@ func (ltc *LocationTypeCreate) AddDocumentCategory(d ...*DocumentCategory) *Loca
 		ids[i] = d[i].ID
 	}
 	return ltc.AddDocumentCategoryIDs(ids...)
+}
+
+// AddResourceRelationshipFkIDs adds the resource_relationship_fk edge to ResourceRelationship by ids.
+func (ltc *LocationTypeCreate) AddResourceRelationshipFkIDs(ids ...int) *LocationTypeCreate {
+	ltc.mutation.AddResourceRelationshipFkIDs(ids...)
+	return ltc
+}
+
+// AddResourceRelationshipFk adds the resource_relationship_fk edges to ResourceRelationship.
+func (ltc *LocationTypeCreate) AddResourceRelationshipFk(r ...*ResourceRelationship) *LocationTypeCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ltc.AddResourceRelationshipFkIDs(ids...)
 }
 
 // Mutation returns the LocationTypeMutation object of the builder.
@@ -420,6 +436,25 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: documentcategory.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ltc.mutation.ResourceRelationshipFkIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   locationtype.ResourceRelationshipFkTable,
+			Columns: []string{locationtype.ResourceRelationshipFkColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resourcerelationship.FieldID,
 				},
 			},
 		}
