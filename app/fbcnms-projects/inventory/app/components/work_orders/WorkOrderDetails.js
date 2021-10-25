@@ -8,13 +8,13 @@
  * @format
  */
 
-import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
-import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
 import type {
   AddHyperlinkInput,
   AddHyperlinkMutationResponse,
   AddHyperlinkMutationVariables,
 } from '../../mutations/__generated__/AddHyperlinkMutation.graphql';
+import type {AddImageMutationResponse} from '../../mutations/__generated__/AddImageMutation.graphql';
+import type {AddImageMutationVariables} from '../../mutations/__generated__/AddImageMutation.graphql';
 import type {ChecklistCategoriesMutateStateActionType} from '../checklist/ChecklistCategoriesMutateAction';
 import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategoriesMutateState';
 import type {ContextRouter} from 'react-router-dom';
@@ -22,12 +22,12 @@ import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
-import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
-import AddImageMutation from '../../mutations/AddImageMutation';
 import AddHyperlinkMutation from '../../mutations/AddHyperlinkMutation';
+import AddImageMutation from '../../mutations/AddImageMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
+import ApplyIcon from '@symphony/design-system/icons/Actions/ApplyIcon';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -41,7 +41,6 @@ import FormFieldWithPermissions from '../../common/FormFieldWithPermissions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@symphony/design-system/components/IconButton';
 import LinkIcon from '@symphony/design-system/icons/Actions/LinkIcon';
-import ApplyIcon from '@symphony/design-system/icons/Actions/ApplyIcon';
 import LocationBreadcrumbsTitle from '../location/LocationBreadcrumbsTitle';
 import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
@@ -72,8 +71,10 @@ import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
+
+import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import {useSnackbar} from 'notistack';
-import {isChecklistItemDone} from '../checklist/ChecklistUtils.js';
+
 type Props = $ReadOnly<{|
   workOrder: WorkOrderDetails_workOrder,
   onWorkOrderRemoved: () => void,
@@ -159,7 +160,6 @@ const WorkOrderDetails = ({
   onWorkOrderRemoved,
   onCancelClicked,
   confirm,
-  alert,
 }: Props) => {
   const classes = useStyles();
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
@@ -488,18 +488,8 @@ const WorkOrderDetails = ({
             'Verification message details',
           ),
           confirmLabel: Strings.common.okButton,
-        }).then(async confirmed => {
+        }).then(confirmed => {
           if (confirmed) {
-            const items: Array<CheckListItem> = editingCategories.flatMap(
-              x => x.checkList || [],
-            );
-            const isNotDone = await verifyMandatoryItems(items);
-            if (isNotDone) {
-              alert(
-                `There are mandatory checklist items pending to be answered. Please complete them before closing the Work Order.`,
-              );
-              return;
-            }
             resolve();
           } else {
             reject();
@@ -508,24 +498,11 @@ const WorkOrderDetails = ({
       }
     });
 
-    verification
-      .then(() => {
-        setWorkOrder({...workOrder, status: value});
-      })
-      .catch(x => console.error('error', x));
-  };
-
-  const verifyMandatoryItems = async (itemsArray: Array<CheckListItem>) => {
-    return itemsArray.some(value => {
-      const isMandatory = value.isMandatory;
-      if (!isMandatory) {
-        return false;
-      }
-      const isDone = isChecklistItemDone(value);
-
-      return !isDone;
+    verification.then(() => {
+      setWorkOrder({...workOrder, status: value});
     });
   };
+
   const _setWorkOrderDetail = (
     key:
       | 'name'
@@ -534,7 +511,8 @@ const WorkOrderDetails = ({
       | 'installDate'
       | 'assignedTo'
       | 'priority'
-      | 'project',
+      | 'project'
+      | 'organizationFk',
     value,
   ) => {
     setWorkOrder(prevWorkOrder => ({...prevWorkOrder, [`${key}`]: value}));
@@ -866,6 +844,16 @@ const WorkOrderDetails = ({
                   </Grid>
                   <Grid item xs={4} sm={4} lg={4} xl={4}>
                     <ExpandingPanel title="Team" className={classes.card}>
+                      <FormField className={classes.input} label="Organization">
+                        <OrganizationTypeahead
+                          selectedOrganization={workOrder.organizationFk}
+                          onOrganizationSelected={organization =>
+                            _setWorkOrderDetail('organizationFk', organization)
+                          }
+                          margin="dense"
+                        />
+                      </FormField>
+
                       <FormFieldWithPermissions
                         className={classes.input}
                         label="Owner"
@@ -936,6 +924,11 @@ export default withRouter(
           id
           name
           description
+          organizationFk {
+            id
+            name
+            description
+          }
           workOrderType {
             name
             id

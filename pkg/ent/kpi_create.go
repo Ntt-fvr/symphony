@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/domain"
 	"github.com/facebookincubator/symphony/pkg/ent/formula"
 	"github.com/facebookincubator/symphony/pkg/ent/kpi"
+	"github.com/facebookincubator/symphony/pkg/ent/kpicategory"
 	"github.com/facebookincubator/symphony/pkg/ent/threshold"
 )
 
@@ -90,6 +91,25 @@ func (kc *KpiCreate) SetNillableDomainID(id *int) *KpiCreate {
 // SetDomain sets the domain edge to Domain.
 func (kc *KpiCreate) SetDomain(d *Domain) *KpiCreate {
 	return kc.SetDomainID(d.ID)
+}
+
+// SetKpiCategoryID sets the KpiCategory edge to KpiCategory by id.
+func (kc *KpiCreate) SetKpiCategoryID(id int) *KpiCreate {
+	kc.mutation.SetKpiCategoryID(id)
+	return kc
+}
+
+// SetNillableKpiCategoryID sets the KpiCategory edge to KpiCategory by id if the given value is not nil.
+func (kc *KpiCreate) SetNillableKpiCategoryID(id *int) *KpiCreate {
+	if id != nil {
+		kc = kc.SetKpiCategoryID(*id)
+	}
+	return kc
+}
+
+// SetKpiCategory sets the KpiCategory edge to KpiCategory.
+func (kc *KpiCreate) SetKpiCategory(k *KpiCategory) *KpiCreate {
+	return kc.SetKpiCategoryID(k.ID)
 }
 
 // AddFormulakpiIDs adds the formulakpi edge to Formula by ids.
@@ -293,6 +313,25 @@ func (kc *KpiCreate) createSpec() (*Kpi, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: domain.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := kc.mutation.KpiCategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   kpi.KpiCategoryTable,
+			Columns: []string{kpi.KpiCategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: kpicategory.FieldID,
 				},
 			},
 		}

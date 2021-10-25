@@ -10,7 +10,7 @@
 import React, {useState} from 'react';
 
 // COMPONENTS //
-import AddedSuccessfullyMessage from './AddedSuccessfullyMessage';
+import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
 // MUTATIONS //
 import type {AddKpiMutationVariables} from '../../mutations/__generated__/AddKpiMutation.graphql';
@@ -29,19 +29,6 @@ import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-
-const AddDomainsKpiQuery = graphql`
-  query AddKpiItemFormQuery {
-    domains {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,6 +71,7 @@ type Node = {
 };
 
 type Props = $ReadOnly<{|
+  isCompleted: void => void,
   kpiNames?: Array<Node>,
 |}>;
 
@@ -94,16 +82,38 @@ type Kpis = {
     status: boolean,
     domain: string,
     description: string,
+    category: string,
   },
 };
 
+const AddDomainsKpiQuery = graphql`
+  query AddKpiItemFormQuery {
+    domains {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    kpiCategories {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export default function AddKpiItemForm(props: Props) {
-  const {kpiNames} = props;
+  const {kpiNames, isCompleted} = props;
   const classes = useStyles();
 
   const [kpis, setKpis] = useState<Kpis>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
-  const names = kpiNames?.map(item => item.node.name);
+  const names = kpiNames?.map(item => item?.node.name);
 
   const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
 
@@ -123,20 +133,31 @@ export default function AddKpiItemForm(props: Props) {
         status: kpis.data.status,
         domainFk: kpis.data.domain,
         description: kpis.data.description,
+        kpiCategoryFK: kpis.data.category,
       },
     };
     setShowChecking(true);
-    AddKpiMutation(variables);
+    AddKpiMutation(variables, {
+      onCompleted: () => {
+        isCompleted();
+        setKpis({data: {}});
+      },
+    });
   }
+
+  const setReturn = () => {
+    setShowChecking(false);
+  };
 
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="kpi"
-        card_header="Add Kpi"
-        title="Kpi"
-        text_button="Add new Kpi"
+        data_entry="KPI"
+        card_header="Add KPI"
+        title="KPI"
+        text_button="Add new KPI"
         names={kpiNames}
+        setReturn={setReturn}
       />
     );
   }
@@ -178,7 +199,20 @@ export default function AddKpiItemForm(props: Props) {
           disableUnderline
           name="domain"
           onChange={handleChange}>
-          {data.domains.edges.map((item, index) => (
+          {data?.domains.edges.map((item, index) => (
+            <MenuItem key={index} value={item.node?.id}>
+              {item.node?.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormField>
+      <FormField label="Category" className={classes.formField}>
+        <Select
+          className={classes.select}
+          disableUnderline
+          name="category"
+          onChange={handleChange}>
+          {data?.kpiCategories.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>
@@ -201,7 +235,7 @@ export default function AddKpiItemForm(props: Props) {
           onClick={handleClick}
           disabled={
             !(
-              Object.values(kpis.data).length === 4 &&
+              Object.values(kpis.data).length === 5 &&
               !Object.values(kpis.data).some(item => item === '') &&
               !names?.some(item => item === kpis.data.name)
             )

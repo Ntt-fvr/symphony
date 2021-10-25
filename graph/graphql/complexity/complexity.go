@@ -91,6 +91,9 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Kpis = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiOrder, _ []*models.KpiFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.KpiCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiCategoryOrder, _ []*models.KpiCategoryFilterInput) int {
+        	return PaginationComplexity(childComplexity, after, first, before, last)
+    }
 	complexity.Query.Thresholds = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ThresholdOrder, _ []*models.ThresholdFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
@@ -116,6 +119,9 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.Techs = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.TechOrder, _ []*models.TechFilterInput) int {
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
+	complexity.Query.NetworkTypes = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.NetworkTypeOrder, _ []*models.NetworkTypeFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.RecommendationsSources = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.RecommendationsSourcesOrder, _ []*models.RecommendationsSourcesFilterInput) int {

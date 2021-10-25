@@ -30,6 +30,11 @@ graphql`
     email
     status
     role
+    organizationFk {
+      id
+      name
+      description
+    }
   }
 `;
 
@@ -48,6 +53,13 @@ graphql`
     name
     description
     status
+  }
+`;
+graphql`
+  fragment UserManagementUtils_organization on Organization {
+    id
+    name
+    description
   }
 `;
 
@@ -163,6 +175,7 @@ graphql`
       isAllowed
       projectTypeIds
       workOrderTypeIds
+      organizationIds
     }
     templates {
       create {

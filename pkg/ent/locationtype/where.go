@@ -826,6 +826,34 @@ func HasDocumentCategoryWith(preds ...predicate.DocumentCategory) predicate.Loca
 	})
 }
 
+// HasResourceRelationshipFk applies the HasEdge predicate on the "resource_relationship_fk" edge.
+func HasResourceRelationshipFk() predicate.LocationType {
+	return predicate.LocationType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourceRelationshipFkTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceRelationshipFkTable, ResourceRelationshipFkColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasResourceRelationshipFkWith applies the HasEdge predicate on the "resource_relationship_fk" edge with a given conditions (other predicates).
+func HasResourceRelationshipFkWith(preds ...predicate.ResourceRelationship) predicate.LocationType {
+	return predicate.LocationType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResourceRelationshipFkInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResourceRelationshipFkTable, ResourceRelationshipFkColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.LocationType) predicate.LocationType {
 	return predicate.LocationType(func(s *sql.Selector) {

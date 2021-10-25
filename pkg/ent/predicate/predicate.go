@@ -19,6 +19,9 @@ type AlarmFilter func(*sql.Selector)
 // AlarmStatus is the predicate function for alarmstatus builders.
 type AlarmStatus func(*sql.Selector)
 
+// Appointment is the predicate function for appointment builders.
+type Appointment func(*sql.Selector)
+
 // Block is the predicate function for block builders.
 type Block func(*sql.Selector)
 
@@ -133,6 +136,9 @@ type Hyperlink func(*sql.Selector)
 // Kpi is the predicate function for kpi builders.
 type Kpi func(*sql.Selector)
 
+// KpiCategory is the predicate function for kpicategory builders.
+type KpiCategory func(*sql.Selector)
+
 // Kqi is the predicate function for kqi builders.
 type Kqi func(*sql.Selector)
 
@@ -162,6 +168,9 @@ type Location func(*sql.Selector)
 
 // LocationType is the predicate function for locationtype builders.
 type LocationType func(*sql.Selector)
+
+// NetworkType is the predicate function for networktype builders.
+type NetworkType func(*sql.Selector)
 
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
@@ -195,6 +204,24 @@ type RecommendationsSources func(*sql.Selector)
 
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
+
+// ResourceRelationship is the predicate function for resourcerelationship builders.
+type ResourceRelationship func(*sql.Selector)
+
+// ResourceRelationshipMultiplicity is the predicate function for resourcerelationshipmultiplicity builders.
+type ResourceRelationshipMultiplicity func(*sql.Selector)
+
+// ResourceRelationshipType is the predicate function for resourcerelationshiptype builders.
+type ResourceRelationshipType func(*sql.Selector)
+
+// ResourceType is the predicate function for resourcetype builders.
+type ResourceType func(*sql.Selector)
+
+// ResourceTypeBaseType is the predicate function for resourcetypebasetype builders.
+type ResourceTypeBaseType func(*sql.Selector)
+
+// ResourceTypeClass is the predicate function for resourcetypeclass builders.
+type ResourceTypeClass func(*sql.Selector)
 
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)

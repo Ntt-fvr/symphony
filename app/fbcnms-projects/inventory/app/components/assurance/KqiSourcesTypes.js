@@ -11,7 +11,7 @@ import type {DeleteKqiSourceMutationVariables} from '../../mutations/__generated
 
 import DeleteKqiSourceMutation from '../../mutations/DeleteKqiSourceMutation';
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import fbt from 'fbt';
 import {fetchQuery, graphql} from 'relay-runtime';
@@ -22,29 +22,17 @@ import {makeStyles} from '@material-ui/styles';
 
 import {TitleTextCardsKqiSource} from './TitleTextCardsKqiSource';
 
-import {KqiAddItemForm} from './KqiAddItemForm';
+import {KqiSourceAddForm} from './KqiSourceAddForm';
 
 import KqiSourceFormEdit from './KqiSourceFormEdit';
 
 import KqiSourcesTypeItem from './KqiSourcesTypeItem ';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
     margin: '40px',
   },
-  paper: {
-    padding: theme.spacing(2),
-  },
-  listCarCounter: {
-    listStyle: 'none',
-  },
-  powerSearchContainer: {
-    margin: '10px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
-  },
-  titulo: {},
 }));
 
 const KqiSourceQuery = graphql`
@@ -75,16 +63,20 @@ const KqiSourcesTypes = () => {
   const [dataEdit, setDataEdit] = useState<KqiSource>({});
 
   useEffect(() => {
+    isCompleted();
+  }, []);
+
+  const isCompleted = useCallback(() => {
     fetchQuery(RelayEnvironment, KqiSourceQuery, {}).then(data => {
       setItems(data);
     });
-  }, [items]);
+  }, [setItems]);
 
   const handleRemove = id => {
     const variables: DeleteKqiSourceMutationVariables = {
       id: id,
     };
-    DeleteKqiSourceMutation(variables);
+    DeleteKqiSourceMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const showEditKqiSourceForm = (kqiSources: KqiSource) => {
@@ -103,13 +95,14 @@ const KqiSourcesTypes = () => {
         kqiSourcesNames={kqiSourcesNames}
         formValues={dataEdit.item.node}
         hideKqiSourceFormEdit={hideKqiSourceFormEdit}
+        isCompleted={isCompleted}
       />
     );
   }
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid className={classes.titulo} item xs={12}>
+        <Grid item xs={12}>
           <ConfigureTitle
             title={fbt('KQI Sources', 'KQI Title')}
             subtitle={fbt(
@@ -118,7 +111,7 @@ const KqiSourcesTypes = () => {
             )}
           />
         </Grid>
-        <Grid className={classes.paper} item xs={9}>
+        <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
           <TitleTextCardsKqiSource />
           <List>
             {items.kqiSources?.edges.map(item => (
@@ -131,8 +124,11 @@ const KqiSourcesTypes = () => {
             ))}
           </List>
         </Grid>
-        <Grid className={classes.paper} item xs={3}>
-          <KqiAddItemForm kqiSourcesNames={items.kqiSources?.edges} />
+        <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
+          <KqiSourceAddForm
+            kqiSourcesNames={items.kqiSources?.edges}
+            isCompleted={isCompleted}
+          />
         </Grid>
       </Grid>
     </div>
