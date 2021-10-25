@@ -191,10 +191,10 @@ export default function AddKpiItemForm(props: Props) {
           variant="outlined"
           name="name"
           onChange={handleChange}
-          hasError={names?.some(item => item === kpis.data.name)}
-          errorText={
+          error={names?.some(item => item === kpis.data.name)}
+          helperText={
             names?.some(item => item === kpis.data.name)
-              ? 'Counter name existing'
+              ? 'Kpi name existing'
               : ''
           }
         />

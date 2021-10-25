@@ -21,6 +21,8 @@ import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
+
+import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {MenuItem, Select} from '@material-ui/core';
@@ -49,6 +51,32 @@ const useStyles = makeStyles(() => ({
   },
   formField: {
     margin: '0 43px 22px 30px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.75)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   cardHeader: {
     margin: '20px 43px 22px 30px',
@@ -66,15 +94,6 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     padding: '20px 0 0 30px',
-  },
-  select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
   },
 }));
 
@@ -122,7 +141,7 @@ const EditCounterItemForm = (props: Props) => {
 
   const validationName = () => {
     if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Counter name existing'};
+      return {error: true, helperText: 'Counter name existing'};
     }
   };
 
@@ -160,7 +179,20 @@ const EditCounterItemForm = (props: Props) => {
             </CardHeader>
             <Grid container>
               <Grid item xs={12} sm={12} lg={12} xl={12}>
-                <FormField
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    className={classes.input}
+                    id="counter-name"
+                    label="Name"
+                    variant="outlined"
+                    name="name"
+                    fullWidth
+                    {...name}
+                    {...validationName()}
+                  />
+                </form>
+                {/* <FormField
                   className={classes.formField}
                   label="Name"
                   required
@@ -171,10 +203,22 @@ const EditCounterItemForm = (props: Props) => {
                     name="name"
                     autoComplete="off"
                   />
-                </FormField>
+                </FormField> */}
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <FormField
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    disabled
+                    className={classes.input}
+                    id="counter-name"
+                    label="Counter Family"
+                    variant="outlined"
+                    name="counterFamily"
+                    fullWidth
+                    {...counterFamily}
+                  />
+                </form>
+                {/* <FormField
                   className={classes.formField}
                   label="Counter Family"
                   disabled>
@@ -184,10 +228,22 @@ const EditCounterItemForm = (props: Props) => {
                     name="counterFamily"
                     autoComplete="off"
                   />
-                </FormField>
+                </FormField> */}
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <FormField
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    className={classes.input}
+                    id="counter-name"
+                    label="Network Manager System"
+                    variant="outlined"
+                    name="NetworkManagerSystem"
+                    fullWidth
+                    {...networkManagerSystem}
+                  />
+                </form>
+                {/* <FormField
                   className={classes.formField}
                   label="Network Manager System"
                   required>
@@ -197,10 +253,21 @@ const EditCounterItemForm = (props: Props) => {
                     name="NetworkManagerSystem"
                     autoComplete="off"
                   />
-                </FormField>
+                </FormField> */}
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
-                <FormField
+                <form className={classes.formField} autoComplete="off">
+                  <TextField
+                    required
+                    className={classes.input}
+                    label="Counter ID"
+                    variant="outlined"
+                    name="CounterID"
+                    fullWidth
+                    {...counterID}
+                  />
+                </form>
+                {/* <FormField
                   className={classes.formField}
                   label="Counter ID"
                   required>
@@ -210,11 +277,26 @@ const EditCounterItemForm = (props: Props) => {
                     name="CounterID"
                     autoComplete="off"
                   />
-                </FormField>
+                </FormField> */}
               </Grid>
             </Grid>
             <Grid item xs={12} sm={12} lg={4} xl={4}>
-              <FormField label="Domain" className={classes.formField}>
+              <form className={classes.formField} autoComplete="off">
+                <TextField
+                  id="outlined-select-vendor"
+                  select
+                  label="Vendor name*"
+                  fullWidth
+                  name="vendor"
+                  variant="outlined">
+                  {data.vendors.edges.map((item, index) => (
+                    <MenuItem key={index} value={item.node?.id}>
+                      {item.node?.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </form>
+              {/* <FormField label="Domain" className={classes.formField}>
                 <Select
                   {...vendor}
                   className={classes.select}
@@ -226,7 +308,7 @@ const EditCounterItemForm = (props: Props) => {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormField>
+              </FormField> */}
             </Grid>
             <Grid container justify="flex-end">
               <Grid item xs={2} sm={2} lg={1} xl={1}>

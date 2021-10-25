@@ -205,7 +205,8 @@ export default function AddCounterItemForm(props: Props) {
           variant="outlined"
           name="name"
           onChange={handleChange}
-          errorText={
+          error={names?.some(item => item === counters.data.name)}
+          helperText={
             names?.some(item => item === counters.data.name)
               ? 'Counter name existing'
               : ''
@@ -243,7 +244,7 @@ export default function AddCounterItemForm(props: Props) {
           onChange={handleChange}
           name="vendor"
           variant="outlined">
-          {data.counterFamilies.edges.map((item, index) => (
+          {data.vendors.edges.map((item, index) => (
             <MenuItem key={index} value={item.node?.id}>
               {item.node?.name}
             </MenuItem>

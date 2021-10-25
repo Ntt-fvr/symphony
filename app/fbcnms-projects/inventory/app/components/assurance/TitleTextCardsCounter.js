@@ -14,7 +14,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '0  3rem 0.5rem 1rem',
+    padding: '0  4.5rem 0.5rem 1rem',
   },
   globalCenter: {
     display: 'flex',

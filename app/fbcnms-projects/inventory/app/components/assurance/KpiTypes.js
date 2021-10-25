@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     position: 'relative',
     overflow: 'auto',
-    paddingLeft: '9px',
+    paddingRight: '9px',
     maxHeight: 510,
     '&::-webkit-scrollbar': {
       width: '9px',
