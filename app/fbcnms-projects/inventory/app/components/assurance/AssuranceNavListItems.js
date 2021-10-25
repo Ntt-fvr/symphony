@@ -14,7 +14,7 @@ export const AssuranceNavListItems = () => {
     <NavListItem
       key={1}
       label="Performance Catalog"
-      path={relativeUrl('/performance')}
+      path={relativeUrl('/performance/counters_types')}
       icon={<SummarizeIcon />}
       onClick={() => {
         ServerLogger.info(LogEvents.PERFORMANCE_TAB_NAVIGATION_CLICKED);
@@ -32,7 +32,7 @@ export const AssuranceNavListItems = () => {
     <NavListItem
       key={3}
       label="Service Quality"
-      path={relativeUrl('/service_quality')}
+      path={relativeUrl('/service_quality/kqi_sources')}
       icon={<AppRegistrationIcon />}
       onClick={() => {
         ServerLogger.info(
