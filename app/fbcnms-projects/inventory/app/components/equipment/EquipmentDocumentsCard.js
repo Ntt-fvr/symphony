@@ -74,8 +74,24 @@ const EquipmentDocumentsCard = (props: Props) => {
         })}
         rightContent={
           <div className={classes.actionButtonsContainer}>
-            <AddHyperlinkButton entityType="EQUIPMENT" entityId={data.id} />
-            <DocumentsAddButton entityType="EQUIPMENT" entityId={data.id} />
+            <AddHyperlinkButton
+              entityType="EQUIPMENT"
+              entityId={data.id}
+              categories={[
+                {id: '279172874268', name: 'ATP'},
+                {id: '279172874269', name: 'Correo de notificación'},
+                {id: '279172874275', name: 'Categoria nueva'},
+              ]}
+            />
+            <DocumentsAddButton
+              entityType="EQUIPMENT"
+              entityId={data.id}
+              categories={[
+                {id: '279172874268', name: 'ATP'},
+                {id: '279172874269', name: 'Correo de notificación'},
+                {id: '279172874275', name: 'Categoria nueva'},
+              ]}
+            />
           </div>
         }>
         Documents

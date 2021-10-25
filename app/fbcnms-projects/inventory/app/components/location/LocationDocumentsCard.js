@@ -43,13 +43,13 @@ type Props = $ReadOnly<{|
 
 type dcCat = $ReadOnly<{|
   id?: number,
-  name?: string
+  name?: string,
 |}>;
 
 const LocationDocumentsCard = (props: Props) => {
   const {className, location} = props;
   const classes = useStyles();
-  console.log('===location ====', location)
+  console.log('===location ====', location);
 
   const data: LocationDocumentsCard_location$data = useFragment(
     graphql`
@@ -98,32 +98,40 @@ const LocationDocumentsCard = (props: Props) => {
   console.log('===DATA v2====', data);
 
   const documents = useMemo(() => {
-    return data.locationType.documentCategories.map( item => {
-      const category = item.name
-      const files = [...item.filesByEntity.map((doc => { return {...doc, category} })) ]
-      const hyperlinks = [...item.hyperlinksByEntity.map((doc => { return {...doc, category}}))]
-      return {files, hyperlinks}
-    })
-  },
-    [data],
-  );
+    return data.locationType.documentCategories.map(item => {
+      const category = item?.name;
+      const files = [
+        ...(item?.filesByEntity.map(doc => {
+          return {...doc, category};
+        }) || []),
+      ];
+      const hyperlinks = [
+        ...(item?.hyperlinksByEntity.map(doc => {
+          return {...doc, category};
+        }) || []),
+      ];
+      return {files, hyperlinks};
+    });
+  }, [data]);
   console.log('===documents====', documents);
 
-  const files = useMemo(
-    () => [...documents.flatMap( item => item.files)],
-    [documents],
-  );
+  const files = useMemo(() => [...documents.flatMap(item => item.files)], [
+    documents,
+  ]);
 
   console.log('===files====', files);
 
   const hyperlinks = useMemo(
-    () => [...documents.flatMap( item => item.hyperlinks)],
+    () => [...documents.flatMap(item => item.hyperlinks)],
     [documents],
   );
 
-
   const categories = useMemo(
-    () => [...data.locationType.documentCategories.map((item: any) => { return {id: item.id, name: item.name} })],
+    () => [
+      ...data.locationType.documentCategories.map((item: any) => {
+        return {id: item.id, name: item.name};
+      }),
+    ],
     [data],
   );
   return (

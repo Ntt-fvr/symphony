@@ -9,7 +9,8 @@
  */
 
 import type {LocationTypeNodesQuery} from './__generated__/LocationTypeNodesQuery.graphql';
-import type {NamedNode} from './EntUtils';
+import type {LocationType2DocumentCategoryNodesQuery} from './__generated__/LocationType2DocumentCategoryNodesQuery.graphql';
+import type {NamedNode, OptionalNamedNode} from './EntUtils';
 import type {PropertyType} from './PropertyType';
 import type {DocumentCategoryType} from './DocumentCategoryType';
 import type {SurveyQuestionType} from '../components/configure/__generated__/AddEditLocationTypeCard_editingLocationType.graphql.js';
@@ -62,7 +63,22 @@ const locationTypeNodesQuery = graphql`
   }
 `;
 
+const locationType2DocumentCategoryNodesQuery = graphql`
+  query LocationType2DocumentCategoryNodesQuery($ltID: ID) {
+    documentCategories(locationTypeID: $ltID) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+//LocationType2DocumentCategoryNodesQueryVariables
 export type LocationTypeNode = $Exact<NamedNode>;
+export type DocumentCategoryNode = $Exact<OptionalNamedNode>;
 
 export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   const response = useLazyLoadQuery<LocationTypeNodesQuery>(
@@ -75,3 +91,15 @@ export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   return locationTypes;
 }
 
+export function useDocumentCategoryByLocationTypeNodes(
+  locationTypeID: ?string,
+): $ReadOnlyArray<DocumentCategoryNode> {
+  const response = useLazyLoadQuery<LocationType2DocumentCategoryNodesQuery>(
+    locationType2DocumentCategoryNodesQuery,
+    {ltID: locationTypeID},
+  );
+  const locationTypesData = response.documentCategories?.edges || [];
+  const documentCategory = locationTypesData.map(p => p.node).filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+  return documentCategory;
+}

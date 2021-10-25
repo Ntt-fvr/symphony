@@ -12,8 +12,8 @@ import type {InventoryPolicy} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import PermissionsPolicyLocationRulesSection from './PermissionsPolicyLocationRulesSection';
-import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
+import PermissionsPolicyLocationDocumentCategoryRulesSection from './PermissionsPolicyLocationDocumentCategoryRulesSection';
+// import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import classNames from 'classnames';
 import fbt from 'fbt';
@@ -21,8 +21,22 @@ import {
   bool2PermissionRuleValue,
   permissionRuleValue2Bool,
 } from '../data/PermissionsPolicies';
+import {useCallback, useMemo, useState} from 'react';
+import Text from '@symphony/design-system/components/Text';
+import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
+import Select from '@symphony/design-system/components/Select/Select';
+import Tokenizer from '@symphony/design-system/components/Token/Tokenizer';
 import {makeStyles} from '@material-ui/styles';
 import {useContext} from 'react';
+
+export const ALL_TOKENS = [
+  {key: '0', label: 'ATP'},
+  {key: '1', label: 'Topología'},
+  {key: '2', label: 'Site Folder'},
+  {key: '3', label: 'Correo de notificación'},
+  {key: '4', label: 'Archivos de TSS'},
+  {key: '5', label: 'Archivos de simulación'},
+];
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,6 +50,30 @@ const useStyles = makeStyles(() => ({
   },
   section: {
     marginTop: '32px',
+  },
+  radioGroup: {
+    marginLeft: '4px',
+    maxHeight: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  radioGroupInline: {
+    display: 'flex',
+  },
+  radioGroupInlineItem: {
+    '&:nth-of-type(even)': {
+      marginLeft: '8px',
+    },
+  },
+  sectionHeader: {
+    paddingTop: '16px',
+    marginBottom: '16px',
+    '&>span': {
+      display: 'block',
+    },
+  },
+  select: {
+    maxWidth: '350px',
   },
 }));
 
@@ -60,6 +98,23 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
   const readAllowed = permissionRuleValue2Bool(policy.read.isAllowed);
   const isDisabled = onChange == null;
 
+  const [selectedLocationValue, setSelectedLocationValue] = useState(null);
+  const [queryString, setQueryString] = useState('');
+  const [tokens, setTokens] = useState([
+    {
+      key: '0',
+      label: 'ATP',
+    },
+    {
+      key: '1',
+      label: 'Topología',
+    },
+    {
+      key: '2',
+      label: 'Site Folder',
+    },
+  ]);
+
   return (
     <div className={classNames(classes.root, className)}>
       {userManagementDevMode ? (
@@ -81,7 +136,7 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
           }
         />
       ) : null}
-      <PermissionsPolicyLocationRulesSection
+      <PermissionsPolicyLocationDocumentCategoryRulesSection
         title={fbt('Locations', '')}
         subtitle={fbt(
           'Location data includes location details, properties, floor plans and coverage maps.',
@@ -89,36 +144,64 @@ export default function PermissionsPolicyInventoryDocumentRulesTab(
         )}
         disabled={isDisabled || !readAllowed}
         locationRule={policy.location}
+        documentRule={policy.documentCategory}
         className={classes.section}
         onChange={
           onChange != null
-            ? location =>
+            ? documentCategory =>
                 onChange({
                   ...policy,
-                  location,
+                  documentCategory,
                 })
             : undefined
         }
       />
-      <PermissionsPolicyRulesSection
-        title={fbt('Equipment', '')}
-        subtitle={fbt(
-          'Equipment data includes equipment items, ports, links, services and network maps.',
-          '',
-        )}
-        className={classes.section}
-        disabled={isDisabled || !readAllowed}
-        rule={policy.equipment}
-        onChange={
-          onChange != null
-            ? equipment =>
-                onChange({
-                  ...policy,
-                  equipment,
-                })
-            : undefined
-        }
-      />
+
+      {/* <div className={classes.radioGroup}>
+        <RadioGroup
+          options={options}
+          value={selectedValue}
+          onChange={value => setSelectedValue(value)}
+          className={classes.radioGroupInline}
+          optionClassName={classes.radioGroupInlineItem}
+        />
+      </div>
+      <div className={classes.radioGroup}>
+        <Select
+          className={classes.select}
+          disabled={selectedValue == 'all' ? true : false}
+          label="Location"
+          options={locationTypes.map(location => ({
+            key: location.id,
+            label: location.name,
+            value: location.id,
+          }))}
+          selectedValue={selectedLocationValue}
+          size="full"
+          onChange={value => setSelectedLocationValue(value)}
+        />
+      </div>
+      <div className={classes.sectionHeader}>
+        <Text variant="subtitle1">
+          <fbt desc="">Documents</fbt>
+        </Text>
+        <Text variant="subtitle2" color="gray">
+          <fbt desc="">
+            Mauris vel turpis felis. Integer viverra ac lorem et rutrum.
+          </fbt>
+        </Text>
+      </div>
+      <div className="classes">
+        <Tokenizer
+          tokens={tokens}
+          onTokensChange={setTokens}
+          queryString={queryString}
+          onQueryStringChange={setQueryString}
+          dataSource={{
+            fetchNetwork: _searchTerm => Promise.resolve(ALL_TOKENS),
+          }}
+        />
+      </div> */}
     </div>
   );
 }
