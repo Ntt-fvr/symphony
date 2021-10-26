@@ -90,10 +90,11 @@ type Props = $ReadOnly<{|
       },
     },
   },
+  isCompleted: void => void,
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
-  const {closeEditForm, formValues} = props;
+  const {closeEditForm, formValues, isCompleted} = props;
   const classes = useStyles();
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
@@ -112,7 +113,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
-    RemoveAlarmFilterMutation(variables);
+    RemoveAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   function handleClickEdit() {
@@ -127,7 +128,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         reason: reason.value,
       },
     };
-    EditAlarmFilterMutation(variables);
+    EditAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
   }
 
   return (

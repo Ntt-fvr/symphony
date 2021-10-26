@@ -66,10 +66,11 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
+  isCompleted: void => void,
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm} = props;
+  const {returnTableAlarm, isCompleted} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -97,7 +98,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
         creationTime: moment(AlarmFilter.data.creationTime).format(),
       },
     };
-    AddAlarmFilterMutation(variables);
+    AddAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
     returnTableAlarm();
   }
 
