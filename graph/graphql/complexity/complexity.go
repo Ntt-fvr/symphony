@@ -92,8 +92,8 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.KpiCategories = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.KpiCategoryOrder, _ []*models.KpiCategoryFilterInput) int {
-        	return PaginationComplexity(childComplexity, after, first, before, last)
-    }
+		return PaginationComplexity(childComplexity, after, first, before, last)
+	}
 	complexity.Query.Thresholds = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.ThresholdOrder, _ []*models.ThresholdFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}

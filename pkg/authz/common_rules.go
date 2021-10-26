@@ -57,7 +57,7 @@ func privacyDecision(allowed bool) error {
 	return privacy.Skip
 }
 
-func checkWorkforce(r *models.WorkforcePermissionRule, workOrderTypeID *int, projectTypeID *int, woOrganizationID *int, ctx context.Context) bool {
+func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, workOrderTypeID *int, projectTypeID *int, woOrganizationID *int) bool {
 	switch r.IsAllowed {
 	case models.PermissionValueYes:
 		if woOrganizationID != nil {
@@ -146,7 +146,7 @@ func allowOrSkipWorkOrder(ctx context.Context, p *models.PermissionSettings, wo 
 	organizationID, _ := wo.QueryOrganization().OnlyID(ctx)
 	return privacyDecision(
 		checkWorkforce(
-			p.WorkforcePolicy.Data.Update, &workOrderTypeID, nil, &organizationID, ctx,
+			ctx, p.WorkforcePolicy.Data.Update, &workOrderTypeID, nil, &organizationID,
 		),
 	)
 }
@@ -167,7 +167,7 @@ func allowOrSkipProject(ctx context.Context, p *models.PermissionSettings, proj 
 	}
 	return privacyDecision(
 		checkWorkforce(
-			p.WorkforcePolicy.Data.Update, nil, &projectTypeID, nil, ctx,
+			ctx, p.WorkforcePolicy.Data.Update, nil, &projectTypeID, nil,
 		),
 	)
 }

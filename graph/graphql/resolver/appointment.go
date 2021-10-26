@@ -18,6 +18,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+/*
 type appointmentResolver struct{}
 
 func (appointmentResolver) Assignee(ctx context.Context, appointment *ent.Appointment) (*ent.User, error) {
@@ -37,7 +38,7 @@ func (appointmentResolver) WorkOrder(ctx context.Context, appointment *ent.Appoi
 	}
 	return wo, nil
 }
-
+*/
 func (r mutationResolver) AddAppointment(
 	ctx context.Context, input models.AddAppointmentInput,
 ) (*ent.Appointment, error) {

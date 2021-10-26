@@ -24,12 +24,10 @@ func TestAddRemoveRecommendationsCategory(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddRecommendationsCategoryTest(t, ctx, mr)
-	EditRecommendationsCategoryTest(t, ctx, mr, id1, id2)
-	RemoveRecommendationsCategoryTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddRecommendationsCategoryTest(ctx, t, mr)
+	RemoveRecommendationsCategoryTest(ctx, t, mr, id1, id2)
 }
-func AddRecommendationsCategoryTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddRecommendationsCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	domain1, err := mr.AddRecommendationsCategory(ctx, models.AddRecommendationsCategoryInput{
 		Name: "domain_test_1",
 	})
@@ -47,7 +45,7 @@ func AddRecommendationsCategoryTest(t *testing.T, ctx context.Context, mr genera
 	return id1, id2
 }
 
-func EditRecommendationsCategoryTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditRecommendationsCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditRecommendationsCategory(ctx, models.EditRecommendationsCategoryInput{
 		ID:   id1,
 		Name: "domain_test_1.1",
@@ -60,7 +58,7 @@ func EditRecommendationsCategoryTest(t *testing.T, ctx context.Context, mr gener
 	require.Error(t, err)
 }
 
-func RemoveRecommendationsCategoryTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveRecommendationsCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveRecommendationsCategory(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveRecommendationsCategory(ctx, id2)

@@ -205,24 +205,6 @@ type RecommendationsSources func(*sql.Selector)
 // ReportFilter is the predicate function for reportfilter builders.
 type ReportFilter func(*sql.Selector)
 
-// ResourceRelationship is the predicate function for resourcerelationship builders.
-type ResourceRelationship func(*sql.Selector)
-
-// ResourceRelationshipMultiplicity is the predicate function for resourcerelationshipmultiplicity builders.
-type ResourceRelationshipMultiplicity func(*sql.Selector)
-
-// ResourceRelationshipType is the predicate function for resourcerelationshiptype builders.
-type ResourceRelationshipType func(*sql.Selector)
-
-// ResourceType is the predicate function for resourcetype builders.
-type ResourceType func(*sql.Selector)
-
-// ResourceTypeBaseType is the predicate function for resourcetypebasetype builders.
-type ResourceTypeBaseType func(*sql.Selector)
-
-// ResourceTypeClass is the predicate function for resourcetypeclass builders.
-type ResourceTypeClass func(*sql.Selector)
-
 // Rule is the predicate function for rule builders.
 type Rule func(*sql.Selector)
 

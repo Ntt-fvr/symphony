@@ -24,12 +24,11 @@ func TestAddRemoveKqiSource(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddKqiSourceTest(t, ctx, mr)
-	EditKqiSourceTest(t, ctx, mr, id1, id2)
-	RemoveKqiSourceTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddKqiSourceTest(ctx, t, mr)
+	EditKqiSourceTest(ctx, t, mr, id1, id2)
+	RemoveKqiSourceTest(ctx, t, mr, id1, id2)
 }
-func AddKqiSourceTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddKqiSourceTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	kqiSource1, err := mr.AddKqiSource(ctx, models.AddKqiSourceInput{
 		Name: "kqiSource_test_1",
 	})
@@ -47,7 +46,7 @@ func AddKqiSourceTest(t *testing.T, ctx context.Context, mr generated.MutationRe
 	return id1, id2
 }
 
-func EditKqiSourceTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditKqiSourceTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditKqiSource(ctx, models.EditKqiSourceInput{
 		ID:   id1,
 		Name: "kqiSource_test_1.1",
@@ -60,7 +59,7 @@ func EditKqiSourceTest(t *testing.T, ctx context.Context, mr generated.MutationR
 	require.Error(t, err)
 }
 
-func RemoveKqiSourceTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveKqiSourceTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveKqiSource(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveKqiSource(ctx, id2)

@@ -73,8 +73,6 @@ services:
       - async
     healthcheck: *healthcheck
     restart: on-failure
-    volumes:
-      - ../graph/cmd/entscript/migrations/params.yml:/bin/params.yml
 
   async:
     build:
@@ -189,7 +187,6 @@ services:
       MYSQL_DATABASE: auth
     volumes:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/params.sql:ro
     security_opt:
       - seccomp:unconfined
     healthcheck:

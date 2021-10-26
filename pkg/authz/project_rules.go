@@ -41,16 +41,16 @@ func projectCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *ent.
 		if !exists {
 			return false, errors.New("creating project with no type")
 		}
-		return checkWorkforce(cud.Create, nil, &typeID, nil, nil), nil
+		return checkWorkforce(ctx, cud.Create, nil, &typeID, nil), nil
 	}
 	projectTypeID, err := getProjectType(ctx, m)
 	if err != nil {
 		return false, err
 	}
 	if m.Op().Is(ent.OpUpdateOne) {
-		return checkWorkforce(cud.Update, nil, projectTypeID, nil, nil), nil
+		return checkWorkforce(ctx, cud.Update, nil, projectTypeID, nil), nil
 	}
-	return checkWorkforce(cud.Delete, nil, projectTypeID, nil, nil), nil
+	return checkWorkforce(ctx, cud.Delete, nil, projectTypeID, nil), nil
 }
 
 func projectReadPredicate(ctx context.Context) predicate.Project {
@@ -156,7 +156,7 @@ func ProjectWritePolicyRule() privacy.MutationRule {
 				if err != nil {
 					return err
 				}
-				allowed = allowed && checkWorkforce(cud.TransferOwnership, nil, projectTypeID, nil, nil)
+				allowed = allowed && checkWorkforce(ctx, cud.TransferOwnership, nil, projectTypeID, nil)
 			}
 		}
 		if allowed {
