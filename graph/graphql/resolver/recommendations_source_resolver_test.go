@@ -24,12 +24,11 @@ func TestAddRemoveRecommendationsSources(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr := r.Mutation()
-	id1, id2 := AddRecommendationsSourcesTest(t, ctx, mr)
-	EditRecommendationsSourcesTest(t, ctx, mr, id1, id2)
-	RemoveRecommendationsSourcesTest(t, ctx, mr, id1, id2)
-
+	id1, id2 := AddRecommendationsSourcesTest(ctx, t, mr)
+	EditRecommendationsSourcesTest(ctx, t, mr, id1, id2)
+	RemoveRecommendationsSourcesTest(ctx, t, mr, id1, id2)
 }
-func AddRecommendationsSourcesTest(t *testing.T, ctx context.Context, mr generated.MutationResolver) (int, int) {
+func AddRecommendationsSourcesTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
 	domain1, err := mr.AddRecommendationsSources(ctx, models.AddRecommendationsSourcesInput{
 		Name: "domain_test_1",
 	})
@@ -47,7 +46,7 @@ func AddRecommendationsSourcesTest(t *testing.T, ctx context.Context, mr generat
 	return id1, id2
 }
 
-func EditRecommendationsSourcesTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func EditRecommendationsSourcesTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.EditRecommendationsSources(ctx, models.EditRecommendationsSourcesInput{
 		ID:   id1,
 		Name: "domain_test_1.1",
@@ -60,7 +59,7 @@ func EditRecommendationsSourcesTest(t *testing.T, ctx context.Context, mr genera
 	require.Error(t, err)
 }
 
-func RemoveRecommendationsSourcesTest(t *testing.T, ctx context.Context, mr generated.MutationResolver, id1 int, id2 int) {
+func RemoveRecommendationsSourcesTest(ctx context.Context, t *testing.T, mr generated.MutationResolver, id1 int, id2 int) {
 	_, err := mr.RemoveRecommendationsSources(ctx, id1)
 	require.NoError(t, err)
 	_, err = mr.RemoveRecommendationsSources(ctx, id2)

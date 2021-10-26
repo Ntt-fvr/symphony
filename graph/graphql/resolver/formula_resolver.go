@@ -83,7 +83,7 @@ func (r mutationResolver) RemoveFormula(ctx context.Context, id int) (int, error
 	}
 	return id, nil
 }
-func ChangeValidation(et *ent.Formula, input models.EditFormulaInput, ctx context.Context) (bool, error) {
+func ChangeValidation(ctx context.Context, et *ent.Formula, input models.EditFormulaInput) (bool, error) {
 	var change = false
 	var kpi, err1 = et.Kpi(ctx)
 	if err1 != nil {
@@ -125,7 +125,7 @@ func (r mutationResolver) EditFormula(ctx context.Context, input models.EditForm
 		return nil, errors.Wrapf(err, "has occurred error on process: %v", err)
 	}
 
-	var change, err1 = ChangeValidation(et, input, ctx)
+	var change, err1 = ChangeValidation(ctx, et, input)
 	if err != nil {
 		return nil, errors.Wrap(err1, "has occurred error on process: %w")
 	}
