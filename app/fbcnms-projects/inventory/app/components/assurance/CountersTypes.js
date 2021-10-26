@@ -18,7 +18,6 @@ import type {RemoveCountersTypesMutationVariables} from '../../mutations/__gener
 
 // COMPONENTS //
 import AddCounterItemForm from './AddCounterItemForm';
-import Button from '@symphony/design-system/components/Button';
 import ConfigureTitle from './common/ConfigureTitle';
 import CounterTypeItem from './CounterTypeItem';
 import EditCounterItemForm from './EditCounterItemForm';
@@ -31,14 +30,18 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: '1',
-    margin: '40px',
+    padding: '40px',
+    maxHeight: 'calc(100vh - 57px)',
+  },
+  table: {
+    height: 'calc(100% - 46.25px)',
   },
   listContainer: {
     width: '100%',
     position: 'relative',
     overflow: 'auto',
     paddingRight: '9px',
-    maxHeight: 510,
+    height: 'calc(100% - 31.74px)',
     '&::-webkit-scrollbar': {
       width: '9px',
     },
@@ -161,39 +164,45 @@ const CountersTypes = () => {
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <ConfigureTitle
-            title={fbt('Counters Catalog', 'Counters Title')}
-            subtitle={fbt(
-              'Counters to be defined by users and used by performance management processes.',
-              'Counters description',
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-          <TitleTextCardsCounter />
-
-          <List disablePadding className={classes.listContainer}>
-            {counterTypes.counters?.edges.map(item => (
-              <CounterTypeItem
-                key={item.node?.id}
-                handleRemove={() => handleRemove(item.node?.id)}
-                edit={() => showEditCounterItemForm({item})}
-                {...item.node}
-              />
-            ))}
-          </List>
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-          <AddCounterItemForm
-            isCompleted={isCompleted}
-            counterNames={counterTypes.counters?.edges}
-          />
-        </Grid>
+    // <div className={classes.root}>
+    <Grid className={classes.root} container spacing={2}>
+      <Grid item xs={12}>
+        <ConfigureTitle
+          title={fbt('Counters Catalog', 'Counters Title')}
+          subtitle={fbt(
+            'Counters to be defined by users and used by performance management processes.',
+            'Counters description',
+          )}
+        />
       </Grid>
-    </div>
+      <Grid
+        className={classes.table}
+        item
+        xs={12}
+        sm={12}
+        md={12}
+        lg={9}
+        xl={9}>
+        <TitleTextCardsCounter />
+
+        <List disablePadding className={classes.listContainer}>
+          {counterTypes.counters?.edges.map(item => (
+            <CounterTypeItem
+              key={item.node?.id}
+              handleRemove={() => handleRemove(item.node?.id)}
+              edit={() => showEditCounterItemForm({item})}
+              {...item.node}
+            />
+          ))}
+        </List>
+      </Grid>
+      <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+        <AddCounterItemForm
+          isCompleted={isCompleted}
+          counterNames={counterTypes.counters?.edges}
+        />
+      </Grid>
+    </Grid>
   );
 };
 
