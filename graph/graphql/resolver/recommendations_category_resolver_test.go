@@ -25,6 +25,7 @@ func TestAddRemoveRecommendationsCategory(t *testing.T) {
 
 	mr := r.Mutation()
 	id1, id2 := AddRecommendationsCategoryTest(ctx, t, mr)
+	EditRecommendationsCategoryTest(ctx, t, mr, id1, id2)
 	RemoveRecommendationsCategoryTest(ctx, t, mr, id1, id2)
 }
 func AddRecommendationsCategoryTest(ctx context.Context, t *testing.T, mr generated.MutationResolver) (int, int) {
