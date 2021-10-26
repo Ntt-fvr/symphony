@@ -6,6 +6,7 @@ package authz
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -66,6 +67,8 @@ func checkWorkforce(ctx context.Context, r *models.WorkforcePermissionRule, work
 					return true
 				}
 			}
+		} else {
+			return true
 		}
 	case models.PermissionValueByCondition:
 		if workOrderTypeID != nil {
@@ -126,6 +129,7 @@ func allowReadPermissionsRule() privacy.QueryRule {
 func denyIfNoPermissionSettingsRule() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
 		if FromContext(ctx) == nil {
+			fmt.Println("aqui esta el detalle")
 			return privacy.Deny
 		}
 		return privacy.Skip
