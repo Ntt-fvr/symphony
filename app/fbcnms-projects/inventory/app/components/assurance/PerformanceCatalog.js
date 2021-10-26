@@ -120,7 +120,7 @@ export default function PerformanceCatalog() {
               component={ThresholdTypes}
             />
             <Redirect
-              from={relativeUrl('/assurance/performance')}
+              from={relativeUrl('/')}
               to={relativeUrl('/counters_types')}
             />
           </Switch>

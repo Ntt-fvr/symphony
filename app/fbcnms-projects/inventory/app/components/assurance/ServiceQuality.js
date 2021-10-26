@@ -123,7 +123,7 @@ export default function ServiceQuality() {
             />
             <Route exact path={relativeUrl('/kqi')} component={KqiTypes} />
             <Redirect
-              from={relativeUrl('/assurance/service_quality')}
+              from={relativeUrl('/')}
               to={relativeUrl('/kqi_sources')}
             />
           </Switch>
