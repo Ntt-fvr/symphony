@@ -40,50 +40,34 @@ import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
   root: {
-    flexGrow: 1,
-    margin: '40px',
+    padding: '40px',
   },
-  formField: {
-    margin: '0 43px 22px 0',
+  header: {
+    marginBottom: '1rem',
   },
-  id: {
-    margin: '50px 43px 22px 0',
+  gridStyleLeft: {
+    paddingRight: '0.5rem',
   },
-  textInput: {
-    minHeight: '36px',
+  gridStyleRight: {
+    paddingLeft: '0.5rem',
   },
   option: {
     width: '111px',
     height: '36px',
     alignSelf: 'flex-end',
-    marginLeft: '1rem',
   },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  textTitle: {
-    paddingLeft: '2rem',
-  },
-  titleButtons: {
-    marginBottom: '1rem',
-  },
-  titleEdit: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  status: {
-    marginTop: '74px',
-  },
-  time: {
-    marginBottom: '20px',
-  },
-  cancel: {
-    width: '111px',
-    height: '36px',
-    alignSelf: 'center',
-    marginLeft: '1rem',
+  calendar: {
+    '& .MuiOutlinedInput-input': {
+      height: '12px',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'rgba(157, 169, 190, 0.49)',
+      },
+      '&:hover fieldset': {
+        borderColor: 'rgba(157, 169, 190, 0.49)',
+      },
+    },
   },
 }));
 
@@ -106,10 +90,11 @@ type Props = $ReadOnly<{|
       },
     },
   },
+  isCompleted: void => void,
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
-  const {closeEditForm, formValues} = props;
+  const {closeEditForm, formValues, isCompleted} = props;
   const classes = useStyles();
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
@@ -136,7 +121,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
-    RemoveAlarmFilterMutation(variables);
+    RemoveAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   const handleDisable = useMemo(
@@ -160,26 +145,25 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         reason: reason.value,
       },
     };
-    EditAlarmFilterMutation(variables);
+    EditAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid container className={classes.titleButtons}>
-          <Grid
-            className={classes.titleEdit}
-            xs={5}
-            sm={5}
-            md={7}
-            lg={9}
-            xl={9}>
-            <Text className={classes.textTitle} variant="h6">
+    <Grid className={classes.root}>
+      <Grid container>
+        <Grid
+          className={classes.header}
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center">
+          <Grid xs>
+            <Text variant="h6" weight="bold">
               {fbt('Edit Alarm Filter', ' ')}
             </Text>
           </Grid>
-          <Grid className={classes.header} xs={7} sm={7} md={5} lg={3} xl={3}>
-            <IconButton>
+          <Grid>
+            <IconButton style={{marginRight: '1rem'}}>
               <DeleteOutlinedIcon
                 style={{color: DARK.D300}}
                 icon={DeleteOutlinedIcon}
@@ -189,15 +173,20 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 }}
               />
             </IconButton>
+          </Grid>
+          <Grid>
             <FormField>
               <Button
-                className={classes.cancel}
+                style={{marginRight: '1rem'}}
+                className={classes.option}
                 variant="outlined"
                 color="primary"
                 onClick={() => closeEditForm()}>
                 Cancel
               </Button>
             </FormField>
+          </Grid>
+          <Grid>
             <FormField>
               <Button
                 onClick={() => {
@@ -213,56 +202,50 @@ const EditAlarmFilteringItemForm = (props: Props) => {
             </FormField>
           </Grid>
         </Grid>
-        <Grid xs={12}>
+        <Grid xs>
           <Card>
-            <Grid container>
-              <Grid xs={1}>
+            <Grid container spacing={3}>
+              <Grid item xs={1}>
                 <FormField label="Enabled">
                   <Switch title={''} checked={checked} onChange={setChecked} />
                 </FormField>
               </Grid>
-              <Grid xs={11}>
-                <FormField className={classes.formField} label="Name">
-                  <TextInput
-                    {...name}
-                    autoComplete="off"
-                    className={classes.textInput}
-                    name="name"
-                  />
+              <Grid item xs={11}>
+                <FormField label="Name">
+                  <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>
-              <Grid xs={6}>
-                <FormField
-                  label="Network Resource"
-                  className={classes.formField}>
-                  <TextInput
-                    {...networkResource}
-                    autoComplete="off"
-                    className={classes.textInput}
-                    name="networkResource"
-                  />
-                </FormField>
+              <Grid container item xs={6}>
+                <Grid item xs={12}>
+                  <FormField label="Network Resource">
+                    <TextInput
+                      {...networkResource}
+                      autoComplete="off"
+                      name="networkResource"
+                    />
+                  </FormField>
+                </Grid>
+                <Grid item xs={12}>
+                  <Text variant="subtitle1">Exception period</Text>
+                </Grid>
               </Grid>
-              <Grid xs={6}>
-                <FormField className={classes.formField} label="Reason">
+              <Grid item xs={6}>
+                <FormField label="Reason">
                   <TextInput
                     {...reason}
                     autoComplete="off"
-                    className={classes.textInput}
                     type="multiline"
                     rows={4}
                     name="reason"
                   />
                 </FormField>
               </Grid>
-              <Grid container xs={6}>
-                <Grid className={classes.time} xs={12}>
-                  <Text variant="subtitle1">Exception period</Text>
-                </Grid>
-                <Grid xs={6}>
-                  <FormField label="Start" className={classes.formField}>
+              <Grid container item xs={6}>
+                <Grid item xs={6} className={classes.gridStyleLeft}>
+                  <FormField label="Start">
                     <TextField
                       {...beginTime}
+                      className={classes.calendar}
                       autoComplete="off"
                       variant="outlined"
                       id="datetime-local"
@@ -271,10 +254,11 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                     />
                   </FormField>
                 </Grid>
-                <Grid xs={6}>
-                  <FormField label="End" className={classes.formField}>
+                <Grid item xs={6} className={classes.gridStyleRight}>
+                  <FormField label="End">
                     <TextField
                       {...endTime}
+                      className={classes.calendar}
                       autoComplete="off"
                       variant="outlined"
                       id="datetime-local"
@@ -284,22 +268,28 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   </FormField>
                 </Grid>
               </Grid>
-              <Grid container xs={6}>
-                <Grid xs={3} className={classes.status}>
+              <Grid container item xs={6}>
+                <Grid
+                  item
+                  xs={4}
+                  lg={3}
+                  xl={2}
+                  className={classes.gridStyleLeft}
+                  style={{marginTop: '25px'}}>
                   <AlarmFilteringStatus
                     creationDate={creationTime.value}
                     beginDate={beginTime.value}
                     endDate={endTime.value}
                   />
                 </Grid>
-                <Grid xs={9}>
-                  <FormField label="ID" className={classes.id}>
-                    <TextInput
-                      className={classes.textInput}
-                      name="id"
-                      disabled
-                      {...id}
-                    />
+                <Grid
+                  item
+                  xs={8}
+                  lg={9}
+                  xl={10}
+                  className={classes.gridStyleRight}>
+                  <FormField label="ID">
+                    <TextInput name="id" disabled {...id} />
                   </FormField>
                 </Grid>
               </Grid>
@@ -307,7 +297,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
           </Card>
         </Grid>
       </Grid>
-    </div>
+    </Grid>
   );
 };
 export default EditAlarmFilteringItemForm;

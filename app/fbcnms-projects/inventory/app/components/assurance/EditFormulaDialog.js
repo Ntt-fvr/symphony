@@ -73,10 +73,11 @@ type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
   dataFormula: any,
+  isCompleted: void => void,
 |}>;
 
 const EditFormulaDialog = (props: Props) => {
-  const {onClose, dataFormula} = props;
+  const {onClose, dataFormula, isCompleted} = props;
   const classes = useStyles();
   const textFormula = useFormInput(dataFormula.data.textFormula);
 
@@ -91,7 +92,7 @@ const EditFormulaDialog = (props: Props) => {
         networkTypeFk: dataFormula.data.networkTypes,
       },
     };
-    EditFormulaMutation(variables);
+    EditFormulaMutation(variables, {onCompleted: () => isCompleted()});
   }
 
   return (

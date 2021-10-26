@@ -157,6 +157,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   hideAddRuleForm: void => void,
+  isCompleted: void => void,
 |}>;
 
 type Rule = {
@@ -180,7 +181,7 @@ type Rule = {
 
 const AddRuleItemForm = (props: Props) => {
   const classes = useStyles();
-  const {threshold, hideAddRuleForm} = props;
+  const {threshold, hideAddRuleForm, isCompleted} = props;
 
   const [rule, setRule] = useState<Rule>({data: {}});
   const [checked, setChecked] = useState(true);
@@ -242,8 +243,13 @@ const AddRuleItemForm = (props: Props) => {
             rule: response.addRule.id,
           },
         };
-        AddRuleLimitMutation(variablesUpper);
-        AddRuleLimitMutation(variablesLower);
+        AddRuleLimitMutation(variablesUpper, {
+          onCompleted: () => isCompleted(),
+        });
+        AddRuleLimitMutation(variablesLower, {
+          onCompleted: () => isCompleted(),
+        });
+        isCompleted();
       },
     };
 
