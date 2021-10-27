@@ -282,8 +282,8 @@ const KpiTypes = () => {
           dataFormula={formulaForm}
           onClose={() => {
             setOpenDialog(false);
-            isCompleted();
           }}
+          isCompleted={isCompleted}
         />
       )}
       {openEditDialog && (
@@ -292,8 +292,8 @@ const KpiTypes = () => {
           dataFormula={formulaEditForm}
           onClose={() => {
             setOpenEditDialog(false);
-            isCompleted();
           }}
+          isCompleted={isCompleted}
         />
       )}
     </div>

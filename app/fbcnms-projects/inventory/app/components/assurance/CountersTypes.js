@@ -164,7 +164,6 @@ const CountersTypes = () => {
   }
 
   return (
-    // <div className={classes.root}>
     <Grid className={classes.root} container spacing={2}>
       <Grid item xs={12}>
         <ConfigureTitle
