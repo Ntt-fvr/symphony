@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -36,6 +36,8 @@ import EditAlarmFilterMutation from '../../mutations/EditAlarmFilterMutation';
 
 import RemoveAlarmFilterMutation from '../../mutations/RemoveAlarmFilterMutation';
 import {AlarmFilteringStatus} from './AlarmFilteringStatus';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
+
 import {DARK} from '@symphony/design-system/theme/symphony';
 
 const useStyles = makeStyles(() => ({
@@ -91,10 +93,14 @@ type Props = $ReadOnly<{|
     },
   },
   isCompleted: void => void,
+  alarms: {
+    id: string,
+    name: string,
+  },
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
-  const {closeEditForm, formValues, isCompleted} = props;
+  const {closeEditForm, formValues, isCompleted, alarms} = props;
   const classes = useStyles();
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
@@ -109,6 +115,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   const creationTime = useFormInput(formValues.item.creationTime);
   const [checked, setChecked] = useState(formValues.item.enable);
 
+  const namesAlarms = alarms.map(item => item.node.name);
+
   const dataInputsObject = [
     name.value.trim(),
     networkResource.value.trim(),
@@ -116,22 +124,27 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     beginTime.value,
     endTime.value,
   ];
-
+  const inputFilter = () => {
+    return (
+      namesAlarms?.filter(
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
+      ) || []
+    );
+  };
   const handleRemove = id => {
     const variables: RemoveAlarmFilterMutationVariables = {
       id: id,
     };
     RemoveAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
   };
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        dataInputsObject.length === 5 &&
-        !dataInputsObject.some(item => item === '')
-      ),
-    [dataInputsObject],
-  );
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Alarm name existing'};
+    }
+  };
 
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
@@ -211,7 +224,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField label="Name">
+                <FormField {...validationName()} label="Name">
                   <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>

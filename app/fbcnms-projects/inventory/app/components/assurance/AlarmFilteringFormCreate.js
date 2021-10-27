@@ -28,6 +28,7 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
@@ -67,23 +68,22 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   isCompleted: void => void,
+  alarms: {
+    id: string,
+    name: string,
+  },
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm, isCompleted} = props;
+  const {returnTableAlarm, isCompleted, alarms} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        Object.values(AlarmFilter.data).length === 5 &&
-        !Object.values(AlarmFilter.data).some(item => item === '')
-      ),
-    [AlarmFilter.data],
-  );
+  const namesAlarms = alarms.map(item => item.node.name);
+
+  const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 5);
 
   function handleChange({target}) {
     setAlarmFilter({
@@ -93,6 +93,11 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
+  const validationName = () => {
+    if (namesAlarms?.some(item => item === AlarmFilter.data.name)) {
+      return {hasError: true, errorText: 'Alarm name existing'};
+    }
+  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -159,7 +164,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField label="Name">
+                <FormField {...validationName()} label="Name">
                   <TextInput
                     autoComplete="off"
                     name="name"

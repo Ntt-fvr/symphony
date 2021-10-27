@@ -78,6 +78,8 @@ const AlarmFilteringTypes = () => {
   const [dataEdit, setDataEdit] = useState<Alarms>({});
   const [showForm, setShowForm] = useState(false);
 
+  const alarms = DataAlarms.alarmFilters?.edges.map(node => node);
+
   useEffect(() => {
     isCompleted();
   }, []);
@@ -100,6 +102,7 @@ const AlarmFilteringTypes = () => {
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
+        alarms={alarms}
         returnTableAlarm={() => setShowForm(false)}
         isCompleted={isCompleted}
       />
@@ -109,6 +112,7 @@ const AlarmFilteringTypes = () => {
   if (showEditForm) {
     return (
       <EditAlarmFilteringItemForm
+        alarms={alarms}
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
         isCompleted={isCompleted}
