@@ -152,12 +152,16 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   hideAddRuleForm: void => void,
   isCompleted: void => void,
+  threshold: {
+    id: string,
+    name: string,
+  },
 |}>;
 
 const EditRuleItemForm = (props: Props) => {
   const classes = useStyles();
   const {rule} = useStore();
-  const {hideAddRuleForm, isCompleted} = props;
+  const {hideAddRuleForm, isCompleted, threshold} = props;
 
   const [ruleData, setRuleData] = useState({data: {}});
   const [checked, setChecked] = useState(rule.status);
@@ -174,6 +178,8 @@ const EditRuleItemForm = (props: Props) => {
   const comparatorLower = useFormInput(rule.ruleLimit[1]?.comparator.id);
   const upper = useFormInput(rule.ruleLimit[0]?.number);
   const lower = useFormInput(rule.ruleLimit[1]?.number);
+
+  const namesRules = threshold?.rule.map(item => item.name);
 
   const dataInputsObject = [
     nameRule.value.trim(),
@@ -204,6 +210,12 @@ const EditRuleItemForm = (props: Props) => {
       },
     });
   }
+
+  const validationName = () => {
+    if (namesRules?.some(item => item === rule.data.name)) {
+      return {hasError: true, errorText: 'Rule name existing'};
+    }
+  };
 
   const handleClick = () => {
     const variables: EditRuleMutationVariables = {
@@ -265,6 +277,7 @@ const EditRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
+                  {...validationName()}
                   className={classes.formField}
                   label="Rule Name"
                   required>

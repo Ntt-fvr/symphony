@@ -191,7 +191,17 @@ const AddRuleItemForm = (props: Props) => {
 
   const namesRules = threshold?.rule.map(item => item.name);
 
-  const handleDisable = useDisabledButton(rule.data, namesRules, 12);
+  const FIELD_MIN = 10;
+  const FIELD_MAX = 12;
+
+  const validationField = () => {
+    const comparison = checkedCheckbox === false ? FIELD_MIN : FIELD_MAX;
+    return comparison;
+  };
+
+  const numberFields = validationField();
+
+  const handleDisable = useDisabledButton(rule.data, namesRules, numberFields);
 
   const validationName = () => {
     if (namesRules?.some(item => item === rule.data.name)) {
