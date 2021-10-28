@@ -37,18 +37,23 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
-    margin: '30px',
+    padding: '30px',
+    margin: '0',
+    maxHeight: 'calc(100vh - 57px)',
+  },
+  table: {
+    height: 'calc(100% - 69px)',
   },
   listContainer: {
     width: '100%',
     position: 'relative',
     overflow: 'auto',
     paddingRight: '9px',
-    maxHeight: 510,
+    height: 'calc(100% - 30.49px)',
     '&::-webkit-scrollbar': {
       width: '9px',
     },
-    /* Estilos barra (thumb) de scroll */
+    /* Styles thumb scroll */
     '&::-webkit-scrollbar-thumb': {
       background: '#9DA9BE',
       borderRadius: '4px',
@@ -60,7 +65,7 @@ const useStyles = makeStyles(() => ({
       background: '#313C48',
       boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
     },
-    /* Estilos track de scroll */
+    /* Styles track scroll */
     '&::-webkit-scrollbar-track': {
       background: '#e5e5e5',
       borderRadius: '4px',
@@ -235,68 +240,73 @@ const KpiTypes = () => {
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <ConfigureTitle
-            title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
-            subtitle={fbt(
-              'Indicators and formulas to be defined by users and calculated by performance management processes.',
-              'Kpi description',
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-          <TitleTextCardsKpi />
-          <List disablePadding className={classes.listContainer}>
-            {dataKpis.kpis?.edges.map((item, index) => (
-              <KpiTypeItem
-                key={index}
-                threshold={dataKpis.thresholds?.edges}
-                deleteItem={() => handleRemove(item.node.id)}
-                edit={() => showEditKpiItemForm({item})}
-                handleFormulaClick={handleFormulaClick}
-                parentCallback={handleCallback}
-                handleEditFormulaClick={handleEditFormulaClick}
-                parentEditCallback={handleEditCallback}
-                isCompleted={isCompleted}
-                {...item.node}
-              />
-            ))}
-          </List>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={3} xl={3}>
-          <AddKpiItemForm
-            kpiNames={dataKpis.kpis?.edges}
+    <Grid className={classes.root} container spacing={2}>
+      <Grid item xs={12}>
+        <ConfigureTitle
+          title={fbt('KPI (Key Performance Indicator)', 'Kpi Title')}
+          subtitle={fbt(
+            'Indicators and formulas to be defined by users and calculated by performance management processes.',
+            'Kpi description',
+          )}
+        />
+      </Grid>
+      <Grid
+        className={classes.table}
+        item
+        xs={12}
+        sm={12}
+        md={12}
+        lg={9}
+        xl={9}>
+        <TitleTextCardsKpi />
+        <List disablePadding className={classes.listContainer}>
+          {dataKpis.kpis?.edges.map((item, index) => (
+            <KpiTypeItem
+              key={index}
+              threshold={dataKpis.thresholds?.edges}
+              deleteItem={() => handleRemove(item.node.id)}
+              edit={() => showEditKpiItemForm({item})}
+              handleFormulaClick={handleFormulaClick}
+              parentCallback={handleCallback}
+              handleEditFormulaClick={handleEditFormulaClick}
+              parentEditCallback={handleEditCallback}
+              isCompleted={isCompleted}
+              {...item.node}
+            />
+          ))}
+        </List>
+      </Grid>
+      <Grid item xs={12} sm={12} lg={3} xl={3}>
+        <AddKpiItemForm
+          kpiNames={dataKpis.kpis?.edges}
+          isCompleted={isCompleted}
+        />
+        <AddFormulaItemForm
+          parentCallback={handleCallback}
+          handleClick={handleFormulaClick}
+        />
+        {openDialog && (
+          <AddFormulaDialog
+            open={openDialog}
+            dataFormula={formulaForm}
+            onClose={() => {
+              setOpenDialog(false);
+            }}
             isCompleted={isCompleted}
           />
-          <AddFormulaItemForm
-            parentCallback={handleCallback}
-            handleClick={handleFormulaClick}
+        )}
+        {openEditDialog && (
+          <EditFormulaDialog
+            open={openEditDialog}
+            dataFormula={formulaEditForm}
+            onClose={() => {
+              setOpenEditDialog(false);
+            }}
+            isCompleted={isCompleted}
           />
-        </Grid>
+        )}
       </Grid>
-      {openDialog && (
-        <AddFormulaDialog
-          open={openDialog}
-          dataFormula={formulaForm}
-          onClose={() => {
-            setOpenDialog(false);
-          }}
-          isCompleted={isCompleted}
-        />
-      )}
-      {openEditDialog && (
-        <EditFormulaDialog
-          open={openEditDialog}
-          dataFormula={formulaEditForm}
-          onClose={() => {
-            setOpenEditDialog(false);
-          }}
-          isCompleted={isCompleted}
-        />
-      )}
-    </div>
+    </Grid>
   );
 };
 

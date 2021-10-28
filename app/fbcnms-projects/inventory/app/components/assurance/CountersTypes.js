@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: '1',
     padding: '40px',
+    margin: '0',
     maxHeight: 'calc(100vh - 57px)',
   },
   table: {
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     '&::-webkit-scrollbar': {
       width: '9px',
     },
-    /* Estilos barra (thumb) de scroll */
+    /* Styles thumb scroll */
     '&::-webkit-scrollbar-thumb': {
       background: '#9DA9BE',
       borderRadius: '4px',
@@ -57,7 +58,7 @@ const useStyles = makeStyles(theme => ({
       background: '#313C48',
       boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
     },
-    /* Estilos track de scroll */
+    /* Styles track scroll */
     '&::-webkit-scrollbar-track': {
       background: '#e5e5e5',
       borderRadius: '4px',

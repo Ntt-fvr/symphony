@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
       borderColor: '#3984FF',
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
+      transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
       marginBottom: '41px',
@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   addCounter: {
-    margin: '20px',
+    margin: '15px 0',
     width: '111px',
     alignSelf: 'flex-end',
   },

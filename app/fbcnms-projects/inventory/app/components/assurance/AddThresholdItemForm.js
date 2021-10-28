@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
       borderColor: '#3984FF',
     },
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-      transform: 'translate(14px, -3px) scale(0.75)',
+      transform: 'translate(14px, -3px) scale(0.85)',
     },
     '& .MuiFormControl-root': {
       marginBottom: '41px',
@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   addCounter: {
-    margin: '20px',
+    margin: '15px 0',
     width: '120px',
     alignSelf: 'flex-end',
   },
@@ -190,8 +190,8 @@ export default function AddThresholdItemForm(props: Props) {
           variant="outlined"
           name="name"
           onChange={handleChange}
-          hasError={names?.some(item => item === thresholds.data.name)}
-          errorText={
+          error={names?.some(item => item === thresholds.data.name)}
+          helperText={
             names?.some(item => item === thresholds.data.name)
               ? 'Threshold name existing'
               : ''
