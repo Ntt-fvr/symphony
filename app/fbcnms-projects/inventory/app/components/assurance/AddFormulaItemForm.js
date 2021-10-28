@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '36px',
   },
   addCounter: {
-    margin: '20px',
+    margin: '15px 0',
     width: '111px',
     alignSelf: 'flex-end',
   },
