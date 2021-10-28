@@ -38,7 +38,7 @@ import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
   },
@@ -47,7 +47,7 @@ const useStyles = makeStyles(() => ({
   },
   dialogContent: {
     overflow: 'hidden',
-    height: '50vh'
+    height: '50vh',
   },
   option: {
     width: '150px',
@@ -72,9 +72,38 @@ const useStyles = makeStyles(() => ({
     },
   },
   styleSearch: {
+    [theme.breakpoints.down('md')]: {
+      height: 'calc(100% - 120px)',
+    },
     height: 'calc(100% - 100px)',
+    width: '100%',
     paddingBottom: '1.5rem',
     overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '8px',
+      height: '8px',
+    },
+
+    /* Estilos barra (thumb) de scroll */
+    '&::-webkit-scrollbar-thumb': {
+      background: '#9DA9BE',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: '#999999',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#313C48',
+      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+    },
+    /* Estilos track de scroll */
+    '&::-webkit-scrollbar-track': {
+      background: '#e5e5e5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
+      background: '#d4d4d4',
+    },
   },
 }));
 
@@ -87,6 +116,11 @@ type Formula = {
   },
 };
 
+type TextFormula = {
+  formula: string,
+  search: string,
+};
+
 type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
@@ -97,7 +131,7 @@ type Props = $ReadOnly<{|
 const AddFormulaDialog = (props: Props) => {
   const {onClose, dataFormula, dataCounter} = props;
   const [checked, setChecked] = useState();
-  const [textFormula, setTextFormula] = useState<any>({});
+  const [textFormula, setTextFormula] = useState<TextFormula>({});
   const classes = useStyles();
 
   function handleChange({target}) {
@@ -173,10 +207,7 @@ const AddFormulaDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent className={classes.dialogContent}>
         <Grid container spacing={2}>
-          <Grid
-            item
-            xs={5}
-            style={{height: '50vh'}}>
+          <Grid item xs={5} style={{height: '50vh'}}>
             <Text variant="body2" weight="regular">
               Press the counter to add it to the expression. You can use your
               keyboard or the buttons on the screen to add math symbols and
@@ -187,12 +218,12 @@ const AddFormulaDialog = (props: Props) => {
               direction="row"
               alignItems="flex-start"
               style={{margin: '1rem auto'}}>
-              <Grid item xs={2} style={{lineHeight: '0px'}}>
+              <Grid item xs={3} lg={2} style={{lineHeight: '0px'}}>
                 <Text variant="caption" color="lightBlue">
                   Mandatory counter
                 </Text>
               </Grid>
-              <Grid item xs={3} style={{lineHeight: '0px'}}>
+              <Grid item xs style={{lineHeight: '0px'}}>
                 <Text variant="caption" color="lightBlue">
                   Name counter
                 </Text>
@@ -202,15 +233,15 @@ const AddFormulaDialog = (props: Props) => {
             <Grid className={classes.styleSearch}>
               {searchCountersFiltered.map((item, index) => {
                 return (
-                  <Grid container spacing={2}>
-                    <Grid item xs={2}>
+                  <Grid container spacing={2} key={index}>
+                    <Grid item xs={3} lg={2}>
                       <Switch
                         title={''}
                         checked={item.checked}
                         onChange={setChecked}
                       />
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={9} lg={10}>
                       <Chip
                         color="primary"
                         key={index}
@@ -229,24 +260,20 @@ const AddFormulaDialog = (props: Props) => {
               })}
             </Grid>
           </Grid>
-          <Grid item xs={7} style={{padding: '0px'}}>
+          <Grid item xs={7}>
             <FormField>
               <TextInput
-                autoComplete="off"
                 name="formula"
                 type="multiline"
-                style={{
-                  height: '50vh',
-                }}
+                autoComplete="off"
                 onChange={handleChange}
+                style={{height: '40vh'}}
               />
             </FormField>
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions
-        style={{height: '100px', backgroundColor: 'blue'}}
-        >
+      <DialogActions style={{height: '100px', paddingRight: '26px'}}>
         <Button
           className={classes.option}
           variant="outlined"

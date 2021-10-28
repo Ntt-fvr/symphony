@@ -298,7 +298,7 @@ const KqiFormEdit = (props: Props) => {
     return (
       <KqiFormCreateTarget
         isCompleted={isCompleted}
-        dataTarget={dataKqiTarget}
+        dataTarget={filterKqiTargetsById}
         idKqi={formValues.item.id}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowCreateTarget(false)}
@@ -315,7 +315,7 @@ const KqiFormEdit = (props: Props) => {
       <KqiFormEditTarget
         isCompleted={isCompleted}
         formValues={dataEdit}
-        dataTarget={dataKqiTarget}
+        dataTarget={filterKqiTargetsById}
         nameKqi={formValues.item.name}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowEditTarget(false)}
