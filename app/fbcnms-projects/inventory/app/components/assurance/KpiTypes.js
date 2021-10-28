@@ -263,8 +263,8 @@ const KpiTypes = () => {
           dataCounter={dataKpis.counters?.edges.map(item => item.node)}
           onClose={() => {
             setOpenDialog(false);
-            isCompleted();
           }}
+          isCompleted={isCompleted}
         />
       )}
       {openEditDialog && (
@@ -273,8 +273,8 @@ const KpiTypes = () => {
           dataFormula={formulaEditForm}
           onClose={() => {
             setOpenEditDialog(false);
-            isCompleted();
           }}
+          isCompleted={isCompleted}
         />
       )}
     </div>

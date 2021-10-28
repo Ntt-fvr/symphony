@@ -141,7 +141,7 @@ const CountersTypes = () => {
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
+        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
           <TitleTextCardsCounter />
           <List disablePadding>
             {counterTypes.counters?.edges.map(item => (
