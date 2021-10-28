@@ -23,7 +23,7 @@ import EditRuleMutation from '../../mutations/EditRuleMutation';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
@@ -33,6 +33,7 @@ import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useStore} from './ThresholdProvider';
@@ -179,7 +180,7 @@ const EditRuleItemForm = (props: Props) => {
   const upper = useFormInput(rule.ruleLimit[0]?.number);
   const lower = useFormInput(rule.ruleLimit[1]?.number);
 
-  const namesRules = threshold?.rule.map(item => item.name);
+  const namesRules = threshold.rule.map(item => item.name);
 
   const dataInputsObject = [
     nameRule.value.trim(),
@@ -193,13 +194,17 @@ const EditRuleItemForm = (props: Props) => {
     upper.value,
     lower.value,
   ];
-  const handleDisable = useMemo(
-    () =>
-      !(
-        dataInputsObject.length === 10 &&
-        !dataInputsObject.some(item => item === '')
-      ),
-    [dataInputsObject],
+  const inputFilter = () => {
+    return (
+      namesRules?.filter(
+        item => item === nameRule.value.trim() && item !== rule.name.trim(),
+      ) || []
+    );
+  };
+  const handleDisable = useDisabledButtonEdit(
+    dataInputsObject,
+    10,
+    inputFilter,
   );
 
   function handleChange({target}) {
@@ -212,7 +217,7 @@ const EditRuleItemForm = (props: Props) => {
   }
 
   const validationName = () => {
-    if (namesRules?.some(item => item === rule.data.name)) {
+    if (inputFilter().length > 0) {
       return {hasError: true, errorText: 'Rule name existing'};
     }
   };
