@@ -75,25 +75,6 @@ const equipmentsPropertiesCardQuery = graphql`
       ... on Equipment {
         id
         name
-        categoriesLocation: parentLocation{
-          locationType{
-            id
-            name
-            documentCategories{
-              id
-              name
-              index
-              filesByEntity(entity: EQUIPMENT, entityID: $equipmentId){
-                id
-                fileName
-              }
-              hyperlinksByEntity(entity: EQUIPMENT, entityID: $equipmentId){
-                id
-                displayName
-              }
-            }
-          }
-        }
         ...EquipmentPortsTable_equipment
         equipmentType {
           id

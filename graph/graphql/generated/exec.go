@@ -819,11 +819,12 @@ type ComplexityRoot struct {
 	}
 
 	Hyperlink struct {
-		Category   func(childComplexity int) int
-		CreateTime func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Name       func(childComplexity int) int
-		URL        func(childComplexity int) int
+		Category         func(childComplexity int) int
+		CreateTime       func(childComplexity int) int
+		DocumentCategory func(childComplexity int) int
+		ID               func(childComplexity int) int
+		Name             func(childComplexity int) int
+		URL              func(childComplexity int) int
 	}
 
 	InventoryPolicy struct {
@@ -5458,6 +5459,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Hyperlink.CreateTime(childComplexity), true
+
+	case "Hyperlink.documentCategory":
+		if e.complexity.Hyperlink.DocumentCategory == nil {
+			break
+		}
+
+		return e.complexity.Hyperlink.DocumentCategory(childComplexity), true
 
 	case "Hyperlink.id":
 		if e.complexity.Hyperlink.ID == nil {
@@ -13652,6 +13660,7 @@ type Hyperlink implements Node {
   displayName: String
   category: String
   createTime: Time!
+  documentCategory: DocumentCategory
 }
 
 input AddHyperlinkInput {
@@ -42885,6 +42894,38 @@ func (ec *executionContext) _Hyperlink_createTime(ctx context.Context, field gra
 	res := resTmp.(time.Time)
 	fc.Result = res
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Hyperlink_documentCategory(ctx context.Context, field graphql.CollectedField, obj *ent.Hyperlink) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Hyperlink",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentCategory(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.DocumentCategory)
+	fc.Result = res
+	return ec.marshalODocumentCategory2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐDocumentCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _InventoryPolicy_read(ctx context.Context, field graphql.CollectedField, obj *models2.InventoryPolicy) (ret graphql.Marshaler) {
@@ -94064,12 +94105,12 @@ func (ec *executionContext) _Hyperlink(ctx context.Context, sel ast.SelectionSet
 		case "id":
 			out.Values[i] = ec._Hyperlink_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "url":
 			out.Values[i] = ec._Hyperlink_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "displayName":
 			out.Values[i] = ec._Hyperlink_displayName(ctx, field, obj)
@@ -94078,8 +94119,19 @@ func (ec *executionContext) _Hyperlink(ctx context.Context, sel ast.SelectionSet
 		case "createTime":
 			out.Values[i] = ec._Hyperlink_createTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "documentCategory":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Hyperlink_documentCategory(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

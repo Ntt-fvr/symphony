@@ -592,6 +592,7 @@ type Hyperlink implements Node {
   displayName: String
   category: String
   createTime: Time!
+  documentCategory: DocumentCategory
 }
 
 input AddHyperlinkInput {
