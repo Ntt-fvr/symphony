@@ -82,7 +82,7 @@ type Props = {|
 type State = {
   isImageDialogOpen: boolean,
   isChecked: boolean,
-  selectValue: string,
+  selectValue: DocumentCategoryNode,
 };
 
 class FileAttachment extends React.Component<Props, State> {
@@ -98,7 +98,7 @@ class FileAttachment extends React.Component<Props, State> {
     this.state = {
       isImageDialogOpen: false,
       isChecked: false,
-      selectValue: '',
+      selectValue: {id: '', name: ''},
     };
   }
 
@@ -142,7 +142,7 @@ class FileAttachment extends React.Component<Props, State> {
   };
 
   render() {
-    const _setCategory = (value: string) => {
+    const _setCategory = (value: DocumentCategoryNode) => {
       if (this.props.onChecked) {
         this.props.onChecked({
           type: 'valueIncrement',
@@ -224,13 +224,16 @@ class FileAttachment extends React.Component<Props, State> {
               <Select
                 options={categories.map(x => ({
                   key: x.id,
-                  value: x.id,
+                  value: x,
                   label: x.name || '',
                 }))}
                 onChange={value => {
-                  this.setState({selectValue: value || ''}, () => {
-                    _setCategory(this.state.selectValue);
-                  });
+                  this.setState(
+                    {selectValue: value || {id: '', name: ''}},
+                    () => {
+                      _setCategory(this.state.selectValue);
+                    },
+                  );
                 }}
                 selectedValue={
                   this.state.isChecked ? this.state.selectValue : ''
