@@ -46,7 +46,6 @@ const useStyles = makeStyles(theme => ({
     '&::-webkit-scrollbar': {
       width: '9px',
     },
-    /* Styles thumb scroll */
     '&::-webkit-scrollbar-thumb': {
       background: '#9DA9BE',
       borderRadius: '4px',
@@ -58,7 +57,6 @@ const useStyles = makeStyles(theme => ({
       background: '#313C48',
       boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
     },
-    /* Styles track scroll */
     '&::-webkit-scrollbar-track': {
       background: '#e5e5e5',
       borderRadius: '4px',

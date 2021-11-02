@@ -192,18 +192,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...validationName()}
                   />
                 </form>
-                {/* <FormField
-                  className={classes.formField}
-                  label="Name"
-                  required
-                  {...validationName()}>
-                  <TextInput
-                    {...name}
-                    className={classes.textInput}
-                    name="name"
-                    autoComplete="off"
-                  />
-                </FormField> */}
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <form className={classes.formField} autoComplete="off">
@@ -218,17 +206,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...counterFamily}
                   />
                 </form>
-                {/* <FormField
-                  className={classes.formField}
-                  label="Counter Family"
-                  disabled>
-                  <TextInput
-                    {...counterFamily}
-                    className={classes.textInput}
-                    name="counterFamily"
-                    autoComplete="off"
-                  />
-                </FormField> */}
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <form className={classes.formField} autoComplete="off">
@@ -243,17 +220,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...networkManagerSystem}
                   />
                 </form>
-                {/* <FormField
-                  className={classes.formField}
-                  label="Network Manager System"
-                  required>
-                  <TextInput
-                    {...networkManagerSystem}
-                    className={classes.textInput}
-                    name="NetworkManagerSystem"
-                    autoComplete="off"
-                  />
-                </FormField> */}
               </Grid>
               <Grid item xs={12} sm={12} lg={4} xl={4}>
                 <form className={classes.formField} autoComplete="off">
@@ -267,17 +233,6 @@ const EditCounterItemForm = (props: Props) => {
                     {...counterID}
                   />
                 </form>
-                {/* <FormField
-                  className={classes.formField}
-                  label="Counter ID"
-                  required>
-                  <TextInput
-                    {...counterID}
-                    className={classes.textInput}
-                    name="CounterID"
-                    autoComplete="off"
-                  />
-                </FormField> */}
               </Grid>
             </Grid>
             <Grid item xs={12} sm={12} lg={4} xl={4}>
@@ -296,19 +251,6 @@ const EditCounterItemForm = (props: Props) => {
                   ))}
                 </TextField>
               </form>
-              {/* <FormField label="Domain" className={classes.formField}>
-                <Select
-                  {...vendor}
-                  className={classes.select}
-                  disableUnderline
-                  name="vendor">
-                  {data.vendors.edges.map((item, index) => (
-                    <MenuItem key={index} value={item.node?.id}>
-                      {item.node?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormField> */}
             </Grid>
             <Grid container justify="flex-end">
               <Grid item xs={2} sm={2} lg={1} xl={1}>
