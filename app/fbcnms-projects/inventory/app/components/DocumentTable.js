@@ -12,6 +12,7 @@ import type {AppContextType} from '@fbcnms/ui/context/AppContext';
 import type {DocumentTable_files} from './__generated__/DocumentTable_files.graphql';
 import type {DocumentTable_hyperlinks} from './__generated__/DocumentTable_hyperlinks.graphql';
 import type {WithStyles} from '@material-ui/core';
+import type {DocumentCategoryNode} from '../common/LocationType';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import FileAttachment from './FileAttachment';
@@ -34,6 +35,7 @@ type Props = WithStyles<typeof styles> & {|
   entityId: string,
   files: DocumentTable_files,
   hyperlinks: DocumentTable_hyperlinks,
+  categories: $ReadOnlyArray<DocumentCategoryNode>,
   onDocumentDeleted: (file: $ElementType<DocumentTable_files, number>) => void,
   linkToLocationOptions?: boolean,
   onChecked: any,
@@ -53,7 +55,7 @@ class DocumentTable extends React.Component<Props> {
   context: AppContextType;
 
   render() {
-    const {classes, onDocumentDeleted, entityId} = this.props;
+    const {classes, onDocumentDeleted, entityId, categories} = this.props;
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
     const files = this.props.files.map(file => ({
       ...file,
@@ -78,6 +80,7 @@ class DocumentTable extends React.Component<Props> {
                 <FileAttachment
                   key={doc.id}
                   file={doc}
+                  categories={categories}
                   onDocumentDeleted={onDocumentDeleted}
                   onChecked={this.props.onChecked}
                   linkToLocationOptions={this.props.linkToLocationOptions}
@@ -87,6 +90,7 @@ class DocumentTable extends React.Component<Props> {
                 <HyperlinkTableRow
                   key={doc.id}
                   hyperlink={doc}
+                  categories={categories}
                   entityId={entityId}
                   onChecked={this.props.onChecked}
                   linkToLocationOptions={this.props.linkToLocationOptions}

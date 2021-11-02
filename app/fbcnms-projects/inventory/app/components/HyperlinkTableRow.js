@@ -11,6 +11,7 @@
 import type {AppContextType} from '@fbcnms/ui/context/AppContext';
 import type {HyperlinkTableRow_hyperlink} from './__generated__/HyperlinkTableRow_hyperlink.graphql';
 import type {WithStyles} from '@material-ui/core';
+import type {DocumentCategoryNode} from '../common/LocationType';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import DateTimeFormat from '../common/DateTimeFormat.js';
@@ -58,6 +59,7 @@ const styles = () => ({
 type Props = {|
   entityId: string,
   hyperlink: HyperlinkTableRow_hyperlink,
+  categories: $ReadOnlyArray<DocumentCategoryNode>,
   onChecked: any,
   linkToLocationOptions?: boolean,
 |} & WithStyles<typeof styles>;
@@ -120,7 +122,7 @@ class HyperlinkTableRow extends React.Component<Props, State> {
       }
     };
     const categoriesEnabled = this.context.isFeatureEnabled('file_categories');
-    const {classes, hyperlink, entityId} = this.props;
+    const {classes, hyperlink, entityId, categories} = this.props;
     if (hyperlink === null) {
       return null;
     }
@@ -174,10 +176,10 @@ class HyperlinkTableRow extends React.Component<Props, State> {
             scope="row">
             <FormField label="" disabled={!this.state.isChecked}>
               <Select
-                options={Strings.documents.categories.map(x => ({
-                  key: x,
-                  value: x,
-                  label: x,
+                options={categories.map(x => ({
+                  key: x.id,
+                  value: x.id,
+                  label: x.name || '',
                 }))}
                 onChange={value => {
                   this.setState({selectValue: value}, () => {

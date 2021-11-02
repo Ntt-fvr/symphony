@@ -48,6 +48,7 @@ export type WorkOrderDetails_workOrder = {|
     +latitude: number,
     +longitude: number,
     +locationType: {|
+      +id: string,
       +mapType: ?string,
       +mapZoomLevel: ?number,
     |},
@@ -417,6 +418,7 @@ return {
           "name": "locationType",
           "plural": false,
           "selections": [
+            (v0/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -1015,6 +1017,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0bd60b08ca0a8e1b232c494f4d55df88';
+(node/*: any*/).hash = '3653057b1a7f6c812f730cb7694bc4f8';
 
 module.exports = node;
