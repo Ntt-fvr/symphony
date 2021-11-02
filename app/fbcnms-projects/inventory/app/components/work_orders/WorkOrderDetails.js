@@ -378,7 +378,8 @@ const WorkOrderDetails = ({
         fileSize: file.sizeInBytes,
         modified: file.uploaded,
         contentType: file.fileType,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 
@@ -404,7 +405,7 @@ const WorkOrderDetails = ({
         enqueueSnackbar(
           file.fileName +
             ' linked to location with category "' +
-            category +
+            category.name +
             '"',
         );
       },
@@ -413,7 +414,7 @@ const WorkOrderDetails = ({
           'There was an error linking ' +
             file.fileName +
             ' to location with category "' +
-            category +
+            category.name +
             '"',
         );
       },
@@ -435,7 +436,8 @@ const WorkOrderDetails = ({
         entityType: 'LOCATION',
         url: link.url,
         displayName: link?.displayName,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 
@@ -457,12 +459,12 @@ const WorkOrderDetails = ({
     const callbacks: MutationCallbacks<AddHyperlinkMutationResponse> = {
       onCompleted: () => {
         enqueueSnackbar(
-          `${link?.displayName} linked to location with category ${category}`,
+          `${link?.displayName} linked to location with category ${category.name}`,
         );
       },
       onError: () => {
         enqueueSnackbar(
-          `There was an error linking ${link?.displayName} to location with category ${category}`,
+          `There was an error linking ${link?.displayName} to location with category ${category.name}`,
         );
       },
     };
