@@ -20,6 +20,7 @@ import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategorie
 import type {ContextRouter} from 'react-router-dom';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
+import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
 import type {CheckListItem} from '../checklist/checkListCategory/ChecklistItemsDialogMutateState.js';
@@ -165,6 +166,12 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
+
+  const useCategories = useDocumentCategoryByLocationTypeNodes(
+    workOrder.location?.locationType.id,
+  );
+  const disabledLinkToLocation = !!useCategories.length;
+
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
       .filter(Boolean)
@@ -806,23 +813,26 @@ const WorkOrderDetails = ({
                       title="Attachments"
                       rightContent={
                         <div className={classes.uploadButtonContainer}>
-                          <IconButton
-                            icon={ApplyIcon}
-                            disabled={
-                              state.isApplyButtonEnabled === false
-                                ? true
-                                : state.checkCount === 0
-                                ? true
-                                : false
-                            }
-                            onClick={() => {
-                              linkFiles();
-                            }}
-                          />
+                          {disabledLinkToLocation ? (
+                            <IconButton
+                              icon={ApplyIcon}
+                              disabled={
+                                state.isApplyButtonEnabled === false
+                                  ? true
+                                  : state.checkCount === 0
+                                  ? true
+                                  : false
+                              }
+                              onClick={() => {
+                                linkFiles();
+                              }}
+                            />
+                          ) : null}
                           <AddHyperlinkButton
                             className={classes.minimizedButton}
                             variant="text"
                             entityType="WORK_ORDER"
+                            categories={[]}
                             allowCategories={false}
                             entityId={workOrder.id}>
                             <IconButton icon={LinkIcon} />
@@ -852,9 +862,10 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.files,
                           ...propsWorkOrder.images,
                         ]}
+                        categories={useCategories}
                         hyperlinks={propsWorkOrder.hyperlinks}
                         onChecked={countDispatch}
-                        linkToLocationOptions={true}
+                        linkToLocationOptions={disabledLinkToLocation}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider
@@ -949,6 +960,7 @@ export default withRouter(
             latitude
             longitude
             locationType {
+              id
               mapType
               mapZoomLevel
             }

@@ -11,6 +11,7 @@
 import type {AppContextType} from '@fbcnms/ui/context/AppContext';
 import type {FileAttachment_file} from './__generated__/FileAttachment_file.graphql';
 import type {WithStyles} from '@material-ui/core';
+import type {DocumentCategoryNode} from '../common/LocationType';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import DateTimeFormat from '../common/DateTimeFormat.js';
@@ -72,6 +73,7 @@ const styles = () => ({
 
 type Props = {|
   file: FileAttachment_file,
+  categories: $ReadOnlyArray<DocumentCategoryNode>,
   onDocumentDeleted: (file: $ElementType<FileAttachment_file, number>) => void,
   onChecked?: any,
   linkToLocationOptions?: boolean,
@@ -150,7 +152,7 @@ class FileAttachment extends React.Component<Props, State> {
       }
     };
 
-    const {classes, file} = this.props;
+    const {classes, file, categories} = this.props;
     if (file === null) {
       return null;
     }
@@ -220,13 +222,13 @@ class FileAttachment extends React.Component<Props, State> {
             scope="row">
             <FormField label="" disabled={!this.state.isChecked}>
               <Select
-                options={Strings.documents.categories.map(x => ({
-                  key: x,
-                  value: x,
-                  label: x,
+                options={categories.map(x => ({
+                  key: x.id,
+                  value: x.id,
+                  label: x.name || '',
                 }))}
                 onChange={value => {
-                  this.setState({selectValue: value}, () => {
+                  this.setState({selectValue: value || ''}, () => {
                     _setCategory(this.state.selectValue);
                   });
                 }}
