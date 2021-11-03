@@ -109,7 +109,7 @@ export default function ServiceQuality() {
         spread={true}
         size="large"
         tabs={tabBars.map(tabBar => tabBar.tab)}
-        activeTabIndex={activeTabBar}
+        activeTabIndex={tabIndex === 0 ? 0 : activeTabBar}
         onChange={changeTab}
       />
 
@@ -123,7 +123,7 @@ export default function ServiceQuality() {
             />
             <Route exact path={relativeUrl('/kqi')} component={KqiTypes} />
             <Redirect
-              from={relativeUrl('/assurance/service_quality')}
+              from={relativeUrl('/')}
               to={relativeUrl('/kqi_sources')}
             />
           </Switch>
