@@ -24,15 +24,10 @@ import {graphql} from 'react-relay';
 
 const useStyles = makeStyles(() => ({
   root: {
-    margin: '40px',
+    padding: '40px',
   },
-  addButton: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    padding: '0 3.5rem',
+  header: {
+    marginBottom: '1rem',
   },
 }));
 
@@ -80,8 +75,10 @@ const AlarmFilteringTypes = () => {
   const classes = useStyles();
   const [DataAlarms, setDataAlarms] = useState({});
   const [showEditForm, setShowEditForm] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
+  const [dataEdit, setDataEdit] = useState<Alarms>({});
   const [showForm, setShowForm] = useState(false);
+
+  const alarms = DataAlarms.alarmFilters?.edges.map(node => node);
 
   useEffect(() => {
     isCompleted();
@@ -105,10 +102,9 @@ const AlarmFilteringTypes = () => {
   if (showForm) {
     return (
       <AlarmFilteringFormCreate
-        returnTableAlarm={() => {
-          setShowForm(false);
-          isCompleted();
-        }}
+        alarms={alarms}
+        returnTableAlarm={() => setShowForm(false)}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -116,18 +112,22 @@ const AlarmFilteringTypes = () => {
   if (showEditForm) {
     return (
       <EditAlarmFilteringItemForm
-        closeEditForm={() => {
-          setShowEditForm(false);
-          isCompleted();
-        }}
+        alarms={alarms}
+        closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
+        isCompleted={isCompleted}
       />
     );
   }
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+    <Grid className={classes.root}>
+      <Grid
+        className={classes.header}
+        container
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center">
+        <Grid xs>
           <ConfigureTitle
             title={fbt('Alarm Filter', 'Alarm Filter Title')}
             subtitle={fbt(
@@ -136,24 +136,17 @@ const AlarmFilteringTypes = () => {
             )}
           />
         </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={10} />
-        <Grid className={classes.addButton} item xs={2}>
-          <FormField>
-            <Button onClick={handleClickAdd} className={classes.button}>
-              Add Alarm Filter
-            </Button>
-          </FormField>
-        </Grid>
-        <Grid item xs={12}>
-          <AlarmFilteringTable
-            dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
-            edit={handleClickEdit}
-          />
+        <Grid>
+          <Button onClick={handleClickAdd}>Add Alarm Filter</Button>
         </Grid>
       </Grid>
-    </div>
+      <Grid item fullWidth>
+        <AlarmFilteringTable
+          dataValues={DataAlarms.alarmFilters?.edges.map(item => item.node)}
+          edit={handleClickEdit}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

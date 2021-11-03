@@ -148,7 +148,6 @@ const ThresholdTypes = () => {
 
   const hideAddRuleForm = () => {
     setShowAddForm(false);
-    isCompleted();
   };
 
   if (showAddForm) {
@@ -156,6 +155,7 @@ const ThresholdTypes = () => {
       <AddRuleItemForm
         threshold={dataEdit.item.node}
         hideAddRuleForm={hideAddRuleForm}
+        isCompleted={isCompleted}
       />
     );
   }
@@ -169,13 +169,16 @@ const ThresholdTypes = () => {
 
   const hideEditRuleForm = () => {
     setShowEditRuleForm(false);
-    isCompleted();
   };
 
   if (showEditRuleForm) {
     return (
       <ThresholdProvider>
-        <EditRuleItemForm hideAddRuleForm={hideEditRuleForm} />
+        <EditRuleItemForm
+          threshold={dataEdit.item.node}
+          hideAddRuleForm={hideEditRuleForm}
+          isCompleted={isCompleted}
+        />
       </ThresholdProvider>
     );
   }

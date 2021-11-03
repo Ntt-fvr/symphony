@@ -149,7 +149,7 @@ const KpiTypeItem = (props: Props) => {
         kpiCategoryFK: kpiCategoryFK.id,
       },
     };
-    EditKpiMutation(variables);
+    EditKpiMutation(variables, {onCompleted: () => isCompleted()});
   };
 
   function handleCallback() {
