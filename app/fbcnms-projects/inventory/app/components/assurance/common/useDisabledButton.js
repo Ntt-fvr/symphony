@@ -10,21 +10,16 @@
 
 import {useMemo} from 'react';
 
-export const useDisabledButton = (
-  element: any,
-  nombre: any,
-  number: number,
-) => {
-  const handleDisable = useMemo(
+export const useDisabledButton = (element: any, name: any, number: number) => {
+  return useMemo(
     () =>
       !(
         Object.values(element).length === number &&
         !Object.values(element).some(item => item === '') &&
-        !nombre?.some(item => item === element.name)
+        !name?.some(item => item === element.name)
       ),
-    [element, nombre],
+    [element, name, number],
   );
-  return handleDisable;
 };
 
 export const useDisabledButtonEdit = (
@@ -32,14 +27,13 @@ export const useDisabledButtonEdit = (
   number: number,
   inputFilter: any,
 ) => {
-  const handleDisable = useMemo(
+  return useMemo(
     () =>
       !(
         dataInputsObject.length === number &&
         !dataInputsObject.some(item => item === '') &&
         !inputFilter().length > 0
       ),
-    [dataInputsObject],
+    [dataInputsObject, inputFilter, number],
   );
-  return handleDisable;
 };
