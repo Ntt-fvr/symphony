@@ -20,6 +20,7 @@ import Button from '@symphony/design-system/components/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
+import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {MenuItem, Select} from '@material-ui/core';
 
@@ -34,30 +35,49 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
   },
   header: {
-    margin: '20px 0 24px 20px',
+    margin: '20px 0 24px 0',
   },
   formField: {
-    margin: '0 20px 22px 20px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B8C2D3',
+    },
+    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#3984FF',
+    },
+    '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+      transform: 'translate(14px, -3px) scale(0.85)',
+    },
+    '& .MuiFormControl-root': {
+      marginBottom: '41px',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#3984FF',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingTop: '7px',
+      paddingBottom: '7px',
+      fontSize: '14px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& label': {
+      fontSize: '14px',
+      lineHeight: '8px',
+    },
   },
   textInput: {
     minHeight: '36px',
   },
   addCounter: {
-    margin: '20px',
+    margin: '15px 0',
     width: '120px',
     alignSelf: 'flex-end',
   },
+  input: {
+    width: '100%',
+  },
   select: {
-    '& .MuiSelect-select': {
-      padding: '9px 0 0 10px',
-    },
-    border: '1px solid #D2DAE7',
-    height: '36px',
-    overflow: 'hidden',
-    position: 'relative',
-    minHeight: '36px',
-    borderRadius: '4px',
-    fontSize: '14px',
+    width: '100%',
   },
 }));
 
@@ -161,47 +181,50 @@ export default function AddThresholdItemForm(props: Props) {
   return (
     <Card className={classes.root}>
       <CardHeader className={classes.header}>Add Threshold</CardHeader>
-      <FormField
-        className={classes.formField}
-        label="Threshold Name"
-        hasError={names?.some(item => item === thresholds.data.name)}
-        errorText={
-          names?.some(item => item === thresholds.data.name)
-            ? 'Threshold name existing'
-            : ''
-        }
-        required>
-        <TextInput
-          className={classes.textInput}
-          autoComplete="off"
+      <form className={classes.formField} autoComplete="off">
+        <TextField
+          required
+          className={classes.input}
+          id="threshold-name"
+          label="Threshold Name"
+          variant="outlined"
           name="name"
-          type="string"
           onChange={handleChange}
+          error={names?.some(item => item === thresholds.data.name)}
+          helperText={
+            names?.some(item => item === thresholds.data.name)
+              ? 'Threshold name existing'
+              : ''
+          }
         />
-      </FormField>
-      <FormField label="Associated KPI" className={classes.formField}>
-        <Select
+        <TextField
+          required
+          id="outlined-select-kpi"
+          select
           className={classes.select}
-          disableUnderline
+          label="Associated KPI"
+          onChange={handleChange}
           name="kpi"
-          onChange={handleChange}>
+          variant="outlined">
           {kpiSelect.map((kpiDataResponse, index) => (
             <MenuItem key={index} value={kpiDataResponse?.id}>
               {kpiDataResponse?.name}
             </MenuItem>
           ))}
-        </Select>
-      </FormField>
-      <FormField className={classes.formField} label="Description" required>
-        <TextInput
-          autoComplete="off"
-          className={classes.textInput}
+        </TextField>
+        <TextField
+          multiline
+          required
+          className={classes.input}
+          id="description"
+          label="Description"
+          variant="outlined"
           name="description"
-          type="multiline"
-          rows={4}
+          minRows={4}
+          inputProps={{maxLength: 120}}
           onChange={handleChange}
         />
-      </FormField>
+      </form>
       <FormField>
         <Button
           className={classes.addCounter}

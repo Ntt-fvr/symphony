@@ -31,10 +31,40 @@ import RemoveThresholdMutation from '../../mutations/RemoveThresholdMutation';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    margin: '40px',
+    padding: '40px',
+    margin: '0',
+    maxHeight: 'calc(100vh - 57px)',
   },
-  paper: {
-    padding: theme.spacing(2),
+  listContainer: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'auto',
+    paddingRight: '9px',
+    height: 'calc(100% - 31.74px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#9DA9BE',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: '#999999',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#313C48',
+      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#e5e5e5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
+      background: '#d4d4d4',
+    },
+  },
+  table: {
+    height: 'calc(100% - 69px)',
   },
 }));
 
@@ -215,42 +245,40 @@ const ThresholdTypes = () => {
 
   return (
     <ThresholdProvider>
-      <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12} lg={9} xl={9}>
-            <ConfigureTitle
-              title={fbt('Thresholds', 'Threshold Title')}
-              subtitle={fbt(
-                'Thresholds definition for alarm generation',
-                'Threshold description',
-              )}
-            />
-          </Grid>
-          <Grid className={classes.paper} item xs={12} sm={12} lg={9} xl={9}>
-            <TitleTextCardsThresholds />
-
-            <List disablePadding>
-              {dataThreshold.thresholds?.edges.map((item, index) => (
-                <ThresholdTypeItem
-                  key={index}
-                  deleteItem={() => handleRemove(item.node?.id)}
-                  edit={() => showEditThresholdItemForm({item})}
-                  addRule={() => showAddRuleItemForm({item})}
-                  editRule={() => showEditRuleItemForm({item})}
-                  isCompleted={isCompleted}
-                  {...item?.node}
-                />
-              ))}
-            </List>
-          </Grid>
-          <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
-            <AddThresholdItemForm
-              thresholdNames={dataThreshold.thresholds?.edges}
-              isCompleted={isCompleted}
-            />
-          </Grid>
+      <Grid className={classes.root} container spacing={3}>
+        <Grid item xs={12} sm={12} lg={9} xl={9}>
+          <ConfigureTitle
+            title={fbt('Thresholds', 'Threshold Title')}
+            subtitle={fbt(
+              'Thresholds definition for alarm generation',
+              'Threshold description',
+            )}
+          />
         </Grid>
-      </div>
+        <Grid className={classes.table} item xs={12} sm={12} lg={9} xl={9}>
+          <TitleTextCardsThresholds />
+
+          <List disablePadding className={classes.listContainer}>
+            {dataThreshold.thresholds?.edges.map((item, index) => (
+              <ThresholdTypeItem
+                key={index}
+                deleteItem={() => handleRemove(item.node?.id)}
+                edit={() => showEditThresholdItemForm({item})}
+                addRule={() => showAddRuleItemForm({item})}
+                editRule={() => showEditRuleItemForm({item})}
+                isCompleted={isCompleted}
+                {...item?.node}
+              />
+            ))}
+          </List>
+        </Grid>
+        <Grid className={classes.paper} item xs={12} sm={12} lg={3} xl={3}>
+          <AddThresholdItemForm
+            thresholdNames={dataThreshold.thresholds?.edges}
+            isCompleted={isCompleted}
+          />
+        </Grid>
+      </Grid>
     </ThresholdProvider>
   );
 };

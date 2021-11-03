@@ -30,7 +30,40 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: '1',
-    margin: '40px',
+    padding: '40px',
+    margin: '0',
+    maxHeight: 'calc(100vh - 57px)',
+  },
+  table: {
+    height: 'calc(100% - 46.25px)',
+  },
+  listContainer: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'auto',
+    paddingRight: '9px',
+    height: 'calc(100% - 31.74px)',
+    '&::-webkit-scrollbar': {
+      width: '9px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#9DA9BE',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: '#999999',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#313C48',
+      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#e5e5e5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
+      background: '#d4d4d4',
+    },
   },
   listCarCounter: {
     listStyle: 'none',
@@ -130,38 +163,44 @@ const CountersTypes = () => {
   }
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <ConfigureTitle
-            title={fbt('Counters Catalog', 'Counters Title')}
-            subtitle={fbt(
-              'Counters to be defined by users and used by performance management processes.',
-              'Counters description',
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-          <TitleTextCardsCounter />
-          <List disablePadding>
-            {counterTypes.counters?.edges.map(item => (
-              <CounterTypeItem
-                key={item.node?.id}
-                handleRemove={() => handleRemove(item.node?.id)}
-                edit={() => showEditCounterItemForm({item})}
-                {...item.node}
-              />
-            ))}
-          </List>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={3} xl={3}>
-          <AddCounterItemForm
-            isCompleted={isCompleted}
-            counterNames={counterTypes.counters?.edges}
-          />
-        </Grid>
+    <Grid className={classes.root} container spacing={2}>
+      <Grid item xs={12}>
+        <ConfigureTitle
+          title={fbt('Counters Catalog', 'Counters Title')}
+          subtitle={fbt(
+            'Counters to be defined by users and used by performance management processes.',
+            'Counters description',
+          )}
+        />
       </Grid>
-    </div>
+      <Grid
+        className={classes.table}
+        item
+        xs={12}
+        sm={12}
+        md={12}
+        lg={9}
+        xl={9}>
+        <TitleTextCardsCounter />
+
+        <List disablePadding className={classes.listContainer}>
+          {counterTypes.counters?.edges.map(item => (
+            <CounterTypeItem
+              key={item.node?.id}
+              handleRemove={() => handleRemove(item.node?.id)}
+              edit={() => showEditCounterItemForm({item})}
+              {...item.node}
+            />
+          ))}
+        </List>
+      </Grid>
+      <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+        <AddCounterItemForm
+          isCompleted={isCompleted}
+          counterNames={counterTypes.counters?.edges}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

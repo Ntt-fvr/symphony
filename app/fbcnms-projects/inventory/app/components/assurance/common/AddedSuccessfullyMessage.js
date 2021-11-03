@@ -34,7 +34,7 @@ const useStyles = makeStyles(() => ({
     color: GREEN.G600,
   },
   addButton: {
-    padding: '1rem 0 2rem 0',
+    padding: '2rem 0',
   },
 }));
 
