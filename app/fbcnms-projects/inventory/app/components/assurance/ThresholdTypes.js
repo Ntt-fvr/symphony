@@ -205,6 +205,7 @@ const ThresholdTypes = () => {
     return (
       <ThresholdProvider>
         <EditRuleItemForm
+          threshold={dataEdit.item.node}
           hideAddRuleForm={hideEditRuleForm}
           isCompleted={isCompleted}
         />

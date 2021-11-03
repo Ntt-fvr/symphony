@@ -7,7 +7,7 @@
  * @flow strict-local
  * @format
  */
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 // COMPONENTS //
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
@@ -28,9 +28,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -146,6 +147,13 @@ export default function AddKpiItemForm(props: Props) {
 
   const data = useLazyLoadQuery<AddKpiItemFormQuery>(AddDomainsKpiQuery, {});
 
+  const handleDisable = useDisabledButton(kpis.data, names, 5);
+
+  const handleHasError = useMemo(
+    () => names?.some(item => item === kpis.data.name),
+    [names, kpis.data.name],
+  );
+
   function handleChange({target}) {
     setKpis({
       data: {
@@ -158,10 +166,10 @@ export default function AddKpiItemForm(props: Props) {
   function handleClick() {
     const variables: AddKpiMutationVariables = {
       input: {
-        name: kpis.data.name,
+        name: kpis.data.name.trim(),
         status: kpis.data.status,
         domainFk: kpis.data.domain,
-        description: kpis.data.description,
+        description: kpis.data.description.trim(),
         kpiCategoryFK: kpis.data.category,
       },
     };
@@ -181,11 +189,9 @@ export default function AddKpiItemForm(props: Props) {
   if (showChecking) {
     return (
       <AddedSuccessfullyMessage
-        data_entry="KPI"
         card_header="Add KPI"
         title="KPI"
         text_button="Add new KPI"
-        names={kpiNames}
         setReturn={setReturn}
       />
     );
@@ -212,10 +218,10 @@ export default function AddKpiItemForm(props: Props) {
             variant="outlined"
             name="name"
             onChange={handleChange}
-            error={names?.some(item => item === kpis.data.name)}
+            error={handleHasError}
             helperText={
               names?.some(item => item === kpis.data.name)
-                ? 'Kpi name existing'
+                ? 'KPI name existing'
                 : ''
             }
           />
@@ -277,13 +283,7 @@ export default function AddKpiItemForm(props: Props) {
             <Button
               className={classes.addCounter}
               onClick={handleClick}
-              disabled={
-                !(
-                  Object.values(kpis.data).length === 5 &&
-                  !Object.values(kpis.data).some(item => item === '') &&
-                  !names?.some(item => item === kpis.data.name)
-                )
-              }>
+              disabled={handleDisable}>
               Add KPI
             </Button>
           </FormField>

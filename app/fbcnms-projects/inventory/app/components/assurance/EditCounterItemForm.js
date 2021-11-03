@@ -28,6 +28,7 @@ import fbt from 'fbt';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
@@ -120,7 +121,7 @@ const EditCounterItemForm = (props: Props) => {
   const {formValues, hideEditCounterForm, counterNames, isCompleted} = props;
   const classes = useStyles();
 
-  const name = useFormInput(formValues.name);
+  const name = useFormInput(formValues.name.trim());
   const networkManagerSystem = useFormInput(formValues.networkManagerSystem);
   const counterID = useFormInput(formValues.externalID);
   const counterFamily = useFormInput(formValues.counterFamily.name);
@@ -131,10 +132,18 @@ const EditCounterItemForm = (props: Props) => {
     {},
   );
 
+  const dataInputsObject = [
+    name.value.trim(),
+    networkManagerSystem.value,
+    counterID.value,
+    counterFamily.value,
+    vendor.value,
+  ];
+
   const inputFilter = () => {
     return (
       counterNames?.filter(
-        item => item === name.value && item !== formValues.name,
+        item => item === name.value.trim() && item !== formValues.name.trim(),
       ) || []
     );
   };
@@ -145,11 +154,13 @@ const EditCounterItemForm = (props: Props) => {
     }
   };
 
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 5, inputFilter);
+
   const handleClick = () => {
     const variables: EditCounterMutationVariables = {
       input: {
         id: formValues.id,
-        name: name.value,
+        name: name.value.trim(),
         externalID: counterID.value,
         networkManagerSystem: networkManagerSystem.value,
         vendorFk: vendor.value,
@@ -259,7 +270,8 @@ const EditCounterItemForm = (props: Props) => {
                     className={classes.addCounter}
                     onClick={() => {
                       handleClick();
-                    }}>
+                    }}
+                    disabled={handleDisable}>
                     Save
                   </Button>
                 </FormField>

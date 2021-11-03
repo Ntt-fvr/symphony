@@ -8,11 +8,11 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
 
-import type {AddTresholdMutationVariables} from '../../mutations/__generated__/AddTresholdMutation.graphql';
+import type {AddThresholdMutationVariables} from '../../mutations/__generated__/AddThresholdMutation.graphql';
 
 import AddTresholdMutation from '../../mutations/AddThresholdMutation';
 
@@ -21,13 +21,13 @@ import Card from '@symphony/design-system/components/Card/Card';
 import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import TextField from '@material-ui/core/TextField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 
 import type {AddThresholdItemFormQuery} from './__generated__/AddThresholdItemFormQuery.graphql';
 
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -81,7 +81,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const KpiDataFormTresholdQuery = graphql`
+const KpiDataFormThresholdQuery = graphql`
   query AddThresholdItemFormQuery {
     kpis {
       edges {
@@ -126,7 +126,7 @@ export default function AddThresholdItemForm(props: Props) {
   const [thresholds, setThresholds] = useState<Thresholds>({data: {}});
   const [showChecking, setShowChecking] = useState(false);
   const response = useLazyLoadQuery<AddThresholdItemFormQuery>(
-    KpiDataFormTresholdQuery,
+    KpiDataFormThresholdQuery,
     {},
   );
   const kpiResponse = response.kpis?.edges.map(item => item.node);
@@ -135,18 +135,24 @@ export default function AddThresholdItemForm(props: Props) {
   const kpiSelect = kpiResponse.filter(
     item => !kpiExisting?.map(kpi => kpi?.name).includes(item?.name),
   );
+  const handleDisable = useDisabledButton(thresholds.data, names, 3);
+
+  const handleHasError = useMemo(
+    () => names?.some(item => item === thresholds.data.name),
+    [names, thresholds.data.name],
+  );
 
   function handleChange({target}) {
     setThresholds({
       data: {
         ...thresholds.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
 
   function handleClick() {
-    const variables: AddTresholdMutationVariables = {
+    const variables: AddThresholdMutationVariables = {
       input: {
         name: thresholds.data.name,
         status: true,
@@ -190,7 +196,7 @@ export default function AddThresholdItemForm(props: Props) {
           variant="outlined"
           name="name"
           onChange={handleChange}
-          error={names?.some(item => item === thresholds.data.name)}
+          error={handleHasError}
           helperText={
             names?.some(item => item === thresholds.data.name)
               ? 'Threshold name existing'
@@ -229,13 +235,7 @@ export default function AddThresholdItemForm(props: Props) {
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={
-            !(
-              Object.values(thresholds.data).length === 3 &&
-              !Object.values(thresholds.data).some(item => item === '') &&
-              !names?.some(item => item === thresholds.data.name)
-            )
-          }>
+          disabled={handleDisable}>
           Add Threshold
         </Button>
       </FormField>

@@ -28,9 +28,11 @@ import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import TextField from '@material-ui/core/TextField';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+
+import {useDisabledButton} from './common/useDisabledButton';
 
 const AddCountersQuery = graphql`
   query AddCounterItemFormQuery {
@@ -129,20 +131,12 @@ export default function AddCounterItemForm(props: Props) {
   const {isCompleted, counterNames} = props;
   const classes = useStyles();
   const [counters, setCounters] = useState<Counters>({data: {}});
-  const [showChecking, setShowChecking] = useState();
+  const [showChecking, setShowChecking] = useState(false);
 
   const data = useLazyLoadQuery<AddCounterItemFormQuery>(AddCountersQuery, {});
   const names = counterNames?.map(item => item.node.name);
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        Object.values(counters.data).length === 5 &&
-        !Object.values(counters.data).some(item => item === '') &&
-        !names?.some(item => item === counters.data.name)
-      ),
-    [counters.data, names],
-  );
+  const handleDisable = useDisabledButton(counters.data, names, 5);
 
   const handleHasError = useMemo(
     () => names?.some(item => item === counters.data.name),
@@ -153,10 +147,9 @@ export default function AddCounterItemForm(props: Props) {
     setCounters({
       data: {
         ...counters.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
-    console.log(counters.data);
   }
 
   function handleClick() {
@@ -205,7 +198,7 @@ export default function AddCounterItemForm(props: Props) {
           variant="outlined"
           name="name"
           onChange={handleChange}
-          error={names?.some(item => item === counters.data.name)}
+          error={handleHasError}
           helperText={
             names?.some(item => item === counters.data.name)
               ? 'Counter name existing'

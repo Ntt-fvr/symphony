@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState, useMemo} from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import ConfigureTitleSubItem from './common/ConfigureTitleSubItem';
@@ -28,13 +28,15 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 
 import type {EditKqiComparatorMutationVariables} from '../../mutations/__generated__/EditKqiComparatorMutation.graphql';
 import type {EditKqiTargetMutationVariables} from '../../mutations/__generated__/EditKqiTargetMutation.graphql';
-import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
 import type {KqiTarget} from './KqiFormEdit';
+import type {RemoveKqiTargetMutationVariables} from '../../mutations/__generated__/RemoveKqiTargetMutation.graphql';
+
 import EditKqiComparatorMutation from '../../mutations/EditKqiComparatorMutation';
 import EditKqiTargetMutation from '../../mutations/EditKqiTargetMutation';
 import RemoveKqiTargetMutation from '../../mutations/RemoveKqiTargetMutation';
 import moment from 'moment';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
@@ -125,7 +127,7 @@ const KqiFormEditTarget = (props: Props) => {
   const [checked, setChecked] = useState(formValues.item.status);
 
   const name = useFormInput(formValues.item.name);
-  const impact = useFormInput(formValues.item.impact);
+  const impact = useFormInput(formValues.item.impact.trim());
   const period = useFormInput(formValues.item.period);
   const allowedVariation = useFormInput(formValues.item.allowedVariation);
   const initTime = useFormInput(moment(formValues.item.initTime).format('HH'));
@@ -145,6 +147,42 @@ const KqiFormEditTarget = (props: Props) => {
     formValues.item.kqiComparator[1].number,
   );
 
+  const dataNameKqi = dataTarget.map(item => item.name);
+
+  const dataInputsObject = [
+    name.value.trim(),
+    impact.value.trim(),
+    period.value,
+    allowedVariation.value,
+    initTime.value,
+    endTime.value,
+    comparatorNumber.value,
+    warningComparatorNumber.value,
+    comparatorSelect.value,
+    warningComparatorSelect.value,
+  ];
+
+  const inputFilter = () => {
+    return (
+      dataNameKqi?.filter(
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
+      ) || []
+    );
+  };
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Kqi Target name existing'};
+    }
+  };
+
+  const handleDisable = useDisabledButtonEdit(
+    dataInputsObject,
+    10,
+    inputFilter,
+  );
+
   const handleRemove = id => {
     const variables: RemoveKqiTargetMutationVariables = {
       id: id,
@@ -156,8 +194,8 @@ const KqiFormEditTarget = (props: Props) => {
     const variables: EditKqiTargetMutationVariables = {
       input: {
         id: formValues.item.id,
-        name: name.value,
-        impact: impact.value,
+        name: name.value.trim(),
+        impact: impact.value.trim(),
         period: Number(period.value),
         allowedVariation: Number(allowedVariation.value),
         initTime: moment(initTime.value, 'HH'),
@@ -194,43 +232,6 @@ const KqiFormEditTarget = (props: Props) => {
     EditKqiTargetMutation(variables, {onCompleted: () => isCompleted()});
     returnFormEdit();
   };
-
-  const dataNameKqi = dataTarget.map(item => item.name);
-
-  const inputFilter = () => {
-    return (
-      dataNameKqi?.filter(
-        item => item === name.value && item !== formValues.item.name,
-      ) || []
-    );
-  };
-
-  const dataInputsObject = [
-    name.value,
-    impact.value,
-    period.value,
-    allowedVariation.value,
-    initTime.value,
-    endTime.value,
-    comparatorNumber.value,
-    warningComparatorNumber.value,
-  ];
-
-  const handleDisable = useMemo(
-    () =>
-      !(
-        dataInputsObject.length === 8 &&
-        !dataInputsObject.some(item => item === '') &&
-        !inputFilter().length > 0
-      ),
-    [dataInputsObject, dataNameKqi],
-  );
-
-  const handleHasError = useMemo(() => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi Target name existing'};
-    }
-  }, [dataNameKqi]);
 
   return (
     <div className={classes.root}>
@@ -291,7 +292,7 @@ const KqiFormEditTarget = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...handleHasError} label="Target name">
+                <FormField {...validationName()} label="Target name">
                   <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>

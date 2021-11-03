@@ -17,7 +17,6 @@ import {graphql} from 'react-relay';
 // COMPONENTS //
 import AddKpiItemForm from './AddKpiItemForm';
 import ConfigureTitle from './common/ConfigureTitle';
-// import DialogConfirmDelete from './DialogConfirmDelete';
 import KpiTypeItem from './KpiTypeItem';
 import TitleTextCardsKpi from './TitleTextCardsKpi';
 import {EditKpiItemForm} from './EditKpiItemForm';

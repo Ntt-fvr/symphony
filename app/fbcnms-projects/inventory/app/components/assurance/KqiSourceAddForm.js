@@ -26,6 +26,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,6 +54,7 @@ type Node = {
 };
 type Props = $ReadOnly<{|
   kqiSourcesNames: Array<Node>,
+  isCompleted: () => void,
 |}>;
 
 type KqiSources = {
@@ -66,15 +68,17 @@ export const KqiSourceAddForm = (props: Props) => {
   const {kqiSourcesNames, isCompleted} = props;
   const classes = useStyles();
   const [kqiSource, setKqiSource] = useState<KqiSources>({data: {}});
-  const [showChecking, setShowChecking] = useState();
+  const [showChecking, setShowChecking] = useState(false);
 
   const names = kqiSourcesNames?.map(item => item.node.name);
+
+  const handleDisable = useDisabledButton(kqiSource.data, names, 1);
 
   function handleChange({target}) {
     setKqiSource({
       data: {
         ...kqiSource.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -130,13 +134,7 @@ export const KqiSourceAddForm = (props: Props) => {
         <Button
           className={classes.addCounter}
           onClick={handleClick}
-          disabled={
-            !(
-              Object.values(kqiSource.data).length === 1 &&
-              !Object.values(kqiSource.data).some(item => item === '') &&
-              !names?.some(item => item === kqiSource.data.name)
-            )
-          }>
+          disabled={handleDisable}>
           Save KQI Source
         </Button>
       </FormField>

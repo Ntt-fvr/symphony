@@ -14,8 +14,6 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@symphony/design-system/components/Button';
-import Card from '@symphony/design-system/components/Card/Card';
-import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 
@@ -23,11 +21,11 @@ import type {AddFormulaItemFormQuery} from './__generated__/AddFormulaItemFormQu
 
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
-import {MenuItem, Select} from '@material-ui/core';
+import {MenuItem} from '@material-ui/core';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import {useState} from 'react';
+import {useState, useMemo} from 'react';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -146,6 +144,15 @@ export default function AddFormulaItemForm(props: Props) {
   const data = useLazyLoadQuery<AddFormulaItemFormQuery>(AddFormulaQuery, {});
   const classes = useStyles();
 
+  const handleDisable = useMemo(
+    () =>
+      !(
+        Object.values(formula).length === 4 &&
+        !Object.values(formula).some(item => item === '')
+      ),
+    [formula],
+  );
+
   function handleChange({target}) {
     setFormula({
       ...formula,
@@ -237,12 +244,7 @@ export default function AddFormulaItemForm(props: Props) {
                 handleCallback();
                 handleClick();
               }}
-              disabled={
-                !(
-                  Object.values(formula).length === 4 &&
-                  !Object.values(formula).some(item => item === '')
-                )
-              }>
+              disabled={handleDisable}>
               Build formula
             </Button>
           </FormField>
