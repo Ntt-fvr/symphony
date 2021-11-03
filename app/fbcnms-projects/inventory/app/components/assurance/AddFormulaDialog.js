@@ -21,41 +21,89 @@ import type {AddFormulaMutationVariables} from '../../mutations/__generated__/Ad
 
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import TextInput from '@symphony/design-system/components/Input/TextInput';
-import {makeStyles} from '@material-ui/styles';
+import FormGroup from '@material-ui/core/FormGroup';
+import Switch from '@symphony/design-system/components/switch/Switch';
 
-const useStyles = makeStyles(() => ({
+import Chip from '@material-ui/core/Chip';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import SearchIcon from '@material-ui/icons/Search';
+import Table from '@material-ui/core/Table';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TextField from '@material-ui/core/TextField';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
+import symphony from '@symphony/design-system/theme/symphony';
+import {makeStyles} from '@material-ui/styles';
+const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
   },
   icon: {
     fontsize: '10px',
   },
-  dialogTitle: {
-    padding: '24px',
-    paddingBottom: '16px',
-  },
   dialogContent: {
-    padding: '2rem',
-    height: '250px',
-  },
-  dialogActions: {
-    padding: '24px',
-    marginBottom: '30px',
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    zIndex: 2,
-  },
-  time: {
-    marginTop: '2rem',
+    overflow: 'hidden',
+    height: '50vh',
   },
   option: {
     width: '150px',
     height: '40px',
+  },
+  textField: {
+    width: '70%',
+    '& .MuiOutlinedInput-root': {
+      color: symphony.palette.D300,
+      height: '26px',
+      '& .Mui-focused.MuiOutlinedInput-notchedOutline': {
+        border: '2px solid black',
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderRadius: '4px',
+        borderWidth: '2px',
+        borderColor: symphony.palette.D300,
+      },
+      '& .MuiOutlinedInput-notchedOutline:hover': {
+        borderColor: symphony.palette.D100,
+      },
+    },
+  },
+  styleSearch: {
+    [theme.breakpoints.down('md')]: {
+      height: 'calc(100% - 120px)',
+    },
+    height: 'calc(100% - 100px)',
+    width: '100%',
+    paddingBottom: '1.5rem',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '8px',
+      height: '8px',
+    },
+
+    /* Estilos barra (thumb) de scroll */
+    '&::-webkit-scrollbar-thumb': {
+      background: '#9DA9BE',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:active': {
+      background: '#999999',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#313C48',
+      boxShadow: '0 0 2px 1px rgba(0, 0, 0, 0.2)',
+    },
+    /* Estilos track de scroll */
+    '&::-webkit-scrollbar-track': {
+      background: '#e5e5e5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-track:hover, &::-webkit-scrollbar-track:active': {
+      background: '#d4d4d4',
+    },
   },
 }));
 
@@ -64,8 +112,13 @@ type Formula = {
     kpi: string,
     vendors: string,
     technology: string,
-    network: string,
+    networkTypes: string,
   },
+};
+
+type TextFormula = {
+  formula: string,
+  search: string,
 };
 
 type Props = $ReadOnly<{|
@@ -73,18 +126,34 @@ type Props = $ReadOnly<{|
   onClose: () => void,
   dataFormula: Formula,
   isCompleted: void => void,
+  dataCounter: any,
 |}>;
 
 const AddFormulaDialog = (props: Props) => {
-  const {onClose, dataFormula, isCompleted} = props;
+  const {onClose, dataFormula, dataCounter, isCompleted} = props;
+  const [checked, setChecked] = useState();
+  const [textFormula, setTextFormula] = useState<TextFormula>({});
   const classes = useStyles();
-  const [textFormula, setTextFormula] = useState<any>({});
 
   function handleChange({target}) {
     setTextFormula({
       ...textFormula,
       [target.name]: target.value,
     });
+  }
+
+  const searchCountersFiltered = !textFormula.search
+    ? dataCounter
+    : dataCounter?.filter(item =>
+        item.name
+          .toString()
+          .toLowerCase()
+          .includes(textFormula.search.toLocaleLowerCase()),
+      );
+
+  function onDragStart(e, v) {
+    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.setData('text/plain', v);
   }
 
   function handleClick() {
@@ -112,32 +181,100 @@ const AddFormulaDialog = (props: Props) => {
           <CloseIcon fontSize="small" color="action" />
         </Button>
       </DialogActions>
-      <DialogTitle className={classes.dialogTitle}>
-        <Text variant="h4">Build Formula</Text>
+      <DialogTitle>
+        <Grid container>
+          <Grid item xs={5}>
+            <Text variant="h6">Build Formula</Text>
+          </Grid>
+          <Grid item xs={7}>
+            <TextField
+              placeholder="Add counter"
+              color="primary"
+              type="text"
+              className={classes.textField}
+              variant="outlined"
+              name="search"
+              onChange={handleChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
       </DialogTitle>
       <DialogContent className={classes.dialogContent}>
         <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <Text weight="bold">Technology: </Text>
-            <Text>{dataFormula.data.technology}</Text>
-            <br />
-            <Text weight="bold">KPI: </Text>
-            <Text>{dataFormula.data.kpi}</Text>
+          <Grid item xs={5} style={{height: '50vh'}}>
+            <Text variant="body2" weight="regular">
+              Press the counter to add it to the expression. You can use your
+              keyboard or the buttons on the screen to add math symbols and
+              numbers.
+            </Text>
+            <Grid
+              container
+              direction="row"
+              alignItems="flex-start"
+              style={{margin: '1rem auto'}}>
+              <Grid item xs={3} lg={2} style={{lineHeight: '0px'}}>
+                <Text variant="caption" color="lightBlue">
+                  Mandatory counter
+                </Text>
+              </Grid>
+              <Grid item xs style={{lineHeight: '0px'}}>
+                <Text variant="caption" color="lightBlue">
+                  Name counter
+                </Text>
+              </Grid>
+            </Grid>
+
+            <Grid className={classes.styleSearch}>
+              {searchCountersFiltered.map((item, index) => {
+                return (
+                  <Grid container spacing={2} key={index}>
+                    <Grid item xs={3} lg={2}>
+                      <Switch
+                        title={''}
+                        checked={item.checked}
+                        onChange={setChecked}
+                      />
+                    </Grid>
+                    <Grid item xs={9} lg={10}>
+                      <Chip
+                        color="primary"
+                        key={index}
+                        label={item.name}
+                        style={{
+                          backgroundColor: item.color,
+                          color: 'black',
+                          fontWeight: '500',
+                        }}
+                        draggable="true"
+                        onDragStart={e => onDragStart(e, item.name)}
+                      />
+                    </Grid>
+                  </Grid>
+                );
+              })}
+            </Grid>
           </Grid>
-          <Grid item xs={9}>
-            <FormField label="Formula">
+          <Grid item xs={7}>
+            <FormField>
               <TextInput
-                autoComplete="off"
                 name="formula"
                 type="multiline"
-                rows={7}
+                autoComplete="off"
                 onChange={handleChange}
+                style={{height: '40vh'}}
               />
             </FormField>
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions className={classes.dialogActions}>
+      <DialogActions style={{height: '100px', paddingRight: '26px'}}>
         <Button
           className={classes.option}
           variant="outlined"

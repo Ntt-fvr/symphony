@@ -23,12 +23,16 @@ const styles = {
   subtitle1: symphony.typography.subtitle1,
   subtitle2: symphony.typography.subtitle2,
   subtitle3: symphony.typography.subtitle3,
+  subtitle4: symphony.typography.subtitle4,
   body1: symphony.typography.body1,
   body2: symphony.typography.body2,
   caption: symphony.typography.caption,
   overline: symphony.typography.overline,
   lightColor: {
     color: symphony.palette.white,
+  },
+  lightBlueColor: {
+    color: symphony.palette.D300,
   },
   regularColor: {
     color: symphony.palette.D900,
@@ -90,6 +94,7 @@ type Props = $ReadOnly<{|
   weight?: 'inherit' | 'light' | 'regular' | 'medium' | 'bold',
   color?:
     | 'light'
+    | 'lightBlue'
     | 'regular'
     | 'primary'
     | 'error'
