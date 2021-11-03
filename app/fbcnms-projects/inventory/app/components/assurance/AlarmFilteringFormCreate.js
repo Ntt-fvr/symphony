@@ -8,7 +8,9 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
+
+import React, {useMemo, useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -26,8 +28,7 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
-
-import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
+import {useDisabledButton} from './common/useDisabledButton';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
@@ -67,23 +68,36 @@ const useStyles = makeStyles(() => ({
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   isCompleted: void => void,
+  alarms: {
+    id: string,
+    name: string,
+  },
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm, isCompleted} = props;
+  const {returnTableAlarm, isCompleted, alarms} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
 
+  const namesAlarms = alarms.map(item => item.node.name);
+
+  const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 5);
+
   function handleChange({target}) {
     setAlarmFilter({
       data: {
         ...AlarmFilter.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
+  const validationName = () => {
+    if (namesAlarms?.some(item => item === AlarmFilter.data.name)) {
+      return {hasError: true, errorText: 'Alarm name existing'};
+    }
+  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -134,7 +148,8 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 onClick={() => setDialogOpen(true)}
                 className={classes.option}
                 variant="contained"
-                color="primary">
+                color="primary"
+                disabled={handleDisable}>
                 Save
               </Button>
             </FormField>
@@ -149,7 +164,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField label="Name">
+                <FormField {...validationName()} label="Name">
                   <TextInput
                     autoComplete="off"
                     name="name"

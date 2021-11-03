@@ -19,7 +19,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import React, {useState, useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -27,6 +27,7 @@ import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -86,12 +87,15 @@ const KqiFormCreateTarget = (props: Props) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const [KqiTarget, setKqiTarget] = useState<KqiTarget>({data: {}});
+  const dataNameTarget = dataTarget?.map(item => item?.name);
+
+  const handleDisable = useDisabledButton(KqiTarget.data, dataNameTarget, 10);
 
   function handleChange({target}) {
     setKqiTarget({
       data: {
         ...KqiTarget.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -137,18 +141,6 @@ const KqiFormCreateTarget = (props: Props) => {
     };
     AddKqiTargetMutation(variables, response);
   }
-
-  const dataNameTarget = dataTarget?.map(item => item?.name);
-
-  const handleDisable = useMemo(
-    () =>
-      !(
-        Object.values(KqiTarget.data).length === 10 &&
-        !Object.values(KqiTarget.data).some(item => item === '') &&
-        !dataNameTarget?.some(item => item === KqiTarget.data.name)
-      ),
-    [KqiTarget.data, dataNameTarget],
-  );
 
   const handleHasError = useMemo(() => {
     if (dataNameTarget?.some(item => item === KqiTarget.data.name)) {

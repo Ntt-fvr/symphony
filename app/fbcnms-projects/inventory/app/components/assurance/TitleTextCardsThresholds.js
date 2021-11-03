@@ -15,7 +15,7 @@ import {makeStyles} from '@material-ui/styles';
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: '1',
-    padding: '0 3rem 0.5rem 1rem',
+    padding: '0 4rem 0.5rem 1rem',
   },
   status: {
     flexWrap: 'nowrap',

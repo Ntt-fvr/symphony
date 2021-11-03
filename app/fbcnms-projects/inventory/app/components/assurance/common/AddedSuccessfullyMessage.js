@@ -34,7 +34,7 @@ const useStyles = makeStyles(() => ({
     color: GREEN.G600,
   },
   addButton: {
-    padding: '1rem 0 2rem 0',
+    padding: '2rem 0',
   },
 }));
 
@@ -42,7 +42,7 @@ type Props = $ReadOnly<{|
   card_header: string,
   title: string,
   text_button: string,
-  setReturn: void => void,
+  setReturn: () => void,
 |}>;
 
 const AddedSuccessfullyMessage = (props: Props) => {
