@@ -8,6 +8,7 @@
  * @format
  */
 
+import type {AddAppointmentMutationVariables} from '../../mutations/__generated__/AddAppointmentMutation.graphql';
 import type {AddEditWorkOrderTypeCard_workOrderType} from '../configure/__generated__/AddEditWorkOrderTypeCard_workOrderType.graphql';
 import type {
   AddWorkOrderCardTypeQuery,
@@ -22,11 +23,10 @@ import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategorie
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {WorkOrder} from '../../common/WorkOrder';
 
+import AddAppointmentMutation from '../../mutations/AddAppointmentMutation';
 import AddWorkOrderMutation from '../../mutations/AddWorkOrderMutation';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import Button from '@symphony/design-system/components/Button';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
@@ -36,18 +36,17 @@ import Grid from '@material-ui/core/Grid';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import MomentUtils from '@date-io/moment';
 import NameDescriptionSection from '../../common/NameDescriptionSection';
-import OrganizationTypeahead from '../typeahead/OrganizationTypeahead';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useCallback, useContext, useReducer, useState} from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
+import SelectAvailabilityAssignee from './SelectAvailabilityAssignee';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
-import UserTypeahead from '../typeahead/UserTypeahead';
 import nullthrows from '@fbcnms/util/nullthrows';
-import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import {convertChecklistCategoriesStateToInput} from '../checklist/ChecklistUtils';
 import {generateTempId, getGraphError} from '../../common/EntUtils';
 import {
@@ -65,6 +64,8 @@ import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useRouteMatch} from 'react-router';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+
+// import {SchedulingQueryRenderer} from './SchedulingQueryRenderer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -188,9 +189,6 @@ const AddWorkOrderCard = (props: Props) => {
   const {workOrderTypeId} = props;
   const classes = useStyles();
   const {statusValues, closedStatus} = useStatusValues();
-  const [selectedDate, handleDateChange] = useState(
-    new Date('2018-01-01T00:00:00.000Z'),
-  );
 
   const {
     workOrderType,
@@ -200,6 +198,11 @@ const AddWorkOrderCard = (props: Props) => {
       workOrderTypeId,
     },
   );
+
+  const [appointmentData, setAppointmentData] = useState({
+    duration: 0,
+    date: null,
+  });
 
   const [workOrder, setWorkOrder] = useState<?WorkOrder>(
     workOrderType?.__typename === 'WorkOrderType'
@@ -310,7 +313,7 @@ const AddWorkOrderCard = (props: Props) => {
           _enqueueError(errors[0].message);
         } else {
           // navigate to main page
-          history.push(match.url);
+          _saveAppointment(response.addWorkOrder.id);
         }
       },
       onError: (error: Error) => {
@@ -321,6 +324,20 @@ const AddWorkOrderCard = (props: Props) => {
       source: 'workOrder_details',
     });
     AddWorkOrderMutation(variables, callbacks);
+  };
+
+  const _saveAppointment = id => {
+    const variables: AddAppointmentMutationVariables = {
+      input: {
+        workorderID: id,
+        assigneeID: workOrder?.assignedTo?.id,
+        duration: appointmentData.duration,
+        date: appointmentData.date,
+      },
+    };
+    AddAppointmentMutation(variables, {
+      onCompleted: () => history.push(match.url),
+    });
   };
 
   const _setWorkOrderDetail = (
@@ -528,71 +545,12 @@ const AddWorkOrderCard = (props: Props) => {
                   </ChecklistCategoriesMutateDispatchContext.Provider>
                 </Grid>
                 <Grid item xs={4} sm={4} lg={4} xl={4}>
-                  <ExpandingPanel title="Select availabilty assignee">
-                    <Button
-                      variant="text"
-                      leftIcon={CalendarTodayIcon}
-                      className={classes.calendarButton}>
-                      View Calendar
-                    </Button>
-                    <FormField label="Time slot start">
-                      <DateTimePicker
-                        variant="inline"
-                        inputVariant="outlined"
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                        className={classes.inputFilter}
-                      />
-                    </FormField>
-                    <FormField label="Time slot end">
-                      <DateTimePicker
-                        variant="inline"
-                        inputVariant="outlined"
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                        className={classes.inputFilter}
-                      />
-                    </FormField>
-                    <FormField label="Duration">
-                      <Select
-                        options={[
-                          {key: '0 hr', label: '0 hr', value: '0'},
-                          {key: '0.5 hr', label: '0.5 hr', value: '0.5'},
-                          {key: '1 hr', label: '1 hr', value: '1'},
-                          {key: '1.5 hr', label: '1.5 hr', value: '1.5'},
-                          {key: '2 hr', label: '2 hr', value: '2'},
-                          {key: '2.5 hr', label: '2.5 hr', value: '2.5'},
-                        ]}
-                        selectedValue={workOrder.status}
-                        className={classes.inputFilter}
-                        onChange={value => {}}
-                      />
-                    </FormField>
-                    <Button className={classes.filterButton}>Filter</Button>
-                    <FormField className={classes.input} label="Organization">
-                      <OrganizationTypeahead
-                        onOrganizationSelected={organization =>
-                          _setWorkOrderDetail('organizationFk', organization)
-                        }
-                        margin="dense"
-                      />
-                    </FormField>
-                    <FormField className={classes.input} label="Owner">
-                      <Select
-                        options={statusValues}
-                        selectedValue={workOrder.status}
-                        onChange={value => {}}
-                      />
-                    </FormField>
-                    <FormField className={classes.input} label="Assignee">
-                      <UserTypeahead
-                        onUserSelection={user =>
-                          _setWorkOrderDetail('assignedTo', user)
-                        }
-                        margin="dense"
-                      />
-                    </FormField>
-                  </ExpandingPanel>
+                  <SelectAvailabilityAssignee
+                    statusValues={statusValues}
+                    workOrder={workOrder}
+                    setAppointmentData={setAppointmentData}
+                    _setWorkOrderDetail={_setWorkOrderDetail}
+                  />
                 </Grid>
               </Grid>
             </div>
