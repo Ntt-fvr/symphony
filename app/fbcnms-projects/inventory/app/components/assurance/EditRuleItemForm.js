@@ -33,6 +33,7 @@ import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useStore} from './ThresholdProvider';
@@ -151,11 +152,17 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   hideAddRuleForm: void => void,
+  isCompleted: void => void,
+  threshold: {
+    id: string,
+    name: string,
+  },
 |}>;
 
 const EditRuleItemForm = (props: Props) => {
+  const classes = useStyles();
   const {rule} = useStore();
-  const {hideAddRuleForm} = props;
+  const {hideAddRuleForm, isCompleted, threshold} = props;
 
   const [ruleData, setRuleData] = useState({data: {}});
   const [checked, setChecked] = useState(rule.status);
@@ -173,14 +180,47 @@ const EditRuleItemForm = (props: Props) => {
   const upper = useFormInput(rule.ruleLimit[0]?.number);
   const lower = useFormInput(rule.ruleLimit[1]?.number);
 
+  const namesRules = threshold.rule.map(item => item.name);
+
+  const dataInputsObject = [
+    nameRule.value.trim(),
+    gracePeriodRule.value,
+    additionalInfoRule.value.trim(),
+    specificProblemRule.value.trim(),
+    eventTypeRule.value,
+    eventSeverityRules.value,
+    comparatorUpper.value,
+    comparatorLower.value,
+    upper.value,
+    lower.value,
+  ];
+  const inputFilter = () => {
+    return (
+      namesRules?.filter(
+        item => item === nameRule.value.trim() && item !== rule.name.trim(),
+      ) || []
+    );
+  };
+  const handleDisable = useDisabledButtonEdit(
+    dataInputsObject,
+    10,
+    inputFilter,
+  );
+
   function handleChange({target}) {
     setRuleData({
       data: {
         ...ruleData.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
+
+  const validationName = () => {
+    if (inputFilter().length > 0) {
+      return {hasError: true, errorText: 'Rule name existing'};
+    }
+  };
 
   const handleClick = () => {
     const variables: EditRuleMutationVariables = {
@@ -217,12 +257,10 @@ const EditRuleItemForm = (props: Props) => {
         rule: rule.id,
       },
     };
-    EditRuleMutation(variables);
-    EditRuleLimitMutation(variablesUpper);
-    EditRuleLimitMutation(variablesLower);
+    EditRuleMutation(variables, {onCompleted: () => isCompleted()});
+    EditRuleLimitMutation(variablesUpper, {onCompleted: () => isCompleted()});
+    EditRuleLimitMutation(variablesLower, {onCompleted: () => isCompleted()});
   };
-
-  const classes = useStyles();
 
   return (
     <div className={classes.root}>
@@ -244,6 +282,7 @@ const EditRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
+                  {...validationName()}
                   className={classes.formField}
                   label="Rule Name"
                   required>
@@ -466,7 +505,8 @@ const EditRuleItemForm = (props: Props) => {
                       onClick={() => {
                         handleClick();
                         hideAddRuleForm();
-                      }}>
+                      }}
+                      disabled={handleDisable}>
                       Save
                     </Button>
                   </FormField>

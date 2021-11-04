@@ -119,7 +119,7 @@ const KqiTable = (props: Props) => {
                     <Indicator>{item.kqiTarget.length}</Indicator>
                   </TableCell>
                   <TableCell>{item.kqiPerspective.name}</TableCell>
-                  <TableCell>{item.kqiSource.id}</TableCell>
+                  <TableCell>{item.kqiSource.name}</TableCell>
                   <TableCell>
                     {DateTimeFormat.dateOnly(item.startDateTime)}
                   </TableCell>

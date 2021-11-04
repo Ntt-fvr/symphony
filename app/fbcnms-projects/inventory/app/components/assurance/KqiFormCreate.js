@@ -15,7 +15,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import React, {useState, useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -23,6 +23,7 @@ import fbt from 'fbt';
 import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -128,12 +129,11 @@ const KqiFormCreate = (props: Props) => {
   } = props;
   const classes = useStyles();
   const [Kqis, setKqis] = useState<Kqis>({data: {}});
-
   function handleChange({target}) {
     setKqis({
       data: {
         ...Kqis.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }

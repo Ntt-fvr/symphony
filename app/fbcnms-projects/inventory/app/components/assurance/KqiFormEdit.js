@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState, useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import fbt from 'fbt';
 
@@ -44,7 +44,7 @@ import EditKqiMutation from '../../mutations/EditKqiMutation';
 
 import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
-
+import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
 
 const useStyles = makeStyles(() => ({
@@ -228,35 +228,27 @@ const KqiFormEdit = (props: Props) => {
   );
   const dataNameKqi = dataKqi.map(item => item.name);
 
-  const inputFilter = () => {
-    return (
-      dataNameKqi?.filter(
-        item => item === name.value && item !== formValues.item.name,
-      ) || []
-    );
-  };
-
   const dataInputsObject = [
-    name.value,
-    description.value,
-    formula.value,
+    name.value.trim(),
+    description.value.trim(),
+    formula.value.trim(),
     kqiCategory.value,
     kqiPerspective.value,
-    startDateTime.value,
     endDateTime.value,
     kqiSource.value,
     kqiTemporalFrequency.value,
   ];
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        dataInputsObject.length === 9 &&
-        !dataInputsObject.some(item => item === '') &&
-        !inputFilter().length > 0
-      ),
-    [dataInputsObject, dataNameKqi],
-  );
+  const inputFilter = () => {
+    return (
+      dataNameKqi?.filter(
+        item =>
+          item === name.value.trim() && item !== formValues.item.name.trim(),
+      ) || []
+    );
+  };
+
+  const handleDisable = useDisabledButtonEdit(dataInputsObject, 8, inputFilter);
 
   const handleHasError = useMemo(() => {
     if (inputFilter().length > 0) {
@@ -275,9 +267,9 @@ const KqiFormEdit = (props: Props) => {
     const variables: EditKqiMutationVariables = {
       input: {
         id: formValues.item.id,
-        name: name.value,
-        description: description.value,
-        formula: formula.value,
+        name: name.value.trim(),
+        description: description.value.trim(),
+        formula: formula.value.trim(),
         startDateTime: moment(startDateTime.value).format(),
         endDateTime: moment(endDateTime.value).format(),
         kqiCategory: kqiCategory.value,
@@ -298,7 +290,7 @@ const KqiFormEdit = (props: Props) => {
     return (
       <KqiFormCreateTarget
         isCompleted={isCompleted}
-        dataTarget={dataKqiTarget}
+        dataTarget={filterKqiTargetsById}
         idKqi={formValues.item.id}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowCreateTarget(false)}
@@ -315,8 +307,8 @@ const KqiFormEdit = (props: Props) => {
       <KqiFormEditTarget
         isCompleted={isCompleted}
         formValues={dataEdit}
-        dataTarget={dataKqiTarget}
-        nameKqi={formValues.item.name}
+        dataTarget={filterKqiTargetsById}
+        nameKqi={formValues.item.name.trim()}
         dataComparatorSelect={dataComparator}
         returnFormEdit={() => setShowEditTarget(false)}
       />

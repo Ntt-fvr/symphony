@@ -36,6 +36,7 @@ import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const AddRuleQuery = graphql`
@@ -156,6 +157,7 @@ type Props = $ReadOnly<{|
     name: string,
   },
   hideAddRuleForm: void => void,
+  isCompleted: void => void,
 |}>;
 
 type Rule = {
@@ -178,7 +180,8 @@ type Rule = {
 };
 
 const AddRuleItemForm = (props: Props) => {
-  const {threshold, hideAddRuleForm} = props;
+  const classes = useStyles();
+  const {threshold, hideAddRuleForm, isCompleted} = props;
 
   const [rule, setRule] = useState<Rule>({data: {}});
   const [checked, setChecked] = useState(true);
@@ -186,11 +189,31 @@ const AddRuleItemForm = (props: Props) => {
   const data = useLazyLoadQuery<AddRuleItemFormQuery>(AddRuleQuery, {});
   const ruleTypeId = data.ruleTypes?.edges[0].node?.id;
 
+  const namesRules = threshold?.rule.map(item => item.name);
+
+  const FIELD_MIN = 10;
+  const FIELD_MAX = 12;
+
+  const validationField = () => {
+    const comparison = checkedCheckbox === false ? FIELD_MIN : FIELD_MAX;
+    return comparison;
+  };
+
+  const numberFields = validationField();
+
+  const handleDisable = useDisabledButton(rule.data, namesRules, numberFields);
+
+  const validationName = () => {
+    if (namesRules?.some(item => item === rule.data.name)) {
+      return {hasError: true, errorText: 'Rule name existing'};
+    }
+  };
+
   function handleChange({target}) {
     setRule({
       data: {
         ...rule.data,
-        [target.name]: target.value,
+        [target.name]: target.value.trim(),
       },
     });
   }
@@ -230,15 +253,18 @@ const AddRuleItemForm = (props: Props) => {
             rule: response.addRule.id,
           },
         };
-        AddRuleLimitMutation(variablesUpper);
-        AddRuleLimitMutation(variablesLower);
+        AddRuleLimitMutation(variablesUpper, {
+          onCompleted: () => isCompleted(),
+        });
+        AddRuleLimitMutation(variablesLower, {
+          onCompleted: () => isCompleted(),
+        });
+        isCompleted();
       },
     };
 
     AddRuleMutation(variables, response);
   }
-
-  const classes = useStyles();
 
   return (
     <div className={classes.root}>
@@ -265,6 +291,7 @@ const AddRuleItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
+                  {...validationName()}
                   className={classes.formField}
                   label="Rule Name"
                   required>
@@ -477,7 +504,8 @@ const AddRuleItemForm = (props: Props) => {
                       onClick={() => {
                         handleClick();
                         hideAddRuleForm();
-                      }}>
+                      }}
+                      disabled={handleDisable}>
                       Save
                     </Button>
                   </FormField>
