@@ -46,6 +46,7 @@ import RemoveKqiMutation from '../../mutations/RemoveKqiMutation';
 import moment from 'moment';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 import {useFormInput} from './common/useFormInput';
+import {useValidationEdit} from './common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -250,11 +251,7 @@ const KqiFormEdit = (props: Props) => {
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 8, inputFilter);
 
-  const handleHasError = useMemo(() => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Kqi name existing'};
-    }
-  }, [dataNameKqi]);
+  const validationName = useValidationEdit(inputFilter, 'Kqi');
 
   const handleRemove = id => {
     const variables: RemoveKqiMutationVariables = {
@@ -367,7 +364,7 @@ const KqiFormEdit = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name" required {...handleHasError}>
+                <FormField label="Name" required {...validationName}>
                   <TextInput {...name} autoComplete="off" name="name" />
                 </FormField>
               </Grid>
