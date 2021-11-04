@@ -33,6 +33,7 @@ import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useValidation} from './common/useValidation';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -149,10 +150,7 @@ export default function AddKpiItemForm(props: Props) {
 
   const handleDisable = useDisabledButton(kpis.data, names, 5);
 
-  const handleHasError = useMemo(
-    () => names?.some(item => item === kpis.data.name),
-    [names, kpis.data.name],
-  );
+  const validationName = useValidation(kpis.data.name, names, 'Kpi');
 
   function handleChange({target}) {
     setKpis({
@@ -211,6 +209,7 @@ export default function AddKpiItemForm(props: Props) {
       <AccordionDetails>
         <form className={classes.formField} autoComplete="off">
           <TextField
+            {...validationName}
             required
             className={classes.input}
             id="kpi-name"
@@ -218,12 +217,6 @@ export default function AddKpiItemForm(props: Props) {
             variant="outlined"
             name="name"
             onChange={handleChange}
-            error={handleHasError}
-            helperText={
-              names?.some(item => item === kpis.data.name)
-                ? 'KPI name existing'
-                : ''
-            }
           />
           <TextField
             required

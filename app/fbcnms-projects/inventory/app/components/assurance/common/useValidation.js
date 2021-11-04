@@ -24,3 +24,14 @@ export const useValidation = (
     [element, name, nameExisting],
   );
 };
+
+export const useValidationEdit = (inputFilter: any, nameExisting: string) => {
+  return useMemo(
+    () =>
+      inputFilter().length > 0 && {
+        error: true,
+        helperText: `${nameExisting} name existing`,
+      },
+    [inputFilter, nameExisting],
+  );
+};
