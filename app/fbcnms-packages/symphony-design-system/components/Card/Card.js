@@ -15,7 +15,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(_theme => ({
   root: {
-    padding: '3px',
+    margin: '16px 0',
     '&:not(:first-child)': {
       marginTop: '16px',
     },

@@ -35,7 +35,10 @@ const CardHeader = (props: Props) => {
   const classes = useStyles();
   return (
     <div className={classNames(classes.root, className)}>
-      <Text variant="h6" className={classes.titleText}>
+      {/* <Text variant="h6" className={classes.titleText}>
+        {children}
+      </Text> */}
+      <Text useEllipsis={true} variant="h6" weight="bold">
         {children}
       </Text>
       {rightContent}

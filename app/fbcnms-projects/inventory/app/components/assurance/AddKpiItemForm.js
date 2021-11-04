@@ -36,7 +36,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0),
+    padding: '8px 0',
     margin: '16px 0',
     borderRadius: '4px',
     boxShadow: '0px 1px 4px 0px rgb(0 0 0 / 17%)',
