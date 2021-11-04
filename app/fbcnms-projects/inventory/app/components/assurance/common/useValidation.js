@@ -31,6 +31,8 @@ export const useValidationEdit = (inputFilter: any, nameExisting: string) => {
       inputFilter().length > 0 && {
         error: true,
         helperText: `${nameExisting} name existing`,
+        hasError: true,
+        errorText: `${nameExisting} name existing`,
       },
     [inputFilter, nameExisting],
   );
