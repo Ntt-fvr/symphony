@@ -20,6 +20,8 @@ export const useValidation = (
       name?.some(item => item === element) && {
         error: true,
         helperText: `${nameExisting} name existing`,
+        hasError: true,
+        errorText: `${nameExisting} name existing`,
       },
     [element, name, nameExisting],
   );
