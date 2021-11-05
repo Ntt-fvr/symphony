@@ -76,6 +76,9 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     '& .MuiOutlinedInput-multiline': {
       height: '100%',
+      '& textarea': {
+        height: '100% !important',
+      },
     },
   },
   styleSearch: {
