@@ -53,6 +53,7 @@ export const AlarmFilteringStatus = (props: Props) => {
         (moment(creationDate).format() <= moment(endDate).format() && (
           <Button
             variant="outlined"
+            weight="bold"
             name="alarmStatus"
             className={classNames(classes.button, classes.buttonActive)}>
             {'Active'}

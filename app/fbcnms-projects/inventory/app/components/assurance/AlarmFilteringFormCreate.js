@@ -10,7 +10,7 @@
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
-import React, {useMemo, useState} from 'react';
+import React, {useState, useRef, useMemo} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -31,6 +31,8 @@ import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
+import classNames from 'classnames';
+import type {alarmStatus} from './AlarmFilteringTypes'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -63,11 +65,31 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  button: {
+    width: '100%',
+    height: '36px',
+  },
+  buttonActive: {
+    border: '1px solid #00AF5B',
+    color: '#00AF5B',
+    fontSize: '14px',
+  },
+  buttonPending: {
+    border: '1px solid #FFB63E',
+    color: '#FFB63E',
+    fontSize: '14px',
+  },
+  buttonClosed: {
+    border: '1px solid #8895AD',
+    color: '#8895AD',
+    fontSize: '14px',
+  },
 }));
 
 type Props = $ReadOnly<{|
   returnTableAlarm: () => void,
   isCompleted: void => void,
+  dataAlarmStatus: alarmStatus,
   alarms: {
     id: string,
     name: string,
@@ -75,11 +97,12 @@ type Props = $ReadOnly<{|
 |}>;
 
 const AlarmFilteringFormCreate = (props: Props) => {
-  const {returnTableAlarm, isCompleted, alarms} = props;
+  const {returnTableAlarm, isCompleted, dataAlarmStatus, alarms} = props;
   const classes = useStyles();
   const [AlarmFilter, setAlarmFilter] = useState<AlarmFilter>({data: {}});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checked, setChecked] = useState(true);
+  const dataRefName = useRef();
 
   const namesAlarms = alarms.map(item => item.node.name);
 
@@ -110,6 +133,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
         reason: AlarmFilter.data.reason,
         user: 'user',
         creationTime: moment(AlarmFilter.data.creationTime).format(),
+        alarmStatus: dataRefName.current,
       },
     };
     AddAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
@@ -231,13 +255,49 @@ const AlarmFilteringFormCreate = (props: Props) => {
                   xl={2}
                   className={classes.gridStyleLeft}
                   style={{marginTop: '25px'}}>
-                  <AlarmFilteringStatus
-                    creationDate={moment(
-                      AlarmFilter.data.creationTime,
-                    ).format()}
-                    beginDate={moment(AlarmFilter.data.beginTime).format()}
-                    endDate={moment(AlarmFilter.data.endTime).format()}
-                  />
+                  {moment(AlarmFilter.data.creationTime).format() <=
+                    moment(AlarmFilter.data.beginTime).format() ||
+                    (moment(AlarmFilter.data.creationTime).format() <=
+                      moment(AlarmFilter.data.endTime).format() && (
+                      <Button
+                        variant="outlined"
+                        value={(dataRefName.current = dataAlarmStatus?.[0].id)}
+                        className={classNames(
+                          classes.button,
+                          classes.buttonActive,
+                        )}>
+                        {'Active'}
+                      </Button>
+                    ))}
+                  {moment(AlarmFilter.data.creationTime).format() >
+                    moment(AlarmFilter.data.endTime).format() && (
+                    <Button
+                      variant="outlined"
+                      weight="bold"
+                      value={(dataRefName.current = dataAlarmStatus?.[1].id)}
+                      className={classNames(
+                        classes.button,
+                        classes.buttonClosed,
+                      )}>
+                      {'Closed'}
+                    </Button>
+                  )}
+                  {moment(AlarmFilter.data.creationTime).format() <
+                    moment(AlarmFilter.data.beginTime).format() &&
+                    moment(AlarmFilter.data.creationTime).format() <
+                      moment(AlarmFilter.data.endTime).format() && (
+                      <Button
+                        variant="outlined"
+                        weight="bold"
+                        name="alarmStatus"
+                        value={(dataRefName.current = dataAlarmStatus?.[2].id)}
+                        className={classNames(
+                          classes.button,
+                          classes.buttonPending,
+                        )}>
+                        {'Pending'}
+                      </Button>
+                    )}
                 </Grid>
                 <Grid
                   item

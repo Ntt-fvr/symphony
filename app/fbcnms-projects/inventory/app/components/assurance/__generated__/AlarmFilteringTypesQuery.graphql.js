@@ -34,7 +34,15 @@ export type AlarmFilteringTypesQueryResponse = {|
         |},
       |}
     |}>
-  |}
+  |},
+  +alarmStatus: {|
+    +edges: $ReadOnlyArray<{|
+      +node: ?{|
+        +id: string,
+        +name: string,
+      |}
+    |}>
+  |},
 |};
 export type AlarmFilteringTypesQuery = {|
   variables: AlarmFilteringTypesQueryVariables,
@@ -64,6 +72,14 @@ query AlarmFilteringTypesQuery {
       }
     }
   }
+  alarmStatus {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
 }
 */
 
@@ -83,6 +99,10 @@ v1 = {
   "storageKey": null
 },
 v2 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -165,13 +185,42 @@ v2 = [
                 "kind": "LinkedField",
                 "name": "alarmStatus",
                 "plural": false,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/)
-                ],
+                "selections": (v2/*: any*/),
                 "storageKey": null
               }
             ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "AlarmStatusConnection",
+    "kind": "LinkedField",
+    "name": "alarmStatus",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "AlarmStatusEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "AlarmStatus",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": (v2/*: any*/),
             "storageKey": null
           }
         ],
@@ -187,7 +236,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "AlarmFilteringTypesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -196,19 +245,19 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AlarmFilteringTypesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7988eb62db16c7bd0821eb585b520414",
+    "cacheID": "200fecb04c876426b14d3e4869930400",
     "id": null,
     "metadata": {},
     "name": "AlarmFilteringTypesQuery",
     "operationKind": "query",
-    "text": "query AlarmFilteringTypesQuery {\n  alarmFilters {\n    edges {\n      node {\n        id\n        name\n        networkResource\n        enable\n        beginTime\n        endTime\n        reason\n        user\n        creationTime\n        alarmStatus {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AlarmFilteringTypesQuery {\n  alarmFilters {\n    edges {\n      node {\n        id\n        name\n        networkResource\n        enable\n        beginTime\n        endTime\n        reason\n        user\n        creationTime\n        alarmStatus {\n          id\n          name\n        }\n      }\n    }\n  }\n  alarmStatus {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eaf1aca142a63831ff2d5e4f18e35885';
+(node/*: any*/).hash = '991ad2c76b3159f9fafe044c20db7b19';
 
 module.exports = node;

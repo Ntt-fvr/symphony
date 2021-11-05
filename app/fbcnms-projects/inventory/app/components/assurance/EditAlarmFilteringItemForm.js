@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useState, useMemo, useRef} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -39,6 +39,8 @@ import {AlarmFilteringStatus} from './AlarmFilteringStatus';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
 
 import {DARK} from '@symphony/design-system/theme/symphony';
+import classNames from 'classnames';
+import type {alarmStatus} from './AlarmFilteringTypes'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -71,7 +73,27 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  button: {
+    width: '100%',
+    height: '36px',
+  },
+  buttonActive: {
+    border: '1px solid #00AF5B',
+    color: '#00AF5B',
+    fontSize: '14px',
+  },
+  buttonPending: {
+    border: '1px solid #FFB63E',
+    color: '#FFB63E',
+    fontSize: '14px',
+  },
+  buttonClosed: {
+    border: '1px solid #8895AD',
+    color: '#8895AD',
+    fontSize: '14px',
+  },
 }));
+
 
 type Props = $ReadOnly<{|
   closeEditForm: () => void,
@@ -93,6 +115,7 @@ type Props = $ReadOnly<{|
     },
   },
   isCompleted: void => void,
+  dataAlarmStatus: alarmStatus,
   alarms: {
     id: string,
     name: string,
@@ -100,7 +123,13 @@ type Props = $ReadOnly<{|
 |}>;
 
 const EditAlarmFilteringItemForm = (props: Props) => {
-  const {closeEditForm, formValues, isCompleted, alarms} = props;
+  const {
+    closeEditForm,
+    formValues,
+    isCompleted,
+    dataAlarmStatus,
+    alarms,
+  } = props;
   const classes = useStyles();
   const id = useFormInput(formValues.item.id);
   const name = useFormInput(formValues.item.name);
@@ -113,7 +142,9 @@ const EditAlarmFilteringItemForm = (props: Props) => {
   );
   const reason = useFormInput(formValues.item.reason);
   const creationTime = useFormInput(formValues.item.creationTime);
+  const alarmStatus = useFormInput(formValues.item.alarmStatus.id);
   const [checked, setChecked] = useState(formValues.item.enable);
+  const dataRefName = useRef(alarmStatus.value);
 
   const namesAlarms = alarms.map(item => item.node.name);
 
@@ -146,6 +177,8 @@ const EditAlarmFilteringItemForm = (props: Props) => {
     }
   };
 
+  const DisableButton = dataRefName.current === dataAlarmStatus?.[0].id;
+
   function handleClickEdit() {
     const variables: EditAlarmFilterMutationVariables = {
       input: {
@@ -156,6 +189,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
         beginTime: moment(beginTime.value).format(),
         endTime: moment(endTime.value).format(),
         reason: reason.value,
+        alarmStatus: dataRefName.current,
       },
     };
     EditAlarmFilterMutation(variables, {onCompleted: () => isCompleted()});
@@ -225,7 +259,12 @@ const EditAlarmFilteringItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={11}>
                 <FormField {...validationName()} label="Name">
-                  <TextInput {...name} autoComplete="off" name="name" />
+                  <TextInput
+                    {...name}
+                    disabled
+                    autoComplete="off"
+                    name="name"
+                  />
                 </FormField>
               </Grid>
               <Grid container item xs={6}>
@@ -258,6 +297,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   <FormField label="Start">
                     <TextField
                       {...beginTime}
+                      disabled={DisableButton}
                       className={classes.calendar}
                       autoComplete="off"
                       variant="outlined"
@@ -289,11 +329,55 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   xl={2}
                   className={classes.gridStyleLeft}
                   style={{marginTop: '25px'}}>
-                  <AlarmFilteringStatus
-                    creationDate={creationTime.value}
-                    beginDate={beginTime.value}
-                    endDate={endTime.value}
-                  />
+                  {moment(creationTime.value).format() <=
+                    moment(beginTime.value).format() ||
+                    (moment(creationTime.value).format() <=
+                      moment(endTime.value).format() && (
+                      <Button
+                        {...alarmStatus}
+                        variant="outlined"
+                        weight="bold"
+                        name="alarmStatus"
+                        value={(dataRefName.current = dataAlarmStatus?.[0].id)}
+                        className={classNames(
+                          classes.button,
+                          classes.buttonActive,
+                        )}>
+                        {'Active'}
+                      </Button>
+                    ))}
+                  {moment(creationTime.value).format() >
+                    moment(endTime.value).format() && (
+                    <Button
+                      {...alarmStatus}
+                      variant="outlined"
+                      weight="bold"
+                      name="alarmStatus"
+                      value={(dataRefName.current = dataAlarmStatus?.[1].id)}
+                      className={classNames(
+                        classes.button,
+                        classes.buttonClosed,
+                      )}>
+                      {'Closed'}
+                    </Button>
+                  )}
+                  {moment(creationTime.value).format() <
+                    moment(beginTime.value).format() &&
+                    moment(creationTime.value).format() <
+                      moment(endTime.value).format() && (
+                      <Button
+                        {...alarmStatus}
+                        variant="outlined"
+                        weight="bold"
+                        name="alarmStatus"
+                        value={(dataRefName.current = dataAlarmStatus?.[2].id)}
+                        className={classNames(
+                          classes.button,
+                          classes.buttonPending,
+                        )}>
+                        {'Pending'}
+                      </Button>
+                    )}
                 </Grid>
                 <Grid
                   item
@@ -302,7 +386,7 @@ const EditAlarmFilteringItemForm = (props: Props) => {
                   xl={10}
                   className={classes.gridStyleRight}>
                   <FormField label="ID">
-                    <TextInput name="id" disabled {...id} />
+                    <TextInput name="id" {...id} disabled />
                   </FormField>
                 </Grid>
               </Grid>
