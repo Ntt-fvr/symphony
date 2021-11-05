@@ -80,6 +80,7 @@ type Props = $ReadOnly<{|
   formulas: Array<Formula>,
   parentEditCallback: any,
   handleEditFormulaClick: any,
+  isCompleted: any,
 |}>;
 
 const DenseTable = (props: Props) => {

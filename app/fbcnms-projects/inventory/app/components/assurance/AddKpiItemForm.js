@@ -7,7 +7,7 @@
  * @flow strict-local
  * @format
  */
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
@@ -152,7 +152,17 @@ export default function AddKpiItemForm(props: Props) {
 
   const validationName = useValidation(kpis.data.name, names, 'Kpi');
 
+  // this function is for inputs or selects that accept metod trim()
   function handleChange({target}) {
+    setKpis({
+      data: {
+        ...kpis.data,
+        [target.name]: target.value.trim(),
+      },
+    });
+  }
+  //It worked only for the status select for being a boolean
+  function handleChangeStatus({target}) {
     setKpis({
       data: {
         ...kpis.data,
@@ -224,7 +234,7 @@ export default function AddKpiItemForm(props: Props) {
             select
             className={classes.select}
             label="Status"
-            onChange={handleChange}
+            onChange={handleChangeStatus}
             name="status"
             variant="outlined">
             <MenuItem value={true}>Enabled</MenuItem>

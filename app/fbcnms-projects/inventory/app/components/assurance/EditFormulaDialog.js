@@ -60,15 +60,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// type Formula = {
-//   data: {
-//     kpi: string,
-//     vendors: string,
-//     technology: string,
-//     networkTypes: string,
-//   },
-// };
-
 type Props = $ReadOnly<{|
   open: boolean,
   onClose: () => void,
