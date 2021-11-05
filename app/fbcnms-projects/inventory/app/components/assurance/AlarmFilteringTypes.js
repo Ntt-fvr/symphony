@@ -52,8 +52,20 @@ const AlarmFilteringQuery = graphql`
         }
       }
     }
+    alarmStatus {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
   }
 `;
+export type alarmStatus = {
+  id: string;
+  name: string;
+}
 type Alarms = {
   item: {
     node: {
@@ -103,6 +115,7 @@ const AlarmFilteringTypes = () => {
     return (
       <AlarmFilteringFormCreate
         alarms={alarms}
+        dataAlarmStatus={DataAlarms.alarmStatus?.edges.map(item => item.node)}
         returnTableAlarm={() => setShowForm(false)}
         isCompleted={isCompleted}
       />
@@ -113,6 +126,7 @@ const AlarmFilteringTypes = () => {
     return (
       <EditAlarmFilteringItemForm
         alarms={alarms}
+        dataAlarmStatus={DataAlarms.alarmStatus?.edges.map(item => item.node)}
         closeEditForm={() => setShowEditForm(false)}
         formValues={dataEdit}
         isCompleted={isCompleted}
