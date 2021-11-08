@@ -31,6 +31,7 @@ import Grid from '@material-ui/core/Grid';
 import Switch from '@symphony/design-system/components/switch/Switch';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButtonEdit} from './common/useDisabledButton';
+import {useValidationEdit} from './common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -118,11 +119,7 @@ export const EditThresholdItemForm = (props: Props) => {
     );
   };
 
-  const validationName = () => {
-    if (inputFilter().length > 0) {
-      return {hasError: true, errorText: 'Threshold name existing'};
-    }
-  };
+  const validationName = useValidationEdit(inputFilter, 'Threshold');
 
   const handleDisable = useDisabledButtonEdit(dataInputsObject, 2, inputFilter);
 
@@ -165,9 +162,9 @@ export const EditThresholdItemForm = (props: Props) => {
               </Grid>
               <Grid item xs={12} sm={12} lg={11} xl={11}>
                 <FormField
+                  {...validationName}
                   className={classes.formField}
                   label="Name"
-                  {...validationName()}
                   required>
                   <TextInput
                     {...name}

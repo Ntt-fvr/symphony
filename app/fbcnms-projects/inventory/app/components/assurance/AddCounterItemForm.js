@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 
 // COMPONENTS //
 import AddedSuccessfullyMessage from './common/AddedSuccessfullyMessage';
@@ -33,6 +33,7 @@ import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
 import {useDisabledButton} from './common/useDisabledButton';
+import {useValidation} from './common/useValidation';
 
 const AddCountersQuery = graphql`
   query AddCounterItemFormQuery {
@@ -138,10 +139,7 @@ export default function AddCounterItemForm(props: Props) {
 
   const handleDisable = useDisabledButton(counters.data, names, 5);
 
-  const handleHasError = useMemo(
-    () => names?.some(item => item === counters.data.name),
-    [names, counters.data.name],
-  );
+  const validationName = useValidation(counters.data.name, names, 'Counter');
 
   function handleChange({target}) {
     setCounters({
@@ -191,6 +189,7 @@ export default function AddCounterItemForm(props: Props) {
       <CardHeader className={classes.header}>Add Counter</CardHeader>
       <form className={classes.formField} autoComplete="off">
         <TextField
+          {...validationName}
           required
           className={classes.input}
           id="counter-name"
@@ -198,12 +197,6 @@ export default function AddCounterItemForm(props: Props) {
           variant="outlined"
           name="name"
           onChange={handleChange}
-          error={handleHasError}
-          helperText={
-            names?.some(item => item === counters.data.name)
-              ? 'Counter name existing'
-              : ''
-          }
         />
         <TextField
           required

@@ -21,19 +21,12 @@ import type {AddFormulaMutationVariables} from '../../mutations/__generated__/Ad
 
 import AddFormulaMutation from '../../mutations/AddFormulaMutation';
 import CloseIcon from '@material-ui/icons/Close';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import FormGroup from '@material-ui/core/FormGroup';
 import Switch from '@symphony/design-system/components/switch/Switch';
 
 import Chip from '@material-ui/core/Chip';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
-import Table from '@material-ui/core/Table';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import symphony from '@symphony/design-system/theme/symphony';

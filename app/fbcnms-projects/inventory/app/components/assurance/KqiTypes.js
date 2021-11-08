@@ -9,7 +9,7 @@
  */
 
 import ConfigureTitle from './common/ConfigureTitle';
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import {Grid} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
@@ -23,7 +23,7 @@ import fbt from 'fbt';
 import {fetchQuery} from 'relay-runtime';
 import {graphql} from 'react-relay';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     padding: '40px',
   },

@@ -10,7 +10,7 @@
 
 import type {AddAlarmFilterMutationVariables} from '../../mutations/__generated__/AddAlarmFilterMutation.graphql';
 
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import fbt from 'fbt';
 
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -29,6 +29,7 @@ import Switch from '@symphony/design-system/components/switch/Switch';
 
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
+import {useValidation} from './common/useValidation';
 
 import AddAlarmFilterMutation from '../../mutations/AddAlarmFilterMutation';
 
@@ -85,6 +86,12 @@ const AlarmFilteringFormCreate = (props: Props) => {
 
   const handleDisable = useDisabledButton(AlarmFilter.data, namesAlarms, 5);
 
+  const validationName = useValidation(
+    AlarmFilter.data.name,
+    namesAlarms,
+    'Alarm',
+  );
+
   function handleChange({target}) {
     setAlarmFilter({
       data: {
@@ -93,11 +100,6 @@ const AlarmFilteringFormCreate = (props: Props) => {
       },
     });
   }
-  const validationName = () => {
-    if (namesAlarms?.some(item => item === AlarmFilter.data.name)) {
-      return {hasError: true, errorText: 'Alarm name existing'};
-    }
-  };
 
   function handleClick() {
     const variables: AddAlarmFilterMutationVariables = {
@@ -164,7 +166,7 @@ const AlarmFilteringFormCreate = (props: Props) => {
                 </FormField>
               </Grid>
               <Grid item xs={11}>
-                <FormField {...validationName()} label="Name">
+                <FormField {...validationName} label="Name">
                   <TextInput
                     autoComplete="off"
                     name="name"

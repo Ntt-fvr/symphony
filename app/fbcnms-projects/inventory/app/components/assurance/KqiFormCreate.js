@@ -15,7 +15,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@symphony/design-system/components/Card/Card';
 import FormField from '@symphony/design-system/components/FormField/FormField';
 import Grid from '@material-ui/core/Grid';
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
@@ -24,6 +24,7 @@ import moment from 'moment';
 import {MenuItem, Select} from '@material-ui/core';
 import {makeStyles} from '@material-ui/styles';
 import {useDisabledButton} from './common/useDisabledButton';
+import {useValidation} from './common/useValidation';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -158,21 +159,9 @@ const KqiFormCreate = (props: Props) => {
 
   const dataNameKqi = dataKqi.map(item => item.name);
 
-  const handleDisable = useMemo(
-    () =>
-      !(
-        Object.values(Kqis.data).length === 9 &&
-        !Object.values(Kqis.data).some(item => item === '') &&
-        !dataNameKqi?.some(item => item === Kqis.data.name)
-      ),
-    [Kqis.data, dataNameKqi],
-  );
+  const handleDisable = useDisabledButton(Kqis.data, dataNameKqi, 9);
 
-  const handleHasError = useMemo(() => {
-    if (dataNameKqi?.some(item => item === Kqis.data.name)) {
-      return {hasError: true, errorText: 'Kqi Target name existing'};
-    }
-  }, [dataNameKqi, Kqis.data.name]);
+  const validationName = useValidation(Kqis.data.name, dataNameKqi, 'Kqi');
 
   return (
     <div className={classes.root}>
@@ -217,7 +206,7 @@ const KqiFormCreate = (props: Props) => {
           <Card>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <FormField label="Name" required {...handleHasError}>
+                <FormField label="Name" required {...validationName}>
                   <TextInput
                     autoComplete="off"
                     name="name"
