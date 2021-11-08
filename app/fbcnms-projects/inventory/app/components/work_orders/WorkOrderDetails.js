@@ -20,6 +20,7 @@ import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategorie
 import type {ContextRouter} from 'react-router-dom';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Property} from '../../common/Property';
+import {useDocumentCategoryByLocationTypeNodes} from '../../common/LocationType';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WorkOrderDetails_workOrder} from './__generated__/WorkOrderDetails_workOrder.graphql.js';
 
@@ -165,6 +166,12 @@ const WorkOrderDetails = ({
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails_workOrder>(
     propsWorkOrder,
   );
+
+  const useCategories = useDocumentCategoryByLocationTypeNodes(
+    workOrder.location?.locationType.id,
+  );
+  const disabledLinkToLocation = !!useCategories.length;
+
   const [properties, setProperties] = useState<Array<Property>>(
     propsWorkOrder.properties
       .filter(Boolean)
@@ -371,7 +378,8 @@ const WorkOrderDetails = ({
         fileSize: file.sizeInBytes,
         modified: file.uploaded,
         contentType: file.fileType,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 
@@ -397,7 +405,7 @@ const WorkOrderDetails = ({
         enqueueSnackbar(
           file.fileName +
             ' linked to location with category "' +
-            category +
+            category.name +
             '"',
         );
       },
@@ -406,7 +414,7 @@ const WorkOrderDetails = ({
           'There was an error linking ' +
             file.fileName +
             ' to location with category "' +
-            category +
+            category.name +
             '"',
         );
       },
@@ -428,7 +436,8 @@ const WorkOrderDetails = ({
         entityType: 'LOCATION',
         url: link.url,
         displayName: link?.displayName,
-        category: category,
+        category: category.name,
+        documentCategoryId: category.id,
       },
     };
 
@@ -450,12 +459,12 @@ const WorkOrderDetails = ({
     const callbacks: MutationCallbacks<AddHyperlinkMutationResponse> = {
       onCompleted: () => {
         enqueueSnackbar(
-          `${link?.displayName} linked to location with category ${category}`,
+          `${link?.displayName} linked to location with category ${category.name}`,
         );
       },
       onError: () => {
         enqueueSnackbar(
-          `There was an error linking ${link?.displayName} to location with category ${category}`,
+          `There was an error linking ${link?.displayName} to location with category ${category.name}`,
         );
       },
     };
@@ -784,23 +793,26 @@ const WorkOrderDetails = ({
                       title="Attachments"
                       rightContent={
                         <div className={classes.uploadButtonContainer}>
-                          <IconButton
-                            icon={ApplyIcon}
-                            disabled={
-                              state.isApplyButtonEnabled === false
-                                ? true
-                                : state.checkCount === 0
-                                ? true
-                                : false
-                            }
-                            onClick={() => {
-                              linkFiles();
-                            }}
-                          />
+                          {disabledLinkToLocation ? (
+                            <IconButton
+                              icon={ApplyIcon}
+                              disabled={
+                                state.isApplyButtonEnabled === false
+                                  ? true
+                                  : state.checkCount === 0
+                                  ? true
+                                  : false
+                              }
+                              onClick={() => {
+                                linkFiles();
+                              }}
+                            />
+                          ) : null}
                           <AddHyperlinkButton
                             className={classes.minimizedButton}
                             variant="text"
                             entityType="WORK_ORDER"
+                            categories={[]}
                             allowCategories={false}
                             entityId={workOrder.id}>
                             <IconButton icon={LinkIcon} />
@@ -830,9 +842,10 @@ const WorkOrderDetails = ({
                           ...propsWorkOrder.files,
                           ...propsWorkOrder.images,
                         ]}
+                        categories={useCategories}
                         hyperlinks={propsWorkOrder.hyperlinks}
                         onChecked={countDispatch}
-                        linkToLocationOptions={true}
+                        linkToLocationOptions={disabledLinkToLocation}
                       />
                     </ExpandingPanel>
                     <ChecklistCategoriesMutateDispatchContext.Provider
@@ -942,6 +955,7 @@ export default withRouter(
             latitude
             longitude
             locationType {
+              id
               mapType
               mapZoomLevel
             }
